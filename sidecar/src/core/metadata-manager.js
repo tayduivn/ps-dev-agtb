@@ -270,7 +270,15 @@
                 _set(_appPrefix + "moduleList", data.moduleList);
             }
 
+            if (data._hash) {
+                _set(_appPrefix + "_hash", data._hash);
+            }
+            
             app.template.set(data, true);
+        },
+
+        getHash: function() {
+            return _get(_appPrefix + "_hash") || "";
         },
 
         /**
@@ -279,16 +287,23 @@
          */
         sync: function(callback) {
             var self = this;
-            app.api.getMetadata(app.config.metadataTypes, [], {
-                success: function(metadata) {
-                    self.set(metadata);
+
+            app.api.getMetadata(self.getHash(), app.config.metadataTypes, [], {
+                success: function(metadata, textStatus, jqXHR) {
+                    if (jqXHR.status == 304) { // Our metadata is up to date so we do nothing.
+                        app.logger.debug("Metadata is up to date");
+                    } else if (jqXHR.status == 200) { // Need to update our app with new metadata.
+                        app.logger.debug("Metadata is out of date");
+                        self.set(metadata);
+                    }
+
                     if (callback) {
                         callback.call(self, null, metadata);
                     }
                 },
                 error: function(error) {
-                    app.logger.error("Error fetching metadata");
-                    app.logger.error(error);
+                    app.logger.error("Error fetching metadata " + error);
+
                     if (callback) {
                         callback.call(self, error);
                     }
