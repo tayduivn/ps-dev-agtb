@@ -10,7 +10,16 @@
         serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
         maxQueryResult: 20,
         platform: "mobile",
-        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"]
+        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
+        additionalComponents: {
+            "left-menu": {
+                target: '#moduleList'
+            },
+            "right-menu": {
+                target: '#createList'
+            }
+        }
+
     }, false);
 
 })(SUGAR.App);

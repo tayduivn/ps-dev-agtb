@@ -1,62 +1,27 @@
-<div class="navbar navbar-fixed-top">
-  <a href="#d" title="Dashboard" class="cube" id="logo"></a>
-  <a href="#l" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
-  <div class="navbar-inner">
-    <h1>{{context.state.module}}</h1>
-    <div class="nav-collapse">
-      <ul class="nav" id="moduleList">
-        <li id="userAdmin"><a href="sabra_khan.html" id="userTab">Sabra Khan</a></li>
-        <li class="divider-horizontal"></li>
-        <li id="gen0"><a href="index.html" id="moduleTab_Activity">Activity</a></li>
-        <li id="gen1" class="active"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
-        <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases</a></li>
-        <li id="gen2"><a href="not.html" id="moduleTab_Contacts">Contacts</a></li>
-        <li id="gen23"><a href="not.html" id="moduleTab_Documents">Documents</a></li>
-        <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities</a></li>
-        <li class="divider-horizontal"></li>
-        <li id="gen1"><a href="not.html" id="moduleTab_Accounts">Settings</a></li>
-        <li id="gen25"><a href="not.html" id="moduleTab_Cases">Quick View</a></li>
-        <li id="gen25"><a href="not.html" id="moduleTab_Cases">Reports</a></li>
-        <li id="gen25"><a href="not.html" id="moduleTab_Cases">Import Contacts</a></li>
-        <li id="gen2"><a href="login.html" id="moduleTab_Contacts">Log Out</a></li>
-      </ul>
-      <ul class="nav" id="createList">
-        <li id="quickTitle"><a name>Quick Create</a></li>
-        <li class="divider-horizontal"></li>
-        <li><a href="account_create.html">Create Account</a></li>
-        <li><a href="not.html">Create Case</a></li>
-        <li><a href="not.html">Create Contact</a></li>
-        <li><a href="not.html">Create Opportunity</a></li>
-        <li><a href="not.html">Create Task</a></li>
-        <li><a href="not.html">Create Meeting</a></li>
-       </ul>
-    </div><!-- /.nav-collapse -->
-  </div><!-- /navbar-inner -->
-</div>
-
+<h1 class="nomad">{{context.state.module}}</h1>
 <div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12 listing fav filtered" id="listing-{{context.state.module}}">
-            <i></i>
-            <section class="search topelbar">
-              <i class="icon-search"></i>
-              <div class="form-search row-fluid" action="">
-                <input type="text" class="search-query" placeholder="Search all {{context.state.module}}">
-                <aside>
-                  <div class="btn-group">
-                    <a title="Starred" href="#n" class="btn"><i class="icon-star"></i></a>
-                    <a title="Account" href="#n" class="btn"><i class="icon-user"></i></a>
-                  </div>
-                </aside>
-              </div>
-            </section>
-            {{#each meta.panels}}
-            <div class="items">
-            {{#each ../context.state.collection.models}}
-                {{listItem this ../../this ../fields}}
-            {{/each}}
+  <div class="row-fluid">
+      <div class="span12 listing fav filtered" id="listing-{{context.state.module}}">
+          <i></i>
+          <section class="search topelbar">
+            <i class="icon-search"></i>
+            <div class="form-search row-fluid">
+              <input type="text" class="search-query" placeholder="Search all {{context.state.module}}">
+              <aside>
+                <div class="btn-group">
+                  <a title="Starred" href="#" class="btn"><i class="icon-star"></i></a>
+                  <a title="Account" href="#" class="btn"><i class="icon-user"></i></a>
+                </div>
+              </aside>
             </div>
-            {{/each}}
-        </div>
+          </section>
+          {{#each meta.panels}}
+          <div class="items">
+          {{#each ../context.state.collection.models}}
+              {{listItem this ../../this ../fields}}
+          {{/each}}
+          </div>
+          {{/each}}
+      </div>
     </div>
 </div>
