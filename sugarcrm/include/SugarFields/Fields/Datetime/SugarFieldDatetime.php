@@ -28,14 +28,15 @@ class SugarFieldDatetime extends SugarFieldBase {
         if(!isset($displayParams['hiddeCalendar'])) {
            $displayParams['hiddeCalendar'] = false;
         }
-
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+        
+        // jpereira@dri - #Bug49552 - Datetime field unable to follow parent class methods
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
-        	return $this->fetch($this->findTemplate('DetailView'));
+            return $this->getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
         }
         //end
-        return $this->fetch($this->findTemplate('EditView'));
+        return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+        // ~ jpereira@dri - #Bug49552 - Datetime field unable to follow parent class methods
     }
 
     function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
