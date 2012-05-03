@@ -12,7 +12,9 @@
             app.view.View.prototype.initialize.call(this, options);
         },
         render: function(args) {
-            var args = args || [];
+
+            if (!args) { return false; }
+
             var level = args[0];
             var alertClass = (level === "info" || level === "error") ? "alert-" + level : "";
             var ctx = {
