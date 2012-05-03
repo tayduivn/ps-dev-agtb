@@ -88,6 +88,7 @@ class Opportunity extends SugarBean {
     var $best_case;
     var $worst_case;
     var $likely_case;
+    var $timeperiod_id;
 //END SUGARCRM flav=pro ONLY
 
 	var $importable = true;
@@ -394,6 +395,20 @@ $query .= 			"LEFT JOIN users
         	if (isset($prob_arr[$this->sales_stage]))
         		$this->probability = $prob_arr[$this->sales_stage];
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        //Set the timeperiod_id value
+        global $timedate;
+        $date_close_db = $timedate->to_db_date($this->date_closed);
+        $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' and end_date > '{$date_close_db}' AND deleted = 0");
+        if(!empty($timeperiod))
+        {
+            $this->timeperiod_id = $timeperiod;
+        } else {
+            //Log an error message here
+            $GLOBALS['log']->error();
+        }
+        //END SUGARCRM flav=pro ONLY
 
 		require_once('modules/Opportunities/SaveOverload.php');
 
