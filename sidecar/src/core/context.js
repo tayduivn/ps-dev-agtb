@@ -172,9 +172,21 @@
              * @param {String} module Module name.
              * @return {Core.Context} New instance of the related context.
              */
-            getRelatedContext: function(name, module) {
-                // TODO: Implement
-                return this.getContext();
+            getChildContext: function(def) {
+                var context = app.context.getContext(def);
+
+                context.parent = this;
+
+                if (def.module) {
+                    context.prepareData();
+                } else if (def.link) {
+                    context.set({parentModel: this.state.model});
+                    context.prepareRelatedData();
+                }
+
+                this.children.push(context);
+
+                return context;
             },
 
             /**
@@ -198,6 +210,20 @@
                 this.set({collection: collection, model: model});
             },
 
+            /**
+             * Prepares instances of related models and collections
+             */
+            prepareRelatedData: function() {
+                var model, collection,
+                    state = this.state;
+
+                if (state.parentModel && state.link) {
+                    collection = state.parentModel.getRelatedCollection(state.link);
+                    model = app.data.createRelatedBean(state.parentModel, null, state.link);
+                    this.set({collection: collection, model: model});
+                }
+            },
+
 
             /**
              * Loads data (calls fetch on either model or collection).
@@ -215,11 +241,17 @@
 
                 if (objectToFetch) {
                     var options = {};
+                    if (this.state.link) {
+                        options.relate = true;
+                    }
                     if (this.state.layout) {
                         options.fields = this.state.layout.getFields();
+                    } else if (this.state.view) {
+                        options.fields = this.state.view.getFields();
                     }
                     objectToFetch.fetch(options);
                 }
+
 
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.loadData();

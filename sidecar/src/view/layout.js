@@ -36,17 +36,23 @@
                 var module = this.module;
                 // Switch context if necessary
                 if (def.context) {
-                    module = def.module || this.module;
-                    context = this.context.getRelatedContext(def.context, module);
-                    context.prepareData();
+
+                    context = this.context.getChildContext(def.context);
+                    if (def.context.link) {
+                        module = context.get('collection').module;
+                    } else {
+                        module = def.context.module || this.module;
+                    }
                 }
 
                 if (def.view) {
-                    this.addComponent(app.view.createView({
-                        context: context,
-                        name: def.view,
-                        module: module
-                    }), def);
+                    var view = app.view.createView({
+                                            context: context,
+                                            name: def.view,
+                                            module: module
+                                        });
+                    context.set({view:view});
+                    this.addComponent(view, def);
                 }
                 // Layouts can either by referenced by name or defined inline
                 else if (def.layout) {
@@ -127,8 +133,11 @@
             // TODO: Fix this method:
             // This method has a bug: it doesn't check for module, it collects fields from its views regadless of module
             var fields = [];
+            var self = this;
             _.each(this._components, function(view) {
-                fields = _.union(fields, view.getFields());
+                if (view.context.get('module') == self.context.get('module')) {
+                    fields = _.union(fields, view.getFields());
+                }
             });
 
             return fields;
