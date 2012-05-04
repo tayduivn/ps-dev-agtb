@@ -29,6 +29,13 @@
  
 // $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
 
+	//set up any action style menus
+	$(document).ready(function(){
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
+	});
+
 /**
  * Handles loading the sitemap popup
  */
