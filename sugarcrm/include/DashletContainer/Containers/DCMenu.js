@@ -532,7 +532,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
                         DCMenu.jsEvalled = false;
-                        overlay = setBody({
+                        var overlay = setBody({
                             html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + data.responseText
                         }, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
@@ -540,12 +540,28 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-						
+
 						setTimeout(function() {
-							overlay.set("width", dcboxbody.get('offsetWidth')+"px");
-							overlay.set("height", dcboxbody.get('offsetHeight')+"px");
-							overlay.set("centered", true);
-							dcboxbody.setStyle("visibility", "visible");
+                            //Bug#52650: Centerize modal window using jQuery since .set("centered") is not working properly in IE8
+                            if(jQuery && jQuery.fn) {
+                                var _overlay = $("#" + overlay.get('id')),
+                                    _dcbody = $("#dcboxbody"),
+                                    _width = _dcbody.outerWidth(),
+                                    _height = _dcbody.outerHeight(),
+                                    _viewportWidth = $(window).width(),
+                                    _viewportHeight = $(window).height();
+                                _overlay.css({
+                                    left: (_viewportWidth - _width) * .5,
+                                    top: (_viewportHeight- _height) *.5,
+                                    width: _width,
+                                    height: _height
+                                });
+                            } else {
+                                overlay.set("width", dcboxbody.get('offsetWidth')+"px");
+                                overlay.set("height", dcboxbody.get('offsetHeight')+"px");
+                                overlay.set("centered", true);
+                            }
+                            dcboxbody.setStyle("visibility", "visible");
 						}, 1000);
 
                         //set margins on modal so it is visible on all browsers

@@ -163,6 +163,7 @@ SUGAR.expressions.validateRelateFunctions = function(t)
             module : "ExpressionEngine",
             action : "validateRelatedField",
             tmodule : ModuleBuilder.module,
+            package : ModuleBuilder.MBpackage,
             link : t.args[0].name,
             related : t.args[1].value
         });
@@ -563,10 +564,12 @@ SUGAR.expressions.GridToolTip = {
     };
 
     SUGAR.expressions.insertRollup = function(){
-        $.markItUp({
-            target : "#formulaInput",
-            closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
-        });
+        if ($('#rollwiz_rfield').val()){
+            $.markItUp({
+                target : "#formulaInput",
+                closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
+            });
+        }
         SUGAR.rollupWindow.hide();
     }
 
@@ -587,8 +590,10 @@ SUGAR.expressions.GridToolTip = {
     	onShiftEnter:  	{keepDefault:true},
     	onCtrlEnter:  	{keepDefault:true},
     	onTab:    		{keepDefault:false, replaceWith:'    '},
-    	markupSet:  [
-            {name:'Related Field', className:'rel_field button',  beforeInsert:function(){
+    	markupSet:  [{
+            name:SUGAR.language.get("ModuleBuilder", "LBL_RELATED_FIELD"),
+            className:'rel_field button',
+            beforeInsert:function(){
                 if (!SUGAR.formulaRelFieldWin)
                     SUGAR.formulaRelFieldWin = new YAHOO.SUGAR.AsyncPanel('relatedFieldWindow', {
                         width: 400,
@@ -606,8 +611,11 @@ SUGAR.expressions.GridToolTip = {
                 SUGAR.expressions.updateSelRFLink("");
                 win.show();
                 win.center();
-            }},
-            {name:'Rollup', className:'rollup button',  beforeInsert:function(){
+            }
+        },{
+            name:SUGAR.language.get("ModuleBuilder", "LBL_ROLLUP"),
+            className:'rollup button',
+            beforeInsert:function(){
                 if (!SUGAR.rollupWindow)
                     SUGAR.rollupWindow = new YAHOO.SUGAR.AsyncPanel('rollupWindow', {
                         width: 400,
@@ -625,8 +633,8 @@ SUGAR.expressions.GridToolTip = {
                 SUGAR.expressions.updateRollupWizard("", "");
                 win.show();
                 win.center();
-            }}
-    	]
+            }
+        }]
     });
 
     /****************

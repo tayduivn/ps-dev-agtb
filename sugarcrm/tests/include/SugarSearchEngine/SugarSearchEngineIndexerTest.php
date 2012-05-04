@@ -54,10 +54,10 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped("Skipping this test in toffee for now.  There are some DB specific calls being made here");
-        return;
-        $GLOBALS['db']->query("TRUNCATE table accounts");
-        $GLOBALS['db']->query("TRUNCATE table contacts");
+        if(empty($GLOBALS['db']) || !($GLOBALS['db'] instanceOf DBManager))
+            $GLOBALS['db'] = DBManagerFactory::getInstance();
+        $GLOBALS['db']->query("DELETE FROM accounts");
+        $GLOBALS['db']->query("DELETE FROM contacts");
 
         $beanList = array();
 		$beanFiles = array();
@@ -85,7 +85,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->_db->query("TRUNCATE table {$this->indexer->table_name}");
+        $this->_db->query("DELETE FROM {$this->indexer->table_name}");
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
         $this->_db->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
 
@@ -282,7 +282,11 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
 
     public function clearFTSIndexQueueStub()
     {
-        $this->clearFTSIndexQueue();
+        // this should call $this->clearFTSIndexQueue but
+        // it fails on db2 as not all versions of db2
+        // support TRUNCATE TABLE command
+        //$this->clearFTSIndexQueue();
+        $GLOBALS['db']->query('DELETE FROM fts_queue');
     }
 
     public function removeExistingFTSConsumersStub()

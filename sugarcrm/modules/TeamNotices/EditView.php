@@ -61,8 +61,8 @@ $xtpl->assign('NAME', $focus->name);
 $xtpl->assign('DESCRIPTION', $focus->description);
 
 $buttons = array(
-    '<input title="' . $app_strings['LBL_SAVE_BUTTON_TITLE'] . '" accessKey="'. $app_strings['LBL_SAVE_BUTTON_KEY'] . '" class="button primary" onclick="this.form.action.value=\'Save\'; return check_form(\'EditView\');" type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'">',
-    '<input title="' . $app_strings['LBL_CANCEL_BUTTON_TITLE']. '" accessKey="'. $app_strings['LBL_CANCEL_BUTTON_KEY'] . '" onclick="this.form.action.value=\'index\';" class="button" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
+    '<input id="btn_teamnotices_save" title="' . $app_strings['LBL_SAVE_BUTTON_TITLE'] . '" accessKey="'. $app_strings['LBL_SAVE_BUTTON_KEY'] . '" class="button primary" onclick="this.form.action.value=\'Save\'; return check_form(\'EditView\');" type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'">',
+    '<input id="btn_teamnotices_cancel" title="' . $app_strings['LBL_CANCEL_BUTTON_TITLE']. '" accessKey="'. $app_strings['LBL_CANCEL_BUTTON_KEY'] . '" onclick="this.form.action.value=\'index\';" class="button" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
 );
 
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');

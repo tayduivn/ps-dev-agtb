@@ -20,7 +20,10 @@
 		'goal_marker_type':'group'
 ,
 		'goal_marker_color':'#3FB300'
-
+,
+        'label_name':'Sales Stage'
+,
+        'value_name':'Amount'
 	}
 
 	],
@@ -103,30 +106,30 @@
 
 		'label': 'Jan',
 
-		'gvalue': '40',
+		'gvalue': '400',
 
-		'gvaluelabel': '40K',
+		'gvaluelabel': '400K',
 
 		'values': [
-			10
+			100
 ,
-			10
+			200
 ,
-			10
+			50
 ,
-            10
+            50
 
 
 		],
 
 		'valuelabels': [
-			'10K'
+			'100K'
 ,
-			'10K'
+			'200K'
 ,
-			'10K'
+			'50K'
 ,
-            '10K'
+            '50K'
 
 
 		],

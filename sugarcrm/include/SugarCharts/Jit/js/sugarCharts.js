@@ -153,7 +153,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                             } else {
                                                 value = "elem.value";
                                             }
-                                            eval("tip.innerHTML = 'Sales Stage: <b>' + elem."+chartConfig["tip"]+" + '</b><br> Amount: <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
+                                            eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
                                         }
                                     }
                                 }
