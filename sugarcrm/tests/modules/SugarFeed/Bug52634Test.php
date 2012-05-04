@@ -38,6 +38,12 @@ class Bug52634Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
 
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+
         //set up the current user as a non admin with a marketing role
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->user->is_admin = false;
@@ -62,6 +68,9 @@ class Bug52634Test extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->l_ids as $id){
             $GLOBALS['db']->query("DELETE FROM leads WHERE id= '{$id}'");
         }
+
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
 
