@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,6 +18,45 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-    print( "<html><body>" );
-    print( "Down for maintenance." );
-    print( "</body></html>" );
+
+/**
+ * UpgradeRemoval65x.php
+ * @author Justin Park
+ * This file contains the code to assit with removal of files during a 65x upgrade
+ *
+ */
+require_once('modules/UpgradeWizard/UpgradeRemoval.php');
+
+class UpgradeRemoval65x extends UpgradeRemoval
+{
+    /**
+     * getFilesToRemove
+     * Return an array of files/directories to remove for 65x upgrades
+     * @param unknown_type $version
+     */
+    public function getFilesToRemove($version)
+    {
+        $files = array();
+
+        // In 6.5.0 we did the following
+        // 1) Removed template files for RTL theme
+
+        if($version < '650')
+        {
+            $files[] = 'themes/RTL/tpls/_companyLogo.tpl';
+            $files[] = 'themes/RTP/tpls/_globalLinks.tpl';
+            $files[] = 'themes/RTP/tpls/_head.tpl';
+            $files[] = 'themes/RTP/tpls/_headerModuleList.tpl';
+            $files[] = 'themes/RTP/tpls/_welcome.tpl';
+            $files[] = 'themes/RTP/tpls/footer.tpl';
+            $files[] = 'themes/RTP/tpls/header.tpl';
+            $files[] = 'themes/RTP/tpls';
+        }
+
+        return $files;
+    }
+
+
+}
+
+?>
