@@ -28,6 +28,9 @@ $viewdefs['Cases']['portal']['view']['grid'] = array(
                 array(
                     'name' => 'status',
                     'label' => 'Status',
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'ctestatus',
+                    'ctetype' => 'chosen',
                     'default' => true,
                     'enabled' => true,
                 ),

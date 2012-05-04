@@ -1,5 +1,4 @@
 ({
-
     events: {
         'mouseenter': 'showActions',
         'mouseleave': 'hideActions'
@@ -12,26 +11,44 @@
 
     render:function() {
         this.app.view.Field.prototype.render.call(this);
-
         var self = this;
+
+        $.editable.addInputType("chosen", {
+            element: function(settings, original) {
+                var selEl = $('<select class="cteSelect">');
+                _.each(app.lang.getAppListStrings(settings.context.fieldDef.options), function (value, key) {
+                    var option = $("<option>").val(key).append(value);
+                    selEl.append(option);
+                });
+                $(this).append(selEl);
+                var hidden = $('<input type="hidden">');
+                $(this).append(hidden);
+                $(this).find('.cteSelect');
+                return(hidden);
+            },
+            plugin: function(settings, original) {
+                $("select", this).filter(".cteSelect").chosen().change(settings.context, function(e) {
+                    self.doChange($(this).val(), settings);
+                });
+            },
+            submit: function(settings, original) {
+                $("input", this).val($("select", this).filter(".cteSelect").val());
+            }
+        });
 
         this.ctefield = this.$el.find('.cte' + this.cteclass);
         this.cteicon = this.ctefield.parent().find('.cteimage');
         this.undoicon = this.ctefield.parent().find('.cteundo');
 
         this.undoicon.on('click', null, self, this.doUndo);
-        this.ctefield.editable(function(value, settings) {
-                console.log("ajax");
-                self.model.set(self.name, value);
-                self.model.save(self.name, value);
-                return value;
-            },
+        this.ctefield.editable(self.doChange,
             {
-                select:true,
-                onedit:self.doEdit,
-                onreset:function(){console.log("onreset"); console.log(this);},
-                onsubmit:function(){console.log("onsubmit"); console.log(this);},
-                onblur:"submit",
+                type: self.ctetype || "text",
+                select: true,
+                onedit: self.doEdit,
+                onreset: function(){console.log("onreset"); console.log(this);},
+                onsubmit: function(){console.log("onsubmit"); console.log(this);},
+                onblur: "submit",
                 callback: self.callback,
                 context: self
             }
@@ -42,6 +59,13 @@
             this.ctefield.on(event, this.act);
         }, this);
         return this;
+    },
+
+    doChange: function(value, settings) {
+        console.log("ajax");
+        settings.context.model.set(settings.context.name, value);
+        settings.context.model.save(settings.context.name, value);
+        return value;
     },
 
     doEdit: function(settings, original) {
@@ -76,5 +100,6 @@
 
     hideActions: function(e) {
         this.cteicon.hide();
-    }
+    },
+
 })
