@@ -356,6 +356,8 @@ class ViewConvertLead extends SugarView
                 return;
             }
             $this->new_contact = true;
+        } elseif (isset($_POST['ContinueContact'])) {
+            $this->new_contact = true;
         }
         if (!empty($_REQUEST['selectedAccount']))
         {
