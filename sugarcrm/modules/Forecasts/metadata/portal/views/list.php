@@ -46,8 +46,8 @@ $viewdefs['Forecasts']['portal']['view']['list'] = array(
             array(
                 0 =>
                 array(
-                    'name' => 'id',
-                    'label' => 'LBL_ACCOUNT_NAME',
+                    'name' => 'name',
+                    'label' => 'Name',
                     'default' => true,
                     'enabled' => true,
                 ),
