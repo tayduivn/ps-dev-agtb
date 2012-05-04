@@ -13,15 +13,15 @@
   <![endif]-->
 
   <!-- styles -->
-  <link href="../../../sugarcrm/themes/default/css/bootstrap.css" rel="stylesheet">
+  <link href="../../../../sugarcrm/themes/default/css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-  <link href="../../../sugarcrm/include/SugarCharts/Jit/css/base.css" rel="stylesheet">
+  <link href="../../../../sugarcrm/include/SugarCharts/Jit/css/base.css" rel="stylesheet">
 
-  <script src="../../../sugarcrm/cache/include/javascript/sugar_grp1_yui.js" type="text/javascript"></script>
-  <script src="../../../sugarcrm/cache/include/javascript/sugar_grp1_jquery.js"></script>
-  <script src="../../../sugarcrm/include/SugarCharts/Jit/js/Jit/jit.js" type="text/javascript" language="javascript"></script>
-  <script src="../../../sugarcrm/include/SugarCharts/Jit/js/sugarCharts.js" type="text/javascript" language="javascript"></script>
-<script src="../../../sugarcrm/cache/include/javascript/sugar_grp1.js" type="text/javascript"></script>
+  <script src="../../../../sugarcrm/cache/include/javascript/sugar_grp1_yui.js" type="text/javascript"></script>
+  <script src="../../../../sugarcrm/cache/include/javascript/sugar_grp1_jquery.js"></script>
+  <script src="../../../../sugarcrm/include/SugarCharts/Jit/js/Jit/jit.js" type="text/javascript" language="javascript"></script>
+  <script src="../../../../sugarcrm/include/SugarCharts/Jit/js/sugarCharts.js" type="text/javascript" language="javascript"></script>
+<script src="../../../../sugarcrm/cache/include/javascript/sugar_grp1.js" type="text/javascript"></script>
 
 
 <script>
@@ -38,7 +38,7 @@
     chartConfig["imageExportType"] = 'png';
     chartConfig["showNodeLabels"] = false;
     chartConfig["showAggregates"] = false;
-    chartConfig["saveImageTo"] = "../../../sugarcrm/index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+    chartConfig["saveImageTo"] = "../../../../sugarcrm/index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
 </script>
 </head>
 
@@ -215,18 +215,7 @@
         <div class="block">
             <h4>People:</h4>
                 <div id="people">
-                <ul class="list" >
-                    <li><i class="icon-folder-open"></i> Sabra Khan
-                        <ul>
-                            <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Mark Gibson</a></li>
-                            <li><a href="forecast_james.html"><i class="icon-folder-close"></i> James Joplin</a></li>
-                            <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Terrence Li</a></li>
-                            <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Amy McCray</a></li>
-                        </ul>
-                    </li>
-                </ul>
                 </div>
-            <div id="demo1"></div>
         </div>
     </div>
 </div>
@@ -519,20 +508,26 @@
         forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
     });
 
-//        $.jstree._themes = "../../../sugarcrm/themes/";
-          $("#demo1").jstree({
+//        $.jstree._themes = "../../../../sugarcrm/themes/";
+          $("#people").jstree({
                 "json_data" : {
                     "data" : [
                         {
                             "data" : "Sabra Khan",
                             "state" : "open",
-                            "metadata" : { id : 23 },
+                            "metadata" : { id : 1 },
                             "children" : [
 
-                                {"data" : "Mark Gibson"},
-                                {"data" : "James Joplin"},
-                                {"data" : "Terrence Li"},
-                                {"data" : "Amy McCray", "children" : ["Troy McClure", "Tony Danza"]}
+                                {"data" : "Mark Gibson","metadata" : { id : 2 }},
+                                {"data" : "James Joplin","metadata" : { id : 3 }},
+                                {"data" : "Terrence Li","metadata" : { id : 4 }},
+                                {
+                                    "data" : "Amy McCray",
+                                    "metadata" : { id : 5 },
+                                    "children" : [
+                                    {"data" : "Troy McClure","metadata" : {id : 6}},
+                                    {"data" : "James Kirk","metadata" : {id : 7}}
+                                ]}
 
                             ]
                         }
@@ -541,16 +536,16 @@
 //                "themes" : { "theme" : "default", "dots" : false },
                 "plugins" : [ "json_data", "ui" ]
 
-    })
+        })
+        .bind("loaded.jstree", function () {
+                // do stuff when tree is loaded
+         $("#people").addClass("jstree-sugar");
+         $("#people > ul").addClass("list jstree-no-icons");
+         $("#people > ul > li > a").addClass("jstree-clicked");
 
-    .bind("loaded.jstree", function () {
-            // do stuff when tree is loaded
-     $("#demo1").addClass("jstree-sugar");
-     $("#demo1 > ul").addClass("list jstree-no-icons");
-     $("#demo1 > ul > li > a").addClass("jstree-clicked");
 
-
-    });
+        })
+        .bind("select_node.jstree", function (e, data) { console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id")); });
 
 
     });

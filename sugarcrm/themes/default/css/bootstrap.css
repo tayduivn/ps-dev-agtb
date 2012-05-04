@@ -5197,13 +5197,13 @@ table.dataTable th:active {
   background: transparent !important;
 }
 #vakata-dragged.jstree-default .jstree-ok {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -2px -53px no-repeat !important;
+  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -2px -53px no-repeat !important;
 }
 #vakata-dragged.jstree-default .jstree-invalid {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -18px -53px no-repeat !important;
+  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -18px -53px no-repeat !important;
 }
 #jstree-marker.jstree-default {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -41px -57px no-repeat !important;
+  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -41px -57px no-repeat !important;
   text-indent: -100px;
 }
 .jstree-default a.jstree-search {
@@ -5255,7 +5255,7 @@ table.dataTable th:active {
 #vakata-dragged.jstree-default .jstree-invalid,
 #vakata-dragged.jstree-default .jstree-ok,
 #jstree-marker.jstree-default {
-  _background-image: url("../../../index.php?entryPoint=getImage&imageName=d.png");
+  _background-image: url("../../../index.php?entryPoint=getImage&imageName=jstree.png");
 }
 .jstree-default .jstree-open ins {
   _background-position: -72px 0;
@@ -5825,8 +5825,8 @@ article:hover {
   -webkit-transition: all .2s linear;
   -moz-transition: all .2s linear;
   transition: all .2s linear;
-  filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
-  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale');
+  -ms-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale');
 }
 .navbar .navbar-inner {
   height: 44px;
@@ -5891,7 +5891,7 @@ article .avatar {
   display: block;
 }
 .logo {
-  background: url(../img/sugar-red-sm.png) 0 0 no-repeat;
+  background: url(../../../index.php?entryPoint=getImage&imageName=company_logo.png) 0 0 no-repeat;
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
