@@ -2239,6 +2239,9 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 					}
 				}
 				$seed->save();
+				if ($seed->deleted == 1) {
+					$seed->mark_deleted($seed->id);
+				}
 				$ids[] = $seed->id;
 			}//fi
 		}
