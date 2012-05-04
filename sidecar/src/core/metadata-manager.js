@@ -177,8 +177,6 @@
             if (metadata && view) {
                 if(metadata[view] && metadata[view].meta) {
                     metadata = metadata[view].meta;
-                } else {
-                    metadata = metadata[view];
                 }
             }
 
