@@ -109,7 +109,7 @@ class MetaDataFiles
     public static $clientDefTypes = array(
         'base'   => array(),
         'mobile' => array('list', 'detail', 'edit', 'search'),
-        'portal' => array('list','detail', 'edit'),
+        'portal' => array('list', 'detail', 'edit', 'tree', 'grid'),
     );
 
     /**

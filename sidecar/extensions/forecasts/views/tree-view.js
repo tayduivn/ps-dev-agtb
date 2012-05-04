@@ -42,7 +42,7 @@
         postUserFetch : function(model, response) {
             // load up the report to users
             this.reportees = app.data.createRelatedCollection(this.primary_user, "reportees");
-            this.reportees.on('app:collection:fetch', this.postReporteesFetch, this);
+            this.reportees.on('reset', this.postReporteesFetch, this);
             this.reportees.fetch({relate: true});
         },
 
@@ -104,6 +104,8 @@
                     "state" : "open"
                 }
             ] };
+
+            console.log(tree_data);
 
             $("#jsTree").jstree({
                 "plugins" : ["themes","json_data","ui","crrm"],
