@@ -602,7 +602,7 @@ function validate_user($user_name, $password){
                 // and  $this->filter_fields doesn't use ACLs
                 $filterFields = $this->filter_fields($related_beans[0], $link_module_fields);
             } else {
-                $filterFields = $this->filter_fields($bean, $link_module_fields);
+                $filterFields = $this->filter_fields(null, $link_module_fields);
             }
 
 			$list = array();

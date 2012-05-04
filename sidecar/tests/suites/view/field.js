@@ -20,10 +20,17 @@ describe("Field", function() {
 
     it("should delegate events", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
-            events = {"click": "callback_click"},
-            bean = new Backbone.Model(),
-            inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
-            field;
+            events, bean, inputEvents, field;
+
+        events = {"click": "callback_click"};
+        bean = new Backbone.Model();
+        inputEvents = fixtures.metadata.modules.Cases.views.edit.meta.buttons[0].events;
+        field = app.view.createField({
+            def: { name: "status", type: "varchar" },
+            view: view,
+            context: context,
+            model: bean
+        });
 
         field = app.view.createField({
             def: { name: "status", type: "varchar" },
@@ -66,13 +73,14 @@ describe("Field", function() {
     });
 
     it("unbind events", function() {
-        var inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
-            field = app.view.createField({
-                def: {name: "status", type: "text"},
-                view: view,
-                context: context,
-                model: bean
-            });
+        var inputEvents, field;
+        inputEvents = fixtures.metadata.modules.Cases.views.edit.meta.buttons[0].events;
+        field = app.view.createField({
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
 
         bean.set({status: "new", id: "anId"});
         field.unBind();
@@ -103,11 +111,11 @@ describe("Field", function() {
 
     it("update model on dom input change", function() {
         var id = _.uniqueId('sugarFieldTest'),
-            bean, field, input;
+            bean, field, input, view;
 
         $('body').append('<div id="'+id+'"></div>');
         bean = new Backbone.Model();
-        var view = new app.view.View({name: 'edit', context: context});
+        view = new app.view.View({name: 'edit', context: context});
         field = app.view.createField({
             def: {name: "status", type: "varchar"},
             view: view,

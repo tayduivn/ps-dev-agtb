@@ -22,7 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 $mod_strings = array(
-	'LBL_DEPENDANT' => 'Dependant' /*for 508 compliance fix*/,
 	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
 	'LBL_HIDEOPTIONS' => 'Hide Options' /*for 508 compliance fix*/,
 	'LBL_DELETE' => 'Delete' /*for 508 compliance fix*/,
@@ -450,6 +449,7 @@ $mod_strings = array(
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
+'LBL_DEPENDANT' => 'Dependant',
 'LBL_CALCULATED' => 'Calculated Value',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
@@ -466,6 +466,8 @@ $mod_strings = array(
 'LBL_AVAILABLE_OPTIONS' => 'Available Options',
 'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
 'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
+'LBL_ROLLUP' => 'Rollup',
+'LBL_RELATED_FIELD' => 'Related Field',
 
 
 //END SUGARCRM flav=pro ONLY
