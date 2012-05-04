@@ -19,6 +19,29 @@
     }
 
     /**
+     * Initializes custom templates and controller if supplied upstream.
+     * @param {Object} entry - a module
+     * @param {String} type - 'view'||'layout'
+     * @param {String} module name
+     * @private
+     */
+    function initCustomTemplatesAndComponents(entry, type, module) {
+        var plural = type+'s',
+            templateKey;
+
+        _.each(entry[plural], function (obj, key) {
+            if (obj && obj.template) {
+                templateKey = key + '.' + module.toLowerCase();
+                app.template.compile(obj.template, templateKey);
+            }
+            if (obj && key && obj.controller) {
+                app.view.declareCustomComponent(obj.controller, key, module, type);
+            }
+        });
+
+    }
+
+    /**
      * The metadata manager is responsible for parsing and returning various metadata to components that request it.
      * @class Core.MetadataManager
      * @singleton
@@ -53,31 +76,33 @@
             if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view, viewName) {
-                _.each(view.panels, function(panel) {
-                    _.each(panel.fields, function(field, fieldIndex) {
-                        var name = _.isString(field) ? field : field.name;
-                        var fieldDef = module.fields[name];
-                        if (!_.isEmpty(fieldDef)) {
-                            // Create a definition if it doesn't exist
-                            if (_.isString(field)) {
-                                field = { name: field };
+                if(view.meta) {
+                    _.each(view.meta.panels, function(panel) {
+                        _.each(panel.fields, function(field, fieldIndex) {
+                            var name = _.isString(field) ? field : field.name;
+                            var fieldDef = module.fields[name];
+                            if (!_.isEmpty(fieldDef)) {
+                                // Create a definition if it doesn't exist
+                                if (_.isString(field)) {
+                                    field = { name: field };
+                                }
+
+                                // Patch label
+                                field.label = field.label || fieldDef.vname || fieldDef.name;
+                                // Assign type
+                                field.type = field.type || fieldDef.type;
+                                // Patch type
+                                field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                panel.fields[fieldIndex] = field;
                             }
-
-                            // Patch label
-                            field.label = field.label || fieldDef.vname || fieldDef.name;
-                            // Assign type
-                            field.type = field.type || fieldDef.type;
-                            // Patch type
-                            field.type = self.fieldTypeMap[field.type] || field.type;
-
-                            panel.fields[fieldIndex] = field;
-                        }
-                        else {
-                            // Ignore view fields that don't have module field definition
-                            //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
-                        }
+                            else {
+                                // Ignore view fields that don't have module field definition
+                                //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                            }
+                        });
                     });
-                });
+                }
             });
             module._patched = true;
             return module;
@@ -150,7 +175,11 @@
         getView: function(module, view) {
             var metadata = this.getModule(module, "views");
             if (metadata && view) {
-                metadata = metadata[view];
+                if(metadata[view] && metadata[view].meta) {
+                    metadata = metadata[view].meta;
+                } else {
+                    metadata = metadata[view];
+                }
             }
 
             return metadata;
@@ -165,7 +194,9 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
             if (metadata && layout) {
-                metadata = metadata[layout];
+                if(metadata[layout] && metadata[layout].meta) {
+                    metadata = metadata[layout].meta;
+                } 
             }
 
             return metadata;
@@ -203,12 +234,18 @@
          */
         set: function(data) {
             if (data.modules) {
-                var modules = [];
+                var modules = []; 
+
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = this._patchMetadata(module, entry);
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
-                }, this);
+
+                    // Create custom templates and modules for layouts and views
+                    initCustomTemplatesAndComponents(entry, 'view', module);
+                    initCustomTemplatesAndComponents(entry, 'layout', module);
+
+                   }, this);
                 _set("modules", modules.join(","));
             }
 
@@ -223,8 +260,6 @@
                 _app.moduleList = data.moduleList;
                 _set(_appPrefix + "moduleList", data.moduleList);
             }
-
-            //TODO add template support
         },
 
         /**
@@ -252,3 +287,4 @@
     });
 
 })(SUGAR.App);
+

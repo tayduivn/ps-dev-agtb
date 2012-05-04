@@ -40,12 +40,27 @@
             },
 
             /**
+             * Set/override a handlebars template
+             * @method
+             * @param {String} src The actual template source to be compiled
+             * @param {String} key An identifier to reference the compiled template at a later time
+             */
+            set: function(src, key) {
+                this.compile(src, key);
+            },
+
+            /**
              * Retrieves a compiled handlebars template
              * @method
              * @param {String} key Identifier of the template to be retrieved
+             * @param {String} module(optional) 
              * @return {Function} compiled Handlebars template
              */
-            get: function(key) {
+            get: function(key, module) {
+                var modKey = (module) ? key +'.'+ module.toLowerCase() : key;
+                if (module && Handlebars.templates && Handlebars.templates[modKey])
+                    return Handlebars.templates[modKey];
+
                 if (Handlebars.templates && Handlebars.templates[key])
                     return Handlebars.templates[key];
             },
@@ -88,3 +103,4 @@
     app.augment("template", _templateManager);
 
 })(SUGAR.App);
+

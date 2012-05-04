@@ -24,7 +24,7 @@ describe("View Manager", function() {
 
             expect(view).toBeDefined();
             expect(view instanceof app.view.View).toBeTruthy();
-            expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit);
+            expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit.meta);
         });
 
         it('pre-defined view class', function () {
