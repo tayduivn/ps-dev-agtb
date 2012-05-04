@@ -1,0 +1,20 @@
+<article id="{{model.module}}{{model.id}}">
+    <i class="icon-star-empty"></i>
+    <div>
+    <a href="#{{model.module}}/{{model.id}}">
+        {{#with fields.[0]}}
+        {{field ../context ../view ../model}}
+        {{/with}}
+    </a><br>
+    {{#with fields.[1]}}
+    {{field ../context ../view ../model}}
+    {{/with}}
+    </div>
+    <span id="listing-action-item1">
+        <i class="grip">|||</i>
+        <span class="hide actions">
+          <a href="#" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a>
+          <a href="#" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>
+        </span>
+    </span>
+</article>

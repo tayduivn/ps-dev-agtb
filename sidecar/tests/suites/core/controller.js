@@ -27,5 +27,6 @@ describe("Controller", function() {
             expect(app.controller.context.get().collection.models.length).toEqual(2);
 
         });
+
     });
 });

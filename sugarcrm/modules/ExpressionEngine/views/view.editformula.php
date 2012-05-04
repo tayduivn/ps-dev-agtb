@@ -48,7 +48,7 @@ class ViewEditFormula extends SugarView
  				require_once('modules/ModuleBuilder/MB/MBPackage.php');
  				$pak = new MBPackage($_REQUEST['package']);
  				$defs = $pak->modules[$module]->getVardefs();
- 				$fields = FormulaHelper::cleanFields($defs['fields']);
+                $fields = FormulaHelper::cleanFields(array_merge($pak->modules[$module]->getLinkFields(), $defs['fields']));
  			} else {
  				$class = $beanList[$module];
 				require_once $beanFiles [ $class ] ;

@@ -1,73 +1,68 @@
 (function(app) {
 
     /**
-     * Base Layout class. Use {@link View.ViewManager} to create instances of layouts.
+     * Base class for layouts.
+     *
+     * Use {@link View.ViewManager} to create instances of layouts.
      *
      * @class View.Layout
-     * @alias SUGAR.App.layout.Layout
-     * @extends View.View
+     * @alias SUGAR.App.view.Layout
+     * @extends View.Component
      */
-    app.view.Layout = app.view.View.extend({
+    app.view.Layout = app.view.Component.extend({
+
+        /**
+         * TODO docs (describe constructor options, see Component class for an example).
+         *
+         * @constructor
+         * @param options
+         */
         initialize: function(options) {
-            _.bindAll(this, 'render', 'bindData');
+            app.view.Component.prototype.initialize.call(this, options);
+
+            // TODO: Do we need this?
+            //_.bindAll(this, 'render', 'bindData');
+
+            this._components = []; // list of components
 
             /**
-             * The context is used to determine what the current focus is
-             * (includes a model, collection, and module)
-             * @cfg {Core.Context}
-             */
-            this.context = options.context || app.controller.context;
-
-            /**
-             * Module
-             * @cfg {String}
-             */
-            this.module = options.module || this.context.module;
-
-            /**
-             * Metadata
-             * @cfg {Object}
-             */
-            this.meta = options.meta;
-
-            /**
-             * Components array
-             * @cfg {Array}
-             * @private
-             */
-            this.components = [];
-
-            /**
-             * Classname of the View
+             * CSS class.
              * @cfg {String} className
              */
             this.$el.addClass("layout " + (options.className || this.meta.type));
 
             _.each(this.meta.components, function(def) {
-                var context = def.context ? this.context.getRelatedContext(def.context) : this.context,
-                    module = def.module || context.get("module");
+                var context = this.context;
+                var module = this.module;
+                // Switch context if necessary
+                if (def.context) {
 
-                //If the context wasn't specified in the def, use the parent layouts module
-                // (even if that isn't the module of the current context)
-                if (!def.context)
-                    module = this.module;
+                    context = this.context.getChildContext(def.context);
+                    if (def.context.link) {
+                        module = context.get('collection').module;
+                    } else {
+                        module = def.context.module || this.module;
+                    }
+                }
 
                 if (def.view) {
-                    this.addComponent(app.view.createView({
-                        context: context,
-                        name: def.view,
-                        module: module
-                    }), def);
+                    var view = app.view.createView({
+                                            context: context,
+                                            name: def.view,
+                                            module: module
+                                        });
+                    context.set({view:view});
+                    this.addComponent(view, def);
                 }
-                //Layouts can either by referenced by name or defined inline
+                // Layouts can either by referenced by name or defined inline
                 else if (def.layout) {
-                    if (typeof def.layout == "string") {
+                    if (_.isString(def.layout)) {
                         this.addComponent(app.view.createLayout({
                             context: context,
                             name: def.layout,
                             module: module
                         }), def);
-                    } else if (typeof def.layout == "object") {
+                    } else if (_.isObject(def.layout)) {
                         //Inline definition of a sublayout
                         this.addComponent(app.view.createLayout({
                             context: context,
@@ -76,68 +71,77 @@
                         }), def);
                     }
                 }
+                else {
+                    app.logger.warn("Invalid layout definition:\n" + def.layout);
+                }
             }, this);
         },
 
         /**
-         * Add a view (or layout) to this layout.
-         * @param {View.Layout/View.View} comp Componant to add
-         * @param {Array} def Metadata definition
+         * Adds a component to this layout.
+         * @param {View.Layout/View.View} component Component (view or layout) to add
+         * @param {Object} def Metadata definition
          */
-        addComponent: function(comp, def) {
-            this.components.push(comp);
-            this._placeComponent(comp, def);
+        addComponent: function(component, def) {
+            this._components.push(component);
+            this._placeComponent(component, def);
         },
 
         /**
-         * Places a view's element on the page. This shoudl be overriden by any custom layout types.
-         * @param {View.View} comp
+         * Places layout component in the DOM.
+         *
+         * Default implementation just appends all the components to itself.
+         * Override this method to support custom placement of components.
+         *
+         * @param {View.View/View.Layout} component View or layout component.
          * @protected
-         * @method
          */
-        //Default layout just appends all the components to itself
-        _placeComponent: function(comp) {
-            this.$el.append(comp.el);
+        _placeComponent: function(component) {
+            this.$el.append(component.el);
         },
 
         /**
-         * Removes the given view / layout from this layout.
-         * If comp is an index, remove the component at that index. Otherwise see if comp is in the array.
-         * @param {View.Layout/View.View/Number} comp Layout / View to remove
-         * @method
+         * Removes a component from this layout.
+
+         * If component is an index, remove the component at that index. Otherwise see if component is in the array.
+         * @param {View.Layout/View.View/Number} component The layout or view to remove.
          */
-        removeComponent: function(comp) {
-            var i = typeof comp == "number" ? comp : this.components.indexOf(comp);
+        removeComponent: function(component) {
+            var i = _.isNumber(component) ? component : this._components.indexOf(component);
 
             if (i > -1) {
-                this.components.splice(i, 1);
+                this._components.splice(i, 1);
             }
         },
 
         /**
-         * Renders all the components
-         * @method
+         * Renders all the components.
          */
         render: function() {
             //default layout will pass render container divs and pass down to all its views.
-            _.each(this.components, function(comp) {
-                comp.render();
+            _.each(this._components, function(component) {
+                component.render();
             }, this);
         },
 
         /**
-         * Used to get a list of all fields used on this layout and its sub layouts/views
+         * Gets a list of all fields used on this layout and its sub layouts/views.
          *
-         * @method
-         * @return {Array} list of fields used by this layout.
+         * @return {Array} The list of fields used by this layout.
          */
         getFields: function() {
+            // TODO: Fix this method:
+            // This method has a bug: it doesn't check for module, it collects fields from its views regadless of module
             var fields = [];
-            _.each(this.components, function(view) {
-                fields = _.union(fields, view.getFields());
+            var self = this;
+            _.each(this._components, function(view) {
+                if (view.context.get('module') == self.context.get('module')) {
+                    fields = _.union(fields, view.getFields());
+                }
             });
 
             return fields;
         }
     });
+
 })(SUGAR.App);

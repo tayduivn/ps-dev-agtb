@@ -1,5 +1,7 @@
 describe("Application context manager", function() {
-    var app;
+    var app, context;
+
+    // TODO: This test suite MUST BE refactored
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -8,16 +10,28 @@ describe("Application context manager", function() {
     });
 
     it("should return a new context object", function() {
-        var context = SUGAR.App.context.getContext({}, {});
+        var context = app.context.getContext({}, {});
         expect(context).toBeTruthy();
+    });
+
+    it("should prepare its model and collection properties for standard modules", function() {
+        var context = SUGAR.App.context.getContext({module:'Contacts'});
+        expect(context.state.model).toBeUndefined();
+        expect(context.state.collection).toBeUndefined();
+        context.prepareData();
+        expect((context.state.model instanceof Backbone.Model)).toBeTruthy();
+        expect((context.state.collection instanceof Backbone.Collection)).toBeTruthy();
     });
 
     describe("Context Object", function() {
         describe("when requesting state", function() {
-            var context = SUGAR.App.context.getContext({
-                prop1: "Prop1",
-                prop2: "Prop2",
-                prop3: "Prop3"
+
+            beforeEach(function() {
+                context = app.context.getContext({
+                    prop1: "Prop1",
+                    prop2: "Prop2",
+                    prop3: "Prop3"
+                });
             });
 
             it("should return one property if only one is requested", function() {
@@ -37,9 +51,14 @@ describe("Application context manager", function() {
         });
 
         describe("when creating a context", function() {
-            var getFieldsSpy = sinon.spy(function() { return [1,2]; }),
-                renderSpy    = sinon.spy(),
-                context      = SUGAR.App.context.getContext();
+            var getFieldsSpy = sinon.spy(function() {
+                    return [1, 2];
+                }),
+                renderSpy = sinon.spy();
+
+            beforeEach(function() {
+                context = app.context.getContext();
+            });
 
             it("should load the context for layout path", function() {
                 var params = {
@@ -48,39 +67,38 @@ describe("Application context manager", function() {
                         getFields: getFieldsSpy,
                         render: renderSpy
                     },
-                    module: 'Home'
+                    module: 'Cases'
                 };
 
                 context.init(params);
+                context.prepareData();
                 context.loadData();
 
                 expect(getFieldsSpy).toHaveBeenCalled();
-                expect(renderSpy).toHaveBeenCalled();
-                expect(context.get('fields')).toEqual([1,2]);
             });
 
             it("should load the context for create path", function() {
                 var stub = sinon.spy(),
                     params = {
                         create: stub,
-                        module: 'Home'
+                        module: 'Cases'
                     };
 
                 context.init(params);
                 context.loadData();
-                expect(context.get().module).toEqual('Home');
+                expect(context.get().module).toEqual('Cases');
             });
 
             it("should always load bean for context", function() {
                 var params = {
-                    module: "Home",
+                    module: "Cases",
                     layout: {
                         getFields: getFieldsSpy,
                         render: renderSpy
                     }
                 };
                 context.init(params);
-                context.loadData();
+                context.prepareData();
                 expect(context.state.collection).toBeDefined();
                 expect(context.state.model).toBeDefined();
             });
@@ -127,40 +145,49 @@ describe("Application context manager", function() {
                 expect(context.get()).toEqual({});
             });
 
-            describe("and when a subcontext is required", function() {
-                var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
-                    subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
+            describe("and when a child context is required", function() {
+                SugarTest.seedMetadata();
+                var context = SUGAR.App.context.getContext({module: "Contacts",
+                        model: {
+                            fields: {
+                                accounts: {
+                                    relationship: "contacts_accounts"
+                                }
+                            },
+                            relationships: {
+                                "contacts_accounts": {
+                                    lhs_module:"Accounts",
+                                    rhs_module:"Contacts"
+                                }
+                            },
+                            getRelatedCollection: function() {
+                                return new Backbone.Collection({module:"Accounts"})
+                            }}}),
+                    childModuleContextDef = {
+                        module: "Accounts"
+                    },
+                    childRelatedContextDef = {
+                        link: "accounts"
+                    },
+                    subcontext = context.getChildContext(childModuleContextDef),
+                    subrelatedContext = context.getChildContext(childRelatedContextDef),
                     state = context.get(),
-                    state2 = subcontext.get();
+                    state2 = subcontext.get(),
+                    state3 = subrelatedContext.get();
 
-                it("should generate sub-contexts from a parent context", function() {
-                    expect(subcontext).toBeTruthy();
+                it("should generate  child contexts", function() {
+                    expect(context.children.length).toEqual(2);
+                    expect(state2).toBeTruthy();
+                    expect(state3).toBeTruthy();
                 });
 
-                describe("the subcontext", function() {
-                    it("should be inherit parent context properties except data properties", function() {
-                        expect(state.module).toEqual(state2.module);
-                        expect(state.url).toEqual(state2.url);
-                        expect(state.model).not.toEqual(state2.model);
-                        expect(state.collection).not.toEqual(state2.collection);
+                describe("the child context", function() {
+                    it("should be of a different module", function() {
+                        expect(state.module).not.toEqual(state2.module);
                     });
 
                     it("should set the parent to the parent context", function() {
                         expect(subcontext.parent).toEqual(context);
-                    });
-
-                    it("should set the children of the parent to the subcontext", function() {
-                        var childContext;
-
-                        expect(context.children).not.toBe([]);
-
-                        _.each(context.children, function(child) {
-                            if (child === subcontext) {
-                                childContext = child;
-                            }
-                        });
-
-                        expect(childContext).toBeTruthy();
                     });
                 });
             });

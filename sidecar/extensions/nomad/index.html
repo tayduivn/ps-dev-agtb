@@ -22,7 +22,7 @@
     <script language="javascript" src="../../lib/stash/stash.js"></script>
     <script language="javascript" src="../../lib/async/async.js"></script>
 
-    <!-- App Scripts -->
+    <!-- Sidecar scripts -->
     <script src='../../lib/sugarapi/sugarapi.js'></script>
     <script src='../../src/app.js'></script>
     <script src='../../src/utils/utils.js'></script>
@@ -50,9 +50,17 @@
     <script src='../../src/view/layout.js'></script>
     <script src='../../src/view/field.js'></script>
 
+    <!-- Nomad extension scripts -->
     <script src='config.js'></script>
+    <script src='hbt-helpers.js'></script>
     <script src='layouts/list-layout.js'></script>
+    <script src='layouts/detail-layout.js'></script>
+    <script src='layouts/edit-layout.js'></script>
+    <script src='views/header-view.js'></script>
+    <script src='views/login-view.js'></script>
     <script src='views/list-view.js'></script>
+    <script src='views/detail-view.js'></script>
+    <script src='views/edit-view.js'></script>
 
     <!-- Pre-compiled templates -->
     <!-- Fields -->
@@ -62,14 +70,20 @@
     <script src='compiled/list-text.js'></script>
     <script src='compiled/list-int.js'></script>
     <script src='compiled/list-name.js'></script>
+
     <!-- Buttons -->
     <script src='compiled/login-loginButton.js'></script>
-    <!-- Views -->
-    <script src='compiled/login.js'></script>
-    <script src='compiled/list.js'></script>
 
-    <!-- Controllers for views and fields -->
-    <script src='templates/login.js'></script>
+    <!-- Views -->
+    <script src='compiled/header.js'></script>
+    <script src='compiled/login.js'></script>
+    <script src='compiled/list.item.js'></script>
+    <script src='compiled/list.js'></script>
+    <script src='compiled/detail.js'></script>
+    <script src='compiled/edit.js'></script>
+
+    <!-- Controllers for fields -->
+    <script src='templates/fields/int/int.js'></script>
 
     <script src='nomad.js'></script>
     <script src='meta-bootstrap.js'></script>
@@ -93,6 +107,8 @@
 </head>
 <body>
 <div id="nomad">
+
+    <div id="header" class="navbar navbar-fixed-top hide"></div>
     <div id="content"></div>
 </div>
 </body>

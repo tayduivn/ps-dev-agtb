@@ -22,7 +22,7 @@ describe("View.Layout", function(){
             context : context,
             name: "edit"
         });
-        expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
+        expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit.meta);
     });
 
     it('should accept metadata overrides', function(){

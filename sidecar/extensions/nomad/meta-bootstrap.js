@@ -19,27 +19,29 @@
                 },
                 "views": {
                     "login": {
-                        "panels": [
-                            {
-                                "label": "Login",
-                                "fields": [
-                                    {name: "username", label: "Username"},
-                                    {name: "password", label: "Password"},
-                                    {name: "url", label: "URL"}
-                                ]
-                            }
-                        ]
-
+                        "meta": {
+                            "panels": [
+                                {
+                                    "label": "Login",
+                                    "fields": [
+                                        {name: "username", label: "Username"},
+                                        {name: "password", label: "Password"},
+                                        {name: "url", label: "URL"}
+                                    ]
+                                }
+                            ]
+                        }
                     }
-
                 },
                 "layouts": {
                     "login": {
-                        //Default layout is a single view
-                        "type": "simple",
-                        "components": [
-                            {view: "login"}
-                        ]
+                        "meta": {
+                            //Default layout is a single view
+                            "type": "simple",
+                            "components": [
+                                {view: "login"}
+                            ]
+                        }
                     }
                 }
             }

@@ -26,7 +26,7 @@ describe("View Manager", function() {
                 collection: collection
             });
 
-            view = new app.view.View({ name: "test" });
+            view = new app.view.View({ name: "test", context: context });
 
             fields = app.view.fields;
         });
@@ -100,7 +100,7 @@ describe("View Manager", function() {
 
         it("and use another template than the view name", function() {
 
-            var detailView = new app.view.View({ name: "detail" });
+            var detailView = new app.view.View({ name: "detail", context: context });
             var opts = {
                 def: {
                     type: 'base',
@@ -108,7 +108,7 @@ describe("View Manager", function() {
                 },
                 context: context,
                 view: detailView,
-                viewName: "default"
+                viewName: "default" // override template (the default template will be ysed instead of "detail"
             };
 
             var field = app.view.createField(opts);

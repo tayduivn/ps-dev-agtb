@@ -135,10 +135,10 @@
     <div style="max-height: 450px; overflow-y: auto; overflow-x: hidden">
         <ul id="childTable" style="float:left" class="ddd_table">
             {foreach from=$child_list_options key=val item=label}
-                {if $val==""}
+                {if $val===""}
                     {assign var=val value='--blank--'}
                 {/if}
-                {if $label==""}
+                {if $label===""}
                     {assign var=label value='--blank--'}
                 {/if}
                 <li class="ui-state-default" val="{$val}">{$label}</li>
@@ -155,7 +155,7 @@
         {if $smarty.foreach.parentloop.index % 4 == 0 && !$smarty.foreach.parentloop.first}
             </tr><tr>
         {/if}
-        {if $val==""}
+        {if $val===""}
             {assign var=val value='--blank--'}
             {assign var=label value='--blank--'}
         {/if}

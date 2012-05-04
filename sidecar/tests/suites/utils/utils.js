@@ -114,11 +114,10 @@ describe("utils", function() {
             var value = new Date(1332838080000),
                 format = 'Y-m-d H:i:sA',
                 result = utils.date.format(value, format);
-            expect(result).toEqual('2012-03-27 08:48:00AM');
-            
+            expect(result).toEqual('2012-03-27 01:48:00AM');
             format = 'Y-m-d H:i:sa';
             result = utils.date.format(value, format);
-            expect(result).toEqual('2012-03-27 08:48:00am');
+            expect(result).toEqual('2012-03-27 01:48:00am');
         });
 
         it("should format date objects into strings", function() {

@@ -100,6 +100,8 @@ class MetaDataManager {
 
                 // First try, see if the module has the metadata file we want
                 $filename = MetaDataFiles::getModuleFileName($moduleName, $type, $location, $this->platforms[0], $viewdefType);
+                $searchPath = dirname($filename);
+
                 if (!file_exists($filename)) {
                     // If we are in the custom scope no need to get SugarObject meta
                     // since it's already been gotten
@@ -119,6 +121,8 @@ class MetaDataManager {
 
                 // Set that we've fetched it
                 $fetched[$type] = true;
+                $templates = $this->fetchTemplates(array($searchPath));
+                $controllers = $this->fetchTemplates(array($searchPath), ".js");
 
                 // Search is not fully converted to sidecar so handle it differently
                 // TODO: figure out how to standardize metadata at a higher level
@@ -129,8 +133,11 @@ class MetaDataManager {
                     }
 
                     if (isset($searchdefs[$moduleName])) {
-                        $data[$type] = $searchdefs[$moduleName];
+                        $data[$type] = array(
+                            "meta" => $searchdefs[$moduleName]
+                        );
                     }
+
                 } else {
                     if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
                         $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $viewdefs);
@@ -138,8 +145,18 @@ class MetaDataManager {
 
                     // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
                     if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]) ) {
-                        $data[$type] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type];
+                        $data[$type] = array(
+                            "meta" => $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]
+                        );
                     }
+                }
+                //Next add a custom template if it exists
+                if (!empty($templates[$type])) {
+                    $data[$type]['template'] = $templates[$type];
+                }
+                //Finally check if a custom controller exists for this view for this module
+                if (!empty($controllers[$type])) {
+                    $data[$type]['controller'] = $controllers[$type];
                 }
             }
         }
