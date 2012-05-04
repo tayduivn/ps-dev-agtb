@@ -3510,7 +3510,7 @@ SUGAR.searchForm = function() {
                 if ( typeof(elem.type) == 'undefined' ) {
                     continue;
                 }
-                
+
                 if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
                         && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
                 {
@@ -3525,11 +3525,11 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'select' || elemType == 'select-one' || elemType == 'select-multiple' ) {
                     // We have, what I hope, is a select box, time to unselect all options
                     var optionList = elem.options;
-                     
+
                     if (optionList.length > 0) {
-                    	optionList[0].selected = "selected"; 
+                    	optionList[0].selected = "selected";
                     }
-                    
+
                     for ( var ii = 0 ; ii < optionList.length ; ii++ ) {
                         optionList[ii].selected = false;
                     }
@@ -4117,20 +4117,20 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		+ ',height=' + height
 		+ ',resizable=1,scrollbars=1';
 
-	if (popup_mode == '' && popup_mode == 'undefined') {
+	if (popup_mode == '' || popup_mode == undefined) {
 		popup_mode='single';
 	}
 	URL+='&mode='+popup_mode;
-	if (create == '' && create == 'undefined') {
+	if (create == '' || create == undefined) {
 		create = 'false';
 	}
 	URL+='&create='+create;
 
-	if (metadata != '' && metadata != 'undefined') {
+	if (metadata != '' && metadata != undefined) {
 		URL+='&metadata='+metadata;
 	}
 
-    // Bug #46842 : The relate field field_to_name_array fails to copy over custom fields 
+    // Bug #46842 : The relate field field_to_name_array fails to copy over custom fields
     // post fields that should be populated from popup form
 	if(popup_request_data.jsonObject) {
 		var request_data = popup_request_data.jsonObject;
@@ -4138,7 +4138,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		var request_data = popup_request_data;
 	}
     var field_to_name_array_url = '';
-    if (request_data && request_data.field_to_name_array != 'undefined') {        
+    if (request_data && request_data.field_to_name_array != undefined) {
         for(var key in request_data.field_to_name_array) {
             if ( key.toLowerCase() != 'id' ) {
                 field_to_name_array_url += '&field_to_name[]='+encodeURIComponent(key.toLowerCase());
@@ -4148,7 +4148,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
     if ( field_to_name_array_url ) {
         URL+=field_to_name_array_url;
     }
-    
+
 	win = SUGAR.util.openWindow(URL, windowName, windowFeatures);
 
 	if(window.focus)
@@ -4169,7 +4169,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
  */
 var from_popup_return  = false;
 
-//Function replaces special HTML chars for usage in text boxes 
+//Function replaces special HTML chars for usage in text boxes
 function replaceHTMLChars(value) {
 	return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 }
@@ -4238,7 +4238,7 @@ function set_return(popup_reply_data)
 				}
 			}
 		}
-		
+
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
         	if (typeof popupConfirm != 'undefined')
