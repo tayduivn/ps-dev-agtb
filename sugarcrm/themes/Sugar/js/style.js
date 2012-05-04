@@ -52,8 +52,7 @@ $(document).ready(function(){
 
 
     $('body').click(function(e) {
-        if($(e.target).closest('#dcmenuSearchDiv').length == 0)
-        {
+    	if($(e.target).closest('#dcmenuSearchDiv').length == 0 && !$("#SpotResults").parent().hasClass("dccontent")){
             SUGAR.themes.clearSearch();
         }
     });
