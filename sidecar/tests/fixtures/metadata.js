@@ -27,7 +27,6 @@ fixtures.metadata = {
                     link: true,
                     merge_filter: "selected",
                     name: "name",
-                    required: true,
                     type: "name",
                     unified_search: true,
                     vname: "LBL_SUBJECT"

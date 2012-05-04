@@ -128,6 +128,7 @@
                  * @member View.Field
                  */
                 this.fieldDef = this.model.fields[this.name];
+                this.model.on("model.validation.error."+this.name, this.handleValidationError, this);
             }
 
             /**
@@ -165,8 +166,8 @@
                 }
 
                 this.template = app.template.get(templateKey) ||
-                                app.template.compile(templateSource, templateKey) ||
-                                app.template.empty;
+                    app.template.compile(templateSource, templateKey) ||
+                    app.template.empty;
             }
         },
 
@@ -299,6 +300,26 @@
             }
 
             delete this.model;
+        },
+
+        /**
+         * Handles how validation errors are appended to the fields dom element
+         *
+         * By default errors are appended to the dom into a .help-block class if present
+         * and the .error class is added to any .control-group elements in accordance with
+         * bootstrap.
+         *
+         * @param {Object} errors hash of validation errors
+         */
+        handleValidationError: function(errors) {
+            var self = this;
+
+            this.$('.control-group').addClass("error");
+            this.$('.help-block').html("");
+
+            _.each(errors, function(errorString) {
+                self.$('.help-block').append("<br>"+errorString);
+            })
         }
 
     });

@@ -16,7 +16,40 @@ describe("Bean", function() {
         expect(errors).toBeDefined();
         error = errors["first_name"];
         expect(error).toBeDefined();
-        expect(error.maxLength).toEqual(20);
+        expect(error.maxLength).toEqual("ERROR: The max number of characters for this field is 20");
+    });
+
+    it("should trigger validation errors on model if errors exist", function(){
+        var moduleName = "Contacts", bean, error, errors;
+        var triggerFn = function(error){
+        };
+        var triggerSpy = sinon.spy(triggerFn);
+        var errors = {first_name: "this is some error string"};
+
+
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+
+        bean = dm.createBean(moduleName, { first_name: "Super long first name"});
+        bean.on("model.validation.disableSave", triggerSpy);
+        bean.on("model.validation.error.first_name", triggerSpy);
+        bean.processValidationErrors(errors);
+        expect(triggerSpy).toHaveBeenCalledTwice();
+    });
+
+    it("should trigger save enabled if no errors is empty", function(){
+        var moduleName = "Contacts", bean, error, errors;
+        var triggerFn = function(error){
+        };
+        var triggerSpy = sinon.spy(triggerFn);
+        var errors = {};
+
+
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+
+        bean = dm.createBean(moduleName, { first_name: "Super long first name"});
+        bean.on("model.validation.enableSave", triggerSpy);
+        bean.processValidationErrors(errors);
+        expect(triggerSpy).toHaveBeenCalledOnce();
     });
 
     it("should be populated with defaults upon instantiation", function() {

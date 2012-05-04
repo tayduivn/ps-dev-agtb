@@ -13,10 +13,10 @@ describe("Field", function() {
         view = new app.view.View({ name: "test", context: context });
     });
 
-     afterEach(function() {
-         app.cache.cutAll();
-         delete Handlebars.templates;
-     });
+    afterEach(function() {
+        app.cache.cutAll();
+        delete Handlebars.templates;
+    });
 
     it("should delegate events", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
@@ -39,11 +39,11 @@ describe("Field", function() {
 
     it("should render sugarfields html", function() {
         var field = app.view.createField({
-                def: {name: "status", type: "text"},
-                view: view,
-                context: context,
-                model: bean
-            });
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
 
         bean.set({status: "new", id: "anId"});
         field.render();
@@ -57,7 +57,7 @@ describe("Field", function() {
                 view: view,
                 context: context,
                 model: bean
-            }), 
+            }),
             spy = sinon.spy(field, 'bindDomChange');
 
         bean.set({status: "new", id: "anId"});
@@ -80,6 +80,22 @@ describe("Field", function() {
         expect(field.model).toBeUndefined();
         //expect(field.context).toBeUndefined();
     });
+    it("handle field errors", function() {
+        var field = app.view.createField({
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
+        var html = "<div class=\"control-group\"> <div class=\"row-fluid\"> <p class=\"help-block\"></p> </div>"
+        var errors = {error: "some random error string"};
+        bean.set({status: "new", id: "anId"});
+        field.$el.html(html);
+        field.handleValidationError(errors);
+
+        expect(field.$('.error')).toBeDefined();
+        expect(field.$('.help-block').html()).toContain("some random error string")
+    });
 
 
     it("bind render to model change events", function() {
@@ -96,7 +112,7 @@ describe("Field", function() {
         field.render();
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
 
-        bean.set("status","older");
+        bean.set("status", "older");
 
         expect(field.$el.html()).toEqual('<span name="status">older</span>');
     });
@@ -105,7 +121,7 @@ describe("Field", function() {
         var id = _.uniqueId('sugarFieldTest'),
             bean, field, input;
 
-        $('body').append('<div id="'+id+'"></div>');
+        $('body').append('<div id="' + id + '"></div>');
         bean = new Backbone.Model();
         var view = new app.view.View({name: 'edit', context: context});
         field = app.view.createField({
@@ -113,15 +129,15 @@ describe("Field", function() {
             view: view,
             context: context,
             model: bean,
-            el:$('#'+id)
+            el: $('#' + id)
         });
 
         bean.set({status: "new"});
         input = field.$el.find("input");
-        input.attr('value','bob');
+        input.attr('value', 'bob');
         input.trigger('change');
         expect(bean.get('status')).toEqual('bob');
-        $('#'+id).remove();
+        $('#' + id).remove();
     });
 });
 
