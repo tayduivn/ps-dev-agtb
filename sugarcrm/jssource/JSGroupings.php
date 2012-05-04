@@ -75,6 +75,8 @@
             'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.dataTables.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/query.chosen.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/query.jstree.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
 
             
 			),

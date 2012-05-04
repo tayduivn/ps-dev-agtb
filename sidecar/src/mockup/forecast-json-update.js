@@ -20,7 +20,10 @@
 		'goal_marker_type':'group'
 ,
 		'goal_marker_color':'#3FB300'
-
+,
+        'label_name':'Sales Stage'
+,
+        'value_name':'Amount'
 	}
 
 	],
