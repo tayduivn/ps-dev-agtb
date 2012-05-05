@@ -56,23 +56,23 @@ describe('Metadata Manager', function () {
     });
 
     it("should delegate to view-manager if has a custom view controller", function () {
-        sinon.spy(app.view, "declareCustomComponent");
+        sinon.spy(app.view, "declareComponent");
         app.metadata.set({modules: { Home: fixtures.metadata.modules.Home }});
-        expect(app.view.declareCustomComponent.getCall(0).args[0]).toMatch(/^\{customCallback.*/);
-        expect(app.view.declareCustomComponent.getCall(0).args[1]).toEqual("login");
-        expect(app.view.declareCustomComponent.getCall(0).args[2]).toEqual("Home");
-        expect(app.view.declareCustomComponent.getCall(0).args[3]).toEqual("view");
-        app.view.declareCustomComponent.restore();
+        expect(app.view.declareComponent.getCall(0).args[0]).toEqual("view");
+        expect(app.view.declareComponent.getCall(0).args[1]).toEqual("login");
+        expect(app.view.declareComponent.getCall(0).args[2]).toEqual("Home");
+        expect(app.view.declareComponent.getCall(0).args[3]).toMatch(/^\{customCallback.*/);
+        app.view.declareComponent.restore();
     });
 
     it("should delegate to view-manager if has custom layout controller", function () {
-        sinon.spy(app.view, "declareCustomComponent");
+        sinon.spy(app.view, "declareComponent");
         app.metadata.set({modules: { Contacts: fixtures.metadata.modules.Contacts}});
-        expect(app.view.declareCustomComponent.getCall(0).args[0]).toMatch(/^\{customLayoutCallback.*/);
-        expect(app.view.declareCustomComponent.getCall(0).args[1]).toEqual("detailplus");
-        expect(app.view.declareCustomComponent.getCall(0).args[2]).toEqual("Contacts");
-        expect(app.view.declareCustomComponent.getCall(0).args[3]).toEqual("layout");
-        app.view.declareCustomComponent.restore();
+        expect(app.view.declareComponent.getCall(0).args[0]).toEqual("layout");
+        expect(app.view.declareComponent.getCall(0).args[1]).toEqual("detailplus");
+        expect(app.view.declareComponent.getCall(0).args[2]).toEqual("Contacts");
+        expect(app.view.declareComponent.getCall(0).args[3]).toMatch(/^\{customLayoutCallback.*/);
+        app.view.declareComponent.restore();
     });
 
     it("should delegate to template.compile if meta set with custom view template", function() {

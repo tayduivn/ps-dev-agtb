@@ -720,7 +720,7 @@ fixtures.metadata = {
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator), \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator, \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"

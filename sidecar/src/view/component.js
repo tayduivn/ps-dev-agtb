@@ -14,6 +14,7 @@
         app: app,
 
         /**
+         * Initializes a component.
          * @constructor
          * @param options
          *

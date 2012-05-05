@@ -28,7 +28,6 @@ describe("Layout.View", function() {
                 name: "edit"
             });
 
-        expect(view.meta).toBeDefined();
         view.render();
         html = view.$el.html();
         expect(html).toContain('edit');

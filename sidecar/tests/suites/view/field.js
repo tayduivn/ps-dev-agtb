@@ -91,8 +91,7 @@ describe("Field", function() {
 
 
     it("bind render to model change events", function() {
-        var secondBean = app.data.createBean("Cases"),
-            field = app.view.createField({
+        var field = app.view.createField({
                 def: {name: "status", type: "text"},
                 view: view,
                 context: context,
