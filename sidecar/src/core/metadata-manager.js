@@ -24,18 +24,19 @@
      * @param {String} type - 'view'||'layout'
      * @param {String} module name
      * @private
+     * @ignore
      */
-    function initCustomTemplatesAndComponents(entry, type, module) {
-        var plural = type+'s',
+    function _initCustomTemplatesAndComponents(entry, type, module) {
+        var plural = type + 's',
             templateKey;
 
-        _.each(entry[plural], function (obj, key) {
+        _.each(entry[plural], function (obj, name) {
             if (obj && obj.template) {
-                templateKey = key + '.' + module.toLowerCase();
+                templateKey = name + '.' + module.toLowerCase();
                 app.template.compile(obj.template, templateKey);
             }
-            if (obj && key && obj.controller) {
-                app.view.declareCustomComponent(obj.controller, key, module, type);
+            if (obj && obj.controller) {
+                app.view.declareComponent(type, name, module, obj.controller, obj.meta.type);
             }
         });
 
@@ -248,18 +249,21 @@
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
 
-                    // Create custom templates and modules for layouts and views
-                    initCustomTemplatesAndComponents(entry, 'view', module);
-                    initCustomTemplatesAndComponents(entry, 'layout', module);
+                    // Compile templates and declare components for custom layouts and views
+                    _initCustomTemplatesAndComponents(entry, 'view', module);
+                    _initCustomTemplatesAndComponents(entry, 'layout', module);
 
                    }, this);
                 _set("modules", modules.join(","));
             }
 
             if (data.sugarFields) {
-                _.each(data.sugarFields, function(entry, module) {
-                    _fields[module] = entry;
-                    _set(_fieldPrefix + module, entry);
+                _.each(data.sugarFields, function(entry, type) {
+                    _fields[type] = entry;
+                    _set(_fieldPrefix + type, entry);
+                    if (entry.controller) {
+                        app.view.declareComponent("field", type, null, entry.controller);
+                    }
                 });
             }
 
