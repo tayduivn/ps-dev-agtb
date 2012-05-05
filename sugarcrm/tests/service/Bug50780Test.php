@@ -117,9 +117,6 @@ class Bug50780Test extends SOAPTestCase
         $this->assertEquals(1, count($result['entry_list']));
     }
 
-    /**
-     * @outputBuffering disabled
-     */
     public function testGetRelationshipOffsetDoesntReturnSameRecords()
     {
         $result1 = $this->_soapClient->call('get_relationships', array(
