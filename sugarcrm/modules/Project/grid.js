@@ -2593,7 +2593,7 @@ SUGAR.grid = function() {
 						inputField : "date_start_" + i, ifFormat : calendar_dateformat, showsTime : false, button : "date_start_" + i, singleClick : true, step : 1, weekNumbers:false
 					});
 					Calendar.setup ({
-						inputField : "date_finish_" + i, ifFormat : calendar_dateformat, showsTime : false, button : "date_finish" + i, singleClick : true, step : 1, weekNumbers:false
+						inputField : "date_finish_" + i, ifFormat : calendar_dateformat, showsTime : false, button : "date_finish_" + i, singleClick : true, step : 1, weekNumbers:false
 					});
 
 					//totalRowsInGrid++;
@@ -2604,7 +2604,7 @@ SUGAR.grid = function() {
 					inputField : "date_start_" + forRow, ifFormat : calendar_dateformat, showsTime : false, button : "date_start_" + forRow, singleClick : true, step : 1, weekNumbers:false
 				});
 				Calendar.setup ({
-					inputField : "date_finish_" + forRow, ifFormat : calendar_dateformat, showsTime : false, button : "date_finish" + forRow, singleClick : true, step : 1, weekNumbers:false
+					inputField : "date_finish_" + forRow, ifFormat : calendar_dateformat, showsTime : false, button : "date_finish_" + forRow, singleClick : true, step : 1, weekNumbers:false
 				});
 			}
 		},
