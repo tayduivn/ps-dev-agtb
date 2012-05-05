@@ -239,7 +239,12 @@
                     objectToFetch = this.state.collection;
                 }
 
-                if (objectToFetch) {
+                // TODO: Figure out what to do when models are not
+                // instances of Bean or BeanCollection. No way to fetch.
+                if (objectToFetch && 
+                    objectToFetch instanceof app.Bean || 
+                    objectToFetch instanceof app.BeanCollection) {
+
                     var options = {};
                     if (this.state.link) {
                         options.relate = true;
@@ -250,6 +255,8 @@
                         options.fields = this.state.view.getFields();
                     }
                     objectToFetch.fetch(options);
+                } else {
+                    app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined.");
                 }
 
 
