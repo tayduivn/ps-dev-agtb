@@ -4,8 +4,6 @@ describe("Field", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.template.initialize();
-        app.template.load(meta.viewTemplates);
         app.metadata.set(meta);
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
@@ -116,7 +114,7 @@ describe("Field", function() {
         bean = new Backbone.Model();
         view = new app.view.View({name: 'edit', context: context});
         field = app.view.createField({
-            def: {name: "status", type: "varchar"},
+            def: {name: "status", type: "text"},
             view: view,
             context: context,
             model: bean,

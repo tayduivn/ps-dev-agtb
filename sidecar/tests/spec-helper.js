@@ -54,15 +54,14 @@ var SugarTest = {};
     // load this in there respective beforeEach:
     // SugarTest.seedMetadata();
     test.seedMetadata = function(useJSMetadata) {
-        var meta = null;
         this.seedApp();
-        SugarTest.metadata = SugarTest.loadFixture("metadata");
         SugarTest.dm = SUGAR.App.data;
 
-        meta = (useJSMetadata) ? fixtures.metadata : SugarTest.metadata;
+        var meta = (useJSMetadata) ? fixtures.metadata : SugarTest.loadFixture("metadata");
         SugarTest.app.metadata.set(meta);
         SugarTest.dm.reset();
         SugarTest.dm.declareModels(meta);
+        SugarTest.metadata = meta;
     };
 
     test.seedApp = function() {
@@ -96,9 +95,7 @@ beforeEach(function(){
 });
 
 afterEach(function() {
-    SugarTest.app.destroy();
-    if (SugarTest.server && SugarTest.server.restore) {
-        SugarTest.server.restore();
-    }
-    if (typeof Backbone !== "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
+    if (SugarTest.app) SugarTest.app.destroy();
+    if (SugarTest.server && SugarTest.server.restore) SugarTest.server.restore();
+    if (Backbone && Backbone.history) Backbone.history.stop();
 });

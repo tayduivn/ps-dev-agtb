@@ -47,7 +47,10 @@
             }
         }
     };
-    app.cache.init();
-    app.metadata.set(base_metadata);
-    app.data.declareModels(base_metadata);
+
+    app.events.on("app:init", function() {
+        app.metadata.set(base_metadata);
+        app.data.declareModels(base_metadata);
+    });
+
 })(SUGAR.App);

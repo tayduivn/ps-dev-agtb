@@ -2,9 +2,8 @@ describe("View Manager", function() {
     var app, context;
 
     beforeEach(function() {
-        SugarTest.seedApp(true);
-        app = SugarTest.app;
         SugarTest.seedMetadata(true);
+        app = SugarTest.app;
         context = app.context.getContext();
     });
 
@@ -321,7 +320,7 @@ describe("View Manager", function() {
             var detailView = new app.view.View({ name: "detail", context: context });
             var opts = {
                 def: {
-                    type: 'base',
+                    type: 'text',
                     name: "name"
                 },
                 context: context,
@@ -335,7 +334,7 @@ describe("View Manager", function() {
 
             var ctx = { value: "a value" };
 
-            expect(field.template(ctx)).toEqual(Handlebars.templates["f.base.default"](ctx));
+            expect(field.template(ctx)).toEqual(Handlebars.templates["f.text.default"](ctx));
         });
 
     });
