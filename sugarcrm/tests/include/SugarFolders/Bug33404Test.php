@@ -35,9 +35,9 @@ class Bug33404Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
     {
-        global $current_user, $currentModule;
-
+        global $current_user;
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_usr = $this->_user;
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
 		$this->folder = new SugarFolder(); 
 	}
@@ -46,9 +46,7 @@ class Bug33404Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
-        
         unset($this->folder);
     }
     
