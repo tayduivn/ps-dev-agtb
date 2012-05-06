@@ -166,11 +166,12 @@
          * Creates an instance of a layout.
          *
          * Parameters define creation rules as well as layout properties.
-         * The `params` hash must contain at least `name` property which is the layout name
-         * (list, simple, complex, etc.)
+         * The factory needs either layout name or type.
+         * The layout type is retrieved either from `params` hash or layout metadata.
          *
-         * Other parameters may be:
+         * Parameters may be:
          *
+         * - name: layout name (list, simple, complex, etc.)
          * - context: context to associate the newly created layout with
          * - module: module name
          * - meta: custom metadata
@@ -215,10 +216,10 @@
         createLayout: function(params) {
             params.context = params.context || app.controller.context;
             params.module  = params.module || params.context.get("module");
-            params.meta   = params.meta || app.metadata.getLayout(params.module, params.name);
-            params.type = params.meta ? params.meta.type : params.type;
+            params.meta    = params.meta || app.metadata.getLayout(params.module, params.name);
+            params.type    = params.type || (params.meta ? params.meta.type : null);
 
-            return this._createComponent("layout", params.name, params);
+            return this._createComponent("layout", params.name || params.type, params);
         },
 
         /**
@@ -273,7 +274,6 @@
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;
-            params.controller = (params.meta && params.meta.controller) ? params.meta.controller : null;
             params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
             

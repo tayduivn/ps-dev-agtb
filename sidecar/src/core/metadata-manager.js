@@ -30,7 +30,7 @@
         var plural = type + 's';
 
         _.each(entry[plural], function (obj, name) {
-            if (type !== "layout" && obj && obj.template) {
+            if (type === "view" && obj && obj.template) {
                 app.template.setView(name, module, obj.template, true);
             }
             if (obj && obj.controller) {
