@@ -149,14 +149,6 @@ SUGAR.App = (function() {
                 this
             );
 
-            /**
-             * Set true if you want to suppress initialization of modules
-             * @cfg {Boolean} silent
-             */
-            if (!opts.silent) {
-                app.trigger("app:init", this, opts.modules);
-            }
-
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(modules, function(module, key) {
@@ -170,6 +162,14 @@ SUGAR.App = (function() {
                 platform: app.config.platform,
                 keyValueStore: app.cache
             });
+
+            /**
+             * Set true if you want to suppress initialization of modules
+             * @cfg {Boolean} silent
+             */
+            if (!opts.silent) {
+                app.trigger("app:init", this, opts.modules);
+            }
 
             return app;
         },
@@ -252,8 +252,6 @@ SUGAR.App = (function() {
             }, function(metadata, callback) {
                 // declare models
                 app.data.declareModels(metadata);
-                // load viewTemplates
-                app.template.load(metadata);
 
                 // load language strings
                 if (metadata.appListStrings) {

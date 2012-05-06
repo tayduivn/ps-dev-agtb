@@ -27,13 +27,11 @@
      * @ignore
      */
     function _initCustomTemplatesAndComponents(entry, type, module) {
-        var plural = type + 's',
-            templateKey;
+        var plural = type + 's';
 
         _.each(entry[plural], function (obj, name) {
-            if (obj && obj.template) {
-                templateKey = name + '.' + module.toLowerCase();
-                app.template.compile(obj.template, templateKey);
+            if (type !== "layout" && obj && obj.template) {
+                app.template.setView(name, module, obj.template, true);
             }
             if (obj && obj.controller) {
                 app.view.declareComponent(type, name, module, obj.controller, obj.meta.type);
@@ -271,6 +269,8 @@
                 _app.moduleList = data.moduleList;
                 _set(_appPrefix + "moduleList", data.moduleList);
             }
+
+            app.template.set(data, true);
         },
 
         /**

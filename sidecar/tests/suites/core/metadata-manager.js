@@ -3,7 +3,6 @@ describe('Metadata Manager', function () {
 
     beforeEach(function () {
         app = SugarTest.app; 
-        app.template.load(meta.viewTemplates);
         app.metadata.set(meta);
     });
 
@@ -76,7 +75,7 @@ describe('Metadata Manager', function () {
     });
 
     it("should delegate to template.compile if meta set with custom view template", function() {
-        sinon.spy(app.template, "compile");
+        sinon.spy(app.template, "setView");
         app.metadata.set({
             modules: { 
                 Taxonomy: {
@@ -88,27 +87,10 @@ describe('Metadata Manager', function () {
                 }
             }
         });
-        expect(app.template.compile.getCall(0).args[0]).toEqual('My Lil Template');
-        expect(app.template.compile.getCall(0).args[1]).toEqual("tree.taxonomy");
-        app.template.compile.restore();
-    });
-
-    it("should delegate to template.compile if meta set with custom layout template", function() {
-        sinon.spy(app.template, "compile");
-        app.metadata.set({
-            modules: { 
-                Taxonomy: {
-                    layouts: { 
-                        tree: { 
-                            template: "My Lil Template"
-                        }
-                    }
-                }
-            }
-        });
-        expect(app.template.compile.getCall(0).args[0]).toEqual('My Lil Template');
-        expect(app.template.compile.getCall(0).args[1]).toEqual("tree.taxonomy");
-        app.template.compile.restore();
+        expect(app.template.setView.getCall(0).args[0]).toEqual("tree");
+        expect(app.template.setView.getCall(0).args[1]).toEqual("Taxonomy");
+        expect(app.template.setView.getCall(0).args[2]).toEqual('My Lil Template');
+        app.template.setView.restore();
     });
 
     it ('should sync metadata', function (){
@@ -129,6 +111,7 @@ describe('Metadata Manager', function () {
         expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
         expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
         expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
 
     });
 

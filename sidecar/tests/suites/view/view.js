@@ -1,4 +1,4 @@
-describe("Layout.View", function() {
+describe("View.View", function() {
     var app, bean, collection, context;
 
     beforeEach(function() {
@@ -17,8 +17,6 @@ describe("Layout.View", function() {
             model: bean,
             collection: collection
         });
-
-        app.template.load(fixtures.metadata);
     });
 
     it('should render edit views', function() {
