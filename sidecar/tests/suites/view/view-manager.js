@@ -229,6 +229,24 @@ describe("View Manager", function() {
             expect(layout.meta).toEqual(testMeta);
         });
 
+        it('"nameless" layout with inline definition', function() {
+            var layout,
+                testMeta = {
+                "type" : "fluid",
+                "components" : [
+                    {view : "testComp"}
+                ]
+            };
+
+            layout = app.view.createLayout({
+                context : context,
+                meta: testMeta,
+                module: "Contacts"
+            });
+
+            expect(layout instanceof app.view.layouts.FluidLayout).toBeTruthy();
+        });
+
     });
 
     describe("should be able to create instances of Field class", function() {
