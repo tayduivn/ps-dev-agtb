@@ -37,7 +37,7 @@
                     "login": {
                         "meta": {
                             //Default layout is a single view
-                            "type": "simple",
+                            "type": "login",
                             "components": [
                                 {view: "login"}
                             ]
