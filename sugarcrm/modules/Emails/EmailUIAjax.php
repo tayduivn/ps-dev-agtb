@@ -1623,7 +1623,7 @@ eoq;
             $person = $_REQUEST['person'];
         }
         if(!empty($_REQUEST['start'])) {
-            $start = inval($_REQUEST['start']);
+            $start = intval($_REQUEST['start']);
         } else {
         	$start = 0;
         }
