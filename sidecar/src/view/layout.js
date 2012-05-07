@@ -47,10 +47,10 @@
 
                 if (def.view) {
                     var view = app.view.createView({
-                                            context: context,
-                                            name: def.view,
-                                            module: module
-                                        });
+                        context: context,
+                        name: def.view,
+                        module: module
+                    });
                     context.set({view:view});
                     this.addComponent(view, def);
                 }

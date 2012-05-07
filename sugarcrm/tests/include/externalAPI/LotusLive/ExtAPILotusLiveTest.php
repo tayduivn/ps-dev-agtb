@@ -51,7 +51,7 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
      * testUploadDocConflictErrorMessage
      *
      * This method tests that we get a unique error message for duplicate upload document conflicts
-     * @outputBuffering disabled
+     *
      */
     public function testUploadDocConflictErrorMessage()
     {

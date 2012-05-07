@@ -12,11 +12,8 @@
         platform: "mobile",
         metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
         additionalComponents: {
-            "left-menu": {
-                target: '#moduleList'
-            },
-            "right-menu": {
-                target: '#createList'
+            "header": {
+                target: '#header'
             }
         }
 

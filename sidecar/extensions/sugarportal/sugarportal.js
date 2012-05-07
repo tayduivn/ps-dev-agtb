@@ -15,46 +15,48 @@
                 },
                 "views": {
                     "loginView": {
-                        "buttons": [
-                            {
-                                name: "login_button",
-                                type: "button",
-                                label: "Login",
-                                value: "login",
-                                primary: true,
-                                events: {
-                                    click: "function(){ var self = this; " +
-                                        " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                        "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
-                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
-                                        "function(){console.log(\"sync success firing\");}); }" +
-                                        "});" +
-                                        "}"
+                        "meta": {
+                            "buttons": [
+                                {
+                                    name: "login_button",
+                                    type: "button",
+                                    label: "Login",
+                                    value: "login",
+                                    primary: true,
+                                    events: {
+                                        click: "function(){ var self = this; " +
+                                            " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
+                                            "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
+                                            "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
+                                            "function(){console.log(\"sync success firing\");}); }" +
+                                            "});" +
+                                            "}"
+                                    }
                                 }
-                            }
-                        ],
-                        "panels": [
-                            {
-                                "label": "Login",
-                                "fields": [
-                                    {name: "username", label: "Username"},
-                                    {name: "password", label: "Password"}
-                                ]
-                            }
-                        ]
-
+                            ],
+                            "panels": [
+                                {
+                                    "label": "Login",
+                                    "fields": [
+                                        {name: "username", label: "Username"},
+                                        {name: "password", label: "Password"}
+                                    ]
+                                }
+                            ]
+                        }
                     }
-
                 },
                 //Layouts map an action to a lyout that defines a set of views and how to display them
                 //Different clients will get different layouts for the same actions
                 "layouts": {
                     "login": {
-                        //Default layout is a single view
-                        "type": "simple",
-                        "components": [
-                            {view: "loginView"}
-                        ]
+                        "meta": {
+                            //Default layout is a single view
+                            "type": "simple",
+                            "components": [
+                                {view: "loginView"}
+                            ]
+                        }
                     }
                 }
             }
@@ -123,16 +125,12 @@
                 "</div>\n" +
                 "</div>         \n" +
                 "</form>",
-            "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{{eq this ../currentModule \"class=\\\"active\\\"\" \"\"}}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each moduleList}}\n                                <li>\n                                  <a href=\"#{{this}}/create\">Create {{this}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>",
-            "alert": "<div class=\"alert {{alertClass}} alert-block timeten\">" +
-                "<a class=\"close\" data-dismiss=\"alert\" href=\"#\">x</a> {{message}}" +
-                "</div>"
+            "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{{eq this ../currentModule \"class=\\\"active\\\"\" \"\"}}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this}}/create\">{{this}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
         }
-    }
-    //if (_.isEmpty(app.metadata.get())) {
-    app.metadata.set(base_metadata);
-    app.data.declareModels(base_metadata);
-    app.template.load(base_metadata);
-    //}
-})
-    (SUGAR.App);
+    };
+    app.events.on("app:init", function() {
+        app.metadata.set(base_metadata);
+        app.data.declareModels(base_metadata);
+    });
+
+})(SUGAR.App);

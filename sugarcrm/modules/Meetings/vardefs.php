@@ -304,7 +304,14 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '11',
     'reportable' => false,
     'default'=>0,
-    'comment' => 'Meeting update sequence for meetings as per iCalendar standards'
+    'comment' => 'Meeting update sequence for meetings as per iCalendar standards',
+      //BEGIN SUGARCRM flav=pro ONLY
+      'studio' => array(
+          'related' => false,
+          'formula' => false,
+          'rollup' => false,
+      ),
+      //END SUGARCRM flav=pro ONLY
   ),
 
   'contact_name' =>

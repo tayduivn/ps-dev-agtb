@@ -29,11 +29,11 @@
 
     // Ever incrementing field ID
     var _sfId = 0;
-
-    // Create a new subclass of the given super class based on the controller definition passed.
-    var _declareClass = function(cache, base, className, controller) {
-        var klass = null;
-        var evaledController = null;
+    // A list of classes declared by _extendClass method
+    var _classes = [];
+    // Creates a new subclass of the given super class based on the controller definition passed.
+    var _extendClass = function(cache, base, className, controller) {
+        var klass = null, evaledController = null;
         if (controller) {
             try {
                 evaledController = eval("[" + controller + "][0]");
@@ -44,12 +44,27 @@
 
         if (_.isObject(evaledController)) {
             klass = cache[className] = base.extend(evaledController);
+            _classes.push(className);
         }
 
         return klass;
     };
 
     var _viewManager = {
+
+        /**
+         * Resets class declarations of custom components.
+         */
+        reset: function() {
+            var className;
+            for(var i = 0; i < _classes.length; ++i) {
+                className = _classes[i];
+                delete this.layouts[className];
+                delete this.views[className];
+                delete this.fields[className];
+            }
+            _classes = [];
+        },
 
         /**
          * Gets ID of the last created field.
@@ -73,7 +88,7 @@
         fields: {},
 
         /**
-         * Creates a component and binds data changes to it.
+         * Creates an instance of a component and binds data changes to it.
          *
          * @param type Component type (`layout`, `view`, `field`).
          * @param name Component name.
@@ -82,24 +97,10 @@
          * @private
          */
         _createComponent: function(type, name, params) {
-            var className = app.utils.capitalize(name) + type;
-            var customClassName = (params.module || "") + className;
-            var cache = this[type.toLowerCase() + "s"];
-            var controller = params.meta ? params.meta.controller : null;
-            var baseClass = app.view[type];
-            var klass =
-                // First check if custom class per module already exists
-                cache[customClassName] ||
-                // Fall back to base views
-                cache[className] ||
-                // Otherwise, create custom class if the metadata has a controller
-                _declareClass(cache, baseClass, customClassName, controller) ||
-                // Fall back to regular view class (ListView, FluidLayout, etc.)
-                cache[className] ||
-                // Fall back to base class (View, Layout, or Field)
-                baseClass;
+            var layoutType = type === "layout" ? params.type : null;
+            var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
 
-            var component = new klass(params);
+            var component = new Klass(params);
             component.bindDataChange();
 
             return component;
@@ -109,10 +110,10 @@
          * Creates an instance of a view.
          *
          * Parameters define creation rules as well as view properties.
-         * The `param` hash must contain at least `name` property which is a view name.
+         * The `params` hash must contain at least `name` property which is the view name.
          * Other parameters may be:
          *
-         * - context: context to associate with the newly created view
+         * - context: context to associate the newly created view with
          * - module: module name
          * - meta: custom metadata
          *
@@ -145,7 +146,7 @@
          * <pre><code>
          * var view = app.view.createView({
          *     name: 'detail',
-         *     meta: { ... some custom metadata ... }
+         *     meta: { ... your custom metadata ... }
          * });
          * </code></pre>
          *
@@ -153,34 +154,79 @@
          * @return {View.View} new instance of view.
          */
         createView: function(params) {
-            params.context = params.context || app.controller.context; // context is always defined on the controller
-            params.module = params.module || params.context.get("module");
-            params.meta = params.meta || app.metadata.getView(params.module, params.name);
-            return this._createComponent("View", params.name, params);
+            // context is always defined on the controller
+            params.context = params.context || app.controller.context;
+            params.module  = params.module || params.context.get("module");
+            params.meta    = params.meta || app.metadata.getView(params.module, params.name);
+
+            return this._createComponent("view", params.name, params);
         },
 
         /**
          * Creates an instance of a layout.
          *
-         * TODO: Add docs.
-         * @param params
-         * @return {View.Layout}
+         * Parameters define creation rules as well as layout properties.
+         * The factory needs either layout name or type.
+         * The layout type is retrieved either from `params` hash or layout metadata.
+         *
+         * Parameters may be:
+         *
+         * - name: layout name (list, simple, complex, etc.)
+         * - context: context to associate the newly created layout with
+         * - module: module name
+         * - meta: custom metadata
+         * - type: layout type (fluid, columns, etc.). If not specified, it is retrieved from metadata definition.
+         *
+         * If context is not specified the controller's current context is assigned to the layout (`SUGAR.App.controller.context`).
+         *
+         * Examples:
+         *
+         * * Create a list layout. The view manager will use metadata for the layout named 'list' defined in Contacts module.
+         * The controller's current context will be set on the new layout instance.
+         * <pre><code>
+         * var listLayout = app.view.createLayout({
+         *    name: 'list',
+         *    module: 'Contacts'
+         * });
+         * </code></pre>
+         *
+         * * Create a custom layout class.
+         * <pre><code>
+         * // Declare your custom layout class.
+         * app.view.layouts.MyCustomLayout = app.view.Layout.extend({
+         *  // Put your custom logic here
+         * });
+         *
+         * var myCustomLayout = app.view.createLayout({
+         *    name: 'myCustom'
+         * });
+         * </code></pre>
+         *
+         * * Create a layout with custom metadata payload.
+         * <pre><code>
+         * var layout = app.view.createLayout({
+         *     name: 'detail',
+         *     meta: { ... your custom metadata ... }
+         * });
+         * </code></pre>
+         *
+         * @param params layout parameters
+         * @return {View.Layout} New instance of the layout.
          */
         createLayout: function(params) {
-            var clonedParams = _.clone(params);
-            clonedParams.module = params.module || params.context.get("module");
-            clonedParams.meta = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
+            params.context = params.context || app.controller.context;
+            params.module  = params.module || params.context.get("module");
+            params.meta    = params.meta || app.metadata.getLayout(params.module, params.name);
+            params.type    = params.type || (params.meta ? params.meta.type : null);
 
-            clonedParams.meta.type = clonedParams.meta.type || clonedParams.name;
-            clonedParams.name = clonedParams.name || clonedParams.meta.type;
-
-            return this._createComponent("Layout", clonedParams.meta.type, clonedParams);
+            return this._createComponent("layout", params.name || params.type, params);
         },
 
         /**
          * Creates an instance of a field and registers it with the parent view (`params.view`).
          *
          * The parameters define creation rules as well as field properties.
+         *
          * The `params` hash must contain `def` property which is the field definition and `view`
          * property which is the reference to the parent view. For example,
          * <pre>
@@ -194,6 +240,7 @@
          *    context: optional context (if not specified, app.controller.context is used)
          *    model: optional model (if not specified, the model which is set on the context is used)
          *    meta: optional custom metadata
+         *    viewName: optional view name to determine the field template (if not specified, view.name is used)
          * }
          * </pre>
          *
@@ -224,16 +271,63 @@
              * @property {String}
              * @member View.Field
              */
-            var type = params.def.type;
-            params.meta = params.meta || app.metadata.getField(type);
+            var type       = params.def.type;
+            params.meta    = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;
-            params.model = params.model || params.context.get("model");
+            params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
-
-            var field = this._createComponent("Field", type, params);
+            
+            var field = this._createComponent("field", type, params);
             // Register new field within its parent view.
             params.view.fields[field.sfId] = field;
             return field;
+        },
+
+        /**
+         * Retrieves class declaration for a component or creates a new component class.
+         *
+         * This method creates a subclass of the base class if controller parameter is not null
+         * and such subclass hasn't been created yet.
+         * Otherwise, the method tries to retrieve the most appropriate class by searching in the following order:
+         *
+         * - Custom class name: `<module><component-name><component-type>`.
+         * For example, for Contacts module one could have:
+         * `ContactsDetailLayout`, `ContactsFluidLayout`, `ContactsListView`.
+         *
+         * - Class name: `<component-name><component-type>`.
+         * For example: `ListLayout`, `ColumnsLayout`, `DetailView`, `IntField`.
+         *
+         * - Base class: `<component-type>` - `Layout`, `View`, `Field`.
+         *
+         * Note 1. Although the view manager supports module specific fields like `ContactsIntField`,
+         * the server does not provide such customization.
+         *
+         * Note 2. The layouts is a special case because their class name is built both from layout name
+         * and layout type. One could have `ListLayout` or `ColumnsLayout` including their
+         * module specific counterparts like `ContactsListView` and `ContactsColumnsLayout`.
+         * The "named" class name is checked first.
+         *
+         *
+         * @param {String} type Lower-cased component type: layout, view, or field.
+         * @param {String} name Lower-cased component name. For example, list (layout or view), bool (field).
+         * @param {String} module(optional) Module name.
+         * @param {String} controller(optional) Controller source code string.
+         * @param {String} layoutType(optional) Layout type. For example, fluid, rows, columns.
+         * @return {Function} Component class.
+         */
+        declareComponent: function(type, name, module, controller, layoutType) {
+            var ucType                  = app.utils.capitalize(type),
+                className               = app.utils.capitalize(name) + ucType,
+                customClassName         = (module || "") + className,
+                layoutClassName         = layoutType ? (app.utils.capitalize(layoutType) + ucType) : null,
+                customLayoutClassName   = layoutType ? ((module || "") + app.utils.capitalize(layoutType) + ucType) : null,
+                cache                   = app.view[type + "s"],
+                baseClass               = cache[className] || cache[layoutClassName] || app.view[ucType];
+
+            return  cache[customClassName] ||
+                    cache[customLayoutClassName] ||
+                    _extendClass(cache, baseClass, customClassName, controller) ||
+                    baseClass;
         }
 
     };
@@ -241,3 +335,4 @@
     app.augment("view", _viewManager, false);
 
 })(SUGAR.App);
+

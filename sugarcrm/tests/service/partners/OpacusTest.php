@@ -50,7 +50,7 @@ public function getEntryListThunderbirdPluginQueries()
  *
  * @param $sql String of the test SQL to simulate the Word plugin
  *
- * @outputBuffering disabled
+ *
  * @dataProvider getEntryListThunderbirdPluginQueries
  */
 public function testGetEntryListThunderbirdPlugin($sql)

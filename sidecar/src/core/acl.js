@@ -28,7 +28,6 @@
         },
         /**
          * Checks acls to see if the current user has access to module views and fields
-         * @param {String} module
          * @param {String} action
          * @param {Object} model
          * @param {String} [fieldName]

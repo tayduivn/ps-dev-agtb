@@ -65,9 +65,10 @@ h1 {font-size: 26px !important;}
 .fright {float: right !important}
 .altview {display:none;}
 
-body > #content,
-body > #content .layout.list,
-body > #content .layout.list > .view.list {
+#nomad,
+#content,
+#content .layout.list,
+#content .layout.list > .view.list {
   display:inline;
 }
 
@@ -838,6 +839,9 @@ color: @gray;
 	background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
+  display:block;
+  height:100%;
+  width:100%;
 }
 .login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;

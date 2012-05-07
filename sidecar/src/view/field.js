@@ -156,18 +156,7 @@
             }
 
             if (viewName) {
-                var templateKey = "f." + this.type + "." + viewName;
-                var templateSource = null;
-
-                if (this.meta) {
-                    templateSource = this.meta.views[viewName] ?
-                        this.meta.views[viewName] :
-                        this.meta.views["default"];
-                }
-
-                this.template = app.template.get(templateKey) ||
-                    app.template.compile(templateSource, templateKey) ||
-                    app.template.empty;
+                this.template = app.template.getField(this.type, viewName) || app.template.empty;
             }
         },
 

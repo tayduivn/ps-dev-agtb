@@ -19,8 +19,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-    $langHeader = get_language_header();
-    print( "<html {$langHeader}>" );
+    print( "<html><body>" );
     print( "Down for maintenance." );
-    print( "</html>" );
-?>
+    print( "</body></html>" );

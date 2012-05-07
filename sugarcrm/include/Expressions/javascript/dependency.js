@@ -616,8 +616,8 @@ AH.setRelatedFields = function(fields){
 AH.getRelatedFieldValues = function(fields, module, record)
 {
     if (fields.length > 0){
-        module = module || SUGAR.forms.AssignmentHandler.getValue("module");
-        record = record || SUGAR.forms.AssignmentHandler.getValue("record");
+        module = module || SUGAR.forms.AssignmentHandler.getValue("module") || DCMenu.module;
+        record = record || SUGAR.forms.AssignmentHandler.getValue("record") || DCMenu.record;
         for (var i = 0; i < fields.length; i++)
         {
             //Related fields require a current related id

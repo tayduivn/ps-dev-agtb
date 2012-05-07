@@ -25,7 +25,7 @@ require_once ('modules/ExpressionEngine/formulaHelper.php');
 class ExpressionEngineController extends SugarController
 {
 	var $action_remap = array ( ) ;
-    var $non_admin_actions = array("functionDetail", "execFunction", "getRelatedField", "getRelatedValue");
+    var $non_admin_actions = array("functionDetail", "execFunction", "getRelatedField", "getRelatedValue", "getRelatedValues");
 	
 	function process(){
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;

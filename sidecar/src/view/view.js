@@ -36,7 +36,8 @@
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = options.template || app.template.get(this.name, this.module);
+            this.template = app.template.getView(this.name, this.module) ||
+                            app.template.getView(this.name);
 
             /**
              * Dictionary of field widgets.
@@ -62,7 +63,7 @@
                 try {
                     this.$el.html(this.template(this));
                 } catch (e) {
-                    app.logger.error("Failed to render '" + this.name + "' view.\n" + e.message);
+                    app.logger.error("Failed to render '" + this.name + "' view.\n" + e);
                     // TODO: trigger app event to render an error message
                 }
             }
@@ -80,7 +81,7 @@
             try {
                 field.render();
             } catch (e) {
-                app.logger.error("Failed to render field '" + field.name + "' on '" + this.name + "' view.\n" + e.message);
+                app.logger.error("Failed to render field '" + field.name + "' on '" + this.name + "' view.\n" + e);
                 // TODO: trigger app event to render an error message
             }
         },

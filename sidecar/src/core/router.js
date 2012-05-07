@@ -1,13 +1,13 @@
 (function(app) {
     /**
-     * This manages the watching of the address hash and routes to the correct handler.
+     * Router manages the watching of the address hash and routes to the correct handler.
      * @class Core.Router
      * @singleton
      * @alias SUGAR.App.router
      */
     var Router = Backbone.Router.extend({
         /**
-         * Routes hash
+         * Routes hash map.
          * @property {Object}
          */
         routes: {
@@ -15,28 +15,18 @@
             "logout": "logout",
             ":module": "index",
             ":module/layout/:view": "layout",
-            ":module/list": "index",
             ":module/create": "create",
             ":module/:id/:action": "record",
             ":module/:id": "record"
         },
 
         /**
-         * Initializes the router. Starts the history watcher if it hasn't been started yet.
-         * @method
-         * @private
-         * @param options
+         * See `Backbone.Router.navigate` documentation for details.
+         *
+         * Sidecar overrides this method to redirect the app to the login route if the app is not authenticated.
+         * @param {String} fragment URL fragment.
+         * @param options(optional) Route options.
          */
-        initialize: function(options) {
-            _.bindAll(this);
-
-            this.controller = options.controller || null;
-
-            if (!this.controller) {
-                throw "No Controller Specified";
-            }
-        },
-
         navigate: function(fragment, options) {
             if (!(app.api.isAuthenticated())) {
                 Backbone.Router.prototype.navigate.call(this, fragment);
@@ -48,35 +38,33 @@
         },
 
         /**
-         * Starts the backbone history which in turns starts routing the hashtag
-         * @method
+         * Starts Backbone history which in turn starts routing the hashtag.
+         *
+         * See Backbone.history documentation for details.
          */
         start: function() {
             app.logger.info("Router Started");
-            var ret = false;
-
             Backbone.history.stop();
-            ret = Backbone.history.start();
-
-            return ret;
+            return Backbone.history.start();
         },
 
-
         /**
-         * Convenience function to build routes
+         * Builds a route.
          *
-         * @param {Object/String} module The name of the module or a context object to extract the module from
-         * @param {String} id The model's ID
-         * @param {String} action Action to perform. This is an optional param
-         * @param {Object} options Additional parameters. Should not include id/module/action.
-         * @return {String} route The built route
+         * This is a convenience function.
+         *
+         * @param {Object/String} moduleOrContext The name of the module or a context object to extract the module from.
+         * @param {String} id The model's ID.
+         * @param {String} action(optional) Action name.
+         * @param {Object} params(optional) Additional URL parameters. Should not include id/module/action.
+         * @return {String} route The built route.
          */
-        buildRoute: function(module, id, action, params) {
+        buildRoute: function(moduleOrContext, id, action, params) {
             var route;
 
-            if (module) {
+            if (moduleOrContext) {
                 // If module is a context object, then extract module from it
-                route = (_.isString(module)) ? module : module.get("module");
+                route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
 
                 if (id) {
                     route += "/" + id;
@@ -90,68 +78,88 @@
             }
 
             // TODO: Currently not supported and breaks other routes
-            // return (_.isObject(params)) ? route += "/?" + $.param(params) : route;
+//            if (params && _.isObject(params) && !_.isEmpty(params)) {
+//                route += "?" + $.param(params);
+//            }
+
             return route;
         },
 
         // Routes
 
+        /**
+         * Handles `index` route.
+         * @param module Module name.
+         */
         index: function(module) {
-            this.controller.loadView({
-                module: module || "Cases", //TODO: This shoudl probably not be Casess
-                layout: "list"
-            });
-        },
-
-        list: function(module) {
-            this.controller.loadView({
-                module: module,
+            app.logger.debug("===Route changed to index of " + module);
+            app.controller.loadView({
+                module: module || "Cases", //TODO: This should probably not be Casess
                 layout: "list"
             });
         },
 
         /**
-         *  The layout route/callback is used to load an arbitrary layout for a module that doesn't have a record associated with the layout.
-         * @param module
-         * @param layout
+         * Handles arbitrary layout for a module that doesn't have a record associated with the layout.
+         * @param module Module name.
+         * @param layout Layout name.
          */
         layout: function(module, layout) {
-            this.controller.loadView({
+            app.logger.debug("===Route changed to layout: " + layout + " for " + module);
+            app.controller.loadView({
                 module: module,
                 layout: layout
             });
         },
 
+        /**
+         * Handles `create` route.
+         * @param module Module name.
+         */
         create: function(module) {
-            this.controller.loadView({
+            app.logger.debug("===Route changed: create " + module);
+            app.controller.loadView({
                 module: module,
                 create: true,
                 layout: "edit"
             });
         },
 
+        /**
+         * Handles `login` route.
+         */
         login: function() {
-            this.controller.loadView({
+            app.logger.debug("===Loging in");
+            app.controller.loadView({
                 module: "Login",
                 layout: "login",
                 create: true
             });
         },
 
+        /**
+         * Handles `logout` route.
+         */
         logout: function() {
-            self = this;
+            app.logger.debug("===Loging out");
+            var self = this;
             app.api.logout({success: function(data) {
                 self.navigate("#");
             }});
         },
 
+        /**
+         * Handles `record` route.
+         * @param module Module name.
+         * @param id Record ID.
+         * @param action(optional) Action name (`edit`, etc.). Defaults to `detail` if not specified.
+         */
         record: function(module, id, action) {
-            console.log("====Routing record====");
-            console.log("Module: ", module, "Action: ", action, "Id: ", id);
+            app.logger.debug("===Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
 
-            this.controller.loadView({
+            app.controller.loadView({
                 module: module,
                 id: id,
                 action: action,
@@ -160,30 +168,6 @@
         }
     });
 
-    /**
-     * @private
-     */
-    var module = {
-        /**
-         * Initializes the router however does not start routing. To start routing, call Router.start();
-         *
-         * @method
-         * @param {Object} instance The instance of the App
-         * @param {Array} modules An optional list of modules to initialize
-         */
-        initRouter: function(instance, modules) {
-            if (!instance.controller) {
-                throw "app.controller does not exist yet. Cannot create router instance";
-            }
+    app.augment("router", new Router(), false);
 
-            if (modules && _.indexOf(modules, "controller") == -1) {
-                return;
-            }
-
-            _.extend(module, new Router({controller: instance.controller}));
-        }
-    };
-
-    app.events.on("app:init", module.initRouter);
-    app.augment("router", module);
 })(SUGAR.App);

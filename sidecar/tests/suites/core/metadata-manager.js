@@ -3,7 +3,6 @@ describe('Metadata Manager', function () {
 
     beforeEach(function () {
         app = SugarTest.app; 
-        app.template.load(meta.viewTemplates);
         app.metadata.set(meta);
     });
 
@@ -24,7 +23,7 @@ describe('Metadata Manager', function () {
     });
 
     it('should get definition for a specific view', function () {
-        expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit);
+        expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit.meta);
     });
 
     it('should get layout definitions', function () {
@@ -32,7 +31,7 @@ describe('Metadata Manager', function () {
     });
 
     it('should get a specific layout', function () {
-        expect(app.metadata.getLayout("Contacts", "detail")).toBe(meta.modules.Contacts.layouts.detail);
+        expect(app.metadata.getLayout("Contacts", "detail")).toBe(meta.modules.Contacts.layouts.detail.meta);
     });
 
     it('should get a varchar sugarfield', function () {
@@ -48,12 +47,50 @@ describe('Metadata Manager', function () {
     });
 
     it('should patch view metadata', function () {
-        app.metadata.set(fixtures.metadata);
         var field = app.metadata.getView("Contacts", "detail").panels[0].fields[3];
         expect(_.isObject(field)).toBeTruthy();
         expect(field.name).toEqual("phone_home");
         expect(field.type).toEqual("text");
         expect(field.label).toEqual("LBL_PHONE_HOME");
+    });
+
+    it("should delegate to view-manager if has a custom view controller", function () {
+        sinon.spy(app.view, "declareComponent");
+        app.metadata.set({modules: { Home: fixtures.metadata.modules.Home }});
+        expect(app.view.declareComponent.getCall(0).args[0]).toEqual("view");
+        expect(app.view.declareComponent.getCall(0).args[1]).toEqual("login");
+        expect(app.view.declareComponent.getCall(0).args[2]).toEqual("Home");
+        expect(app.view.declareComponent.getCall(0).args[3]).toMatch(/^\{customCallback.*/);
+        app.view.declareComponent.restore();
+    });
+
+    it("should delegate to view-manager if has custom layout controller", function () {
+        sinon.spy(app.view, "declareComponent");
+        app.metadata.set({modules: { Contacts: fixtures.metadata.modules.Contacts}});
+        expect(app.view.declareComponent.getCall(0).args[0]).toEqual("layout");
+        expect(app.view.declareComponent.getCall(0).args[1]).toEqual("detailplus");
+        expect(app.view.declareComponent.getCall(0).args[2]).toEqual("Contacts");
+        expect(app.view.declareComponent.getCall(0).args[3]).toMatch(/^\{customLayoutCallback.*/);
+        app.view.declareComponent.restore();
+    });
+
+    it("should delegate to template.compile if meta set with custom view template", function() {
+        sinon.spy(app.template, "setView");
+        app.metadata.set({
+            modules: { 
+                Taxonomy: {
+                    views: { 
+                        tree: { 
+                            template: "My Lil Template"
+                        }
+                    }
+                }
+            }
+        });
+        expect(app.template.setView.getCall(0).args[0]).toEqual("tree");
+        expect(app.template.setView.getCall(0).args[1]).toEqual("Taxonomy");
+        expect(app.template.setView.getCall(0).args[2]).toEqual('My Lil Template');
+        app.template.setView.restore();
     });
 
     it ('should sync metadata', function (){
@@ -74,6 +111,7 @@ describe('Metadata Manager', function () {
         expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
         expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
         expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
 
     });
 
