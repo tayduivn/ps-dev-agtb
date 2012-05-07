@@ -49,7 +49,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 
 		$this->title = $app_strings['LBL_SELECT_BUTTON_TITLE'];
 		$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
-		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];		
+		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];
 
 		if (is_array($this->button_properties)) {
 			if( isset($this->button_properties['title'])) {
@@ -65,8 +65,8 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 				$this->module_name = $this->button_properties['module'];
 			}
 		}
-	
-		
+
+
 		$focus = $widget_data['focus'];
 		if(ACLController::moduleSupportsACL($widget_data['module']) && !ACLController::checkAccess($widget_data['module'], 'list', true)){
 			$button = ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $this->getWidgetId() . '_select_button" class="button"' . "\n"
@@ -109,14 +109,14 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		}
 		$return_module = $_REQUEST['module'];
 		$return_action = 'SubPanelViewer';
-		$return_id = $_REQUEST['record']; 
-		
+		$return_id = $_REQUEST['record'];
+
 		//field_to_name_array
 		$fton_array= array('id' => 'subpanel_id');
 		if(isset($widget_data['field_to_name_array']) && is_array($widget_data['field_to_name_array'])){
 			$fton_array=array_merge($fton_array,$widget_data['field_to_name_array']);
 		}
-			
+
 		$return_url = "index.php?module=$return_module&action=$return_action&subpanel=$subpanel_name&record=$return_id&sugar_body_only=1";
 
 		$popup_request_data = array(
@@ -134,20 +134,13 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data'])) {
 			$popup_request_data['passthru_data']= array_merge($popup_request_data['passthru_data'],$this->button_properties['add_to_passthru_data']);
-		}		
-		
+		}
+
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data']['return_type'])) {
-			
+
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
 				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
-			//BEGIN SUGARCRM flav!=sales ONLY
-			if ($this->button_properties['add_to_passthru_data']['return_type']=='addtoprospectlist') {
-				if (isset($widget_data['query'])) {
-					$popup_request_data['passthru_data']['query']=$widget_data['query'];
-				}
-			}
-			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 
