@@ -134,7 +134,7 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
      * @param $sql String of the test SQL to simulate the Word plugin
      * @param $tableName String of the expected table name of the from query (the Prospect.php code will parse the related_type value)
      *
-     * @outputBuffering disabled
+     *
      * @dataProvider getEntryListQueries
      */
     public function testSoapSugarUsersGetEntryListValidateQuery($sql, $tableName)
