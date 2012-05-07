@@ -140,13 +140,14 @@ SUGAR.App = (function() {
                 this
             );
 
-            /**
-             * Set true if you want to suppress initialization of modules
-             * @cfg {Boolean} silent
-             */
-            if (!opts.silent) {
-                app.trigger("app:init", this, opts.modules);
-            }
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when an alert must be displayed
+                 */
+                "app:alert",
+                this
+            );
 
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
@@ -161,6 +162,14 @@ SUGAR.App = (function() {
                 platform: app.config.platform,
                 keyValueStore: app.cache
             });
+
+            /**
+             * Set true if you want to suppress initialization of modules
+             * @cfg {Boolean} silent
+             */
+            if (!opts.silent) {
+                app.trigger("app:init", this, opts.modules);
+            }
 
             return app;
         },
@@ -243,8 +252,6 @@ SUGAR.App = (function() {
             }, function(metadata, callback) {
                 // declare models
                 app.data.declareModels(metadata);
-                // load viewTemplates
-                app.template.load(metadata);
 
                 // load language strings
                 if (metadata.appListStrings) {
@@ -296,6 +303,16 @@ SUGAR.App = (function() {
             route = this.router.buildRoute(module, id, action, params);
 
             this.router.navigate(route, {trigger: true});
+        },
+
+        /**
+         * Display an alert.
+         * @method
+         * @param {String} level Either "info", "warn" or "error".
+         * @param {String} message The message
+         */
+        alert: function(level, message) {
+            app.trigger("app:alert", [level, message]);
         },
 
         modules: modules

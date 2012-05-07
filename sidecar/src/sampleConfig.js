@@ -58,6 +58,12 @@
         maxQueryResult: 20,
 
         /**
+        * # of fields to display on the detail view
+        * @cfg {Number}
+        */
+        fieldsToDisplay: 5,        
+
+        /**
          * Platform name.
          * @cfg {String}
          */

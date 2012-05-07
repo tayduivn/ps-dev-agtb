@@ -77,145 +77,150 @@ fixtures.metadata = {
             },
             "views": {
                 "edit": {
-                    "buttons": [
-                        {
-                            name: "save_button",
-                            type: "button",
-                            label: "Save",
-                            value: "save",
-                            primary: true,
-                            events: {
-                                click: "function(){ var self = this; " +
-                                    "this.model.save(null, {success:" +
-                                    "function(){self.app.navigate(self.context, self.model, 'detail');}" +
-                                    "});" +
-                                    "}"
-                            }
-                        },
-                        {
-                            name: "cancel_button",
-                            type: "button",
-                            label: "Cancel",
-                            value: "cancel",
-                            route: {
-                                action: "detail",
-                                module: "Cases"
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "save_button",
+                                type: "button",
+                                label: "Save",
+                                value: "save",
+                                primary: true,
+                                events: {
+                                    click: "function(){ var self = this; " +
+                                        "this.model.save(null, {success:" +
+                                        "function(){self.app.navigate(self.context, self.model, 'detail');}" +
+                                        "});" +
+                                        "}"
+                                }
                             },
-                            primary: false
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "Details",
-                            "fields": [
-                                {name: "case_number", label: "Case Number", "class": "foo"},
-                                {name: "name", label: "Name"},
-                                {name: "status", label: "Status"},
+                            {
+                                name: "cancel_button",
+                                type: "button",
+                                label: "Cancel",
+                                value: "cancel",
+                                route: {
+                                    action: "detail",
+                                    module: "Cases"
+                                },
+                                primary: false
+                            }
+                        ],
+                        "panels": [
+                            {
+                                "label": "Details",
+                                "fields": [
+                                    {name: "case_number", label: "Case Number", "class": "foo"},
+                                    {name: "name", label: "Name"},
+                                    {name: "status", label: "Status"},
 
-                                {name: "priority", label: "Priority"},
-                                {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"},
-                                {name: "leradio_c", label: "LeRadio"}
-                            ]
-                        }
-                    ]
-
+                                    {name: "priority", label: "Priority"},
+                                    {name: "description", label: "Description"},
+                                    {name: "date_modified", label: "Modifed Date"},
+                                    {name: "leradio_c", label: "LeRadio"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 "detail": {
-                    "buttons": [
-                        {
-                            name: "edit_button",
-                            type: "button",
-                            label: "Edit",
-                            value: "edit",
-                            route: {
-                                action: "edit"
-                            },
-                            primary: true
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "Details",
-                            "fields": [
-                                {name: "case_number", label: "Case Number", "class": "foo"},
-                                {name: "name", label: "Name"},
-                                {name: "status", label: "Status"},
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "edit_button",
+                                type: "button",
+                                label: "Edit",
+                                value: "edit",
+                                route: {
+                                    action: "edit"
+                                },
+                                primary: true
+                            }
+                        ],
+                        "panels": [
+                            {
+                                "label": "Details",
+                                "fields": [
+                                    {name: "case_number", label: "Case Number", "class": "foo"},
+                                    {name: "name", label: "Name"},
+                                    {name: "status", label: "Status"},
 
-                                {name: "priority", label: "Priority"},
-                                {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"},
-                                {name: "leradio_c", label: "LeRadio"}
-                            ]
-                        }
-                    ]
+                                    {name: "priority", label: "Priority"},
+                                    {name: "description", label: "Description"},
+                                    {name: "date_modified", label: "Modifed Date"},
+                                    {name: "leradio_c", label: "LeRadio"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 "quickCreate": {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
                 "list": {
-                    "buttons": [
-                        {
-                            name: "show_more_button",
-                            type: "button",
-                            label: "Show More",
-                            class: "loading wide",
-                            events: {
-                                click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({add:true, success:function(){window.scrollTo(0,document.body.scrollHeight);}});" +
-                                    "}"
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "show_more_button",
+                                type: "button",
+                                label: "Show More",
+                                class: "loading wide",
+                                events: {
+                                    click: "function(){ var self = this; " +
+                                        "this.context.state.collection.paginate({add:true, success:function(){window.scrollTo(0,document.body.scrollHeight);}});" +
+                                        "}"
+                                }
                             }
-                        }
-                    ],
-                    "listNav": [
-                        {
-                            name: "show_more_button_back",
-                            type: "navElement",
-                            icon: "icon-plus",
-                            label: " ",
-                            route: {
-                                action: "create",
-                                module: "Cases"
+                        ],
+                        "listNav": [
+                            {
+                                name: "show_more_button_back",
+                                type: "navElement",
+                                icon: "icon-plus",
+                                label: " ",
+                                route: {
+                                    action: "create",
+                                    module: "Cases"
+                                }
+                            },
+                            {
+                                name: "show_more_button_back",
+                                type: "navElement",
+                                icon: "icon-chevron-left",
+                                label: " ",
+                                events: {
+                                    click: "function(){ var self = this; " +
+                                        "this.context.state.collection.paginate({page:-1, success:function(){}});" +
+                                        "}"
+                                }
+                            },
+                            {
+                                name: "show_more_button_forward",
+                                type: "navElement",
+                                icon: "icon-chevron-right",
+                                label: " ",
+                                events: {
+                                    click: "function(){ var self = this; " +
+                                        "this.context.state.collection.paginate({success:function(){}});" +
+                                        "}"
+                                }
                             }
-                        },
-                        {
-                            name: "show_more_button_back",
-                            type: "navElement",
-                            icon: "icon-chevron-left",
-                            label: " ",
-                            events: {
-                                click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({page:-1, success:function(){}});" +
-                                    "}"
-                            }
-                        },
-                        {
-                            name: "show_more_button_forward",
-                            type: "navElement",
-                            icon: "icon-chevron-right",
-                            label: " ",
-                            events: {
-                                click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({success:function(){}});" +
-                                    "}"
-                            }
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "LBL_PANEL_1",
-                            "fields": [
-                                {name: "case_number", label: "Case Number", "class": "foo"},
-                                {name: "name", label: "Name"},
-                                {name: "status", label: "Status"},
-                                {name: "priority", label: "priority"},
-                                {name: "date_modified", label: "Modifed Date"},
+                        ],
+                        "panels": [
+                            {
+                                "label": "LBL_PANEL_1",
+                                "fields": [
+                                    {name: "case_number", label: "Case Number", "class": "foo"},
+                                    {name: "name", label: "Name"},
+                                    {name: "status", label: "Status"},
+                                    {name: "priority", label: "priority"},
+                                    {name: "date_modified", label: "Modifed Date"},
 
-                                {type: "sugarField_actionsLink", label: "Actions"}
-                            ]
-                        }
-                    ]
+                                    {type: "sugarField_actionsLink", label: "Actions"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 //Subpanel layout defs
                 "subpanel": {
@@ -226,63 +231,75 @@ fixtures.metadata = {
             //Different clients will get different layouts for the same actions
             "layouts": {
                 "edit": {
-                    //Default layout is a single view
-                    "type": "simple",
-                    "components": [
-                        {view: "edit"}
-                    ]
+                    "meta": {
+                        //Default layout is a single view
+                        "type": "simple",
+                        "components": [
+                            {view: "edit"}
+                        ]
+                    }
                 },
                 "detail": {
-                    "type": "rows",
-                    "components": [
-                        {view: "detail"},
-                        {view: "subpanel"}
-                    ]
+                    "meta": {
+                        "type": "rows",
+                        "components": [
+                            {view: "detail"},
+                            {view: "subpanel"}
+                        ]
+                    }
                 },
                 "list": {
-                    //Default layout is a single view
-                    "type": "simple",
-                    "components": [
-                        {view: "list"}
-                    ]
+                    "meta": {
+                        //Default layout is a single view
+                        "type": "simple",
+                        "components": [
+                            {view: "list"}
+                        ]
+                    }
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
                 "sublayout": {
-                    "type": "rows",
-                    "components": [
-                        {"layout": {
-                            "type": "columns",
-                            "components": [
-                                {view: "edit"},
-                                {view: "detail"}
-                            ]
-                        }},
-                        {"view": "subpanel"}
-                    ]
+                    "meta": {
+                        "type": "rows",
+                        "components": [
+                            {"layout": {
+                                "type": "columns",
+                                "components": [
+                                    {view: "edit"},
+                                    {view: "detail"}
+                                ]
+                            }},
+                            {"view": "subpanel"}
+                        ]
+                    }
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
-                    "type": "columns",
-                    "components": [
-                        {"view": "edit"},
-                        {
-                            "view": "detail",
-                            //Name of link to pull the new context from, In this case a single account
-                            "context": "accounts"
-                        }
-                    ]
+                    "meta": {
+                        "type": "columns",
+                        "components": [
+                            {"view": "edit"},
+                            {
+                                "view": "detail",
+                                //Name of link to pull the new context from, In this case a single account
+                                "context": "accounts"
+                            }
+                        ]
+                    }
                 },
                 //Layout that references another layout
                 "detailplus": {
-                    "type": "fluid",
-                    "components": [
-                        {view: "subpanel",
-                            size: 2},
-                        {layout: "edit",
-                            size: 6},
-                        {layout: "detail",
-                            size: 3}
-                    ]
+                    "meta": {
+                        "type": "fluid",
+                        "components": [
+                            {view: "subpanel",
+                                size: 2},
+                            {layout: "edit",
+                                size: 6},
+                            {layout: "detail",
+                                size: 3}
+                        ]
+                    }
                 }
             }
         },
@@ -324,86 +341,91 @@ fixtures.metadata = {
             },
             "views": {
                 "edit": {
-                    "buttons": [
-                        {
-                            name: "save_button",
-                            type: "button",
-                            label: "Save",
-                            value: "save",
-                            primary: true
-                        },
-                        {
-                            name: "cancel_button",
-                            type: "button",
-                            label: "Cancel",
-                            value: "cancel",
-                            route: {
-                                action: "detail",
-                                module: "Contacts"
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "save_button",
+                                type: "button",
+                                label: "Save",
+                                value: "save",
+                                primary: true
                             },
-                            events: {
-                                //click : "this.app.myExtension.callback",
-                                //drag: "",
-                                foo: 'function(e){console.log(this)}'
-                            },
-                            primary: false
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "Details",
-                            "fields": [
-                                {name: "first_name", label: "First Name", "class": "foo"},
-                                {name: "last_name", label: "Last Name"},
-                                {name: "phone_work", label: "Phone"},
-                                {name: "email1", label: "Email"}
-                            ]
-                        }
-                    ]
-
+                            {
+                                name: "cancel_button",
+                                type: "button",
+                                label: "Cancel",
+                                value: "cancel",
+                                route: {
+                                    action: "detail",
+                                    module: "Contacts"
+                                },
+                                events: {
+                                    //click : "this.app.myExtension.callback",
+                                    //drag: "",
+                                    foo: 'function(e){console.log(this)}'
+                                },
+                                primary: false
+                            }
+                        ],
+                        "panels": [
+                            {
+                                "label": "Details",
+                                "fields": [
+                                    {name: "first_name", label: "First Name", "class": "foo"},
+                                    {name: "last_name", label: "Last Name"},
+                                    {name: "phone_work", label: "Phone"},
+                                    {name: "email1", label: "Email"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 "detail": {
-                    "buttons": [
-                        {
-                            name: "edit_button",
-                            type: "button",
-                            label: "Edit",
-                            value: "edit",
-                            route: {
-                                action: "edit"
-                            },
-                            primary: true
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "Details",
-                            "fields": [
-                                {name: "first_name", label: "First Name"},
-                                {name: "last_name", label: "Last Name"},
-                                {name: "phone_work", label: "Phone"},
-                                "phone_home",
-                                {name: "email1", label: "Email"}
-                            ]
-                        }
-                    ]
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "edit_button",
+                                type: "button",
+                                label: "Edit",
+                                value: "edit",
+                                route: {
+                                    action: "edit"
+                                },
+                                primary: true
+                            }
+                        ],
+                        "panels": [
+                            {
+                                "label": "Details",
+                                "fields": [
+                                    {name: "first_name", label: "First Name"},
+                                    {name: "last_name", label: "Last Name"},
+                                    {name: "phone_work", label: "Phone"},
+                                    "phone_home",
+                                    {name: "email1", label: "Email"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 "quickCreate": {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
                 "list": {
-                    "panels": [
-                        {
-                            "label": "LBL_PANEL_1",
-                            "fields": [
-                                {name: "first_name", label: "First Name"},
-                                {name: "last_name", label: "Last Name"},
-                                {name: "email1", label: "Email"},
-                                {name: "phone_work", label: "Phone"}
-                            ]
-                        }
-                    ]
+                    "meta": {
+                        "panels": [
+                            {
+                                "label": "LBL_PANEL_1",
+                                "fields": [
+                                    {name: "first_name", label: "First Name"},
+                                    {name: "last_name", label: "Last Name"},
+                                    {name: "email1", label: "Email"},
+                                    {name: "phone_work", label: "Phone"}
+                                ]
+                            }
+                        ]
+                    }
                 },
                 //Subpanel layout defs
                 "subpanel": {
@@ -414,63 +436,76 @@ fixtures.metadata = {
             //Different clients will get different layouts for the same actions
             "layouts": {
                 "edit": {
-                    //Default layout is a single view
-                    "type": "simple",
-                    "components": [
-                        {view: "edit"}
-                    ]
+                    "meta": {
+                        //Default layout is a single view
+                        "type": "simple",
+                        "components": [
+                            {view: "edit"}
+                        ]
+                    }
                 },
                 "detail": {
-                    "type": "rows",
-                    "components": [
-                        {view: "detail"},
-                        {view: "subpanel"}
-                    ]
+                    "meta": {
+                        "type": "rows",
+                        "components": [
+                            {view: "detail"},
+                            {view: "subpanel"}
+                        ]
+                    }
                 },
                 "list": {
-                    //Default layout is a single view
-                    "type": "simple",
-                    "components": [
-                        {view: "list"}
-                    ]
+                    "meta": {
+                        //Default layout is a single view
+                        "type": "simple",
+                        "components": [
+                            {view: "list"}
+                        ]
+                    }
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
                 "sublayout": {
-                    "type": "rows",
-                    "components": [
-                        {"layout": {
-                            "type": "columns",
-                            "components": [
-                                {view: "edit"},
-                                {view: "detail"}
-                            ]
-                        }},
-                        {"view": "subpanel"}
-                    ]
+                    "meta": {
+                        "type": "rows",
+                        "components": [
+                            {"layout": {
+                                "type": "columns",
+                                "components": [
+                                    {view: "edit"},
+                                    {view: "detail"}
+                                ]
+                            }},
+                            {"view": "subpanel"}
+                        ]
+                    }
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
-                    "type": "columns",
-                    "components": [
-                        {"view": "edit"},
-                        {
-                            "view": "detail",
-                            //Name of link to pull the new context from, In this case a single account
-                            "context": "accounts"
-                        }
-                    ]
+                    "meta": {
+                        "type": "columns",
+                        "components": [
+                            {"view": "edit"},
+                            {
+                                "view": "detail",
+                                //Name of link to pull the new context from, In this case a single account
+                                "context": "accounts"
+                            }
+                        ]
+                    }
                 },
                 //Layout that references another layout
                 "detailplus": {
-                    "type": "fluid",
-                    "components": [
-                        {view: "subpanel",
-                            size: 2},
-                        {layout: "edit",
-                            size: 6},
-                        {layout: "detail",
-                            size: 3}
-                    ]
+                    "meta": {
+                        "type": "fluid",
+                        "components": [
+                            {view: "subpanel",
+                                size: 2},
+                            {layout: "edit",
+                                size: 6},
+                            {layout: "detail",
+                                size: 3}
+                        ]
+                    },
+                    "controller": "{customLayoutCallback : function(){return \"overridden\";}}"
                 }
             }
         },
@@ -488,44 +523,47 @@ fixtures.metadata = {
             },
             "views": {
                 "login": {
-                    "buttons": [
-                        {
-                            name: "login_button",
-                            type: "button",
-                            label: "Login",
-                            value: "login",
-                            primary: true,
-                            events: {
-                                click: "function(){ var self = this; " +
-                                    " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.api.login(args, {success:" +
-                                    "function(){console.log(\"logged in successfully dtam!\");}" +
-                                    "});" +
-                                    "}"
+                    "meta": {
+                        "buttons": [
+                            {
+                                name: "login_button",
+                                type: "button",
+                                label: "Login",
+                                value: "login",
+                                primary: true,
+                                events: {
+                                    click: "function(){ var self = this; " +
+                                        " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.api.login(args, {success:" +
+                                        "function(){console.log(\"logged in successfully dtam!\");}" +
+                                        "});" +
+                                        "}"
+                                }
                             }
-                        }
-                    ],
-                    "panels": [
-                        {
-                            "label": "Login",
-                            "fields": [
-                                {name: "username", label: "Username"},
-                                {name: "password", label: "Password"}
-                            ]
-                        }
-                    ],
+                        ],
+                        "panels": [
+                            {
+                                "label": "Login",
+                                "fields": [
+                                    {name: "username", label: "Username"},
+                                    {name: "password", label: "Password"}
+                                ]
+                            }
+                        ],
+                    },
                     "controller": "{customCallback : function(){return \"overridden\";}}"
                 }
-
             },
             //Layouts map an action to a lyout that defines a set of views and how to display them
             //Different clients will get different layouts for the same actions
             "layouts": {
-                "login": {
-                    //Default layout is a single view
-                    "type": "simple",
-                    "components": [
-                        {view: "login"}
-                    ]
+                "meta": {
+                    "login": {
+                        //Default layout is a single view
+                        "type": "simple",
+                        "components": [
+                            {view: "login"}
+                        ]
+                    }
                 }
             }
         }
@@ -682,7 +720,7 @@ fixtures.metadata = {
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator), \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator, \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"

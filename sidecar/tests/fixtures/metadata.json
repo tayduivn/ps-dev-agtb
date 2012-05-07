@@ -124,62 +124,72 @@
             },
             "layouts": {
                 "edit": {
-                    "type": "simple",
-                    "components": [
-                        {
-                            "view": "EditView"
-                        }
-                    ]
+                    "meta": {
+                        "type": "simple",
+                        "components": [
+                            {
+                                "view": "EditView"
+                            }
+                        ]
+                    }
                 },
                 "detail": {
-                    "components": "rows",
-                    "views": [
-                        {
-                            "view": "DetailView"
-                        },
-                        {
-                            "view": "SubpanelView"
-                        }
-                    ]
+                    "meta": {
+                        "components": "rows",
+                        "views": [
+                            {
+                                "view": "DetailView"
+                            },
+                            {
+                                "view": "SubpanelView"
+                            }
+                        ]
+                    }
                 },
                 "list": {
-                    "type": "simple",
-                    "components": [
-                        {"view": "list"}
-                    ]
+                    "meta": {
+                        "type": "simple",
+                        "components": [
+                            {"view": "list"}
+                        ]
+                    }
                 },
                 "sublayout": {
-                    "type": "rows",
-                    "components": [
-                        {
-                            "layout": {
-                                "type": "columns",
-                                "components": [
-                                    {
-                                        "view": "ListView"
-                                    },
-                                    {
-                                        "view": "DetailView"
-                                    }
-                                ]
+                    "meta": {
+                        "type": "rows",
+                        "components": [
+                            {
+                                "layout": {
+                                    "type": "columns",
+                                    "components": [
+                                        {
+                                            "view": "ListView"
+                                        },
+                                        {
+                                            "view": "DetailView"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "view": "SubpanelView"
                             }
-                        },
-                        {
-                            "view": "SubpanelView"
-                        }
-                    ]
+                        ]
+                    }
                 },
                 "complexlayout": {
-                    "type": "columns",
-                    "components": [
-                        {
-                            "view": "EditView"
-                        },
-                        {
-                            "view": "DetailView",
-                            "context": "accounts"
-                        }
-                    ]
+                    "meta": {
+                        "type": "columns",
+                        "components": [
+                            {
+                                "view": "EditView"
+                            },
+                            {
+                                "view": "DetailView",
+                                "context": "accounts"
+                            }
+                        ]
+                    }
                 }
             }
         }

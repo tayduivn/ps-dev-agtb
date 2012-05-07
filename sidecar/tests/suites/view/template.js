@@ -9,13 +9,12 @@ describe('template', function() {
         //Reset the cache after every test
         app.cache.cutAll();
         delete Handlebars.templates;
-        app.template.initialize();
     });
 
     it('should compile templates', function() {
         var src = "Hello {{name}}!",
             key = "testKey",
-            temp = app.template.compile(src, key);
+            temp = app.template.compile(key, src);
         expect(temp({name: "Jim"})).toEqual("Hello Jim!");
     });
 
@@ -23,7 +22,7 @@ describe('template', function() {
         var src = "Hello {{name}}!",
             key = "testKey";
         //Compile the template
-        app.template.compile(src, key);
+        app.template.compile(key, src);
 
         expect(app.cache.get("templates")).not.toBeEmpty();
 
@@ -38,9 +37,9 @@ describe('template', function() {
         var src = "Hello {{name}}!",
             key = "testKey";
         //Compile the template
-        app.template.compile(src, key);
+        app.template.compile(key, src);
         //Initialize will reset the internal varaibles referencing the tempaltes in memory
-        app.template.initialize();
+        app.template.init();
 
         //Get should return a compiled template
         expect(app.template.get(key)({name: "Jim"})).toEqual("Hello Jim!");
@@ -53,7 +52,7 @@ describe('template', function() {
                 foo: "Bar"
             }
         };
-        app.template.load(data);
+        app.template.set(data);
 
         //Get should return both the templates
         expect(app.template.get("hello")({name: "Jim"})).toEqual("Hello Jim!");

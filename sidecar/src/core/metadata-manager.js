@@ -19,6 +19,28 @@
     }
 
     /**
+     * Initializes custom templates and controller if supplied upstream.
+     * @param {Object} entry - a module
+     * @param {String} type - 'view'||'layout'
+     * @param {String} module name
+     * @private
+     * @ignore
+     */
+    function _initCustomTemplatesAndComponents(entry, type, module) {
+        var plural = type + 's';
+
+        _.each(entry[plural], function (obj, name) {
+            if (type === "view" && obj && obj.template) {
+                app.template.setView(name, module, obj.template, true);
+            }
+            if (obj && obj.controller) {
+                app.view.declareComponent(type, name, module, obj.controller, obj.meta.type);
+            }
+        });
+
+    }
+
+    /**
      * The metadata manager is responsible for parsing and returning various metadata to components that request it.
      * @class Core.MetadataManager
      * @singleton
@@ -53,31 +75,33 @@
             if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view, viewName) {
-                _.each(view.panels, function(panel) {
-                    _.each(panel.fields, function(field, fieldIndex) {
-                        var name = _.isString(field) ? field : field.name;
-                        var fieldDef = module.fields[name];
-                        if (!_.isEmpty(fieldDef)) {
-                            // Create a definition if it doesn't exist
-                            if (_.isString(field)) {
-                                field = { name: field };
+                if(view.meta) {
+                    _.each(view.meta.panels, function(panel) {
+                        _.each(panel.fields, function(field, fieldIndex) {
+                            var name = _.isString(field) ? field : field.name;
+                            var fieldDef = module.fields[name];
+                            if (!_.isEmpty(fieldDef)) {
+                                // Create a definition if it doesn't exist
+                                if (_.isString(field)) {
+                                    field = { name: field };
+                                }
+
+                                // Patch label
+                                field.label = field.label || fieldDef.vname || fieldDef.name;
+                                // Assign type
+                                field.type = field.type || fieldDef.type;
+                                // Patch type
+                                field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                panel.fields[fieldIndex] = field;
                             }
-
-                            // Patch label
-                            field.label = field.label || fieldDef.vname || fieldDef.name;
-                            // Assign type
-                            field.type = field.type || fieldDef.type;
-                            // Patch type
-                            field.type = self.fieldTypeMap[field.type] || field.type;
-
-                            panel.fields[fieldIndex] = field;
-                        }
-                        else {
-                            // Ignore view fields that don't have module field definition
-                            //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
-                        }
+                            else {
+                                // Ignore view fields that don't have module field definition
+                                //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                            }
+                        });
                     });
-                });
+                }
             });
             module._patched = true;
             return module;
@@ -150,7 +174,9 @@
         getView: function(module, view) {
             var metadata = this.getModule(module, "views");
             if (metadata && view) {
-                metadata = metadata[view];
+                if(metadata[view] && metadata[view].meta) {
+                    metadata = metadata[view].meta;
+                }
             }
 
             return metadata;
@@ -164,8 +190,19 @@
          */
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
+
+            // TODO: Server returns empty array for mobile platform
+            // REMOVE THIS HACK ONCE RESOLVED
+            //------------- HACK START ----------------------
+            if (_.isArray(metadata)) {
+                metadata = undefined;
+            }
+            //------------- HACK END ----------------------
+
             if (metadata && layout) {
-                metadata = metadata[layout];
+                if(metadata[layout] && metadata[layout].meta) {
+                    metadata = metadata[layout].meta;
+                } 
             }
 
             return metadata;
@@ -203,19 +240,28 @@
          */
         set: function(data) {
             if (data.modules) {
-                var modules = [];
+                var modules = []; 
+
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = this._patchMetadata(module, entry);
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
-                }, this);
+
+                    // Compile templates and declare components for custom layouts and views
+                    _initCustomTemplatesAndComponents(entry, 'view', module);
+                    _initCustomTemplatesAndComponents(entry, 'layout', module);
+
+                   }, this);
                 _set("modules", modules.join(","));
             }
 
             if (data.sugarFields) {
-                _.each(data.sugarFields, function(entry, module) {
-                    _fields[module] = entry;
-                    _set(_fieldPrefix + module, entry);
+                _.each(data.sugarFields, function(entry, type) {
+                    _fields[type] = entry;
+                    _set(_fieldPrefix + type, entry);
+                    if (entry.controller) {
+                        app.view.declareComponent("field", type, null, entry.controller);
+                    }
                 });
             }
 
@@ -224,7 +270,7 @@
                 _set(_appPrefix + "moduleList", data.moduleList);
             }
 
-            //TODO add template support
+            app.template.set(data, true);
         },
 
         /**
@@ -252,3 +298,4 @@
     });
 
 })(SUGAR.App);
+

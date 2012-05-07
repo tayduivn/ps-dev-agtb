@@ -26,6 +26,11 @@ require_once 'include/utils.php';
 
 class MiscUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        $_REQUEST = array();
+    }
+
 	public function providerIsGuid()
 	{
 		return array(

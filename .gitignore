@@ -1,10 +1,11 @@
-.buildpath
+buildpath
 .externalToolBuilders/
 .project
 .settings/
 .idea
 build/rome/builds/
 sidecar/src/config.js
+sidecar/src/config_si.php
 sidecar/build
 sidecar/docs
 sidecar/extensions/nomad/compiled/*.js
@@ -20,3 +21,4 @@ sugarcrm/custom/modules/
 sugarcrm/custom/Extension/
 sugarcrm/custom/themes/
 tags
+
