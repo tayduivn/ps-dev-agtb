@@ -1,6 +1,9 @@
 (function(app) {
 
     app.view.views.ListView = app.view.View.extend({
+        events:{
+            'click  .show-more-button':'showMoreRecords'
+        },
         initialize: function(options) {
             // Mobile shows only the first two fields
             options.meta.panels[0].fields.length = 2;
@@ -29,6 +32,10 @@
                 this.collection.on('add', this.addOne, this);
                 this.collection.on('remove', this.removeOne, this);
             }
+        },
+        showMoreRecords:function()
+        {
+            this.collection.paginate({page:1});
         }
 
     });

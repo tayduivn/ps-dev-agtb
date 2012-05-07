@@ -57,6 +57,7 @@
             {{/each}}
             </div>
             {{/each}}
+            <div class="show-more-button"> show more </div>
         </div>
     </div>
 </div>
