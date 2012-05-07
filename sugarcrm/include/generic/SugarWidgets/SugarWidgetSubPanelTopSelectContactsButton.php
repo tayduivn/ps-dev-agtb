@@ -153,7 +153,6 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
 				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
-			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 
