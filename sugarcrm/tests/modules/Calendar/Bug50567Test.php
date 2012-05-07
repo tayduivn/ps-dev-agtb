@@ -59,7 +59,7 @@ class Bug50567Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerCorrectNextMonth
-     * @outputBuffering disabled
+     *
      */
     public function testCorrectNextMonth($testDate, $direction, $expectedString)
     {

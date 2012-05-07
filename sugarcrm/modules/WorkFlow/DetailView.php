@@ -115,12 +115,14 @@ $buttons = array(
     '<input title="'.$app_strings['LBL_DELETE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_DELETE_BUTTON_KEY'].'" class="button" onclick="this.form.return_module.value=\'WorkFlow\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; return confirm(\''.$app_strings['NTC_DELETE_CONFIRMATION'].'\')" type="submit" name="DeleteWorkFlow" id="DeleteWorkFlow" value="'.$app_strings['LBL_DELETE_BUTTON_LABEL'].'">'
 );
 
+$javascript = new javascript();
+
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_buttons = smarty_function_sugar_action_menu(array(
     'id' => 'ACLRoles_EditView_action_menu',
     'buttons' => $buttons,
 ), $xtpl);
-
+$javascript->addActionMenu();
 $xtpl->assign('ACTION_MENU', $action_buttons);
 
 $xtpl->parse("main");
@@ -178,11 +180,8 @@ $subactions =  ob_get_contents();
 ob_end_clean();
 }
 
-
-
 ob_start();
 echo $old_contents;
-
 
 if(!empty($subtriggers))$sub_xtpl->assign('SUBTRIGGERS', $subtriggers);
 
@@ -192,4 +191,5 @@ if(!empty($subactions))$sub_xtpl->assign('SUBACTIONS', $subactions);
 $sub_xtpl->parse("subpanel");
 $sub_xtpl->out("subpanel");
 
+echo $javascript->getScript(true, false);
 ?>
