@@ -366,7 +366,7 @@
                 if (options.success) {
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
                         if (data.next_offset) {
-                            model.offset = data.next_offset;
+                            model.offset = (data.next_offset!=-1)?data.next_offset:model.offset;
                             model.page = model.getPageNumber();
                         }
                         data = data.records || [];

@@ -20,7 +20,11 @@
           {{#each ../context.state.collection.models}}
               {{listItem this ../../this ../fields}}
           {{/each}}
-            <div class="show-more-button"> show more </div>
+          </div>
+          <div class="block-footer show-more-button">
+              <span sfuuid="108">
+                  <a class="btn loading wide " name="show_more_button" href="javascript:void(0)">Show More</a>
+              </span>
           </div>
           {{/each}}
       </div>

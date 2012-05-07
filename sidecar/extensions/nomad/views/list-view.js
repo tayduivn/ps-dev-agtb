@@ -33,9 +33,10 @@
                 this.collection.on('remove', this.removeOne, this);
             }
         },
-        showMoreRecords:function()
-        {
-            this.collection.paginate({page:1});
+        showMoreRecords:function() {
+
+           this.collection.paginate({page:this.collection.page,add:true});
+
         }
 
     });
