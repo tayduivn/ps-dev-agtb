@@ -44,13 +44,13 @@ class UpgradeRemoval65x extends UpgradeRemoval
         if($version < '650')
         {
             $files[] = 'themes/RTL/tpls/_companyLogo.tpl';
-            $files[] = 'themes/RTP/tpls/_globalLinks.tpl';
-            $files[] = 'themes/RTP/tpls/_head.tpl';
-            $files[] = 'themes/RTP/tpls/_headerModuleList.tpl';
-            $files[] = 'themes/RTP/tpls/_welcome.tpl';
-            $files[] = 'themes/RTP/tpls/footer.tpl';
-            $files[] = 'themes/RTP/tpls/header.tpl';
-            $files[] = 'themes/RTP/tpls';
+            $files[] = 'themes/RTL/tpls/_globalLinks.tpl';
+            $files[] = 'themes/RTL/tpls/_head.tpl';
+            $files[] = 'themes/RTL/tpls/_headerModuleList.tpl';
+            $files[] = 'themes/RTL/tpls/_welcome.tpl';
+            $files[] = 'themes/RTL/tpls/footer.tpl';
+            $files[] = 'themes/RTL/tpls/header.tpl';
+            $files[] = 'themes/RTL/tpls';
         }
 
         return $files;
