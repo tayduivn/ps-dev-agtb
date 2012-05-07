@@ -47,11 +47,12 @@ class MetaDataManager {
     protected $platform = 'base';
     protected $typeFilter = null;
     protected $user;
-    protected $defaultPlatformDefs = array('list', 'detail', 'edit',);
 
     /**
      * The constructor for the class.
      *
+     * @param User $user A User bean
+     * @param array $platforms A list of clients
      */
     function __construct ($user, $platforms = null) {
         if ( $platforms == null ) {
@@ -67,89 +68,106 @@ class MetaDataManager {
      *
      * @param string $moduleName The name of the module
      * @param string $viewdefType The type of def (layout or view)
-     * @param string $view The name of a view type to get defs for. If omitted
-     *                     all viewdefs for this module and def type will be returned.
      * @return array
      */
-    protected function getModuleViewdefs($moduleName, $viewdefType = 'view', $view = null) {
+    protected function getModuleViewdefs($moduleName, $viewdefType = 'view') {
         // Return data
         $data = array();
 
-        // Metadata types we expect to have
-        if ($view) {
-            $expectedTypes = array($view);
-        } else {
-            $expectedTypes = MetaDataFiles::getClientDefType($this->platforms[0]);
-            if (empty($expectedTypes)) {
-                $expectedTypes = $this->defaultPlatformDefs;
+        // These are module specific locations to look for metadata
+        $locations = array(MB_BASEMETADATALOCATION, MB_CUSTOMMETADATALOCATION);
+
+        // The metadata filenames that we will be getting
+        $filenames = array();
+
+        // Module metadata directories for fetching controllers and templates
+        $moduledirs = array();
+
+        // Start with SugarObjects :: basic
+        $basic = 'include/SugarObjects/templates/basic/metadata/' . $this->platforms[0] . '/';
+        if (is_dir($basic)) {
+            $files = glob($basic . '*.php');
+            foreach ($files as $fullpath) {
+                $filenames[basename($fullpath, '.php')] = $fullpath;
             }
         }
 
-        // Loop and fetch, starting with custom metadata then base metadata
-        $locations = array(MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION);
+        // Now get the SugarObjects :: $moduleType files
+        $moduleType = MetaDataFiles::getSugarObjectFileDir($moduleName, $this->platforms[0], $viewdefType);
+        if (is_dir($moduleType)) {
+            $files = glob($moduleType . '*.php');
+            foreach ($files as $fullpath) {
+                $filenames[basename($fullpath, '.php')] = $fullpath;
+            }
+        }
+
+        // Now handle the module locations
+        foreach ($locations as $location) {
+            $dir = MetaDataFiles::getModuleFileDir($moduleName, $location, $this->platforms[0], $viewdefType);
+
+            // Handle getting the metadata files
+            if (is_dir($dir)) {
+                $files = glob($dir . '*.php');
+                foreach ($files as $fullpath) {
+                    $filenames[basename($fullpath, '.php')] = $fullpath;
+                }
+
+                // Now set the moduledirs array for templates and controllers
+                $moduledirs[$location] = $dir;
+            }
+        }
+
 
         // This is an array of metadata files already read so we don't clobber stuff
         $fetched = array();
 
-        foreach ($locations as $location) {
-            foreach ($expectedTypes as $type) {
-                // If we've already gotten this one, let it ride
-                if (isset($fetched[$type])) {
-                    continue;
+        // Loop the filenames array and grab our metadata
+        foreach ($filenames as $type => $filename) {
+            // If we've already gotten this one, let it ride
+            if (isset($fetched[$type])) {
+                continue;
+            }
+
+            // If the file doesn't exist, move on
+            // No, this should never happen, but making sure always makes sense
+            if (!file_exists($filename)) {
+                continue;
+            }
+
+            // Require rather than require once since we need the data as is
+            require $filename;
+
+            // Set that we've fetched it
+            $fetched[$type] = true;
+
+            // Search is not fully converted to sidecar so handle it differently
+            // TODO: figure out how to standardize metadata at a higher level
+            //       so that these kinds of conditionals don't need to exist
+            if ($type == 'search') {
+                if (isset($searchdefs['<module_name>']) || isset($searchdefs['<_module_name>']) || isset($searchdefs['<MODULE_NAME>'])) {
+                    $searchdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $searchdefs);
                 }
 
-                // First try, see if the module has the metadata file we want
-                $filename = MetaDataFiles::getModuleFileName($moduleName, $type, $location, $this->platforms[0], $viewdefType);
-                $searchPath = dirname($filename);
-
-                if (!file_exists($filename)) {
-                    // If we are in the custom scope no need to get SugarObject meta
-                    // since it's already been gotten
-                    if ($location == MB_CUSTOMMETADATALOCATION) {
-                        continue;
-                    }
-
-                    // Fall back to SugarObjects if there is one
-                    $filename = MetaDataFiles::getSugarObjectFileName($moduleName, $type, $this->platforms[0], $viewdefType);
-                    if (!file_exists($filename)) {
-                        continue;
-                    }
+                if (isset($searchdefs[$moduleName])) {
+                    $data[$type]['meta'] = $searchdefs[$moduleName];
                 }
 
-                // Require rather than require once since we need the data as is
-                require $filename;
-
-                // Set that we've fetched it
-                $fetched[$type] = true;
-                $templates = $this->fetchTemplates(array($searchPath));
-                $controllers = $this->fetchTemplates(array($searchPath), ".js");
-
-                // Search is not fully converted to sidecar so handle it differently
-                // TODO: figure out how to standardize metadata at a higher level
-                //       so that these kinds of conditionals don't need to exist
-                if ($type == 'search') {
-                    if (isset($searchdefs['<module_name>']) || isset($searchdefs['<_module_name>']) || isset($searchdefs['<MODULE_NAME>'])) {
-                        $searchdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $searchdefs);
-                    }
-
-                    if (isset($searchdefs[$moduleName])) {
-                        $data[$type] = array(
-                            "meta" => $searchdefs[$moduleName]
-                        );
-                    }
-
-                } else {
-                    if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
-                        $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $viewdefs);
-                    }
-
-                    // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
-                    if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]) ) {
-                        $data[$type] = array(
-                            "meta" => $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]
-                        );
-                    }
+            } else {
+                if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
+                    $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $viewdefs);
                 }
+
+                // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
+                if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]) ) {
+                    $data[$type]['meta'] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type];
+                }
+            }
+
+            foreach ($moduledirs as $dir) {
+                // Templates and controllers can go here
+                $templates = $this->fetchTemplates(array($dir));
+                $controllers = $this->fetchTemplates(array($dir), ".js");
+
                 //Next add a custom template if it exists
                 if (!empty($templates[$type])) {
                     $data[$type]['template'] = $templates[$type];
@@ -241,8 +259,8 @@ class MetaDataManager {
     /**
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
-     * @param $module The module we want to fetch the ACL for
-     * @param $user The user id for the ACL's we are retrieving.
+     * @param string $module The module we want to fetch the ACL for
+     * @param string $userId The user id for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
     public function getAclForModule($module,$userId) {
