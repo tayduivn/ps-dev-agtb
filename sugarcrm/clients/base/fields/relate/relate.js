@@ -9,6 +9,7 @@
     initialize: function(options) {
         _.bindAll(this);
         this.app.view.Field.prototype.initialize.call(this, options);
+        this.optionsTemplateC = this.app.template.getField(this.type, "options");
     },
     /**
      * Renders relate field
@@ -54,7 +55,6 @@
             success: function(data) {
                 if (data.models.length > 0) {
                     self.options = data.models;
-                    self.setOptionsTemplate();
                     var options = self.optionsTemplateC(self);
                     self.$('select').html(options);
                     self.$('select').trigger("liszt:updated");
@@ -64,18 +64,6 @@
             }
 
         });
-    },
-    /**
-     * Sets custom options template from app cache and compiles it
-     */
-    setOptionsTemplate: function() {
-        var templateKey = "sugarField." + this.fieldType + ".options";
-
-        var templateSource = null;
-
-        if (this.meta) {
-            templateSource = this.meta.views["options"];
-        }
-        this.optionsTemplateC = this.app.template.get(templateKey) || this.app.template.compile(templateSource, templateKey);
     }
+
 })
