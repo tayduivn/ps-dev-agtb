@@ -48,7 +48,7 @@ class Bug51679Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @outputBuffering disabled
+     *
      */
     public function testM2MRelationships()
     {

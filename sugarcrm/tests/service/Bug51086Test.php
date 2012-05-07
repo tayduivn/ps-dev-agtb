@@ -131,7 +131,7 @@ class Bug51086Test extends SOAPTestCase
 
     //test that the soap call will honor field level acl with a passed in list of selected fields
     /**
-     * @outputBuffering disabled
+     *
      */
     public function testFieldLevelACLWithDefinedSelect()
     {
