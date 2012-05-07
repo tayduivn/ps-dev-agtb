@@ -79,6 +79,12 @@ class SugarBean
 	//END SUGARCRM flav=pro ONLY
 
 	/**
+	 * How deep logic hooks can go
+	 * @var int
+	 */
+	protected $max_logic_depth = 10;
+
+	/**
 	 * Disble vardefs.  This should be set to true only for beans that do not have varders.  Tracker is an example
 	 *
 	 * @var BOOL -- default false
@@ -256,6 +262,13 @@ class SugarBean
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
     var $in_import = false;
+    /**
+     * A way to keep track of the loaded relationships so when we clone the object we can unset them.
+     *
+     * @var array
+     */
+    protected $loaded_relationships = array();
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -936,6 +949,23 @@ class SugarBean
 
 
     /**
+     * Handle the following when a SugarBean object is cloned
+     *
+     * Currently all this does it unset any relationships that were created prior to cloning the object
+     *
+     * @api
+     */
+    public function __clone()
+    {
+        if(!empty($this->loaded_relationships)) {
+            foreach($this->loaded_relationships as $rel) {
+                unset($this->$rel);
+            }
+        }
+    }
+
+
+    /**
      * Loads the request relationship. This method should be called before performing any operations on the related data.
      *
      * This method searches the vardef array for the requested attribute's definition. If the attribute is of the type
@@ -978,6 +1008,8 @@ class SugarBean
                     unset($this->$rel_name);
                     return false;
                 }
+                // keep track of the loaded relationships
+                $this->loaded_relationships[] = $rel_name;
                 return true;
             }
         }
@@ -3217,6 +3249,8 @@ class SugarBean
         if($custom_join)
         {
             $ret_array['from'] .= ' ' . $custom_join['join'];
+            // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
+            $ret_array['from_min'] .= ' ' . $custom_join['join'];
         }
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
@@ -5094,6 +5128,12 @@ class SugarBean
         // We need to confirm that the user is a member of the team of the item.
 
         global $current_user;
+        
+        if(empty($current_user) || empty($current_user->id))
+        {
+            return;
+        }
+                
         // The user either has to be an admin, or be assigned to the team that owns the data
         $team_table_alias = 'team_memberships';
 
@@ -5334,7 +5374,7 @@ class SugarBean
         if(!isset($this->processed) || $this->processed == false){
             //add some logic to ensure we do not get into an infinite loop
             if(!empty($this->logicHookDepth[$event])) {
-                if($this->logicHookDepth[$event] > 10)
+                if($this->logicHookDepth[$event] > $this->max_logic_depth)
                     return;
             }else
                 $this->logicHookDepth[$event] = 0;
@@ -5352,6 +5392,7 @@ class SugarBean
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+            $this->logicHookDepth[$event]--;
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
             if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")

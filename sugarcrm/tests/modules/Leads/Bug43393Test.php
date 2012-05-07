@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,21 +27,47 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Leads/views/view.convertlead.php');
+require_once 'modules/Leads/views/view.editconvert.php';
 
-class SugarTestViewConvertLeadUtilities
+
+class Bug43393Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
-    private static $_createdViewConvertLeads = array();
-
-    private function __construct() {}
-
-    public static function createViewConvertLead($id = '')
+    public function setUp()
     {
-        $view_conv_lead = new ViewConvertLead();
-        require('modules/Leads/metadata/convertdefs.php');
-        $view_conv_lead->defs = $viewdefs;
-        self::$_createdViewConvertLeads[] = $view_conv_lead;
-        return $view_conv_lead;
+        global $mod_strings;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'Leads');
+
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
+    
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_list_strings']);
+    }
+
+    /**
+     * @group bug43393
+     */
+    public function testStudioModuleAddNoLeadsOrUsers()
+    {
+        // set the request/post parameters
+        $_REQUEST['module'] = 'Leads';
+        $_REQUEST['action'] = 'Editconvert';
+
+        // call display to generate output
+        $vc = new ViewEditConvert();
+        $vc->display();
+
+        // we don't want leads or users to show up in the list
+        $this->expectOutputNotRegex('/.*(Leads|Users)'.preg_quote('<\/option>','/').'.*/');
+
+        // cleanup
+        unset($_REQUEST['module']);
+        unset($_REQUEST['action']);
+    }
+
 }
-?>

@@ -149,7 +149,7 @@ $dbOut = $outs['dbOut'];
 $result = checkSystemCompliance();
 $checks = array(
 	'phpVersion'				=> $mod_strings['LBL_UW_COMPLIANCE_PHP_VERSION'],
-	'mysqlVersion'				=> $mod_strings['LBL_UW_COMPLIANCE_MYSQL'],
+    'dbVersion'                 => $mod_strings['LBL_UW_COMPLIANCE_DB'],
 	'xmlStatus'					=> $mod_strings['LBL_UW_COMPLIANCE_XML'],
 	'curlStatus'				=> $mod_strings['LBL_UW_COMPLIANCE_CURL'],
 	'imapStatus'				=> $mod_strings['LBL_UW_COMPLIANCE_IMAP'],
@@ -157,6 +157,7 @@ $checks = array(
 	'safeModeStatus'			=> $mod_strings['LBL_UW_COMPLIANCE_SAFEMODE'],
 	'callTimeStatus'			=> $mod_strings['LBL_UW_COMPLIANCE_CALLTIME'],
 	'memory_msg'				=> $mod_strings['LBL_UW_COMPLIANCE_MEMORY'],
+    'stream_msg'                => $mod_strings['LBL_UW_COMPLIANCE_STREAM'],
     'ZipStatus'			        => $mod_strings['LBL_UW_COMPLIANCE_ZIPARCHIVE'],
 	//commenting mbstring overload.
 	//'mbstring.func_overload'	=> $mod_strings['LBL_UW_COMPLIANCE_MBSTRING_FUNC_OVERLOAD'],

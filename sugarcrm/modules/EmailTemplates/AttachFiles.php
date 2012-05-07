@@ -42,7 +42,7 @@ $ret = array();
 foreach($_FILES as $k => $file) {
 	if(in_array(strtolower($_FILES[$k]['type']), $imgType)) {
 		$dest = $cachedir.$_FILES[$k]['name'];
-		if(is_uploaded_file($_FILES[$k]['tmp_name'])) {
+		if(is_uploaded_file($_FILES[$k]['tmp_name']) && verify_uploaded_image($_FILES[$k]['tmp_name'])) {
 			move_uploaded_file($_FILES[$k]['tmp_name'], $dest);
 		    $ret[] = $dest;
 		}
@@ -54,5 +54,3 @@ if (!empty($ret)) {
 	echo $json->encode($ret);
 	//return the parameters
 }
-
-?>

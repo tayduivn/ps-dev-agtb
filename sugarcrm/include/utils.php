@@ -1120,7 +1120,8 @@ function return_application_language($language)
 	}
 
 	// If we are in debug mode for translating, turn on the prefix now!
-	if($sugar_config['translation_string_prefix']) {
+    if(!empty($sugar_config['translation_string_prefix']))
+    {
 		foreach($app_strings as $entry_key=>$entry_value) {
 			$app_strings[$entry_key] = $language.' '.$entry_value;
 		}
@@ -4828,7 +4829,8 @@ function verify_image_file($path, $jpeg = false)
             if(file_put_contents($path, $image)) {
                 return true;
             }
-        } elseif ($filetype == "image/png") { // else if the filetype is png, create png
+        } elseif ($filetype == "image/png") {
+            // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
         	ob_start();
@@ -4863,7 +4865,7 @@ function verify_image_file($path, $jpeg = false)
 
 /**
  * Verify uploaded image
- * Verifies that image has proper extension, MIME type and doesn't contain hostile contant
+ * Verifies that image has proper extension, MIME type and doesn't contain hostile content
  * @param string $path  Image path
  * @param bool $jpeg_only  Accept only JPEGs?
  */
@@ -4881,7 +4883,7 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	$img_size = getimagesize($path);
 	$filetype = $img_size['mime'];
 	$ext = end(explode(".", $path));
-	if(substr_count('..', $path) > 0 || ($ext !== $path && !in_array(strtolower($ext), array_keys($supportedExtensions))) ||
+	if(substr_count('..', $path) > 0 || ($ext !== $path && !isset($supportedExtensions[strtolower($ext)])) ||
 	    !in_array($filetype, array_values($supportedExtensions))) {
 	        return false;
 	}

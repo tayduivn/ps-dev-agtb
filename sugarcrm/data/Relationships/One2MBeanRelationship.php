@@ -84,6 +84,11 @@ class One2MBeanRelationship extends One2MRelationship
             $this->callAfterAdd($rhs, $lhs);
         }
 
+        //One2MBean relationships require that the RHS bean be saved or else the relationship will not be saved.
+        //If we aren't already in a relationship save, intitiate a save now.
+        if (empty($GLOBALS['resavingRelatedBeans']))
+            SugarRelationship::resaveRelatedBeans();
+        
         return true;
     }
 
@@ -271,6 +276,10 @@ class One2MBeanRelationship extends One2MRelationship
         $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
                . $this->getRoleWhere() . "\n";
+
+        if (!empty($params['return_as_array'])) {
+            $return_array = true;
+        }
 
         if($return_array){
             return array(

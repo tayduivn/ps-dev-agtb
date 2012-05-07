@@ -431,7 +431,6 @@ EOQ;
 		$widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>';
 		foreach($subpanel_def as $widget_data)
 		{
-			$widget_data['query']=urlencode($panel_query);
 			$widget_data['action'] = $_REQUEST['action'];
 			$widget_data['module'] =  $thisPanel->get_inst_prop_value('module');
 			$widget_data['focus'] = $this->focus;

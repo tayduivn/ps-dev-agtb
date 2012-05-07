@@ -320,7 +320,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	function queryFilterTP_this_month($layout_def)
 	{
 		global $timedate;
-		return $this->queryMonth($layout_def, $this->now()->get_day_by_index_this_month(1));
+		return $this->queryMonth($layout_def, $this->now()->get_day_by_index_this_month(0));
 	}
 
 	function queryFilterTP_next_month($layout_def)
@@ -465,12 +465,14 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return parent :: querySelect($layout_def)." \n";
 	}
 	function & displayListday(& $layout_def) {
-		return parent:: displayListPlain($layout_def);
+		$value = parent:: displayListPlain($layout_def);
+		return $value;
 	}
 
 	function & displayListyear(& $layout_def) {
 		global $app_list_strings;
-    	return parent:: displayListPlain($layout_def);
+    	$value = parent:: displayListPlain($layout_def);
+    	return $value;
 	}
 
 	function displayListmonth($layout_def)
