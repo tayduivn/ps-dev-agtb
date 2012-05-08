@@ -33,23 +33,25 @@
             this.$el.show();
         },
         setCreateTasksList: function() {
-            var self = this;
+            var self = this, singularModules;
             self.createListLabels = [];
+
             try {
-                if(app.acl.hasAccess('edit', app.data.createBean('Bugs',{assigned_user_id: 'assignedUserId'}))) {
-                    self.createListLabels.push(app.lang.get('LBL_CREATE_BUG', 'Emails'));
-                }
-                if(app.acl.hasAccess('edit', app.data.createBean('Cases', {assigned_user_id: 'assignedUserId'}))) {
-                    self.createListLabels.push(app.lang.get('LBL_CREATE_CASE', 'Emails'));
-                }
-                if(app.acl.hasAccess('edit', app.data.createBean('Leads', {assigned_user_id: 'assignedUserId'}))) {
-                    self.createListLabels.push(app.lang.get('LBL_CREATE_LEAD', 'Emails'));
-                }
-                // At time of writing KBDocuments module is not supported so this will throw. I put it here so that bugs, cases,
-                // and leads still render properly. When available, Create KBDocument will be pushed into second to last indice. 
-                if(app.acl.hasAccess('edit', app.data.createBean('KBDocuments', {assigned_user_id: 'assignedUserId'}))) {
-                    self.createListLabels.splice([self.createListLabels.length - 1], 0, app.lang.getAppStrings('LBL_CREATE_KB_DOCUMENT'));
-                    
+                singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
+                if(singularModules) {
+                    _.each(self.moduleList, function(loadedModule) {
+
+                        // Continue on Leads, Notes, or KBDocuments, but for all others:
+                        // check access to create and push to list
+                        if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
+                            app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
+                        } else {
+                            var singular = (singularModules[loadedModule]) ? singularModules[loadedModule] : loadedModule;
+                            if(app.acl.hasAccess('create', app.data.createBean(loadedModule,{assigned_user_id: 'assignedUserId'}))) {
+                                self.createListLabels.push('Create '+singular);
+                            }
+                        }
+                    });
                 }
             } catch(e) {
                 return;
