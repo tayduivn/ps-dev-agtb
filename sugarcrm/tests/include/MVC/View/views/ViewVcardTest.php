@@ -58,6 +58,6 @@ class ViewVcardTest extends Sugar_PHPUnit_Framework_OutputTestCase
 	    $view->module = 'Contacts';
         $view->display();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->expectOutputRegex('BEGIN\:VCARD');
+        $this->expectOutputRegex('/BEGIN\:VCARD/');
 	}
 }
