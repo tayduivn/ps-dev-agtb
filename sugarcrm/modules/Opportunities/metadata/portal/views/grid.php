@@ -36,6 +36,9 @@ $viewdefs['Opportunities']['portal']['view']['grid'] = array(
                     'label' => 'Lead Source',
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'ctels',
+                    'ctetype' => 'chosen',
                 ),
                 4 =>
                 array(

@@ -78,7 +78,6 @@ EOQ;
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         $_SESSION['avail_modules'][$this->package] = 'write';
-        $this->useOutputBuffering = false;
     }
 
     public function tearDown()

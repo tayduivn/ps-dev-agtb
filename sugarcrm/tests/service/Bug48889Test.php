@@ -40,8 +40,6 @@ class Bug48889Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-
-        $this->useOutputBuffering = false;
     }
 
     public function tearDown()

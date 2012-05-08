@@ -7,8 +7,24 @@
             app.api.debug = app.config.debugSugarApi;
             app.start();
             app.logger.debug('App started');
+        },
 
-            //document.addEventListener("backbutton", NOMAD.onBackButtonTouched, false); // for Android
+        /**
+         * Displays email chooser UI.
+         * @param {Array} emails
+         * @param {String} subject(optional)
+         * @param {String} body(optional)
+         */
+        sendEmail: function(emails, subject, body) {
+            // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Displays phone chooser UI.
+         * @param {Array} phones
+         */
+        callPhone: function(phones) {
+            // TODO: Implement HTML action sheet view
         }
 
     });

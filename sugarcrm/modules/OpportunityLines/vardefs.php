@@ -77,6 +77,30 @@ array (
     'comment' => 'Discount price expressed in USD',
     'studio' => array('editview' => false),
 ),
+'best_case' =>
+array (
+    'name' => 'best_case',
+    'vname' => 'LB_BEST_CASE_VALUE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'likely_case' =>
+array (
+    'name' => 'likely_case',
+    'vname' => 'LB_LIKELY_VALUE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'worst_case' =>
+array (
+    'name' => 'worst_case',
+    'vname' => 'LB_WORST_CASE_VALUE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
 'currency_id' =>
 array (
     'name' => 'currency_id',

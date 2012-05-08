@@ -146,7 +146,18 @@
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+
+        /**
+         * Binds data changes to the model to trigger an initial view to render
+         */
+        bindDataChange: function() {
+            if (this.collection) {
+                this.collection.on("reset", this.render, this);
+            }
         }
+
 
     });
 
