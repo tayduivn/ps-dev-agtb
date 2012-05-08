@@ -142,15 +142,6 @@ SUGAR.App = (function() {
 
             app.events.register(
                 /**
-                 * @event
-                 * This event is fired when an alert must be displayed
-                 */
-                "app:alert",
-                this
-            );
-
-            app.events.register(
-                /**
                  * Route change event. Fired when the route has
                  * changed and before the application is loading layouts and views.
                  *
@@ -162,6 +153,7 @@ SUGAR.App = (function() {
                 "app:view:change",
                 this
             );
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(modules, function(module, key) {
@@ -317,16 +309,6 @@ SUGAR.App = (function() {
             route = this.router.buildRoute(module, id, action, params);
 
             this.router.navigate(route, {trigger: true});
-        },
-
-        /**
-         * Display an alert.
-         * @method
-         * @param {String} level Either "info", "warn" or "error".
-         * @param {String} message The message
-         */
-        alert: function(level, message) {
-            app.trigger("app:alert", [level, message]);
         },
 
         modules: modules
