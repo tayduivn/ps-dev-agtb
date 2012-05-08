@@ -343,9 +343,7 @@
 
             options = options || {};
             options.params = options.params || {};
-            if (options.skipValidation) {
-                this.skipValidation=true;
-            }
+            
             if (options.fields) {
                 options.params.fields = options.fields.join(",");
             }
