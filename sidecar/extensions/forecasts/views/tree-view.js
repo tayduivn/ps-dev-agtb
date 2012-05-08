@@ -8,17 +8,23 @@
      */
     app.view.views.TreeView = app.view.View.extend({
 
-
         rendered : false,
 
         primary_user : '',
 
         reportees : '',
 
+        /**
+         * Initialize the View
+         *
+         * @constructor
+         * @param {Object} options
+         */
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
             app.events.register("treeview:node_select", this);
         },
+
         /**
          * Start the rendering of the JS Tree
          */
@@ -27,8 +33,6 @@
             // only let this render once.  since if there is more than one view on a layout it renders twice
             if(this.rendered) return;
             app.view.View.prototype.render.call(this);
-
-
 
             this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
             this.primary_user.on('change', this.postUserFetch, this);
@@ -122,6 +126,11 @@
             }).bind("select_node.jstree", this.treeNodeSelect);
         },
 
+        /**
+         * Event Handler for when a jsTree node is selected
+         * @param event
+         * @param data
+         */
         treeNodeSelect: function(event, data)
         {
             jsData = data.inst.get_json();
