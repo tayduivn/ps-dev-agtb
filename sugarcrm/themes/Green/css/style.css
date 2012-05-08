@@ -91,6 +91,7 @@ height: 43px\9;;
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul,
+ul.filter-menu li a.selected,
 ul.megamenu ul a:hover,
 ul.moduleTabMore li a:hover,
 ul.sf-sub-modulelist li a:hover,
@@ -108,9 +109,11 @@ ul.sf-sub-modulelist li a:hover,
 	background:		#6ea100;
 }
 
-
+ul.SugarActionMenuIESub li a:hover,
+ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
 ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 	background:		#6ea100;
+    color:#ffffff !important;
 }
 
 #globalLinksModule:hover, #quickCreate ul.clickMenu > li:hover {
