@@ -55,7 +55,7 @@ function add_prospects_to_prospect_list($query_panel,$parent_module,$parent_type
 
 
 	if (!class_exists($parent_type)) {
-		require_once('modules/'.$parent_module.'/'.$parent_type.'.php');
+		require_once('modules/'.cleanDirName($parent_module).'/'.cleanDirName($parent_type).'.php');
 	}
 	$focus = new $parent_type();
 	$focus->retrieve($parent_id);
@@ -227,7 +227,8 @@ else {
  		$current_query_by_page_array = unserialize(base64_decode($current_query_by_page));
 
         $module = $current_query_by_page_array['module'];
- 		$seed = loadBean($module);
+        $seed = BeanFactory::getBean($module);
+        if(empty($seed)) exit;
  		$where_clauses = '';
  		require_once('include/SearchForm/SearchForm2.php');
 
