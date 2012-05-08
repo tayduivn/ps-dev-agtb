@@ -137,11 +137,8 @@
                 _.each(errors, function(fieldErrors, fieldName) {
                     self.trigger("model.validation.error." + fieldName, fieldErrors);
                 });
-                this.trigger('model.validation.disableSave');
                 // trigger error events on this object
                 return errors;
-            } else {
-                this.trigger('model.validation.enableSave');
             }
         },
 
