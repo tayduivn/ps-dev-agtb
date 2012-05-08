@@ -1726,4 +1726,26 @@ EOQ;
 			),
         );
     }
+
+    /**
+     * Returns a DB specific FROM clause which can be used to select against functions.
+     * Note that depending on the database that this may also be an empty string.
+     * @return string
+     */
+    public function getFromDummyTable()
+    {
+        return "from dual";
+    }
+
+    /**
+     * Returns a DB specific piece of SQL which will generate GUID (UUID)
+     * This string can be used in dynamic SQL to do multiple inserts with a single query.
+     * I.e. generate a unique Sugar id in a sub select of an insert statement.
+     * @return string
+     */
+	public function getGuidSQL()
+    {
+        $guidStart = create_guid_section(3);
+      	return "'$guidStart-' || sys_guid()";
+    }
 }
