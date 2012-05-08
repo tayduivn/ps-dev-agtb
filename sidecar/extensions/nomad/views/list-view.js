@@ -4,8 +4,9 @@
         events:{
             'click  .show-more-button':'showMoreRecords',
             'click  article .grip':'onClickGrip',
-            'swipeLeft article':'swipeLeftItem',
-            'swipeRight article':'swipeRightItem'
+            'swipeLeft article':'onSwipeLeftItem',
+            'swipeRight article':'onSwipeRightItem',
+            'click .remove-item-btn':'onRemoveItem'
         },
         initialize: function(options) {
             // Mobile shows only the first two fields
@@ -46,7 +47,7 @@
             var isActive = grip.hasClass('on');
             grip.closest('article').trigger(isActive ? 'swipeRight' : 'swipeLeft');
         },
-        swipeLeftItem:function(e){
+        onSwipeLeftItem:function(e){
             if (this.activeArticle) {
                 this.activeArticle.trigger('swipeRight');
             }
@@ -56,11 +57,20 @@
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
 
         },
-        swipeRightItem:function(e){
+        onSwipeRightItem:function(e){
             this.activeArticle.find('.grip').removeClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+        },
+        onRemoveItem:function(e){
+            //need confirm!!!!
+            var cid = $(e.target).closest('article').attr('model');
+            var model = this.collection.get(cid);
+            this.collection.remove(model);
+            model.destroy();
+        },
+        onEditItem:function(){
+            app.logger.debug('EDIT ONE!');
         }
-
     });
 
 })(SUGAR.App);

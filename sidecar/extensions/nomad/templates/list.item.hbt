@@ -1,4 +1,4 @@
-<article id="{{model.module}}{{model.id}}">
+<article id="{{model.module}}{{model.id}}" model="{{model.id}}">
     <i class="icon-star-empty"></i>
     <div>
     <a href="#{{model.module}}/{{model.id}}">
@@ -13,8 +13,8 @@
     <span id="listing-action-item1">
         <i class="grip">|||</i>
         <span class="hide actions">
-          <a href="#" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a>
-          <a href="#" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>
+          <a href="#" title="Edit" class="edit-item-btn"><i class="icon-pencil icon-md"></i><br>Edit</a>
+          <a href="#" title="Remove" class="remove-item-btn"><i class="icon-trash icon-md"></i><br>Remove</a>
         </span>
     </span>
 </article>
