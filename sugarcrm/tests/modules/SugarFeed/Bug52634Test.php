@@ -37,17 +37,13 @@ class Bug52634Test extends Sugar_PHPUnit_Framework_TestCase
     private $l_ids = array();
     public function setUp()
     {
-
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
 
         //set up the current user as a non admin with a marketing role
-        $this->user = SugarTestUserUtilities::createAnonymousUser();
-        $this->user->is_admin = false;
-        $GLOBALS['current_user'] = $this->user;
+        $this->user = $GLOBALS['current_user'];
 
         //select and assign the marketing role
         $role_id = $GLOBALS['db']->getOne("select id from acl_roles where name = 'Marketing Administrator' ");
@@ -64,13 +60,11 @@ class Bug52634Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         foreach($this->l_ids as $id){
             $GLOBALS['db']->query("DELETE FROM leads WHERE id= '{$id}'");
         }
 
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        SugarTestHelper::tearDown();
     }
 
 
