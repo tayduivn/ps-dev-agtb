@@ -146,7 +146,7 @@
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
-        }
+        },
 
 
         /**
