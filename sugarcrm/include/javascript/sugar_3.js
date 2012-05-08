@@ -2430,7 +2430,8 @@ sugarListView.prototype.check_boxes = function() {
 						if(inputs_array[wp].value == checked_items[i]) {
 							checkedCount++;
 							inputs_array[wp].checked = true;
-							sugarListView.prototype.check_item(inputs_array[wp], document.MassUpdate);
+                            //Bug#52748: Total # of checked items are calculated in back-end side
+							//sugarListView.prototype.check_item(inputs_array[wp], document.MassUpdate);
 						}
 					}
 				}
