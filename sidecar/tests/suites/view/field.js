@@ -4,8 +4,6 @@ describe("Field", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.template.initialize();
-        app.template.load(meta.viewTemplates);
         app.metadata.set(meta);
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
@@ -13,10 +11,10 @@ describe("Field", function() {
         view = new app.view.View({ name: "test", context: context });
     });
 
-     afterEach(function() {
-         app.cache.cutAll();
-         delete Handlebars.templates;
-     });
+    afterEach(function() {
+        app.cache.cutAll();
+        delete Handlebars.templates;
+    });
 
     it("should delegate events", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
@@ -46,11 +44,11 @@ describe("Field", function() {
 
     it("should render sugarfields html", function() {
         var field = app.view.createField({
-                def: {name: "status", type: "text"},
-                view: view,
-                context: context,
-                model: bean
-            });
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
 
         bean.set({status: "new", id: "anId"});
         field.render();
@@ -64,7 +62,7 @@ describe("Field", function() {
                 view: view,
                 context: context,
                 model: bean
-            }), 
+            }),
             spy = sinon.spy(field, 'bindDomChange');
 
         bean.set({status: "new", id: "anId"});
@@ -88,23 +86,39 @@ describe("Field", function() {
         expect(field.model).toBeUndefined();
         //expect(field.context).toBeUndefined();
     });
+    it("handle errors on model validation error", function() {
+        var handleSpy = sinon.spy(app.view.Field.prototype, 'handleValidationError');
+        var field = app.view.createField({
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
+        var errors = {
+            status: {
+                error: "some random error string"
+            }
+        };
+        bean.processValidationErrors(errors);
+        expect(handleSpy).toHaveBeenCalled();
+        handleSpy.restore();
+    });
 
 
     it("bind render to model change events", function() {
-        var secondBean = app.data.createBean("Cases"),
-            field = app.view.createField({
-                def: {name: "status", type: "text"},
-                view: view,
-                context: context,
-                model: bean
-            });
+        var field = app.view.createField({
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
 
 
         bean.set({status: "new", id: "anId"});
         field.render();
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
 
-        bean.set("status","older");
+        bean.set("status", "older");
 
         expect(field.$el.html()).toEqual('<span name="status">older</span>');
     });
@@ -113,23 +127,23 @@ describe("Field", function() {
         var id = _.uniqueId('sugarFieldTest'),
             bean, field, input, view;
 
-        $('body').append('<div id="'+id+'"></div>');
+        $('body').append('<div id="' + id + '"></div>');
         bean = new Backbone.Model();
         view = new app.view.View({name: 'edit', context: context});
         field = app.view.createField({
-            def: {name: "status", type: "varchar"},
+            def: {name: "status", type: "text"},
             view: view,
             context: context,
             model: bean,
-            el:$('#'+id)
+            el: $('#' + id)
         });
 
         bean.set({status: "new"});
         input = field.$el.find("input");
-        input.attr('value','bob');
+        input.attr('value', 'bob');
         input.trigger('change');
         expect(bean.get('status')).toEqual('bob');
-        $('#'+id).remove();
+        $('#' + id).remove();
     });
 });
 

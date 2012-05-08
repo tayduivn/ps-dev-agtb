@@ -40,7 +40,6 @@ class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
-        $this->useOutputBuffering = false;
 	}
 
 	public function tearDown()

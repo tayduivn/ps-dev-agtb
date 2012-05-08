@@ -65,7 +65,7 @@ class QuerySanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider  getQueries
-     * @outputBuffering disabled
+     *
      */
     public function testCheckQuery($where, $order_by, $ok)
     {

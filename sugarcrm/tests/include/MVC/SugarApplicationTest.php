@@ -62,6 +62,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        /*
         unset($GLOBALS['current_user']);
         unset($GLOBALS['moduleList']);
         unset($GLOBALS['request_string']);
@@ -77,6 +78,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['starttTime']);
         unset($GLOBALS['sugar_version']);
         unset($GLOBALS['sugar_flavor']);
+        */
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
 
         if ( isset($this->prevRefererList)) {

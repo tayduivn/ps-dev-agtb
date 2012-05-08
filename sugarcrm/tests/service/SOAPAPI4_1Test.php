@@ -170,7 +170,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * testGetModifiedRelationships
-     * @outputBuffering disabled
+     *
      */
     public function testGetModifiedRelationships()
     {

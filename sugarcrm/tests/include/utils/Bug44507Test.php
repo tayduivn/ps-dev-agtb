@@ -52,8 +52,6 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     	$randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
         $randomTeam->add_user_to_team($GLOBALS['current_user']->id);
 
-	    $this->useOutputBuffering = false;
-
 	    global $sugar_config;
 	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
 	    $sugar_config['disable_count_query'] = true;

@@ -63,7 +63,6 @@ class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $hook_array['after_relationship_add'][] = Array(1, 'Cases increment count', $this->casesCountFile,'CaseCount', 'countMe');
         write_array_to_file("hook_array", $hook_array, $this->casesHookFile);
-        $this->useOutputBuffering = false;
         LogicHook::refreshHooks();
 
         //now  write out the script that the logichook executes.  This will keep track of times called

@@ -4,102 +4,204 @@
         _footer = '})();',
         _templates = {};
 
+    /**
+     * Manages Handlebars templates.
+     * @class View.TemplateManager
+     * @singleton
+     * @alias SUGAR.App.template
+     */
+    var _templateManager = {
+
         /**
-         * Loads and compiles Handlebars templates.
-         * @class View.TemplateManager
-         * @singleton
-         * @alias SUGAR.App.template
+         * Loads templates from local storage and populates `Handlebars.templates` collection.
          */
-        var _templateManager = {
-            //Initialize will pull the compiled templates from local storage and populate Handlebars.templates
-            initialize: function() {
-                _templates = app.cache.get("templates") || {};
-                var src = "";
-                _.each(_templates, function(t) {
-                    src += t;
-                });
+        init: function() {
+            _templates = app.cache.get("templates") || {};
+            var src = "";
+            _.each(_templates, function(t) {
+                src += t;
+            });
+
+            try {
                 eval(_header + src + _footer);
-            },
+            }
+            catch (e) {
+                app.logger.error("Failed to eval templates retrieved from local storage:\n" + e);
+                // TODO: Trigger app:error event
+            }
+        },
 
-            /**
-             * Compile will put the precompiled version of the template in cache and return the compiled template
-             * @param {String} src The actual template source to be compiled
-             * @param {String} key An identifier to reference the compiled template at a later time
-             * @method
-             */
-            compile: function(src, key) {
-                try {
-                    _templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
-                    app.cache.set("templates", _templates);
-                    eval(_header + _templates[key] + _footer);
-                } catch (e) {
-                    //Bad templates will cause a JS error when they either pre-compile or compile.
-                    app.logger.error("Template compilation error; unable to compile " + key + ".\n" + e.message);
-                }
-                return this.get(key);
-            },
+        /**
+         * Conditionally compiles a template.
+         * @param {Array} tpl First item is template key, the second is compiled template.
+         * @param {String} src Template source code.
+         * @param {Boolean} force Flag indicating if the template must be re-compiled.
+         * @private
+         * @ignore
+         */
+        _compile: function(tpl, src, force) {
+            return (force || !tpl[1]) ?
+                this.compile(tpl[0], src) :
+                tpl[1];
+        },
 
-            /**
-             * Set/override a handlebars template
-             * @method
-             * @param {String} src The actual template source to be compiled
-             * @param {String} key An identifier to reference the compiled template at a later time
-             */
-            set: function(src, key) {
-                this.compile(src, key);
-            },
+        /**
+         * Compiles a template.
+         *
+         * This method puts the precompiled version of the template in cache and returns the compiled template.
+         * The template can be accessed directly via `Handlebars.templates[key]` statement.
+         *
+         * @param {String} key Template identifier.
+         * @param {String} src The actual template source to be compiled.
+         * @return {Function} Compiled template.
+         */
+        compile: function(key, src) {
+            try {
+                _templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
+                app.cache.set("templates", _templates);
+                eval(_header + _templates[key] + _footer);
+            } catch (e) {
+                // Invalid templates will cause a JS error when they either pre-compile or compile.
+                app.logger.error("Failed to compile or eval template " + key + ".\n" + e);
+                // TODO: Trigger app:error event
+            }
 
-            /**
-             * Retrieves a compiled handlebars template
-             * @method
-             * @param {String} key Identifier of the template to be retrieved
-             * @param {String} module(optional) 
-             * @return {Function} compiled Handlebars template
-             */
-            get: function(key, module) {
-                var modKey = (module) ? key +'.'+ module.toLowerCase() : key;
-                if (module && Handlebars.templates && Handlebars.templates[modKey])
-                    return Handlebars.templates[modKey];
+            return this.get(key);
+        },
 
-                if (Handlebars.templates && Handlebars.templates[key])
-                    return Handlebars.templates[key];
-            },
+        /**
+         * Retrieves a compiled handlebars template.
+         * @param {String} key Identifier of the template to be retrieved.
+         * @return {Function} Compiled Handlebars template.
+         */
+        get: function(key) {
+            return Handlebars.templates ? Handlebars.templates[key] : null;
+        },
 
-            /**
-             * load is used to compile a set of templates sources from metadata
-             * @param {Object} metadata an metadata response object with a an object.viewTemplates which is a key => source set of templates to load into memory. Templates that were not previously loaded will be precompiled
-             * @param {Boolean} force If true, the cache is ignored and the templates are all recompiled
-             * @method
-             */
-            load: function(metadata, force) {
-                if (metadata.viewTemplates) {
-                    _.each(metadata.viewTemplates, function(src, key) {
-                        if ((key != "_hash") && (!this.get(key) || force)) {
-                            this.compile(src, key);
-                        }
-                    }, this);
-                }
-            },
+        // Convenience private method
+        _getView: function(name, module) {
+            var key = name + (module ? ("." + module.toLowerCase()) : "");
+            return [key, this.get(key)];
+        },
 
-            /**
-             * This function is called during the app's initialization phase.
-             * TODO: Right now metadata is hard coded but will need to be pulled from metadata eventually
-             * TODO: Change this name once we remove all the inits
-             * @method
-             */
-            initTemplate: function(instance) {
-                //this.load(fixtures.metadata.viewTemplates);
-            },
+        /**
+         * Gets compiled template for a view.
+         * @param {String} name View name.
+         * @param {String} module(optional) Module name.
+         * @return {Function} Compiled template.
+         */
+        getView: function(name, module) {
+            return this._getView(name, module)[1];
+        },
 
-            /**
-             * Pre-compiled empty template.
-             *
-             * @property {Function}
-             */
-            empty: function() { return ""; }
-        };
+        // Convenience private method
+        _getField: function(type, view, useDefault) {
+            var prefix = "f." + type + ".";
+            var key = prefix + view;
+            useDefault = _.isUndefined(useDefault) ? true : useDefault;
+            return [key, this.get(prefix + view) ||
+                         (useDefault ? this.get(prefix + "default") : null)];
+        },
 
-    app.events.on("app:init", _templateManager.initTemplate, _templateManager);
+        /**
+         * Gets compiled template for a field.
+         * @param {String} type Field type.
+         * @param {String} view View name.
+         * @param {Boolean} useDefault(optional) Flag indicating if the default field template should be returned
+         * if view specific is not found. Defaults to `true`.
+         * @return {Function} Compiled template.
+         */
+        getField: function(type, view, useDefault) {
+            return this._getField(type, view, useDefault)[1];
+        },
+
+        /**
+         * Compiles and puts into local storage a view template.
+         * @param {String} name View name.
+         * @param {String} module Module name.
+         * @param {String} src Template source code.
+         * @param {Boolean} force Flag indicating if the template must be re-compiled.
+         * @return {Function} Compiled template.
+         */
+        setView: function(name, module, src, force) {
+            return this._compile(this._getView(name, module), src, force);
+        },
+
+        /**
+         * Compiles and puts into local storage a field template.
+         * @param {String} type Field type.
+         * @param {String} view View name.
+         * @param {String} src Template source code.
+         * @param {Boolean} force Flag indicating if the template must be re-compiled.
+         * @return {Function} Compiled template.
+         */
+        setField: function(type, view, src, force) {
+            // Don't fall back to default template (false flag)
+            return this._compile(this._getField(type, view, false), src, force);
+        },
+
+        /**
+         * Compiles view and field templates from metadata payload and puts them into local storage.
+         *
+         * This method compiles both view and field templates. The metadata must contain the following sections:
+         *
+         * <pre>
+         * {
+         *    "viewTemplates": {
+         *       "detail": HB template source,
+         *       "list": HB template source,
+         *       // etc.
+         *    },
+         *
+         *    "sugarFields": {
+         *        "text": {
+         *            "views": {
+         *               "default": HB template source,
+         *               "detail": HB template source,
+         *               "edit": ...,
+         *               "list": ...
+         *            }
+         *        },
+         *        "bool": {
+         *           // templates for boolean field
+         *        },
+         *        // etc.
+         *    }
+         * }
+         * </pre>
+         *
+         * @param {Object} metadata Metadata payload.
+         * @param {Boolean} force(optional) Flag indicating if the cache is ignored and the templates are to be recompiled.
+         */
+        set: function(metadata, force) {
+            if (metadata.viewTemplates) {
+                _.each(metadata.viewTemplates, function(src, name) {
+                    if (name != "_hash") {
+                        // This are common templates: pass null for module
+                        this.setView(name, null, src, force);
+                    }
+                }, this);
+            }
+
+            if (metadata.sugarFields) {
+                _.each(metadata.sugarFields, function(field, type) {
+                    if (type != "_hash") {
+                        _.each(field.views, function(src, view) {
+                            this.setField(type, view, src, force);
+                        }, this);
+                    }
+                }, this);
+            }
+        },
+
+        /**
+         * Pre-compiled empty template.
+         *
+         * @property {Function}
+         */
+        empty: function() { return ""; }
+    };
+
     app.augment("template", _templateManager);
 
 })(SUGAR.App);

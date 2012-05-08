@@ -7,7 +7,7 @@
      * @extends View.View
      */
     app.view.views.DetailView = app.view.View.extend({
-        fieldsToDisplay: 10,
+        fieldsToDisplay: app.config.fieldsToDisplay || 5,
         events: {
             'click .more': 'showMore',
             'click .less': 'hideMore'

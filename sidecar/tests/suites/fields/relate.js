@@ -27,15 +27,8 @@ describe("sugarfields", function() {
     });
 
     describe("relate", function() {
-        it("should set options template", function() {
-            var templateGetStub = sinon.stub(this.field.app.template, 'get', function(templateKey) {
-                return Handlebars.compile("String");
-            });
-            this.field.setOptionsTemplate();
-            expect(this.field.optionsTemplateC).toBeDefined();
-            expect(this.field.optionsTemplateC(this.field)).toEqual("String");
-
-            templateGetStub.restore();
+        it("should have options template", function() {
+            expect(this.field.optionsTemplateC).toEqual(Handlebars.templates["f.relate.options"]);
         });
     });
 });
