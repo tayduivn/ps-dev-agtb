@@ -4,8 +4,8 @@
         events:{
             'click  .show-more-button':'showMoreRecords',
             'click  article .grip':'onClickGrip',
-            'swipeLeft article':'swipeLeftArticle',
-            'swipeRight article':'swipeRightArticle'
+            'swipeLeft article':'swipeLeftItem',
+            'swipeRight article':'swipeRightItem'
         },
         initialize: function(options) {
             // Mobile shows only the first two fields
@@ -46,7 +46,7 @@
             var isActive = grip.hasClass('on');
             grip.closest('article').trigger(isActive ? 'swipeRight' : 'swipeLeft');
         },
-        swipeLeftArticle:function(e){
+        swipeLeftItem:function(e){
             if (this.activeArticle) {
                 this.activeArticle.trigger('swipeRight');
             }
@@ -56,7 +56,7 @@
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
 
         },
-        swipeRightArticle:function(e){
+        swipeRightItem:function(e){
             this.activeArticle.find('.grip').removeClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
         }
