@@ -231,7 +231,7 @@
             loadData: function() {
                 if (this.state.create) return;
 
-                var objectToFetch = null;
+                var objectToFetch = null, options = {};
 
                 if (this.state.id) {
                     objectToFetch = this.state.model;
@@ -241,11 +241,9 @@
 
                 // TODO: Figure out what to do when models are not
                 // instances of Bean or BeanCollection. No way to fetch.
-                if (objectToFetch && 
-                    objectToFetch instanceof app.Bean || 
-                    objectToFetch instanceof app.BeanCollection) {
+                if (objectToFetch && (objectToFetch instanceof app.Bean || 
+                    objectToFetch instanceof app.BeanCollection)) {
 
-                    var options = {};
                     if (this.state.link) {
                         options.relate = true;
                     }
