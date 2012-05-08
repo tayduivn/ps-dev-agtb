@@ -35,8 +35,6 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
         global $current_user, $timedate;
         $timedate = TimeDate::getInstance();
         $current_user = SugarTestUserUtilities::createAnonymousUser();
-        //$this->setOutputBuffering = false;
-
     }
 
     public function tearDown()

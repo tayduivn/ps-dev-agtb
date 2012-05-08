@@ -50,7 +50,6 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
     {
 	    $this->_db = DBManagerFactory::getInstance();
-        $this->useOutputBuffering = false;
 	}
 
 	public function tearDown()

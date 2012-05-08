@@ -37,7 +37,6 @@ class Bug41974Test extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->useOutputBuffering = false;
     }
 
     public function testCaseNumberReadOnlyFieldNotRequired() {

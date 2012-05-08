@@ -90,7 +90,6 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
      */
     function testUpdateCustomProspectsMetadataPopupdefsSave()
     {
-        $this->useOutputBuffering = false;
         $this->parser = new PopupMetaDataParser('popuplist', 'Prospects');
         $this->parser->_viewdefs = $this->fields;
         $this->parser->handleSave(false);
