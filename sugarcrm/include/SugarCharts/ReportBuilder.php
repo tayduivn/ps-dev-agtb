@@ -91,6 +91,65 @@ class ReportBuilder
     }
 
     /**
+     * Add A Field via a link, If the link doesn't load it will not process the link in the chart.
+     *
+     * @param string $link              The Link name to load the field from
+     * @param string $field             The field to add to the group by
+     * @param string $module            The Parent module for the link.
+     * @return ReportBuilder
+     */
+    public function addLink($link, $field, $module = null)
+    {
+        if(empty($module)) {
+            $module = $this->self_module;
+        }
+        $bean = $this->getBean($module);
+
+        $links = $bean->get_linked_fields();
+
+        if(isset($links[$link]) && $bean->load_relationship($link)) {
+            // we have the link
+            /* @var $bean_rel Link2 */
+            $bean_rel = $bean->$link;
+
+            $link = $links[$link];
+
+            $key = $bean->module_dir . ':' . $link['name'];
+
+            //$child_bean = $this->getBean($link['module']);
+            $this->table_keys[$link['module']] = $key;
+            $this->addGroupBy($field, $link['module']);
+
+            $field_position = count($this->defaultReport['summary_columns']);
+
+            $arrLink = array(
+                'name' => $bean->module_dir . ' > ' . $link['module'],
+                'parent' => $this->table_keys[$module],
+                'children' => array(),
+                'link_def' => array(
+                    'name' => $link['name'],
+                    'relationship_name' => $link['relationship'],
+                    'bean_is_lhs' => ($bean_rel->getSide() == 'LHS'),
+                    'link_type' => $bean_rel->getType(),
+                    'label' => $link['module'],
+                    'module' => $link['module'],
+                    'table_key' => $key,
+                ),
+                'dependents' => array(
+                    'group_by_row_' . $field_position,
+                    'display_summaries_row_group_by_row_' . $field_position,
+                ),
+                'module' => $link['module'],
+                'label' => $link['vname']
+            );
+
+            $this->defaultReport['full_table_list'][$key] = $arrLink;
+        }
+
+        return $this;
+    }
+
+    /**
      * Add A Field To Group By
      *
      * @param string $field         Which field do we want to group by
