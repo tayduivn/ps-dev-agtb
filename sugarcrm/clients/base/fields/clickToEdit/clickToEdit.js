@@ -4,13 +4,19 @@
         'mouseleave': 'hideActions'
     },
 
+    ctePath: "",
     ctefield: {},
     cteicon: {},
-    undoicon: {},
-    undoValue: '',
+    undoicon:{},
+
+    initialize: function(options) {
+        this.app.view.Field.prototype.initialize.call(this, options);
+        this.ctePath = this.app.config.serverUrl + "/../../clients/base/fields/clickToEdit";
+    },
 
     render:function() {
         this.app.view.Field.prototype.render.call(this);
+
         var self = this;
 
         $.editable.addInputType("chosen", {
@@ -26,15 +32,18 @@
                 $(this).find('.cteSelect');
                 return(hidden);
             },
+
             plugin: function(settings, original) {
                 $("select", this).filter(".cteSelect").chosen().change(settings.context, function(e) {
                     self.doChange($(this).val(), settings);
                 });
             },
+
             submit: function(settings, original) {
                 $("input", this).val($("select", this).filter(".cteSelect").val());
             }
         });
+
 
         this.ctefield = this.$el.find('.cte' + this.cteclass);
         this.cteicon = this.ctefield.parent().find('.cteimage');

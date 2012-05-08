@@ -51,7 +51,6 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
             write_array_to_file("test", array(), $this->contactsHookFile);
         }
 
-        $this->useOutputBuffering = false;
         LogicHook::refreshHooks();
     }
 
