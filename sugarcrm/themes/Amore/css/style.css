@@ -88,7 +88,13 @@ height: 43px\9;;
 	background:		#ef3067;
 }
 
-#moduleList .sf-menu > li:hover, 
+ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
+ul.moduleTabMore li.sfHover a.sf-with-ul,
+ul.sf-sub-modulelist li.sfHover > a.sf-with-ul,
+ul.megamenu ul a:hover,
+ul.moduleTabMore li a:hover,
+ul.sf-sub-modulelist li a:hover,
+#moduleList .sf-menu > li:hover,
 #moduleList .sf-menu > li.sfHover,
 #moduleList .sf-menu > li a:focus, 
 #moduleList .sf-menu > li a:hover, 
