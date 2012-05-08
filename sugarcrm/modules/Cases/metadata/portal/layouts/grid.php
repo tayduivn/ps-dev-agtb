@@ -4,10 +4,16 @@ $viewdefs['Cases']['portal']['layout']['grid'] = array(
     'components' =>
     array(
         0 => array(
+            'context'=>array(
+                'module'=>'Cases',
+            ),
             'view' => 'grid',
         ),
         1 =>
         array(
+            'context'=>array(
+                'module'=>'Opportunities',
+            ),
             'view' => 'grid',
         ),
     ),
