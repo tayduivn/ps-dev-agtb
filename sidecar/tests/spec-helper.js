@@ -83,11 +83,12 @@ beforeEach(function(){
     SugarTest.resetWaitFlag();
 
     if (SUGAR.App) {
-        SugarTest.app = SUGAR.App.init({el: "body", silent: true});
         SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
         SUGAR.App.config.env = "test";
         SUGAR.App.config.appId = "portal";
         SUGAR.App.config.maxQueryResult = 20;
+
+        SugarTest.app = SUGAR.App.init({el: "body", silent: true});
 
         SugarTest.storage = {};
         SUGAR.App.cache.store = SugarTest.keyValueStore;

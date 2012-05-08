@@ -242,6 +242,7 @@ SUGAR.App = (function() {
         /**
          * Calls a global sync for the app. An app:sync:complete event will be fired when
          * the series of sync operations have finished.
+         * @param {Function} synccuccess Callback function called if sync was successful.
          * @method
          */
         sync: function(syncsuccess) {
