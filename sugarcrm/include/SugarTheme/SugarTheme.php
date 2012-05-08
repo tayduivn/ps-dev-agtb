@@ -830,16 +830,15 @@ EOHTML;
                 return $this->_imageCache[$imageName];
         }
         $imagePath = '';
-        if (($filename = $this->_getImageFileName($this->getImagePath().'/'.$imageName)) != '')
+        if (($filename = $this->_getImageFileName('custom/'.$this->getImagePath().'/'.$imageName)) != '')
+            $imagePath = $filename;
+        elseif (($filename = $this->_getImageFileName($this->getImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
         elseif (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
                 && ($filename = SugarThemeRegistry::get($this->parentTheme)->getImageURL($imageName,false)) != '')
             $imagePath = $filename;
         elseif (($filename = $this->_getImageFileName('custom/'.$this->getDefaultImagePath().'/'.$imageName)) != '')
-            $imagePath = $filename;
-            //Moved to address Bug 35096
-        elseif (($filename = $this->_getImageFileName('custom/'.$this->getImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
         elseif (($filename = $this->_getImageFileName($this->getDefaultImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
