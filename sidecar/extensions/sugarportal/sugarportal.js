@@ -133,4 +133,28 @@
         app.data.declareModels(base_metadata);
     });
 
+    app.view.Field=app.view.Field.extend({
+        /**
+         * Handles how validation errors are appended to the fields dom element
+         *
+         * By default errors are appended to the dom into a .help-block class if present
+         * and the .error class is added to any .control-group elements in accordance with
+         * bootstrap.
+         *
+         * @param {Object} errors hash of validation errors
+         */
+        handleValidationError: function(errors) {
+            var self = this;
+
+            this.$('.control-group').addClass("error");
+            this.$('.help-block').html("");
+
+            _.each(errors, function(errorContext, errorName) {
+                self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
+            });
+        }
+    })
+
+
 })(SUGAR.App);
+
