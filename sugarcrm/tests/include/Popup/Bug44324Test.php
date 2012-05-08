@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-class Bug44324Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $contact;
 
@@ -63,8 +63,7 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_OutputTestCase
     	$popupSmarty->fieldDefs = array();
     	$popupSmarty->view= 'popup';
     	$popupSmarty->tpl = 'include/Popups/tpls/PopupGeneric.tpl';
-    	$this->expectOutputRegex('/\"NAME\":\"Lady Gaga\"/', 'Assert that NAME value was set to "Lady Gaga"');
-    	echo $popupSmarty->display();
+    	$this->assertRegExp('/\"NAME\":\"Lady Gaga\"/', $popupSmarty->display(), 'Assert that NAME value was set to "Lady Gaga"');
     }
 
 }
