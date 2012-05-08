@@ -1,37 +1,14 @@
-<div class="subnav">
-    <div class="btn-toolbar pull-left">
-        <h1>{{fieldWithName "name" context this}}</h1>
-    </div>
-    <div class="btn-toolbar pull-right">
-      <div class="btn-group">
-          <a class="btn btn-success" href="#{{buildRoute context model "edit" route.options}}">
-          <i class="icon-pencil"></i> Edit
-          </a>
-      </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span7">
-        <form name='{{name}}'>
-                <div class="card2">
-                    {{#each meta.panels}}
-                        {{#each fields}}
-                            {{field ../../context ../../this ../../model}}
-                        {{/each}}
-                    {{/each}}
-                    <div class="form-actions">
-                    {{#each meta.buttons}}
-                        {{field ../context ../this ../model}}
-                    {{/each}}
-                    </div>
-                </div>
-        </form>
-        <div class="block filtered" id="moduleLog">
+<form name='{{name}}'>
+    <div class="card2">
+        {{#each meta.panels}}
+        {{#each fields}}
+        {{field ../../context ../../this ../../model}}
+        {{/each}}
+        {{/each}}
+        <div class="form-actions">
+            {{#each meta.buttons}}
+            {{field ../context ../this ../model}}
+            {{/each}}
         </div>
-      </div>
-      <div class="span5 divleft">
-      </div>
     </div>
-  </div>
+</form>

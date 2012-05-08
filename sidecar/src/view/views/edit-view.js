@@ -20,7 +20,17 @@
                     self.app.navigate(self.context, self.model, 'detail');
                 }
             });
+        },
+        bindDataChange: function() {
+            if (this.model) {
+                this.model.on("change", function() {
+                        if (this.app.additionalComponents.subnav) {
+                            this.app.additionalComponents.subnav.model = app.controller.context.state.model;
+                            this.app.additionalComponents.subnav.meta = this.meta;
+                        }
+                    }, this
+                );
+            }
         }
     });
-
 })(SUGAR.App);

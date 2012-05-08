@@ -46,7 +46,7 @@ describe("App", function() {
     it("should initialize addtional components", function() {
         var components = {login:{target:'#footer'}};
         SugarTest.app.loadAdditionalComponents(components);
-        expect(SugarTest.app.additionalComponents.length).toEqual(1);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined(components);
     });
     describe("when augmented", function() {
         it("should register a module with itself", function() {

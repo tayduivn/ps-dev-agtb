@@ -88,6 +88,9 @@
         additionalComponents: {
             header: {
                 target: '#header'
+            },
+            subnav: {
+                target: '#subnav'
             }
         }
 
