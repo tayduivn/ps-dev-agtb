@@ -29,7 +29,6 @@ class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     function setUp()
     {
-       $this->setOutputBuffering = false;
        SugarTestMergeUtilities::setupFiles(array('Calls', 'Meetings'), array('editviewdefs'), 'tests/modules/UpgradeWizard/SugarMerge/metadata_files');
     }
 

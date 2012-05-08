@@ -43,7 +43,6 @@ public function setUp()
 	$GLOBALS['beanFiles'] = $beanFiles;
     $_SESSION['upgrade_from_flavor'] = 'SugarCE to SugarPro';
     require_once('modules/UpgradeWizard/uw_utils.php');
-    $this->useOutputBuffering = true;
 }
 
 public function tearDown()

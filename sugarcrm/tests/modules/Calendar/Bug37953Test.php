@@ -32,7 +32,6 @@ class Bug37953Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->call = SugarTestCallUtilities::createCall();
-        $this->useOutputBuffering = false;
 	}
 
     public function tearDown()

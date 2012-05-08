@@ -28,10 +28,6 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             'label' => 'Save',
             'value' => 'save',
             'primary' => true,
-            'events' =>
-            array(
-                'click' => 'function(){ var self = this; this.model.save(null, {success:function(){self.app.navigate(self.context, self.model, \'detail\');}});}',
-            ),
         ),
         array(
             'name' => 'cancel_button',
@@ -103,7 +99,10 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
                          'colspan' => 2,
                          'rows' => '15',
                          'cols' => '100'
-                     ))
+                     )),
+                array(
+                    'name' => 'resolution',
+                    ),
             )
         )
     ),

@@ -30,7 +30,6 @@
                     "len": "255",
                     "source": "non-db",
                     "unified_search": true,
-                    "required": true,
                     "importable": "required"
                 },
                 "account_id": {
@@ -94,7 +93,6 @@
                 "last_name": {
                     "name": "last_name",
                     "type": "varchar",
-                    "required": true,
                     "len": 20
                 },
                 "field_0": {

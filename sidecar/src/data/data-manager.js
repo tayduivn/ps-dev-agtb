@@ -343,7 +343,7 @@
 
             options = options || {};
             options.params = options.params || {};
-
+            
             if (options.fields) {
                 options.params.fields = options.fields.join(",");
             }
