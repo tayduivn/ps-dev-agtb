@@ -88,7 +88,6 @@ class Bug44931Test extends SOAPTestCase
 		$kbdocKBTag->team_id = $kbdoc->team_id;
 		$kbdocKBTag->save();
         $GLOBALS['db']->commit();
-		$this->useOutputBuffering = false;
     }
 
     public function tearDown()

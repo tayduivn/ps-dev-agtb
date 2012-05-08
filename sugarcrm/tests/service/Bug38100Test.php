@@ -41,7 +41,6 @@ class Bug38100Test extends SOAPTestCase
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->useOutputBuffering = false;
 		parent::setUp();
     }
 
