@@ -240,7 +240,7 @@
                 }
 
                 if (objectToFetch) {
-                    var options = {skipValidation: true};
+                    var options = {};
                     if (this.state.link) {
                         options.relate = true;
                     }
