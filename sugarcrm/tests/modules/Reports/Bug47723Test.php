@@ -26,7 +26,6 @@ class Bug47723Test extends Sugar_PHPUnit_Framework_TestCase
         //force test to simulate mssql
         $this->dbType = $this->reportInstance->db->dbType;
         $this->reportInstance->db->dbType = 'mssql';
-        $this->useOutputBuffering = false;
     }
 	
     public function tearDown()

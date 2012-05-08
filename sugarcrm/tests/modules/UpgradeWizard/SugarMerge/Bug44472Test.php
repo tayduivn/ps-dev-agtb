@@ -28,7 +28,6 @@ class Bug44472Test extends Sugar_PHPUnit_Framework_TestCase  {
 
 function setUp() {
    SugarTestMergeUtilities::setupFiles(array('Cases'), array('editviewdefs'), 'tests/modules/UpgradeWizard/SugarMerge/od_metadata_files/610');
-   $this->useOutputBuffering = false;
 }
 
 

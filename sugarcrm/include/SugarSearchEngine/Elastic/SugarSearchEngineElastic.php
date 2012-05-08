@@ -438,7 +438,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to create index with error: {$e->getMessage()}");
+            $GLOBALS['log']->error("Unable to create index with error: {$e->getMessage()}");
         }
 
     }

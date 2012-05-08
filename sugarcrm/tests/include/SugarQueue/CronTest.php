@@ -54,6 +54,11 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testThrottle()
     {
+        //Set the min_interval to 30 if it is set to 0 for this test
+        if($this->jq->min_interval === 0)
+        {
+           $this->jq->min_interval = 30;
+        }
         $this->jq->throttle();
         $this->assertFalse($this->jq->throttle(), "Should prohibit second time");
         // wait a bit
