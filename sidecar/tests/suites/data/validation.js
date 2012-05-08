@@ -132,46 +132,46 @@ describe("Validation", function() {
         it("should be able to validate an empty string field set on a bean with a field already set", function() {
             var bean = new Bean({ name: "foo" }),
                 result = rv(field, "name", bean, "");
-            expect(result).toBeFalsy();
-
-            result = rv(field, "name", bean, undefined);
             expect(result).toBeTruthy();
 
-            result = rv(field, "name", bean, null);
+            result = rv(field, "name", bean, undefined);
             expect(result).toBeFalsy();
+
+            result = rv(field, "name", bean, null);
+            expect(result).toBeTruthy();
         });
 
         it("should be able to validate an empty string field set on a bean with unset field", function() {
             var bean = new Bean(),
                 result = rv(field, "name", bean, "");
-            expect(result).toBeFalsy();
+            expect(result).toBeTruthy();
 
             result = rv(field, "name", bean, undefined);
-            expect(result).toBeFalsy();
+            expect(result).toBeTruthy();
 
             result = rv(field, "name", bean, null);
-            expect(result).toBeFalsy();
+            expect(result).toBeTruthy();
         });
 
         it("should be able to validate a non-empty string field set on a bean with unset field", function() {
             var bean = new Bean(),
                 result = rv(field, "name", bean, "bar");
-            expect(result).toBeTruthy();
+            expect(result).toBeFalsy();
         });
 
         it("should be able to validate a non-empty string field set on a bean with a field already set", function() {
             var bean = new Bean({ name: "foo" }),
                 result = rv(field, "name", bean, "bar");
-            expect(result).toBeTruthy();
+            expect(result).toBeFalsy();
         });
 
         it("should skip validation if a field is not required", function() {
             var bean = new Bean(),
                 result = rv({required: false}, "name", bean, "");
-            expect(result).toBeTruthy();
+            expect(result).toBeFalsy();
 
             result = rv({}, "name", bean, "");
-            expect(result).toBeTruthy();
+            expect(result).toBeFalsy();
         });
     });
 });

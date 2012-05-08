@@ -12,6 +12,7 @@ describe("Bean", function() {
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         bean = dm.createBean(moduleName, { first_name: "Super long first name"});
+        bean.validateFlag = true;
         errors = bean.validate(bean.attributes);
         expect(errors).toBeDefined();
         error = errors["first_name"];
