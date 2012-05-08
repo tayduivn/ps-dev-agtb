@@ -12,13 +12,13 @@
 
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
+            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
         },
         /**
          * Renders Grid view
          */
         render: function() {
             app.view.View.prototype.render.call(this);
-            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
             this.gTable = this.$el.find('#gridTable').dataTable();
         },
 

@@ -15,6 +15,10 @@
 
         reportees : '',
 
+        initialize: function(options){
+            app.view.View.prototype.initialize.call(this, options);
+            app.events.register("treeview:node_select", this);
+        },
         /**
          * Start the rendering of the JS Tree
          */
@@ -24,7 +28,7 @@
             if(this.rendered) return;
             app.view.View.prototype.render.call(this);
 
-            app.events.register("treeview:node_select", this);
+
 
             this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
             this.primary_user.on('change', this.postUserFetch, this);
@@ -121,7 +125,7 @@
         treeNodeSelect: function(event, data)
         {
             jsData = data.inst.get_json();
-            this.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
+            app.events.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
         }
     });
 
