@@ -15,6 +15,10 @@
     var _relatedCollections;
 
     app.augment("Bean", Backbone.Model.extend({
+        initialize: function(attributes){
+            Backbone.Model.prototype.initialize.call(this, attributes);
+            this.validateFlag = false;
+        },
 
         /**
          * Caches a collection of related beans in this bean instance.
@@ -79,10 +83,9 @@
          * @return {Object} errors hash if the bean is invalid or nothing otherwise.
          */
         validate: function(attrs) {
-
             var errors = {}, self = this;
             var field, value, result, validator;
-            if (!this.skipValidation) {
+            if (this.validateFlag) {
                 _.each(_.keys(self.fields), function(fieldName) {
                     field = self.fields[fieldName];
                     value = attrs[fieldName];
@@ -95,11 +98,7 @@
                         });
                     }
                 });
-            } else {
-                this.skipValidation = false;
-                return false;
             }
-
             return this.processValidationErrors(errors);
         },
         /**
@@ -152,8 +151,14 @@
          * @param {Object} options standard save options as described by Backbone docs
          */
         save: function(attributes, options) {
-            if (!this.validateRequired(this.attributes)) {
-                Backbone.Model.prototype.save.call(this, attributes, options);
+            // we only validate on save
+            this.validateFlag = true;
+            var validationReturn = this.validate(this.attributes);
+            this.validateFlag = false;
+            if (!this.validateRequired(this.attributes) && _.isEmpty(validationReturn)) {
+                return Backbone.Model.prototype.save.call(this, attributes, options);
+            } else {
+                return false;
             }
         },
 

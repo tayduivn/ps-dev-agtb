@@ -65,4 +65,11 @@ describe("Error module", function() {
         // Check to see if onerror was overloaded
         expect(_.isFunction(window.onerror)).toBeTruthy();
     });
+
+    it("should get error strings", function(){
+        var errorKey = "ERROR_TEST";
+        var context = "10";
+        var string = app.error.getErrorString(errorKey, context);
+        expect(string).toEqual("Some error string 10");
+    });
 });

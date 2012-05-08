@@ -12,11 +12,12 @@ describe("Bean", function() {
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         bean = dm.createBean(moduleName, { first_name: "Super long first name"});
+        bean.validateFlag = true;
         errors = bean.validate(bean.attributes);
         expect(errors).toBeDefined();
         error = errors["first_name"];
         expect(error).toBeDefined();
-        expect(error.maxLength).toEqual("ERROR: The max number of characters for this field is 20");
+        expect(error.maxLength).toEqual(20);
     });
 
     it("should trigger validation errors on model if errors exist", function(){

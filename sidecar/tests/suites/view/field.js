@@ -86,31 +86,32 @@ describe("Field", function() {
         expect(field.model).toBeUndefined();
         //expect(field.context).toBeUndefined();
     });
-    it("handle field errors", function() {
+    it("handle errors on model validation error", function() {
+        var handleSpy = sinon.spy(app.view.Field.prototype, 'handleValidationError');
         var field = app.view.createField({
             def: {name: "status", type: "text"},
             view: view,
             context: context,
             model: bean
         });
-        var html = "<div class=\"control-group\"> <div class=\"row-fluid\"> <p class=\"help-block\"></p> </div>"
-        var errors = {error: "some random error string"};
-        bean.set({status: "new", id: "anId"});
-        field.$el.html(html);
-        field.handleValidationError(errors);
-
-        expect(field.$('.error')).toBeDefined();
-        expect(field.$('.help-block').html()).toContain("some random error string")
+        var errors = {
+            status: {
+                error: "some random error string"
+            }
+        };
+        bean.processValidationErrors(errors);
+        expect(handleSpy).toHaveBeenCalled();
+        handleSpy.restore();
     });
 
 
     it("bind render to model change events", function() {
         var field = app.view.createField({
-                def: {name: "status", type: "text"},
-                view: view,
-                context: context,
-                model: bean
-            });
+            def: {name: "status", type: "text"},
+            view: view,
+            context: context,
+            model: bean
+        });
 
 
         bean.set({status: "new", id: "anId"});

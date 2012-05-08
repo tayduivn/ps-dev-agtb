@@ -311,7 +311,8 @@ fixtures.metadata = {
                 },
                 "first_name": {
                     "name": "first_name",
-                    "type": "varchar"
+                    "type": "varchar",
+                    "len": 20
                 },
                 "last_name": {
                     "name": "last_name",
@@ -1069,6 +1070,7 @@ fixtures.metadata = {
         ERROR_EXAMINE_MSG: "  Please examine the error message below:",
         ERROR_FULLY_EXPIRED: "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
         ERROR_JS_ALERT_SYSTEM_CLASS: "System",
+        ERROR_TEST: "Some error string {{this}}",
         ERROR_JS_ALERT_TIMEOUT_MSG_1: "Your session is about to timeout in 2 minutes. Please save your work.",
         ERROR_JS_ALERT_TIMEOUT_MSG_2: "Your session has timed out.",
         ERROR_JS_ALERT_TIMEOUT_TITLE: "Session Timeout",

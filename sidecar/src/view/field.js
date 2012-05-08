@@ -292,23 +292,13 @@
         },
 
         /**
-         * Handles how validation errors are appended to the fields dom element
+         * Handles how validation errors are displayed on fields
          *
-         * By default errors are appended to the dom into a .help-block class if present
-         * and the .error class is added to any .control-group elements in accordance with
-         * bootstrap.
+         * This method should be implemented in the extension dir per platform
          *
          * @param {Object} errors hash of validation errors
          */
         handleValidationError: function(errors) {
-            var self = this;
-
-            this.$('.control-group').addClass("error");
-            this.$('.help-block').html("");
-
-            _.each(errors, function(errorString) {
-                self.$('.help-block').append("<br>"+errorString);
-            })
         }
 
     });
