@@ -2843,6 +2843,7 @@ $app_strings = array (
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
+    'ERROR_NO_BEAN' => 'Failed to get bean.', 
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
