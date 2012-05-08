@@ -388,6 +388,7 @@ class InboundEmail extends SugarBean {
 
 				if(!empty($line)) {
 					$key = trim(substr($line, 0, strpos($line, ":")));
+					$key = to_html($key);
 					$value = trim(substr($line, strpos($line, ":") + 1));
 					$value = to_html($value);
 
