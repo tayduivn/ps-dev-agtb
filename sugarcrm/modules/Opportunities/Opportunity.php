@@ -399,7 +399,16 @@ $query .= 			"LEFT JOIN users
         //BEGIN SUGARCRM flav=pro ONLY
         //Set the timeperiod_id value
         global $timedate;
-        $date_close_db = $timedate->to_db_date($this->date_closed);
+
+        if ($timedate->check_matching_format($this->date_closed, $timedate::DB_DATE_FORMAT))
+        {
+            $date_close_db = $this->date_closed;
+        }
+        else
+        {
+            $date_close_db = $timedate->to_db_date($this->date_closed);
+        }
+
         $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' and end_date > '{$date_close_db}' AND deleted = 0");
         if(!empty($timeperiod))
         {
