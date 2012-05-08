@@ -243,19 +243,25 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'long',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
   ),
   'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'long',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
   ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'long',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
   ),
   'timeperiod_id' =>
   array (
