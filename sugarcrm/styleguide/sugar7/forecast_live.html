@@ -505,7 +505,10 @@
 
 
                   })
-                  .bind("select_node.jstree", function (e, data) { console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id")); });
+                  .bind("select_node.jstree", function (e, data) { 
+                  	console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
+                  	data.inst.toggle_node(data.rslt.obj);
+                  	 });
 
 
           //datatable setup
