@@ -107,7 +107,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * Starts the initialization phase of the app. Modules bound to this event will initialize.
+                 * Fires when the app object is initialized. Modules bound to this event will initialize.
                  */
                 "app:init",
                 this
@@ -116,7 +116,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when the app is beginning to sync data / metadata from the server.
+                 * Fires when the app is beginning to sync data / metadata from the server.
                  */
                 "app:sync",
                 this
@@ -125,7 +125,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when the app has finished its syncing process and is ready to proceed.
+                 * Fires when the app has finished its syncing process and is ready to proceed.
                  */
                 "app:sync:complete",
                 this
@@ -134,7 +134,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when a sync process failed
+                 * Fires when a sync process failed
                  */
                 "app:sync:error",
                 this
@@ -142,8 +142,7 @@ SUGAR.App = (function() {
 
             app.events.register(
                 /**
-                 * Route change event. Fired when the route has
-                 * changed and before the application is loading layouts and views.
+                 * Fires when route changes a new view has been loaded.
                  *
                  * <pre><code>
                  * obj.on("app:view:change", callback);
@@ -151,6 +150,24 @@ SUGAR.App = (function() {
                  * @event
                  */
                 "app:view:change",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * Fires when login succeeds.
+                 */
+                "app:login:success",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * Fires when the app logs out.
+                 */
+                "app:logout",
                 this
             );
 
@@ -309,6 +326,37 @@ SUGAR.App = (function() {
             route = this.router.buildRoute(module, id, action, params);
 
             this.router.navigate(route, {trigger: true});
+        },
+
+        /**
+         * Logs in this app.
+         *
+         * @param  {Object} credentials user credentials.
+         * @param  {Object} data(optional) extra data to be passed in login request such as client user agent, etc.
+         * @param  {Object} callbacks(optional) callback object.
+         * @return XHR request object.
+         */
+        login: function(credentials, data, callbacks) {
+            callbacks = callbacks || {};
+            var origSuccess = callbacks.success;
+            var self = this;
+            callbacks.success = function(data) {
+                app.trigger("app:login:success", data);
+                if (origSuccess) origSuccess(data);
+            };
+
+            return app.api.login(credentials, data, callbacks);
+        },
+
+        /**
+         * Logs out this app.
+         * @param  {Object} callbacks(optional) callback object.
+         * @return {Object} XHR request object.
+         */
+        logout: function(callbacks) {
+            var xhr = app.api.logout(callbacks);
+            app.trigger("app:logout", data);
+            return xhr;
         },
 
         modules: modules
