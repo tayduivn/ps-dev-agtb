@@ -99,6 +99,8 @@ $last_name_max = $last_name_count - 1;
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] .$sugar_demodata['category_ext_name'];
 	$category->parent_id = $parent_id;
 	$category->save();
+    $key = array_rand($sugar_demodata['users']);
+    $category->assigned_user_id = $sugar_demodata['users'][$key]['id'];
 	$cat_id = $category->id;
 	unset($category);
 	return $cat_id;
