@@ -52,7 +52,7 @@ $(document).ready(function(){
 
 
     $('body').click(function(e) {
-    	if($(e.target).closest('#dcmenuSearchDiv').length == 0 && !$("#SpotResults").parent().hasClass("dccontent")){
+    	if($(e.target).closest('#dcmenuSearchDiv').length == 0 && !$("#SpotResults").parent().hasClass("dccontent") && $("#dcgscontent").css("visibility") != "visible"){
             SUGAR.themes.clearSearch();
         }
     });
