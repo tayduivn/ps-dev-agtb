@@ -84,7 +84,7 @@ class MetaDataManager {
         $moduledirs = array();
 
         // Start with SugarObjects :: basic
-        $basic = 'include/SugarObjects/templates/basic/metadata/' . $this->platforms[0] . '/';
+        $basic = 'include/SugarObjects/templates/basic/metadata/' . $this->platforms[0] . '/' . $viewdefType . 's/';
         if (is_dir($basic)) {
             $files = glob($basic . '*.php');
             foreach ($files as $fullpath) {
