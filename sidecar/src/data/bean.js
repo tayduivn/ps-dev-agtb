@@ -15,6 +15,10 @@
     var _relatedCollections;
 
     app.augment("Bean", Backbone.Model.extend({
+        initialize: function(attributes){
+            Backbone.Model.prototype.initialize.call(this, attributes);
+            this.validateFlag = false;
+        },
 
         /**
          * Caches a collection of related beans in this bean instance.
@@ -81,28 +85,77 @@
         validate: function(attrs) {
             var errors = {}, self = this;
             var field, value, result, validator;
+            if (this.validateFlag) {
+                _.each(_.keys(self.fields), function(fieldName) {
+                    field = self.fields[fieldName];
+                    value = attrs[fieldName];
+
+                    if (value) {
+                        _.each(_.keys(app.validation.validators), function(validatorName) {
+                            validator = app.validation.validators[validatorName];
+                            result = validator(field, value);
+                            _addValidationError(errors, result, fieldName, validatorName);
+                        });
+                    }
+                });
+            }
+            return this.processValidationErrors(errors);
+        },
+        /**
+         * Validates attributes for required fields
+         * @param {Object} attrs
+         * @return {Object}
+         */
+        validateRequired: function(attrs) {
+
+            var errors = {}, self = this;
+            var field, value, result, validator;
 
             _.each(_.keys(self.fields), function(fieldName) {
                 field = self.fields[fieldName];
                 value = attrs[fieldName];
-
-                if (value) {
-                    _.each(_.keys(app.validation.validators), function(validatorName) {
-                        validator = app.validation.validators[validatorName];
-                        result = validator(field, value);
-                        _addValidationError(errors, result, fieldName, validatorName);
-                    });
-                }
+                result = app.validation.requiredValidator(field, field.name, self, value);
+                _addValidationError(errors, result, fieldName, "required");
             });
 
-            // {
-            // first_name: { maxLength: 20 },
-            // }
+            if (!_.isEmpty(errors)) {
+                return this.processValidationErrors(errors);
+            }
 
+        },
+
+        /**
+         * Processes generic validation errors and triggers model events
+         * @param {Object} errors
+         * @return {Object} errors
+         */
+        processValidationErrors: function(errors) {
             // "validate" method should not return anything in case there are no validation errors
             if (!_.isEmpty(errors)) {
                 app.error.handleValidationError(this, errors);
+                var self = this;
+                _.each(errors, function(fieldErrors, fieldName) {
+                    self.trigger("model.validation.error." + fieldName, fieldErrors);
+                });
+                // trigger error events on this object
                 return errors;
+            }
+        },
+
+        /**
+         * Overloads standard bean save so we can run required field validation outside of the standard validation loop
+         * @param {Object} attributes model attributes
+         * @param {Object} options standard save options as described by Backbone docs
+         */
+        save: function(attributes, options) {
+            // we only validate on save
+            this.validateFlag = true;
+            var validationReturn = this.validate(this.attributes);
+            this.validateFlag = false;
+            if (!this.validateRequired(this.attributes) && _.isEmpty(validationReturn)) {
+                return Backbone.Model.prototype.save.call(this, attributes, options);
+            } else {
+                return false;
             }
         },
 

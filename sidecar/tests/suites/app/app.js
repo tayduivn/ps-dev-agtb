@@ -8,12 +8,11 @@ describe("App", function() {
             return true;
         });
 
-        metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(modules, filters, callbacks) {
+        metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(hash, modules, filters, callbacks) {
             if (isGetMetadataSucceeded) {
                 var metadata = fixtures.metadata;
-                callbacks.success(metadata);
-            }
-            else {
+                callbacks.success(metadata, "", {status: 200});
+            } else {
                 callbacks.error({code: 500});
             }
         });
@@ -43,11 +42,13 @@ describe("App", function() {
             expect(cbSpy).toHaveBeenCalled();
         });
     });
+
     it("should initialize addtional components", function() {
         var components = {login:{target:'#footer'}};
         SugarTest.app.loadAdditionalComponents(components);
-        expect(SugarTest.app.additionalComponents.length).toEqual(1);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined();
     });
+
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,

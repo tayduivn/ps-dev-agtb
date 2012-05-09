@@ -97,6 +97,7 @@ function pad(number, length) {
 
 };
 
+
 var Url = {
  
 	// public method for url encoding
@@ -185,6 +186,23 @@ function array_match(needle, haystack) {
     }
     return new Array(count,indexValue);
 };
+
+
+ $.isTouchScreen =  function() {
+     // first check if we have forced use of the touch enhanced interface
+     if (Get_Cookie("touchscreen") == '1') {
+         return true;
+     }
+
+     // next check if we should use the touch interface with our device
+     if ((navigator.userAgent.match(/iPad/i) != null)) {
+         return true;
+     }
+
+     return false;
+ };
+
+
 
 $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
   ctx.beginPath();
@@ -2562,7 +2580,7 @@ Extras.Classes.Tips = new Class({
   },
   
   hide: function(triggerCallback) {
-    if(!SUGAR.util.isTouchScreen()) {
+    if(!$.isTouchScreen()) {
     	this.tip.style.display = 'none';
     }
     triggerCallback && this.config.onHide();

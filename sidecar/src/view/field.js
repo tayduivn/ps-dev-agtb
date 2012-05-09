@@ -128,6 +128,7 @@
                  * @member View.Field
                  */
                 this.fieldDef = this.model.fields[this.name];
+                this.model.on("model.validation.error." + this.name, this.handleValidationError, this);
             }
 
             /**
@@ -288,6 +289,16 @@
             }
 
             delete this.model;
+        },
+
+        /**
+         * Handles how validation errors are displayed on fields
+         *
+         * This method should be implemented in the extension dir per platform
+         *
+         * @param {Object} errors hash of validation errors
+         */
+        handleValidationError: function(errors) {
         }
 
     });

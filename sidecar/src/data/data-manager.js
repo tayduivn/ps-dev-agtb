@@ -205,7 +205,7 @@
          * @return {Data.Bean} A new instance of bean model.
          */
         createBean: function(module, attrs) {
-            return new _models[module](attrs);
+            return _models[module] ?  new _models[module](attrs) : new Backbone.Model();
         },
 
         /**
@@ -220,7 +220,9 @@
          * @return {Data.BeanCollection} A new instance of bean collection.
          */
         createBeanCollection: function(module, models, options) {
-            return new _collections[module](models, options);
+            return _collections[module] ? 
+                new _collections[module](models, options) : 
+                new Backbone.Collection();
         },
 
         /**
@@ -343,7 +345,7 @@
 
             options = options || {};
             options.params = options.params || {};
-
+            
             if (options.fields) {
                 options.params.fields = options.fields.join(",");
             }

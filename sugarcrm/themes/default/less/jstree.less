@@ -86,19 +86,22 @@
 }
 
 .jstree-sugar li.jstree-last { background:transparent; }
+.jstree-sugar li.jstree-open > a > ins,
+.jstree-sugar li.jstree-closed > a > ins,
+.jstree-sugar li.jstree-leaf > ins {display: none;}
 .jstree-sugar .jstree-open > ins:before { content: "\f07c"; }
 .jstree-sugar .jstree-closed > ins:before { content: "\f07b"; }
-.jstree-sugar .jstree-leaf > ins:before { content: "\f007"; }
+.jstree-sugar .jstree-leaf > ins:before {}
 .jstree-sugar .jstree-closed > ins:hover,
 .jstree-sugar .jstree-open > ins:hover {cursor: pointer;}
 .jstree-sugar ins {margin-right: 5px !important;}
 .jstree-sugar .jstree-open > ins,
-.jstree-sugar .jstree-leaf > ins {color: @gray;}
+.jstree-sugar .jstree-leaf > ins { }
 
 .jstree-sugar .jstree-hovered { }
 .jstree-sugar .jstree-clicked { color: @gray !important; }
 .jstree-sugar li, .jstree-sugar a  {color: @blueDark !important;}
-.jstree-sugar a .jstree-icon { background-position:-56px -19px; }
+.jstree-sugar a .jstree-icon:before { content: "\f007"; }
 .jstree-sugar a.jstree-loading .jstree-icon { background:url("../../../index.php?entryPoint=getImage&imageName=throbber.gif") center center no-repeat !important; }
 
 .jstree-sugar.jstree-focused {  }

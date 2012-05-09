@@ -71,6 +71,8 @@
                 this.layout.render();
             }
 
+            app.trigger("app:view:change", params.layout);
+
             // Render the rendered layout to the main element
             this.$('#content').html(this.layout.$el);
 

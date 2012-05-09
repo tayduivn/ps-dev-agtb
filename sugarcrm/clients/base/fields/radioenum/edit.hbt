@@ -3,7 +3,7 @@
     <div class="span10">
     {{#eachOptions options}}
         <input type="radio" name="{{../name}}" value="{{this}}" {{eq this ../value "SELECTED"}}>{{this}}</label>
-    {{/each}}
+    {{/eachOptions}}
     <p class="help-block"></p>
     </div>
 </div>

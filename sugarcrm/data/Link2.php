@@ -426,9 +426,16 @@ class Link2 {
             }
 
             //If we did a compelte load, cache the result in $this->beans
-            if (empty($params))
+            if (empty($params)) {
                 $this->beans = $result;
-        } else {
+                foreach($result as $id => $bean)
+                {
+                    if (!isset($this->rows[$id]))
+                        $this->rows[$id] = array("id" => $id);
+                }
+            }
+        }
+        else {
             $result = $this->beans;
         }
 
@@ -479,6 +486,7 @@ class Link2 {
                 $this->relationship->add($key, $this->focus, $additional_values);
             }
         }
+        return true;
     }
 
 
@@ -558,9 +566,11 @@ class Link2 {
         if (!is_array($this->beans))
         {
             $this->tempBeans[$bean->id] = $bean;
+            $this->rows[$bean->id] = array("id" => $bean->id);
         }
         else {
             $this->beans[$bean->id] = $bean;
+            $this->rows[$bean->id] = array("id" => $bean->id);
         }
 
     }
