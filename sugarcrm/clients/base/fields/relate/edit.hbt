@@ -1,3 +1,4 @@
+<div class="control-group">
 <div class="row-fluid">
     <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4">
@@ -10,3 +11,4 @@
         <p class="help-block"></p>
     </div>
 </div>
+    </div>
