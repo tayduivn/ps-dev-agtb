@@ -46,7 +46,7 @@ class ProductCategory extends SugarBean {
 	var $description;
     //BEGIN SUGARCRM flav=pro ONLY
 	var $parent_id;
-
+    var $assigned_user_id;
 
 //TREEVIEW
 

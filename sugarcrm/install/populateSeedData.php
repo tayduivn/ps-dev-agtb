@@ -719,6 +719,10 @@ foreach($sugar_demodata['productcategory_seed_data_names'] as $v){
 	$category = new ProductCategory;
 	$category->name = $v;
 	$category->list_order = "1";
+    //BEGIN SUGARCRM flav=pro ONLY
+    $key = array_rand($sugar_demodata['users']);
+    $category->assigned_user_id = $sugar_demodata['users'][$key]['id'];
+    //END SUGARCRM flav=pro ONLY
 	$category->save();
 	$productcategory_id_arr[] = $category->id;
 }
@@ -950,5 +954,11 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 //END SUGARCRM flav=dce ONLY
 
 //END SUGARCRM flav!=sales ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+    include('install/seed_data/ForecastTreeSeedData.php');
+    ForecastTreeSeedData::populateUserSeedData();
+    ForecastTreeSeedData::populateProductCategorySeedData();
+//END SUGARCRM flav=pro ONLY
 
 ?>

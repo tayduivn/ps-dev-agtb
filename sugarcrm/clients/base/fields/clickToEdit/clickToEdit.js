@@ -35,7 +35,7 @@
 
             plugin: function(settings, original) {
                 $("select", this).filter(".cteSelect").chosen().change(settings.context, function(e) {
-                    self.doChange($(this).val(), settings);
+                    self.editFinished($(this).val(), settings);
                 });
             },
 
