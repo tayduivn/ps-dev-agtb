@@ -94,7 +94,6 @@ if(isset( $_POST['Users0emailAddress0'])){
     	
     	// Check if current_user is admin or the same user
     	if(empty($current_user) || ($usr->id != $current_user->id && !$current_user->is_admin)) {
-    	    sugar_die($GLOBALS['app_strings']['LBL_UNAUTH_ACCESS']);
     	    return;
     	}    	
     }
