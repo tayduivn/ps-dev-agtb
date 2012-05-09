@@ -6182,7 +6182,7 @@ tr:hover .actions {
   margin-right: 5px;
 }
 .control-group .btn-toolbar {
-  margin: -4px 0 0 !important;
+  margin: 0 0 0 5px !important;
   display: inline;
 }
 /* vcard */

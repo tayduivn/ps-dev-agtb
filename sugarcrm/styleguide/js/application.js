@@ -157,6 +157,9 @@
       function () {$(this).before('<span class="span2" style="position: absolute; left: -20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');},
       function () {$('span.span2').remove();}
   	)
+  	// Select widget
+    $(".chzn-select").chosen()
+    $(".chzn-select-deselect").chosen({allow_single_deselect:true})
   	
   })
   
@@ -188,9 +191,6 @@
     "bInfo": false,
     "bAutoWidth": true
   })
-  
-  // Select widget
-  $(".chzn-select").chosen()
-  $(".chzn-select-deselect").chosen({allow_single_deselect:true})
+
   
 }(window.jQuery)
