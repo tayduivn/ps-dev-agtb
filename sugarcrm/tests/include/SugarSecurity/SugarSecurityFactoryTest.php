@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarSecurity/SugarSecurity.php');
+require_once('tests/include/SugarSecurity/SugarSecurityUnitTest.php');
 require_once('include/SugarSecurity/SugarSecurityFactory.php');
 
 class SugarSecurityFactoryTest extends Sugar_PHPUnit_Framework_TestCase
@@ -77,16 +77,4 @@ class SugarSecurityFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $secClass2 = SugarSecurityFactory::loadClassFromSession();
         $this->assertEquals('SugarSecurityUnitTest',get_class($secClass2));
     }
-}
-
-class SugarSecurityUnitTest extends SugarSecurity {
-    function loginUserPass($username, $password, $passwordType = 'PLAIN' ) { return true; }
-    function loginOAuth2Token($token) { return true; }
-    function loginSingleSignOnToken($token) { return true; }
-    function loadFromSession() { return true; }
-    function canAccessModule(SugarBean $bean,$accessType='view') { return true; }
-    function canAccessField(SugarBean $bean,$fieldName,$accessType) { return true; }
-    function hasExtraSecurity(SugarBean $bean,$action='list') { return false; }
-    // Soylent test is people!
-    function isSugarUser() { return true; }
 }

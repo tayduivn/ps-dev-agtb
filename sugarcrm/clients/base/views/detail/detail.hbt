@@ -1,38 +1,15 @@
-<div class="subnav">
-    <div class="btn-toolbar pull-left">
-      <h1>{{fieldWithName "name" context this}}</h1>
-    </div>
-    <div class="btn-toolbar pull-right">
-      <div class="btn-group">
-            {{#each meta.buttons}}
-                {{field ../context ../this ../model}}
-            {{/each}}
-      </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span7">
-        <form name='{{name}}'>
-        {{#each meta.panels}}
-                <div class="card2">
-                    {{#each fields}}
-                        {{field ../../context ../../this ../../model}}
-                    {{/each}}
+<form name='{{name}}'>
+    {{#each meta.panels}}
+    <div class="card2">
+        {{#each fields}}
+        {{field ../../context ../../this ../../model}}
+        {{/each}}
                 <span class="extend">
                   <div class="row-fluid">
-                    <a class="more hide">More  <i class="icon-chevron-down"></i></a>
-                    <a class="less hide">Less  <i class="icon-chevron-up"></i></a>
+                      <a class="more hide">More <i class="icon-chevron-down"></i></a>
+                      <a class="less hide">Less <i class="icon-chevron-up"></i></a>
                   </div>
                 </span>
-                </div>
-        {{/each}}
-        </form>
-        <div class="block filtered" id="moduleLog">
-        </div>
-      </div>
-      <div class="span5 divleft">
-      </div>
     </div>
-  </div>
+    {{/each}}
+</form>

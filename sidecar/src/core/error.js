@@ -57,6 +57,22 @@
         },
 
         remoteLogging: false,
+        /**
+         * Returns error strings given a error key and context
+         * @param errorKey
+         * @param context
+         */
+        getErrorString: function(errorKey, context) {
+            var errorName2Keys = {
+              "maxLength":"ERROR_MAX_FIELD_LENGTH",
+               "minLength":"ERROR_MIN_FIELD_LENGTH",
+               "required":"ERROR_FIELD_REQUIRED"
+            };
+            var module = context.module || '';
+            var errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);
+            var compiledTemplate = Handlebars.compile(errorTemplate);
+            return compiledTemplate(context);
+        },
 
         /**
          * Handles validation errors. By default this just pipes the error to the
