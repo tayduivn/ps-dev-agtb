@@ -360,6 +360,7 @@ if (substr($sapi_type, 0, 3) != 'cli') {
             header("Location: ".$sugar_config['site_url'] . "/index.php");
         }else{
             echo "Didn't find site url in your sugarcrm config file";
+            exit(1);
         }
     }
 }
