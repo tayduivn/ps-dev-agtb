@@ -45,11 +45,7 @@
       		return false;  
     })
 
-    // editable
-    $('td .dblclick').hover( 
-      function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
-      function () {$('.icon-pencil').remove();}
-  	)
+
     $("a[rel=popover]")
       .popover()
       .click(function(e) {
@@ -149,20 +145,11 @@
     
     $('.btngroup .btn').button()
 
-    // datepicker
-    $('[rel=datepicker]').datepicker({
-      format: 'mm-dd-yyyy'
-    })
-
-    // colorpicker
-    $('[rel=colorpicker]').colorpicker({
-  		format: 'hex'
-  	})
 
     // editable example
-    $('.dblclick, .ePriority, .eStatus').hover( 
-      function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
-      function () {$('.icon-pencil').remove();}
+    $('.dblclick').hover(
+      function () {$(this).before('<span class="span2" style="position: absolute; left: -20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');},
+      function () {$('span.span2').remove();}
   	)
   	
   })

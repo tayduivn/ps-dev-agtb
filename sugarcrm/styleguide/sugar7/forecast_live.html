@@ -505,10 +505,7 @@
 
 
                   })
-                  .bind("select_node.jstree", function (e, data) { 
-                  	console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
-                  	data.inst.toggle_node(data.rslt.obj);
-                  	 });
+                  .bind("select_node.jstree", function (e, data) { console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id")); });
 
 
           //datatable setup
@@ -537,7 +534,7 @@
                       "sTitle": "Amount",
                       "fnRender": function(obj) {
                           var sReturn = obj.aData[ obj.iDataColumn ];
-                          var ret = "<span class='dblclick'>" + sReturn + "</span>";
+                          var ret = "<div style='position:relative;'><span class='dblclick'>" + sReturn + "</span></div>";
                           return ret;
                       }
                   }
