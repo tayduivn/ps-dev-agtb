@@ -1298,28 +1298,28 @@ table td .btn-toolbar {
   width: 100% !important;
 }
 /*  Font Awesome
-    the iconic font designed for use with Twitter Bootstrap
-    -------------------------------------------------------
-    The full suite of pictographic icons, examples, and documentation
-    can be found at: http://fortawesome.github.com/Font-Awesome/
-
-    License
-    -------------------------------------------------------
-    The Font Awesome webfont, CSS, and LESS files are licensed under CC BY 3.0:
-    http://creativecommons.org/licenses/by/3.0/ A mention of
-    'Font Awesome - http://fortawesome.github.com/Font-Awesome' in human-readable
-    source code is considered acceptable attribution (most common on the web).
-    If human readable source code is not available to the end user, a mention in
-    an 'About' or 'Credits' screen is considered acceptable (most common in desktop
-    or mobile software).
-
-    Contact
-    -------------------------------------------------------
-    Email: dave@davegandy.com
-    Twitter: http://twitter.com/fortaweso_me
-    Work: http://lemonwi.se co-founder
-
-    */
+ *      the iconic font designed for use with Twitter Bootstrap
+ *          -------------------------------------------------------
+ *              The full suite of pictographic icons, examples, and documentation
+ *                  can be found at: http://fortawesome.github.com/Font-Awesome/
+ *
+ *                      License
+ *                          -------------------------------------------------------
+ *                              The Font Awesome webfont, CSS, and LESS files are licensed under CC BY 3.0:
+ *                                  http://creativecommons.org/licenses/by/3.0/ A mention of
+ *                                      'Font Awesome - http://fortawesome.github.com/Font-Awesome' in human-readable
+ *                                          source code is considered acceptable attribution (most common on the web).
+ *                                              If human readable source code is not available to the end user, a mention in
+ *                                                  an 'About' or 'Credits' screen is considered acceptable (most common in desktop
+ *                                                      or mobile software).
+ *
+ *                                                          Contact
+ *                                                              -------------------------------------------------------
+ *                                                                  Email: dave@davegandy.com
+ *                                                                      Twitter: http://twitter.com/fortaweso_me
+ *                                                                          Work: http://lemonwi.se co-founder
+ *
+ *                                                                              */
 @font-face {
   font-family: 'FontAwesome';
   src: url('../font/fontawesome-webfont.eot');
@@ -1350,7 +1350,7 @@ li[class*=" icon-"] {
   display: block;
 }
 /*  Font Awesome styles
-    ------------------------------------------------------- */
+ *      ------------------------------------------------------- */
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
   font-family: FontAwesome;
@@ -1423,7 +1423,7 @@ li[class*=" icon-"].icon-large:before {
   text-indent: -1.3333333333333333em;
 }
 /*  Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
-    readers do not read off random characters that represent icons */
+ *      readers do not read off random characters that represent icons */
 .icon-glass:before {
   content: "\f000";
 }
@@ -3661,7 +3661,7 @@ a.thumbnail:hover {
   height: 0;
 }
 /* Body and structure
--------------------*/
+ * -------------------*/
 body {
   position: relative;
   padding: 47px 0;
@@ -3781,7 +3781,7 @@ article [id^="listing-action"] i.grip {
   padding: 0 4px 0 8px;
   line-height: 68px;
   width: 16px;
-  letter-spacing: -4px;
+  letter-spacing: 0;
   z-index: 1;
   font-style: normal;
   height: 100%;
@@ -3850,9 +3850,9 @@ article p:last-child {
   background: #f5f5f5;
 }
 /* Messages 
-------------*/
+ * ------------*/
 /* Tweak navbar brand link to be super sleek
--------------------------------------------------- */
+ * -------------------------------------------------- */
 .cube {
   background: url(../img/badge_256.png) 50% 50% no-repeat;
   background-size: 50%;
@@ -3915,7 +3915,7 @@ date {
 }
 /*.container-fluid {margin-top: 16px;}*/
 /* Icons
-------------------------- */
+ * ------------------------- */
 [class^="icon-"] {
   font-size: 16px;
 }
@@ -4259,24 +4259,24 @@ html {
 }
 #detailListing .listing {
   /*
-  top: 202px; 
-  padding-bottom: 190px;
-*/
+ *   top: 202px; 
+ *     padding-bottom: 190px;
+ *     */
 
 }
 /*
-.navbar-inner h1 {
-  font-size: 16px !important;
-  text-align: center;
-  font-weight: 700;
-  width: auto !important;
-  overflow: hidden;
-  margin: 0 auto;
-  text-shadow: 0 -1px 0 @black;
-  z-index: 0;
-  color: @white;
-}
-*/
+ * .navbar-inner h1 {
+ *   font-size: 16px !important;
+ *     text-align: center;
+ *       font-weight: 700;
+ *         width: auto !important;
+ *           overflow: hidden;
+ *             margin: 0 auto;
+ *               text-shadow: 0 -1px 0 @black;
+ *                 z-index: 0;
+ *                   color: @white;
+ *                   }
+ *                   */
 h1.nomad,
 h3.nomad {
   color: #ffffff;
