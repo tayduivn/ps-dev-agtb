@@ -62,7 +62,7 @@ if(isset( $_POST['Users0emailAddress0'])){
             $usr_id=$usr->retrieve_user_id($username);
             $usr->retrieve($usr_id);
             if ($usr->email1 !=  $useremail){
-                echo $mod_strings['ERR_PASSWORD_USERNAME_MISSMATCH'];
+                echo $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
                 return;
             }
 
@@ -87,13 +87,14 @@ if(isset( $_POST['Users0emailAddress0'])){
 	        	$usr->retrieve($usr_id);
 			}
     		else{
-    			echo  $mod_strings['ERR_USER_INFO_NOT_FOUND'];
+    			echo  $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
             	return;
     		}
     	}
     	
     	// Check if current_user is admin or the same user
-    	if(empty($current_user) || ($usr->id != $current_user->id && !$current_user->is_admin)) {
+    	if(empty($current_user->id) || empty($usr->id) || ($usr->id != $current_user->id && !$current_user->is_admin)) {
+    	    echo  $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
     	    return;
     	}    	
     }
