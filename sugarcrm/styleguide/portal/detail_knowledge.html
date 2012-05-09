@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Bad links in Pitch - 20508 - SugarCRM</title>
+  <title>SugarCRM On-Demand - Knowledge Base - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -23,13 +23,13 @@
         <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
-            <li class="active">
+            <li>
               <a href="bugs.html">Bugs</a>
             </li>
             <li>
               <a href="cases.html">Cases</a>
             </li>
-            <li>
+            <li class="active">
               <a href="knowledge.html">Knowledge Base</a>
             </li>
           </ul>
@@ -63,15 +63,21 @@
   </div>        
   <div class="subnav row-fluid">
     <div class="btn-toolbar pull-left">
-      <h1>Bad links in Pitch</h1>
+      <h1>SugarCRM On-Demand </h1>
     </div>
     <div class="btn-toolbar pull-right">
-      <div class="dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-        <ul class="dropdown-menu menu">
-          <li><a href="edit.html">Edit</a></li>
-          <li class="divider"></li>
-          <li><a data-toggle="modal" href="#noteModal">Add Note</a></li>
+      <div class="btn-group">
+        <a class="btn" href="#"><i class="icon-print"></i></a>
+        <a class="btn" href="#"><i class="icon-envelope"></i></a>
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-share"></i>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Quora</a></li>
+          <li><a href="#">Twitter</a></li>
         </ul>
       </div>
     </div>
@@ -82,49 +88,96 @@
         <div class="card2">
           <div class="row-fluid">
             <div class="span2">Description:</div>
-            <div class="span10 dblclick">You have to hide the footer to see the "Print" and "Back to Top" links</div>
-          </div>          
-          <div class="row-fluid">
-            <div class="span2">Number:</div>
-            <div class="span4">20508</div>
-          </div>
-          <div class="row-fluid">
-            <div class="span2">Priority:</div>
-            <div class="span4 ePriority">Medium</div> 
-          </div>
-          <div class="row-fluid">
-            <div class="span2">Category:</div>
-            <div class="span4" id="product_category">User Interface</div>
-          </div>
-          <div class="row-fluid">  
-            <div class="span2">Status:</div>
-            <div class="span4 eStatus" id="status">Closed</div>   
-          </div>
-          <div class="extend hide">         
-          <div class="row-fluid">
-            <div class="span2">Resolution:</div>
-            <div class="span4">Check Implementation</div>   
-          </div>    
-          <div class="row-fluid">
-            <div class="span2">Created:</div>
-            <div class="span4" id="date_entered">02/08/2012 13:29</div>     
-          </div>
-          <div class="row-fluid">     
-            <div class="span2">Modified:</div>
-            <div class="span4" id="date_modified">02/29/2012 10:47</div>
-          </div>
-          <div class="row-fluid">
-            <div class="span2">Type:</div>
-            <div class="span4 dblclick">Feature</div>  
-          </div> 
-            <div class="row-fluid">
-              <div class="span2">Related To:</div>
-              <div class="span4 dblclick">67896, 45343, 66443</div>
+            <div class="span10">
+              <p>
+                <strong>Q: How often is my SugarCRM On-Demand instance backed up?</strong><br>
+                A: On-Demand instances are backed up nightly at approximately 12:00am Pacific time.
+              </p>
+              <p>
+                <strong>Q: How long is the copy of the backup stored?</strong><br>
+              A: Each nightly backup is stored for thirty days.
+              </p>
+              <p>
+                <strong>Q: How do I obtain a copy of the backup?</strong><br>
+              A: While you cannot obtain a backup of the full SugarCRM instance, you can obtain a backup of your data by submitting a ticket to SugarCRM Customer Support.
+              </p>
+              <p>
+                <strong>Q: How do I request my instance be restored to a backup copy?</strong><br>
+              A: To request that your SugarCRM instance be rolled back to a date within the last thirty days, submit a ticket to SugarCRM Customer Support.
+              </p>
+              <p>
+                <strong>Q: How do I upgrade my On-Demand instance?</strong><br>
+              A: Minor patches are automatically applied to your On-Demand instance. For major upgrades, SugarCRM will generate a test instance for you to approve prior to upgrading your production instance. To schedule a major upgrade, open a ticket with SugarCRM Customer Support.
+              </p>
+              <p>
+                <strong>Q: How do I upgrade the offline client once my On-Demand instance is upgraded?</strong><br>
+              A: Once your On-Demand instance has been upgraded, uninstall the old offline client and install the new one fresh.
+              </p>
+              <p>
+                <strong>Q: Can we access the On-Demand database to run queries directly?</strong><br>
+              A: Direct database access is not provided with Sugar Professional On-Demand. If running database queries for searching is a requirement for you, please speak with your sales representative about Sugar Enterprise On-Demand. This solution includes the Enterprise Reporting feature, allowing you to construct your own SELECT queries to search the database.
+              </p>
+              <p>
+                <strong>Q: What if I want to customize my On-Demand instance?</strong><br>
+              A: SugarCRM will support any customization you make through our product's user interface. For example, any custom fields generated through Studio, or layout changes done through Studio, will be supported.  Custom modules that can be installed through Module Loader are also supported.
+              </p>
+              <p>
+                If you require customizations that are not possible through Studio or Module Builder, please contact your sales representative to discuss a Professional Services consulting engagement.  
+              </p>
             </div>
-          </div>
-          <div class="row-fluid">
-            <a href="" class="more">More  <i class="icon-chevron-down"></i></a>
-          </div>     
+            
+          </div>    
+              <div class="row-fluid">
+                <div class="span2">Tags:</div>
+                <div class="span4">External/Edition/Enterprise, External/Deployment/On-Demand, External/Edition/Professional, FAQs</div>   
+              </div> 
+              <div class="row-fluid">
+                <div class="span2">Related To:</div>
+                <div class="span4"><a href="detail.html">67896</a></div>
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Number:</div>
+                <div class="span4">20508</div>
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Modified:</div>
+                <div class="span4" id="date_entered">02/08/2012 13:29</div>     
+              </div>
+          <div class="extend hide">           
+              <div class="row-fluid">
+                <div class="span2">Published:</div>
+                <div class="span4" id="date_entered">02/08/2012 13:29</div>     
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Created:</div>
+                <div class="span4" id="date_entered">02/08/2012 13:29</div>     
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Revision:</div>
+                <div class="span4">1</div>  
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Team:</div>
+                <div class="span4">Global</div>
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Author:</div>
+                <div class="span4"><a href="">Sabra Khan</a></div>  
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Approver:</div>
+                <div class="span4"><a href="">Sabra Khan</a></div>  
+              </div>
+              <div class="row-fluid">
+                <div class="span2">Status:</div>
+                <div class="span4">Published</div>  
+              </div>
+              </div>
+              <div class="row-fluid">
+                <a href="" class="more">More  <i class="icon-chevron-down"></i></a>
+              </div>     
+            </div>
+          </div>   
         </div>
             <div class="block filtered tabbable tabs-left" id="moduleActivity">
               <h4>Activity</h4>
@@ -133,30 +186,27 @@
               </form> 
               <ul class="nav nav-tabs results">
                 <li>
-                  <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
-                  <p>
-                    <a href=" profile_skhan.html">Sabra Khan</a> changed priority to medium
-                    <br>
-                    <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
-                  </p>
-                </li>
-                <li>
                   <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
                   <p>
                     <a href="profile_sabra.html">Sabra Khan</a> added a note that included a screenshot.
                     <br>
                     <date class="date">Posted 1 day ago at 3:00 pm EST</date>
                   </p>
+                  <div class="actions">
+                    <a href="#note1" data-toggle="tab"><i class="icon-preview"></i></a>
+                    <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
+                    <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
+                  </div>
                 </li> 
                 <li>
                   <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
                   <p>
-                    <a href="profile_skhan.html">Sabra Khan</a> changed the status to pending review.
+                    <a href="profile_skhan.html">Sabra Khan</a> added "FAQs" to Tags.
                     <br>
                     <date class="date">Posted 2 days ago at 1:20 pm EST</date>
                   </p>
-                  <div class="actions ">
-                    <a data-toggle="tab" href="#log2" class="btn btn-mini"><i class="icon-eye-open"></i></a>
+                  <div class="actions">
+                    <a href="#note1" data-toggle="tab"><i class="icon-preview"></i></a>
                     <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
                     <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
                   </div>

@@ -1,5 +1,11 @@
 !function ($) {
   $(function(){
+   
+    // keybinding
+    $(document).keyup(function(e){
+        if(e.keyCode === 27) 
+          $(".alert-top").remove();
+    })
     
     // make code pretty (styleguide only)
     window.prettyPrint && prettyPrint()
@@ -162,7 +168,10 @@
 	})
 	$('.search').on('click', function () {
 	    $(this).toggleClass('active');
-	    $(this).parent().parent().parent().find('.dataTables_filter').toggle();
+	    $(this).parent().parent().parent().find('.dataTables_filter').toggle(
+	      function () {
+	        $(this).find('input').focus();
+  	  });
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
@@ -183,4 +192,5 @@
   // Select widget
   $(".chzn-select").chosen()
   $(".chzn-select-deselect").chosen({allow_single_deselect:true})
+  
 }(window.jQuery)

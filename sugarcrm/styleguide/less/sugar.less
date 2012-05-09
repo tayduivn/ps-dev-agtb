@@ -248,19 +248,6 @@ border-right: 1px solid @grayLighter;
           transition: all .2s linear;
   }
   
-/* Messages 
-------------*/
-.alert-top {
-  width: 50%;
-  left: 25%;
-  position: fixed;
-  top: 55px;
-  z-index: 1060;
-}
-.alert-top .alert {  
-  @shadow: 0 1px 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);  
-}
 
 #folded .tab-pane {
   overflow: auto;
@@ -370,7 +357,6 @@ article .avatar {
 	margin-left: -33px;
 	padding: 5px 10px;
 	min-width: 16px;
-	display: inline;
   .border-radius (0 4px 4px 0);
 }
 
@@ -525,17 +511,17 @@ article .avatar {
 .drawerTrig {font-size: 8px; padding: 1px 5px 0; z-index: 1020; position: absolute;}
 h4 i {color: @grayLight;}
 .drawerTrig.pull-right {
-  .border-radius(4px 0 0 4px);
-  margin-right: -1px;
+  .border-radius(0 2px 2px 0);
+  margin-right: -18px;
   position: relative;
 }
 
-.block.tabs-left .nav-tabs li:hover .actions {
+.block.tabs-left .nav-tabs li .actions {
   display: block;
   top: 0;
 }
 
-.block.tabs-left .nav-tabs li.active:hover .actions {
+.block.tabs-left .nav-tabs li.active .actions {
   display: block;
   top: 11px;
   right: 60px;
@@ -630,6 +616,9 @@ position: relative;
 
 .btn-group .actions {
   float: none;
+}
+
+.showcase{
 }
 
 .card2 {
@@ -913,7 +902,7 @@ padding-bottom: 15px;
 }
 
 .navbar .container-fluid {margin-top: 0;}
-.container-fluid {margin-top: 16px;}
+.container-fluid {margin-top: 20px;}
 
 /* Quick links
 -------------------------------------------------- */
@@ -1793,8 +1782,6 @@ background: none;
   left: 22%;
 }
 #login .modal .btn {float: none !important;}
-
-
 
 /* Alert overrider */
 .alert-success {background: @green;} 

@@ -10,20 +10,22 @@
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body id="portal">
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
         <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
-            <li class="active">
+            <li>
               <a href="bugs.html">Bugs</a>
             </li>
-            <li class="">
+            <li>
               <a href="cases.html">Cases</a>
+            </li>
+            <li>
+              <a href="knowledge.html">Knowledge Base</a>
             </li>
           </ul>
           <ul class="nav pull-right" id="userList">
@@ -32,9 +34,6 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="profile_skhan.html">Profile</a></li>
-                <li><a href="#">Password</a></li>
-                <li><a href="#">Advanced</a></li>
-                <li><a href="#">External Accounts</a></li>
                 <li class="divider"></li>
                 <li><a href="#">Log Out</a></li>
               </ul>
@@ -42,28 +41,27 @@
             <li class="divider-vertical"></li>
             <li class="dropdown" id="createList">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu quick">
-                <li><a href="#">Create Account</a></li>
-                <li><a href="#">Create Lead</a></li>
-                <li><a href="#">Create Case</a></li>
+              <ul class="dropdown-menu">
+                <li><a href="create.html">Create bug</a></li>
+                <li><a href="#">Create case</a></li>
               </ul>
             </li>              
           </ul>
           <div id="searchForm">        
             <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]"><a href="" class="btn"><i class="icon-search"></i></a> 
             </form>
           </div>
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
-  </div>   
+  </div>  
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span12">
         <div class="thumbnail">
           <h4>Search for "Bugs with bad stuff" <small>(10 of 30)</small></h4>
-          <table class="table table-striped">
+          <table class="table table-striped datatable">
             <thead>
               <tr>
                 <th class="span1">Number</th>
@@ -95,20 +93,10 @@
               </tr>
             </tbody>
           </table>
-          <div class="block-footer">
-            <button data-loading-text="Loading..." class="btn">
-              Show more bugs
-            </button>
-          </div>
-          <ul class="nav nav-pills actions" id="bugsModuleActions">        
-            <li>  
-              <a href="#adminActivity" data-toggle="modal" rel="tooltip" title="Account options" id="bugsModuleActionsAdmin"><i class="icon-cog"></i></a>
-            </li>          
-          </ul>
         </div>
       </div>
     </div>
-  </div>   
+  </div>
   <footer>
     <div class="row-fluid">
       <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
@@ -126,68 +114,7 @@
   </footer>
 
 
-  <!-- Tour Guide -->
-  <div class="modal hide" id="systemTour">
-  </div>
-
-  <!-- dynamic generation -->
-  <div class="modal hide" id="adminAdd">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Add a Bug</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form-horizontal">
-        <fieldset>
-          <div class="control-group">
-            <label for="input01" class="control-label">Number</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="input01" class="control-label">Name</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="input01" class="control-label">Name</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="input01" class="control-label">Name</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>          
-          <div class="control-group">
-            <label for="input01" class="control-label">Label</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>                    
-          <div class="control-group">
-            <label for="textarea" class="control-label">Label</label>
-            <div class="controls">
-              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-            </div>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button data-loading-text="Saving..." class="btn loading btn-primary">
-        Save
-      </button>
-      <button class="btn cancel" data-dismiss="modal">Cancel</button>
-    </div>
-  </div>
-
   <script src="../js/jquery-1.7.2.min.js"></script>
-  <script src="../js/jquery.jeditable.js"></script>        
   <script src="../js/bootstrap-transition.js"></script>
   <script src="../js/bootstrap-alert.js"></script>
   <script src="../js/bootstrap-modal.js"></script>
@@ -199,8 +126,11 @@
   <script src="../js/bootstrap-popover.js"></script>
   <script src="../js/bootstrap-button.js"></script>
   <script src="../js/bootstrap-typeahead.js"></script>
-  <script src="../js/application.js"></script>
+  <script src="../js/jquery.datatables.js"></script>  
+  <script src="../js/wicked.js"></script>        
   <script src="../js/jquery.jeditable.js"></script>        
   <script src="../js/editable.js"></script>
+  <script src="../js/application.js"></script>
+
 </body>
 </html>
