@@ -1,0 +1,10 @@
+<div class="thumbnail">
+    <h1>{{meta.panels.0.label}}</h1>
+
+    <div id="jsTree"></div>
+    {{#if meta.options.show_footer}}
+    <div class="block-footer">
+        Hello World
+    </div>
+    {{/if}}
+</div>
