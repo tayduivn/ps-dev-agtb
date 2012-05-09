@@ -23,7 +23,8 @@
             msg       = (_.isString(options.messages)) ? [options.messages] : options.messages;
             autoClose = options.autoClose ? options.autoClose : false;
 
-            alertClass = (level === "warning" || level === "info" || level === "error") ? "alert-" + level : "";
+            // "process" is the loading indicator .. I didn't name it ;=)
+            alertClass = (level === "process" || level === "success" || level === "warning" || level === "info" || level === "error") ? "alert-" + level : "";
 
             ctx = {
                 alertClass:  alertClass,
@@ -36,6 +37,8 @@
                     template: "<div class=\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{/if}}\">" +
                         "<a class=\"close\" data-dismiss=\"alert\" href=\"#\">x</a>{{#if title}}<strong>{{title}}</strong>{{/if}}" +
                         "{{#each messages}}<p>{{this}}</p>{{/each}}</div>",
+                    loadingTemplate: "<div class=\"alert {{alertClass}}\">" +
+                        "<strong>{{title}}</strong>&hellip;</div><a class=\"close\" data-dismiss=\"alert\" href=\"#\">x</a>",
                     initialize: function() {
                         this.render();
                     },
@@ -43,7 +46,10 @@
                         this.$el.remove();
                     },
                     render: function() {
-                        var tpl = Handlebars.compile(this.template);
+                        var tpl = (level === 'process') ?
+                            Handlebars.compile(this.loadingTemplate) :
+                            Handlebars.compile(this.template);
+
                         this.$el.html(tpl(ctx));
                     }
                 });

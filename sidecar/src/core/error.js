@@ -40,6 +40,7 @@
             400: function() {
             },
             401: function() {
+                app.alert.dismissAll();
                 app.api.logout();
                 app.router.login();
             },
@@ -84,6 +85,12 @@
         handleValidationError: function(model, errors) {
             // TODO: Right now doesn't stringify the error, add it in when we finalize the
             // structure of the error.
+
+            // TODO: Likely, we'll have a 'Saving...' alert, etc., and so we just dismiss all
+            // since we don't know the alert key. Ostensibly, validation errors will show
+            // field by field; so feedback will be provided as appropriate.
+            app.alert.dismissAll();
+
             _.each(errors, function(fieldError) {
                 app.logger.error("validation failed: " + fieldError);
             });
@@ -134,6 +141,13 @@
             originalHandler = window.onerror;
 
             window.onerror = function(mesg, url, line) {
+                // TODO: We'll likely want to let originalHandler deal with this case by case.
+                // Also, need to use language strings for multiple languages.
+                app.alert.show('loading', {
+                    level: 'error', 
+                    title: 'Fatal Error', 
+                    messages: ["You don't appear to have an internet connection.", 'Please connect to the internet and try again.']});
+
                 if (handler) {
                     handler.call(context);
                 } else {
