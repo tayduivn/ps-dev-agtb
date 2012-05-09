@@ -51,6 +51,31 @@ function build_argument_string($arguments=array()) {
    return $argument_string;
 }
 
+//Bug 52872. Redirect to index.php if the request does not come from CLI.
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) != 'cli') {
+
+    $cwd = getcwd();
+    $dirs = explode('/', $cwd);
+    //Pops last two elements from array
+    array_pop($dirs);
+    array_pop($dirs);
+    $root_dir = implode('/', $dirs);
+
+    if (is_file($root_dir.'/config.php')) {
+
+        require_once($root_dir.'/config.php');
+
+        global $sugar_config;
+        if(!empty($sugar_config['site_url'])){
+            header("Location: ".$sugar_config['site_url'] . "/index.php");
+        }else{
+            echo "Didn't find site url in your sugarcrm config file";
+        }
+    }
+}
+//End of #52872
+
 $php_path = '';
 $run_dce_upgrade = false;
 if(isset($argv[3]) && is_dir($argv[3]) && file_exists($argv[3]."/ini_setup.php")) {

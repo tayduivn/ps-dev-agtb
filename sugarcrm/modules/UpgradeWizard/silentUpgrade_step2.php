@@ -168,6 +168,31 @@ function rebuildRelations($pre_path = '')
 	include($pre_path.'modules/ACL/install_actions.php');
 }
 
+//Bug 52872. Redirect to index.php if the request does not come from CLI.
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) != 'cli') {
+
+    $cwd = getcwd();
+    $dirs = explode('/', $cwd);
+    //Pops last two elements from array
+    array_pop($dirs);
+    array_pop($dirs);
+    $root_dir = implode('/', $dirs);
+
+    if (is_file($root_dir.'/config.php')) {
+
+        require_once($root_dir.'/config.php');
+
+        global $sugar_config;
+        if(!empty($sugar_config['site_url'])){
+            header("Location: ".$sugar_config['site_url'] . "/index.php");
+        }else{
+            echo "Didn't find site url in your sugarcrm config file";
+        }
+    }
+}
+//End of #52872
+
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	fwrite(STDERR,'This utility may only be run from the command line or command prompt.');
