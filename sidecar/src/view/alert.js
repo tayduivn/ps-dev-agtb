@@ -36,6 +36,8 @@
          * <code>
          * var a2 = SUGAR.App.alert('mykey', {level:"info", title:'Title', messages:['para 1', 'para 2'], autoclose:true})
          * </code>
+         * Note: If the level property is 'process' (a loading indicator), messages is ignored. The 
+         * title is the only thing displayed resulting in something like : 'Loading...' 
          * @return {Backbone.View} Alert instance 
          * @method
          */
