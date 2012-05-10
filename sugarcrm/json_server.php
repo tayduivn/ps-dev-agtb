@@ -126,6 +126,18 @@ function json_query($request_id, $params) {
 		$list_arr[$i]['module']= $list_return[$i]->object_name;
 
 		foreach($args['field_list'] as $field) {
+			
+			//handle links
+			
+			if( $list_return[$i]->field_name_map[$field]['type'] == "relate" ) {
+				 $linked = current($list_return[$i]->get_linked_beans($list_return[$i]->field_name_map[$field]['link'], get_valid_bean_name($list_return[$i]->field_name_map[$field]['module'])));
+				 $list_return[$i]->$field = "";
+				 if (is_object($linked)) {
+					 $linkFieldName = $list_return[$i]->field_name_map[$field]['rname'];
+					 $list_return[$i]->$field = $linked->$linkFieldName;
+				 }
+			}
+			
 			// handle enums
 			if(	(isset($list_return[$i]->field_name_map[$field]['type']) && $list_return[$i]->field_name_map[$field]['type'] == 'enum') ||
 				(isset($list_return[$i]->field_name_map[$field]['custom_type']) && $list_return[$i]->field_name_map[$field]['custom_type'] == 'enum')) {
@@ -240,6 +252,20 @@ function construct_where(&$query_obj, $table='',$module=null) {
 		         "AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = '{$module}' AND email_address_caps LIKE '%{$email1_value}%' )";
 
 	         array_push($cond_arr,$email1_condition);
+		}
+		elseif ($condition['name']=='account_name') {
+			
+			if ($module == "Contacts") {
+				$account_name = " {$table}id in ( SELECT  lnk.contact_id AS id FROM accounts ac, " .
+			         "accounts_contacts lnk WHERE ac.id = lnk.account_id " .
+			         "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+		        array_push($cond_arr,$account_name);
+			}
+			elseif ($module == "Leads") {
+				$account_name = " {$table}account_id in ( SELECT id FROM accounts ac " .
+			         "WHERE ac.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+				array_push($cond_arr,$account_name);
+			}
 		}
 		else {
 			if($condition['op'] == 'contains') {

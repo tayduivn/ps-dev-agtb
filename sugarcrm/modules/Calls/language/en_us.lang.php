@@ -76,6 +76,7 @@ $mod_strings = array (
     'LBL_FIRST_NAME' => 'First Name',
     'LBL_LAST_NAME' => 'Last Name',
     'LBL_EMAIL' => 'Email',
+    'LBL_ACCOUNT_NAME' => 'Account',    
     'LBL_PHONE' => 'Phone',
     'LBL_REMINDER' => 'Reminders:',
     'LBL_REMINDER_POPUP' => 'Popup',
