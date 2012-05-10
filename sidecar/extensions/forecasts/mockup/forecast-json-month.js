@@ -104,7 +104,7 @@
 
 	{
 
-		'label': 'Jan',
+		'label': 'January',
 
 		'gvalue': '400',
 
@@ -151,7 +151,7 @@
 ,
 	{
 
-		'label': 'Feb',
+		'label': 'Febuary',
 
 		'gvalue': '590',
 
@@ -197,7 +197,7 @@
 ,
 	{
 
-		'label': 'Mar',
+		'label': 'March',
 
 		'gvalue': '410',
 
@@ -239,6 +239,412 @@
 		'goalmarkerlabel' : 'Quota'
 
 	}
+,
+	{
+
+		'label': 'April',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'May',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'June',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'July',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'August',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'September',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'October',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'November',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+,
+	{
+
+		'label': 'December',
+
+		'gvalue': '410',
+
+		'gvaluelabel': '410K',
+
+		'values': [
+			10
+,
+			100
+,
+			200
+,
+            100
+
+		],
+
+		'valuelabels': [
+			'10K'
+,
+			'100K'
+,
+			'200K'
+,
+            '100K'
+
+		],
+
+		'links': [
+			''
+,
+			''
+,
+			''
+
+
+		],
+		'goalmarkervalue' : 410,
+		'goalmarkervaluelabel' : '410K',
+		'goalmarkerlabel' : 'Quota'
+
+	}
+
 
 
 	]
