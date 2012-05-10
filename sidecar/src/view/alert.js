@@ -43,7 +43,7 @@
          */
         show: function(key, options) {
             var _alertView = null;
-            if (!app.additionalComponents.alert) return; 
+            if (!app.additionalComponents.alert) return null;
 
             // Your AlertView implementation must define this:
             _alertView = app.additionalComponents.alert.show(options);
