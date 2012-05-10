@@ -82,7 +82,7 @@ if(isset( $_POST['Users0emailAddress0'])){
             $usr->retrieve($_POST['userId']);
         }
         else{
-        	if(isset( $_POST['sugar_user_name'])){
+        	if(!empty( $_POST['sugar_user_name'])){
 				$usr_id=$usr->retrieve_user_id($_POST['sugar_user_name']);
 	        	$usr->retrieve($usr_id);
 			}
