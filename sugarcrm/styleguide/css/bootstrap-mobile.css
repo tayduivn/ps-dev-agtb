@@ -3805,8 +3805,37 @@ article [class^="icon-star"] {
 article > input[type=checkbox] {
   margin-top: 20px;
 }
-#detailListing article {
-  padding: 8px 32px 8px 16px !important;
+#detailListing {
+  padding-right: 0;
+  padding-left: 0;
+}
+#detailListing {
+  height: auto;
+}
+#detailListing #listing {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+}
+#detailListing #listing > i {
+  display: inline-block;
+  height: 210px;
+}
+#detailListing ul.actions {
+  margin: 0;
+  padding: 0;
+}
+#detailListing ul.actions li {
+  list-style: none;
+  padding: 0 0 0 10px;
+  line-height: 42px;
+  border-top: 1px solid #e8e8e8;
+  min-height: 42px;
+}
+#detailListing ul.actions li .more {
+  color: #bfbfbf;
+  float: right;
+  margin-right: 10px;
 }
 article [id^="listing-action"] i.grip {
   position: absolute;
@@ -3853,8 +3882,7 @@ article [id^="listing-action"] span {
   list-style: none;
   text-align: center;
 }
-article [id^="listing-action"] a,
-#record-action a {
+article [id^="listing-action"] a {
   padding: 4px 6%;
   display: inline-block;
   /*width: 26px;*/
@@ -3976,9 +4004,22 @@ a:hover [class^="icon-"] {
 #record-action .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
   background-size: 80%;
-  height: 26px;
+  height: 22px;
   width: 26px;
-  margin-bottom: -22px;
+  margin-top: 13px;
+}
+#record-action > a:not(:last-child) {
+  -webkit-box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
+  -moz-box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
+  box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
+}
+#record-action > a {
+  margin: 0;
+  padding: 0;
+  height: 52px;
+}
+#record-action > a > i {
+  margin: 16px 0 0 0;
 }
 .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
@@ -4383,22 +4424,22 @@ h3.nomad {
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+  font-size: 0.9em;
 }
 .bizcard a {
   color: #ffffff;
 }
 .bizcard .avatar {
-  height: 68px;
-  width: 68px;
-  position: absolute;
-  right: 16px;
-  top: 16px;
+  height: 82px;
+  width: 82px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
-  -webkit-box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 rgba(0, 0, 0, 0.9), 0 1px 4px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 rgba(0, 0, 0, 0.9), 0 1px 4px rgba(0, 0, 0, 0.6);
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.2), 0 1px 0 rgba(0, 0, 0, 0.9), 0 1px 4px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  margin-left: 10px;
 }
 .bizcard h3 {
   font-size: 16px;
@@ -4408,8 +4449,23 @@ h3.nomad {
   padding: 0;
   line-height: 20px;
 }
+.bizcard img {
+  float: left;
+}
 .bizcard .card {
   margin: 0 0 0 16px;
+  float: left;
+  line-height: 1.25em;
+}
+.bizcard .card h3 {
+  font-size: 1.75em;
+  line-height: 22px;
+}
+.bizcard .more {
+  float: right;
+  padding-top: 35px;
+  padding-right: 10px;
+  color: #666666;
 }
 .bizcard #accountDescription {
   margin: 10px 0 0;
