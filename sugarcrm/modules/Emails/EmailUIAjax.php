@@ -1624,8 +1624,8 @@ eoq;
         if(isset($_REQUEST['person']) && !empty($_REQUEST['person'])) {
             $person = $_REQUEST['person'];
         }
-        if(isset($_REQUEST['start']) && !empty($_REQUEST['start'])) {
-            $start = $_REQUEST['start'];
+        if(!empty($_REQUEST['start'])) {
+            $start = intval($_REQUEST['start']);
         } else {
         	$start = 0;
         }
@@ -1644,11 +1644,11 @@ eoq;
 	        $time = microtime(true);
 
 	        //Handle sort and order requests
-	        $sort = !empty($_REQUEST['sort']) ? $_REQUEST['sort'] : "id";
+	        $sort = !empty($_REQUEST['sort']) ? $ie->db->getValidDBName($_REQUEST['sort']) : "id";
 	        $sort = ($sort == 'bean_id') ? 'id' : $sort;
 	        $sort = ($sort == 'email') ? 'email_address' : $sort;
 	        $sort = ($sort == 'name') ? 'last_name' : $sort;
-	        $direction = !empty($_REQUEST['dir']) ? $_REQUEST['dir'] : "asc";
+	        $direction = !empty($_REQUEST['dir']) && in_array(strtolower($_REQUEST['dir']), array("asc", "desc")) ? $_REQUEST['dir'] : "asc";
 	        $order = ( !empty($sort) && !empty($direction) ) ? " ORDER BY {$sort} {$direction}" : "";
 
 	        $r = $ie->db->limitQuery($qArray['query'] . " $order ", $start, 25, true);
