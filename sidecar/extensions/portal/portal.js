@@ -25,9 +25,17 @@
                                     primary: true,
                                     events: {
                                         click: "function(){ var self = this; " +
-                                            " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
-                                            "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
+                                            "$('#content').hide(); " +
+                                            "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
+                                            "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
+                                            "this.app.api.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "console.log(\"login failed!\");},  success:" +
+                                            "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
+                                            "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
+                                            "app.events.on('app:sync:complete', function() { " +
+                                            "app.alert.dismiss('login'); $('#content').show();" +
+                                            "}); " +
+                                            "app.sync(" +
                                             "function(){console.log(\"sync success firing\");}); }" +
                                             "});" +
                                             "}"
@@ -125,7 +133,19 @@
                 "</div>\n" +
                 "</div>         \n" +
                 "</form>",
-            "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{{eq this ../currentModule \"class=\\\"active\\\"\" \"\"}}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this}}/create\">{{this}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+            "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{{eq this ../currentModule \"class=\\\"active\\\"\" \"\"}}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this}}/create\">{{this}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>",
+            "subnav": "<div class=\"subnav\">" +
+                "<div class=\"btn-toolbar pull-left\">" +
+                "<h1>{{fieldWithName context this null \"name\"}}</h1>" +
+                "</div>" +
+                "<div class=\"btn-toolbar pull-right\">" +
+                "<div class=\"btn-group\">" +
+                "{{#each meta.buttons}}" +
+                "{{field ../context ../this ../model}}  " +
+                "{{/each}}" +
+                "</div>" +
+                "</div>" +
+                "</div>"
         }
     };
     app.events.on("app:init", function() {
@@ -133,4 +153,28 @@
         app.data.declareModels(base_metadata);
     });
 
+    app.view.Field=app.view.Field.extend({
+        /**
+         * Handles how validation errors are appended to the fields dom element
+         *
+         * By default errors are appended to the dom into a .help-block class if present
+         * and the .error class is added to any .control-group elements in accordance with
+         * bootstrap.
+         *
+         * @param {Object} errors hash of validation errors
+         */
+        handleValidationError: function(errors) {
+            var self = this;
+
+            this.$('.control-group').addClass("error");
+            this.$('.help-block').html("");
+
+            _.each(errors, function(errorContext, errorName) {
+                self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
+            });
+        }
+    })
+
+
 })(SUGAR.App);
+

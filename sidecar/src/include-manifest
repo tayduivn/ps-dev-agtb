@@ -1,6 +1,0 @@
-# Define order for loading javascript files
-
-app.js
-controller/controller.js
-controller/router.js
-logger.js

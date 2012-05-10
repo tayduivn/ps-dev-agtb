@@ -1,52 +1,56 @@
-describe('Metadata Manager', function () {
+describe('Metadata Manager', function() {
     var app, meta = fixtures.metadata;
 
-    beforeEach(function () {
-        app = SugarTest.app; 
+    beforeEach(function() {
+        app = SugarTest.app;
         app.metadata.set(meta);
     });
 
-    it('should get view definitions', function () {
+    it('should get metadata hash', function() {
+        expect(app.metadata.getHash()).toEqual("2q34aasdfwrasdfse");
+    });
+
+    it('should get view definitions', function() {
         expect(app.metadata.getView("Contacts")).toBe(meta.modules.Contacts.views);
     });
 
-    it('should get moduleList', function () {
+    it('should get moduleList', function() {
         var result = meta.moduleList;
         delete result._hash;
 
         expect(app.metadata.getModuleList()).toBe(result);
     });
 
-    it('should get all modules', function () {
-        expect(app.metadata.getModules()['Cases']).toBeDefined(); 
-        expect(app.metadata.getModules()['BOGUS']).not.toBeDefined(); 
+    it('should get all modules', function() {
+        expect(app.metadata.getModules()['Cases']).toBeDefined();
+        expect(app.metadata.getModules()['BOGUS']).not.toBeDefined();
     });
 
-    it('should get definition for a specific view', function () {
+    it('should get definition for a specific view', function() {
         expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit.meta);
     });
 
-    it('should get layout definitions', function () {
+    it('should get layout definitions', function() {
         expect(app.metadata.getLayout("Contacts")).toBe(meta.modules.Contacts.layouts);
     });
 
-    it('should get a specific layout', function () {
+    it('should get a specific layout', function() {
         expect(app.metadata.getLayout("Contacts", "detail")).toBe(meta.modules.Contacts.layouts.detail.meta);
     });
 
-    it('should get a varchar sugarfield', function () {
+    it('should get a varchar sugarfield', function() {
         expect(app.metadata.getField('varchar')).toBe(meta.sugarFields.text);
     });
 
-    it('should get a specific sugarfield', function () {
+    it('should get a specific sugarfield', function() {
         expect(app.metadata.getField('phone')).toBe(meta.sugarFields.phone);
     });
 
-    it('should get a undefined sugarfield as text', function () {
+    it('should get a undefined sugarfield as text', function() {
         expect(app.metadata.getField('doesntexist')).toBe(meta.sugarFields.text);
     });
 
-    it('should patch view metadata', function () {
+    it('should patch view metadata', function() {
         var field = app.metadata.getView("Contacts", "detail").panels[0].fields[3];
         expect(_.isObject(field)).toBeTruthy();
         expect(field.name).toEqual("phone_home");
@@ -54,7 +58,7 @@ describe('Metadata Manager', function () {
         expect(field.label).toEqual("LBL_PHONE_HOME");
     });
 
-    it("should delegate to view-manager if has a custom view controller", function () {
+    it("should delegate to view-manager if has a custom view controller", function() {
         sinon.spy(app.view, "declareComponent");
         app.metadata.set({modules: { Home: fixtures.metadata.modules.Home }});
         expect(app.view.declareComponent.getCall(0).args[0]).toEqual("view");
@@ -64,7 +68,7 @@ describe('Metadata Manager', function () {
         app.view.declareComponent.restore();
     });
 
-    it("should delegate to view-manager if has custom layout controller", function () {
+    it("should delegate to view-manager if has custom layout controller", function() {
         sinon.spy(app.view, "declareComponent");
         app.metadata.set({modules: { Contacts: fixtures.metadata.modules.Contacts}});
         expect(app.view.declareComponent.getCall(0).args[0]).toEqual("layout");
@@ -77,10 +81,10 @@ describe('Metadata Manager', function () {
     it("should delegate to template.compile if meta set with custom view template", function() {
         sinon.spy(app.template, "setView");
         app.metadata.set({
-            modules: { 
+            modules: {
                 Taxonomy: {
-                    views: { 
-                        tree: { 
+                    views: {
+                        tree: {
                             template: "My Lil Template"
                         }
                     }
@@ -93,26 +97,44 @@ describe('Metadata Manager', function () {
         app.template.setView.restore();
     });
 
-    it ('should sync metadata', function (){
-        SugarTest.storage = {};
+    describe('when syncing metdata', function() {
+        beforeEach(function() {
+            app.cache.cutAll(true);
+            SugarTest.seedFakeServer();
+        });
 
-        var server = sinon.fakeServer.create();
-        server.respondWith("GET", /.*\/rest\/v10\/metadata\?typeFilter=&moduleFilter=.*/,
-                        [200, {  "Content-Type":"application/json"},
-                            JSON.stringify(meta)]);
+        it('should sync metadata', function() {
+            // Verify hash doesn't exist
+            expect(SugarTest.storage["test:portal:md:_hash"]).toBeUndefined();
 
-        app.metadata.sync();
-        server.respond();
-        server.restore();
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\?typeFilter=&moduleFilter=.*/,
+                [200, {"Content-Type": "application/json"}, JSON.stringify(meta)]);
 
-        expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
-        expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
-        expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
-        expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
-        expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
-        expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
-        expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
+            app.metadata.sync();
+            SugarTest.server.respond();
 
+            expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
+            expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
+        });
+
+        it('should not take any action when server returns 304', function() {
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\?typeFilter=&moduleFilter=.*/,
+                [304, {"Content-Type": "application/json"}, JSON.stringify(meta)]);
+
+            app.metadata.sync();
+            SugarTest.server.respond();
+
+            expect(SugarTest.storage["test:portal:md:modules"]).not.toEqual("Cases,Contacts,Home");
+            expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeUndefined();
+            expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeUndefined();
+            expect(SugarTest.storage["test:portal:md:m:Home"]).toBeUndefined();
+            expect(SugarTest.storage["test:portal:md:f:integer"]).toBeUndefined();
+            expect(SugarTest.storage["test:portal:md:f:password"]).toBeUndefined();
+        });
     });
-
 });

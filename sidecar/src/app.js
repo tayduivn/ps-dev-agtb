@@ -142,10 +142,15 @@ SUGAR.App = (function() {
 
             app.events.register(
                 /**
+                 * Route change event. Fired when the route has
+                 * changed and before the application is loading layouts and views.
+                 *
+                 * <pre><code>
+                 * obj.on("app:view:change", callback);
+                 * </pre></code>
                  * @event
-                 * This event is fired when an alert must be displayed
                  */
-                "app:alert",
+                "app:view:change",
                 this
             );
 
@@ -202,7 +207,7 @@ SUGAR.App = (function() {
                     var view = app.view.createView({name: componentName, context: context});
                     view.$el = app.controller.$(options.target);
                     view.render();
-                    app.additionalComponents.push(view);
+                    app.additionalComponents[componentName] = view;
                 }
             });
         },
@@ -242,6 +247,7 @@ SUGAR.App = (function() {
         /**
          * Calls a global sync for the app. An app:sync:complete event will be fired when
          * the series of sync operations have finished.
+         * @param {Function} synccuccess Callback function called if sync was successful.
          * @method
          */
         sync: function(syncsuccess) {
@@ -303,16 +309,6 @@ SUGAR.App = (function() {
             route = this.router.buildRoute(module, id, action, params);
 
             this.router.navigate(route, {trigger: true});
-        },
-
-        /**
-         * Display an alert.
-         * @method
-         * @param {String} level Either "info", "warn" or "error".
-         * @param {String} message The message
-         */
-        alert: function(level, message) {
-            app.trigger("app:alert", [level, message]);
         },
 
         modules: modules

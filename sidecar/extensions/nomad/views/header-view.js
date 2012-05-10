@@ -6,7 +6,7 @@
             app.view.View.prototype.initialize.call(this, options);
 
             var self = this;
-            app.events.on("app:sync:complete", function() {
+            app.events.on("app:view:change", function() {
                 self.render();
             });
         },

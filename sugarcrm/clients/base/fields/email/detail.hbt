@@ -1,0 +1,19 @@
+
+<div class="row-fluid">
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span10">
+                          {{#each value}}
+        <div class="control-group">
+        <div class="controls pull-left span2">
+                        {{email}}
+                    </div>
+        <div class="btn-toolbar pull-left">
+                      <div class="btn-group" data-toggle="buttons-checkbox">
+                        <button type="button" class="btn {{#if is_primary}}active{{/if}} disabled" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                        <button type="button" class="btn {{#if opted_out}}active{{/if}} disabled" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
+                        <button type="button" class="btn {{#if is_invalid}}active{{/if}} disabled" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
+                      </div>
+                    </div>
+                          {{/each}}
+    </div>
+</div>

@@ -36,7 +36,7 @@ require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 abstract class AbstractMetaDataImplementation
 {
 	protected $_view;
-    protected $_viewClient; // base, portal, mobile
+    protected $_viewClient = null; // base, portal, mobile
     protected $_viewType; // list, edit, search, detail
 	protected $_moduleName;
 	protected $_viewdefs; // Raw $viewdefs from the metadata file
@@ -106,6 +106,24 @@ abstract class AbstractMetaDataImplementation
      */
     public function useWorkingFile() {
         return $this->_useWorkingFile;
+    }
+
+    /**
+     * Sets the client
+     *
+     * @param string $client
+     */
+    public function setViewClient($client) {
+        $this->_viewClient = $client;
+    }
+
+    /**
+     * Gets the view client
+     *
+     * @return string
+     */
+    public function getViewClient() {
+        return $this->_viewClient;
     }
 
     /**
