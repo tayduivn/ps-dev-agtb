@@ -112,15 +112,15 @@ if(isset( $_POST['Users0emailAddress0'])){
 
 ///////
 ///////////////////////////////////////////////////
-
+    $isLink = isset($_POST['link']) && $_POST['link'] == '1';
     // if i need to generate a password (not a link)
-    $password = isset($_POST['link']) && $_POST['link'] == '1' ? '' : User::generatePassword();
+    $password = $isLink ? '' : User::generatePassword();
 
 ///////////////////////////////////////////////////
 ///////  Create URL
 
 // if i need to generate a link
-if (isset($_POST['link']) && $_POST['link'] == '1'){
+if ($isLink){
 	global $timedate;
 	$guid=create_guid();
 	$url=$GLOBALS['sugar_config']['site_url']."/index.php?entryPoint=Changenewpassword&guid=$guid";
@@ -134,13 +134,13 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 ///////////////////////////////////////////////////
 
 ///////  Email creation
-    if (isset($_POST['link']) && $_POST['link'] == '1')
+    if ($isLink)
     	$emailTemp_id = $res['lostpasswordtmpl'];
     else
     	$emailTemp_id = $res['generatepasswordtmpl'];
 
     $additionalData = array(
-        'link' => isset($_POST['link']) && $_POST['link'] == '1',
+        'link' => $isLink,
         'password' => $password
     );
     if (isset($url))
