@@ -141,13 +141,6 @@
             originalHandler = window.onerror;
 
             window.onerror = function(mesg, url, line) {
-                // TODO: We'll likely want to let originalHandler deal with this case by case.
-                // Also, need to use language strings for multiple languages.
-                app.alert.show('loading', {
-                    level: 'error', 
-                    title: 'Fatal Error', 
-                    messages: ["You don't appear to have an internet connection.", 'Please connect to the internet and try again.']});
-
                 if (handler) {
                     handler.call(context);
                 } else {
