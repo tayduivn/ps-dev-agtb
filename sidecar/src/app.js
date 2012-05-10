@@ -354,8 +354,22 @@ SUGAR.App = (function() {
          * @return {Object} XHR request object.
          */
         logout: function(callbacks) {
-            var xhr = app.api.logout(callbacks);
-            app.trigger("app:logout", data);
+            var originalSuccess, xhr;
+            callbacks = callbacks || {};
+            originalSuccess = callbacks.success;
+
+            callbacks.success = function(data) {
+                // TODO: The user.js module now listens for logout event.
+                // It takes a 'clear' boolean indicating whether we want
+                // to completely clear user's data or leave intact. Later,
+                // we should let user choose. For they get "zapped"
+                app.trigger("app:logout", true);
+                if(originalSuccess) {
+                    originalSuccess(data);
+                }
+            };
+
+            xhr = app.api.logout(callbacks);
             return xhr;
         },
 

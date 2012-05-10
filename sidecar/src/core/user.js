@@ -16,26 +16,28 @@
      * }
      *
      * // Use it like this:
-     * var userId = SUGAR.App.user.id;
+     * var userId = SUGAR.App.user.get('id');
      * 
      * </code></pre>
      *
      * @class Core.User
-     * @singleton
+     * @singleton @extends Backbone.Model
      * @alias SUGAR.App.user
      */
-    var _user = {
+    var usr, _user;
+    usr = new Backbone.Model({});
 
+    _user = {
         /**
          * Initializes this user object at application start-up.
          *
          * This method fetches user data stored in the local storage.
          */
         init: function() {
-            var user;
+            var user, s;
             try {
                 // We serialize ourselves because stash.js stringifies everything (functions included)
-                var s = app.cache.get("current_user");
+                s = app.cache.get("current_user");
                 if (s) user = JSON.parse(s);
             }
             catch (e) {
@@ -44,46 +46,47 @@
             this._reset(user);
         },
 
+        get: function(key) {
+            return usr.get(key);
+        },
+        
+        set: function(key, value) {
+            return usr.set(key, value);
+        },
+
         /**
          * Resets user object with new data.
          *
          * @param user(optional) User information object. If not specified this user object is cleared and wiped out from local storage.
+         * @param  
          * @return {Boolean} Flag indicating if the reset was successful.
          * @private
          */
         _reset: function(user) {
             var r = true;
-
-            _.each(_.keys(this), function(key) {
-                if (!_.isFunction(this[key])) {
-                    this[key] = undefined;
-                }
-            }, this);
+            usr.clear({silent:true});
 
             if (user) {
-                _.extend(this, user);
+                usr.set(user); 
+                try {
+                    user = JSON.stringify(usr.toJSON());
+                    r = app.cache.set("current_user", user);
+                }
+                catch (e) {
+                    app.logger.error("Failed to set user object into cache:\n" + e);
+                    r = false;
+                }
             }
-
-            try {
-                user = JSON.stringify(this);
-                r = app.cache.set("current_user", user);
-            }
-            catch (e) {
-                app.logger.error("Failed to set user object into cache:\n" + e);
-                r = false;
-            }
-
             return r;
         }
-
     };
 
-    _.extend(_user, Backbone.Events);
-    
     app.events.on("app:login:success", function(data) {
         _user._reset(data ? data.current_user : null);
-    }).on("app:logout", function() {
-        _user._reset();
+    }).on("app:logout", function(clear) {
+        if(clear) {
+            _user._reset();
+        }
     });
 
     app.augment("user", _user);
