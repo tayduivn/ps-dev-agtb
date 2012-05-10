@@ -191,14 +191,6 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
 
-            // TODO: Server returns empty array for mobile platform
-            // REMOVE THIS HACK ONCE RESOLVED
-            //------------- HACK START ----------------------
-            if (_.isArray(metadata)) {
-                metadata = undefined;
-            }
-            //------------- HACK END ----------------------
-
             if (metadata && layout) {
                 if(metadata[layout] && metadata[layout].meta) {
                     metadata = metadata[layout].meta;
