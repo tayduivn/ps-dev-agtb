@@ -4022,7 +4022,7 @@ function getTrackerSubstring($name) {
 		$chopped = $name;
 	}
 
-	return $chopped;
+	return to_html($chopped);
 }
 function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_custom_fields=false,$module='') {
 	$where_clauses= array();
