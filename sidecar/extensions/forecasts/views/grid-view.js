@@ -36,7 +36,7 @@
                 if ( self.gTable.fnIsOpen(this) )  {
                     self.gTable.fnClose( this );
                 } else {
-                    self.gTable.fnOpen( this, formatAdditionalDetails(this), 'details' );
+                    self.gTable.fnOpen( this, self.formatAdditionalDetails(this), 'details' );
                 }
             });
         },
