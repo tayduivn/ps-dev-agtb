@@ -16,15 +16,16 @@
             </div>
           </section>
           {{#each meta.panels}}
+          <div class="block-footer show-more-top-btn" style="display: none">
+              <a class="btn loading wide " href="javascript:void(0)">Show More</a>
+          </div>
           <div class="items">
           {{#each ../context.state.collection.models}}
               {{listItem this ../../this ../fields}}
           {{/each}}
           </div>
-          <div class="block-footer show-more-button">
-              <span sfuuid="108">
-                  <a class="btn loading wide " name="show_more_button" href="javascript:void(0)">Show More</a>
-              </span>
+          <div class="block-footer show-more-bottom-btn">
+              <a class="btn loading wide" href="javascript:void(0)">Show More</a>
           </div>
           {{/each}}
       </div>

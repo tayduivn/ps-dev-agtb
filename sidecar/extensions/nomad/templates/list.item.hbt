@@ -1,4 +1,4 @@
-<article id="{{model.module}}{{model.id}}" model="{{model.id}}">
+<article id="{{model.module}}{{model.id}}">
     <i class="icon-star-empty"></i>
     <div>
     <a href="#{{model.module}}/{{model.id}}">
