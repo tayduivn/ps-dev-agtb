@@ -220,7 +220,7 @@
 
 
 
-    var fd_touch_event = "click",
+    var fd_touch_event = "tap",
         fd_detail_view = $('.layout.detail'),
 	fd_listing_view = $('.layout.listing'),
 	fd_login_view = $('.layout.login'),
