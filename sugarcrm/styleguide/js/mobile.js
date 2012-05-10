@@ -120,7 +120,7 @@
     $('#tour').on('click', function () {
       $(this).remove();
     });
-    $('#back .back, .back.btn').on('click', function(){
+    $('#nomad:not(.flow) #back .back, #nomad:not(.flow) .back.btn').on('click', function(){
 		if(history.length<=2) {
 			window.location="./";
 		}else{
@@ -217,6 +217,63 @@
 	    $('.navbar-bottom').removeClass('teaser');
 	}
     });
+
+
+
+    var fd_touch_event = "click",
+        fd_detail_view = $('.layout.detail'),
+	fd_listing_view = $('.layout.listing'),
+	fd_login_view = $('.layout.login'),
+	fd_navbar = $('.navbar'),
+	fd_back_btn = $('#back');
+
+    $('#nomad.flow #login_button').on('click',function(){
+	fd_listing_view.show().css({opacity:'0',left:'0',right:'0'});
+	fd_listing_view.anim({opacity:'1'},.75,'ease-in',function(){
+	    fd_navbar.show();
+	});
+	fd_login_view.anim({opacity:'0'},.5,'ease-out',function(){
+	    fd_login_view.css({left:'-101%',position:'absolute'});
+
+	});
+	return false;
+    });
+
+    $('#nomad.flow #back .back').on(fd_touch_event,function(){ // return to listing
+	if(fd_detail_view.hasClass('in_focus')) {
+	    fd_detail_view.removeClass('make_static');
+	    fd_back_btn.hide();
+	    fd_listing_view.show();
+	    fd_detail_view.anim({ translateX: '+'+ window.innerWidth +'px', opacity: '1'}, .25, 'ease-out',function(){
+		fd_detail_view.removeClass('in_focus')	
+	    });
+	}
+	return false;
+    });
+
+    $('#nomad.flow article').on(fd_touch_event,function(){ // show details
+	fd_detail_view.anim({ translateX: '-'+ window.innerWidth +'px', opacity: '1'}, .25, 'ease-out',function(){
+	    fd_detail_view.addClass('make_static');
+	    fd_detail_view.addClass('in_focus')
+	    fd_listing_view.hide();
+	    fd_back_btn.show();
+	});
+	return false;
+    });
+
+    $('#nomad .list.detail h1.nomad').on(fd_touch_event,function(){
+	$('#nomad.flow #back .back').trigger(fd_touch_event);
+	return false;
+    })
+    
+//alert('trigger #back click when these are clicked: h1.nomad, h3.nomad --- because they`re overlapping back button');
+
+//   .anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+
+
+
+
+
 
 })(window.Zepto);
 
