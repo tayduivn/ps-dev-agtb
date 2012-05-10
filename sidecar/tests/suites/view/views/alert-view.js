@@ -1,19 +1,10 @@
 describe("alertView", function() {
-    var app;
+    var app, options, view, components;
 
     beforeEach(function() {
+        SugarTest.seedApp();
         app = SugarTest.app;
-    });
-
-    it("should fire a app:alert event", function() {
-        var cbSpy = sinon.spy(function() {});
-        app.events.on("app:alert", cbSpy);
-        app.alert("info", "message");
-        expect(cbSpy).toHaveBeenCalled();
-    });
-
-    it("should fire a app:alert elent and display an alert", function() {
-        var options = {
+        options = {
                 context: {get: function() {
                     return 'cases';
                 }},
@@ -21,15 +12,26 @@ describe("alertView", function() {
                 template: function() {
                     return 'asdf';
                 }
-            },
-            view = new SUGAR.App.view.views.AlertView(options);
+            };
+        view = new SUGAR.App.view.views.AlertView(options);
+        components = {alert:{target:'#alert'}};
+        SugarTest.app.loadAdditionalComponents(components);
+    });
 
-        var cbSpy = sinon.spy(view, "render");
+    afterEach(function() {
+        options = null;
+    });
+
+    it("should display an alert", function() {
+        var cbSpy;
+        view = SugarTest.app.additionalComponents.alert;
         expect(view).toBeDefined();
         expect(view instanceof app.view.View).toBeTruthy();
+
+        cbSpy = sinon.spy(view, "show");
+
         //triggering the event
-        app.alert("info", "message");
-        //should render the alert
+        app.alert.show("info", {level:'info', title:'foo', message:"message", autoclose: true});
         expect(cbSpy).toHaveBeenCalled();
     });
 });
