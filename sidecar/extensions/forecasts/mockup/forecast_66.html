@@ -11,7 +11,9 @@
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="../../../../sugarcrm/include/SugarCharts/Jit/FlashCanvas/flashcanvas.js"></script>
+    <![endif]-->
   <!-- styles -->
   <link href="../../../../sugarcrm/themes/default/css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
@@ -365,7 +367,7 @@
                             "sTitle": "Amount",
                             "fnRender": function(obj) {
                                 var sReturn = obj.aData[ obj.iDataColumn ];
-                                var ret = "<span class='dblclick'>" + sReturn + "</span>";
+                                var ret = "<div style='position:relative;'><span class='dblclick'>" + sReturn + "</span></div>";
                                 return ret;
                             }
                         }
