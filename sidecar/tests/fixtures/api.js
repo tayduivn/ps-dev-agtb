@@ -289,7 +289,7 @@ fixtures.api = {
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedRecord": {
+                "related_record": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
@@ -308,7 +308,7 @@ fixtures.api = {
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedRecord": {
+                "related_record": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
@@ -326,7 +326,7 @@ fixtures.api = {
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedRecord": {
+                "related_record": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
