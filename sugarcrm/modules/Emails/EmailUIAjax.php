@@ -145,6 +145,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: removeUploadedAttachment");
         $fileFromRequest = from_html($_REQUEST['file']);
         $fileGUID = substr($fileFromRequest, 0, 36);
+        // Bug52727: sanitize fileGUID to remove path components: /\.
+        $fileGUID = cleanDirName($fileGUID);
         $fileName = $email->et->userCacheDir . "/" . $fileGUID;
         $filePath = clean_path($fileName);
         unlink($filePath);
