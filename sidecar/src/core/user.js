@@ -79,10 +79,11 @@
     };
 
     _.extend(_user, Backbone.Events);
-    _user.on("app:login:success", function(data) {
-        this._reset(data ? data.current_user : null);
+    
+    app.events.on("app:login:success", function(data) {
+        _user._reset(data ? data.current_user : null);
     }).on("app:logout", function() {
-        this._reset();
+        _user._reset();
     });
 
     app.augment("user", _user);

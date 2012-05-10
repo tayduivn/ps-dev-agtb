@@ -28,6 +28,30 @@ describe("User", function() {
 
     });
 
+    it("should login user", function() {
+        var loginSuccessEventSpy = sinon.spy(),
+            userReset = sinon.spy(app.user, '_reset');
+
+        SugarTest.seedApp();
+        app = SugarTest.app;
+        app.events.on("app:login:success", loginSuccessEventSpy);
+        
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/login.*/,
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify({current_user:'jimbo'})]);
+
+        app.login({username:'scooby',password:'pass'}, null, {
+            success: function() {},
+            error: function() {}
+        });
+        SugarTest.server.respond();
+
+        expect(userReset).toHaveBeenCalled();
+        expect(userReset.calledWith('jimbo')).toBeTruthy();
+        expect(loginSuccessEventSpy).toHaveBeenCalled();
+    });
+
     it("should reset itself with new data", function() {
         var user = app.user;
         app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
