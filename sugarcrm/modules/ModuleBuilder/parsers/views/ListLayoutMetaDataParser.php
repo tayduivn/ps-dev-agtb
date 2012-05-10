@@ -64,11 +64,12 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     /*
      * Constructor
-     * @param string view          The view type, that is, editview, searchview etc
-     * @param string moduleName     The name of the module to which this listview belongs
-     * @param string packageName    If not empty, the name of the package to which this listview belongs
+     * @param string $view           The view type, that is, editview, searchview etc
+     * @param string $moduleName     The name of the module to which this listview belongs
+     * @param string $packageName    If not empty, the name of the package to which this listview belongs
+     * @param string $client         The client making the request for this parser
      */
-    function __construct ($view , $moduleName , $packageName = '')
+    function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct()" ) ;
 
@@ -81,11 +82,11 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         if (empty ( $packageName ))
         {
             require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
-            $this->implementation = new DeployedMetaDataImplementation ( $view, $moduleName ) ;
+            $this->implementation = new DeployedMetaDataImplementation ( $view, $moduleName, $client ) ;
         } else
         {
             require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
-            $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName ) ;
+            $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName, $client ) ;
         }
         $this->view = $view;
 
@@ -377,21 +378,10 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	return $out;
     }
 
-    public function getOriginalPanelDefs() {
-        $defs = $this->getOriginalViewDefs();
-        $viewType = ($viewType = MetaDataFiles::getViewClient($this->view)) == '' ? 'base' : $viewType;
-        if (isset($defs[$viewType]) && is_array($defs[$viewType]) && isset($defs[$viewType]['view']) && is_array($defs[$viewType]['view'])) {
-            $index = key($defs[$viewType]['view']);
-            if (isset($defs[$viewType]['view'][$index]['panels'])) {
-                $defs = $defs[$viewType]['view'][$index]['panels'];
-            }
-        }
-        return $defs;
-    }
-
     /**
      * Checks to see if a field name is in any of the panels
-     * @param $key
+     * @param string $name
+     * @param array  $src
      * @return bool
      */
     public function panelHasField($name, $src = null) {

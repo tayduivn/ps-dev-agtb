@@ -41,9 +41,10 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 * Constructor
 	 * @param string $view
 	 * @param string $moduleName
+	 * @param string $client The client making the request for this implementation
 	 * @throws Exception Thrown if the provided view doesn't exist for this module
 	 */
-	function __construct ($view , $moduleName)
+	function __construct ($view , $moduleName, $client = '')
 	{
 
 		// BEGIN ASSERTIONS
@@ -54,7 +55,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		// END ASSERTIONS
 
 		$this->_view = strtolower($view);
-        $this->setViewClientFromView();
+        $this->setViewClient($client);
 		$this->_moduleName = $moduleName ;
 
 		$module = StudioModuleFactory::getStudioModule( $moduleName ) ;
@@ -322,14 +323,18 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 
 	/*
 	 * Construct a full pathname for the requested metadata
-	 * Can be called statically
-	 * @param string view           The view type, that is, EditView, DetailView etc
-	 * @param string modulename     The name of the module that will use this layout
-	 * @param string type
+	 *
+	 * @param string $view           The view type, that is, EditView, DetailView etc
+	 * @param string $modulename     The name of the module that will use this layout
+	 * @param string $type           The location of the file (custom, history, etc)
+	 * @param string $client         The client type for the file name
 	 */
-	public static function getFileName($view , $moduleName , $type = MB_CUSTOMMETADATALOCATION)
+	public function getFileName($view , $moduleName , $type = MB_CUSTOMMETADATALOCATION, $client = null)
 	{
-        return MetaDataFiles::getDeployedFileName($view, $moduleName, $type);
+        if ($client === null) {
+            $client = $this->_viewClient;
+        }
+        return MetaDataFiles::getDeployedFileName($view, $moduleName, $type, $client);
 	}
 	
 	private function replaceVariables($defs, $module) {
