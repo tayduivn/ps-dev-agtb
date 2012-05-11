@@ -90,14 +90,21 @@ class SugarParsers_Filter
                 // just a string (field_name)
                 // run the generic
                 $_filterKey = $key;
-                $klass = $this->filters['$is'];
+
+                // make sure key is not a variable
+                if(is_string($value) && isset($this->filters[$value])) {
+                    $klass = $this->filters[$value];
+                } else {
+                    $klass = $this->filters['$is'];
+                }
             }
 
             /**
-             * Handle if we have a control variable followed by a string
+             * Handle if we have a control variable followed by a string which is not a variable
              */
             if($klass::isControlVariable() && is_string($value)) {
-                $_cvKlass = $this->filters['$is'];
+                $variable = (isset($this->filters[$value])) ? $value : '$is';
+                $_cvKlass = $this->filters[$variable];
                 $cvKlass = new $_cvKlass();
                 $cvKlass->filter($value);
                 $value = $cvKlass;

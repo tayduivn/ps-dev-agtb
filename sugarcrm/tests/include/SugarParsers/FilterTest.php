@@ -51,6 +51,29 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group SugarParser
      */
+    public function testParseEmpty()
+    {
+        $obj = json_decode('{"billing_postalcode" : "$empty" }');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+        $this->assertInstanceOf("SugarParsers_Filter_Empty", $pFilter['billing_postalcode']);
+    }
+
+    /**
+     * @group SugarParser
+     */
+    public function testParseNotEmpty()
+    {
+        $obj = json_decode('{ "billing_postalcode" : { "$not" :  "$empty" } }');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+        $this->assertInstanceOf("SugarParsers_Filter_Not", $pFilter['billing_postalcode']);
+        $this->assertInstanceOf("SugarParsers_Filter_Empty", $pFilter['billing_postalcode']->getValue());
+    }
+
+    /**
+     * @group SugarParser
+     */
     public function testInFilterParse()
     {
 
@@ -98,6 +121,5 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("William", $andFilterObject['first_name']->getValue());
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['last_name']);
         $this->assertEquals("Williamson", $andFilterObject['last_name']->getValue());
-
     }
 }

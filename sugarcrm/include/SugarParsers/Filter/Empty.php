@@ -47,13 +47,20 @@ class SugarParsers_Filter_Empty extends SugarParsers_Filter_AbstractFilter
     protected $operator_not_text = "not_empty";
 
     /**
-     * This is a way to tell if the filter is a control method
+     * Ignore any set value as this has to be empty
      *
-     * @static
-     * @return bool
+     * @param String $value
      */
-    public static function isControlVariable()
+    public function filter($value)
+    {}
+
+    /**
+     * Becuase this is for empty we always return null
+     *
+     * @return null
+     */
+    public function getValue()
     {
-        return true;
+        return null;
     }
 }
