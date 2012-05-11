@@ -308,8 +308,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return false;
         }
 
-        // for fuzzy search, does not append wildcard
+        // for fuzzy search, do not append wildcard
         if( substr($queryString, -1) ===  '~') {
+            return false;
+        }
+
+        // for range searches, do not append wildcard
+        if (preg_match('/\[.*TO.*\]/', $queryString) || preg_match('/{.*TO.*}/', $queryString))
+        {
             return false;
         }
 
