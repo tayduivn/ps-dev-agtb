@@ -15,10 +15,14 @@
         },
         saveModel: function() {
             var self = this;
+
+            // TODO we need to dismiss this in global error handler
+            app.alert.show('save_edit_view', {level:'process', title:'Saving'});
             this.model.save(null, {
                 success: function() {
+                    app.alert.dismiss('save_edit_view');
                     self.app.navigate(self.context, self.model, 'detail');
-                }
+                },
             });
         },
         bindDataChange: function() {

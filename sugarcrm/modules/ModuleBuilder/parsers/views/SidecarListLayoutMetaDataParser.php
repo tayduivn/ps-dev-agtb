@@ -30,9 +30,10 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * @param string $view           The view type, that is, editview, searchview etc
      * @param string $moduleName     The name of the module to which this listview belongs
      * @param string $packageName    If not empty, the name of the package to which this listview belongs
+     * @param string $client         The client making the request for this parser
      */
-    function __construct ($view , $moduleName , $packageName = '') {
-        parent::__construct($view, $moduleName, $packageName);
+    function __construct ($view , $moduleName , $packageName = '', $client = '') {
+        parent::__construct($view, $moduleName, $packageName, $client);
         $this->_paneldefs = $this->implementation->getPanelDefs();
     }
 
@@ -137,7 +138,8 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      */
     public function getOriginalPanelDefs() {
         $defs = $this->getOriginalViewDefs();
-        $viewType = ($viewType = MetaDataFiles::getViewClient($this->view)) == '' ? 'base' : $viewType;
+        $viewClient = $this->implementation->getViewClient();
+        $viewType = empty($viewClient) ? 'base' : $viewClient;
         if (isset($defs[$viewType]) && is_array($defs[$viewType]) && isset($defs[$viewType]['view']) && is_array($defs[$viewType]['view'])) {
             $index = key($defs[$viewType]['view']);
             if (isset($defs[$viewType]['view'][$index]['panels'])) {

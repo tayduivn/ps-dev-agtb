@@ -52,12 +52,14 @@ define('MB_WIRELESSDETAILVIEW','wirelessdetailview');
 define('MB_WIRELESSLISTVIEW','wirelesslistview');
 define('MB_WIRELESSBASICSEARCH','wireless_basic_search' );
 define('MB_WIRELESSADVANCEDSEARCH','wireless_advanced_search' );
+define('MB_WIRELESS', 'mobile');
 //END SUGARCRM flav=pro || flav=sales ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 define('MB_PORTALEDITVIEW','portaleditview');
 define('MB_PORTALDETAILVIEW','portaldetailview');
 define('MB_PORTALLISTVIEW','portallistview');
 define('MB_PORTALSEARCHVIEW','portalsearchview');
+define('MB_PORTAL', 'portal');
 //END SUGARCRM flav=ent ONLY
 
 class MBConstants

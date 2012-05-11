@@ -70,8 +70,19 @@ class LoginApi extends SugarApi {
             // Login failed
             $data = array('success'=>false);
         } else {
-            $data = array('token'=>$api->security->sessionId,
-                          'success'=>true);
+            global $current_user;
+            $data = array(
+                'token' => $api->security->sessionId,
+                'success' => true,
+                'current_user' => array(
+                    'id' => $current_user->id,
+                    'full_name' => $current_user->full_name,
+                    'user_name' => $current_user->user_name,
+                    'timezone' => $current_user->getPreference('timezone'),
+                    'datepref' => $current_user->getPreference('datef'),
+                    'timepref' => $current_user->getPreference('timef'),
+                )
+            );
         }
         
         return $data;

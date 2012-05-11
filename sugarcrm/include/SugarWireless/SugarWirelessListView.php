@@ -69,7 +69,7 @@ class SugarWirelessListView extends SugarWirelessView{
     public function getMetaDataViewDefs() {
         require_once 'modules/ModuleBuilder/parsers/constants.php';
         require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-        $parser = new SidecarListLayoutMetaDataParser(MB_WIRELESSLISTVIEW, $GLOBALS['module']);
+        $parser = new SidecarListLayoutMetaDataParser(MB_WIRELESSLISTVIEW, $GLOBALS['module'], null, MB_WIRELESS);
         $defs = $parser->getDefaultFields();
         return $defs;
     }

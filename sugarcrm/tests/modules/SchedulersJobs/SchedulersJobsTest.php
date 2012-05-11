@@ -48,7 +48,7 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestAccountUtilities::removeAllCreatedAccounts();
         }
         if(!empty($this->scheduler)) {
-           // $this->db->query("DELETE FROM schedulers where id = '{$this->scheduler->id}'");
+           $this->db->query("DELETE FROM schedulers where id = '{$this->scheduler->id}'");
         }
     }
 
