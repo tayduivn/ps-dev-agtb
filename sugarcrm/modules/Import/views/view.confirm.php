@@ -424,7 +424,20 @@ eoq;
         $rows = array();
         for($i=0; $i < self::SAMPLE_ROW_SIZE; $i++)
         {
-            $rows[] = $importFile->getNextRow();
+            $row = $importFile->getNextRow();
+            if (is_array($row))
+            {
+                foreach($row as &$val)
+                {
+                    $val = htmlentities($val, ENT_QUOTES);
+                }
+            }
+            else 
+            {
+                $row = htmlentities($row, ENT_QUOTES);
+            }
+            
+            $rows[] = $row;
         }
 
         if( ! $importFile->hasHeaderRow(FALSE) )
