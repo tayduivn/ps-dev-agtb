@@ -45,6 +45,22 @@ class SugarParsers_Filter
         $this->loadFilters();
     }
 
+    /**
+     * Parse A Json String
+     *
+     * @param string $json
+     */
+    public function parseJson($json)
+    {
+        $obj = json_decode($json);
+        $this->parse($obj);
+    }
+
+    /**
+     * Parse A decoded JsonString or an Array
+     *
+     * @param mixed $obj
+     */
     public function parse($obj)
     {
         if(is_object($obj)) {
@@ -67,7 +83,7 @@ class SugarParsers_Filter
 
             // we we have the class, lets check the value to see if it's an array and contains any more $variables
             // we can ignore this if the key is in as in requires an array of values
-            $valueHasVariables = $this->valueArrayHasVarialbes($value);
+            $valueHasVariables = $this->valueArrayHasVariables($value);
 
             // since the value is an array with no variables and there is only one, lets explode it out
             if($valueHasVariables === false && is_array($value) && count($value) === 1) {
@@ -153,7 +169,13 @@ class SugarParsers_Filter
         return $_filters;
     }
 
-    protected function valueArrayHasVarialbes($array)
+    /**
+     * Check to see if any keys in the current array have variables as the keys
+     *
+     * @param array $array
+     * @return bool
+     */
+    protected function valueArrayHasVariables($array)
     {
 
         if(!is_array($array)) return false;
