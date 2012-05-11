@@ -24,7 +24,7 @@
                                 {
                                     "label": "Login",
                                     "fields": [
-                                        {name: "username", label: "Username"},
+                                        {name: "username", label: "Username", placeholder: "Username or Email"},
                                         {name: "password", label: "Password"},
                                         {name: "url", label: "URL"}
                                     ]
