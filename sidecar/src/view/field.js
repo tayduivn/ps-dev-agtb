@@ -156,12 +156,13 @@
             }
 
             if (viewName) {
-                this.template = app.template.getField(this.type, viewName) ||
+                var fallbackFieldTemplate = this.view.fallbackFieldTemplate || "default";
+                this.template = app.template.getField(this.type, viewName, fallbackFieldTemplate) ||
                                 // Fallback to text field if template is not defined for this type
-                                app.template.getField("text", viewName) ||
+                                app.template.getField("text", viewName, fallbackFieldTemplate) ||
                                 // Safeguard with an empty template
                                 app.template.empty;
-            }
+           }
         },
 
         /**

@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Notes']['portal']['view']['list'] = array(
+$viewdefs['Notes']['portal']['view']['activity'] = array(
     'buttons' =>
     array(
         0 =>
@@ -59,13 +59,20 @@ $viewdefs['Notes']['portal']['view']['list'] = array(
                     'name' => 'description',
                     'default' => true,
                     'enabled' => true,
-                    'link' => true,
                     'sorting' => true,
-                    'width' => 49
+                    'width' => 13
                 ),
                 2 =>
                 array(
                     'name' => 'date_entered',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 13
+                ),
+                3 =>
+                array(
+                    'name' => 'created_by_name',
                     'default' => true,
                     'enabled' => true,
                     'sorting' => true,
