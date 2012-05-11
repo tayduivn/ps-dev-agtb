@@ -182,4 +182,50 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
 
     }
+
+    /**
+     * @group SugarParser
+     */
+    public function testEmptyFilterConvert()
+    {
+        $obj = json_decode('{"billing_postalcode":"$empty"}');
+        $this->filter->parse($obj);
+
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+
+        $expected = array("Filter_1" => array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'billing_postalcode',
+                'table_key' => 'self',
+                'qualifier_name' => 'empty',
+                'input_name0' => null
+            )
+        ));
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @group SugarParser
+     */
+    public function testNotEmptyFilterConvert()
+    {
+        $obj = json_decode('{"billing_postalcode": { "$not" : "$empty" }}');
+        $this->filter->parse($obj);
+
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+
+        $expected = array("Filter_1" => array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'billing_postalcode',
+                'table_key' => 'self',
+                'qualifier_name' => 'not_empty',
+                'input_name0' => null
+            )
+        ));
+
+        $this->assertSame($expected, $actual);
+    }
 }
