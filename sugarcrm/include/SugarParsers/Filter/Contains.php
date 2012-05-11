@@ -27,9 +27,24 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarParsers_Filter_Contains extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$contains');
 
+    /**
+     * Text Operator
+     *
+     * @var string
+     */
     protected $operator_text = 'contains';
 
+    /**
+     * Not Text Operator
+     *
+     * @var string
+     */
     protected $operator_not_text = 'does_not_contain';
 }

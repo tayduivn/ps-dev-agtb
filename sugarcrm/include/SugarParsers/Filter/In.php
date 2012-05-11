@@ -25,12 +25,25 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarParsers_Filter_In extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$in');
 
-    protected $operator = null;
-
+    /**
+     * Text Operator
+     *
+     * @var string
+     */
     protected $operator_text = "one_of";
 
+    /**
+     * Not Text Operator
+     *
+     * @var string
+     */
     protected $operator_not_text = "not_one_of";
 
     /**
@@ -40,6 +53,8 @@ class SugarParsers_Filter_In extends SugarParsers_Filter_AbstractFilter
      */
     public function filter($value)
     {
+        // make sure that the value is an array.
+        // if it's not make it an array
         if (!is_array($value)) {
             $value = array($value);
         }

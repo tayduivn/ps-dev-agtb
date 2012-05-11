@@ -20,11 +20,40 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-interface SugarParsers_Filter_FilterInterface
+/**
+ * This class is used when the field check is empty or not empty
+ */
+class SugarParsers_Filter_Empty extends SugarParsers_Filter_AbstractFilter
 {
     /**
-     * @abstract
-     * @param mixed $value      The Value we need to parse
+     * Which Variables trigger this class
+     *
+     * @var array
      */
-    public function filter($value);
+    protected $variables = array('$empty');
+
+    /**
+     * Text Operator
+     *
+     * @var string
+     */
+    protected $operator_text = "empty";
+
+    /**
+     * Not Text Operator
+     *
+     * @var string
+     */
+    protected $operator_not_text = "not_empty";
+
+    /**
+     * This is a way to tell if the filter is a control method
+     *
+     * @static
+     * @return bool
+     */
+    public static function isControlVariable()
+    {
+        return true;
+    }
 }

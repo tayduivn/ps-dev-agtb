@@ -25,10 +25,25 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarParsers_Filter_Or extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$or');
 
+    /**
+     * Standard Operator
+     *
+     * @var string
+     */
     protected $operator = "||";
 
+    /**
+     * Operator Text
+     *
+     * @var string
+     */
     protected $operator_text = "OR";
 
     /**

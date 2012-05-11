@@ -25,11 +25,38 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarParsers_Filter_Equal extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$is', '$equal');
 
+    /**
+     * Standard Operator
+     *
+     * @var string
+     */
     protected $operator = "=";
 
+    /**
+     * Standard Not Operator
+     *
+     * @var string
+     */
+    protected $operator_not = "!=";
+
+    /**
+     * Text Operator
+     *
+     * @var string
+     */
     protected $operator_text = "equals";
 
+    /**
+     * Not Text Operator
+     *
+     * @var string
+     */
     protected $operator_not_text = "not_equals";
 }

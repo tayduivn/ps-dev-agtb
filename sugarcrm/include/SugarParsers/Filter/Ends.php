@@ -20,11 +20,24 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-interface SugarParsers_Filter_FilterInterface
+/**
+ * This is for when a string will be at the end of a string
+ *
+ * Ex: %<string>
+ */
+class SugarParsers_Filter_Ends extends SugarParsers_Filter_AbstractFilter
 {
     /**
-     * @abstract
-     * @param mixed $value      The Value we need to parse
+     * Which Variables trigger this class
+     *
+     * @var array
      */
-    public function filter($value);
+    protected $variables = array('$ends', '$end');
+
+    /**
+     * The Text Operator
+     *
+     * @var string
+     */
+    protected $operator_text = 'ends_with';
 }
