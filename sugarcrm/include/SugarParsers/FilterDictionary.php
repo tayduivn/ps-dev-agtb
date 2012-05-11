@@ -104,7 +104,7 @@ class FilterDictionary
                 $variables = $obj->getVariables();
 
                 foreach($variables as $var) {
-                    $filterRegistry[$var] = $fileClass;
+                    $filterRegistry[$var] = array('class' => $fileClass, 'file' => $file);
                 }
             }
         }

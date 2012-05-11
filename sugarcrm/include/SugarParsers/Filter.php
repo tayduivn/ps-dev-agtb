@@ -45,12 +45,27 @@ class SugarParsers_Filter
         $this->loadFilters();
     }
 
+    /**
+     * Parse A Json String
+     *
+     * @param string $json
+     */
+    public function parseJson($json)
+    {
+        $obj = json_decode($json);
+        $this->parse($obj);
+    }
+
+    /**
+     * Parse A decoded JsonString or an Array
+     *
+     * @param mixed $obj
+     */
     public function parse($obj)
     {
         if(is_object($obj)) {
             $obj = $this->objectToArray($obj);
         }
-
         $this->parsedFilter = $this->parseFilterArray($obj);
     }
 
@@ -67,7 +82,7 @@ class SugarParsers_Filter
 
             // we we have the class, lets check the value to see if it's an array and contains any more $variables
             // we can ignore this if the key is in as in requires an array of values
-            $valueHasVariables = $this->valueArrayHasVarialbes($value);
+            $valueHasVariables = $this->valueArrayHasVariables($value);
 
             // since the value is an array with no variables and there is only one, lets explode it out
             if($valueHasVariables === false && is_array($value) && count($value) === 1) {
@@ -79,7 +94,7 @@ class SugarParsers_Filter
             $_filterKey = count($_filters);
             if (isset($this->filters[$key])) {
                 // we have a class to process
-                $klass = $this->filters[$key];
+                $klass = $this->filters[$key]['class'];
             } else {
                 // one doesn't exist so let make sure that the key is not a $variable
                 if (substr($key, 0, 1) == "$") {
@@ -93,9 +108,9 @@ class SugarParsers_Filter
 
                 // make sure key is not a variable
                 if(is_string($value) && isset($this->filters[$value])) {
-                    $klass = $this->filters[$value];
+                    $klass = $this->filters[$value]['class'];
                 } else {
-                    $klass = $this->filters['$is'];
+                    $klass = $this->filters['$is']['class'];
                 }
             }
 
@@ -104,7 +119,7 @@ class SugarParsers_Filter
              */
             if($klass::isControlVariable() && is_string($value)) {
                 $variable = (isset($this->filters[$value])) ? $value : '$is';
-                $_cvKlass = $this->filters[$variable];
+                $_cvKlass = $this->filters[$variable]['class'];
                 $cvKlass = new $_cvKlass();
                 $cvKlass->filter($value);
                 $value = $cvKlass;
@@ -153,7 +168,13 @@ class SugarParsers_Filter
         return $_filters;
     }
 
-    protected function valueArrayHasVarialbes($array)
+    /**
+     * Check to see if any keys in the current array have variables as the keys
+     *
+     * @param array $array
+     * @return bool
+     */
+    protected function valueArrayHasVariables($array)
     {
 
         if(!is_array($array)) return false;
@@ -197,6 +218,11 @@ class SugarParsers_Filter
     {
         $fd = new FilterDictionary();
         $this->filters = $fd->loadDictionaryFromStorage();
+
+        foreach($this->filters as $filter) {
+            // load all the classes from the bean
+            require_once($filter['file']);
+        }
     }
 
 
