@@ -4834,6 +4834,9 @@ h3.nomad {
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
 }
+#createRecord.form-horizontal span .control-group:first-child {
+  border-top: 1px solid #e8e8e8;
+}
 #createRecord.form-horizontal .control-group {
   position: relative;
   display: block;
