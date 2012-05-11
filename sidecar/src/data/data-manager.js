@@ -356,11 +356,11 @@
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params.maxresult = app.config.maxQueryResult;
+                    options.params.max_num = app.config.maxQueryResult;
                 }
 
                 if (model.orderBy && model.orderBy.field) {
-                    options.params.orderBy = model.orderBy.field + ":" + model.orderBy.direction;
+                    options.params.order_by = model.orderBy.field + ":" + model.orderBy.direction;
                 }
             }
 

@@ -156,7 +156,11 @@
             }
 
             if (viewName) {
-                this.template = app.template.getField(this.type, viewName) || app.template.empty;
+                this.template = app.template.getField(this.type, viewName) ||
+                                // Fallback to text field if template is not defined for this type
+                                app.template.getField("text", viewName) ||
+                                // Safeguard with an empty template
+                                app.template.empty;
             }
         },
 
