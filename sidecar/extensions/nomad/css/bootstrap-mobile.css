@@ -4335,6 +4335,7 @@ h3.nomad {
 .bizcard {
   position: fixed;
   top: 46px;
+  left: 0;
   width: 100%;
   z-index: 1000;
   min-height: 70px;
