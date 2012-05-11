@@ -4634,15 +4634,18 @@ h3.nomad {
 #createRecord.form-horizontal .controls {
   margin-left: 26%;
 }
-#createRecord.form-horizontal .control-group:first-child {
-  border-top: none;
-}
 #createRecord.form-horizontal .control-group {
   position: relative;
   display: block;
   padding: 10px;
   margin: 0;
   border-top: 1px solid #f2f2f2;
+}
+#createRecord.form-horizontal .control-group:first-child {
+  border-top: none;
+}
+#createRecord.form-horizontal span .control-group:first-child {
+  border-top: 1px solid #e8e8e8;
 }
 #createRecord .avatar {
   height: 32px;
