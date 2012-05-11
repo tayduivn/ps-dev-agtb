@@ -122,4 +122,30 @@ describe("App", function() {
 
         routerSpy.restore();
     });
+
+    it("should login", function() {
+        SugarTest.seedApp();
+        var app         = SugarTest.app,
+            mock        = sinon.mock(app.api),
+            successFn   = function() {},
+            credentials = {user:'dauser',pass:'dapass'},
+            callbacks   = {success: successFn};
+
+        mock.expects("login").once().withArgs(
+            'foo', credentials, callbacks );
+        app.login('foo', credentials, callbacks );
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should logout", function() {
+        SugarTest.seedApp();
+        var app         = SugarTest.app,
+            mock        = sinon.mock(app.api),
+            successFn   = function() {},
+            callbacks   = {success: successFn};
+
+        mock.expects("logout").once().withArgs(callbacks);
+        app.logout( callbacks );
+        expect(mock.verify()).toBeTruthy();
+    });
 });
