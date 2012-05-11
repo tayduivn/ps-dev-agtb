@@ -80,7 +80,7 @@ array (
 'best_case' =>
 array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_CASE_VALUE',
+    'vname' => 'LB_BEST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -88,7 +88,7 @@ array (
 'likely_case' =>
 array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY_VALUE',
+    'vname' => 'LB_LIKELY_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -96,7 +96,7 @@ array (
 'worst_case' =>
 array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_CASE_VALUE',
+    'vname' => 'LB_WORST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
