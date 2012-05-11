@@ -66,7 +66,6 @@ class SugarParsers_Filter
         if(is_object($obj)) {
             $obj = $this->objectToArray($obj);
         }
-
         $this->parsedFilter = $this->parseFilterArray($obj);
     }
 
@@ -95,7 +94,7 @@ class SugarParsers_Filter
             $_filterKey = count($_filters);
             if (isset($this->filters[$key])) {
                 // we have a class to process
-                $klass = $this->filters[$key];
+                $klass = $this->filters[$key]['class'];
             } else {
                 // one doesn't exist so let make sure that the key is not a $variable
                 if (substr($key, 0, 1) == "$") {
@@ -109,9 +108,9 @@ class SugarParsers_Filter
 
                 // make sure key is not a variable
                 if(is_string($value) && isset($this->filters[$value])) {
-                    $klass = $this->filters[$value];
+                    $klass = $this->filters[$value]['class'];
                 } else {
-                    $klass = $this->filters['$is'];
+                    $klass = $this->filters['$is']['class'];
                 }
             }
 
@@ -120,7 +119,7 @@ class SugarParsers_Filter
              */
             if($klass::isControlVariable() && is_string($value)) {
                 $variable = (isset($this->filters[$value])) ? $value : '$is';
-                $_cvKlass = $this->filters[$variable];
+                $_cvKlass = $this->filters[$variable]['class'];
                 $cvKlass = new $_cvKlass();
                 $cvKlass->filter($value);
                 $value = $cvKlass;
@@ -219,6 +218,11 @@ class SugarParsers_Filter
     {
         $fd = new FilterDictionary();
         $this->filters = $fd->loadDictionaryFromStorage();
+
+        foreach($this->filters as $filter) {
+            // load all the classes from the bean
+            require_once($filter['file']);
+        }
     }
 
 
