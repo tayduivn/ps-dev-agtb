@@ -30,8 +30,19 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
      */
     protected $_reportFilters = array();
 
+    /**
+     * Default Control Statement
+     *
+     * @var string
+     */
     protected $controlStatement = "AND";
 
+    /**
+     * Convert the filter into a Report Engine Friendly Array
+     *
+     * @param mixed $value
+     * @return array
+     */
     public function convert($value)
     {
         foreach ($value as $key => $val) {
@@ -76,6 +87,12 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         }
     }
 
+    /**
+     * @param string $field_name        Name of the field we are modifying
+     * @param string $operator          Operator to use.
+     * @param string $value             Value for the field
+     * @return array
+     */
     protected function createFilter($field_name, $operator, $value)
     {
         return array(

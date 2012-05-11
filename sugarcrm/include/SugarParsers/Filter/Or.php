@@ -19,16 +19,32 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
  * This class is used when the key doesn't contain any keys
  */
 class SugarParsers_Filter_Or extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$or');
 
+    /**
+     * Standard Operator
+     *
+     * @var string
+     */
     protected $operator = "||";
 
+    /**
+     * Operator Text
+     *
+     * @var string
+     */
     protected $operator_text = "OR";
 
     /**

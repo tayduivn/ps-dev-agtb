@@ -19,43 +19,26 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
- * This class is used when the key doesn't contain any keys
+ * This is for when a string will be at the end of a string
+ *
+ * Ex: %<string>
  */
-class SugarParsers_Filter_And extends SugarParsers_Filter_AbstractFilter
+class SugarParsers_Filter_Ends extends SugarParsers_Filter_AbstractFilter
 {
     /**
      * Which Variables trigger this class
      *
      * @var array
      */
-    protected $variables = array('$and');
+    protected $variables = array('$ends', '$end');
 
     /**
-     * Standard Operator
+     * The Text Operator
      *
      * @var string
      */
-    protected $operator = "&&";
-
-    /**
-     * Text Operator
-     *
-     * @var string
-     */
-    protected $operator_text = "AND";
-
-    /**
-     * This is a way to tell if the filter is a control method
-     *
-     * @static
-     * @return bool
-     */
-    public static function isControlVariable()
-    {
-        return true;
-    }
+    protected $operator_text = 'ends_with';
 }

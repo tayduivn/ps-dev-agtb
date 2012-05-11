@@ -19,43 +19,49 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
- * This class is used when the key doesn't contain any keys
+ * This class is used when the field check is empty or not empty
  */
-class SugarParsers_Filter_And extends SugarParsers_Filter_AbstractFilter
+class SugarParsers_Filter_Empty extends SugarParsers_Filter_AbstractFilter
 {
     /**
      * Which Variables trigger this class
      *
      * @var array
      */
-    protected $variables = array('$and');
-
-    /**
-     * Standard Operator
-     *
-     * @var string
-     */
-    protected $operator = "&&";
+    protected $variables = array('$empty');
 
     /**
      * Text Operator
      *
      * @var string
      */
-    protected $operator_text = "AND";
+    protected $operator_text = "empty";
 
     /**
-     * This is a way to tell if the filter is a control method
+     * Not Text Operator
      *
-     * @static
-     * @return bool
+     * @var string
      */
-    public static function isControlVariable()
+    protected $operator_not_text = "not_empty";
+
+    /**
+     * Ignore any set value as this has to be empty
+     *
+     * @param String $value
+     */
+    public function filter($value)
+    {}
+
+    /**
+     * Becuase this is for empty we always return null
+     *
+     * @return null
+     */
+    public function getValue()
     {
-        return true;
+        return null;
     }
 }

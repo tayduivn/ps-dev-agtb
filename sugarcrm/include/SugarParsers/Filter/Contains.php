@@ -20,6 +20,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once("include/SugarParsers/Filter/AbstractFilter.php");
+
 /**
  * This is for when a string will contain part of this string.
  *
@@ -27,9 +29,24 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarParsers_Filter_Contains extends SugarParsers_Filter_AbstractFilter
 {
+    /**
+     * Which Variables trigger this class
+     *
+     * @var array
+     */
     protected $variables = array('$contains');
 
+    /**
+     * Text Operator
+     *
+     * @var string
+     */
     protected $operator_text = 'contains';
 
+    /**
+     * Not Text Operator
+     *
+     * @var string
+     */
     protected $operator_not_text = 'does_not_contain';
 }

@@ -54,6 +54,17 @@ class ChartApi extends SugarApi
 
                 call_user_func_array(array($ReportBuilder, "addLink"), $arrLink);
             }
+        }
+
+        if (isset($args['filter'])) {
+            require_once('include/SugarParsers/Filter.php');
+            require_once('include/SugarParsers/Converter/Report.php');
+            $filter = new SugarParsers_Filter();
+            // fix the filter args
+            $filter->parseJson(html_entity_decode($args['filter'], ENT_QUOTES));
+            $filters = $filter->convert(new SugarParsers_Converter_Report());
+
+            $ReportBuilder->addFilter($filters);
 
         }
 
@@ -70,7 +81,6 @@ class ChartApi extends SugarApi
         $reporter->run_chart_queries();
 
         $chart_type = $reporter->chart_type;
-
 
         $group_key = (isset($reporter->report_def['group_defs'][0]['table_key']) ? $reporter->report_def['group_defs'][0]['table_key'] : '') .
             ':' .

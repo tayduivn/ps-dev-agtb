@@ -25,7 +25,6 @@ interface SugarParsers_Filter_FilterInterface
     /**
      * @abstract
      * @param mixed $value      The Value we need to parse
-     * @return mixed
      */
     public function filter($value);
 }

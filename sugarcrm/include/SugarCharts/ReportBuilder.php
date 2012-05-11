@@ -43,9 +43,6 @@ class ReportBuilder
         'report_type' => 'summary',
         'full_table_list' => array(),
         'filters_def' => array(
-            'Filter_1' => array(
-                'operator' => 'AND',
-            )
         )
     );
 
@@ -249,9 +246,12 @@ class ReportBuilder
         return $this;
     }
 
-    public function addFilter()
+    /**
+     * @param $filter
+     */
+    public function addFilter($filter)
     {
-
+        $this->defaultReport['filters_def'] = $filter;
     }
 
     /**
