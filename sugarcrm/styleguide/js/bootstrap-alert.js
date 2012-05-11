@@ -1,7 +1,7 @@
-/* ==========================================================
- * bootstrap-alert.js v2.0.0
- * http://twitter.github.com/bootstrap/widgets.html#alerts
- * ==========================================================
+/* ============================================================
+ * bootstrap-button.js v2.0.3
+ * http://twitter.github.com/bootstrap/javascript.html#buttons
+ * ============================================================
  * Copyright 2012 Twitter, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,77 +15,82 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ========================================================== */
+ * ============================================================ */
 
 
-!function( $ ){
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
 
- /* ALERT CLASS DEFINITION
-  * ====================== */
 
-  var dismiss = '[data-dismiss="alert"]'
-    , Alert = function ( el ) {
-        $(el).on('click', dismiss, this.close)
-      }
+ /* BUTTON PUBLIC CLASS DEFINITION
+  * ============================== */
 
-  Alert.prototype = {
+  var Button = function (element, options) {
+    this.$element = $(element)
+    this.options = $.extend({}, $.fn.button.defaults, options)
+  }
 
-    constructor: Alert
+  Button.prototype.setState = function (state) {
+    var d = 'disabled'
+      , $el = this.$element
+      , data = $el.data()
+      , val = $el.is('input') ? 'val' : 'html'
 
-  , close: function ( e ) {
-      var $this = $(this)
-        , selector = $this.attr('data-target')
-        , $parent
+    state = state + 'Text'
+    data.resetText || $el.data('resetText', $el[val]())
 
-      if (!selector) {
-        selector = $this.attr('href')
-        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
-      }
+    $el[val](data[state] || this.options[state])
 
-      $parent = $(selector)
-      $parent.trigger('close')
+    // push to event loop to allow forms to submit
+    setTimeout(function () {
+      state == 'loadingText' ?
+        $el.addClass(d).attr(d, d) :
+        $el.removeClass(d).removeAttr(d)
+    }, 0)
+  }
 
-      e && e.preventDefault()
+  Button.prototype.toggle = function () {
+    var $parent = this.$element.parent('[data-toggle="buttons-radio"]')
 
-      $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+    $parent && $parent
+      .find('.active')
+      .removeClass('active')
 
-      $parent.removeClass('in')
-
-      function removeElement() {
-        $parent.remove()
-        $parent.trigger('closed')
-      }
-
-      $.support.transition && $parent.hasClass('fade') ?
-        $parent.on($.support.transition.end, removeElement) :
-        removeElement()
-    }
-
+    this.$element.toggleClass('active')
   }
 
 
- /* ALERT PLUGIN DEFINITION
-  * ======================= */
+ /* BUTTON PLUGIN DEFINITION
+  * ======================== */
 
-  $.fn.alert = function ( option ) {
+  $.fn.button = function (option) {
     return this.each(function () {
       var $this = $(this)
-        , data = $this.data('alert')
-      if (!data) $this.data('alert', (data = new Alert(this)))
-      if (typeof option == 'string') data[option].call($this)
+        , data = $this.data('button')
+        , options = typeof option == 'object' && option
+      if (!data) $this.data('button', (data = new Button(this, options)))
+      if (option == 'toggle') data.toggle()
+      else if (option) data.setState(option)
     })
   }
 
-  $.fn.alert.Constructor = Alert
+  $.fn.button.defaults = {
+    loadingText: 'loading...'
+  }
+
+  $.fn.button.Constructor = Button
 
 
- /* ALERT DATA-API
-  * ============== */
+ /* BUTTON DATA-API
+  * =============== */
 
   $(function () {
-    $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
+    $('body').on('click.button.data-api', '[data-toggle^=button]', function ( e ) {
+      var $btn = $(e.target)
+      if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
+      $btn.button('toggle')
+    })
   })
 
-}( window.jQuery )
+}(window.jQuery);
