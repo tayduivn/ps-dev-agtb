@@ -379,7 +379,7 @@
                         if (model.link.bean) {
                             model.link.bean.set(data.record);
                         }
-                        data = data.relatedRecord;
+                        data = data.related_record;
                         // Attributes will be set automatically for create/update but not for delete
                         // Also, break the link
                         if (method == "delete") {

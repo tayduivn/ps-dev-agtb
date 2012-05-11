@@ -286,14 +286,15 @@ class SugarWirelessView extends SugarView
         require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
         $file_strategy = array(MB_CUSTOMMETADATALOCATION,MB_BASEMETADATALOCATION);
         $lView = strtolower($view);
+        $client = MetaDataFiles::getClientByView($lView);
 
         foreach($file_strategy as $file_location)
         {
-            $filename = MetaDataFiles::getDeployedFileName($lView, $module_name, $file_location);
+            $filename = MetaDataFiles::getDeployedFileName($lView, $module_name, $file_location, $client);
             $using_view = $lView;
             // fallback for detail view
             if (!file_exists($filename) && $lView == MB_WIRELESSDETAILVIEW ) {
-                $filename = MetaDataFiles::getDeployedFileName( MB_WIRELESSEDITVIEW, $module_name, $file_location);
+                $filename = MetaDataFiles::getDeployedFileName( MB_WIRELESSEDITVIEW, $module_name, $file_location, MB_WIRELESS);
                 $using_view = MB_WIRELESSEDITVIEW;
             }
             if (file_exists($filename))

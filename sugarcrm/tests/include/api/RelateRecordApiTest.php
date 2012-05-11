@@ -31,17 +31,19 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected $createdBeans = array();
 
     public function setUp(){
+        global $beanFiles, $beanList;
+        require('include/modules.php');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     public function tearDown()
-    	{
-    	    foreach($this->createdBeans as $bean)
-            {
-                $bean->retrieve($bean->id);
-                $bean->mark_deleted($bean->id);
-            }
+    {
+        foreach($this->createdBeans as $bean)
+        {
+            $bean->retrieve($bean->id);
+            $bean->mark_deleted($bean->id);
         }
+    }
 
     public function testCreateRelatedNote() {
         $contact = BeanFactory::getBean("Contacts");
