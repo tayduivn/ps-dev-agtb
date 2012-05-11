@@ -60,6 +60,8 @@ class SugarTestProductBundleUtilities
     {
         $productbundle_ids = self::getCreatedProductBundleIds();
         $GLOBALS['db']->query('DELETE FROM product_bundles WHERE id IN (\'' . implode("', '", $productbundle_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM product_bundle_product WHERE bundle_id IN (\'' . implode("', '", $productbundle_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM product_bundle_quote WHERE bundle_id IN (\'' . implode("', '", $productbundle_ids) . '\')');
     }
         
     public static function getCreatedProductBundleIds() 
