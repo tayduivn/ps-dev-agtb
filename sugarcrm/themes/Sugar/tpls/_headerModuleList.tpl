@@ -161,15 +161,6 @@ $this->assign('currentGroupTab', $currentGroupTab);
 											</ul>
 											</div>
 										</div>
-										
-										<div class="megacolumn">
-											<div class="megacolumn-content divider">
-											<ul class="MMFavorites">
-												<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-												<li><a href="#">&nbsp;</a></li>
-											</ul>
-											</div>
-										</div>
 										<div class="megacolumn">
 											<div class="megacolumn-content">
 											{if $groupTabId}
@@ -185,6 +176,14 @@ $this->assign('currentGroupTab', $currentGroupTab);
 											{/if}
 											</div>
 										</div>
+                                        <div class="megacolumn">
+                                            <div class="megacolumn-content divider">
+                                                <ul class="MMFavorites">
+                                                    <li class="groupLabel">{$APP.LBL_FAVORITES}</li>
+                                                    <li><a href="#">&nbsp;</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
 									</div>
 								</li>
 								</ul>

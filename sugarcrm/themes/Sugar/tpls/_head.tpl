@@ -35,6 +35,7 @@
 {$SUGAR_CSS}
 {if $AUTHENTICATED}
 <link rel='stylesheet' href='{sugar_getjspath file="include/ytree/TreeView/css/folders/tree.css"}'/>
+<link rel='stylesheet' href='{sugar_getjspath file="include/SugarCharts/Jit/css/base.css"}'/>
 {/if}
 {$SUGAR_JS}
 {literal}

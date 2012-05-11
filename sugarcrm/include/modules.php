@@ -51,6 +51,7 @@ $moduleList[] = 'ProspectLists';
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
+$moduleList[] = 'OpportunityLines';
 $moduleList[] = 'Products';
 //END SUGARCRM flav=pro ONLY
 
@@ -509,7 +510,8 @@ $report_include_modules['Trackers']         = 'Tracker';
 //END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-
+$report_include_modules['OpportunityLines'] = 'OpportunityLine';
+$report_include_modules['TimePeriods'] = 'TimePeriod';
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
 $report_include_modules['TrackerQueries']   = 'TrackerQuery';

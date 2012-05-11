@@ -267,7 +267,18 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_TIMEPERIOD_ID',
-    'type' => 'id',
+    'type' => 'id'
+  ),
+  'timeperiods' =>
+  array(
+    'name' => 'timeperiods',
+    'type' => 'link',
+    'relationship' => 'opportunities_timeperiods',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'TimePeriods',
+    'bean_name'=>'TimePeriod',
+    'vname'=>'LBL_TIMEPERIODS',
   ),
   //END SUGARCRM flav=PRO ONLY
   'accounts' =>
@@ -279,7 +290,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'link_type'=>'one',
     'module'=>'Accounts',
     'bean_name'=>'Account',
-		'vname'=>'LBL_ACCOUNTS',
+	'vname'=>'LBL_ACCOUNTS',
   ),
   'contacts' =>
   array (
@@ -411,6 +422,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'source' => 'non-db',
 
   ),
+   /*
     'opportunity_line_bundles' =>
     array (
         'name' => 'opportunity_line_bundles',
@@ -419,6 +431,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'relationship' => 'opportunity_line_bundle_opportunity',
         'source'=>'non-db',
     ),
+   */
+  'opportunity_lines' =>
+   array(
+        'name' => 'opportunity_lines',
+        'type' => 'link',
+        'vname' => 'LBL_OPPORTUNITY_LINES',
+        'relationship' => 'opportunity_lines',
+        'source' => 'non-db',
+   ),
  //END SUGARCRM flav=pro ONLY
 ),
 		'indices' => array (
@@ -488,7 +509,20 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'campaign_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav!=sales ONLY
+
+   //BEGIN SUGARCRM flav=pro ONLY
+   'opportunities_timeperiods' =>
+   array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
+   'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'timeperiod_id',
+   'relationship_type'=>'one-to-many'),
+
+   'opportunity_lines' =>
+   array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
+   'relationship_type'=>'one-to-many'),
+   //END SUGARCRM flav=pro ONLY
 )
+
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,
 );

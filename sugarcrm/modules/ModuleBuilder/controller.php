@@ -842,7 +842,7 @@ class ModuleBuilderController extends SugarController
         //BEGIN SUGARCRM flav=ent ONLY
         if (isset($_REQUEST['PORTAL'])) {
             $this->view = 'portallistview' ;
-            $parser = ParserFactory::getParser($this->view, $_REQUEST['view_module']);
+            $parser = ParserFactory::getParser($this->view, $_REQUEST['view_module'], null, null, MB_PORTAL);
             //$parser->init ( $_REQUEST [ 'view_module' ] ) ; // removed init because MetaDataParsers don't use it
         } else
         {

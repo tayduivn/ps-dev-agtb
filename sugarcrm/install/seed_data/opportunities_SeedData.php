@@ -27,7 +27,7 @@ $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_co
 $count = $large_scale_test ? 500 : 50;
 
 //Retrieve a sample of the product_template entries to use and store this in product_line_data array
-$result = $db->limitQuery("select id, list_price, discount_price, discount_usdollar, currency, currency_id, tax_class from product_templates", 0, $count);
+$result = $db->limitQuery("select id, list_price, discount_price, discount_usdollar, currency_id, tax_class from product_templates", 0, $count);
 $product_line_data = array();
 while(($row = $db->fetchByAssoc($result)))
 {
@@ -48,7 +48,7 @@ while(($row = $db->fetchByAssoc($result)))
     $opportunityLineBundle->name = $row['name'];
     $opportunityLineBundle->created_by = $opp->assigned_user_id;
     $opportunityLineBundle->modified_user_id = $opp->assigned_user_id;
-    $opportunityLineBundle->date_created = $timedate->asDb($timedate->getNow());
+    $opportunityLineBundle->date_modified = $timedate->asDb($timedate->getNow());
     $opportunityLineBundle->date_entered = $timedate->asDb($timedate->getNow());
     $opportunityLineBundle->deleted = 0;
     $opportunityLineBundle->save();
@@ -63,13 +63,16 @@ while(($row = $db->fetchByAssoc($result)))
     $opportunityLine->best_case = $opportunityLine->price;
     $opportunityLine->likely_case = $opportunityLine->discount_price;
     $opportunityLine->worst_case = $opportunityLine->discount_price * .75;
-    $opportunityLine->currency = $product['currency'];
     $opportunityLine->currency_id = $product['currency_id'];
     $opportunityLine->tax_class = $product['tax_class'];
+    $opportunityLine->created_by = $opp->assigned_user_id;
+    $opportunityLine->modified_user_id = $opp->assigned_user_id;
+    $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
+    $opportunityLine->date_modified = $timedate->asDb($timedate->getNow());
     $opportunityLine->deleted = 0;
     $opportunityLine->save();
 
-    $opportunityLineBundle->set_opportunitylinebundle_opportunity_relationship($row['id'], $opportunityLineBundle->id, 1);
-    $opportunityLineBundle->set_opportunitylinebundle_opportunityline_relationship($opportunityLine->id, 1, $opportunityLineBundle->id);
+    $opportunityLineBundle->set_opportunitylinebundle_opportunity_relationship($row['id'], '', 1);
+    $opportunityLineBundle->set_opportunitylinebundle_opportunityline_relationship($opportunityLine->id, 1, '');
 
 }

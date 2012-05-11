@@ -52,6 +52,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
+    'OpportunityLines' => 'Opportunity Lines',
     'Products' => 'Products',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',

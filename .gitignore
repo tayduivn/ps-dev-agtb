@@ -9,6 +9,8 @@ sidecar/src/config_si.php
 sidecar/build
 sidecar/docs
 sidecar/extensions/nomad/compiled/*.js
+sidecar/extensions/portal/config.js
+sidecar/extensions/forecasts/config.js
 sidecar/extensions/nomad/config.js
 sugarcrm/config_si.php
 *~
@@ -21,4 +23,4 @@ sugarcrm/custom/modules/
 sugarcrm/custom/Extension/
 sugarcrm/custom/themes/
 tags
-
+build/rome/MAMP

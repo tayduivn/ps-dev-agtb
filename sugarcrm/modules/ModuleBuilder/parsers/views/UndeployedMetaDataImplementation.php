@@ -33,14 +33,16 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
 
     private $_packageName ;
 
-   /*
+    /**
      * Constructor
      * @param string $view
      * @param string $moduleName
+     * @param string $packageName
+     * @param string $client The client making the request for this implementation
      * @throws Exception Thrown if the provided view doesn't exist for this module
      */
 
-    function __construct ($view , $moduleName , $packageName)
+    function __construct ($view , $moduleName , $packageName, $client = '')
     {
 
     	// BEGIN ASSERTIONS
@@ -51,6 +53,7 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
         // END ASSERTIONS
 
         $this->_view = strtolower ( $view ) ;
+        $this->setViewClient($client);
         $this->_moduleName = $moduleName ;
         $this->_packageName = $packageName ;
 
@@ -153,62 +156,17 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
 
     /*
      * Construct a full pathname for the requested metadata
-     * @param string view           The view type, that is, EditView, DetailView etc
-     * @param string modulename     The name of the module that will use this layout
-     * @param string type
+     * @param string $view           The view type, that is, EditView, DetailView etc
+     * @param string $modulename     The name of the module that will use this layout
+     * @param string $type           The location of the file
+     * @param string $client         The client to get the filename for
      */
-    public static function getFileName ($view , $moduleName , $packageName , $type = MB_BASEMETADATALOCATION)
+    public function getFileName ($view , $moduleName , $packageName , $type = MB_BASEMETADATALOCATION, $client = null)
     {
-        /*
-
-        $type = strtolower ( $type ) ;
-
-        // BEGIN ASSERTIONS
-        if ($type != MB_BASEMETADATALOCATION && $type != MB_HISTORYMETADATALOCATION)
-        {
-            // just warn rather than die
-            $GLOBALS [ 'log' ]->warning ( "UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized" ) ;
+        if ($client === null) {
+            $client = $this->_viewClient;
         }
-        // END ASSERTIONS
-
-        // TODO: refactor this into parent class - duplicated code with DeployedMetaDataImplementation
-        $filenames = array (  	MB_DASHLETSEARCH => 'dashletviewdefs',
-        						MB_DASHLET => 'dashletviewdefs',
-        						MB_LISTVIEW => 'listviewdefs' ,
-        						MB_BASICSEARCH => 'searchdefs' ,
-        						MB_ADVANCEDSEARCH => 'searchdefs' ,
-        						MB_EDITVIEW => 'editviewdefs' ,
-        						MB_DETAILVIEW => 'detailviewdefs' ,
-        						MB_QUICKCREATE => 'quickcreatedefs',
-					        	MB_POPUPSEARCH => 'popupdefs',
-					        	MB_POPUPLIST => 'popupdefs',
-        						//BEGIN SUGARCRM flav=pro ONLY
-        						MB_WIRELESSEDITVIEW => 'wireless.editviewdefs' ,
-        						MB_WIRELESSDETAILVIEW => 'wireless.detailviewdefs' ,
-        						MB_WIRELESSLISTVIEW => 'wireless.listviewdefs' ,
-        						MB_WIRELESSBASICSEARCH => 'wireless.searchdefs' ,
-        						MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
-        						//END SUGARCRM flav=pro || flav=sales ONLY
-                                //BEGIN SUGARCRM flav=ent ONLY
-                                MB_PORTALEDITVIEW => 'portal.editviewdefs',
-                                MB_PORTALDETAILVIEW => 'portal.detailviewdefs',
-                                MB_PORTALLISTVIEW => 'portal.listviewdefs',
-                                MB_PORTALSEARCHVIEW => 'portal.searchviewdefs',
-                                //END SUGARCRM flav=ent ONLY
-        ) ;
-
-        switch ( $type)
-        {
-            case MB_HISTORYMETADATALOCATION :
-                return 'custom/history/modulebuilder/packages/' . $packageName . '/modules/' . $moduleName . '/metadata/' . $filenames [ $view ] . '.php' ;
-            default :
-                // get the module again, all so we can call this method statically without relying on the module stored in the class variables
-                $mb = new ModuleBuilder ( ) ;
-                $module = & $mb->getPackageModule ( $packageName, $moduleName ) ;
-                return $module->getModuleDir () . '/metadata/' . $filenames [ $view ] . '.php' ;
-        }
-        */
-        return MetaDataFiles::getUndeployedFileName($view, $moduleName, $packageName, $type);
+        return MetaDataFiles::getUndeployedFileName($view, $moduleName, $packageName, $type, $client);
     }
     
     public function getModuleDir(){

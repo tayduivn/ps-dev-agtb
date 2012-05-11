@@ -48,9 +48,6 @@ $mod_strings = array (
   'LBL_CURRENCY_ID'=>'Currency ID',
   'LBL_CURRENCY_NAME'=>'Currency Name',
   'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
-   //BEGIN SUGARCRM flav=pro ONLY
-  'LBL_TEAM_ID' =>'Team ID',
-  //END SUGARCRM flav=pro ONLY
 //DON'T CONVERT THESE THEY ARE MAPPINGS
   'db_sales_stage' => 'LBL_LIST_SALES_STAGE',
   'db_name' => 'LBL_NAME',
@@ -100,9 +97,6 @@ $mod_strings = array (
   'MSG_DUPLICATE' => 'The opportunity record you are about to create might be a duplicate of a opportunity record that already exists. Opportunity records containing similar names are listed below.<br>Click Save to continue creating this new opportunity, or click Cancel to return to the module without creating the opportunity.',
   'LBL_NEW_FORM_TITLE' => 'Create Opportunity',
   'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
-//BEGIN SUGARCRM flav=pro ONLY
-  'LNK_OPPORTUNITY_REPORTS' => 'View Opportunity Reports',
-//END SUGARCRM flav=pro ONLY
   'LNK_OPPORTUNITY_LIST' => 'View Opportunities',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the opportunity.',
   'LBL_TOP_OPPORTUNITIES' => 'My Top Open Opportunities',
@@ -115,19 +109,12 @@ $mod_strings = array (
 	
     'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
-    //BEGIN SUGARCRM flav=pro ONLY
-    'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
-    //END SUGARCRM flav=pro ONLY
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to:',
 	'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
-//BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONTRACTS'=>'Contracts',
-	'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',	
- //END SUGARCRM flav=pro ONLY
   'LBL_LIST_SALES_STAGE' => 'Sales Stage',
   'LBL_MY_CLOSED_OPPORTUNITIES' => 'My Closed Opportunities',
   'LBL_TOTAL_OPPORTUNITIES' => 'Total Opportunities',
@@ -156,6 +143,18 @@ $mod_strings = array (
 
   // SNIP
   'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
+
+  //BEGIN SUGARCRM flav=pro ONLY
+  'LBL_CONTRACTS'=>'Contracts',
+  'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
+  'LBL_OPPORTUNITY_LINES' => 'Opportunity Line Items',
+  'LNK_OPPORTUNITY_REPORTS' => 'View Opportunity Reports',
+  'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
+  'LBL_TEAM_ID' =>'Team ID',
+  'LBL_TIMEPERIODS' => 'TimePeriods',
+  'LBL_TIMEPERIOD_ID' => 'TimePeriod ID',
+  //END SUGARCRM flav=pro ONLY
+
 );
 
 ?>
