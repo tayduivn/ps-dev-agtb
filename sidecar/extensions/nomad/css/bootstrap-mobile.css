@@ -4587,6 +4587,7 @@ h3.nomad {
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
+  overflow: hidden;
   margin: 5px auto 15px;
   width: 220px;
   height: auto;
