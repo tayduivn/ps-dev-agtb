@@ -729,14 +729,41 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
 // forecast_type can be 'Direct' or 'Rollup'
 function getOppSummationData($user_id, $timeperiod_id, $forecast_type = 'Direct')
 {
+    global $timedate;
+
     //initialize hierarchy helper function.
     $hhelper = new Common();
+    $hhelper->setup();
     $hhelper->set_current_user($user_id);
+
+    if (empty($timedate))
+    {
+        $timedate = TimeDate::getInstance();
+    }
+
+    if (empty($timeperiod_id))
+    {
+        $now = $timedate->getNow();
+        
+        $timeperiod_id = $hhelper->db->getOne("SELECT id 
+                                                FROM timeperiods 
+                                                WHERE start_date < '{$timedate->asDbDate($now)}' 
+                                                    AND end_date > '{$timedate->asDbDate($now)}' 
+                                                    AND deleted = 0
+                                                    AND is_fiscal_year = 0");
+        if(empty($timeperiod_id))
+        {
+            //Log an error message here
+            $GLOBALS['log']->error();
+        }
+    }
+
+    
 
     $data = array();
 
-    $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", array(0));
-    $probability = $this->db->convert("probability", "IFNULL", array(0));
+    $amount_usdollar = $hhelper->db->convert("amount_usdollar", "IFNULL", array(0));
+    $probability = $hhelper->db->convert("probability", "IFNULL", array(0));
 
     if (strtolower($forecast_type) == 'direct')
     {
@@ -744,33 +771,41 @@ function getOppSummationData($user_id, $timeperiod_id, $forecast_type = 'Direct'
                         op.name name,
                         op.amount amount,
                         ((op.amount_usdollar * op.probability) / 100) weighted_value,
-                        if(s.best_case > 0, s.best_case, " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " best_case,
-                        if(s.likely_case >0, s.likely_case, " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " likely_case,
-                        if(s.worst_case > 0, s.worst_case, " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " worst_case";
-        $query .= "FROM (" . createOppDataByUserQuery($user_id, $timeperiod_id) . ") as s";
-        $query .= "LEFT JOIN opportunities op on op.id = s.id";
+                        CASE WHEN s.best_case > 0 THEN s.best_case
+                            ELSE " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END best_case,
+                        CASE WHEN s.likely_case > 0 THEN s.likely_case
+                            ELSE " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END likely_case,
+                        CASE WHEN s.worst_case > 0 THEN s.worst_case
+                            ELSE " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END worst_case";
+        $query .= " FROM (" . createOppDataByUserQuery($user_id, $timeperiod_id) . ") as s";
+        $query .= " LEFT JOIN opportunities op on op.id = s.id";
 
         $result = $hhelper->db->query($query, true, "Error getting opportunity summation data");
         while($row = $hhelper->db->fetchByAssoc($result))
         {
-            $data['direct'][$user_id]['opp_sum_data'][] = $row;
+            $data['direct'][$user_id][] = $row;
         }
     }
     elseif (strtolower($forecast_type) == 'rollup')
     {
-        $hhelper->retrieve_downline($user_id);
+        $hhelper->retrieve_direct_downline($user_id);
 
-        foreach ($hhelper->my_downline as $user)
+        $users = array_merge(array($user_id), $hhelper->my_direct_downline);
+
+        foreach ($users as $user)
         {
             $query = "SELECT op.assigned_user_id user_id,
                             SUM(op.amount) amount,
                             SUM(((op.amount_usdollar * op.probability) / 100)) weighted_value,
-                            SUM(if(s.best_case > 0, s.best_case, " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " best_case,
-                            SUM(if(s.likely_case >0, s.likely_case, " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " likely_case,
-                            SUM(if(s.worst_case > 0, s.worst_case, " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " worst_case";
-            $query .= "FROM (" . createOppDataByUserQuery($user, $timeperiod_id) . ") as s";
-            $query .= "LEFT JOIN opportunities op on op.id = s.id";
-            $query .= "GROUP BY op.assigned_user_id";
+                            SUM(CASE WHEN s.best_case > 0 THEN s.best_case
+                                    ELSE " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) best_case,
+                            SUM(CASE WHEN s.likely_case > 0 THEN s.likely_case
+                                    ELSE " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) likely_case,
+                            SUM(CASE WHEN s.worst_case > 0 THEN s.worst_case
+                                    ELSE " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) worst_case";
+            $query .= " FROM (" . createOppDataByUserQuery($user, $timeperiod_id) . ") as s";
+            $query .= " LEFT JOIN opportunities op on op.id = s.id";
+            $query .= " GROUP BY op.assigned_user_id";
 
             $result = $hhelper->db->query($query, true, "Error getting opportunity summation data");
             $row = $hhelper->db->fetchByAssoc($result);
@@ -798,17 +833,16 @@ function createOppDataByUserQuery($user_id, $timeperiod_id)
                SUM(" . $db->convert("ol.best_case", "IFNULL", array(0)) . ") as best_case,
                SUM(" . $db->convert("ol.likely_case", "IFNULL", array(0)) . ") as likely_case,
                SUM(" . $db->convert("ol.worst_case", "IFNULL", array(0)) . ") as worst_case";
-    $query .= "FROM opportunities o,
-                    timeperiods t";
-    $query .= "LEFT JOIN opp_line_bundle_opp olbo on o.id = olbo.opportunity_id
+    $query .= " FROM timeperiods t, opportunities o";
+    $query .= " LEFT JOIN opp_line_bundle_opp olbo on o.id = olbo.opportunity_id
                 LEFT JOIN opp_line_bundle_opp_line olbol on olbo.bundle_id = olbol.bundle_id
                 LEFT JOIN opportunity_line ol on olbol.opportunity_line_id = ol.id";
-    $query .= "WHERE o.assigned_user_id = '$user_id'
+    $query .= " WHERE o.assigned_user_id = '$user_id'
                     AND t.id = '$timeperiod_id'
                     AND o.date_closed <= t.end_date
                     AND o.date_closed >= t.start_date
                     AND o.deleted = 0";
-    $query .= "GROUP BY o.id";
+    $query .= " GROUP BY o.id";
     
     return $query;
 }

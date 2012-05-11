@@ -2,9 +2,12 @@
 
 $libraryFiles = array(
     'lib/jquery/jquery.min.js',
+    'lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js',
     'lib/backbone/underscore.min.js',
     'lib/backbone/backbone.min.js',
     'lib/stash/stash.min.js',
+    'lib/async/async.min.js',
+    'lib/chosen/chosen.jquery.min.js',
 );
 
 $includeFiles = array(
@@ -25,7 +28,6 @@ $includeFiles = array(
     'src/core/metadata-manager.js',
     'src/core/acl.js',
     'src/utils/logger.js',
-    'src/config.js',
     'src/data/bean.js',
     'src/data/bean-collection.js',
     'src/data/data-manager.js',
@@ -40,5 +42,7 @@ $includeFiles = array(
     'src/view/views/detail-view.js',
     'src/view/views/header-view.js',
     'src/view/layouts/columns-layout.js',
-    'src/view/layouts/fluid-layout.js'
+    'src/view/layouts/fluid-layout.js',
+    'src/view/layouts/leftside-layout.js',
+    'src/view/layouts/rightside-layout.js'
 );

@@ -26,14 +26,13 @@
                                     events: {
                                         click: "function(){ var self = this; " +
                                             "$('#content').hide(); " +
-                                            "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.api.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "this.app.api.login(args, null, {error:function(){ $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
                                             "app.events.on('app:sync:complete', function() { " +
-                                            "app.alert.dismiss('login'); $('#content').show();" +
+                                            "$('#content').show();" +
                                             "}); " +
                                             "app.sync(" +
                                             "function(){console.log(\"sync success firing\");}); }" +
@@ -86,7 +85,7 @@
                 controller: "{" +
                     "render : function(){" +
                     "this.app.view.Field.prototype.render.call(this);" +
-                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"forecasts\"); }" +
+                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"forecasts-module\"); }" +
                     "}}"
             },
             "password": {

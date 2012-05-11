@@ -30,9 +30,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp()
-    {
-        global $beanList, $beanFiles;
+    public function setUp(){
+        global $beanFiles, $beanList;
         require('include/modules.php');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
