@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Dashboard - SugarCRM</title>
+  <title>Dashboard - Compact - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -10,6 +10,7 @@
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
 <body id="portal">
   <div class="navbar navbar-fixed-top">
@@ -65,61 +66,43 @@
   </div>
   <div class="container-fluid">
     <div class="row-fluid">
-      <div class="span8">
-        <div class="thumbnail" id="BugsModuleWidget">
+      <div class="span4">
+        <div class="thumbnail" id="moduleWidgetBugs">
           <h1><a href="bugs.html">Bugs</a></h1>
           <table class="table table-striped datatable">
             <thead>
               <tr>
                 <th>Number</th>
                 <th>Subject</th>
-                <th>Priority</th>
                 <th>Status</th>
-                <th>Type</th>
-                <th>Resolution</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>20508</td>
                 <td><a href="detail.html">Bad links in Pitch</a></td>
-                <td>Medium</td>
                 <td>Open</td>
-                <td>Defect</td>
-                <td>Closed</td>
+              </tr>
+              <tr>
+                <td>20509</td>
+                <td><a href="">Broken images in pdf</a></td>
+                <td>Open</td>
               </tr>
               <tr>
                 <td>20550</td>
-                <td><a href="detail.html">Misspellings everywhere</a></td>
-                <td>Urgent</td>
-                <td>Open</td>
-                <td>Defect</td>
-                <td>Pending</td>
+                <td><a href="">Misspellings everywhere</a></td>
+                <td>Closed</td>
               </tr>
               <tr>
                 <td>20554</td>
-                <td><a href="detail.html">404 on faq</a></td>
-                <td>Urgent</td>
-                <td>Open</td>
-                <td>Defect</td>
+                <td><a href="">404 on faq</a></td>
                 <td>Pending</td>
               </tr>
               <tr>
-                <td>20600</td>
-                <td><a href="detail.html">HTML is broken</a></td>
-                <td>Urgent</td>
-                <td>Open</td>
-                <td>Defect</td>
+                <td>20555</td>
+                <td><a href="">Problem revalidating the key</a></td>
                 <td>Pending</td>
-              </tr>
-              <tr>
-                <td>20616</td>
-                <td><a href="detail.html">Page link is not redirecting</a></td>
-                <td>Urgent</td>
-                <td>Open</td>
-                <td>Defect</td>
-                <td>Pending</td>
-              </tr>           
+              </tr>               
             </tbody>
           </table>
           <div class="block-footer">
@@ -132,63 +115,47 @@
               <a href="create.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
             </li>
             <li>  
-              <a href="" rel="tooltip" title="Search list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
             </li>          
           </ul>
         </div>
-        <div class="thumbnail" id="casesModuleWidget">
+        </div>
+        <div class="span4">
+        <div class="thumbnail" id="moduleWidgetCases">
           <h1><a href="cases.html">Cases</a></h1>
             <table class="table table-striped datatable">
               <thead>
                 <tr>
                   <th>Number</th>
                   <th>Subject</th>
-                  <th>Priority</th>
                   <th>Status</th>
-                  <th>Type</th>
-                  <th>Resolution</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>102100</td>
                   <td><a href="">Bad links in Pitch</a></td>
-                  <td>High</td>
-                  <td>Open</td>  
-                  <td>Feature</td>
-                  <td>Closed</td>
+                  <td>Open</td>
                 </tr>
                 <tr>
                   <td>102310</td>
                   <td><a href="">Broken images in pdf</a></td>
-                  <td>High</td>
-                  <td>Open</td>  
-                  <td>Feature</td>
                   <td>Open</td>
                 </tr>
                 <tr>
                   <td>102330</td>
                   <td><a href="">Misspellings everywhere</a></td>
-                  <td>High</td>
-                  <td>Open</td>  
-                  <td>Feature</td>
-                  <td>Pending</td>
+                  <td>Closed</td>
                 </tr>
                 <tr>
                   <td>102439</td>
                   <td><a href="">404 on faq</a></td>
-                  <td>High</td>
-                  <td>Open</td>  
-                  <td>Feature</td>
-                  <td>Closed</td>
+                  <td>Pending</td>
                 </tr>  
                 <tr>
                   <td>102509</td>
                   <td><a href="">Problem revalidating the key</a></td>
-                  <td>High</td>
-                  <td>Open</td>  
-                  <td>Feature</td>
-                  <td>Closed</td>
+                  <td>Pending</td>
                 </tr>               
               </tbody>
             </table>
@@ -202,12 +169,14 @@
               <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add a Case" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
             </li>
             <li>  
-              <a href="" rel="tooltip" title="Search list" class="search" id="casesModuleActionsSearch"><i class="icon-search"></i></a>
+              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
             </li>
           </ul>
         </div> 
-        <div class="thumbnail" id="knowledgeBaseModuleWidget">
-           <h1><a href="knowledge.html">Knowledge Base</a></h1>
+        </div>
+        <div class="span4">
+        <div class="thumbnail" id="moduleWidgetBugs">
+           <h1><a href="know.html">Knowledge Base</a></h1>
            <table class="table table-striped datatable">
              <thead>
                <tr>
@@ -217,7 +186,7 @@
              </thead>
              <tbody>
                <tr>
-                 <td><a href="detail_knowledge.html">Using search</a></td>
+                 <td><a href="detail.html">Using search</a></td>
                  <td>2012-1-14</td>
                </tr>
                <tr>
@@ -229,23 +198,37 @@
                  <td>2012-1-10</td>
                </tr>
                <tr>
-                 <td><a href="detail_knowledge.html">SugarCRM On-Demand</a></td>
+                 <td><a href="detail_knowledge.html">SugarCRM On-Demand </a></td>
                  <td>2012-1-10</td>
-               </tr>              
+               </tr>  
+               <tr>
+                 <td><a href="">Delete a bug</a></td>
+                 <td>2012-1-10</td>
+               </tr>            
              </tbody>
            </table>
-           <ul class="nav nav-pills actions" id="knowledgeBaseModuleActions">
+           <div class="block-footer">
+             <a href="" data-loading-text="Loading...">
+               Show more knowledge ...
+             </a>
+           </div>
+           <ul class="nav nav-pills actions" id="bugsModuleActions">
              <li>  
-               <a href="" rel="tooltip" title="Search list" class="search" id="knowledgeBaseModuleActionsSearch"><i class="icon-search"></i></a>
+               <a href="create.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+             </li>
+             <li>  
+               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
              </li>          
            </ul>
          </div>
-      </div>  
-      <div class="span4">
+      </div>
+      </div>
+      <div class="row-fluid">
+      <div class="span12">
         <div class="block filtered thumbnail" id="moduleActivity">
           <h4>Activity</h4>
           <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Search activity ...">
+            <input value="" class="span4" placeholder="Refine activity ...">
           </form> 
           <article>
             <a href="profile_skhan.html" class="pull-left" data-author_id="skhan">
@@ -304,7 +287,7 @@
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
             <li>  
-              <a href="" rel="tooltip" title="Search list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
             </li>        
           </ul>
         </div>      
