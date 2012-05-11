@@ -10,16 +10,24 @@
     undoIcon:{},
     undoValue: "",
 
+    /**
+     * initializes clickToEdit fields
+     * @param options
+     */
     initialize: function(options) {
         this.app.view.Field.prototype.initialize.call(this, options);
+        this.ctePath = this.app.config.serverUrl + "/../../clients/base/fields/clickToEdit";
 
         var self = this;
 
-        this.ctePath = this.app.config.serverUrl + "/../../clients/base/fields/clickToEdit";
-
-        // temporarily add chosen clickToEdit type, here
-        // TODO:  make this happen more elegantly, and add more type
+        // Temporarily at this location - Add chosen as a field type for editable.
+        // TODO: abstract this out to handle more elegantly as determined by metadata, replace with an actual sugarField
         $.editable.addInputType("chosen", {
+            /**
+             * create the element as a dropdown, so chosen can process
+             * @param settings
+             * @param original
+             */
             element: function(settings, original) {
                 var selEl = $('<select class="cteSelect">');
                 _.each(app.lang.getAppListStrings(settings.context.fieldDef.options), function (value, key) {
@@ -33,26 +41,39 @@
                 return(hidden);
             },
 
+            /**
+             * sets up and attaches the chosen plugin for this type.
+             * @param settings
+             * @param original
+             */
             plugin: function(settings, original) {
                 $("select", this).filter(".cteSelect").chosen().change(settings.context, function(e) {
-                    self.editFinished($(this).val(), settings);
+                    self.doChange($(this).val(), settings);
                 });
             },
 
+            /**
+             * process value from chosen for submittal
+             * @param settings
+             * @param original
+             */
             submit: function(settings, original) {
                 $("input", this).val($("select", this).filter(".cteSelect").val());
             }
         });
     },
 
+    /**
+     * renders clickToEdit field
+     */
     render:function() {
         this.app.view.Field.prototype.render.call(this);
 
         var self = this;
 
         this.cteField = this.$el.find('.cte' + this.cteclass);
-        this.cteIcon = this.cteField.parent().find('.cteimage');
-        this.undoIcon = this.cteField.parent().find('.cteundo');
+        this.cteIcon = this.cteField.parent().find('.cteIcon');
+        this.undoIcon = this.cteField.parent().find('.cteUndoIcon');
 
         this.undoIcon.on('click', null, self, this.doUndo);
         this.cteField.editable(self.doChange,
@@ -61,8 +82,8 @@
                 select: true,
                 onedit: self.doEdit,
                 onreset: function(){console.log("onreset"); console.log(this);},
-                onsubmit: self.editFinished,
                 onblur: "submit",
+                callback: self.editFinished,
                 context: self
             }
         );
@@ -74,41 +95,30 @@
         return this;
     },
 
-    /***
-     * Overwriting default bindDomChange function to prevent default behavior
-     *
-     * @param model
-     * @param fieldName
-     */
-    bindDomChange: function(model, fieldName) {},
-
     /**
-     * The function editable expects to be the AJAX call for the edit.  We simply return the value since all Ajax/REST
-     * calls happen in backbone
-     * @param value
-     * @param settings
+     * Called to do the change, once submitted from editable
+     * @param value the new value
+     * @param settings the editable settings, includes "self" as settings.context
      */
     doChange: function(value, settings) {
+        settings.context.model.set(settings.context.name, value);
+        settings.context.model.save(settings.context.name, value);
         return value;
     },
 
     /**
-     * This is called when the clickToEdit is initiated.  Saves the undo value for the field.
-     * @param settings
-     * @param original
+     * Called when the clickToEdit is triggered.  This is where we store the previous value for undo
+     * @param settings the editable settings, includes "self" as settings.context
+     * @param original the original html
      */
     doEdit: function(settings, original) {
         settings.context.cteIcon.hide();
-        if (settings.context.undoValue != original.innerText) {
-            // This just saves the undovalue in memory as part of the current context.
-            //TODO:  make the undo value persistent
-            settings.context.undoValue = original.innerText;
-        }
+        settings.context.undoValue = original.innerText;
     },
 
     /**
-     * Event handler for the event that triggers an undo
-     * @param e the event
+     * Handler to do an undo
+     * @param e event that triggered the handler
      */
     doUndo: function(e) {
         $(this).hide();
@@ -117,32 +127,36 @@
     },
 
     /**
-     * This is called when the clickToEdit value is submitted
+     * Gets called after editing is complete and submitted.
      * @param value
      * @param settings
      */
     editFinished: function(value, settings) {
-        if (value != settings.context.undoValue) {
-            settings.context.model.set(settings.context.name, value);
-            settings.context.model.save(settings.context.name, value);
-            settings.context.undoIcon.show();
-        }
-        return value;
+        settings.context.undoIcon.show();
     },
 
     /**
-     * Event handler to show the clickToEdit pencil icon
-     * @param e an event
+     * Overwriting default bindDomChange function to prevent default behavior
+     *
+     * @param model
+     * @param fieldName
+     */
+    bindDomChange: function(model, fieldName) {},
+
+    /**
+     * Handler to show the clickToEdit pencil icon
+     * @param e event that triggered the handler
      */
     showActions: function (e) {
         this.cteIcon.show();
     },
 
     /**
-     * Event handler to hide the clickToEdit pencil icon
-     * @param e an event
+     * Handler to hide the clickToEdit pencil icon
+     * @param e event that triggered the handler
      */
     hideActions: function(e) {
         this.cteIcon.hide();
     }
+
 })

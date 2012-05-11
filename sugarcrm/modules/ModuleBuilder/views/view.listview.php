@@ -77,8 +77,9 @@ class ViewListView extends ViewEdit
 
         $packageName = (! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
         $subpanelName = (! empty ( $_REQUEST [ 'subpanel' ] )) ? $_REQUEST [ 'subpanel' ] : null ;
-        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
-        $parser = ParserFactory::getParser (  $this->editLayout , $this->editModule , $packageName, $subpanelName ) ;
+        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
+        require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+        $parser = ParserFactory::getParser (  $this->editLayout , $this->editModule , $packageName, $subpanelName, MetaDataFiles::getClientByView($this->editLayout) ) ;
         $smarty = $this->constructSmarty ( $parser ) ;
 
         if ($preview)
