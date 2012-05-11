@@ -68,7 +68,7 @@ class ParserFactory
      * @return AbstractMetaDataParser
      */
 
-    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = 'base' )
+    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = '' )
     {
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
 		$sm = null;
@@ -91,15 +91,6 @@ class ParserFactory
             }
         }
 
-        // BEGIN SUGARCRM flav=ent ONLY
-        // eventually we should make better use of the client param, but for now keep this ugly hack in
-        // the factory where it can cause as little confusion as possible.
-        if ($client == 'portal') {
-            $lView = self::_helperConvertToViewConstant($lView);
-            $view = $lView; // so the Parser can find the portal files - pass the portalview constant to its ctor
-        }
-        //END SUGARCRM flav=ent ONLY
-
         switch ( $lView)
         {
             case MB_EDITVIEW :
@@ -115,13 +106,13 @@ class ParserFactory
             case MB_PORTALEDITVIEW:
             //END SUGARCRM flav=ent ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
-                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_WIRELESSLISTVIEW:
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
             //END SUGARCRM flav=ent ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
-                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName);
+                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
             //END SUGARCRM flav=pro || flav=sales ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :

@@ -46,6 +46,29 @@ class MetaDataFiles
     );
 
     /**
+     * Listing of clients as they relate to their respective views
+     *
+     * @var array
+     * @access public
+     * @static
+     */
+    public static $clientsByView = array(
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        MB_WIRELESSDETAILVIEW => MB_WIRELESS,
+        MB_WIRELESSEDITVIEW => MB_WIRELESS,
+        MB_WIRELESSLISTVIEW => MB_WIRELESS,
+        MB_WIRELESSADVANCEDSEARCH => MB_WIRELESS,
+        MB_WIRELESSBASICSEARCH => MB_WIRELESS,
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALEDITVIEW => MB_PORTAL,
+        MB_PORTALDETAILVIEW => MB_PORTAL,
+        MB_PORTALLISTVIEW => MB_PORTAL,
+        MB_PORTALSEARCHVIEW => MB_PORTAL,
+        //END SUGARCRM flav=ent ONLY
+    );
+
+    /**
      * Names of the files themselves
      *
      * @var array
@@ -99,17 +122,6 @@ class MetaDataFiles
         MB_PORTALDETAILVIEW => array('portal','view','detail'),
         //END SUGARCRM flav=ent ONLY
 
-    );
-
-    /**
-     * The list of def types associated with a client
-     *
-     * @var array
-     */
-    public static $clientDefTypes = array(
-        'base'   => array(),
-        'mobile' => array('list', 'detail', 'edit', 'search'),
-        'portal' => array('list', 'detail', 'edit', 'tree', 'grid'),
     );
 
     /**
@@ -173,24 +185,14 @@ class MetaDataFiles
     }
 
     /**
-     * Gets all client def types as an array keyed on client
+     * Gets a view client for a known view
      *
      * @static
-     * @return array
+     * @param string $view The view to get the client for
+     * @return string
      */
-    public static function getClientDefTypes() {
-        return self::$clientDefTypes;
-    }
-
-    /**
-     * Gets a single set of client defs for a client
-     *
-     * @static
-     * @param string $client The client to get the def types for
-     * @return array
-     */
-    public static function getClientDefType($client) {
-        return empty(self::$clientDefTypes[$client]) ? array() : self::$clientDefTypes[$client];
+    public static function getClientByView($view) {
+        return empty($view) || empty(self::$clientsByView[$view]) ? '' : self::$clientsByView[$view];
     }
 
     /**
@@ -317,12 +319,13 @@ class MetaDataFiles
      * DeployedMetaDataImplementation instance.
      *
      * @static
-     * @param string $view The requested view type
-     * @param string $module The module for this metadata file
-     * @param string $type The type of metadata file location (custom, working, etc)
+     * @param string $view    The requested view type
+     * @param string $module  The module for this metadata file
+     * @param string $type    The type of metadata file location (custom, working, etc)
+     * @param string $client  The client type for this file
      * @return string
      */
-    public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION) {
+    public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION, $client = '') {
         $type = strtolower($type);
         $paths = self::getPaths();
         $names = self::getNames();
@@ -346,8 +349,8 @@ class MetaDataFiles
 		// END ASSERTIONS
 
 		// Construct filename
-        if (($viewType = self::getViewClient($view)) != '' && $viewType != 'base') {
-            $viewPath = $viewType . '/' . self::$viewsPath;
+        if (!empty($client)) {
+            $viewPath = $client . '/' . self::$viewsPath;
         } else {
             $viewPath = '';
         }
@@ -359,13 +362,14 @@ class MetaDataFiles
      * UndeployedMetaDataImplementation instance.
      *
      * @static
-     * @param string $view The requested view
-     * @param string $module The module for this metadata file
-     * @param string $packageName The package for this metadata file
-     * @param string $type The type of metadata file to get (custom, working, etc)
+     * @param string $view         The requested view
+     * @param string $module       The module for this metadata file
+     * @param string $packageName  The package for this metadata file
+     * @param string $type         The type of metadata file to get (custom, working, etc)
+     * @param string $client       The client type for this file
      * @return string
      */
-    public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION) {
+    public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION, $client = '') {
         $type = strtolower($type);
 
         // BEGIN ASSERTIONS
@@ -378,8 +382,8 @@ class MetaDataFiles
         $names = self::getNames();
 
         // Get final filename path part
-        if (($viewType = self::getViewClient($view)) != '' && $viewType != 'base') {
-            $viewPath = $viewType . '/' . self::$viewsPath;
+        if (!empty($client)) {
+            $viewPath = $client . '/' . self::$viewsPath;
         } else {
             $viewPath = '';
         }
@@ -405,23 +409,13 @@ class MetaDataFiles
      * @param string $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
-    public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = 'base', $component = self::COMPONENTVIEW) {
-        // Simple validation of path and client
-        if (!isset(self::$paths[$path])) {
+    public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
+        $filedir = self::getModuleFileDir($module, $path, $client, $component);
+        if ($filedir === null) {
             return null;
         }
 
-        if (!in_array($client, self::$clients)) {
-            return null;
-        }
-
-        if (!in_array($component, self::$components)) {
-            return null;
-        }
-
-        // Now get to building
-        $viewPath = $client == 'mobile' || $client == 'portal' ? $client . '/' . $component . 's/' : '';
-        $filename = self::$paths[$path] . 'modules/' . $module . '/metadata/' . $viewPath . $deftype . '.php';
+        $filename = $filedir . $deftype . '.php';
         return $filename;
     }
 
@@ -435,14 +429,54 @@ class MetaDataFiles
      * @param string $component Layout or view
      * @return string
      */
-    public static function getSugarObjectFileName($module, $deftype, $client = 'base', $component = self::COMPONENTVIEW) {
+    public static function getSugarObjectFileName($module, $deftype, $client = '', $component = self::COMPONENTVIEW) {
+        $filename =  self::getSugarObjectFileDir($module, $client, $component) . $deftype . '.php';
+        return $filename;
+    }
+
+    /**
+     * Gets a metadata directory for a given module and path (custom, history, etc)
+     *
+     * @static
+     * @param string $module The name of the module to get metadata for
+     * @param string $path The path to the metadata (base path, custom path, working path, history path)
+     * @param string $client The client making this request
+     * @param string $component Layout or view
+     * @return null|string Null if the request is invalid, path if it is good
+     */
+    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
+        // Simple validation of path
+        if (!isset(self::$paths[$path])) {
+            return null;
+        }
+
+        // Now get to building
+        $dirname = self::$paths[$path] . 'modules/' . $module . '/metadata/';
+        if (!empty($client)) {
+            $dirname .= $client . '/' . $component . 's/';
+        }
+        return $dirname;
+    }
+
+    /**
+     * Gets a metadata directory path for a module from its SugarObject template type
+     *
+     * @static
+     * @param string $module The name of the module to get metadata for
+     * @param string $client The client making this request
+     * @param string $component Layout or view
+     * @return string
+     */
+    public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW) {
         require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
         $sm = new StudioModule($module);
 
-        $path = 'include/SugarObjects/templates/' . $sm->getType() . '/metadata/';
-        $viewPath = $client == 'mobile' || $client == 'portal' ? $client . '/' . $component . 's/' : '';
-        $filename =  $path . $viewPath . $deftype . '.php';
-        return $filename;
+        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/metadata/';
+        if (!empty($client)) {
+            $dirname .= $client . '/' . $component . 's/';
+        }
+
+        return $dirname;
     }
 
     /**

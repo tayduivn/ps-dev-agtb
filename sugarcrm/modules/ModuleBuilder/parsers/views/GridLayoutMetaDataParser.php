@@ -52,8 +52,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * @param string $view           The view type, that is, editview, searchview etc
      * @param string $moduleName     The name of the module to which this view belongs
      * @param string $packageName    If not empty, the name of the package to which this view belongs
+     * @param string $client         The client making the request for this parser
      */
-    function __construct ($view , $moduleName , $packageName = '')
+    function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->__construct( {$view} , {$moduleName} , {$packageName} )" ) ;
 
@@ -67,11 +68,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         if (empty ( $packageName ))
         {
             require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
-            $this->implementation = new DeployedMetaDataImplementation($view, $moduleName);
+            $this->implementation = new DeployedMetaDataImplementation($view, $moduleName, $client);
         } else
         {
             require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
-            $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName ) ;
+            $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName, $client ) ;
         }
 
         $viewdefs = $this->implementation->getViewdefs () ;
