@@ -67,11 +67,11 @@
         _reset: function(user) {
             var r = true;
             usr.clear({silent:true});
+            app.cache.cut("current_user");
 
             if (user) {
                 usr.set(user); 
                 try {
-                    //user = JSON.stringify(
                     usr.toJSON();
                     r = app.cache.set("current_user", user);
                 }

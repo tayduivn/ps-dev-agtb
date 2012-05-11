@@ -29,11 +29,12 @@ describe("User", function() {
 
     it("should _reset with no args to clear", function() {
         var user = app.user;
-        app.cache.set("current_user", loginResponse.current_user)
+        app.cache.set("current_user", loginResponse.current_user);
         user.init();
         user._reset();
         expect(user.get('id')).toBeUndefined();
         expect(user.get('full_name')).toBeUndefined();
+        expect(app.cache.get('current_user')).toBeUndefined();
     });
 
     it("should do simple get and set", function() {
