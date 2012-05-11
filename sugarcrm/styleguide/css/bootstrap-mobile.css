@@ -4600,6 +4600,7 @@ h3.nomad {
   margin: 0 18px;
 }
 .bizcard {
+  left: 0px;
   position: fixed;
   top: 46px;
   width: 100%;
