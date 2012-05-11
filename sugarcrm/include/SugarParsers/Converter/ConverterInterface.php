@@ -20,13 +20,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/SugarParsers/Decorator/DecoratorInterface.php");
-abstract class SugarParsers_Decorator_AbstractDecorator implements SugarParsers_Decorator_Interface
+interface SugarParsers_Converter_Interface
 {
     /**
-     * If NOT is set we want to trigger then, so we know which operator to use
-     *
-     * @var bool
+     * @abstract
+     * @param mixed $value
+     * @return mixed
      */
-    protected $is_not = false;
+    public function convert($value);
 }

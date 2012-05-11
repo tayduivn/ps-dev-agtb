@@ -1,16 +1,10 @@
 <?php
 
 
-require_once("include/SugarParsers/Decorator/Report.php");
+require_once("include/SugarParsers/Converter/Report.php");
 require_once("include/SugarParsers/Filter.php");
-class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @var SugarParsers_Decorator_Report
-     */
-    protected $obj;
-
     /**
      * @var SugarParsers_Filter;
      */
@@ -18,7 +12,6 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->obj = new SugarParsers_Decorator_Report();
         $this->filter = new SugarParsers_Filter();
     }
 
@@ -30,12 +23,15 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $filterDict->resetCache();
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testEqualFilterConvert()
     {
         $obj = json_decode('{"billing_postalcode":"90210"}');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -50,12 +46,15 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testNotEqualFilterConvert()
     {
         $obj = json_decode('{"billing_postalcode": { "$not" : "90210" } }');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -70,13 +69,16 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testInFilterConvert()
     {
 
         $obj = json_decode('{"billing_postalcode": { "$in" : ["90210", "46052"] }}');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -94,13 +96,16 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testNotInFilterConvert()
     {
 
         $obj = json_decode('{"billing_postalcode": { "$not" : { "$in" : ["90210", "46052"] }}}');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -118,12 +123,15 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testAndFilterConvert()
     {
         $obj = json_decode('{"$and" : [{"first_name":"William"},{"last_name":"Williamson"}] }');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -145,12 +153,15 @@ class SugarParsers_Decorator_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testOrFilterConvert()
     {
         $obj = json_decode('{"$or" : [{"first_name":"William"},{"first_name":"Jon"}] }');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Decorator_Report());
+        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
 
         $expected = array("Filter_1" => array(
             'operator' => 'OR',

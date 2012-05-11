@@ -22,15 +22,20 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         unset($this->obj);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testParseEqual()
     {
-
         $obj = json_decode('{"billing_postalcode":"90210"}');
         $this->obj->parse($obj);
         $pFilter = $this->obj->getParsedFilter();
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $pFilter['billing_postalcode']);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testParseNotEqual()
     {
         $obj = json_decode('{"billing_postalcode": { "$not" : "90210" } }');
@@ -43,6 +48,9 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testInFilterParse()
     {
 
@@ -56,6 +64,9 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testNotInFilterParse()
     {
 
@@ -71,6 +82,9 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testParseWithAnd()
     {
         $obj = json_decode('{"$and" : [{"first_name":"William"},{"last_name":"Williamson"}] }');

@@ -175,10 +175,10 @@ class SugarParsers_Filter
     /**
      * Convert the parseFilter into some decorated type
      *
-     * @param SugarParsers_Decorator_Interface $decorator
+     * @param SugarParsers_Converter_Interface $decorator
      * @return mixed
      */
-    public function convert(SugarParsers_Decorator_Interface $decorator)
+    public function convert(SugarParsers_Converter_Interface $decorator)
     {
         return $decorator->convert($this->parsedFilter);
     }
