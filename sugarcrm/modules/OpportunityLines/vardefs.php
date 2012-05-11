@@ -129,23 +129,15 @@ array (
     'len'=>5,
     'comment' => 'Quantity in use'
 ),
-'deleted' =>
-array (
-    'name' => 'deleted',
-    'vname' => 'LBL_DELETED',
-    'type' => 'bool',
-    'required' => false,
-    'default' => '0',
-    'reportable'=>false,
-    'comment' => 'Record deletion indicator'
-),
 
 )
-  ,'indices' => array (
-       array('name' =>'idx_opp_line_id', 'type'=>'primary', 'fields'=>array('id')),
-  )
+
 );
 
-VardefManager::createVardef('OpportunityLines','OpportunityLine', array(
-'team_security',
-));
+VardefManager::createVardef('OpportunityLines','OpportunityLine',
+       array('default',
+       //BEGIN SUGARCRM flav=pro ONLY
+       'team_security'
+       //END SUGARCRM flav=pro ONLY
+       )
+);
