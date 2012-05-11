@@ -17,7 +17,7 @@ describe("User", function() {
 
     it("should init itself with data from local storage", function() {
         var user = app.user;
-        app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
+        app.cache.set("current_user", loginResponse.current_user);
         user.init();
         expect(user.get('id')).toEqual("1");
         expect(user.get('full_name')).toEqual("Administrator");
@@ -29,7 +29,7 @@ describe("User", function() {
 
     it("should _reset with no args to clear", function() {
         var user = app.user;
-        app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
+        app.cache.set("current_user", loginResponse.current_user)
         user.init();
         user._reset();
         expect(user.get('id')).toBeUndefined();
@@ -44,12 +44,12 @@ describe("User", function() {
 
     it("should nuke old user when new user comes to town", function() {
         var user = app.user;
-        app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
+        app.cache.set("current_user", loginResponse.current_user);
         user.init();
         expect(user.get('id')).toEqual('1');
-        app.cache.set('current_user', JSON.stringify({
+        app.cache.set('current_user', {
             id: 99,
-            yo:"gabagaba"}));
+            yo:"gabagaba"});
 
         user.init();
         expect(user.get('id')).toEqual(99);
@@ -60,7 +60,7 @@ describe("User", function() {
         SugarTest.seedApp();
         app = SugarTest.app;
         var user = app.user;
-        app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
+        app.cache.set("current_user", loginResponse.current_user);
         user.init();
         app.events.trigger("app:logout", true);
         expect(user.get('id')).toBeUndefined();
@@ -92,7 +92,7 @@ describe("User", function() {
 
     it("should reset itself with new data", function() {
         var user = app.user, newData = null;
-        app.cache.set("current_user", JSON.stringify(loginResponse.current_user));
+        app.cache.set("current_user", loginResponse.current_user);
         user.init();
 
         newData = {
@@ -111,7 +111,7 @@ describe("User", function() {
         expect(user.get('datepref')).toBeUndefined();
         expect(user.get('timepref')).toBeUndefined();
 
-        expect(SugarTest.storage["test:portal:current_user"]).toEqual(JSON.stringify(newData.current_user));
+        expect(SugarTest.storage["test:portal:current_user"]).toEqual(newData.current_user);
     });
 
 

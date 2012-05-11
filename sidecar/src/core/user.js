@@ -38,7 +38,7 @@
             try {
                 // We serialize ourselves because stash.js stringifies everything (functions included)
                 s = app.cache.get("current_user");
-                if (s) user = JSON.parse(s);
+                if (s) user = s;
             }
             catch (e) {
                 app.logger.error("Failed to read user object from cache:\n" + e);
@@ -51,7 +51,9 @@
         },
         
         set: function(key, value) {
-            return usr.set(key, value);
+            var r = usr.set(key, value);
+            this._reset(usr.toJSON());
+            return r;
         },
 
         /**
@@ -69,7 +71,8 @@
             if (user) {
                 usr.set(user); 
                 try {
-                    user = JSON.stringify(usr.toJSON());
+                    //user = JSON.stringify(
+                    usr.toJSON();
                     r = app.cache.set("current_user", user);
                 }
                 catch (e) {
@@ -82,6 +85,12 @@
     };
 
     app.events.on("app:login:success", function(data) {
+        // TODO: Discuss sync strategy for this...
+        //
+        // We need to discuss how we want to sync here. This will always
+        // let the server win; so any client side calls to set('mykey','val') will
+        // be overwritten. However, if we check for user and NOT call reset, we could
+        // have the same problem where we miss unique data sent from server.
         _user._reset(data ? data.current_user : null);
     }).on("app:logout", function(clear) {
         if(clear) {
