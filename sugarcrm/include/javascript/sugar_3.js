@@ -1876,15 +1876,10 @@ sugarListView.prototype.confirm_action = function(del) {
 
 }
 sugarListView.get_num_selected = function () {
-	if(typeof document.MassUpdate != 'undefined') {
-		the_form = document.MassUpdate;
-		for(var wp = 0; wp < the_form.elements.length; wp++) {
-			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
-				return the_form.elements[wp].value;
-			}
-		}
-	}
-	return 0;
+    var selectCount = $("input[name='selectCount[]']:first");
+    if(selectCount.length > 0)
+        return parseInt(selectCount.val());
+    return 0;
 
 }
 sugarListView.update_count = function(count, add) {
