@@ -1019,6 +1019,8 @@ class Email extends SugarBean {
 	///////////////////////////////////////////////////////////////////////////
 	////	SAVERS
 	function save($check_notify = false) {
+        global $current_user;
+
 		if($this->isDuplicate) {
 			$GLOBALS['log']->debug("EMAIL - tried to save a duplicate Email record");
 		} else {
@@ -1043,7 +1045,7 @@ class Email extends SugarBean {
 			//Bug 39503 - SugarBean is not setting date_sent when seconds missing
  			if(empty($this->date_sent)) {
 				global $timedate;
-				$date_sent_obj = $timedate->fromString($this->date_start." ".$this->time_start);
+				$date_sent_obj = $timedate->fromUser($timedate->merge_date_time($this->date_start, $this->time_start), $current_user);
                  if (!empty($date_sent_obj) && ($date_sent_obj instanceof SugarDateTime)) {
  				    $this->date_sent = $date_sent_obj->asDb();
                  }
