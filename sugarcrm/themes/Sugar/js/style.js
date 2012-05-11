@@ -188,7 +188,8 @@ SUGAR.append(SUGAR.themes, {
         makeCall = v;
     },
     loadModuleList: function() {
-    	$('#moduleList ul.sf-menu').superfish({
+        var isRTL = (typeof rtl != "undefined") && rtl;
+        $('#moduleList ul.sf-menu').superfish({
 			delay: 50,
 			speed: 0,
             animation: {
@@ -198,8 +199,9 @@ SUGAR.append(SUGAR.themes, {
 			autoArrows: false,
 			dropShadows: false,
             ignoreClass: 'megawrapper',
+            rtl: isRTL,
 			onBeforeShow: function() {
-				if($(this).attr("class") == "megamenu" && $(this).prev().hasClass('more') != true) {
+				if($(this).hasClass("megamenu") && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");
                     //Check if the menu we want to show is in the more menu
@@ -208,26 +210,71 @@ SUGAR.append(SUGAR.themes, {
 						var moduleName = moduleName.replace("Hidden","");
 					}
 
-					that = $(this);
+					var that = $(this),
+                        shortCutWidth = that.find("ul.MMShortcuts").parent().outerWidth();
 					//ajax call for favorites
+
+                    if(that.is(".rtl, .ltr")) {
+                        that.find("ul.MMFavorites, ul.MMLastViewed").parent().hide();
+                        var _width = that.find("ul.MMShortcuts").parent().outerWidth();
+                        that.width(_width).find(".megawrapper").width(_width);
+                    } else {
+                        var _width = that.attr("width");
+
+                        if(_width) {
+                            that.find("div.show").show();
+                            that.width(_width).find(".megawrapper").width(_width);
+                        }
+                        else {
+                            that.find("ul.MMFavorites, ul.MMLastViewed").parent().removeClass("divider").hide();
+                            var _width = that.find("ul.MMShortcuts").parent().removeClass("divider").outerWidth();
+                            that.width(_width).find(".megawrapper").width(_width);
+                        }
+                    }
+                    var updateHeight = function() {
+                        var wrapperHeight = $(that).find("li div.megawrapper").height();
+                        if(wrapperHeight == 0) {
+                            setTimeout(updateHeight, 500);
+                        } else {
+                            if(wrapperHeight > $(that).find("div.megacolumn-content").height())
+                                $(that).find("div.megacolumn-content").height(wrapperHeight);
+                        }
+                    };
 					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
 
 						$.ajax({
 						  url: "index.php?module="+moduleName+"&action=favorites",
 						  success: function(json){
-						    var lastViewed = $.parseJSON(json);
-						    $(that).find("ul.MMFavorites").children().not(':eq(0)').remove();
+						    var lastViewed = $.parseJSON(json),
+                                container = that.find("ul.MMFavorites");
+                            container.children().not(':eq(0)').remove();
 						    $.each(lastViewed, function(k,v) {
 						    	if(v.text == "none") {
 						    		v.url = "javascript: void(0);";
 						    	}
-						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+                                container.append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
-						    //update column heights so dividers are even
-							$(that).find("ul.MMFavorites li:nth("+lastViewed.length+")").children().ready(function() {
-								wrapperHeight = $(that).find("li div.megawrapper").height();
-								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
-							});
+
+                            if( lastViewed.length > 0 && lastViewed[0].text != 'none') {
+                                var _width = shortCutWidth;
+
+                                if(container.parent().hasClass("show")) {
+                                    _width = 0;
+                                } else {
+                                    container.parent().show().addClass("show");
+                                }
+
+                                if(that.attr("width")) {
+                                    _width += parseInt(that.attr("width"));
+                                    that.find("ul.MMLastViewed").parent().addClass("divider");
+                                } else {
+                                    that.find("ul.MMShortcuts").parent().addClass("divider");
+                                    _width += shortCutWidth;
+                                }
+                                that.width(_width).attr("width", _width).find(".megawrapper").width(_width);
+                            }
+                              //update column heights so dividers are even
+                              that.find("ul.MMFavorites li:nth("+lastViewed.length+")").children().ready(updateHeight);
 						  }
 						});
 					}
@@ -236,20 +283,34 @@ SUGAR.append(SUGAR.themes, {
 						$.ajax({
 						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
 						  success: function(json){
-						    var lastViewed = $.parseJSON(json);
-						    $(that).find("ul.MMLastViewed").children().not(':eq(0)').remove();
+						    var lastViewed = $.parseJSON(json),
+                                container = that.find("ul.MMLastViewed");
+                            container.children().not(':eq(0)').remove();
 						    $.each(lastViewed, function(k,v) {
 						    	if(v.text == "none") {
 						    		v.url = "javascript: void(0);";
 						    	}
-						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+                                container.append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
 
-						    //update column heights so dividers are even
-							$(that).find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(function() {
-								wrapperHeight = $(that).find("li div.megawrapper").height();
-								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
-							});
+                              if(lastViewed.length > 0 && lastViewed[0].text != 'none') {
+                                  var _width = shortCutWidth;
+                                  if(container.parent().hasClass("show")) {
+                                      _width = 0;
+                                  } else {
+                                      container.parent().show().addClass("show");
+                                  }
+                                  if(that.attr("width")) {
+                                      _width += parseInt(that.attr("width"));
+                                      container.parent().addClass("divider");
+                                  } else {
+                                      that.find("ul.MMShortcuts").parent().addClass("divider");
+                                      _width += shortCutWidth;
+                                  }
+                                  that.width(_width).attr("width", _width).find(".megawrapper").width(_width);
+                              }
+                              //update column heights so dividers are even
+                              that.find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(updateHeight);
 						  }
 						});
 					}
@@ -287,15 +348,34 @@ SUGAR.append(SUGAR.themes, {
         //Bug#52433: Prevent calling resizeMenu before basic theme is initialized
         if(typeof sugar_theme_gm_current == "undefined") return;
 
-	    var maxMenuWidth = $("#dcmenu").width() - 40 //40px: misc. padding and border lines
+        //Bug#52650: For RTL, Keep module menus rather than search, quick menu, and etc.
+        var isRTL = (typeof rtl != "undefined") && rtl;
+        if(isRTL) {
+            $("#dcmenu").css({
+                'left' : $(window).width() < $("#dcmenu").width() ? $(window).width() - $("#dcmenu").width() : ''
+            });
+        }
+
+	    var maxMenuWidth = $("#dcmenu").width() - 100 //100px: spacing for submegamenu, padding and border lines
             - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
 		var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
-            menuItemsWidth = SUGAR.themes.menuItemsWidth || currentModuleList.width(),
-            _ie_adjustment = 10;
+            menuItemsWidth = SUGAR.themes.menuItemsWidth || $("#moduleList").width(),
+            _ie_adjustment = 10,
+            menuItems = currentModuleList.children("li"),
+            menuLength = menuItems.length;
+        if(isRTL && $.browser.msie && !SUGAR.themes.menuItemsWidth) {
+            menuItemsWidth = 0;
+            menuItems.each(function(){
+                menuItemsWidth += $(this).width();
+            });
+            menuItemsWidth += _ie_adjustment;
+            currentModuleList.width(menuItemsWidth);
+            menuItemsWidth += _ie_adjustment;
+            $("#moduleList").width(menuItemsWidth);
+
+        }
         SUGAR.themes.menuItemsWidth = menuItemsWidth;
 
-        var menuItems = currentModuleList.children("li");
-        var menuLength = menuItems.length;
 
         if(menuItemsWidth > maxMenuWidth){
             var moreNode = $("#moduleTabMore" + sugar_theme_gm_current);
@@ -307,11 +387,20 @@ SUGAR.append(SUGAR.themes, {
                 if(menuNode.hasClass("home")){
                     menuNode = menuNode.prev();
                 }
+                menuNode.find(".megamenu").css({
+                    'left' : '',
+                    'right' : '',
+                    'top' : '',
+                    'bottom' : ''
+                });
                 if($.browser.msie) {
                     menuNode.attr("width", menuNode.outerWidth());
                     menuItemsWidth -= menuNode.outerWidth();
                     moreNode.prepend(menuNode);
                     currentModuleList.width(menuItemsWidth + _ie_adjustment);
+                    if(isRTL) {
+                        $("#moduleList").width(menuItemsWidth + _ie_adjustment);
+                    }
                     SUGAR.themes.menuItemsWidth = menuItemsWidth;
                 } else {
                     moreNode.prepend(menuNode);
@@ -338,11 +427,20 @@ SUGAR.append(SUGAR.themes, {
                 }
                 menuLength++;
 
+                menuNode.find(".megamenu").css({
+                    'left' : '',
+                    'right' : '',
+                    'top' : '',
+                    'bottom' : ''
+                });
                 if($.browser.msie) {
                     menuItemsWidth += parseInt(menuNodeWidth);
                     insertNode.before(menuNode);
                     SUGAR.themes.menuItemsWidth = menuItemsWidth;
                     currentModuleList.width(menuItemsWidth + _ie_adjustment);
+                    if(isRTL) {
+                        $("#moduleList").width(menuItemsWidth + _ie_adjustment);
+                    }
                 } else {
                     insertNode.before(menuNode);
                     menuItemsWidth = currentModuleList.width();

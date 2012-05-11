@@ -3914,10 +3914,10 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 	line-height: 1.0;
 }
 
-#moduleList .sf-menu ul, ul.megamenu {
+#moduleList .sf-menu ul, ul.megamenu, ul.filter-menu {
 	position: absolute;
 	top: -999em;
-	width: 10em;
+	width: 120px;
 }
 
 .moduleTabExtraMenu .listcontainer > ul,
@@ -3937,7 +3937,7 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 }
 
 #moduleList .sf-menu ul.megamenu, ul.megamenu {
-	width: 600px;
+	width: 495px;
 }
 
 #moduleList .sf-menu ul li {
@@ -4140,7 +4140,7 @@ ul.moduleTabMore em,
 }
 ul.moduleTabMore,
 #moduleList .sf-menu li.moduleTabExtraMenu > ul {
-	width: 225px;
+	width: 160px; /*more menu*/
 }
 
 ul.sf-sub-modulelist .selected,
@@ -4196,24 +4196,37 @@ Mega Column Styles
 
 #moduleList .megawrapper, ul.megamenu .megawrapper {
 	float: left;
-	width: 600px;
 }
 
 #moduleList .megacolumn, ul.megamenu .megacolumn {
-	width: 200px;
+	width: 165px;
 	float: left;
+}
+#moduleList .rtl .megacolumn {
+    float:right;
+}
+#moduleList .rtl .megacolumn-content.divider, ul.megamenu.rtl .megacolumn-content.divider {
+    border-right: 0px;
+}
+#moduleList .rtl .MMLastViewed, #moduleList .rtl .MMFavorites {
+    display:none;
 }
 
 #moduleList .megacolumn-content, #moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content, ul.megamenu .megacolumn-content.divider {
 	overflow: hidden;
 }
-
 #moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content.divider {
  	border-right: 1px solid #ccc;
 }
 
 #moduleList .megacolumn-content p, ul.megamenu .megacolumn-content p {
 	margin-bottom: 16px;
+}
+#moduleList .sf-menu ul div.megacolumn-content ul li a,
+ul.megamenu div.megacolumn-content ul li a {
+    line-height:1.5;
+    padding-top:6px;
+    padding-bottom:6px;
 }
 
 #moduleList .megafooter, ul.megamenu .megafooter {
@@ -4275,19 +4288,19 @@ ul.megamenu .megawrapper ul li a,
 
 ul.megamenu .megawrapper ul li.groupLabel a ,
 #moduleList .sf-menu ul .megawrapper ul li a{
-    width: 180px;
+    width: 145px;
 }
 
 
 #moduleList ul.sf-menu li.moduleTabExtraMenu li:hover > ul, 
 #moduleList ul.sf-menu li.moduleTabExtraMenu li.sfHover > ul {
-    left: 225px;
+    left: 160px; /*more menu*/
     top: 0;
 }
 ul.megamenu.moduleTabExtraMenu, ul.moduleTabExtraMenu > li > div.megawrapper, ul.moduleTabExtraMenu > li > div.megawrapper > .megacolumn,
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper, 
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn {
-	width: 225px;
+	width: 160px; /*more menu*/
 }
 
 #moduleList ul.sf-menu li.moduleTabExtraMenu ul.megamenu .megawrapper .megacolumn .megacolumn-content {
@@ -4296,7 +4309,7 @@ ul.megamenu.moduleTabExtraMenu, ul.moduleTabExtraMenu > li > div.megawrapper, ul
 
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn > .megacolumn-content > ul > li > a,
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn > .megacolumn-content > .hoverscroll > .listcontainer > ul > li > a {
-	width: 205px;
+	width: 140px; /*more menu*/
 }
 
 ul.megamenu .moduleTabExtraMenu, ul.megamenu .moduleTabGroupMenu
@@ -6426,25 +6439,6 @@ ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
 
-ul.clickMenu li a:hover {
-   		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#255e90 2%,
-		#3d74a5 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.02, #255e90),
-	    color-stop(1, #3d74a5)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
-		border-color: #000;
-		color: #fff;	
-}
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
 	/*color: #fff !important;*/
