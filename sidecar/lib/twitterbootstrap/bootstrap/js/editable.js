@@ -1,6 +1,8 @@
 !function ($) {
     	$(function() {
  				// editable demo
+ 				
+ 				
         $(".dblclicka").editable('blah.php',{ 
           indicator : 'Saving ...',
           cssclass   : "editable",
@@ -9,7 +11,10 @@
           $(".dblclick").editable('blah.php',{ 
             indicator : 'Saving ...',
             cssclass   : "editable",
-            tooltip   : 'Click to edit...'
+            tooltip   : 'Click to edit...',
+            callback : function(value, settings) {
+              window.location = index.html;
+            }
           })
           $(".edit_select").editable('blah.php',{ 
             indicator : 'Saving ...',

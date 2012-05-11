@@ -50,7 +50,7 @@
             this.$el.addClass("view " + this.name);
 
             /**
-             * Default template to use for view fields if a field does not have template defined for its parent view.
+             * A template to use for view fields if a field does not have a template defined for its parent view.
              * Defaults to `"default"`.
              *
              * For example, if you have a subview and don't want to define subview template for all field types,
@@ -58,7 +58,7 @@
              *
              * @property {String}
              */
-            this.defaultFieldTemplate = "default";
+            this.fallbackFieldTemplate = "default";
         },
 
         /**

@@ -11,7 +11,7 @@
             'click #saveNote': 'saveNote',
             'click .search': 'showSearch',
             'click .addNote': 'openNoteModal',
-            'click .activity': 'loadChildDetailView'
+            'click .icon-eye-open': 'loadChildDetailView'
         },
         render: function() {
             app.view.View.prototype.render.call(this);
@@ -65,9 +65,9 @@
             return false;
         },
         loadChildDetailView: function(e) {
-            var activityId = $(e.currentTarget).attr("data-id");
-            $("li.activity").removeClass("active");
-            $(e.currentTarget).addClass("active");
+            var activityId = $(e.currentTarget).parent().parent().parent().attr("data-id");
+            $("li.activity").removeClass("on");
+            $(e.currentTarget).parent().parent().parent().addClass("on");
 
             var activity = this.collection.get(activityId);
             app.events.trigger("app:view:activity:subdetail", activity);

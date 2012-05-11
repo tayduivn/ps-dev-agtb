@@ -34,9 +34,10 @@
                 }
             });
 
-            this.defaultFieldTemplate = "detail";
+            this.fallbackFieldTemplate = "detail";
         },
         render: function() {
+            this.$el.parent().parent().addClass("tab-content").attr("id", "folded");
             //avoid to have an empty detail view
         },
         bindDataChange: function() {
@@ -53,7 +54,7 @@
         closeSubdetail: function() {
             this.model.clear();
             this.$el.empty();
-            $("li.activity").removeClass("active");
+            $("li.activity").removeClass("on");
         }
     });
 

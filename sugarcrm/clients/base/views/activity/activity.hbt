@@ -4,39 +4,31 @@
                     <h4>Activity</h4>
 
                     <form class="form-search hide" action="">
-                        <input value="" class="span4" placeholder="Refine activity ...">
+                        <input value="" class="span12" placeholder="Search this activity stream ...">
                     </form>
                     {{#each meta.panels}}
                     <ul class="nav nav-tabs results">
                         {{#each ../context.state.collection.models}}
                         <li class="activity" data-id="">
                             <a data-toggle="tab"><span class="label label-note">Note</span></a>
-
                             <p>{{fieldWithName ../../context ../../this this "id"}}
-                                <a>
-                                    {{fieldWithName ../../context ../../this this "name"}}
-                                </a>
+                                <a>{{fieldWithName ../../context ../../this this "name"}}</a>
+                                <br>
                                 <date class="date">
                                     Posted on {{fieldWithName ../../context ../../this this "date_entered"}}
                                 </date>
                             </p>
+                            <div class="actions">
+                               <a><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                            </div>
                         </li>
                         {{/each}}
                     </ul>
                     {{/each}}
-                    <ul class="nav nav-pills actions">
-                        <li class="dropdown pull-right">
-                            <a data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i
-                                    class="icon caret"></i></a>
-                            <ul class="dropdown-menu menu">
-                                <li><a data-toggle="modal" class="addNote">Add Note</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="" rel="tooltip" class="search" id="" data-original-title="Refine list"><i
-                                    class="icon-search"></i></a>
-                        </li>
-                    </ul>
+                    <div class="actions">
+                        <a rel="tooltip" title="Search activity stream" class="btn search" id=""><i class="icon-search"></i></a>
+                        <a class="btn addNote" rel="tooltip" title="Add a note or attachment"><i class="icon-plus"></i> Add Note</a>
+                    </div>
                 </div>
 
             </div>
