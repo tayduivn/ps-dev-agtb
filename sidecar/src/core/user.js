@@ -71,14 +71,8 @@
 
             if (user) {
                 usr.set(user); 
-                try {
-                    usr.toJSON();
-                    r = app.cache.set("current_user", user);
-                }
-                catch (e) {
-                    app.logger.error("Failed to set user object into cache:\n" + e);
-                    r = false;
-                }
+                usr.toJSON();
+                r = app.cache.set("current_user", user);
             }
             return r;
         }
