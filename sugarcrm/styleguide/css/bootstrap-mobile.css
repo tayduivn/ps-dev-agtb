@@ -4862,6 +4862,9 @@ h3.nomad {
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
   height: 100%;
 }
+.login .modal-footer {
+  text-align: center;
+}
 .login .modal,
 .login .modal-header,
 .login .modal-footer,

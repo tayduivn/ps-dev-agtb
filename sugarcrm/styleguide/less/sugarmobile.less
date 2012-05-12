@@ -915,11 +915,15 @@ color: @gray;
 /* Log In
 ----------*/
 .login {
-	background: #E61718 url(../img/leather-red.png);
+  background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
   height:100%;
+  .modal-footer {
+    text-align:center;
+  }
 }
+
 .login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;
 padding: 0 !important;
