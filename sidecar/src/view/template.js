@@ -107,7 +107,7 @@
          * Gets compiled template for a field.
          * @param {String} type Field type.
          * @param {String} view View name.
-         * @param {Boolean} useDefault(optional) Flag indicating if the default field template should be returned
+         * @param {Boolean} fallbackTemplate(optional) Template name to fallback to if template for `view` is not found.
          * if view specific is not found. Defaults to `true`.
          * @return {Function} Compiled template.
          */
