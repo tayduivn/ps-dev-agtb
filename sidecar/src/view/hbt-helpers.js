@@ -196,13 +196,14 @@
     });
 
     /**
+     * Retrieves a label string.
      * @method getLabel
-     * @param {String} string
-     * @param {String}
+     * @param {String} key Key of the label.
+     * @param {String} module(optional) Module name.
+     * @return {String} The string for the given label key.
      */
-    Handlebars.registerHelper("getLabel", function(string, module){
-       var result = app.lang.get(string, module);
-       return result;
+    Handlebars.registerHelper("getLabel", function(key, module){
+       return app.lang.get(key, module);
     });
 
 })(SUGAR.App);

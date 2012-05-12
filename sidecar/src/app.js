@@ -276,19 +276,6 @@ SUGAR.App = (function() {
                 // declare models
                 app.data.declareModels(metadata);
 
-                // load language strings
-                if (metadata.appListStrings) {
-                    app.lang.setAppListStrings(metadata.appListStrings);
-                }
-
-                if (metadata.appStrings) {
-                    app.lang.setAppStrings(metadata.appStrings);
-                }
-
-                if (metadata.modStrings) {
-                    app.lang.setLabels(metadata.modStrings);
-                }
-
                 app.acl.set(metadata.acl);
 
                 callback(null, metadata);
