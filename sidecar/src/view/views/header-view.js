@@ -65,8 +65,8 @@
                             app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
                         } else {
                             var singular = (singularModules[loadedModule]) ? singularModules[loadedModule] : loadedModule;
-                            if(app.acl.hasAccess('create', loadedModule)) {
-                                self.createListLabels.push('Create '+singular);
+                            if(app.acl.hasAccess('create', app.data.createBean(loadedModule,{assigned_user_id: 'assignedUserId'}))) {
+                                self.createListLabels.push({label:'Create '+singular, module: loadedModule});
                             }
                         }
                     });
