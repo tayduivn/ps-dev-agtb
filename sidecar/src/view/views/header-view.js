@@ -8,7 +8,8 @@
      */
     app.view.views.HeaderView = app.view.View.extend({
         events: {
-            'click #moduleList li a': 'onModuleTabClicked'
+            'click #moduleList li a': 'onModuleTabClicked',
+            'click #createList li a': 'onCreateClicked'
         },
         onModuleTabClicked: function(evt) {
             evt.preventDefault();
@@ -19,7 +20,14 @@
             app.router.navigate(moduleHref, {trigger: true});
         },
 
-        
+        onCreateClicked: function(evt) {
+            var moduleHref, hashModule;
+            moduleHref = evt.currentTarget.hash;
+            hashModule = moduleHref.split('/')[0];
+            $('#moduleList li').removeClass('active');
+            $('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+        },
+
         /**
          * Renders Header view
          */
