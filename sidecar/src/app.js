@@ -275,9 +275,6 @@ SUGAR.App = (function() {
             }, function(metadata, callback) {
                 // declare models
                 app.data.declareModels(metadata);
-
-                app.acl.set(metadata.acl);
-
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
@@ -326,7 +323,6 @@ SUGAR.App = (function() {
         login: function(credentials, data, callbacks) {
             callbacks = callbacks || {};
             var origSuccess = callbacks.success;
-            var self = this;
             callbacks.success = function(data) {
                 app.trigger("app:login:success", data);
                 if (origSuccess) origSuccess(data);

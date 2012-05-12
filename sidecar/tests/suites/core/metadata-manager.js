@@ -129,6 +129,8 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:lang:modStrings"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:lang:appStrings"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:lang:appListStrings"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:acl"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:moduleList"]).toBeDefined();
         });
 
         it('should not take any action when server returns 304', function() {

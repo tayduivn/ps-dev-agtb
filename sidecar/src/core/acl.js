@@ -1,72 +1,73 @@
 (function(app) {
     /**
-     * ACL. Checks ACL access to modules and fields
+     * Checks ACL for modules and fields.
      *
-     * @class Core.acl
+     * @class Core.Acl
      * @singleton
      * @alias SUGAR.App.acl
      */
     app.augment("acl", {
+
         /**
-         * Acl hash for current user
+         * Dictionary that maps actions to permissions.
          * @property {Object}
          */
-        acls: {},
-        action2acl: {
+        action2permission: {
             "edit": "write",
             "detail": "read",
             "list": "read"
         },
+
         /**
-         * Sets acls
-         * @param {Object} acls
+         * Checks acls to see if the current user has access to action on a given module's field.
+         *
+         * @param {String} action Action name.
+         * @param {Object} module Module name.
+         * @param {String} ownerId(optional) ID of the record's owner (`assigned_user_id` attribute).
+         * @param {String} field(optional) Name of the model field.
+         * @return {Boolean} Flag indicating if the current user has access to the given action.
          */
-        set: function(acls) {
-            if (acls) {
-                this.acls = acls;
-            }
-        },
-        /**
-         * Checks acls to see if the current user has access to module views and fields
-         * @param {String} action
-         * @param {Object} model
-         * @param {String} [fieldName]
-         */
-        hasAccess: function(action, model, fieldName) {
-            if (!model) return true;
-            //TODO Update this to get apps current user id
+        hasAccess: function(action, module, ownerId, field) {
             //TODO Also add override for app full admins remember to add a test this means you
-            // get current users ID
-            var myID = "seed_sally_id",
-                module = model.module || '',
-                hasAccess = true,
-                access = "yes";
+            var hasAccess = true,
+                access = "yes",
+                acls = app.metadata.getAcls()[module];
 
-            if (this.acls && this.acls[module]) {
-                // if we have a field check field level access
-                if (fieldName && this.acls[module].fields[fieldName] && this.action2acl[action]) {
-                    access = this.acls[module].fields[fieldName][this.action2acl[action]];
-                }
-                // check if just a module view
-                if (!fieldName && this.acls[module][action]) {
-                    access = this.acls[module][action];
+            // module admins have full access
+            if (acls && acls.admin !== "yes") {
+                // Check field level access
+                if (field && acls.fields[field] && this.action2permission[action]) {
+                    access = acls.fields[field][this.action2permission[action]];
                 }
 
+                // check module acl
+                if (!field && acls[action]) {
+                    access = acls[action];
+                }
 
                 if (access === "no") {
                     hasAccess = false;
                 }
-
-                if (access === "owner" && model && model.get('assigned_user_id') !== myID) {
+                else if (access === "owner" && ownerId !== app.user.id) {
                     hasAccess = false;
-                }
-                // if module admin they have full access
-                if (this.acls[module].admin === "yes") {
-                    hasAccess = true;
                 }
             }
 
             return hasAccess;
+        },
+
+        /**
+         * Checks acls to see if the current user has access to action on a given model's field.
+         *
+         * @param {String} action Action name.
+         * @param {Object} model Model instance.
+         * @param {String} field(optional) Name of the model field.
+         * @return {Boolean} Flag indicating if the current user has access to the given action.
+         */
+        hasAccessToModel: function(action, model, field) {
+            return model ? this.hasAccess(action, model.module, model.get("assigned_user_id"), field) : true;
         }
+
     });
+
 }(SUGAR.App));

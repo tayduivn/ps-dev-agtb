@@ -86,6 +86,8 @@
         // be overwritten. However, if we check for user and NOT call reset, we could
         // have the same problem where we miss unique data sent from server.
         _user._reset(data ? data.current_user : null);
+        // TODO: THIS MUST GO AWAY ONCE THE SERVER STARTS RETURNING USER INFO
+        app.user.id = "seed_sally_id";
     }).on("app:logout", function(clear) {
         if(clear) {
             _user._reset();
