@@ -252,6 +252,15 @@
                     } else if (this.state.view) {
                         options.fields = this.state.view.getFields();
                     }
+
+                    // If we have an orderByDefaults in the config, try to use that
+                    if (!objectToFetch.orderBy && app.config && app.config.orderByDefaults) {
+                        if(options.fields && 
+                            options.fields.indexOf(app.config.orderByDefaults.field) !== -1) {
+                            objectToFetch.orderBy = app.config.orderByDefaults;
+                        }
+                    }
+                    
                     objectToFetch.fetch(options);
                 } else {
                     app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined.");

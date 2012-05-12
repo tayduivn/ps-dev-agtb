@@ -74,6 +74,16 @@
          * @cfg {Array}
          */
         metadataTypes: [],
+
+        /**
+         * For list views, the default ordering. 
+         * @cfg {Object} The field and direction to order by
+         */
+        orderByDefaults: {
+            field: 'case_number',
+            direction: 'asc'
+        },
+        
         /**
          * Hash of addtional views of the format below to init and render on app start
          ** <pre><code>
