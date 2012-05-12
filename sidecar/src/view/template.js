@@ -95,12 +95,12 @@
         },
 
         // Convenience private method
-        _getField: function(type, view, useDefault) {
+        _getField: function(type, view, fallbackTemplate) {
             var prefix = "f." + type + ".";
             var key = prefix + view;
-            useDefault = _.isUndefined(useDefault) ? true : useDefault;
+            var useFallbackTemplate = !_.isUndefined(fallbackTemplate);
             return [key, this.get(prefix + view) ||
-                         (useDefault ? this.get(prefix + "default") : null)];
+                         (useFallbackTemplate ? this.get(prefix + fallbackTemplate) : null)];
         },
 
         /**
@@ -111,8 +111,8 @@
          * if view specific is not found. Defaults to `true`.
          * @return {Function} Compiled template.
          */
-        getField: function(type, view, useDefault) {
-            return this._getField(type, view, useDefault)[1];
+        getField: function(type, view, fallbackTemplate) {
+            return this._getField(type, view, fallbackTemplate)[1];
         },
 
         /**
@@ -137,7 +137,7 @@
          */
         setField: function(type, view, src, force) {
             // Don't fall back to default template (false flag)
-            return this._compile(this._getField(type, view, false), src, force);
+            return this._compile(this._getField(type, view), src, force);
         },
 
         /**
