@@ -103,7 +103,7 @@
          * @return {Object} Reference to this view.
          */
         render: function() {
-            if (app.acl.hasAccess(this.name, this.context.get("model"))) {
+            if (app.acl.hasAccess(this.name, this.module)) {
                 this._render();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
@@ -111,7 +111,7 @@
                 }, this);
             } else {
                 app.logger.info("Current user does not have access to this module view.");
-                //TODO trigger app event to notify user about no access
+                //TODO trigger app event to notify user about no access or render a "no access" template
             }
 
             return this;

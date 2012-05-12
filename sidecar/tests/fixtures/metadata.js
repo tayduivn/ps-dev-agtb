@@ -1137,6 +1137,28 @@ fixtures.metadata = {
                 "massupdate": "yes",
                 "create": "yes",
                 "_hash": "c2dd34be3e193dd127eb7ab69d413cc6"
+      },
+      "Accounts":{
+          "fields": {
+                    "name": {
+                        "write": "owner"
+                    }, "status": {
+                        "write": "no"
+                    }
+                },
+                "admin": "yes",
+                "developer": "no",
+                "access": "yes",
+                "view": "yes",
+                "list": "yes",
+                "edit": "no",
+                "delete": "yes",
+                "import": "yes",
+                "export": "yes",
+                "massupdate": "yes",
+                "create": "yes",
+                "_hash": "3435464127eb7ab69d413cc6"
       }
+
   }
 };

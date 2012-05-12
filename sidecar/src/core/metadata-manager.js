@@ -30,6 +30,15 @@
         }
     }
 
+    function _getData(container, property, prefix, deleteHash) {
+        if (!container[property]) {
+            container[property] = _get(prefix + property);
+        }
+
+        if (deleteHash && container[property]) delete container[property]._hash;
+        return container[property];
+    }
+
     /**
      * Initializes custom templates and controller if supplied upstream.
      * @param {Object} entry - a module
@@ -163,11 +172,7 @@
          * @return {Object} Metadata for the specified field type.
          */
         getField: function(type) {
-            var metadata = _fields[type];
-            if (!metadata) {
-                _fields[type] = _get(_fieldPrefix + type);
-                metadata = _fields[type];
-            }
+            var metadata = _getData(_fields, type, _fieldPrefix);
 
             // Fall back to plain text field
             if (!metadata) {
@@ -217,12 +222,7 @@
          * @return {Object}
          */
         getModuleList: function() {
-            if (!_app.moduleList) {
-                _app.moduleList = _get("moduleList");
-            }
-
-            if (_app.moduleList) delete _app.moduleList._hash;
-            return _app.moduleList || {};
+            return _getData(_app, "moduleList", "", true) || {};
         },
 
         /**
@@ -231,11 +231,16 @@
          * @return Dictionary of strings.
          */
         getStrings: function(type) {
-            var r = _lang[type];
-            if (!r) {
-                r = _get(_langPrefix + type);
-            }
-            return r || {};
+            return _getData(_lang, type, _langPrefix) || {};
+        },
+
+        /**
+         * Gets ACLs.
+         *
+         * @return Dictionary of ACLs.
+         */
+        getAcls: function() {
+            return _getData(_app, "acl", "") || {};
         },
 
         /**
@@ -277,6 +282,8 @@
             _setData(_lang, "appListStrings", _langPrefix, data);
             _setData(_lang, "appStrings", _langPrefix, data);
             _setData(_lang, "modStrings", _langPrefix, data);
+
+            _setData(_app, "acl", "", data);
 
             _setData(_app, "_hash", "", data);
 
