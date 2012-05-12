@@ -9,7 +9,8 @@
     app.view.views.HeaderView = app.view.View.extend({
         events: {
             'click #moduleList li a': 'onModuleTabClicked',
-            'click #createList li a': 'onCreateClicked'
+            'click #createList li a': 'onCreateClicked',
+            'click .cube': 'onHomeClicked'
         },
         onModuleTabClicked: function(evt) {
             evt.preventDefault();
@@ -19,7 +20,11 @@
             $(evt.currentTarget).parent().addClass('active');
             app.router.navigate(moduleHref, {trigger: true});
         },
-
+        onHomeClicked: function(evt) {
+            // Just removes active on modules for now.
+            // TODO: Maybe we should highlight the "cube"?
+            $('#moduleList li').removeClass('active');
+        },
         onCreateClicked: function(evt) {
             var moduleHref, hashModule;
             moduleHref = evt.currentTarget.hash;
