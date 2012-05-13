@@ -100,6 +100,7 @@ describe('Metadata Manager', function() {
         expect(app.template.setView.getCall(0).args[0]).toEqual("tree");
         expect(app.template.setView.getCall(0).args[1]).toEqual("Taxonomy");
         expect(app.template.setView.getCall(0).args[2]).toEqual('My Lil Template');
+        expect(Handlebars.templates["tree.Taxonomy"]).toBeDefined();
         app.template.setView.restore();
     });
 

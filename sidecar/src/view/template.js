@@ -80,7 +80,7 @@
 
         // Convenience private method
         _getView: function(name, module) {
-            var key = name + (module ? ("." + module.toLowerCase()) : "");
+            var key = name + (module ? ("." + module) : "");
             return [key, this.get(key)];
         },
 
@@ -98,9 +98,8 @@
         _getField: function(type, view, fallbackTemplate) {
             var prefix = "f." + type + ".";
             var key = prefix + view;
-            var useFallbackTemplate = !_.isUndefined(fallbackTemplate);
             return [key, this.get(prefix + view) ||
-                         (useFallbackTemplate ? this.get(prefix + fallbackTemplate) : null)];
+                         (_.isUndefined(fallbackTemplate) ? null : this.get(prefix + fallbackTemplate))];
         },
 
         /**
