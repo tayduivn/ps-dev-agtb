@@ -1,11 +1,21 @@
 (function(app) {
 
+    // One and only instance of user model
+    var _usr = new Backbone.Model(),
+        // Cache key
+        _key = "app:user";
+
     /**
      * Represents application's current user object.
      *
-     * Sample user object:
-     * <pre><code>
+     * The user object contains settings that are fetched from the server
+     * and whatever settings application wants to store.
      *
+     * The user object is cached by {@link Core.CacheManager} and is restored at the application start-up.
+     * It is updated with data from the server after successful login and cleared upon logout event.
+     *
+     * <pre><code>
+     * // Sample user object that is fetched from the server:
      * {
      *      id: "1",
      *      full_name: "Administrator",
@@ -17,79 +27,90 @@
      *
      * // Use it like this:
      * var userId = SUGAR.App.user.get('id');
+     * // Set app specific settings
+     * SUGAR.App.user.set("sortBy:Cases", "case_number");
+     *
+     * // Bind event handlers if necessary
+     * SUGAR.App.user.getUser().on("change", function() {
+     *     // Do your thing
+     * });
      * 
      * </code></pre>
      *
      * @class Core.User
-     * @singleton @extends Backbone.Model
+     * @singleton
      * @alias SUGAR.App.user
      */
-    var usr, _user;
-    usr = new Backbone.Model({});
-
-    _user = {
+    var _user = {
         /**
          * Initializes this user object at application start-up.
          *
          * This method fetches user data stored in the local storage.
          */
         init: function() {
-            var user, s;
-            try {
-                // We serialize ourselves because stash.js stringifies everything (functions included)
-                s = app.cache.get("current_user");
-                if (s) user = s;
-            }
-            catch (e) {
-                app.logger.error("Failed to read user object from cache:\n" + e);
-            }
-            this._reset(user);
+            this._reset(app.cache.get(_key));
         },
 
+        /**
+         * Get the current value of an attribute from the user model.
+         *
+         * For example: `SUGAR.App.get("user_name")`.
+         * @param {String} key Attribute key.
+         */
         get: function(key) {
-            return usr.get(key);
+            return _usr.get(key);
         },
-        
-        set: function(key, value) {
-            var r = usr.set(key, value);
-            this._reset(usr.toJSON());
+
+        /**
+         * Sets a hash of attributes (one or many) on a user.
+         * You may also pass individual keys and values.
+         *
+         * See Backbone.Model documentation for details.
+         *
+         * @param attributes Hash of attributes.
+         * @param options(optional) Options.
+         */
+        set: function(attributes, options) {
+            var r = _usr.set(attributes, options);
+            app.cache.set(_key, _usr.toJSON());
             return r;
+        },
+
+        /**
+         * Gets underlying Backbone model instance.
+         *
+         * You may use this method to get the model instance and attach to its events.
+         * @return {Backbone.Model} User model instance.
+         */
+        getUser: function() {
+            return _usr;
         },
 
         /**
          * Resets user object with new data.
          *
          * @param user(optional) User information object. If not specified this user object is cleared and wiped out from local storage.
-         * @param  
-         * @return {Boolean} Flag indicating if the reset was successful.
          * @private
          */
         _reset: function(user) {
-            var r = true;
-            usr.clear({silent:true});
-            app.cache.cut("current_user");
+            // Clear local storage if complete reset is requested
+            // or the new user that is about to be set has different ID (multiple users per domain are not supported)
+            if (!user || (user.id != _usr.id)) {
+                _usr.clear({silent:true});
+                app.cache.cut(_key);
+            }
 
             if (user) {
-                usr.set(user); 
-                usr.toJSON();
-                r = app.cache.set("current_user", user);
+                this.set(user);
             }
-            return r;
         }
     };
 
     app.events.on("app:login:success", function(data) {
-        // TODO: Discuss sync strategy for this...
-        //
-        // We need to discuss how we want to sync here. This will always
-        // let the server win; so any client side calls to set('mykey','val') will
-        // be overwritten. However, if we check for user and NOT call reset, we could
-        // have the same problem where we miss unique data sent from server.
+        // Server always wins. We update the user with fresh data from the server
         _user._reset(data ? data.current_user : null);
-        // TODO: THIS MUST GO AWAY ONCE THE SERVER STARTS RETURNING USER INFO
-        app.user.id = "seed_sally_id";
     }).on("app:logout", function(clear) {
-        if(clear) {
+        if (clear) {
             _user._reset();
         }
     });
