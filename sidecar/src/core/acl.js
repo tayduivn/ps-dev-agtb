@@ -70,4 +70,4 @@
 
     });
 
-}(SUGAR.App));
+})(SUGAR.App);
