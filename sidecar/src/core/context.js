@@ -231,12 +231,22 @@
             loadData: function() {
                 if (this.state.create) return;
 
-                var objectToFetch = null, options = {};
+                var objectToFetch = null, options = {}, defaultOrdering;
 
                 if (this.state.id) {
                     objectToFetch = this.state.model;
                 } else {
                     objectToFetch = this.state.collection;
+                }
+
+                // If we have an orderByDefaults in the config, and this is a bean collection,
+                // try to use ordering from there (only if orderBy is not already set.)
+                if (objectToFetch instanceof app.BeanCollection && !objectToFetch.orderBy && 
+                    this.state.module && app.config.orderByDefaults) {
+                    defaultOrdering = app.config.orderByDefaults;
+                    if(defaultOrdering[this.state.module]) {
+                        objectToFetch.orderBy = defaultOrdering[this.state.module];
+                    }
                 }
 
                 // TODO: Figure out what to do when models are not
@@ -252,6 +262,7 @@
                     } else if (this.state.view) {
                         options.fields = this.state.view.getFields();
                     }
+
                     objectToFetch.fetch(options);
                 } else {
                     app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined.");
