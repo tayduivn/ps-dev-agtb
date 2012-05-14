@@ -25,8 +25,8 @@ describe("Controller", function() {
 
             expect(app.controller.layout).toBeDefined();
             expect(app.controller.layout instanceof Backbone.View).toBeTruthy();
-            expect(app.controller.context.get().collection).toBeDefined();
-            expect(app.controller.context.get().collection.models.length).toEqual(2);
+            expect(app.controller.context.get("collection")).toBeDefined();
+            expect(app.controller.context.get("collection").models.length).toEqual(2);
 
         });
 

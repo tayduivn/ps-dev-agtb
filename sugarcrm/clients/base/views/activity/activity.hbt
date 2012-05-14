@@ -8,7 +8,7 @@
                     </form>
                     {{#each meta.panels}}
                     <ul class="nav nav-tabs results">
-                        {{#each ../context.state.collection.models}}
+                        {{#each ../context.attributes.collection.models}}
                         <li class="activity" data-id="">
                             <a data-toggle="tab"><span class="label label-note">Note</span></a>
                             <p>{{fieldWithName ../../context ../../this this "id"}}

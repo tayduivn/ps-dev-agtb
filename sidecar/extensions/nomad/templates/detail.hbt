@@ -13,7 +13,7 @@
 
     {{#each meta.panels}}
     <div class="items">
-    {{#each ../context.state.collection.models}}
+    {{#each ../context.attributes.collection.models}}
         <div class="control-group">
             {{#each ../fields}}
                 {{field     ../../../context    ../../../this   ../this}}
