@@ -34,7 +34,10 @@
         },
 
         /**
-         * Renders Header view
+         * Initialize the View
+         *
+         * @constructor
+         * @param {Object} options
          */
         initialize: function(options) {
             var self = this;

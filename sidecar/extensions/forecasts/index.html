@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+		<meta http-equiv="x-ua-compatible" content="IE=8">
+		<script language="javascript" src="../../lib/jquery/jquery.min.js"></script>
+        <script language="javascript" src="../../lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+		<script language="javascript" src="../../lib/backbone/underscore.js"></script>
+		<script language="javascript" src="../../lib/backbone/backbone.js"></script>
+        <script language="javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+        <script language="javascript" src="../../lib/stash/stash.js"></script>
+        <script language="javascript" src="../../lib/async/async.js"></script>
+        <script language="javascript" src="../../lib/jstree/jquery.jstree.js"></script>
+        <link rel="stylesheet" href="../../lib/chosen/chosen.css"/>
+        <script language="javascript" src="../../lib/chosen/chosen.jquery.js"></script>
+		<!-- App Scripts -->
+        <script src='../../lib/sugarapi/sugarapi.js'></script>
+		<script src='../../src/app.js'></script>
+        <script src='../../src/utils/utils.js'></script>
+		<script src='../../src/core/cache.js'></script>
+        <script src="../../src/core/events.js"></script>
+        <script src='../../src/core/error.js'></script>
+		<script src='../../src/view/template.js'></script>
+		<script src='../../src/core/context.js'></script>
+		<script src='../../src/core/controller.js'></script>
+		<script src='../../src/core/router.js'></script>
+        <script src='../../src/core/language.js'></script>
+		<script src='../../src/core/metadata-manager.js'></script>
+        <script src='../../src/core/acl.js'></script>
+        <script src='../../src/utils/logger.js'></script>
+		<script src='../../src/config.js'></script>
+
+		<script src='../../src/data/bean.js'></script>
+		<script src='../../src/data/bean-collection.js'></script>
+        <script src='../../src/data/data-manager.js'></script>
+		<script src='../../src/data/validation.js'></script>
+
+        <script src='../../src/view/hbt-helpers.js'></script>
+        <script src='../../src/view/view-manager.js'></script>
+        <script src='../../src/view/component.js'></script>
+        <script src='../../src/view/view.js'></script>
+        <script src='../../src/view/field.js'></script>
+        <script src='../../src/view/layout.js'></script>
+        <script src='../../src/view/views/list-view.js'></script>
+        <script src='../../src/view/views/detail-view.js'></script>
+        <script src='../../src/view/views/activity-view.js'></script>
+        <script src='../../src/view/views/header-view.js'></script>
+        <script src='../../src/view/views/test-view.js'></script>
+        <script src='../../src/view/views/alert-view.js'></script>
+        <script src='../../src/view/layouts/columns-layout.js'></script>
+        <script src='../../src/view/layouts/fluid-layout.js'></script>
+
+        <script src='views/grid-view.js'></script>
+        <script src='views/tree-view.js'></script>
+	    <script src='views/filter-view.js'></script>
+
+        <script src='forecasts.js'></script>
+
+		<script language="javascript" src="../../lib/sinon/sinon.js"></script>
+		<link rel="stylesheet" href="../../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="../../lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-tooltip.js"></script>
+        <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-popover.js"></script>
+        <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-dropdown.js"></script>
+        <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-modal.js"></script>
+        <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-alert.js"></script>
+        <script src="../../lib/twitterbootstrap/bootstrap/js/application.js"></script>
+        <script language="javascript" src="../../lib/jeditable/jquery.jeditable.mini.js"></script>
+        <script language="javascript" src="../../lib/datatables/media/js/jquery.dataTables.js"></script>
+    </head>
+    <body>
+    	<div id="forecasts-module">
+			<div id="forecasts" style="" >
+                <div id="alert" class="alert-top">
+
+                </div>
+                <div id="header">
+
+                </div>
+                <div id="content">
+
+                </div>
+                <div id="footer">
+
+                </div>
+
+			</div>
+			<div id="layout" style=""></div>
+		</div>
+
+		<script language="javascript">
+			var syncResult, view, layout, html;
+            var App = SUGAR.App.init({
+                el: "#forecasts"
+            });
+            App.api.debug = App.config.debugSugarApi;
+            App.start();
+		</script>
+    </body>
+</html>

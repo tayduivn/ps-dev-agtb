@@ -154,7 +154,7 @@ class Forecast extends SugarBean {
         $ret_array=array();
         $ret_array['select'] = "SELECT  tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* "; 
         $ret_array['from'] = " FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ";
-        $ret_array['where'] = ' WHERE '. $where;
+        $ret_array['where'] = !empty($where) ? ' WHERE '. $where : '';
 
         //if order by just has asc or des
         $temp_order = trim($order_by);

@@ -109,6 +109,15 @@ $dictionary['ProductCategory'] = array('table' => 'product_categories',
     'comment' => 'Full desscription of the category'
   ),
   //BEGIN SUGARCRM flav=pro ONLY
+  'assigned_user_id' =>
+  array (
+    'name' => 'assigned_user_id',
+    'vname' => 'LBL_ASSIGNED_USER_NAME',
+    'type' => 'varchar',
+    'len' => '36',
+    'comment' => 'The id of the user who owns the product category',
+    'reportable'=>true
+  ),
   'parent_id' =>
   array (
     'name' => 'parent_id',

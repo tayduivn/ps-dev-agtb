@@ -51,6 +51,7 @@ $moduleList[] = 'ProspectLists';
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
+$moduleList[] = 'OpportunityLines';
 $moduleList[] = 'Products';
 //END SUGARCRM flav=pro ONLY
 
@@ -114,6 +115,12 @@ $beanList['Accounts']       = 'Account';
 $beanList['DynamicFields']  = 'DynamicField';
 $beanList['EditCustomFields']   = 'FieldsMetaData';
 $beanList['Opportunities']  = 'Opportunity';
+
+//BEGIN SUGARCRM flav=PRO ONLY
+$beanList['OpportunityLines'] = 'OpportunityLine';
+$beanList['OpportunityLineBundles'] = 'OpportunityLineBundle';
+//END SUGARCRM flav=PRO ONLY
+
 $beanList['EmailTemplates']     = 'EmailTemplate';
 $beanList['Notes']          = 'Note';
 $beanList['Calls']          = 'Call';
@@ -274,6 +281,10 @@ $beanFiles['SchedulersJob']  = 'modules/SchedulersJobs/SchedulersJob.php';
 $beanFiles['Contact']       = 'modules/Contacts/Contact.php';
 $beanFiles['Account']       = 'modules/Accounts/Account.php';
 $beanFiles['Opportunity']   = 'modules/Opportunities/Opportunity.php';
+//BEGIN SUGARCRM flav=PRO ONLY
+$beanFiles['OpportunityLine']   = 'modules/OpportunityLines/OpportunityLine.php';
+$beanFiles['OpportunityLineBundle']   = 'modules/OpportunityLineBundles/OpportunityLineBundle.php';
+//END SUGARCRM flav=PRO ONLY
 $beanFiles['EmailTemplate']         = 'modules/EmailTemplates/EmailTemplate.php';
 $beanFiles['Note']          = 'modules/Notes/Note.php';
 $beanFiles['Call']          = 'modules/Calls/Call.php';
@@ -401,7 +412,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
     //BEGIN SUGARCRM flav=pro ONLY
-    'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
+    'OpportunityLineBundles', 'OpportunityLine', 'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
@@ -499,7 +510,8 @@ $report_include_modules['Trackers']         = 'Tracker';
 //END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-
+$report_include_modules['OpportunityLines'] = 'OpportunityLine';
+$report_include_modules['TimePeriods'] = 'TimePeriod';
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
 $report_include_modules['TrackerQueries']   = 'TrackerQuery';
