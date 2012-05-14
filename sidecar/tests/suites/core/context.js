@@ -89,6 +89,49 @@ describe("Application context manager", function() {
                 expect(context.get().module).toEqual('Cases');
             });
 
+            it("should set the order by on collection if defined in config", function() {
+                var collection = app.data.createBeanCollection("Cases"), params;
+                
+                params = {
+                    module: 'Cases',
+                    collection: collection
+                };
+                app.config.orderByDefaults = {
+                    'Cases': {
+                        field: 'case_number',
+                        direction: 'asc'
+                    }
+                };
+                context.init(params);
+                context.loadData();
+                expect(context.get('collection').orderBy).toBeDefined();
+                expect(context.get('collection').orderBy.field).toEqual('case_number');
+                expect(context.get('collection').orderBy.direction).toEqual('asc');
+            });
+
+            it("should maintain order by if already set on collection event if defined in config", function() {
+                var collection = app.data.createBeanCollection("Cases"), params;
+                collection.orderBy = {
+                        field: 'fooby',
+                        direction: 'updownallaround'
+                    }
+                params = {
+                    module: 'Cases',
+                    collection: collection
+                };
+                app.config.orderByDefaults = {
+                    'Cases': {
+                        field: 'case_number',
+                        direction: 'asc'
+                    }
+                };
+                context.init(params);
+                context.loadData();
+                expect(context.get('collection').orderBy).toBeDefined();
+                expect(context.get('collection').orderBy.field).toEqual('fooby');
+                expect(context.get('collection').orderBy.direction).toEqual('updownallaround');
+            });
+
             it("should always load bean for context", function() {
                 var params = {
                     module: "Cases",
