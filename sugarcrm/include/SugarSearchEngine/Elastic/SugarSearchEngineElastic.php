@@ -301,6 +301,27 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $highlighArray;
     }
 
+    private function canAppendWildcard($queryString)
+    {
+        $queryString = trim($queryString);
+        if( substr($queryString, -1) ===  self::WILDCARD_CHAR) {
+            return false;
+        }
+
+        // for fuzzy search, do not append wildcard
+        if( substr($queryString, -1) ===  '~') {
+            return false;
+        }
+
+        // for range searches, do not append wildcard
+        if (preg_match('/\[.*TO.*\]/', $queryString) || preg_match('/{.*TO.*}/', $queryString))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * @param $queryString
      * @param int $offset
@@ -310,11 +331,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
         $appendWildcard = false;
-        if( !empty($options['append_wildcard']) )
+        if( !empty($options['append_wildcard']) && $this->canAppendWildcard($queryString) )
         {
-            if( substr($queryString, -1) !==  self::WILDCARD_CHAR) {
-                $appendWildcard = true;
-            }
+            $appendWildcard = true;
         }
         $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
 
@@ -438,7 +457,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to create index with error: {$e->getMessage()}");
+            $GLOBALS['log']->error("Unable to create index with error: {$e->getMessage()}");
         }
 
     }
