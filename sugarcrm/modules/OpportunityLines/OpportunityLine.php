@@ -26,8 +26,32 @@ class OpportunityLine extends SugarBean
 	// Stored fields
 	var $id;
     var $product_id;
+    var $product_owner_id;
     var $table_name = "opportunity_line";
    	var $module_dir = 'OpportunityLines';
    	var $object_name = "OpportunityLine";
 
+    function getProductCategoryOwner()
+    {
+        $product = new Product();
+
+        $query = "SELECT pc.assigned_user_id as id
+                    FROM " . $product->table_name . " p, " . $product->rel_categories . " pc
+                    WHERE p.category_id = pc.id
+                        AND p.id = '" . $this->product_id . "'
+                        AND p.deleted = 0
+                        AND pc.deleted=0";
+        $result = $this->db->query($query,true," Error getting product category owner: ");
+
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row != null)
+        {
+            $this->product_owner_id = $row['id'];
+        }
+        else
+        {
+            $this->product_owner_id = '';
+        }
+    }
 }
