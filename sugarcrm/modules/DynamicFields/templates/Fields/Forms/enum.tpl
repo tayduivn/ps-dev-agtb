@@ -64,6 +64,7 @@
 	</td>
 </tr>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
+{if !$multi && !radio}
 <tr id='depTypeRow' class="toggleDep"><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td>
         <select id="depTypeSelect" onchange="ModuleBuilder.toggleParent(this.value == 'parent'); ModuleBuilder.toggleDF(this.value == 'formula'); ">
@@ -100,5 +101,6 @@
 	{/if}
 	</td>
 </tr>
+{/if}
 {* //END SUGARCRM flav=pro ONLY *}
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}
