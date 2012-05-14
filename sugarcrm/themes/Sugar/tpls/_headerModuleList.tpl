@@ -162,7 +162,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 											</div>
 										</div>
 										<div class="megacolumn">
-											<div class="megacolumn-content">
+											<div class="megacolumn-content divider">
 											{if $groupTabId}
 											<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="MMLastViewed">
 												<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
@@ -177,7 +177,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 											</div>
 										</div>
                                         <div class="megacolumn">
-                                            <div class="megacolumn-content divider">
+                                            <div class="megacolumn-content">
                                                 <ul class="MMFavorites">
                                                     <li class="groupLabel">{$APP.LBL_FAVORITES}</li>
                                                     <li><a href="#">&nbsp;</a></li>
@@ -204,7 +204,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 				
 					 		<li><a href="#" class="group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
 					
-								<ul class="sf-menu">
+								<ul class="sf-menu filter-menu">
 						          {foreach from=$groupTabs item=module key=group name=groupList}
 				                      {php}
 				                          $group = str_replace(" ", "_", $this->get_template_vars('group'));
