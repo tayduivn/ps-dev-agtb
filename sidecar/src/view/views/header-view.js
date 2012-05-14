@@ -15,22 +15,22 @@
         onModuleTabClicked: function(evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            var moduleHref = $(evt.currentTarget).attr('href');
-            $('#moduleList li').removeClass('active');
-            $(evt.currentTarget).parent().addClass('active');
+            var moduleHref = this.$(evt.currentTarget).attr('href');
+            this.$('#moduleList li').removeClass('active');
+            this.$(evt.currentTarget).parent().addClass('active');
             app.router.navigate(moduleHref, {trigger: true});
         },
         onHomeClicked: function(evt) {
             // Just removes active on modules for now.
             // TODO: Maybe we should highlight the "cube"?
-            $('#moduleList li').removeClass('active');
+            this.$('#moduleList li').removeClass('active');
         },
         onCreateClicked: function(evt) {
             var moduleHref, hashModule;
             moduleHref = evt.currentTarget.hash;
             hashModule = moduleHref.split('/')[0];
-            $('#moduleList li').removeClass('active');
-            $('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+            this.$('#moduleList li').removeClass('active');
+            this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
         },
 
         /**
