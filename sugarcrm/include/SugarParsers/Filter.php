@@ -24,7 +24,6 @@ require_once('include/SugarParsers/FilterDictionary.php');
 
 class SugarParsers_Filter
 {
-
     /**
      * List of the filters
      *
@@ -63,7 +62,7 @@ class SugarParsers_Filter
      */
     public function parse($obj)
     {
-        if(is_object($obj)) {
+        if (is_object($obj)) {
             $obj = $this->objectToArray($obj);
         }
         $this->parsedFilter = $this->parseFilterArray($obj);
@@ -85,7 +84,7 @@ class SugarParsers_Filter
             $valueHasVariables = $this->valueArrayHasVariables($value);
 
             // since the value is an array with no variables and there is only one, lets explode it out
-            if($valueHasVariables === false && is_array($value) && count($value) === 1) {
+            if ($valueHasVariables === false && is_array($value) && count($value) === 1) {
                 // make the key and value be the contents of the array
                 $key = array_shift(array_keys($value));
                 $value = array_shift($value);
@@ -107,7 +106,7 @@ class SugarParsers_Filter
                 $_filterKey = $key;
 
                 // make sure key is not a variable
-                if(is_string($value) && isset($this->filters[$value])) {
+                if (is_string($value) && isset($this->filters[$value])) {
                     $klass = $this->filters[$value]['class'];
                 } else {
                     $klass = $this->filters['$is']['class'];
@@ -117,7 +116,7 @@ class SugarParsers_Filter
             /**
              * Handle if we have a control variable followed by a string which is not a variable
              */
-            if($klass::isControlVariable() && is_string($value)) {
+            if ($klass::isControlVariable() && is_string($value)) {
                 $variable = (isset($this->filters[$value])) ? $value : '$is';
                 $_cvKlass = $this->filters[$variable]['class'];
                 $cvKlass = new $_cvKlass();
@@ -129,13 +128,13 @@ class SugarParsers_Filter
             if (is_array($value) && $key != '$in') {
                 // we need to parse this level
                 $value = $this->parseFilterArray($value);
-                if(count($value) == 1 && isset($value[0])) {
+                if (count($value) == 1 && isset($value[0])) {
                     // we have one filter that is not assigned to a filed
                     // just store the filter
                     $value = $value[0];
                 }
             } elseif ($key == '$in') {
-                if(!is_array($value)) {
+                if (!is_array($value)) {
                     $value = array($value);
                 } else {
                     // take out any keys that may be there since we don't need them
@@ -144,7 +143,7 @@ class SugarParsers_Filter
             }
 
             /* @var $klass SugarParsers_Filter_AbstractFilter */
-            if($valueHasVariables === false || $klass::isControlVariable()) {
+            if ($valueHasVariables === false || $klass::isControlVariable()) {
                 /* @var $filter SugarParsers_Filter_AbstractFilter */
                 $filter = new $klass();
                 $filter->filter($value);
@@ -153,7 +152,7 @@ class SugarParsers_Filter
                 $filter = $value;
             }
 
-            if(isset($_filters[$_filterKey])) {
+            if (isset($_filters[$_filterKey])) {
                 $stripArrayKeys = true;
                 $_filterKey = null;
             }
@@ -161,7 +160,7 @@ class SugarParsers_Filter
             $_filters[$_filterKey] = $filter;
         }
 
-        if($stripArrayKeys) {
+        if ($stripArrayKeys) {
             $_filters = array_values($_filters);
         }
 
@@ -177,12 +176,12 @@ class SugarParsers_Filter
     protected function valueArrayHasVariables($array)
     {
 
-        if(!is_array($array)) return false;
+        if (!is_array($array)) return false;
 
         $varKeys = array_keys($array);
 
-        foreach($varKeys as $key) {
-            if(isset($this->filters[$key])) {
+        foreach ($varKeys as $key) {
+            if (isset($this->filters[$key])) {
                 return true;
             }
         }
@@ -219,7 +218,7 @@ class SugarParsers_Filter
         $fd = new FilterDictionary();
         $this->filters = $fd->loadDictionaryFromStorage();
 
-        foreach($this->filters as $filter) {
+        foreach ($this->filters as $filter) {
             // load all the classes from the bean
             require_once($filter['file']);
         }
@@ -241,11 +240,11 @@ class SugarParsers_Filter
         }
 
         if (is_array($d)) {
-            /*
-                   * Return array converted to object
-                   * Using __FUNCTION__ (Magic constant)
-                   * for recursive call
-                   */
+            /**
+             * Return array converted to object
+             * Using __FUNCTION__ (Magic constant)
+             * for recursive call
+             */
             return array_map(array(__CLASS__, __FUNCTION__), $d);
         }
         else {
