@@ -153,6 +153,9 @@ $mod_strings = array (
   'LBL_TEAM_ID' =>'Team ID',
   'LBL_TIMEPERIODS' => 'TimePeriods',
   'LBL_TIMEPERIOD_ID' => 'TimePeriod ID',
+  'LBL_BEST_CASE' => 'Best case',
+  'LBL_LIKELY_CASE' => 'Likely case',
+  'LBL_WORST_CASE' => 'Worst case',
   //END SUGARCRM flav=pro ONLY
 
 );

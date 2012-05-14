@@ -27,7 +27,7 @@ $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_co
 $count = $large_scale_test ? 500 : 50;
 
 //Retrieve a sample of the product_template entries to use and store this in product_line_data array
-$result = $db->limitQuery("select id, list_price, discount_price, discount_usdollar, currency_id, tax_class from product_templates", 0, $count);
+$result = $db->limitQuery("select id, name, list_price, discount_price, discount_usdollar, currency_id, tax_class from product_templates", 0, $count);
 $product_line_data = array();
 while(($row = $db->fetchByAssoc($result)))
 {
@@ -69,6 +69,8 @@ while(($row = $db->fetchByAssoc($result)))
     $opportunityLine->modified_user_id = $opp->assigned_user_id;
     $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
     $opportunityLine->date_modified = $timedate->asDb($timedate->getNow());
+    $opportunityLine->profit_margin = $opportunityLine->price * .3;
+    $opportunityLine->note = $product['name'];
     $opportunityLine->deleted = 0;
     $opportunityLine->save();
 
