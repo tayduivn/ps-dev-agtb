@@ -1,6 +1,8 @@
 (function(app) {
 
     app.view.views.ListView = app.view.View.extend({
+        ITEM_TYPE_DELAY:400,
+        MAX_PAGE_SIZE:25,
         events:{
             'click  .show-more-top-btn':'showMoreTopRecords',
             'click  .show-more-bottom-btn':'showMoreBottomRecords',
@@ -17,9 +19,7 @@
 
             this.activeArticle = null;
 
-            this.topItemsModels = [];
             this.timerId = null;
-            this.ITEM_TYPE_DELAY = 400;
         },
         onKyeDown:function(){
             if(this.timerId)
@@ -29,7 +29,7 @@
 
             this.timerId = window.setTimeout(_.bind(this.search,this),this.ITEM_TYPE_DELAY);
         },
-        search:function(){
+        search:function() {
           this.collection.fetch();
         },
         addOne: function(model,collection,options) {
@@ -37,7 +37,7 @@
             var fieldId = app.view.getFieldId();
             var item = Handlebars.helpers.listItem(model, this, this.meta.panels[0].fields);
 
-            if (options.addTop) {
+            if (options.addTop && this.$('.items').children().length) {
                 this.$('.items').children().first().before(item.toString());
             } else {
                 this.$('.items').append(item.toString());
@@ -60,37 +60,53 @@
             }
         },
         showMoreTopRecords:function () {
-            var count = Math.min(app.config.maxQueryResult,this.topItemsModels.length);
+            this.collection.fetch({add:true,
+                silent:true,
+                offset:Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult,0),
+                max_num:app.config.maxQueryResult,
+                fields:this.collection.fields,
+                success:_.bind(function (collection,items) {
+                    var models = [];
 
-            for (var i = 0; i < count; i++) {
-                this.collection.add(this.topItemsModels.pop(),{addTop:true,at:0});
-            }
-            this.showMoreItems();
+                    _.each(items,function(item){
+                        var model = this.collection.get(item.id);
+                        models.push(model);
+                        this.removeOne(model);
+                        this.collection.remove(model,{silent:true});
+                    },this);
+
+                    while(models.length){
+                        this.collection.add(models.pop(),{addTop:true,at:0});
+                    }
+
+                    if (this.collection.length > this.getMaxPageSize()) {
+
+                        while (this.collection.length > this.getMaxPageSize()) {
+                            var model = this.collection.pop({silent:true});
+                            this.removeOne(model);
+                        }
+                    }
+
+                    this.collection.offset += this.collection.length - app.config.maxQueryResult;
+
+                }, this)});
         },
         showMoreBottomRecords:function () {
-            this.collection.paginate({add:true, success:_.bind(function () {
-                this.showMoreItems(true);
+            this.collection.paginate({add:true,
+                success:_.bind(function () {
+                if (this.collection.length > this.getMaxPageSize()) {
+                    this.$('.show-more-top-btn').show();
+
+                    while (this.collection.length > this.getMaxPageSize()) {
+                        var model = this.collection.shift({silent:true});
+                        this.removeOne(model);
+                    }
+
+                }
             }, this)});
         },
-        showMoreItems:function (isBottomShift) {
-            var model = null;
-            while (app.config.maxQueryResult < this.collection.length) {
-
-                if(!isBottomShift){
-                    model = this.collection.pop({silent:true});
-                }else{
-                    model = this.collection.shift({silent:true});
-                    this.topItemsModels.push(model);
-                }
-                this.removeOne(model);
-            }
-
-            if (this.topItemsModels.length) {
-                this.$('.show-more-top-btn').show();
-            }else{
-                this.$('.show-more-top-btn').hide();
-            }
-
+        getMaxPageSize:function(){
+            return Math.max(this.MAX_PAGE_SIZE, app.config.maxQueryResult);
         },
         onClickGrip:function (e) {
             var grip = $(e.target);
@@ -105,7 +121,6 @@
             this.activeArticle = $(e.target);
             this.activeArticle.find('.grip').addClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
-
         },
         onSwipeRightItem:function(e){
             this.activeArticle.find('.grip').removeClass('on');
