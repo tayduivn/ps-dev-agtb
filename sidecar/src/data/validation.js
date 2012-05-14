@@ -110,7 +110,7 @@
          * @method
          */
         requiredValidator: function(field, fieldName, model, value) {
-            if (!_.isUndefined(field.required) && (field.required === true)) {
+            if (!_.isUndefined(field.required) && (field.required === true) && (fieldName !== "id")) {
                 var currentValue = model.get(fieldName);
                 var currentUndefined = _.isUndefined(currentValue);
                 var valueEmpty = _.isNull(value) || value === "";

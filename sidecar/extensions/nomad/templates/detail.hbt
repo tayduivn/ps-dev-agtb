@@ -1,1 +1,29 @@
-TODO: Implement detail view HBT
+
+
+<h1 class="nomad">Create Opportunity</h1>
+<div class="form-horizontal" id="createRecord">
+  <div id="scroll">
+  <fieldset class="pad">
+
+    {{#each model.attributes}}
+      <div class="control-group">
+        {{field context view model}}
+      </div>
+    {{/each}}
+
+    {{#each meta.panels}}
+    <div class="items">
+    {{#each ../context.state.collection.models}}
+        <div class="control-group">
+            {{#each ../fields}}
+                {{field     ../../../context    ../../../this   ../this}}
+            {{/each}}
+        </div>
+    {{/each}}
+    </div>
+    {{/each}}
+
+  </fieldset>
+  </div>
+</div>
+

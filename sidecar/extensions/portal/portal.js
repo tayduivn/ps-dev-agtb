@@ -173,8 +173,7 @@
                 self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
             });
         }
-    })
-
+    });
 
 })(SUGAR.App);
 
