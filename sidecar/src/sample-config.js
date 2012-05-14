@@ -74,16 +74,35 @@
          * @cfg {Array}
          */
         metadataTypes: [],
-
+        
         /**
          * For list views, the default ordering. 
+         * <pre><code>
+         *         orderByDefaults: {
+         *            moduleName: {
+         *                field: '<name_of_field>',
+         *                direction: '(asc|desc)'
+         *            }
+         *        }
+         * </pre></code>
+         * 
          * @cfg {Object} The field and direction to order by
          */
         orderByDefaults: {
-            field: 'case_number',
-            direction: 'asc'
+            'Cases': {
+                field: 'case_number',
+                direction: 'asc'
+            },
+            'Bugs': {
+                field: 'bug_number',
+                direction: 'asc'
+            },
+            'Notes': {
+                field: 'date_modified',
+                direction: 'desc'
+            }
         },
-        
+ 
         /**
          * Hash of addtional views of the format below to init and render on app start
          ** <pre><code>
