@@ -3,12 +3,17 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
-    var _appPrefix = "a:";
+    var _langPrefix = "lang:";
 
     // Metadata that has been loaded from offline storage (memory cache)
-    var _app = {};
+    // Module specific metadata
     var _metadata = {};
+    // Field definitions
     var _fields = {};
+    // String packs
+    var _lang = {};
+    // Other
+    var _app = {};
 
     function _get(key) {
         return app.cache.get(_keyPrefix + key);
@@ -16,6 +21,22 @@
 
     function _set(key, value) {
         app.cache.set(_keyPrefix + key, value);
+    }
+
+    function _setData(container, property, prefix, data) {
+        if (data[property]) {
+            container[property] = data[property];
+            _set(prefix + property, data[property]);
+        }
+    }
+
+    function _getData(container, property, prefix, deleteHash) {
+        if (!container[property]) {
+            container[property] = _get(prefix + property);
+        }
+
+        if (deleteHash && container[property]) delete container[property]._hash;
+        return container[property];
     }
 
     /**
@@ -74,7 +95,7 @@
         _patchMetadata: function (moduleName, module) {
             if (!module || module._patched === true) return module;
             var self = this;
-            _.each(module.views, function(view, viewName) {
+            _.each(module.views, function(view) {
                 if(view.meta) {
                     _.each(view.meta.panels, function(panel) {
                         _.each(panel.fields, function(field, fieldIndex) {
@@ -151,11 +172,7 @@
          * @return {Object} Metadata for the specified field type.
          */
         getField: function(type) {
-            var metadata = _fields[type];
-            if (!metadata) {
-                _fields[type] = _get(_fieldPrefix + type);
-                metadata = _fields[type];
-            }
+            var metadata = _getData(_fields, type, _fieldPrefix);
 
             // Fall back to plain text field
             if (!metadata) {
@@ -205,23 +222,26 @@
          * @return {Object}
          */
         getModuleList: function() {
-           var result =  {};
-            if (_app.moduleList) {
-                result = _app.moduleList;
-            } else {
-                _app.moduleList=_get(_appPrefix+"moduleList");
-                result = _app.moduleList;
-            }
-
-            if(result && result._hash) {
-                delete result._hash;
-            }
-
-            return result;
+            return _getData(_app, "moduleList", "", true) || {};
         },
 
-        // set is going to be used by the sync function and will transalte
-        // from server format to internal format for metadata
+        /**
+         * Gets language strings for a given type.
+         * @param {String} type Type of string pack: `appStrings`, `appListStrings`, `modStrings`.
+         * @return Dictionary of strings.
+         */
+        getStrings: function(type) {
+            return _getData(_lang, type, _langPrefix) || {};
+        },
+
+        /**
+         * Gets ACLs.
+         *
+         * @return Dictionary of ACLs.
+         */
+        getAcls: function() {
+            return _getData(_app, "acl", "") || {};
+        },
 
         /**
          * Sets the metadata.
@@ -257,20 +277,25 @@
                 });
             }
 
-            if (data.moduleList) {
-                _app.moduleList = data.moduleList;
-                _set(_appPrefix + "moduleList", data.moduleList);
-            }
+            _setData(_app, "moduleList", "", data);
 
-            if (data._hash) {
-                _set(_appPrefix + "_hash", data._hash);
-            }
-            
+            _setData(_lang, "appListStrings", _langPrefix, data);
+            _setData(_lang, "appStrings", _langPrefix, data);
+            _setData(_lang, "modStrings", _langPrefix, data);
+
+            _setData(_app, "acl", "", data);
+
+            _setData(_app, "_hash", "", data);
+
             app.template.set(data, true);
         },
 
+        /**
+         * Gets metadata hash.
+         * @return {String} Metadata hash tag.
+         */
         getHash: function() {
-            return _get(_appPrefix + "_hash") || "";
+            return _app._hash || _get("_hash") || "";
         },
 
         /**

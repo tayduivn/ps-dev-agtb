@@ -275,22 +275,6 @@ SUGAR.App = (function() {
             }, function(metadata, callback) {
                 // declare models
                 app.data.declareModels(metadata);
-
-                // load language strings
-                if (metadata.appListStrings) {
-                    app.lang.setAppListStrings(metadata.appListStrings);
-                }
-
-                if (metadata.appStrings) {
-                    app.lang.setAppStrings(metadata.appStrings);
-                }
-
-                if (metadata.modStrings) {
-                    app.lang.setLabels(metadata.modStrings);
-                }
-
-                app.acl.set(metadata.acl);
-
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
@@ -339,7 +323,6 @@ SUGAR.App = (function() {
         login: function(credentials, data, callbacks) {
             callbacks = callbacks || {};
             var origSuccess = callbacks.success;
-            var self = this;
             callbacks.success = function(data) {
                 app.trigger("app:login:success", data);
                 if (origSuccess) origSuccess(data);

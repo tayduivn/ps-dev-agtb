@@ -1,56 +1,60 @@
-// LABELS
-// ------
+// LABELS & BADGES
+// ---------------
 
-// Base
-.label {
-  padding: 2px 4px 3px;
-  font-size: @baseFontSize * .85;
-  font-weight: 400;
-  color: @grayDarker;
+// Base classes
+.label,
+.badge {
+  font-size: @baseFontSize * .846;
+  line-height: 14px; // ensure proper line-height if floated
+  color: @white;
+  vertical-align: baseline;
+  white-space: nowrap;
   background-color: @grayLight;
-  .border-radius;
+}
+// Set unique padding and border-radii
+.label {
+  padding: 1px 4px 2px;
+  .border-radius(3px);
+}
+.badge {
+  padding: 1px 9px 2px;
+  .border-radius(9px);
 }
 
-// Hover state
-.label:hover {
-  color: @white;
-  text-decoration: none;
+// Hover state, but only for links
+a {
+  &.label:hover,
+  &.badge:hover {
+    color: @white;
+    text-decoration: none;
+    cursor: pointer;
+  }
 }
 
 // Colors
-
-.label-file { 
-  background-color: @orange; 
-  color: @white;
+// Only give background-color difference to links (and to simplify, we don't qualify with `a` but [href] attribute)
+.label,
+.badge {
+  &-important         { background-color: @btnDangerBackground; }
+  &-important[href]   { background-color: darken(@btnDangerBackground, 10%); }
+  &-warning           { background-color: @orange; }
+  &-warning[href]     { background-color: darken(@orange, 10%); }
+  &-success           { background-color: @btnSuccessBackground; }
+  &-success[href]     { background-color: darken(@btnSuccessBackground, 10%); }
+  &-info              { background-color: @btnInfoBackground; }
+  &-info[href]        { background-color: darken(@btnInfoBackground, 10%); }
+  &-inverse           { background-color: @grayDark; }
+  &-inverse[href]     { background-color: darken(@grayDark, 10%); }
+  &-log           { background-color: @gray; }
+  &-log[href]     { background-color: darken(@gray, 10%); }
+  &-document           { background-color: @purple; }
+  &-document[href]     { background-color: darken(@purple, 10%); }
+  &-file           { background-color: @orange; }
+  &-file[href]     { background-color: darken(@orange, 10%); }
+  &-contact           { background-color: @blue; }
+  &-contact[href]     { background-color: darken(@blue, 10%); }
+  &-lead           { background-color: @green; }
+  &-lead[href]     { background-color: darken(@green, 10%); }
+  &-note           { background-color: @warningText; }
+  &-note[href]     { background-color: darken(@warningText, 10%); }
 }
-.label-file:hover { background-color: darken(@orange, 10%); }
-
-.label-note { background-color: @yellow;
-  color: darken(@yellow, 30%);
-  text-shadow: 0 1px 0 rgba(255,255,255,.2);
-}
-.label-note:hover       { background-color: darken(@yellow, 10%); }
-
-.label-lead { 
-  background-color: @green; 
-  color: @white;
-}
-.label-lead:hover       { background-color: darken(@green, 20%); }
-
-.label-contact { 
-  background-color: @blue; 
-  color: @white;
-}
-.label-contact:hover    { background-color: darken(@blue, 10%); }
-
-.label-document { 
-  background-color: @purple; 
-  color: @white;
-}
-.label-document:hover   { background-color: darken(@purple, 10%); }
-
-.label-log { 
-  background-color: @gray; 
-  color: @white;
-}
-.label-log:hover   { background-color: darken(@gray, 10%); }

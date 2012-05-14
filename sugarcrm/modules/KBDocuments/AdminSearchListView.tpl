@@ -81,7 +81,7 @@
 		<tr height='20' class='{$_rowColor}S1'>
 			{if $prerow}
 			<td width='1%' nowrap='nowrap'>
-					<input onclick='sListView.check_item(this, document.KBAdminView); update_sel_count(this);' type='checkbox' class='checkbox' name='mass[]' value='{$rowData[$params.id]|default:$rowData.ID}'>
+					<input onclick='update_sel_count(this); sListView.check_item(this, document.KBAdminView); ' type='checkbox' class='checkbox' name='mass[]' value='{$rowData[$params.id]|default:$rowData.ID}'>
 			</td>
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
