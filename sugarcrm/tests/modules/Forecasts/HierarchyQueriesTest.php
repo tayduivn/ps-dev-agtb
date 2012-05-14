@@ -27,11 +27,89 @@
 class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-public function testForecastTreeForUsers()
+private $employee1;
+private $employee2;
+private $employee3;
+private $employee4;
+
+public function setUp()
 {
-    $this->markTestIncomplete('Awaiting completion of implementation for all databases');
-    $lineageSQL = $GLOBALS['db']->getRecursiveSelectSQL('forecast_tree', 'id', 'parent_id', 'id, name, user_id, parent_id', true);
-    $result = $GLOBALS['db']->query($lineageSQL);
+    global $beanList, $beanFiles, $current_user;
+    require('include/modules.php');
+
+    $current_user = SugarTestUserUtilities::createAnonymousUser();
+    $current_user->user_name = 'employee0';
+    $current_user->save();
+
+    $this->employee1 = SugarTestUserUtilities::createAnonymousUser();
+    $this->employee1->reports_to_id = $current_user->id;
+    $this->employee1->user_name = 'employee1';
+    $this->employee1->save();
+
+    $this->employee2 = SugarTestUserUtilities::createAnonymousUser();
+    $this->employee2->reports_to_id = $current_user->id;
+    $this->employee2->user_name = 'employee2';
+    $this->employee2->save();
+
+    $this->employee3 = SugarTestUserUtilities::createAnonymousUser();
+    $this->employee3->reports_to_id = $this->employee2->id;
+    $this->employee3->user_name = 'employee3';
+    $this->employee3->save();
+
+    $this->employee4 = SugarTestUserUtilities::createAnonymousUser();
+    $this->employee4->reports_to_id = $this->employee3->id;
+    $this->employee4->user_name = 'employee4';
+    $this->employee4->save();
+}
+
+public function tearDown()
+{
+    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+}
+
+public function testForecastTree()
+{
+    global $current_user;
+    $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, id, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
+    $result = $GLOBALS['db']->query($sql);
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+        switch($row['id'])
+        {
+            case $this->employee1->id:
+            case $this->employee2->id:
+                $this->assertEquals($current_user->id, $row['reports_to_id']);
+            break;
+
+            case $this->employee3->id:
+                $this->assertEquals($this->employee2->id, $row['reports_to_id']);
+            break;
+
+            case $this->employee4->id:
+                $this->assertEquals($this->employee3->id, $row['reports_to_id']);
+            break;
+        }
+    }
+
+    $result = $GLOBALS['db']->query("SELECT id, parent_id FROM product_categories WHERE deleted = 0");
+    $products = array();
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+        if(!empty($row['parent_id']))
+        {
+            $products[$row['id']] = $row['parent_id'];
+        }
+    }
+
+    $sql = $GLOBALS['db']->getRecursiveSelectSQL('product_categories', 'id', 'parent_id', 'id, parent_id, assigned_user_id, name', false, "deleted = 0");
+    $result = $GLOBALS['db']->query($sql);
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+        if(!empty($row['parent_id']))
+        {
+            $this->assertEquals($row['parent_id'], $products[$row['id']]);
+        }
+    }
 }
 
 
