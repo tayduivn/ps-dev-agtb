@@ -265,13 +265,16 @@ class One2MBeanRelationship extends One2MRelationship
         $alias = empty($params['join_table_alias']) ? "{$link->name}_rel": $params['join_table_alias'];
         $alias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
 
+        $tableInRoleFilter = "";
+        if ($targetTable == "meetings" && $linkIsLHS == false) $tableInRoleFilter = $alias;
+
         //Set up any table aliases required
         $targetTableWithAlias = "$targetTable $alias";
         $targetTable = $alias;
 
         $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
-               . $this->getRoleWhere() . "\n";
+               . $this->getRoleWhere($tableInRoleFilter) . "\n";
 
         if (!empty($params['return_as_array'])) {
             $return_array = true;
