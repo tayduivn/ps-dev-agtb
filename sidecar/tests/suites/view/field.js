@@ -99,7 +99,7 @@ describe("Field", function() {
                 error: "some random error string"
             }
         };
-        bean.processValidationErrors(errors);
+        bean._processValidationErrors(errors);
         expect(handleSpy).toHaveBeenCalled();
         handleSpy.restore();
     });
