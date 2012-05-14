@@ -126,7 +126,7 @@ EOD
 );
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
-    'id' => 'kbdocument_action_buttons',
+    'id' => 'detail_header_action_menu',
     'buttons' => $buttons,
     'class' => 'clickMenu fancymenu',
 ), $xtpl);
