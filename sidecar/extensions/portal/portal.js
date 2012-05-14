@@ -28,7 +28,7 @@
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.api.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "this.app.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
@@ -173,8 +173,7 @@
                 self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
             });
         }
-    })
-
+    });
 
 })(SUGAR.App);
 

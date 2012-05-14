@@ -8,122 +8,68 @@
      * @alias SUGAR.App.lang
      */
     app.augment("lang", {
-        /**
-         * Language hash for labels
-         * @property {Object}
-         */
-        modStrings: {},
-
-        appListStrings: {},
-        
-        appStrings: {},
 
         /**
-         * Saves a set of labels to its internal cache.
-         * @param {String} module Module name
-         * @param {Object} data Hash of language labels
-         * @param {Boolean} bulk Set to true if doing a bulk save which will not update the app cache.
-         * @method
-         */
-        setLabel: function(module, data, bulk) {
-            this.modStrings[module] = data || {};
-
-            if (!bulk) {
-                app.cache.set("language:labels", this.modStrings);
-            }
-        },
-
-        /**
-         * Takes multiple modules and sets individually
-         * @param {Object} data Language Hash
-         */
-        setLabels: function(data) {
-            _.each(data, function(label, module) {
-                this.setLabel(module, label, true);
-            }, this);
-
-            app.cache.set("language:labels", this.modStrings);
-        },
-
-        /**
-         * Sets app list strings (from metadata)
-         * @param {Object} data Object of app list strings
-         */
-        setAppListStrings: function(data) {
-            this.appListStrings = data;
-
-            app.cache.set("language:appListStrings", this.appListStrings);
-        },
-
-        /**
-         * Sets app strings (from metadata)
-         * @param {Object} data Object of app strings
-         */
-        setAppStrings: function(data) {
-            this.appStrings = data;
-
-            app.cache.set("language:appStrings", this.appStrings);
-        },
-
-        /**
-         * Retreives a language label
+         * Retrieves a string for a given key.
+         *
          * This function searches the module strings first and falls back to the app strings.
-         * If no label is found it returns the str arg.
-         * @method
-         * @param {String} str Label to retreive
-         * @param {String} module Module the label belongs to
-         * @return {String} Language Label
+         *
+         * @param {String} key Key of the string to retrieve.
+         * @param {String} module(optional) Module the label belongs to.
+         * @return {String} String for the given key or the `key` parameter if the key is not found in language pack.
+         */
+        get: function(key, module) {
+            return this._get("modStrings", key, module) ||
+                   this._get("appStrings", key) ||
+                   key;
+        },
+
+        /**
+         * Retreives an application string for a given key.
+         * @param {String} key Key of the string to retrieve.
+         * @return {String} String for the given key or the `key` parameter if the key is not found in the language pack.
+         */
+        getAppString: function(key) {
+            return this._get("appStrings", key) || key;
+        },
+
+        /**
+         * Retrieves an application list string or object.
+         * @param {String} key Key of the string to retrieve.
+         * @return {Object/String} String or object for the given key.
+         */
+        getAppListStrings: function(key) {
+            return this._get("appListStrings", key);
+        },
+
+        /**
+         * Retrieves a string of a given type.
+         * @param {String} type Type of string pack: `appStrings`, `appListStrings`, `modStrings`.
+         * @param {String} key Key of the string to retrieve.
+         * @param {String} module(optional) Module the label belongs to.
+         * @return {String} String for the given key.
          * @private
          */
-        get: function(str, module) {
-            var label= str;
-            if (this.modStrings && this.modStrings[module] && this.modStrings[module][str]) {
-                label = this.sanitizeString(this.modStrings[module][str]);
-            } else if (this.appStrings && this.appStrings[str]) {
-                label = this.sanitizeString(this.appStrings[str]);
-            }
-            return label;
+        _get: function(type, key, module) {
+            var bundle = app.metadata.getStrings(type);
+            bundle = module ? bundle[module] : bundle;
+            return bundle ? this._sanitize(bundle[key]) : null;
         },
 
         /**
-         * Retreives a App string.
-         * NOTE: Not implemented yet
-         * @method
-         * @param {String} str App string to retreive.
-         */
-        getAppStrings: function(str) {
-            return this.appStrings[str] || false;
-        },
-
-        getAppListStrings: function(str) {
-            return this.appListStrings[str] || false;
-        },
-
-        // We shoudln't need this function :(
-        /**
-         * Sanitizes the label.
-         * @method
-         * @param {String} str String to sanitize
-         * @return {String} Sanitized String
+         * Sanitizes a string.
+         *
+         * This function strips trailing colon.
+         *
+         * @param {String} str String to sanitize.
+         * @return {String} Sanitized string or `str` parameter if it's not a string.
          * @private
          */
-        sanitizeString: function(str) {
-            return (typeof str == "string" && (str.lastIndexOf(":") == str.length - 1)) ? str.substring(0, str.length - 1) : str;
-        },
-
-        /**
-         * Looks up the label provided.
-         * @method
-         * @param {String} str Name of the lable
-         * @param {String} module Name of the module to look up. Leave blank if looking for app strings
-         * @return {String} Translated string
-         */
-        translate: function(str, module) {
-            if(typeof module !== 'undefined' && module) {
-                return this.get(str, module) || this.getAppStrings(str) || "";
-            } else {
-                return this.getAppStrings(str);
-            }
+        _sanitize: function(str) {
+            return (_.isString(str) && (str.lastIndexOf(":") == str.length - 1)) ?
+                    str.substring(0, str.length - 1) : str;
         }
+
     });
+
 })(SUGAR.App);

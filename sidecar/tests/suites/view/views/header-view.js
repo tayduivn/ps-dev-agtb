@@ -49,10 +49,6 @@ describe("headerView", function() {
             return true;
         });
 
-        beanStub = sinon.stub(SUGAR.App.data,"createBean",function() {
-            return {a:'b'};
-        });
-
         getAppStringsStub = sinon.stub(app.lang, 'getAppListStrings', function() {
             return { Bugs: "Bugs", Cases: "Cases", KBDocuments: "KBDocuments", Leads: "Leads"};
         });
@@ -65,9 +61,7 @@ describe("headerView", function() {
 
         expect(view.createListLabels.length).toEqual(2);
         expect(hasAccessStub).toHaveBeenCalled();
-        expect(beanStub).toHaveBeenCalled();
         getAppStringsStub.restore();
         hasAccessStub.restore();
-        beanStub.restore();
     });
 });

@@ -80,7 +80,7 @@
 
         // Convenience private method
         _getView: function(name, module) {
-            var key = name + (module ? ("." + module.toLowerCase()) : "");
+            var key = name + (module ? ("." + module) : "");
             return [key, this.get(key)];
         },
 
@@ -95,24 +95,23 @@
         },
 
         // Convenience private method
-        _getField: function(type, view, useDefault) {
+        _getField: function(type, view, fallbackTemplate) {
             var prefix = "f." + type + ".";
             var key = prefix + view;
-            useDefault = _.isUndefined(useDefault) ? true : useDefault;
             return [key, this.get(prefix + view) ||
-                         (useDefault ? this.get(prefix + "default") : null)];
+                         (_.isUndefined(fallbackTemplate) ? null : this.get(prefix + fallbackTemplate))];
         },
 
         /**
          * Gets compiled template for a field.
          * @param {String} type Field type.
          * @param {String} view View name.
-         * @param {Boolean} useDefault(optional) Flag indicating if the default field template should be returned
+         * @param {Boolean} fallbackTemplate(optional) Template name to fallback to if template for `view` is not found.
          * if view specific is not found. Defaults to `true`.
          * @return {Function} Compiled template.
          */
-        getField: function(type, view, useDefault) {
-            return this._getField(type, view, useDefault)[1];
+        getField: function(type, view, fallbackTemplate) {
+            return this._getField(type, view, fallbackTemplate)[1];
         },
 
         /**
@@ -137,7 +136,7 @@
          */
         setField: function(type, view, src, force) {
             // Don't fall back to default template (false flag)
-            return this._compile(this._getField(type, view, false), src, force);
+            return this._compile(this._getField(type, view), src, force);
         },
 
         /**
