@@ -1,6 +1,6 @@
 
 
-<h1 class="nomad">Create Opportunity</h1>
+<h1 class="nomad">Details</h1>
 <div class="form-horizontal" id="createRecord">
   <div id="scroll">
   <fieldset class="pad">
@@ -13,12 +13,10 @@
 
     {{#each meta.panels}}
     <div class="items">
-    {{#each ../context.attributes.collection.models}}
-        <div class="control-group">
-            {{#each ../fields}}
-                {{field     ../../../context    ../../../this   ../this}}
-            {{/each}}
-        </div>
+    {{#each ../context.state.collection.models}}
+        {{#each ../fields}}
+            {{field     ../../../context    ../../../this   ../this}}
+        {{/each}}
     {{/each}}
     </div>
     {{/each}}
@@ -26,4 +24,10 @@
   </fieldset>
   </div>
 </div>
+
+<fieldset>
+    <div>
+        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+    </div>
+</fieldset>
 

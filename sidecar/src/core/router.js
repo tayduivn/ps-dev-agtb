@@ -17,7 +17,8 @@
             ":module/layout/:view": "layout",
             ":module/create": "create",
             ":module/:id/:action": "record",
-            ":module/:id": "record"
+            ":module/:id": "record",
+            ":module/:id/edit": "edit"
         },
 
         /**
@@ -135,6 +136,18 @@
             });
         },
 
+        /**
+         * Handles `edit` route.
+         * @param module Module name.
+         */
+        edit: function(module) {
+            app.logger.debug("===Route changed: edit " + module);
+            app.controller.loadView({
+                module: module,
+                create: true,
+                layout: "edit"
+            });
+        },
         /**
          * Handles `login` route.
          */
