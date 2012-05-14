@@ -1,23 +1,34 @@
 describe("Bean", function() {
 
-    var dm = SUGAR.App.data, metadata;
+    var app, dm, metadata;
 
     beforeEach(function() {
+        app = SugarTest.app;
+        dm = app.data;
         dm.reset();
         metadata = SugarTest.loadFixture("metadata");
     });
 
     it("should be able to validate itself", function() {
-        var moduleName = "Contacts", bean, error, errors;
+        var moduleName = "Opportunities", bean, error, errors;
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        bean = dm.createBean(moduleName, { first_name: "Super long first name"});
-        bean.validateFlag = true;
-        errors = bean.validate(bean.attributes);
+        bean = dm.createBean(moduleName, { account_name: "Super long account name"});
+        errors = bean._doValidate();
         expect(errors).toBeDefined();
-        error = errors["first_name"];
+        error = errors["account_name"];
         expect(error).toBeDefined();
         expect(error.maxLength).toEqual(20);
+
+        error = errors["name"];
+        expect(error).toBeDefined();
+        expect(error.required).toBeTruthy();
+
+        var spy = sinon.spy();
+        bean.on("app:error:validation:account_name", spy);
+        bean.on("app:error:validation:name", spy);
+        expect(bean.isValid()).toBeFalsy();
+        expect(spy).toHaveBeenCalledTwice();
     });
 
     it("should be populated with defaults upon instantiation", function() {

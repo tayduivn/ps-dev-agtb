@@ -128,7 +128,7 @@
                  * @member View.Field
                  */
                 this.fieldDef = this.model.fields[this.name];
-                this.model.on("model.validation.error." + this.name, this.handleValidationError, this);
+                this.model.on("app:error:validation:" + this.name, this.handleValidationError, this);
             }
 
             /**
