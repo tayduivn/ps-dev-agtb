@@ -75,10 +75,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
     		return;
     	} // if
 
-    	$class_name = $beanList[$module_name];
-    	require_once($beanFiles[$class_name]);
-    	$mod = new $class_name();
-    	$mod->retrieve($module_id);
+    	$mod = BeanFactory::getBean($module_name, $module_id);
 
         if (!self::$helperObject->checkQuery($error, $related_module_query, $order_by)) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
@@ -176,6 +173,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
             return array('result_count'=>0, 'next_offset'=>0, 'field_list'=>$select_fields, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
         }
 
+        self::$helperObject = new SugarWebServiceUtilv4_1();
         if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error))
         {
        		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_modified_relationships');
