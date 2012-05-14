@@ -51,10 +51,8 @@
              * @method
              */
             minLength: function(field, value) {
-                var minLength;
-
                 if (_.isNumber(field.minlen)) { // TODO: Not sure what the proper property is if there is one
-                    minLength = field.minlen;
+                    var minLength = field.minlen;
                     value = value || "";
                     value = value.toString();
 
@@ -92,10 +90,7 @@
 
             // TODO: More validators will be added as we need them
 
-            // EMAIL, URL, whatever
-
             // TODO: Do we need "type" validators, e.g. "int", "currency", etc?
-
         },
 
         /**
@@ -106,7 +101,7 @@
          * @param {String} fieldName bean field name
          * @param {Data.Bean} model bean instance
          * @param {String} value value to be set
-         * @return {Boolean} <code>true</code> if the validation passes, <code>false</code> otherwise
+         * @return {Boolean} `true` if the validation fails, `false` otherwise
          * @method
          */
         requiredValidator: function(field, fieldName, model, value) {
