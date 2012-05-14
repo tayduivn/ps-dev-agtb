@@ -33,6 +33,7 @@
  */
  function get_body(&$ss, $vardef){
  	$multi = false;
+    $radio = false;
  	if (isset ($vardef['type']) && $vardef['type'] == 'multienum')
  		$multi = true;
  		
@@ -47,6 +48,7 @@
 
 	if(!empty($_REQUEST['type']) && $_REQUEST['type'] == 'radioenum'){
 		$edit_mod_strings['LBL_DROP_DOWN_LIST'] = $edit_mod_strings['LBL_RADIO_FIELDS'];
+        $radio = true;
 	}
 	$package_strings = array();
 	if(!empty($_REQUEST['view_package'])){
