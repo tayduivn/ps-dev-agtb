@@ -424,20 +424,7 @@ eoq;
         $rows = array();
         for($i=0; $i < self::SAMPLE_ROW_SIZE; $i++)
         {
-            $row = $importFile->getNextRow();
-            if (is_array($row))
-            {
-                foreach($row as &$val)
-                {
-                    $val = htmlentities($val, ENT_QUOTES);
-                }
-            }
-            else 
-            {
-                $row = htmlentities($row, ENT_QUOTES);
-            }
-            
-            $rows[] = $row;
+            $rows[] = $importFile->getNextRow();
         }
 
         if( ! $importFile->hasHeaderRow(FALSE) )
@@ -457,7 +444,15 @@ eoq;
                 }
             }
         }
-
+        
+        foreach ($rows as &$row) {
+            if (is_array($row)) {
+                foreach ($row as &$val) {
+                    $val = htmlentities($val, ENT_QUOTES, 'UTF-8');
+                }
+            }
+        }
+    
         return $rows;
     }
 
