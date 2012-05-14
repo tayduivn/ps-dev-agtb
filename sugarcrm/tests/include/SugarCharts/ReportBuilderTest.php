@@ -4,14 +4,6 @@ require_once('include/SugarCharts/ReportBuilder.php');
 
 class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     public function testConstructorSetsModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -33,6 +25,20 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
             'label' => 'Accounts',
             'parent' => '',
             'children' => array())), $actual['full_table_list']);
+    }
+
+    public function testToJson()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $test = json_decode($rb->toJson());
+
+        $this->assertNotNull($test);
+    }
+
+    public function testToArray()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $this->assertTrue(is_array($rb->toArray()));
     }
 
     public function testAddModuleWithKey()

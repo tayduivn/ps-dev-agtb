@@ -269,6 +269,16 @@ class ReportBuilder
     }
 
     /**
+     * Return the report as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->defaultReport;
+    }
+
+    /**
      * @param string $module Which Module To Load
      * @return SugarBean
      */
