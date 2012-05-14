@@ -1,1 +1,26 @@
-TODO: Implement edit view HBT
+
+
+<h1 class="nomad">Create Item</h1>
+<div class="form-horizontal" id="createRecord">
+    <div id="scroll">
+        <fieldset class="pad">
+
+            {{#each meta.panels}}
+                {{#each ../context.state.collection.models}}
+                    {{#each ../fields}}
+                        {{field     ../../../context    ../../../this   ../this}}
+                    {{/each}}
+                {{/each}}
+            {{/each}}
+
+        </fieldset>
+    </div>
+</div>
+
+<fieldset>
+    <div>
+        <a href="opportunity.html#demo-success" class="btn btn-primary" id="saveRecord">Save</a>
+        <a href="opportunity.html" class="btn btn-inverse" id="backRecord">Cancel</a>
+    </div>
+</fieldset>
+

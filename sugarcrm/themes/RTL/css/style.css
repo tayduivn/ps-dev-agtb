@@ -87,8 +87,8 @@ div.moduleTitle
 }
 
 table.actionsContainer table td {
-text-align: left;
-direction: ltr;
+text-align: right;
+direction: rtl;
 }
 
 table.actionsContainer td:last-child {
@@ -201,9 +201,10 @@ span.id-ff.multiple button.button.lastChild{
 
 }
 
-#moduleList, #moduleList .sf-menu li {
+#moduleList, #moduleList .sf-menu, #moduleList .sf-menu li {
 	float: right;
 }
+ul.megamenu,
 #moduleList .sf-menu li:hover ul, #moduleList .sf-menu li.sfHover ul {
 	right: 0px;
 	left: auto;
@@ -211,7 +212,7 @@ span.id-ff.multiple button.button.lastChild{
 
 #moduleList ul.sf-menu li.moduleTabExtraMenu li:hover > ul, #moduleList ul.sf-menu li.moduleTabExtraMenu li.sfHover > ul {
 	left: auto;
-	right: 225px;	
+	right: 160px; /* more menu */
 }
 
 #quickCreate, #searchDivider, #globalLinksDivider {
@@ -226,27 +227,31 @@ span.id-ff.multiple button.button.lastChild{
 #globalLinksModule ul.clickMenu li ul.subnav {
 	left: 0px;	
 }
-
+ul.moduleTabExtraMenu, ul.filter-menu,
+ul.megamenu ul.MMLastViewed,
 #moduleList .sf-menu  ul.MMLastViewed {
 direction: rtl;
 }
-
+ul.megamenu ul.MMFavorites,
 #moduleList .sf-menu ul.MMFavorites {
 direction: rtl;
 }
 
+ul.megamenu ul.MMShortcuts,
 #moduleList .sf-menu ul.MMShortcuts {
 direction: rtl;
 float: right;
 }
-
+ul.megamenu .megacolumn,
 #moduleList .megacolumn {
 	float: right;
 }
-
+ul.megamenu .megawrapper ul li.groupLabel,
 #moduleList .sf-menu ul .megawrapper ul li.groupLabel {
 	padding-left: 0px;
-	padding-right: 10px;	
+	padding-right: 10px;
+    display:block;
+    float:right;
 }
 
 #arrow {
@@ -473,4 +478,14 @@ direction: rtl;
 ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	left: auto;
 	right: 0px;
+}
+#moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content.divider {
+    border-left: 1px solid #ccc;
+    border-right:0px;
+}
+#moduleList .ltr .megacolumn-content.divider, ul.megamenu.ltr .megacolumn-content.divider {
+    border-left: 0px;
+}
+#moduleList .ltr .MMLastViewed, #moduleList .ltr .MMFavorites {
+    display:none;
 }

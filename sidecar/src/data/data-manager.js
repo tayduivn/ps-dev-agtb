@@ -356,11 +356,11 @@
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params.maxresult = app.config.maxQueryResult;
+                    options.params.max_num = app.config.maxQueryResult;
                 }
 
                 if (model.orderBy && model.orderBy.field) {
-                    options.params.orderBy = model.orderBy.field + ":" + model.orderBy.direction;
+                    options.params.order_by = model.orderBy.field + ":" + model.orderBy.direction;
                 }
             }
 
@@ -368,7 +368,7 @@
                 if (options.success) {
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
                         if (data.next_offset) {
-                            model.offset = (data.next_offset!=-1)?data.next_offset:model.offset;
+                            model.offset = data.next_offset != -1 ? data.next_offset : model.offset;
                             model.page = model.getPageNumber();
                         }
                         data = data.records || [];

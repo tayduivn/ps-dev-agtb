@@ -7,7 +7,7 @@
  * `<env>:<appId>:` string to avoid clashes with other environments and applications running off the same domain name and port.
  * You can set environment and application ID in {@link Config} module.
  *
- * @class Core.CacheMananager
+ * @class Core.CacheManager
  * @singleton
  * @alias SUGAR.App.cache
  */
