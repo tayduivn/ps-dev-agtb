@@ -93,6 +93,23 @@ $dictionary['Shipper'] = array('table' => 'shippers'
     'len' => '4',
     'importable' => 'required',
   ),
+  'default_cost' =>
+  array (
+      'name' => 'default_cost',
+      'vname' => 'LBL_DEFAULT_COST',
+      'type' => 'currency',
+      'len' => '26,6',
+      'audited'=>true,
+      'comment' => 'Default cost (Shown)'
+  ),
+  'default_cost_usdollar' =>
+  array (
+      'name' => 'default_cost_usdollar',
+      'vname' => 'LBL_DEFAULT_COST_USDOLLAR',
+      'type' => 'decimal',
+      'len' => '26,6',
+      'studio' => array('editview' => false)
+  ),
   'status' =>
   array (
     'name' => 'status',

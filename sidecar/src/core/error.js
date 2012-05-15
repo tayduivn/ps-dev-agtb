@@ -1,7 +1,8 @@
 (function(app) {
     /**
      * Error handling module.
-     * @class Error
+     * @class Core.Error
+     * @singleton
      */
     var module = {
         /**

@@ -7,8 +7,37 @@
      * @extends View.View
      */
     app.view.views.HeaderView = app.view.View.extend({
+        events: {
+            'click #moduleList li a': 'onModuleTabClicked',
+            'click #createList li a': 'onCreateClicked',
+            'click .cube': 'onHomeClicked'
+        },
+        onModuleTabClicked: function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            var moduleHref = this.$(evt.currentTarget).attr('href');
+            this.$('#moduleList li').removeClass('active');
+            this.$(evt.currentTarget).parent().addClass('active');
+            app.router.navigate(moduleHref, {trigger: true});
+        },
+        onHomeClicked: function(evt) {
+            // Just removes active on modules for now.
+            // TODO: Maybe we should highlight the "cube"?
+            this.$('#moduleList li').removeClass('active');
+        },
+        onCreateClicked: function(evt) {
+            var moduleHref, hashModule;
+            moduleHref = evt.currentTarget.hash;
+            hashModule = moduleHref.split('/')[0];
+            this.$('#moduleList li').removeClass('active');
+            this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+        },
+
         /**
-         * Renders Header view
+         * Initialize the View
+         *
+         * @constructor
+         * @param {Object} options
          */
         initialize: function(options) {
             var self = this;
@@ -25,6 +54,11 @@
             this.setModuleInfo();
             this.setCreateTasksList();
             app.view.View.prototype.render.call(this);
+            // So this "re-binds" our delegate events defined above. We're re-rendering the
+            // header view twice; (once for initial page load; I assume so we "look fast"),
+            // and then again once app:sync:complete fires. This makes sense, but our events
+            // get lost since, ultimately, backbone.render gets recalled. This fixes that ;=)
+            this.delegateEvents(); 
         },
         hide: function() {
             this.$el.hide();
@@ -48,7 +82,7 @@
                         } else {
                             var singular = (singularModules[loadedModule]) ? singularModules[loadedModule] : loadedModule;
                             if(app.acl.hasAccess('create', app.data.createBean(loadedModule,{assigned_user_id: 'assignedUserId'}))) {
-                                self.createListLabels.push('Create '+singular);
+                                self.createListLabels.push({label:'Create '+singular, module: loadedModule});
                             }
                         }
                     });

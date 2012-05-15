@@ -985,7 +985,7 @@ class SugarBean
      * link then it creates a similary named variable and loads the relationship definition.
      *
      * @param string $rel_name  relationship/attribute name.
-     * @return nothing.
+     * @return bool true on success, false on failure
      */
     function load_relationship($rel_name)
     {

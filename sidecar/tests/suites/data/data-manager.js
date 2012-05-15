@@ -138,7 +138,7 @@ describe("DataManager", function() {
         contacts = SugarTest.loadFixture("contacts");
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}max_num=2.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
@@ -174,7 +174,7 @@ describe("DataManager", function() {
         contacts = SugarTest.loadFixture("contacts");
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}max_num=2.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 

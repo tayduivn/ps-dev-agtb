@@ -97,12 +97,12 @@ class ListApi extends SugarApi {
 
 
         $orderBy = '';
-        if ( isset($args['orderBy']) ) {
-            if ( strpos($args['orderBy'],',') !== 0 ) {
+        if ( isset($args['order_by']) ) {
+            if ( strpos($args['order_by'],',') !== 0 ) {
                 // There is a comma, we are ordering by more than one thing
-                $orderBys = explode(',',$args['orderBy']);
+                $orderBys = explode(',',$args['order_by']);
             } else {
-                $orderBys = array($args['orderBy']);
+                $orderBys = array($args['order_by']);
             }
             $orderByArray = array();
             foreach ( $orderBys as $order ) {

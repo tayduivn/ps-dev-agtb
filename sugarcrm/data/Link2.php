@@ -109,7 +109,8 @@ class Link2 {
 
         if (!$this->loadedSuccesfully())
         {
-            $GLOBALS['log']->fatal("{$this->name} for {$this->def['relationship']} failed to load\n");
+            global $app_strings;
+            $GLOBALS['log']->error(string_format($app_strings['ERR_DATABSE_RELATIONSHIP_QUERY'], array($this->name, $this->def['relationship'])));
         }
         //Following behavior is tied to a property(ignore_role) value in the vardef. It alters the values of 2 properties, ignore_role_filter and add_distinct.
         //the property values can be altered again before any requests are made.

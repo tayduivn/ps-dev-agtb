@@ -2138,15 +2138,15 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
-        $this->markTestSkipped('Skipping recursive tests until functionality complete');
-        //$result = $this->_db->createRecursiveQuerySPs();
-        //echo var_dump($result);
         $idCurrent = $startId;
         $levels = $startDbLevel;
-       //$result = $this->_db->createRecursiveQuerySPs();
-        //echo var_dump($result);
-        //$table = $this->setupRecursiveStructure();
-		$table = 'testRecursive_';
+        $this->_db->preInstall();
+
+        // setup test table and fill it with data if it doesn't already exist
+        $table = 'testRecursive_';
+        if(!$this->_db->tableExists($table)) {
+            $table = $this->setupRecursiveStructure();
+        }
 
         // Testing lineage
         $lineageSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',true, "id ='$idCurrent'");
@@ -2154,15 +2154,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         while($row = $this->_db->fetchByAssoc($result))
         {
-			$this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
-			if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
-			$this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
-		}
-		$this->assertEquals('1', $idCurrent, "Incorrect top node id");
-		$this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
-		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
+            $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
+            if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+            $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
+        }
+        $this->assertEquals('1', $idCurrent, "Incorrect top node id");
+        $this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
 
-		// Testing children
+        // Testing children
         $idCurrent = $startId;
         $childcount = 0;
         $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
@@ -2170,13 +2169,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         while($row = $this->_db->fetchByAssoc($result))
         {
-			$this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
-			$childcount++;
-		}
-		$this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
-		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
-    }
+            $this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
+            $childcount++;
+        }
+        $this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
 
+    }
 
     public function testGetIndicesContainsPrimary()
     {

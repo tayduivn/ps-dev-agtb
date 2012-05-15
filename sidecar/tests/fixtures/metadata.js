@@ -569,6 +569,7 @@ fixtures.metadata = {
         }
     },
     'sugarFields': {
+        "_hash": "x1",
         "text": {
             "views": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
@@ -900,6 +901,7 @@ fixtures.metadata = {
         }
     },
     'viewTemplates': {
+        "_hash": "x2",
         "detail": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
@@ -971,7 +973,28 @@ fixtures.metadata = {
             '</ul>' +
             "</div>"
     },
-    appListStrings: {
+    "modStrings": {
+        "_hash": "x3",
+        "Contacts": {
+          "LBL_ASSIGNED_TO_ID": "Assigned User",
+          "LBL_ASSIGNED_TO_NAME": "Assigned to:",
+          "LBL_TEAM": "Teams",
+          "LBL_TEAMS": "Teams",
+          "LBL_TEAM_ID": "Team ID:",
+          "LBL_SALUTATION": "Salutation:",
+          "LBL_FIRST_NAME": "First Name:",
+          "LBL_LAST_NAME": "Last Name:",
+          "LBL_TITLE": "Title:",
+          "LBL_DEPARTMENT": "Department:",
+          "MSG_DUPLICATE": "The contact record you are about to create might be a duplicate of a contact record that already exists. Contact records containing similar names are listed below.<br>Click Create Contact to continue creating this new contact, or select an existing contact listed below.",
+          "MSG_SHOW_DUPLICATES": "The contact record you are about to create might be a duplicate of a contact record that already exists. Contact records containing similar names are listed below.<br>Click Save to continue creating this new contact, or click Cancel to return to the module without creating the contact.",
+          "NTC_COPY_ALTERNATE_ADDRESS": "Copy alternate address to primary address",
+          "NTC_COPY_PRIMARY_ADDRESS": "Copy primary address to alternate address",
+          "_hash": "65155e04133282acf37a51305a6ca9e6"
+        }
+    },
+    "appListStrings": {
+        "_hash": "x4",
         "case_priority_default_key": "P2",
         "case_priority_dom": {"P1": "High", "P2": "Medium", "P3": "Low"},
         "case_status_dom": {"New": "New", "Assigned": "Assigned", "Closed": "Closed", "Pending Input": "Pending Input", "Rejected": "Rejected", "Duplicate": "Duplicate"},
@@ -1061,7 +1084,8 @@ fixtures.metadata = {
             "pieWedgeName": "sections"
         }
     },
-    appStrings: {
+    "appStrings": {
+        "_hash": "x5",
         DATA_TYPE_DUE: "Due:",
         DATA_TYPE_MODIFIED: "Modified:",
         DATA_TYPE_SENT: "Sent:",
@@ -1113,6 +1137,28 @@ fixtures.metadata = {
                 "massupdate": "yes",
                 "create": "yes",
                 "_hash": "c2dd34be3e193dd127eb7ab69d413cc6"
+      },
+      "Accounts":{
+          "fields": {
+                    "name": {
+                        "write": "owner"
+                    }, "status": {
+                        "write": "no"
+                    }
+                },
+                "admin": "yes",
+                "developer": "no",
+                "access": "yes",
+                "view": "yes",
+                "list": "yes",
+                "edit": "no",
+                "delete": "yes",
+                "import": "yes",
+                "export": "yes",
+                "massupdate": "yes",
+                "create": "yes",
+                "_hash": "3435464127eb7ab69d413cc6"
       }
+
   }
 };

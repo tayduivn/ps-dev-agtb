@@ -33,7 +33,7 @@ require_once ('modules/Forecasts/Common.php');
 require_once ('modules/Forecasts/ForecastDirectReports.php');
 
 require_once ('include/JSON.php');
-global $theme, $mod_strings;
+global $theme, $mod_strings, $current_language;
 
 
 global $href_string;
@@ -480,4 +480,370 @@ function buildExportLink($forecast_type) {
     return $buttons;
 }
 
-?>
+
+function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
+{
+    global $timedate, $current_user;
+
+    $result = '';
+
+    $quote = new Quote();
+    $quote->retrieve($quote_id);
+    $quoteBundles = array();
+    $quoteBundles = $quote->get_product_bundles();
+
+    $opp = new Opportunity();
+    $opp->retrieve($opp_id);
+    $oppBundles = array();
+    $oppBundles = $opp->get_line_bundles();
+
+    if ($direction == 'to_opportunity' && !empty($quoteBundles))
+    {
+        $result['opportunity']['id'] = $opp_id;
+
+        foreach ($quoteBundles as $bundle)
+        {
+            // check if opp bundle already exists
+            $oppBundleExists = false;
+            foreach ($oppBundles as $oppBundle)
+            {
+                if ($oppBundle->name == $bundle->name)
+                {
+                    $oppBundleExists = true;
+                    break;
+                }
+            }
+
+            // sync a bundle
+            $oppLineBundle = new OpportunityLineBundle();
+
+            if ($oppBundleExists)
+            {
+                $oppLineBundle->retrieve($oppBundle->id);
+            }
+
+
+            if (!isset($oppLineBundle->id))
+            {
+                $oppLineBundle->id = null;
+                $oppLineBundle->name = $bundle->name;
+                $oppLineBundle->created_by = $bundle->created_by;
+                $oppLineBundle->modified_user_id = $current_user->id;
+                $oppLineBundle->date_created = $timedate->asDb($timedate->getNow());
+                $oppLineBundle->date_entered = $timedate->asDb($timedate->getNow());
+                $oppLineBundle->deleted = 0;
+                $oppLineBundle->save();
+
+                //set opp_line_bundle_opp relationship
+                $oppLineBundle->set_opportunitylinebundle_opportunity_relationship($opp_id, '', 1);
+            }
+
+            $productBundle = new ProductBundle();
+            $productBundle->retrieve($bundle->id);
+            $products = array();
+            $products = $productBundle->get_products();
+
+            $lineItems = array();
+            if ($oppBundleExists)
+            {
+                $lineItems = $oppLineBundle->get_line_items();
+            }
+
+            $arrOppLines = '';
+
+            foreach ($products as $product)
+            {
+                // check if line item already exists
+                $lineItemExists = false;
+                foreach ($lineItems as $lineItem)
+                {
+                    if ($lineItem->product_id == $product->id)
+                    {
+                        $lineItemExists = true;
+                        break;
+                    }
+                }
+
+                //sync a line item
+                $oppLine = new OpportunityLine();
+                if ($lineItemExists)
+                {
+                    //just update currency fields
+                    $oppLine->retrieve($lineItem->id);
+                    $oppLine->price = $product->list_price;
+                    $oppLine->discount_price = $product->discount_price;
+                    $oppLine->discount_usdollar = $product->discount_usdollar;
+                    $oppLine->currency_id = $product->currency_id;
+                    $oppLine->tax_class = $product->tax_class;
+                    $oppLine->save();
+                }
+                else
+                {
+                    //create new opportunity line item
+                    $oppLine->id = null;
+                    $oppLine->product_id = $product->id;
+                    $oppLine->opportunity_id = $opp_id;
+                    $oppLine->price = $product->list_price;
+                    $oppLine->discount_price = $product->discount_price;
+                    $oppLine->discount_usdollar = $product->discount_usdollar;
+                    $oppLine->currency_id = $product->currency_id;
+                    $oppLine->tax_class = $product->tax_class;
+                    $oppLine->deleted = 0;
+                    $oppLine->save();
+
+                    //set opp_line_bundle_opp_line relationship
+                    $oppLineBundle->set_opportunitylinebundle_opportunityline_relationship($oppLine->id, 1, '');
+
+                    $arrOppLines[] = array('id' => $oppLine->id);
+                }
+                
+            }//foreach products
+
+            if (!empty($arrOppLines))
+            {
+                $result['opportunity']['bundles'][] = array('id' => $oppLineBundle->id, 'products' => $arrOppLines);
+            }
+
+        }//foreach bundles
+
+        return $result;
+    }
+    elseif ($direction == 'to_quote' && !empty($oppBundles))
+    {
+        $result['quote']['id'] = $quote_id;
+
+        foreach ($oppBundles as $bundle)
+        {
+            // check if quote bundle already exists
+            $quoteBundleExists = false;
+            foreach ($quoteBundles as $quoteBundle)
+            {
+                if ($quoteBundle->name == $bundle->name)
+                {
+                    $quoteBundleExists = true;
+                    break;
+                }
+            }
+            // sync a bundle
+            $productBundle = new ProductBundle();
+
+            if ($quoteBundleExists)
+            {
+                $productBundle->retrieve($quoteBundle->id);
+            }
+
+            if (!isset($productBundle->id))
+            {
+                $productBundle->id = null;
+                $productBundle->name = $bundle->name;
+                $productBundle->created_by = $bundle->created_by;
+                $productBundle->modified_user_id = $current_user->id;
+                $productBundle->date_modified = $timedate->asDb($timedate->getNow());
+                $productBundle->date_entered = $timedate->asDb($timedate->getNow());
+                $productBundle->deleted = 0;
+                $productBundle->save();
+
+                //set productbundle_quote relationship
+                $productBundle->set_productbundle_quote_relationship($quote_id, '', '');
+            }
+
+            $oppLineBundle = new OpportunityLineBundle();
+            $oppLineBundle->retrieve($bundle->id);
+            $lineItems = array();
+            $lineItems = $oppLineBundle->get_line_items();
+
+            $products = array();
+            if ($quoteBundleExists)
+            {
+                $products = $productBundle->get_products();
+            }
+
+            $arrProducts = '';
+
+            foreach ($lineItems as $line)
+            {
+                //check if product already exists
+                $quoteProductExists = false;
+                foreach ($products as $product)
+                {
+                    if ($product->id == $line->product_id)
+                    {
+                        $quoteProductExists = true;
+                        break;
+                    }
+                }
+
+                //sync a line item
+
+                if ($quoteProductExists)
+                {
+                    //just update currency fields
+                    $product->list_price = $line->price;
+                    $product->discount_price = $line->discount_price;
+                    $product->discount_usdollar = $line->discount_usdollar;
+                    $product->currency_id = $line->currency_id;
+                    $product->tax_class = $line->tax_class;
+                    $product->save();
+
+                }
+                else
+                {
+                    //create new product for quote
+                    $product = new Product();
+                    $product->id = $line->product_id;
+                    $product->quote_id = $quote_id;
+                    $product->list_price = $line->price;
+                    $product->discount_price = $line->discount_price;
+                    $product->discount_usdollar = $line->discount_usdollar;
+                    $product->currency_id = $line->currency_id;
+                    $product->tax_class = $line->tax_class;
+                    $product->deleted = 0;
+                    $product->save();
+
+                    //set opp_line_bundle_opp_line relationship
+                    $productBundle->set_productbundle_product_relationship($product->id, 1, $bundle->id);
+
+                    $arrProducts[] = array('id' => $product->id);
+                }
+
+                
+
+            }//foreach oppLines
+
+            if (!empty($arrProducts))
+            {
+                $result['quote']['bundles'][] = array('id' => $productBundle->id, 'products' => $arrProducts);
+            }
+
+        }//foreach oppBundles
+
+        return $result;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// get summation opportunity data for current user
+// forecast_type can be 'Direct' or 'Rollup'
+function getOppSummationData($user_id, $timeperiod_id, $forecast_type = 'Direct')
+{
+    global $timedate;
+
+    //initialize hierarchy helper function.
+    $hhelper = new Common();
+    $hhelper->setup();
+    $hhelper->set_current_user($user_id);
+
+    if (empty($timedate))
+    {
+        $timedate = TimeDate::getInstance();
+    }
+
+    if (empty($timeperiod_id))
+    {
+        $now = $timedate->getNow();
+        
+        $timeperiod_id = $hhelper->db->getOne("SELECT id 
+                                                FROM timeperiods 
+                                                WHERE start_date < '{$timedate->asDbDate($now)}' 
+                                                    AND end_date > '{$timedate->asDbDate($now)}' 
+                                                    AND deleted = 0
+                                                    AND is_fiscal_year = 0");
+        if(empty($timeperiod_id))
+        {
+            //Log an error message here
+            $GLOBALS['log']->error();
+        }
+    }
+
+    
+
+    $data = array();
+
+    $amount_usdollar = $hhelper->db->convert("amount_usdollar", "IFNULL", array(0));
+    $probability = $hhelper->db->convert("probability", "IFNULL", array(0));
+
+    if (strtolower($forecast_type) == 'direct')
+    {
+        $query = "SELECT op.id opp_id,
+                        op.name name,
+                        op.amount amount,
+                        ((op.amount_usdollar * op.probability) / 100) weighted_value,
+                        CASE WHEN s.best_case > 0 THEN s.best_case
+                            ELSE " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END best_case,
+                        CASE WHEN s.likely_case > 0 THEN s.likely_case
+                            ELSE " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END likely_case,
+                        CASE WHEN s.worst_case > 0 THEN s.worst_case
+                            ELSE " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END worst_case";
+        $query .= " FROM (" . createOppDataByUserQuery($user_id, $timeperiod_id) . ") as s";
+        $query .= " LEFT JOIN opportunities op on op.id = s.id";
+
+        $result = $hhelper->db->query($query, true, "Error getting opportunity summation data");
+        while($row = $hhelper->db->fetchByAssoc($result))
+        {
+            $data['direct'][$user_id][] = $row;
+        }
+    }
+    elseif (strtolower($forecast_type) == 'rollup')
+    {
+        $hhelper->retrieve_direct_downline($user_id);
+
+        $users = array_merge(array($user_id), $hhelper->my_direct_downline);
+
+        foreach ($users as $user)
+        {
+            $query = "SELECT op.assigned_user_id user_id,
+                            SUM(op.amount) amount,
+                            SUM(((op.amount_usdollar * op.probability) / 100)) weighted_value,
+                            SUM(CASE WHEN s.best_case > 0 THEN s.best_case
+                                    ELSE " . $hhelper->db->convert("op.best_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) best_case,
+                            SUM(CASE WHEN s.likely_case > 0 THEN s.likely_case
+                                    ELSE " . $hhelper->db->convert("op.likely_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) likely_case,
+                            SUM(CASE WHEN s.worst_case > 0 THEN s.worst_case
+                                    ELSE " . $hhelper->db->convert("op.worst_case", "IFNULL", array("(($amount_usdollar * $probability)/100)")) . " END) worst_case";
+            $query .= " FROM (" . createOppDataByUserQuery($user, $timeperiod_id) . ") as s";
+            $query .= " LEFT JOIN opportunities op on op.id = s.id";
+            $query .= " GROUP BY op.assigned_user_id";
+
+            $result = $hhelper->db->query($query, true, "Error getting opportunity summation data");
+            $row = $hhelper->db->fetchByAssoc($result);
+            if ($row != null)
+            {
+                $data['rollup'][] = $row;
+            }
+        }
+    }
+    return $data;
+}
+
+// create subquery to be used in the function above
+// count summation of opp_lines b/l/w cases for every opp assigned to current user
+function createOppDataByUserQuery($user_id, $timeperiod_id)
+{
+    global $db;
+
+    if (empty($db))
+    {
+        $db = DBManagerFactory::getInstance();
+    }
+
+    $query = "SELECT o.id id,
+               SUM(" . $db->convert("ol.best_case", "IFNULL", array(0)) . ") as best_case,
+               SUM(" . $db->convert("ol.likely_case", "IFNULL", array(0)) . ") as likely_case,
+               SUM(" . $db->convert("ol.worst_case", "IFNULL", array(0)) . ") as worst_case";
+    $query .= " FROM timeperiods t, opportunities o";
+    $query .= " LEFT JOIN opp_line_bundle_opp olbo on o.id = olbo.opportunity_id
+                LEFT JOIN opp_line_bundle_opp_line olbol on olbo.bundle_id = olbol.bundle_id
+                LEFT JOIN opportunity_line ol on olbol.opportunity_line_id = ol.id";
+    $query .= " WHERE o.assigned_user_id = '$user_id'
+                    AND t.id = '$timeperiod_id'
+                    AND o.date_closed <= t.end_date
+                    AND o.date_closed >= t.start_date
+                    AND o.deleted = 0";
+    $query .= " GROUP BY o.id";
+    
+    return $query;
+}
+

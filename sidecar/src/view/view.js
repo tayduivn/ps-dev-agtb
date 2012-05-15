@@ -48,6 +48,17 @@
             this.fields = {};
 
             this.$el.addClass("view " + this.name);
+
+            /**
+             * A template to use for view fields if a field does not have a template defined for its parent view.
+             * Defaults to `"default"`.
+             *
+             * For example, if you have a subview and don't want to define subview template for all field types,
+             * you may choose to use existing templates like `detail` if your subview is in fact a detail view.
+             *
+             * @property {String}
+             */
+            this.fallbackFieldTemplate = "default";
         },
 
         /**
@@ -92,7 +103,7 @@
          * @return {Object} Reference to this view.
          */
         render: function() {
-            if (app.acl.hasAccess(this.name, this.context.get("model"))) {
+            if (app.acl.hasAccess(this.name, this.module)) {
                 this._render();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
@@ -100,7 +111,7 @@
                 }, this);
             } else {
                 app.logger.info("Current user does not have access to this module view.");
-                //TODO trigger app event to notify user about no access
+                //TODO trigger app event to notify user about no access or render a "no access" template
             }
 
             return this;
@@ -146,7 +157,18 @@
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+
+        /**
+         * Binds data changes to the model to trigger an initial view to render
+         */
+        bindDataChange: function() {
+            if (this.collection) {
+                this.collection.on("reset", this.render, this);
+            }
         }
+
 
     });
 

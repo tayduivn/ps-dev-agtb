@@ -50,6 +50,12 @@ describe('Metadata Manager', function() {
         expect(app.metadata.getField('doesntexist')).toBe(meta.sugarFields.text);
     });
 
+    it('should get strings', function() {
+        expect(app.metadata.getStrings("modStrings")).toBe(meta.modStrings);
+        expect(app.metadata.getStrings("appStrings")).toBe(meta.appStrings);
+        expect(app.metadata.getStrings("appListStrings")).toBe(meta.appListStrings);
+    });
+
     it('should patch view metadata', function() {
         var field = app.metadata.getView("Contacts", "detail").panels[0].fields[3];
         expect(_.isObject(field)).toBeTruthy();
@@ -94,6 +100,7 @@ describe('Metadata Manager', function() {
         expect(app.template.setView.getCall(0).args[0]).toEqual("tree");
         expect(app.template.setView.getCall(0).args[1]).toEqual("Taxonomy");
         expect(app.template.setView.getCall(0).args[2]).toEqual('My Lil Template');
+        expect(Handlebars.templates["tree.Taxonomy"]).toBeDefined();
         app.template.setView.restore();
     });
 
@@ -120,6 +127,11 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
             expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:lang:modStrings"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:lang:appStrings"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:lang:appListStrings"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:acl"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:moduleList"]).toBeDefined();
         });
 
         it('should not take any action when server returns 304', function() {
@@ -136,5 +148,6 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:f:integer"]).toBeUndefined();
             expect(SugarTest.storage["test:portal:md:f:password"]).toBeUndefined();
         });
+
     });
 });
