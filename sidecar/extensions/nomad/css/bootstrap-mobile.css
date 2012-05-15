@@ -3341,7 +3341,6 @@ article [id^="listing-action"] i.grip {
   padding: 0 4px 0 8px;
   line-height: 68px;
   width: 16px;
-  letter-spacing: -4px;
   z-index: 1;
   font-style: normal;
   height: 100%;
@@ -4269,16 +4268,6 @@ h3.nomad {
 }
 .alert:target {
   display: inline-block !important;
-}
-/* TOUR */
-#tour {
-  background: url('../img/welcome.jpg') no-repeat;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 3000;
 }
 /* Navbar collapse */
 .navbar-fixed-top .navbar-inner {
