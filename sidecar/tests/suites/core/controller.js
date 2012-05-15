@@ -1,15 +1,17 @@
 describe("Controller", function() {
 
+    var app;
+
     describe("when a route is matched", function() {
 
         beforeEach(function() {
+            app = SugarTest.app;
             SugarTest.seedMetadata();
             SugarTest.seedFakeServer();
         });
 
         it("should load the view properly", function() {
-            var app = SugarTest.app,
-                params = {
+            var params = {
                     module: "Contacts",
                     layout: "list"
                 };
@@ -23,9 +25,21 @@ describe("Controller", function() {
 
             expect(app.controller.layout).toBeDefined();
             expect(app.controller.layout instanceof Backbone.View).toBeTruthy();
-            expect(app.controller.context.get().collection).toBeDefined();
-            expect(app.controller.context.get().collection.models.length).toEqual(2);
+            expect(app.controller.context.get("collection")).toBeDefined();
+            expect(app.controller.context.get("collection").models.length).toEqual(2);
 
+        });
+
+        it("should fire a app:view:change event", function() {
+            var cbSpy = sinon.spy(function() {});
+            app.events.on("app:view:change", cbSpy);
+
+            var params = {
+                    module: "Contacts",
+                    layout: "list"
+                };
+            app.controller.loadView(params);
+            expect(cbSpy).toHaveBeenCalled();
         });
 
     });

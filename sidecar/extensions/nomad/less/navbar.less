@@ -142,12 +142,10 @@
     // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
     &:focus,
     &.focused {
-      padding: 5px 10px;
       color: @grayDark;
       text-shadow: 0 1px 0 @white;
       background-color: @white;
-      border: 0;
-      .box-shadow(0 0 3px rgba(0,0,0,.15));
+      border: 1px solid @gray;
       outline: 0;
     }
   }

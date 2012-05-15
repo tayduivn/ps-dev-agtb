@@ -76,6 +76,9 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         
         $reply = $this->_restCall('login',json_encode($args));
         $this->assertNotEmpty($reply['reply']['token']);
+        $this->assertNotEmpty($reply['reply']['current_user']['user_name']);
+        $this->assertNotEmpty($reply['reply']['current_user']['full_name']);
+        $this->assertNotEmpty($reply['reply']['current_user']['id']);
                                                           
     }
 }

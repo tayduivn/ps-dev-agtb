@@ -143,7 +143,7 @@
         logout: function() {
             app.logger.debug("===Loging out");
             var self = this;
-            app.api.logout({success: function(data) {
+            app.logout({success: function(data) {
                 self.navigate("#");
             }});
         },
@@ -161,7 +161,7 @@
 
             app.controller.loadView({
                 module: module,
-                id: id,
+                modelId: id,
                 action: action,
                 layout: action
             });

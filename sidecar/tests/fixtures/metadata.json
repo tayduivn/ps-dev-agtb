@@ -15,6 +15,10 @@
         },
         "Opportunities": {
             "fields": {
+                "name": {
+                    "name": "name",
+                    "required": true
+                },
                 "account_name": {
                     "name": "account_name",
                     "rname": "name",
@@ -27,7 +31,7 @@
                     "module": "Accounts",
                     "dbType": "varchar",
                     "link": "accounts",
-                    "len": "255",
+                    "len": 20,
                     "source": "non-db",
                     "unified_search": true,
                     "importable": "required"
@@ -192,5 +196,6 @@
             }
         }
 
-    }
+    },
+    "_hash": "hash"
 }

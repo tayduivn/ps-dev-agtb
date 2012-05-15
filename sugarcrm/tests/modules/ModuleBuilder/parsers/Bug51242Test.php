@@ -48,26 +48,29 @@ class Bug51242Test extends Sugar_PHPUnit_Framework_TestCase
     public function providerGetParser()
     {
         return array(
-            array(MB_PORTALLISTVIEW, 'Cases'),
-            array('portallayoutview','Cases'),
-            array(MB_PORTALLISTVIEW, 'Leads'),
-            array('portallayoutview','Leads'),
-            array(MB_PORTALLISTVIEW, 'Bugs'),
-            array('portallayoutview','Bugs'),
-            array(MB_PORTALLISTVIEW, 'KBDocuments'),
-            array('portallayoutview','KBDocuments'),
+            array(MB_PORTALLISTVIEW, 'Cases', null, null, MB_PORTAL),
+            array('portallayoutview','Cases', null, null, MB_PORTAL),
+            array(MB_PORTALLISTVIEW, 'Leads', null, null, MB_PORTAL),
+            array('portallayoutview','Leads', null, null, MB_PORTAL),
+            array(MB_PORTALLISTVIEW, 'Bugs', null, null, MB_PORTAL),
+            array('portallayoutview','Bugs', null, null, MB_PORTAL),
+            array(MB_PORTALLISTVIEW, 'KBDocuments', null, null, MB_PORTAL),
+            array('portallayoutview','KBDocuments', null, null, MB_PORTAL),
         );
     }
 
 
     /**
-     *  @dataProvider providerGetParser
-     *  @param string $view String value of the view to load
-     *  @param string $moduleName String value of the module name
+     * @dataProvider providerGetParser
+     * @param string $view      String value of the view to load
+     * @param string $module    String value of the module name
+     * @param string $package   The name of the MB package
+     * @param string $subpanel  The subpanel
+     * @param string $client    The client for this parser
      */
-    public function testGetParser($view, $module)
+    public function testGetParser($view, $module, $package, $subpanel, $client)
     {
-        $parser = ParserFactory::getParser($view, $module);
+        $parser = ParserFactory::getParser($view, $module, $package, $subpanel, $client);
         $this->assertNotEmpty($parser, 'Failed to retrieve parser instance');
     }
 }

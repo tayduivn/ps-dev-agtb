@@ -113,11 +113,10 @@ describe("Handlebars Helpers", function() {
     describe("eachOptions", function() {
         it("should pull options hash from app list strings and return an iterated block string", function() {
             var optionName = "custom_fields_importable_dom",
-                blockHtml = "<li>{{this.key}} {{this.value}}</li>",
-                appListStrings = fixtures.metadata.appListStrings,
+                blockHtml = "<li>{{this.key}} {{this.value}}</li>"
                 template = Handlebars.compile(blockHtml);
 
-            app.lang.setAppListStrings(fixtures.metadata.appListStrings);
+            app.metadata.set(fixtures.metadata);
             expect(Handlebars.helpers.eachOptions(optionName, template)).toEqual("<li>true Yes</li><li>false No</li><li>required Required</li>");
         });
 
@@ -154,17 +153,9 @@ describe("Handlebars Helpers", function() {
 
     describe("getLabel", function() {
         it("should get a label", function() {
-            var lang = SUGAR.App.lang,
-                setData = fixtures.language.Accounts,
-                string;
-
-            lang.setLabel("Accounts", setData);
-            string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
-
-            expect(string).toEqual("Annual Revenue");
-            // Save instance of app cache
-            expect(Handlebars.helpers.getLabel("LBL_ANNUAL_REVENUE", "Accounts")).toEqual("Annual Revenue");
-            // Restore cache
+            var lang = SugarTest.app.lang;
+            app.metadata.set(fixtures.metadata);
+            expect(Handlebars.helpers.getLabel("LBL_ASSIGNED_TO_NAME", "Contacts")).toEqual("Assigned to");
         });
     });
 

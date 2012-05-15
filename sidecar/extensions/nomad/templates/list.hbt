@@ -1,12 +1,12 @@
-<h1 class="nomad">{{context.state.module}}</h1>
+<h1 class="nomad">{{context.attributes.module}}</h1>
 <div class="container-fluid">
   <div class="row-fluid">
-      <div class="span12 listing fav filtered" id="listing-{{context.state.module}}">
+      <div class="span12 listing fav filtered" id="listing-{{context.attributes.module}}">
           <i></i>
           <section class="search topelbar">
             <i class="icon-search"></i>
             <div class="form-search row-fluid">
-              <input type="text" class="search-query" placeholder="Search all {{context.state.module}}">
+              <input type="text" class="search-query" placeholder="Search all {{context.attributes.module}}">
               <aside>
                 <div class="btn-group">
                   <a title="Starred" href="#" class="btn"><i class="icon-star"></i></a>
@@ -16,10 +16,16 @@
             </div>
           </section>
           {{#each meta.panels}}
+          <div class="block-footer show-more-top-btn" style="display: none">
+              <a class="btn loading wide " href="javascript:void(0)">Show More</a>
+          </div>
           <div class="items">
-          {{#each ../context.state.collection.models}}
+          {{#each ../context.attributes.collection.models}}
               {{listItem this ../../this ../fields}}
           {{/each}}
+          </div>
+          <div class="block-footer show-more-bottom-btn">
+              <a class="btn loading wide" href="javascript:void(0)">Show More</a>
           </div>
           {{/each}}
       </div>

@@ -182,10 +182,10 @@ describe('SugarCRM Javascript API', function () {
         });
 
         it('should build resource URLs for fetching a link', function() {
-            var params = { maxresult: 20 },
+            var params = { max_num: 20 },
             attributes = { id:'seed_jim_id', link:'reportees', related: null, relatedId: undefined },
             url = this.api.buildURL("Users", "reportees", attributes, params);
-            expect(url).toEqual('/rest/v10/Users/seed_jim_id/link/reportees?maxresult=20');
+            expect(url).toEqual('/rest/v10/Users/seed_jim_id/link/reportees?max_num=20');
         });
     });
 
@@ -416,11 +416,11 @@ describe('SugarCRM Javascript API', function () {
             SugarTest.server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=Contacts",
                 [200, {  "Content-Type":"application/json"},
                     JSON.stringify(fixtures.metadata.modules.Contacts)]);
-            this.api.getMetadata([], ['Contacts'], this.callbacks);
+            this.api.getMetadata("hash", [], ['Contacts'], this.callbacks);
             SugarTest.server.respond(); 
 
             expect(callspy).toHaveBeenCalled();
-            expect(callspy.getCall(0).args[1]).toEqual("/rest/v10/metadata?typeFilter=&moduleFilter=Contacts");
+            expect(callspy.getCall(0).args[1]).toEqual("/rest/v10/metadata?typeFilter=&moduleFilter=Contacts&_hash=hash");
         });
 
         it('should retrieve metadata', function () {
@@ -428,11 +428,11 @@ describe('SugarCRM Javascript API', function () {
                 modules = ["Contacts"],
                 spy = sinon.spy(this.callbacks, 'success');
             //this.api.debug=true;
-            SugarTest.server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=Contacts",
+            SugarTest.server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=Contacts&_hash=hash",
                 [200, {  "Content-Type":"application/json"},
                     JSON.stringify(fixtures.metadata.modules.Contacts)]);
 
-            this.api.getMetadata(types, modules, this.callbacks);
+            this.api.getMetadata("hash", types, modules, this.callbacks);
             SugarTest.server.respond(); //tell server to respond to pending async call
 
             expect(spy).toHaveBeenCalled();

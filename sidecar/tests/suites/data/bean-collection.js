@@ -23,7 +23,7 @@ describe("BeanCollection", function() {
         contacts.records.pop();
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
         syncSpy = sinon.spy(beans, "fetch");
@@ -50,7 +50,7 @@ describe("BeanCollection", function() {
         contacts.records.pop();
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
         syncSpy = sinon.spy(beans, "fetch");
@@ -80,7 +80,7 @@ describe("BeanCollection", function() {
         subSetContacts.records.pop();
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(subSetContacts)]);
         syncSpy = sinon.spy(beans, "fetch");
@@ -93,7 +93,7 @@ describe("BeanCollection", function() {
         contacts.records.shift();
         server = sinon.fakeServer.create();
 
-        server.respondWith("GET", /.*\/rest\/v10\/Contacts\?offset=1&maxresult=1/,
+        server.respondWith("GET", /.*\/rest\/v10\/Contacts\?offset=1&max_num=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
@@ -118,12 +118,12 @@ describe("BeanCollection", function() {
         };
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1&orderBy=bob%3Aasc/,
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1&orderBy=bob%3Aasc/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(subSetContacts)]);
         beans.fetch();
         SugarTest.server.respond();
-        expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?maxresult=1&orderBy=bob%3Aasc/);
+        expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?max_num=1&order_by=bob%3Aasc/);
         ajaxSpy.restore();
     });
 

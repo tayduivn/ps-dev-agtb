@@ -59,17 +59,20 @@
     /**
      * Creates a field widget for a given field name.
      * @method fieldWithName
-     * @param {String} name Field name
      * @param {Core.Context} context Current app context
      * @param {View.View} view Parent view
+     * @param {Data.Bean} bean
+     * @param {String} name Field name
+     * @param {String} viewName Specify it to call a template from another view
      * @return {String} HTML placeholder for the widget.
      */
-    Handlebars.registerHelper('fieldWithName', function(name, context, view) {
+    Handlebars.registerHelper('fieldWithName', function(context, view, bean, name, viewName) {
         var field = app.view.createField({
             def: { name: name, type: "base" },
             view: view,
             context: context,
-            viewName: "default" // override view name (template for "default" view will be used instead of view.name)
+            model: bean || context.get("model"),
+            viewName: viewName || null // override view name (template for "default" view will be used instead of view.name)
         });
 
         return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
@@ -193,13 +196,14 @@
     });
 
     /**
+     * Retrieves a label string.
      * @method getLabel
-     * @param {String} string
-     * @param {String}
+     * @param {String} key Key of the label.
+     * @param {String} module(optional) Module name.
+     * @return {String} The string for the given label key.
      */
-    Handlebars.registerHelper("getLabel", function(string, module){
-       var result = app.lang.get(string, module);
-       return result;
+    Handlebars.registerHelper("getLabel", function(key, module){
+       return app.lang.get(key, module);
     });
 
 })(SUGAR.App);

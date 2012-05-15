@@ -8,35 +8,38 @@
 // Core
 .btn {
   display: inline-block;
+  .ie7-inline-block();
   padding: 4px 10px 4px;
   margin-bottom: 0; // For input.btn
   font-size: @baseFontSize;
   line-height: @baseLineHeight;
-  color: darken(@gray, 20%);
+  *line-height: 20px;
+  color: @gray;
   font-weight: 500;
-  font-family: 'Helvetica Neue';
   text-align: center;
-  text-shadow: 0 1px 0 rgba(255,255,255,.75);
+  text-shadow: 0 1px 1px rgba(255,255,255,.75);
   vertical-align: middle;
-  .buttonBackground(@white, @grayLight);
-  border: 1px solid rgba(0,0,0,.25);
-  .border-radius(3px);
-  @shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 1px rgba(0,0,0,.075);
-  .box-shadow(@shadow);
   cursor: pointer;
-
-  // Give IE7 some love
-  .reset-filter();
-  .ie7-restore-left-whitespace();
+  .buttonBackground(@btnBackground, @btnBackgroundHighlight);
+  border: 1px solid @btnBorder;
+  *border: 0; // Remove the border to prevent IE7's black border on input:focus
+  border-bottom-color: darken(@btnBorder, 10%);
+  .border-radius(4px);
+  .ie7-restore-left-whitespace(); // Give IE7 some love
+  .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
 }
 
 // Hover state
 .btn:hover {
-  color: @grayDarker;
+  color: @grayDark;
   text-decoration: none;
-  border: 1px solid rgba(0,0,0,.4);
-  @shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.1);
-  .box-shadow(@shadow);
+  background-color: darken(@white, 10%);
+  *background-color: darken(@white, 15%); /* Buttons in IE7 don't get borders, so darken on hover */
+  background-position: 0 -15px;
+
+  // transition is only when going to hover, otherwise the background
+  // behind the gradient (there for IE<=9 fallback) gets mismatched
+  .transition(background-position .1s linear);
 }
 
 // Focus state for keyboard and accessibility
@@ -47,22 +50,21 @@
 // Active state
 .btn.active,
 .btn:active {
+  background-color: darken(@gray, 10%);
+  background-color: darken(@gray, 15%) e("\9");
   background-image: none;
-  @shadow: inset 0 1px 1px rgba(0,0,0,.5);
-  .box-shadow(@shadow);
-  color: @white;
-  text-shadow: none;
-  background-color: @gray;
+  color: @grayLighter !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.75);
   outline: 0;
-  .opacity(100);
+  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
 }
 
 // Disabled state
 .btn.disabled,
 .btn[disabled] {
   cursor: default;
-  background-image: none;
   background-color: darken(@white, 10%);
+  background-image: none;
   .opacity(65);
   .box-shadow(none);
 }
@@ -70,11 +72,6 @@
 
 // Button Sizes
 // --------------------------------------------------
-
-.btn [class^="icon-"] {
-  margin-top: 2px;
-  .opacity(65);  
-}
 
 // Large
 .btn-large {
@@ -122,8 +119,8 @@
 .btn-info:hover,
 .btn-inverse,
 .btn-inverse:hover {
+  color: @white;
   text-shadow: 0 -1px 0 rgba(0,0,0,.25);
-  color: @white !important;
 }
 // Provide *some* extra contrast for those who can get it
 .btn-primary.active,
@@ -131,43 +128,37 @@
 .btn-danger.active,
 .btn-success.active,
 .btn-info.active,
-.btn-dark.active {
+.btn-inverse.active {
   color: rgba(255,255,255,.75);
 }
 
 // Set the backgrounds
 // -------------------------
+
 .btn-primary {
-  .buttonBackground(@blue, darken(@blue, 10%));
+  .buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
 }
 // Warning appears are orange
 .btn-warning {
-  .buttonBackground(@orange, darken(@orange, 10%));
+  .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
 }
 // Danger and error appear as red
 .btn-danger {
-  .buttonBackground(@red, darken(@red, 10%));
+  .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
 }
 // Success appears as green
 .btn-success {
-  .buttonBackground(@green, darken(@green, 10%));
+  .buttonBackground(@btnSuccessBackground, @btnSuccessBackgroundHighlight);
 }
 // Info appears as a neutral blue
 .btn-info {
-  .buttonBackground(@blueLight, darken(@blueLight, 10%));
+  .buttonBackground(@btnInfoBackground, @btnInfoBackgroundHighlight);
 }
-// Inverse appears as black
+// Inverse appears as dark gray
 .btn-inverse {
-  .buttonBackground(@grayDarker, darken(@black, 5%));
-  text-shadow: 0 1px 0 @black;
+  .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
 }
 
-// sugar red buttons
-.btn-sugar {
-  .buttonBackground(@red, darken(@red, 15%));
-  text-shadow: 0 -1px 0 darken(@red, 25%);
-  color: #fff;
-}
 
 // Cross-browser Jank
 // --------------------------------------------------
@@ -184,12 +175,16 @@ input[type="submit"].btn {
   // IE7 has some default padding on button controls
   *padding-top: 2px;
   *padding-bottom: 2px;
-  &.large {
+  &.btn-large {
     *padding-top: 7px;
     *padding-bottom: 7px;
   }
-  &.small {
+  &.btn-small {
     *padding-top: 3px;
     *padding-bottom: 3px;
+  }
+  &.btn-mini {
+    *padding-top: 1px;
+    *padding-bottom: 1px;
   }
 }

@@ -1,10 +1,17 @@
 /**
  * Base bean class. Use {@link Data.DataManager} to create instances of beans.
  *
- * **CRUD on beans**
+ * **CRUD**
  *
- * Use standard Backbone's <code>fetch</code>, <code>save</code>, and <code>destroy</code>
+ * Use standard Backbone's `fetch`, `save`, and `destroy`
  * methods to perform CRUD operations on beans. See {@link Data.DataManager} class for details.
+ *
+ * **Validation**
+ *
+ * This class does not override Backbone.Model's `validate` method.
+ * The validation is done in `save` method. If the bean is invalid the save is rejected.
+ * Use {@link Data.Bean#isValid} method to check if the bean is valid in other situations.
+ * Failed validations trigger an `"app:error:validation:<field-name>"` event.
  *
  * @class Data.Bean
  * @extends Backbone.Model
@@ -15,9 +22,9 @@
     var _relatedCollections;
 
     app.augment("Bean", Backbone.Model.extend({
+
         initialize: function(attributes){
             Backbone.Model.prototype.initialize.call(this, attributes);
-            this.validateFlag = false;
         },
 
         /**
@@ -56,107 +63,89 @@
         },
 
         /**
+         * Checks if a bean is valid.
+         *
+         * This method is called before {@link Data.Bean#save}.
+         * Failed validations trigger an `"app:error:validation:<field-name>"` event.
+         *
+         * @return {Boolean} Flag indicating if this bean is valid or not.
+         */
+        isValid: function() {
+            var errors = this._doValidate();
+            return this._processValidationErrors(errors);
+        },
+
+        /**
          * Validates a bean.
          *
-         * <code>validate</code> is called before <code>set</code> and <code>save</code>,
-         * and is passed the attributes that are about to be updated.
-         * <code>set</code> and <code>save</code> will not continue if validate returns an error.
-         * Failed validations trigger an <code>"error"</code> event.
-         *
-         * <code>validate</code> returns an errors hash of the following structure:
+         * @return {Object} validation errors object.
          *
          * - keys: field names, values: errors hash
          * - errors hash is a collection of error definitions
          * - error definition can be a primitive type or an object. It depends on validator.
          *
-         *  Example:
-         *  <pre><code>
-         *  {
-         *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } }
-         *  }
-         *  </code></pre>
+         * Example:
+         * <pre><code>
+         * {
+         *    first_name: {
+         *       maxLength: 20,
+         *       someOtherValidatorName: { some complex error definition... }
+         *    },
+         *    last_name: {
+         *       required: true
+         *    }
+         * }
+         * </code></pre>
          *
-         *  This method does not check for required fields.
-         *  TODO: Add convinience method that checks for required fields
-         *
-         * @param attrs attributes hash that is about to be set on this bean
-         * @return {Object} errors hash if the bean is invalid or nothing otherwise.
+         * @private
          */
-        validate: function(attrs) {
-            var errors = {}, self = this;
-            var field, value, result, validator;
-            if (this.validateFlag) {
-                _.each(_.keys(self.fields), function(fieldName) {
-                    field = self.fields[fieldName];
-                    value = attrs[fieldName];
+        _doValidate: function() {
+            var value, errors = {};
+            _.each(this.fields, function(field, fieldName) {
+                value = this.get(fieldName);
 
-                    if (value) {
-                        _.each(_.keys(app.validation.validators), function(validatorName) {
-                            validator = app.validation.validators[validatorName];
-                            result = validator(field, value);
-                            _addValidationError(errors, result, fieldName, validatorName);
-                        });
-                    }
-                });
-            }
-            return this.processValidationErrors(errors);
-        },
-        /**
-         * Validates attributes for required fields
-         * @param {Object} attrs
-         * @return {Object}
-         */
-        validateRequired: function(attrs) {
+                _addValidationError(errors,
+                    app.validation.requiredValidator(field, field.name, this, value),
+                    fieldName, "required");
 
-            var errors = {}, self = this;
-            var field, value, result, validator;
+                if (value) {
+                    _.each(app.validation.validators, function(validator, validatorName) {
+                        _addValidationError(errors, validator(field, value), fieldName, validatorName);
+                    });
+                }
+            }, this);
 
-            _.each(_.keys(self.fields), function(fieldName) {
-                field = self.fields[fieldName];
-                value = attrs[fieldName];
-                result = app.validation.requiredValidator(field, field.name, self, value);
-                _addValidationError(errors, result, fieldName, "required");
-            });
-
-            if (!_.isEmpty(errors)) {
-                return this.processValidationErrors(errors);
-            }
-
+            return errors;
         },
 
         /**
-         * Processes generic validation errors and triggers model events
-         * @param {Object} errors
-         * @return {Object} errors
+         * Processes validation errors and triggers validation error events.
+         * @param {Object} errors validation errors.
+         * @return {Boolean} `true` if `errors` parameter is empty, otherwise `false`.
+         * @private
          */
-        processValidationErrors: function(errors) {
-            // "validate" method should not return anything in case there are no validation errors
+        _processValidationErrors: function(errors) {
+            var isValid = true;
             if (!_.isEmpty(errors)) {
                 app.error.handleValidationError(this, errors);
-                var self = this;
                 _.each(errors, function(fieldErrors, fieldName) {
-                    self.trigger("model.validation.error." + fieldName, fieldErrors);
-                });
-                // trigger error events on this object
-                return errors;
+                    this.trigger("app:error:validation:" + fieldName, fieldErrors);
+                }, this);
+
+                isValid = false;
             }
+
+            return isValid;
         },
 
         /**
-         * Overloads standard bean save so we can run required field validation outside of the standard validation loop
+         * Overloads standard bean save so we can run validation outside of the standard validation loop.
          * @param {Object} attributes model attributes
          * @param {Object} options standard save options as described by Backbone docs
          */
         save: function(attributes, options) {
             // we only validate on save
-            this.validateFlag = true;
-            var validationReturn = this.validate(this.attributes);
-            this.validateFlag = false;
-            if (!this.validateRequired(this.attributes) && _.isEmpty(validationReturn)) {
-                return Backbone.Model.prototype.save.call(this, attributes, options);
-            } else {
-                return false;
-            }
+            return this.isValid() ? Backbone.Model.prototype.save.call(this, attributes, options) : false;
         },
 
         /**
@@ -171,12 +160,13 @@
     }), false);
 
     /**
-     * Adds validation error to the passed in error object.
+     * Adds validation error to the passed in errorr object.
      * @param {Object} errors
-     * @param result
+     * @param {Object} result
      * @param {String} fieldName
      * @param {String} validatorName
      * @private
+     * @ignore
      */
     function _addValidationError(errors, result, fieldName, validatorName) {
         if (result) {
@@ -186,4 +176,5 @@
             errors[fieldName][validatorName] = result;
         }
     }
+
 })(SUGAR.App);

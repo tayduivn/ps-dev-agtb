@@ -3,12 +3,17 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
-    var _appPrefix = "a:";
+    var _langPrefix = "lang:";
 
     // Metadata that has been loaded from offline storage (memory cache)
-    var _app = {};
+    // Module specific metadata
     var _metadata = {};
+    // Field definitions
     var _fields = {};
+    // String packs
+    var _lang = {};
+    // Other
+    var _app = {};
 
     function _get(key) {
         return app.cache.get(_keyPrefix + key);
@@ -18,26 +23,34 @@
         app.cache.set(_keyPrefix + key, value);
     }
 
-    /**
-     * Initializes custom templates and controller if supplied upstream.
-     * @param {Object} entry - a module
-     * @param {String} type - 'view'||'layout'
-     * @param {String} module name
-     * @private
-     * @ignore
-     */
-    function _initCustomTemplatesAndComponents(entry, type, module) {
-        var plural = type + 's';
+    function _setMeta(container, property, prefix, meta) {
+        if (meta[property]) {
+            container[property] = meta[property];
+            _set(prefix + property, meta[property]);
+        }
+    }
 
-        _.each(entry[plural], function (obj, name) {
-            if (type === "view" && obj && obj.template) {
-                app.template.setView(name, module, obj.template, true);
-            }
-            if (obj && obj.controller) {
-                app.view.declareComponent(type, name, module, obj.controller, obj.meta.type);
-            }
+    function _getMeta(container, property, prefix, deleteHash) {
+        if (!container[property]) {
+            container[property] = _get(prefix + property);
+        }
+
+        if (deleteHash && container[property]) delete container[property]._hash;
+        return container[property];
+    }
+
+     // Initializes custom layouts/views templates and controllers
+    function _initCustomComponents(module, moduleName) {
+        _.each(["layout", "view"], function(type) {
+            _.each(module[type + 's'], function (def, name) {
+                if (type === "view" && def.template) { // Only views can have templates
+                    app.template.setView(name, moduleName, def.template, true);
+                }
+                if (def.controller) { // Both layouts and views can have controllers
+                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type);
+                }
+            });
         });
-
     }
 
     /**
@@ -51,11 +64,7 @@
         /**
          * Map of fields types.
          *
-         * Specifies correspondence between module field types and field widget types.
-         *
-         * - `varchar`, `name`, `currency` are mapped to `text` widget
-         * - `text` - `textarea`
-         * - `decimal` - `float`
+         * Specifies correspondence between field types and field widget types.
          */
         fieldTypeMap: {
             varchar: "text",
@@ -74,7 +83,7 @@
         _patchMetadata: function (moduleName, module) {
             if (!module || module._patched === true) return module;
             var self = this;
-            _.each(module.views, function(view, viewName) {
+            _.each(module.views, function(view) {
                 if(view.meta) {
                     _.each(view.meta.panels, function(panel) {
                         _.each(panel.fields, function(field, fieldIndex) {
@@ -151,18 +160,8 @@
          * @return {Object} Metadata for the specified field type.
          */
         getField: function(type) {
-            var metadata = _fields[type];
-            if (!metadata) {
-                _fields[type] = _get(_fieldPrefix + type);
-                metadata = _fields[type];
-            }
-
             // Fall back to plain text field
-            if (!metadata) {
-                metadata = _fields.text;
-            }
-
-            return metadata;
+            return _getMeta(_fields, type, _fieldPrefix) || _fields.text;
         },
 
         /**
@@ -173,10 +172,8 @@
          */
         getView: function(module, view) {
             var metadata = this.getModule(module, "views");
-            if (metadata && view) {
-                if(metadata[view] && metadata[view].meta) {
-                    metadata = metadata[view].meta;
-                }
+            if (metadata && metadata[view]) {
+                metadata = metadata[view].meta;
             }
 
             return metadata;
@@ -191,18 +188,8 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
 
-            // TODO: Server returns empty array for mobile platform
-            // REMOVE THIS HACK ONCE RESOLVED
-            //------------- HACK START ----------------------
-            if (_.isArray(metadata)) {
-                metadata = undefined;
-            }
-            //------------- HACK END ----------------------
-
-            if (metadata && layout) {
-                if(metadata[layout] && metadata[layout].meta) {
-                    metadata = metadata[layout].meta;
-                } 
+            if (metadata && metadata[layout]) {
+                metadata = metadata[layout].meta;
             }
 
             return metadata;
@@ -213,23 +200,26 @@
          * @return {Object}
          */
         getModuleList: function() {
-           var result =  {};
-            if (_app.moduleList) {
-                result = _app.moduleList;
-            } else {
-                _app.moduleList=_get(_appPrefix+"moduleList");
-                result = _app.moduleList;
-            }
-
-            if(result && result._hash) {
-                delete result._hash;
-            }
-
-            return result;
+            return _getMeta(_app, "moduleList", "", true) || {};
         },
 
-        // set is going to be used by the sync function and will transalte
-        // from server format to internal format for metadata
+        /**
+         * Gets language strings for a given type.
+         * @param {String} type Type of string pack: `appStrings`, `appListStrings`, `modStrings`.
+         * @return Dictionary of strings.
+         */
+        getStrings: function(type) {
+            return _getMeta(_lang, type, _langPrefix) || {};
+        },
+
+        /**
+         * Gets ACLs.
+         *
+         * @return Dictionary of ACLs.
+         */
+        getAcls: function() {
+            return _getMeta(_app, "acl", "") || {};
+        },
 
         /**
          * Sets the metadata.
@@ -248,8 +238,7 @@
                     modules.push(module);
 
                     // Compile templates and declare components for custom layouts and views
-                    _initCustomTemplatesAndComponents(entry, 'view', module);
-                    _initCustomTemplatesAndComponents(entry, 'layout', module);
+                    _initCustomComponents(entry, module);
 
                    }, this);
                 _set("modules", modules.join(","));
@@ -265,12 +254,25 @@
                 });
             }
 
-            if (data.moduleList) {
-                _app.moduleList = data.moduleList;
-                _set(_appPrefix + "moduleList", data.moduleList);
-            }
+            _setMeta(_app, "moduleList", "", data);
+
+            _setMeta(_lang, "appListStrings", _langPrefix, data);
+            _setMeta(_lang, "appStrings", _langPrefix, data);
+            _setMeta(_lang, "modStrings", _langPrefix, data);
+
+            _setMeta(_app, "acl", "", data);
+
+            _setMeta(_app, "_hash", "", data);
 
             app.template.set(data, true);
+        },
+
+        /**
+         * Gets metadata hash.
+         * @return {String} Metadata hash tag.
+         */
+        getHash: function() {
+            return _app._hash || _get("_hash") || "";
         },
 
         /**
@@ -279,16 +281,23 @@
          */
         sync: function(callback) {
             var self = this;
-            app.api.getMetadata(app.config.metadataTypes, [], {
-                success: function(metadata) {
-                    self.set(metadata);
+
+            app.api.getMetadata(self.getHash(), app.config.metadataTypes, [], {
+                success: function(metadata, textStatus, jqXHR) {
+                    if (jqXHR.status == 304) { // Our metadata is up to date so we do nothing.
+                        app.logger.debug("Metadata is up to date");
+                    } else if (jqXHR.status == 200) { // Need to update our app with new metadata.
+                        app.logger.debug("Metadata is out of date");
+                        self.set(metadata);
+                    }
+
                     if (callback) {
                         callback.call(self, null, metadata);
                     }
                 },
                 error: function(error) {
-                    app.logger.error("Error fetching metadata");
-                    app.logger.error(error);
+                    app.logger.error("Error fetching metadata " + error);
+
                     if (callback) {
                         callback.call(self, error);
                     }

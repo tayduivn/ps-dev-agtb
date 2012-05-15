@@ -107,7 +107,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * Starts the initialization phase of the app. Modules bound to this event will initialize.
+                 * Fires when the app object is initialized. Modules bound to this event will initialize.
                  */
                 "app:init",
                 this
@@ -116,7 +116,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when the app is beginning to sync data / metadata from the server.
+                 * Fires when the app is beginning to sync data / metadata from the server.
                  */
                 "app:sync",
                 this
@@ -125,7 +125,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when the app has finished its syncing process and is ready to proceed.
+                 * Fires when the app has finished its syncing process and is ready to proceed.
                  */
                 "app:sync:complete",
                 this
@@ -134,7 +134,7 @@ SUGAR.App = (function() {
             app.events.register(
                 /**
                  * @event
-                 * This event is fired when a sync process failed
+                 * Fires when a sync process failed
                  */
                 "app:sync:error",
                 this
@@ -142,10 +142,32 @@ SUGAR.App = (function() {
 
             app.events.register(
                 /**
+                 * Fires when route changes a new view has been loaded.
+                 *
+                 * <pre><code>
+                 * obj.on("app:view:change", callback);
+                 * </pre></code>
                  * @event
-                 * This event is fired when an alert must be displayed
                  */
-                "app:alert",
+                "app:view:change",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * Fires when login succeeds.
+                 */
+                "app:login:success",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * Fires when the app logs out.
+                 */
+                "app:logout",
                 this
             );
 
@@ -202,7 +224,7 @@ SUGAR.App = (function() {
                     var view = app.view.createView({name: componentName, context: context});
                     view.$el = app.controller.$(options.target);
                     view.render();
-                    app.additionalComponents.push(view);
+                    app.additionalComponents[componentName] = view;
                 }
             });
         },
@@ -242,6 +264,7 @@ SUGAR.App = (function() {
         /**
          * Calls a global sync for the app. An app:sync:complete event will be fired when
          * the series of sync operations have finished.
+         * @param {Function} synccuccess Callback function called if sync was successful.
          * @method
          */
         sync: function(syncsuccess) {
@@ -252,22 +275,6 @@ SUGAR.App = (function() {
             }, function(metadata, callback) {
                 // declare models
                 app.data.declareModels(metadata);
-
-                // load language strings
-                if (metadata.appListStrings) {
-                    app.lang.setAppListStrings(metadata.appListStrings);
-                }
-
-                if (metadata.appStrings) {
-                    app.lang.setAppStrings(metadata.appStrings);
-                }
-
-                if (metadata.modStrings) {
-                    app.lang.setLabels(metadata.modStrings);
-                }
-
-                app.acl.set(metadata.acl);
-
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
@@ -306,13 +313,47 @@ SUGAR.App = (function() {
         },
 
         /**
-         * Display an alert.
-         * @method
-         * @param {String} level Either "info", "warn" or "error".
-         * @param {String} message The message
+         * Logs in this app.
+         *
+         * @param  {Object} credentials user credentials.
+         * @param  {Object} data(optional) extra data to be passed in login request such as client user agent, etc.
+         * @param  {Object} callbacks(optional) callback object.
+         * @return XHR request object.
          */
-        alert: function(level, message) {
-            app.trigger("app:alert", [level, message]);
+        login: function(credentials, data, callbacks) {
+            callbacks = callbacks || {};
+            var origSuccess = callbacks.success;
+            callbacks.success = function(data) {
+                app.trigger("app:login:success", data);
+                if (origSuccess) origSuccess(data);
+            };
+
+            return app.api.login(credentials, data, callbacks);
+        },
+
+        /**
+         * Logs out this app.
+         * @param  {Object} callbacks(optional) callback object.
+         * @return {Object} XHR request object.
+         */
+        logout: function(callbacks) {
+            var originalSuccess, xhr;
+            callbacks = callbacks || {};
+            originalSuccess = callbacks.success;
+
+            callbacks.success = function(data) {
+                // TODO: The user.js module now listens for logout event.
+                // It takes a 'clear' boolean indicating whether we want
+                // to completely clear user's data or leave intact. Later,
+                // we should let user choose. For they get "zapped"
+                app.trigger("app:logout", true);
+                if(originalSuccess) {
+                    originalSuccess(data);
+                }
+            };
+
+            xhr = app.api.logout(callbacks);
+            return xhr;
         },
 
         modules: modules

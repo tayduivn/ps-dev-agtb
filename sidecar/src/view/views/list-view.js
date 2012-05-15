@@ -103,8 +103,10 @@
 
         showMoreRecords: function() {
             var self = this;
-            app.controller.context.state.collection.paginate({add: true,
+            app.alert.show('show_more_records', {level:'process', title:'Loading'});
+            app.controller.context.attributes.collection.paginate({add: true,
                 success: function() {
+                    app.alert.dismiss('show_more_records');
                     self.render();
                     window.scrollTo(0, document.body.scrollHeight);
                 }
@@ -112,16 +114,20 @@
         },
         showPreviousRecords: function() {
             var self = this;
-            app.controller.context.state.collection.paginate({page: -1,
+            app.alert.show('show_previous_records', {level:'process', title:'Loading'});
+            app.controller.context.attributes.collection.paginate({page: -1,
                 success: function() {
+                    app.alert.dismiss('show_previous_records');
                     self.render();
                 }
             });
         },
         showNextRecords: function() {
             var self = this;
-            app.controller.context.state.collection.paginate({
+            app.alert.show('show_next_records', {level:'process', title:'Loading'});
+            app.controller.context.attributes.collection.paginate({
                 success: function() {
+                    app.alert.dismiss('show_next_records');
                     self.render();
                 }
             });

@@ -8,12 +8,11 @@ describe("App", function() {
             return true;
         });
 
-        metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(modules, filters, callbacks) {
+        metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(hash, modules, filters, callbacks) {
             if (isGetMetadataSucceeded) {
                 var metadata = fixtures.metadata;
-                callbacks.success(metadata);
-            }
-            else {
+                callbacks.success(metadata, "", {status: 200});
+            } else {
                 callbacks.error({code: 500});
             }
         });
@@ -43,11 +42,13 @@ describe("App", function() {
             expect(cbSpy).toHaveBeenCalled();
         });
     });
+
     it("should initialize addtional components", function() {
         var components = {login:{target:'#footer'}};
         SugarTest.app.loadAdditionalComponents(components);
-        expect(SugarTest.app.additionalComponents.length).toEqual(1);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined();
     });
+
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -120,5 +121,31 @@ describe("App", function() {
         expect(routerSpy).toHaveBeenCalled();
 
         routerSpy.restore();
+    });
+
+    it("should login", function() {
+        SugarTest.seedApp();
+        var app         = SugarTest.app,
+            mock        = sinon.mock(app.api),
+            successFn   = function() {},
+            credentials = {user:'dauser',pass:'dapass'},
+            callbacks   = {success: successFn};
+
+        mock.expects("login").once().withArgs(
+            'foo', credentials, callbacks );
+        app.login('foo', credentials, callbacks );
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should logout", function() {
+        SugarTest.seedApp();
+        var app         = SugarTest.app,
+            mock        = sinon.mock(app.api),
+            successFn   = function() {},
+            callbacks   = {success: successFn};
+
+        mock.expects("logout").once().withArgs(callbacks);
+        app.logout( callbacks );
+        expect(mock.verify()).toBeTruthy();
     });
 });

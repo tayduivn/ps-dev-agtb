@@ -18,23 +18,45 @@
 
             var that = this;
             if (fieldsArray.length > that.fieldsToDisplay) {
-                _.each(fieldsArray, function(field, i) { if( i > that.fieldsToDisplay-1) { $(field).hide(); }});
+                _.each(fieldsArray, function(field, i) {
+                    if (i > that.fieldsToDisplay - 1) {
+                        $(field).hide();
+                    }
+                });
                 this.$el.find(".more").removeClass("hide");
             }
         },
         showMore: function() {
             var fieldsArray = this.$el.find("form[name=detail]").find("span[sfuuid]") || [];
-            _.each(fieldsArray, function(field, i) { $(field).show(); });
+            _.each(fieldsArray, function(field, i) {
+                $(field).show();
+            });
             this.$el.find(".more").addClass("hide");
             this.$el.find(".less").removeClass("hide");
         },
         hideMore: function() {
             var fieldsArray = this.$el.find("form[name=detail]").find("span[sfuuid]") || [];
             var that = this;
-            _.each(fieldsArray, function(field, i) { if( i > that.fieldsToDisplay-1) { $(field).hide(); }});
+            _.each(fieldsArray, function(field, i) {
+                if (i > that.fieldsToDisplay - 1) {
+                    $(field).hide();
+                }
+            });
             this.$el.find(".less").addClass("hide");
             this.$el.find(".more").removeClass("hide");
+        },
+        bindDataChange: function() {
+            if (this.model) {
+                this.model.on("change", function() {
+                        if (this.app.additionalComponents.subnav) {
+                            this.app.additionalComponents.subnav.model = app.controller.context.attributes.model;
+                            this.app.additionalComponents.subnav.meta = this.meta;
+                        }
+                    }, this
+                );
+            }
         }
+
     });
 
 })(SUGAR.App);
