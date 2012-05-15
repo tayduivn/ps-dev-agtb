@@ -41,13 +41,13 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
     public function providerQueryStringData()
     {
         return array(
-            array(0, 'abc', true),
-            array(1, 'abc def', true),
-            array(2, "abc[10 TO 20]", false),
-            array(3, '{10 TO 20}abc', false),
-            array(4, '"abc"', false),
-            array(5, 'abc~', false),
-            array(6, 'accounts:abc', true),
+            array('abc', true),
+            array('abc def', true),
+            array("abc[10 TO 20]", false),
+            array('{10 TO 20}abc', false),
+            array('"abc"', false),
+            array('abc~', false),
+            array('accounts:abc', true),
             );
     }
 
