@@ -24,7 +24,7 @@
               {{listItem this ../../this ../fields}}
           {{/each}}
           </div>
-          <div class="block-footer show-more-bottom-btn">
+          <div class="block-footer show-more-bottom-btn" {{#if ../context.attributes.collection.models.length}} {{else}}style="display: none"{{/if}}>
               <a class="btn loading wide" href="javascript:void(0)">Show More</a>
           </div>
           {{/each}}

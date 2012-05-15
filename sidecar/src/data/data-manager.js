@@ -369,6 +369,7 @@
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
                         if (data.next_offset) {
                             model.offset = data.next_offset != -1 ? data.next_offset : model.offset + (data.records || []).length;
+                            model.next_offset = data.next_offset;
                             model.page = model.getPageNumber();
                         }
                         data = data.records || [];
@@ -387,7 +388,6 @@
                             delete model.link;
                         }
                     }
-
                     options.success(data);
                 }
             };
