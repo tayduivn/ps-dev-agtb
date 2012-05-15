@@ -1,15 +1,20 @@
 (function(app) {
     var base_metadata = {
         _hash: '',
+        "appStrings": {
+            ERROR_FIELD_REQUIRED: "Error. This field is required."
+        },
         "modules": {
             "Login": {
                 "fields": {
                     "username": {
                         "name": "username",
-                        "type": "varchar"
+                        "type": "varchar",
+                        "required": true
                     },
                     "password": {
                         "name": "password",
+                        "required": true,
                         "type": "password"
                     }
                 },
@@ -21,10 +26,12 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "Login",
+                                    class: "login-submit",
                                     value: "login",
                                     primary: true,
                                     events: {
                                         click: "function(){ var self = this; " +
+                                            "this.model.isValid();" +
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
@@ -76,8 +83,8 @@
                     "editView": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                             "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                             "<\/p> <\/div>",
-                    "loginView":"<div class=\"controls\"><label class=\"hide\">{{label}}<\/label> " +
-                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">  <p class=\"help-block\">" +
+                            "loginView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label><div class=\"controls\">" +
+                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">  <\/div><p class=\"help-block\">" +
                             "<\/p> <\/div>",
                     "default": "<span name=\"{{name}}\">{{value}}</span>"
                 },
@@ -96,7 +103,8 @@
                             "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
                     "loginView": "<div class=\"control-group\">" +
                                                 "<label class=\"hide\">{{label}}</label>" +
-                                                "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
+                                                "<div class=\"controls\">\n" +
+                                                "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">\n  <\/div>\n" +
                                                 "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                                                 "</div>"
                 }
@@ -165,15 +173,23 @@
          */
         handleValidationError: function(errors) {
             var self = this;
-
             this.$('.control-group').addClass("error");
             this.$('.help-block').html("");
 
+            // For each error add to error help block
+            this.$('.controls').addClass('input-append');
             _.each(errors, function(errorContext, errorName) {
-                self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
+                self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));
             });
+
+            // Remove previous exclamation then add back.
+            this.$('.add-on').remove();
+            this.$('.controls').find('input').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            
         }
     });
 
 })(SUGAR.App);
+
+
 
