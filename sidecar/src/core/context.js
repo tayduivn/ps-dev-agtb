@@ -44,6 +44,11 @@
             this.children = [];
         },
 
+        clear: function(options) {
+            this.children = [];
+            this.parent = null;
+            Backbone.Model.prototype.clear.call(this, options);
+        },
 
         // TODO: Do we need this?
 //        /**

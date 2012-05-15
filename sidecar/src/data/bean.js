@@ -19,12 +19,11 @@
  */
 (function(app) {
 
-    var _relatedCollections;
-
     app.augment("Bean", Backbone.Model.extend({
 
         initialize: function(attributes){
             Backbone.Model.prototype.initialize.call(this, attributes);
+            this._relatedCollections = null;
         },
 
         /**
@@ -34,8 +33,8 @@
          * @private
          */
         _setRelatedCollection: function(link, collection) {
-            _relatedCollections = _relatedCollections || {};
-            _relatedCollections[link] = collection;
+            if (!this._relatedCollections) this._relatedCollections = {};
+            this._relatedCollections[link] = collection;
         },
 
         /**
@@ -55,8 +54,8 @@
          * @return {Data.BeanCollection} Previously created collection or a new collection of related beans.
          */
         getRelatedCollection: function(link) {
-            if (_relatedCollections && _relatedCollections[link]) {
-                return _relatedCollections[link];
+            if (this._relatedCollections && this._relatedCollections[link]) {
+                return this._relatedCollections[link];
             }
 
             return app.data.createRelatedCollection(this, link);
