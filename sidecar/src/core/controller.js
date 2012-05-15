@@ -53,7 +53,9 @@
             this.layout = null;
 
             // Reset context and initialize it with new params
-            this.context.init(params);
+            this.context.clear({silent: true});
+            this.context.set(params);
+
             // Prepare model and collection
             this.context.prepareData();
             // Create an instance of the layout and bind it to the data instance

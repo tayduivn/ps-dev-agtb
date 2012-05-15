@@ -161,7 +161,7 @@
         {/if}
         <td>
             <h3 class="title">{$label}</h3>
-            <ul id="ddd_{$val}_list" class="ddd_table ddd_parent_option" >
+            <ul id="ddd_{$val|replace:" ":"_"}_list" class="ddd_table ddd_parent_option" >
                 {foreach from=$mapping.$val key=iv item=il name=parentElLoop}
                     <li class="ui-state-default" val="{$il}">{$iv}{$il}{$child_list_options.$il}</li>
                 {/foreach}
@@ -210,11 +210,12 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     {
         var vals = mapping[i];
         if (i === "") i = "--blank--";
+        i = i.replace(" ", "_");
         var l = $("#ddd_" + i + "_list");
         for(var j = 0; j < vals.length; j++)
         {
             var v = vals[j] === "" ? "--blank--" : vals[j];
-            var c  = p.children("li[val=" + v + "]");
+            var c  = p.children("li[val=\"" + v + "\"]");
             l.append(c.clone());
         }
     }
@@ -226,7 +227,6 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     var listContainsItem = function(list, val)
     {
         var c = list.children("li[val=" + val + "].original").not("li.ui-sortable-helper, li:hidden");
-        console.log(c);
         return c.length != 0;
     }
 
@@ -292,6 +292,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     for (var i in parentOptions)
     {
         if (i == "") i = "--blank--";
+        i = i.replace(" ", "_");
         $( "#ddd_" + i + "_list" ).sugardddlist({
             connectWith: ".ddd_table",
             scope: "ddd_table",
@@ -356,7 +357,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         }
         for (var i in parentOptions)
         {
-            var k = i == "" ? blank : i;
+            var k = i == "" ? blank : i.replace(" ", "_");
             mapping[i] = getlistValues($( "#ddd_" + k + "_list" ));
         }
         return {
