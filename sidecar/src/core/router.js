@@ -161,7 +161,7 @@
 
             app.controller.loadView({
                 module: module,
-                id: id,
+                modelId: id,
                 action: action,
                 layout: action
             });

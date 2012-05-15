@@ -47,8 +47,8 @@
         },
         bindDataChange: function() {
             var self = this;
-            if (app.controller.context.state.model) {
-                app.controller.context.state.model.on("change", function() {
+            if (app.controller.context.attributes.model) {
+                app.controller.context.attributes.model.on("change", function() {
                     self.render();
                     }, this
                 );
