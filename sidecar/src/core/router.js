@@ -38,6 +38,16 @@
         },
 
         /**
+         * Navigates to the previous route in history.
+         *
+         * This method triggers route change event.
+         */
+        goBack: function() {
+            app.logger.debug("Navigating back...");
+            window.history.goBack();
+        },
+
+        /**
          * Starts Backbone history which in turn starts routing the hashtag.
          *
          * See Backbone.history documentation for details.
@@ -92,7 +102,7 @@
          * @param module Module name.
          */
         index: function(module) {
-            app.logger.debug("===Route changed to index of " + module);
+            app.logger.debug("Route changed to index of " + module);
             app.controller.loadView({
                 module: module || "Cases", //TODO: This should probably not be Casess
                 layout: "list"
@@ -105,7 +115,7 @@
          * @param layout Layout name.
          */
         layout: function(module, layout) {
-            app.logger.debug("===Route changed to layout: " + layout + " for " + module);
+            app.logger.debug("Route changed to layout: " + layout + " for " + module);
             app.controller.loadView({
                 module: module,
                 layout: layout
@@ -117,7 +127,7 @@
          * @param module Module name.
          */
         create: function(module) {
-            app.logger.debug("===Route changed: create " + module);
+            app.logger.debug("Route changed: create " + module);
             app.controller.loadView({
                 module: module,
                 create: true,
@@ -129,7 +139,7 @@
          * Handles `login` route.
          */
         login: function() {
-            app.logger.debug("===Loging in");
+            app.logger.debug("Loging in");
             app.controller.loadView({
                 module: "Login",
                 layout: "login",
@@ -141,7 +151,7 @@
          * Handles `logout` route.
          */
         logout: function() {
-            app.logger.debug("===Loging out");
+            app.logger.debug("Loging out");
             var self = this;
             app.logout({success: function(data) {
                 self.navigate("#");
@@ -155,7 +165,7 @@
          * @param action(optional) Action name (`edit`, etc.). Defaults to `detail` if not specified.
          */
         record: function(module, id, action) {
-            app.logger.debug("===Route changed: " + module + "/" + id + "/" + action);
+            app.logger.debug("Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
 
