@@ -303,19 +303,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     private function canAppendWildcard($queryString)
     {
-        $queryString = trim($queryString);
+        $queryString = trim(html_entity_decode($queryString, ENT_QUOTES));
         if( substr($queryString, -1) ===  self::WILDCARD_CHAR) {
             return false;
         }
 
         // for fuzzy search, do not append wildcard
-        if( substr($queryString, -1) ===  '~') {
+        if( strpos($queryString, '~') !==  false) {
             return false;
         }
 
         // for range searches, do not append wildcard
         if (preg_match('/\[.*TO.*\]/', $queryString) || preg_match('/{.*TO.*}/', $queryString))
         {
+            return false;
+        }
+
+        // when using double quotes, do not append wildcard
+        if( strpos($queryString, '"') !==  false) {
             return false;
         }
 

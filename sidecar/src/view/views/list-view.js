@@ -112,7 +112,7 @@
         showMoreRecords: function() {
             var self = this;
             app.alert.show('show_more_records', {level:'process', title:'Loading'});
-            app.controller.context.state.collection.paginate({add: true,
+            app.controller.context.attributes.collection.paginate({add: true,
                 success: function() {
                     app.alert.dismiss('show_more_records');
                     self.render();
@@ -123,7 +123,7 @@
         showPreviousRecords: function() {
             var self = this;
             app.alert.show('show_previous_records', {level:'process', title:'Loading'});
-            app.controller.context.state.collection.paginate({page: -1,
+            app.controller.context.attributes.collection.paginate({page: -1,
                 success: function() {
                     app.alert.dismiss('show_previous_records');
                     self.render();
@@ -133,7 +133,7 @@
         showNextRecords: function() {
             var self = this;
             app.alert.show('show_next_records', {level:'process', title:'Loading'});
-            app.controller.context.state.collection.paginate({
+            app.controller.context.attributes.collection.paginate({
                 success: function() {
                     app.alert.dismiss('show_next_records');
                     self.render();

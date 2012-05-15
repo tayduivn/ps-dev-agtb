@@ -653,18 +653,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         {
             return;
         }
-
+       
         var o = overlays['sqv'];
-        var animDCcont = new Y.Anim({ node: o.get("boundingBox"), to: { opacity:0 } });
-        animDCcont.on('end', function() {
-            o.visible = false;
-            o.get('boundingBox').setStyle('visibility','hidden');
-        });
-
-        animDCcont.set('duration', .5);
-        animDCcont.set('easing', Y.Easing.easeOut);
-        animDCcont.run();
-
+        o.visible = false;
+        o.get('boundingBox').setStyle('visibility','hidden');
     }
 
 
@@ -690,7 +682,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         {
             overlays[qvDepth] = new Y.Overlay({
                 bodyContent:'',
-                zIndex:5,
+                zIndex:100,
                 height:500,
                 width:320,
                 shim:false,
@@ -743,7 +735,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         {
             overlays[qvDepth] = new Y.Overlay({
                 bodyContent:'',
-                zIndex:5,
+                zIndex:100,
                 height:boxBody._node.clientHeight,
                 width:320,
                 shim:false,
@@ -783,7 +775,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 var shim = 15;  //The padding of the dashletPanel border
                 var animX = (SUGAR.themes.theme_name == 'RTL') ? this.get("x") + this.get("width") - shim : this.get("x") - this.get("width") - shim;
                 var animY = 42;
-                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY] } });
+                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY]} });
                 animDCcont.set('duration', .25);
                 animDCcont.set('easing', Y.Easing.easeOut);
                 animDCcont.run();

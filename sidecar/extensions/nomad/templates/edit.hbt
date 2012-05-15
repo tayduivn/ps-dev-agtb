@@ -6,7 +6,7 @@
         <fieldset class="pad">
 
             {{#each meta.panels}}
-                {{#each ../context.state.collection.models}}
+                {{#each ../context.attributes.collection.models}}
                     {{#each ../fields}}
                         {{field     ../../../context    ../../../this   ../this}}
                     {{/each}}

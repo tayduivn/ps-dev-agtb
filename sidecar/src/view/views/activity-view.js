@@ -37,13 +37,13 @@
                 portal_flag: true
             }
 
-            var newNote = app.data.createRelatedBean(this.app.controller.context.state.model, null, "notes", args);
+            var newNote = app.data.createRelatedBean(this.app.controller.context.attributes.model, null, "notes", args);
             newNote.save(null, {
                 relate: true,
                 success: function(data) {
                     self.$el.find('#saveNote').button();
                     self.$el.find('#noteModal').modal('hide').find('form').get(0).reset();
-                    self.context.state.collection.add(newNote);
+                    self.context.attributes.collection.add(newNote);
                     self.render();
                 },
                 error: function(data) {

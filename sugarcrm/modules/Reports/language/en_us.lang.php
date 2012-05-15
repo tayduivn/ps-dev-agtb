@@ -237,6 +237,12 @@ $mod_strings = array (
   'LBL_PUBLISHED_QUOTE_REPORTS' => 'Published Quote Reports',
   //END SUGARCRM flav!=sales ONLY
 
+  //BEGIN SUGARCRM flav=pro ONLY
+  'LBL_PUBLISHED_FORECAST_REPORTS' => 'Published Forecast Reports',
+  'LBL_PUBLISHED_OPPORTUNITY_LINE_REPORTS' => 'Published Opportunity Line Reports',
+  'LBL_PUBLISHED_QUOTA_REPORTS' => 'Published Quota Reports',
+  //END SUGARCRM flav=pro ONLY
+
   'LBL_PUBLISHED_CALL_REPORTS' => 'Published Call Reports',
   'LBL_PUBLISHED_MEETING_REPORTS' => 'Published Meeting Reports',
   'LBL_PUBLISHED_TASK_REPORTS' => 'Published Task Reports',

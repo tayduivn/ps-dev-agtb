@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['grid'] = array(
+$viewdefs['Opportunities']['core']['view']['grid'] = array(
     'panels' =>
     array(
         0 =>
@@ -9,37 +9,36 @@ $viewdefs['Cases']['portal']['view']['grid'] = array(
             array(
                 0 =>
                 array(
-                    'name' => 'case_number',
-                    'label' => 'Case Number',
-                    'class' => 'foo',
+                    'name' => 'name',
+                    'label' => 'Name',
                     'default' => true,
                     'enabled' => true,
                 ),
                 1 =>
                 array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'cte',
+                    'name' => 'amount',
+                    'label' => 'Opportunity Amount',
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'cteopp',
                 ),
                 2 =>
                 array(
-                    'name' => 'status',
-                    'label' => 'Status',
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'ctestatus',
-                    'ctetype' => 'chosen',
+                    'name' => 'opportunity_type',
+                    'label' => 'Opp. Type',
                     'default' => true,
                     'enabled' => true,
                 ),
                 3 =>
                 array(
-                    'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'name' => 'lead_source',
+                    'label' => 'Lead Source',
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'ctels',
+                    'ctetype' => 'chosen',
                 ),
                 4 =>
                 array(

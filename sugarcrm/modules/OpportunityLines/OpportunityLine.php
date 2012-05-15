@@ -23,11 +23,58 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OpportunityLine extends SugarBean
 {
-	// Stored fields
-	var $id;
+    // Stored fields
+    var $id;
     var $product_id;
+    var $product_category_id;
+    var $experts;
+    var $product_owner_id;
     var $table_name = "opportunity_line";
-   	var $module_dir = 'OpportunityLines';
-   	var $object_name = "OpportunityLine";
+    var $module_dir = 'OpportunityLines';
+    var $object_name = "OpportunityLine";
 
+    function getExperts()
+    {
+        $query = "SELECT " . $this->db->convert("p.category_id", "IFNULL", array("pt.category_id")) . " category_id
+                FROM products p
+                LEFT JOIN product_templates pt on p.product_template_id = pt.id
+                WHERE p.id = '$this->product_id'
+                    AND p.deleted = 0";
+
+        $result = $this->db->query($query,true," Error getting product category id: ");
+
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row != null)
+        {
+            $this->product_category_id = $row['category_id'];
+            $this->getProductOwners($this->product_category_id);
+        }
+        else
+        {
+            $this->experts = '';
+        }
+    }
+
+    function getProductOwners($category_id)
+    {
+        $query = "SELECT assigned_user_id, parent_id
+                    FROM product_categories pc
+                    WHERE id = '$category_id'";
+
+        $result = $this->db->query($query, true, "Error getting product category additional fields: ");
+
+        $row = $this->db->fetchByAssoc($result);
+
+        if ($row != null)
+        {
+            $this->experts[] = $row['assigned_user_id'];
+            $this->getProductOwners($row['parent_id']);
+            $this->product_owner_id = $row['id'];
+        }
+        else
+        {
+            $this->product_owner_id = '';
+        }
+    }
 }

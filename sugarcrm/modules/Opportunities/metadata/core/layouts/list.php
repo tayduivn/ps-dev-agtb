@@ -1,11 +1,8 @@
 <?php
-$viewdefs['Cases']['portal']['layout']['tree'] = array(
+$viewdefs['Opportunities']['core']['layout']['list'] = array(
     'type' => 'simple',
     'components' =>
     array(
-        0 => array(
-            'view' => 'header',
-        ),
         1 => array(
             'layout' => array(
                 'type' => 'fluid',
@@ -17,19 +14,13 @@ $viewdefs['Cases']['portal']['layout']['tree'] = array(
                             'components' => array(
                                 array(
                                     'view' => 'tree',
-                                ),
-                                array(
-                                    'view' => 'test',
                                 )
                             )
                         )
                     ),
                     array(
                         "size" => 10,
-                        "view" => "grid",
-                        "listeners" => array(
-                            'treeview:node_select' => "do what ever here"
-                        )
+                        "view" => "grid"
                     )
                 )
             )
