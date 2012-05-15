@@ -32,6 +32,7 @@ private $employee2;
 private $employee3;
 private $employee4;
 
+
 public function setUp()
 {
     global $beanList, $beanFiles, $current_user;
@@ -60,11 +61,13 @@ public function setUp()
     $this->employee4->reports_to_id = $this->employee3->id;
     $this->employee4->user_name = 'employee4';
     $this->employee4->save();
+
 }
 
 public function tearDown()
 {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
 }
 
 public function testForecastTree()

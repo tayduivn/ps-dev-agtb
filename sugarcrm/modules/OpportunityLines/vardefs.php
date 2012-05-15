@@ -80,7 +80,7 @@ array (
 'best_case' =>
 array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_CASE',
+    'vname' => 'LBL_BEST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -88,7 +88,7 @@ array (
 'likely_case' =>
 array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY_CASE',
+    'vname' => 'LBL_LIKELY_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -96,7 +96,15 @@ array (
 'worst_case' =>
 array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_CASE',
+    'vname' => 'LBL_WORST_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'profit_margin' =>
+array (
+    'name' => 'profit_margin',
+    'vname' => 'LBL_PROFIT_MARGIN',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -128,6 +136,15 @@ array (
     'type' => 'int',
     'len'=>5,
     'comment' => 'Quantity in use'
+),
+'note' =>
+array (
+    'name' => 'note',
+    'vname' => 'LBL_NOTE',
+    'type' => 'text',
+    'comment' => 'Full text of the note',
+    'rows' => 6,
+    'cols' => 80,
 ),
 
 )

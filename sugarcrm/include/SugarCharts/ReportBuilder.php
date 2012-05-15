@@ -91,7 +91,11 @@ class ReportBuilder
         $bean = $this->getBean($module);
 
         if (empty($key)) {
-            // we need to generate keys
+            // see if the key already exist
+            if(!isset($this->table_keys[$module])) {
+                // module is not already added, so lest just add it
+                $key = $module;
+            }
         }
 
         $this->table_keys[$module] = $key;
@@ -203,7 +207,7 @@ class ReportBuilder
      * @param string $module        Which module does the field belong to
      * @return ReportBuilder
      */
-    public function addSummaryColumn($field, $module)
+    public function addSummaryColumn($field, $module = null)
     {
         if (!($module instanceof SugarBean)) {
             if (empty($module)) {
@@ -265,15 +269,55 @@ class ReportBuilder
     }
 
     /**
+     * Return the report as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->defaultReport;
+    }
+
+    /**
      * @param string $module Which Module To Load
      * @return SugarBean
      */
-    protected function getBean($module)
+    public function getBean($module)
     {
         if (!isset($this->beans[$module])) {
             $this->beans[$module] = BeanFactory::getBean($module);
         }
 
         return $this->beans[$module];
+    }
+
+    /**
+     * Return a specify key if a module is set, if not return the whole array
+     *
+     * @param string $module        Specific module to get a table key for.
+     * @return array|string
+     */
+    public function getKeyTable($module = null)
+    {
+        if(is_null($module) || !isset($this->table_keys[$module])) {
+            return $this->table_keys;
+        } else {
+            return $this->table_keys[$module];
+        }
+    }
+
+    /**
+     * Return the default module set.
+     *
+     * @param boolean $asBean       Return the default module as a SugarBean instance
+     * @return string|SugarBean
+     */
+    public function getDefaultModule($asBean = false)
+    {
+        if($asBean == true) {
+            return $this->getBean($this->self_module);
+        }
+
+        return $this->self_module;
     }
 }
