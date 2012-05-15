@@ -726,7 +726,13 @@ $resources = $sugarChart->getChartResources();
 $mySugarResources = $sugarChart->getMySugarChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 $sugar_smarty->assign('mySugarChartResources', $mySugarResources);
-echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
+
+if (file_exists("custom/include/MySugar/tpls/MySugar.tpl")) {
+	echo $sugar_smarty->fetch('custom/include/MySugar/tpls/MySugar.tpl');
+} else {
+	echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
+}
+
 //init the quickEdit listeners after the dashlets have loaded on home page the first time
 echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";
 ?>
