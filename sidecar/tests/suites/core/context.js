@@ -160,6 +160,12 @@ describe("Context", function() {
             subrelatedContext.prepareRelatedData();
             expect(subcontext.attributes.model).toBeDefined();
             expect(subcontext.attributes.model.module).toEqual("Accounts");
+
+            context.clear();
+            expect(context.children.length).toEqual(0);
+
+            subrelatedContext.clear();
+            expect(context.parent).toBeNull();
         });
 
     });
