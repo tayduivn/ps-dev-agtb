@@ -242,7 +242,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'best_case' =>
   array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_CASE',
+    'vname' => 'LBL_BEST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -250,7 +250,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'likely_case' =>
   array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY',
+    'vname' => 'LBL_LIKELY_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -258,7 +258,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'worst_case' =>
   array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_CASE',
+    'vname' => 'LBL_WORST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -267,7 +267,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_TIMEPERIOD_ID',
-    'type' => 'id'
+    'type' => 'id',
+    'reportable' => false,
   ),
   'timeperiods' =>
   array(
