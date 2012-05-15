@@ -44,7 +44,7 @@
          */
         goBack: function() {
             app.logger.debug("Navigating back...");
-            window.history.goBack();
+            window.history.back();
         },
 
         /**
