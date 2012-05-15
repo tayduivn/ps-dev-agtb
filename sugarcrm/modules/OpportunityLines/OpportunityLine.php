@@ -28,6 +28,7 @@ class OpportunityLine extends SugarBean
     var $product_id;
     var $product_category_id;
     var $experts;
+    var $product_owner_id;
     var $table_name = "opportunity_line";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";
@@ -69,6 +70,11 @@ class OpportunityLine extends SugarBean
         {
             $this->experts[] = $row['assigned_user_id'];
             $this->getProductOwners($row['parent_id']);
+            $this->product_owner_id = $row['id'];
+        }
+        else
+        {
+            $this->product_owner_id = '';
         }
     }
 }
