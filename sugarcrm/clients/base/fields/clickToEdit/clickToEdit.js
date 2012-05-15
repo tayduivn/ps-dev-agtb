@@ -102,7 +102,9 @@
      */
     doChange: function(value, settings) {
         settings.context.model.set(settings.context.name, value);
-        settings.context.model.save(settings.context.name, value);
+        // currently does not pass validation on saves
+        // TODO: fix it.
+        // settings.context.model.save(settings.context.name, value);
         return value;
     },
 
@@ -123,7 +125,9 @@
     doUndo: function(e) {
         $(this).hide();
         e.data.model.set(e.data.name, e.data.undoValue);
-        e.data.model.save(e.data.name, e.data.undoValue);
+        // currently does not pass validation on saves
+        // TODO: fix it.
+        // e.data.model.save(e.data.name, e.data.undoValue);
     },
 
     /**
