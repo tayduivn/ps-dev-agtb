@@ -120,7 +120,7 @@ describe('Metadata Manager', function() {
             app.metadata.sync();
             SugarTest.server.respond();
 
-            expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
+            expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Accounts,Home");
             expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
@@ -141,7 +141,7 @@ describe('Metadata Manager', function() {
             app.metadata.sync();
             SugarTest.server.respond();
 
-            expect(SugarTest.storage["test:portal:md:modules"]).not.toEqual("Cases,Contacts,Home");
+            expect(SugarTest.storage["test:portal:md:modules"]).not.toEqual("Cases,Contacts,Accounts,Home");
             expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeUndefined();
             expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeUndefined();
             expect(SugarTest.storage["test:portal:md:m:Home"]).toBeUndefined();
