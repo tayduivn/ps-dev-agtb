@@ -514,6 +514,13 @@ class SugarBean
 
         require('metadata/audit_templateMetaData.php');
 
+        // Bug: 52583 Need ability to customize template for audit tables
+        $custom = 'custom/metadata/audit_templateMetaData_' . $this->getTableName() . '.php';
+        if (file_exists($custom))
+        {
+            require($custom);
+        }
+
         $fieldDefs = $dictionary['audit']['fields'];
         $indices = $dictionary['audit']['indices'];
         // '0' stands for the first index for all the audit tables
