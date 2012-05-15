@@ -48,6 +48,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
             array('"abc"', false),
             array('abc~', false),
             array('accounts:abc', true),
+            array('abc*', false),
             );
     }
 
