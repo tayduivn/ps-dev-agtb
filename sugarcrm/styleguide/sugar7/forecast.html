@@ -164,7 +164,7 @@
               </select>
             </div>
           </div>
-          <div class="control-group">
+          <div class="control-group" id="chartType">
             <label for="select01" class="control-label">Layout:</label>
             <div class="controls">
               <div class="btn-group">
@@ -193,10 +193,10 @@
         <div class="span7">            
           <div id="chart" class="tcenter">
             <div class="chartContainer">
-              <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
-                <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="chartCanvas" style="width: 99%; height: 300px;"></div>
-              </div>
-              <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
+                <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
+                    <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="chartCanvas" style="width: 99%; height: 300px;"></div>
+                </div>
+                <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
             </div>
           </div>
         </div>
@@ -442,20 +442,20 @@
 
 
 <script>
-var chartId = 'db620e51-8350-c596-06d1-4f866bfcfd5b';
-var css = new Array();
-var chartConfig = new Array();
-css["gridLineColor"] = '#dddddd';
-css["font-family"] = 'Arial';
-css["color"] = '#444444';
-chartConfig["orientation"] = 'vertical';
-chartConfig["barType"] = 'stacked';
-chartConfig["tip"] = 'name';
-chartConfig["chartType"] ='barChart';
-chartConfig["imageExportType"] = 'png';
-chartConfig["showNodeLabels"] = false;
-chartConfig["showAggregates"] = false;
-chartConfig["saveImageTo"] = "";
+    var chartId = 'db620e51-8350-c596-06d1-4f866bfcfd5b';
+    var css = new Array();
+    var chartConfig = new Array();
+    css["gridLineColor"] = '#cccccc';
+    css["font-family"] = 'Arial';
+    css["color"] = '#000000';
+    chartConfig["orientation"] = 'vertical';
+    chartConfig["barType"] = 'stacked';
+    chartConfig["tip"] = 'name';
+    chartConfig["chartType"] ='barChart';
+    chartConfig["imageExportType"] = 'png';
+    chartConfig["showNodeLabels"] = false;
+    chartConfig["showAggregates"] = false;
+    chartConfig["saveImageTo"] = "";
 </script>
 
 <script>
