@@ -18,7 +18,6 @@
          */
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
-
             // add event listener for treeview:node_select so grid can be updated via a tree-view event
             app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
         },

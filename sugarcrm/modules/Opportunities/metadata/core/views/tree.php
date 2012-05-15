@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['tree'] = array(
+$viewdefs['Opportunities']['core']['view']['tree'] = array(
     'options' => array(
         'show_footer' => false,
     ),

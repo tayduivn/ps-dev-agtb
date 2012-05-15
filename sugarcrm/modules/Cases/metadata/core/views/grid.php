@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['test'] = array(
+$viewdefs['Cases']['core']['view']['grid'] = array(
     'panels' =>
     array(
         0 =>
@@ -19,6 +19,8 @@ $viewdefs['Cases']['portal']['view']['test'] = array(
                 array(
                     'name' => 'name',
                     'label' => 'Name',
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'cte',
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -26,6 +28,9 @@ $viewdefs['Cases']['portal']['view']['test'] = array(
                 array(
                     'name' => 'status',
                     'label' => 'Status',
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'ctestatus',
+                    'ctetype' => 'chosen',
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -33,6 +38,13 @@ $viewdefs['Cases']['portal']['view']['test'] = array(
                 array(
                     'name' => 'date_modified',
                     'label' => 'Modifed Date',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                4 =>
+                array(
+                    'name' => 'assigned_user_id',
+                    'label' => 'Assigned User',
                     'default' => true,
                     'enabled' => true,
                 ),

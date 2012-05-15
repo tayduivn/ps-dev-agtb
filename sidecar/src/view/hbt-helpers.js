@@ -206,7 +206,10 @@
        return app.lang.get(key, module);
     });
 
-
+    /**
+     * Allows browser debugger to be launched from within a handlebar template using {{debugger}}
+     * @method debugger
+     */
     Handlebars.registerHelper("debugger", function() {
         console.log("debugger");
         debugger;

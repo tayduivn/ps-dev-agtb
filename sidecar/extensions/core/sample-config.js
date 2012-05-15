@@ -11,7 +11,7 @@
          * Application identifier.
          * @cfg {String}
          */
-        appId: 'forecasts',
+        appId: 'core-app',
 
         /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
@@ -67,7 +67,7 @@
          * Platform name.
          * @cfg {String}
          */
-        platform: "forecasts",
+        platform: "core",
 
         /**
          * A list of metadata types to fetch by default.
