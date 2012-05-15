@@ -31,7 +31,11 @@ private $employee1;
 private $employee2;
 private $employee3;
 private $employee4;
-
+private $opp1;
+private $opp2;
+private $opp3;
+private $opp4;
+private $opp5;
 
 public function setUp()
 {
@@ -62,12 +66,88 @@ public function setUp()
     $this->employee4->user_name = 'employee4';
     $this->employee4->save();
 
+    $this->opp1 = SugarTestOpportunityUtilities::createOpportunity();
+    $this->opp1->assigned_user_id = $current_user->id;
+    $this->opp1->probability = '10';
+    $this->opp1->best_case = '1300';
+    $this->opp1->likely_case = '1200';
+    $this->opp1->worst_case = '1100';
+    $this->opp1->save();
+    $line_bundle_1 = SugarTestOppLineBundleUtilities::createLineBundle();
+    $line_1 = SugarTestOppLineItemUtilities::createLine();
+    $line_1->team_set_id = $current_user->id;
+    $line_1->team_id = $current_user->id;
+    $line_1->save();
+    $line_bundle_1->set_opportunitylinebundle_opportunity_relationship($this->opp1->id, '', '1');
+    $line_bundle_1->set_opportunitylinebundle_opportunityline_relationship($line_1->id, '1', '');
+
+    $this->opp2 = SugarTestOpportunityUtilities::createOpportunity();
+    $this->opp2->assigned_user_id = $this->employee1->id;
+    $this->opp2->probability = '10';
+    $this->opp2->best_case = '1300';
+    $this->opp2->likely_case = '1200';
+    $this->opp2->worst_case = '1100';
+    $this->opp2->save();
+    $line_bundle_2 = SugarTestOppLineBundleUtilities::createLineBundle();
+    $line_2 = SugarTestOppLineItemUtilities::createLine();
+    $line_2->team_set_id = $this->employee1->id;
+    $line_2->team_id = $this->employee1->id;
+    $line_2->save();
+    $line_bundle_2->set_opportunitylinebundle_opportunity_relationship($this->opp2->id, '', '1');
+    $line_bundle_2->set_opportunitylinebundle_opportunityline_relationship($line_2->id, '1', '');
+
+    $this->opp3 = SugarTestOpportunityUtilities::createOpportunity();
+    $this->opp3->assigned_user_id = $this->employee2->id;
+    $this->opp3->probability = '10';
+    $this->opp3->best_case = '1300';
+    $this->opp3->likely_case = '1200';
+    $this->opp3->worst_case = '1100';
+    $this->opp3->save();
+    $line_bundle_3 = SugarTestOppLineBundleUtilities::createLineBundle();
+    $line_3 = SugarTestOppLineItemUtilities::createLine();
+    $line_3->team_set_id = $this->employee2->id;
+    $line_3->team_id = $this->employee2->id;
+    $line_3->save();
+    $line_bundle_3->set_opportunitylinebundle_opportunity_relationship($this->opp3->id, '', '1');
+    $line_bundle_3->set_opportunitylinebundle_opportunityline_relationship($line_3->id, '1', '');
+
+    $this->opp4 = SugarTestOpportunityUtilities::createOpportunity();
+    $this->opp4->assigned_user_id = $this->employee3->id;
+    $this->opp4->probability = '10';
+    $this->opp4->best_case = '1300';
+    $this->opp4->likely_case = '1200';
+    $this->opp4->worst_case = '1100';
+    $this->opp4->save();
+    $line_bundle_4 = SugarTestOppLineBundleUtilities::createLineBundle();
+    $line_4 = SugarTestOppLineItemUtilities::createLine();
+    $line_4->team_set_id = $this->employee3->id;
+    $line_4->team_id = $this->employee3->id;
+    $line_4->save();
+    $line_bundle_4->set_opportunitylinebundle_opportunity_relationship($this->opp4->id, '', '1');
+    $line_bundle_4->set_opportunitylinebundle_opportunityline_relationship($line_4->id, '1', '');
+
+    $this->opp5 = SugarTestOpportunityUtilities::createOpportunity();
+    $this->opp5->assigned_user_id = $this->employee4->id;
+    $this->opp5->probability = '10';
+    $this->opp5->best_case = '1300';
+    $this->opp5->likely_case = '1200';
+    $this->opp5->worst_case = '1100';
+    $this->opp5->save();
+    $line_bundle_5 = SugarTestOppLineBundleUtilities::createLineBundle();
+    $line_5 = SugarTestOppLineItemUtilities::createLine();
+    $line_5->team_set_id = $this->employee4->id;
+    $line_5->team_id = $this->employee4->id;
+    $line_5->save();
+    $line_bundle_5->set_opportunitylinebundle_opportunity_relationship($this->opp5->id, '', '1');
+    $line_bundle_5->set_opportunitylinebundle_opportunityline_relationship($line_5->id, '1', '');
 }
 
 public function tearDown()
 {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
+    SugarTestOppLineItemUtilities::removeAllCreatedLines();
+    SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
+    SugarTestOpportunityUtilities::removeAllCreatedOpps();
 }
 
 public function testForecastTree()
@@ -113,6 +193,54 @@ public function testForecastTree()
             $this->assertEquals($row['parent_id'], $products[$row['id']]);
         }
     }
+
+    //Finally test a reporting-like query we may encounter
+    //This query gets the upstream users for employee4
+    $hierarchy_sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', true, "status = 'Active' AND id = '{$this->employee4->id}'");
+    $result = $GLOBALS['db']->query($hierarchy_sql);
+    $hierarchy = array();
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+       $hierarchy[] = $row['id'];
+    }
+
+    $hierarchy = "'" . implode("','", $hierarchy) . "'";
+
+    //Would we really do it this way???
+    $sql = "SELECT IFNULL(opportunities.id,'') primaryid
+    ,IFNULL(opportunities.name,'') opportunities_name
+    ,opportunities.probability
+    ,opportunities.best_case
+    ,opportunities.worst_case
+    ,IFNULL(l1.id,'') l1_id
+    ,l1.user_name l1_user_name,IFNULL(l2.id,'') l2_id
+    ,l2.product_id l2_product_id,l2.quantity l2_quantity,l2.price l2_price ,IFNULL( l2.currency_id,'') l2_price_currency
+
+    FROM opportunities
+    LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
+
+    LEFT JOIN  opportunity_line l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
+
+     AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
+                                        tst INNER JOIN team_memberships team_memberships ON tst.team_id =
+                                        team_memberships.team_id AND team_memberships.user_id in ({$hierarchy}) AND team_memberships.deleted=0)
+     WHERE (((l1.id in ({$hierarchy})
+    )) AND opportunities.team_set_id IN (SELECT tst.team_set_id FROM
+                                    team_sets_teams tst INNER JOIN team_memberships team_memberships ON
+                                    tst.team_id = team_memberships.team_id AND team_memberships.user_id in ({$hierarchy})
+                                    AND team_memberships.deleted=0))
+    AND  opportunities.deleted=0
+     LIMIT 0,100";
+
+    $result = $GLOBALS['db']->query($sql);
+    $opportunities = 0;
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+       $opportunities++;
+    }
+
+    $this->assertEquals(4, $opportunities);
+
 }
 
 
