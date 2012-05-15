@@ -152,10 +152,10 @@
         </div>                      
       </div>
       <div class="span10">
-        <table class="table datatable">
+        <table class="table datatableInput">
           <thead>
             <tr>
-              <th class="nosort">
+              <th>
                 <div class="btn-group">
                   <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
                   <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
@@ -168,12 +168,11 @@
                   </ul>
                 </div>
               </th>
-              <th class="">Opportunity</th>
-              <th class="">Sales Stage</th>
-              <th class="">Amount (USD)</th>
-              <th class="">Closing</th>
-              <th class="primary">Next Steps</th>
-              <th class="nosort"></th>
+              <th>Opportunity</th>
+              <th>Sales Stage</th>
+              <th>Amount (USD)</th>
+              <th>Closing</th>
+              <th>Next Steps</th>
             </tr>
           </thead>
           <tbody id="listed">
@@ -188,15 +187,6 @@
               <td><span class="dblclick keyup">75,000</span></td>
               <td>20 days</td>
               <td>Call <a href="user.html">Chris Lottery</a> to ask how to import his ...</td>
-              <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="index.html">Edit</a></li>
-                    <li><a href="index.html">Delete</a></li>
-                  </ul>
-                </span>
-              </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <a href=""><i class="icon-star"></i></a></td>
@@ -209,15 +199,6 @@
               <td>175,000</td>
               <td>40 days</td>
               <td>Call <a href="user.html">Peter Weyland</a> to ask how ...</td>
-              <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="index.html">Edit</a></li>
-                    <li><a href="index.html">Delete</a></li>
-                  </ul>
-                </span>
-              </td>
             </tr>                                                                                                                                                                                                                                                                                                                                                                                
           </tbody>
         </table>
@@ -401,5 +382,8 @@
     <script src="../js/editable.js"></script>
     <script src="../js/chosen.jquery.min.js"></script>
     <script src="../js/application.js"></script>
+    <script>
+      $('.datatableInput').dataTable({ aoColumnDefs: [{ bSortable: false, aTargets: [0]}],"bPaginate": false,"bFilter": true,"bInfo": false,"bAutoWidth": false });
+    </script>
   </body>
   </html>

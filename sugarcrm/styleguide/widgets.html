@@ -2399,46 +2399,59 @@ $('.myCarousel').carousel({
     <script src="js/bootstrap-colorpicker.js"></script>
     <script src="js/bootstrap-datepicker.js"></script>
     <script src="js/chosen.jquery.min.js"></script>
+    <script src="js/styleguide.js"></script>
     <script src="js/application.js"></script>
-    
-    <script>
-    		$(function(){
-    		  
-    		  //Color picker
-    			var bodyStyle = $('body')[0].style;
-    			$('#cp4').colorpicker().on('changeColor', function(ev){
-    				bodyStyle.backgroundColor = ev.color.toHex();
-    			});
-    		
-    		  // Calendar 
-    			var startDate = new Date(2012,1,20);
-    			var endDate = new Date(2012,1,25);
-    			$('#dp4').datepicker()
-    				.on('changeDate', function(ev){
-    					if (ev.date.valueOf() > endDate.valueOf()){
-    						$('#alert').show().find('strong').text('The start date can not be greater then the end date');
-    					} else {
-    						$('#alert').hide();
-    						startDate = new Date(ev.date);
-    						$('#startDate').text($('#dp4').data('date'));
-    					}
-    					$('#dp4').datepicker('hide');
-    				});
-    				
-    			// datepicker	
-    			$('#dp5').datepicker()
-    				.on('changeDate', function(ev){
-    					if (ev.date.valueOf() < startDate.valueOf()){
-    						$('#alert').show().find('strong').text('The end date can not be less then the start date');
-    					} else {
-    						$('#alert').hide();
-    						endDate = new Date(ev.date);
-    						$('#endDate').text($('#dp5').data('date'));
-    					}
-    					$('#dp5').datepicker('hide');
-    				});
-    		});
-    	</script>
+
+  	<script>
+  		$(function(){
+  		window.prettyPrint && prettyPrint()
+  			$('#cp1').colorpicker({
+  				format: 'hex'
+  			});
+  			$('#cp2').colorpicker();
+  			$('#cp3').colorpicker();
+  			var bodyStyle = $('body')[0].style;
+  			$('#cp4').colorpicker().on('changeColor', function(ev){
+  				bodyStyle.backgroundColor = ev.color.toHex();
+  			});
+  		});
+  	</script>
+ 
+  	<script>
+  		$(function(){
+  			$('#dp1').datepicker({
+  				format: 'mm-dd-yyyy'
+  			});
+  			$('#dp2').datepicker();
+  			$('#dp3').datepicker();
+
+
+  			var startDate = new Date(2012,1,20);
+  			var endDate = new Date(2012,1,25);
+  			$('#dp4').datepicker()
+  				.on('changeDate', function(ev){
+  					if (ev.date.valueOf() > endDate.valueOf()){
+  						$('#alert').show().find('strong').text('The start date can not be greater then the end date');
+  					} else {
+  						$('#alert').hide();
+  						startDate = new Date(ev.date);
+  						$('#startDate').text($('#dp4').data('date'));
+  					}
+  					$('#dp4').datepicker('hide');
+  				});
+  			$('#dp5').datepicker()
+  				.on('changeDate', function(ev){
+  					if (ev.date.valueOf() < startDate.valueOf()){
+  						$('#alert').show().find('strong').text('The end date can not be less then the start date');
+  					} else {
+  						$('#alert').hide();
+  						endDate = new Date(ev.date);
+  						$('#endDate').text($('#dp5').data('date'));
+  					}
+  					$('#dp5').datepicker('hide');
+  				});
+  		});
+  	</script>
     
   </body>
 </html>
