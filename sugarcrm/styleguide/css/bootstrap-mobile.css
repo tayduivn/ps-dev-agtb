@@ -4600,6 +4600,7 @@ h3.nomad {
   margin: 0 18px;
 }
 .bizcard {
+  left: 0px;
   position: fixed;
   top: 46px;
   width: 100%;
@@ -4783,6 +4784,7 @@ h3.nomad {
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
+  overflow: hidden;
   margin: 5px auto 15px;
   width: 220px;
   height: auto;
@@ -4832,6 +4834,9 @@ h3.nomad {
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
 }
+#createRecord.form-horizontal span .control-group:first-child {
+  border-top: 1px solid #e8e8e8;
+}
 #createRecord.form-horizontal .control-group {
   position: relative;
   display: block;
@@ -4855,6 +4860,10 @@ h3.nomad {
   -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+  height: 100%;
+}
+.login .modal-footer {
+  text-align: center;
 }
 .login .modal,
 .login .modal-header,

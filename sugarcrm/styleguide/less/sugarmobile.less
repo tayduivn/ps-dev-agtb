@@ -690,6 +690,7 @@ text-shadow: 0 -1px 0 @black;
 }
 
 .bizcard {
+  left:0px;
   position: fixed;
   top: 46px;
   width: 100%;
@@ -835,6 +836,7 @@ color: @gray;
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
+  overflow:hidden;
   margin: 5px auto 15px;
   width: 220px;
   height: auto;
@@ -881,12 +883,18 @@ color: @gray;
 #createRecord.form-horizontal .controls {
   margin-left: 26%;
 }
+
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
 }
+
+#createRecord.form-horizontal span .control-group:first-child {
+  border-top: 1px solid #e8e8e8;
+}
+
 #createRecord.form-horizontal .control-group {
   position: relative;
-	display: block;
+  display: block;
   padding: 10px;
   margin: 0;
   border-top: 1px solid darken(@grayLighter, 1%);
@@ -907,10 +915,15 @@ color: @gray;
 /* Log In
 ----------*/
 .login {
-	background: #E61718 url(../img/leather-red.png);
+  background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
+  height:100%;
+  .modal-footer {
+    text-align:center;
+  }
 }
+
 .login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;
 padding: 0 !important;

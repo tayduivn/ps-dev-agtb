@@ -17,9 +17,19 @@
 ,
 		'print':'on'
 ,
-		'goal_marker_type':'group'
+		'goal_marker_type': [
+            'group',
+            'group'
+            ]
 ,
-		'goal_marker_color':'#3FB300'
+		'goal_marker_color': [
+            '#3FB300',
+            '#444444'
+           ]
+,       'goal_marker_label' : [
+        'Quota',
+        'Likely'
+          ]
 ,
         'label_name':'Sales Stage'
 ,
@@ -104,7 +114,7 @@
 
 	{
 
-		'label': 'Jan',
+		'label': 'January',
 
 		'gvalue': '400',
 
@@ -143,15 +153,20 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            200
+        ],
+		'goalmarkervaluelabel' : [
+            '410K',
+            '200K'
+        ]
 
 	}
 ,
 	{
 
-		'label': 'Feb',
+		'label': 'Febuary',
 
 		'gvalue': '590',
 
@@ -189,15 +204,20 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410k',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            50
+            ],
+		'goalmarkervaluelabel' : [
+            '410k',
+            '50k'
+            ]
 
 	}
 ,
 	{
 
-		'label': 'Mar',
+		'label': 'March',
 
 		'gvalue': '410',
 
@@ -234,11 +254,18 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            200
+            ],
+		'goalmarkervaluelabel' : [
+            '410K',
+            '200k'
+            ]
 
 	}
+
+
 
 
 	]
