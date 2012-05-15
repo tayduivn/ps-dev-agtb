@@ -72,53 +72,94 @@
          * @return {Core.Context} New instance of the child context.
          */
         getChildContext: function(def) {
-            var context = app.context.getContext(def);
+            var context;
+
+            // Re-use a child context if it already exists
+            // We search by either link name or module name
+            // Consider refactoring the way we store children: hash v.s. array
+            var name = def.link || def.module;
+            if (name) {
+                context = _.find(this.children, function(child) {
+                    return ((child.get("link") == name) || (child.get("module") == name));
+                });
+            }
+
+            if (!context) {
+                context = app.context.getContext(def);
+                this.children.push(context);
+                context.parent = this;
+            }
 
             if (def.link) {
                 context.set({ parentModel: this.get("model") });
             }
 
-            this.children.push(context);
-            context.parent = this;
             return context;
+        },
+
+        _prepareData: function(force, preparator) {
+            // The data has already been prepared
+            if (!force && (this.get("model") || this.get("collection"))) return;
+            this.set(preparator.call(this));
         },
 
         /**
          * Prepares instances of model and collection.
+         *
+         * This method does nothing if this context already contains an instance of a model or a collection.
+         * Pass `true` to re-create model and collection.
+         *
+         * @param {Boolean} force(optional) Flag indicating if data instances must be re-created.
          */
-        prepareData: function() {
-            var model, collection,
-                modelId = this.get("modelId"),
-                module = this.get("module"),
-                create = this.get("create");
+        prepareData: function(force) {
+            this._prepareData(force, function() {
+                var model, collection,
+                    modelId = this.get("modelId"),
+                    module = this.get("module"),
+                    create = this.get("create");
 
-            if (modelId) {
-                model = app.data.createBean(module, { id: modelId });
-                collection = app.data.createBeanCollection(module, [model]);
-            } else if (create === true) {
-                model = app.data.createBean(module);
-                collection = app.data.createBeanCollection(module, [model]);
-            } else {
-                model = app.data.createBean(module);
-                collection = app.data.createBeanCollection(module);
-            }
+                if (modelId) {
+                    model = app.data.createBean(module, { id: modelId });
+                    collection = app.data.createBeanCollection(module, [model]);
+                } else if (create === true) {
+                    model = app.data.createBean(module);
+                    collection = app.data.createBeanCollection(module, [model]);
+                } else {
+                    model = app.data.createBean(module);
+                    collection = app.data.createBeanCollection(module);
+                }
 
-            this.set({collection: collection, model: model});
+                return {
+                    collection: collection,
+                    model: model
+                };
+            });
+
         },
 
         /**
          * Prepares instances of related models and collections.
+         *
+         * This method does nothing if this context already contains an instance of a model or a collection.
+         * Pass `true` to re-create model and collection.
+         *
+         * @param {Boolean} force(optional) Flag indicating if data instances must be re-created.
          */
-        prepareRelatedData: function() {
-            var model, collection,
-                parentModel = this.get("parentModel"),
-                link = this.get("link");
+        prepareRelatedData: function(force) {
+            this._prepareData(force, function() {
+                var model, collection,
+                    parentModel = this.get("parentModel"),
+                    link = this.get("link");
 
-            if (parentModel && link) {
-                collection = parentModel.getRelatedCollection(link);
-                model = app.data.createRelatedBean(parentModel, null, link);
-                this.set({collection: collection, model: model});
-            }
+                if (parentModel && link) {
+                    collection = parentModel.getRelatedCollection(link);
+                    model = app.data.createRelatedBean(parentModel, null, link);
+                    return {
+                        collection: collection,
+                        model: model
+                    };
+                }
+            });
         },
 
 
