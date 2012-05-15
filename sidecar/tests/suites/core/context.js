@@ -154,6 +154,13 @@ describe("Context", function() {
             expect(subrelatedContext.attributes.link).toEqual("Accounts");
             expect(subrelatedContext.attributes..parentModel).toEqual(model);
 
+            var subcontext2 = context.getChildContext({ module: "Accounts" });
+            expect(subcontext).toEqual(subcontext2);
+            var subrelatedContext2 = context.getChildContext({ link: "accounts" });
+            expect(subrelatedContext).toEqual(subrelatedContext2);
+
+            expect(context.children.length).toEqual(2);
+
             subcontext.prepareData();
             expect(subcontext.attributes.model).toBeDefined();
 
