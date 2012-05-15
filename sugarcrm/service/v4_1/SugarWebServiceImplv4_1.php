@@ -102,12 +102,10 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
     		$filterFields = $result['fields_set_on_rows'];
 
     		if (sizeof($list) > 0) {
-    			// get the related module name and instantiate a bean for that.
+    			// get the related module name and instantiate a bean for that
     			$submodulename = $mod->$link_field_name->getRelatedModuleName();
-    			$submoduleclass = $beanList[$submodulename];
-    			require_once($beanFiles[$submoduleclass]);
+                $submoduletemp = BeanFactory::getBean($submodulename);
 
-    			$submoduletemp = new $submoduleclass();
     			foreach($list as $row) {
     				$submoduleobject = @clone($submoduletemp);
     				// set all the database data to this object
