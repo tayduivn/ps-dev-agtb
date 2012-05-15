@@ -1,5 +1,3 @@
-
-
 <h1 class="nomad">Create Item</h1>
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">
@@ -16,7 +14,6 @@
         </fieldset>
     </div>
 </div>
-
 <fieldset>
     <div>
         <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Save</a>

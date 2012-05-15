@@ -1,7 +1,4 @@
-
-
-<h1 class="nomad">Details</h1>
-<div class="form-horizontal" id="createRecord">
+<!--<div class="form-horizontal" id="createRecord">
   <div id="scroll">
   <fieldset class="pad">
 
@@ -23,7 +20,39 @@
 
   </fieldset>
   </div>
+</div>-->
+{{log this}}
+
+<h1 class="nomad">{{model.attributes.name}}</h1>
+<div class="bizcard">
+    <img src="../img/avatar_sabra.jpg" class="avatar" alt="{{model.attributes.name}} avatar">
+    <div class="card">
+        <h3>{{model.attributes.name}}</h3>
+        National Sales Manager<br>
+        Nuance<br>
+        <a href="http://maps.google.com/maps/place?q=boston+MA&amp;hl=en" id="accountAddress">123 Boylston St,<br>Boston, MA</a>
+    </div>
+    <a href="perkin_kleiners_edit.html"><i class="icon-chevron-right more"></i></a>
+    <div id="record-action" class="row-fluid">
+        <a class="span4" href=""><i class="icon-phone"></i></a>
+        <a class="span4" href="mailto:info@kpcb.com"><i class="icon-envelope icon-md"></i></a>
+        <a class="span4" href="#"><i class="icon-comment icon-md"></i></a>
+    </div>
 </div>
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12" id="listing"><i></i>
+            <ul class="actions">
+                <li><a href="#">Activity <i class="icon-chevron-right more"></i></a></li>
+                <li><a href="#">Accounts <i class="icon-chevron-right more"></i></a></li>
+                <li><a href="#">Contacts <i class="icon-chevron-right more"></i></a></li>
+                <li><a href="#">Documents <i class="icon-chevron-right more"></i></a></li>
+                <li><a href="#">Notes <i class="icon-chevron-right more"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 
 <fieldset>
     <div>

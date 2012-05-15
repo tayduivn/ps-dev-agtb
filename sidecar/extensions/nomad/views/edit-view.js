@@ -3,7 +3,6 @@
     app.view.views.EditView = app.view.View.extend({
         events: {
             "click #saveRecord": function () {
-                var self = this;
                 var model = this.context.get("model");
                 model.save(null, {
                     success: function () {
