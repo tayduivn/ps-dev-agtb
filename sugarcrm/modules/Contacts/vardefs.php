@@ -125,7 +125,7 @@ array (
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
-		),	
+		),
 	'opportunity_role' =>
 		array(
 			'name' => 'opportunity_role',
@@ -193,7 +193,7 @@ array (
             'vname' => 'LBL_USER_PASSWORD',
             'type' => 'password',
             'dbType' => 'varchar',
-            'len' => '32',
+            'len' => '255',
             'group'=>'portal',
             'reportable' => false,
         	'studio' => array('listview' => false),
@@ -204,7 +204,7 @@ array (
             'vname' => 'LBL_USER_PASSWORD',
             'type' => 'varchar',
             'source' => 'non-db',
-            'len' => '32',
+            'len' => '255',
             'group'=>'portal',
             'reportable' => false,
             'importable' => 'false',

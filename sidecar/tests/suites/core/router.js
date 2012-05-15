@@ -75,7 +75,7 @@ describe("Router", function() {
         var mock = sinon.mock(app.controller);
         mock.expects("loadView").once().withArgs({
             module: 'Cases',
-            id: 123,
+            modelId: 123,
             action: 'edit',
             layout: 'edit'
         });

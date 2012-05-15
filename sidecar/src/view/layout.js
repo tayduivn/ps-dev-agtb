@@ -39,8 +39,10 @@
 
                     context = this.context.getChildContext(def.context);
                     if (def.context.link) {
+                        context.prepareRelatedData();
                         module = context.get('collection').module;
                     } else {
+                        context.prepareData();
                         module = def.context.module || this.module;
                     }
                 }

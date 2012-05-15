@@ -49,6 +49,7 @@ describe("Bean", function() {
         expect(contacts.link).toBeDefined();
         expect(contacts.link.name).toEqual("contacts");
         expect(contacts.link.bean).toEqual(opportunity);
+        expect(opportunity._relatedCollections["contacts"]).toEqual(contacts);
 
         // Make sure we get the same instance (cached)
         expect(opportunity.getRelatedCollection("contacts")).toEqual(contacts);

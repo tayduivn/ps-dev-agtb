@@ -2,7 +2,7 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="thumbnail {{name}}">
-                <h1><a href='#{{context.state.module}}'>{{context.state.module}}</a></h1>
+                <h1><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a></h1>
 
                 <div>
                     <div class="dataTables_filter">
@@ -14,15 +14,15 @@
                         <thead>
                         <tr role="row">
                             {{#each fields}}
-                            <th class="{{#if sorting}}sorting{{eq ../../../context.state.collection.orderBy.field name ../../../this.orderBy.direction ""}} orderBy{{name}}{{/if}}"
+                            <th class="{{#if sorting}}sorting{{eq ../../../context.attributes.collection.orderBy.field name ../../../this.orderBy.direction ""}} orderBy{{name}}{{/if}}"
                                 role="columnheader" data-fieldname="{{name}}">
-                                {{getLabel label ../../context.state.module}}
+                                {{getLabel label ../../context.attributes.module}}
                             </th>
                             {{/each}}
                         </tr>
                         </thead>
                         <tbody role="alert" aria-live="polite" aria-relevant="all">
-                        {{#each ../context.state.collection.models}}
+                        {{#each ../context.attributes.collection.models}}
                         <tr name="{{module}}_{{attributes.id}}">
                             {{#each ../fields}}
                             <td>{{field ../../../context ../../../this ../this}}</td>
@@ -54,10 +54,10 @@
                     {{field ../context ../this ../model}}
                 </li>
                 {{/each}}
-                {{#if context.state.collection.page}}
+                {{#if context.attributes.collection.page}}
                 <li>
                     <div class="page_counter">
-                        <small>Page {{context.state.collection.page}}</small>
+                        <small>Page {{context.attributes.collection.page}}</small>
                     </div>
                 </li>
                 {{/if}}
