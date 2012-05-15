@@ -31,7 +31,7 @@
 *}
 {* && $vardef.type != 'date' && $vardef.type != 'datetimecombo' *}
 {if $vardef.type != 'enum' && $vardef.type != 'address'
- && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
+ && $vardef.type != 'html' && $vardef.type != 'relate'
  && $vardef.type != 'url' && $vardef.type != 'iframe' && $vardef.type != 'parent'  && $vardef.type != 'image'}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td style="line-height:1em"><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"

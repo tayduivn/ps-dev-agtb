@@ -15,6 +15,12 @@
             "header": {
                 target: '#header'
             }
+        },
+        orderByDefaults: {
+            'Cases': {
+                field: 'case_number',
+                direction: 'asc'
+            }
         }
 
     }, false);
