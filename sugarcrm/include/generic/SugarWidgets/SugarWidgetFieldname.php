@@ -259,6 +259,47 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN (".$str.")\n";
 	}
 
+    /**
+     * queryFilterreports_to
+     *
+     * @param $layout_def
+     * @param bool $rename_columns
+     * @return string
+     */
+    function queryFilterreports_to($layout_def, $rename_columns = true)
+   	{
+        $layout_def['name'] = 'id';
+        $layout_def['type'] = 'id';
+        $input_name0 = $layout_def['input_name0'];
+
+        if (is_array($layout_def['input_name0']))
+        {
+            $input_name0 = $layout_def['input_name0'][0];
+        }
+
+        if ($input_name0 == 'Current User')
+        {
+            global $current_user;
+            $input_name0 = $current_user->id;
+        }
+
+        $sql = $this->reporter->db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', false, "status = 'Active'");
+        $result = $this->reporter->db->query($sql);
+        $ids = array();
+        while($row = $this->reporter->db->fetchByAssoc($result))
+        {
+            $ids[$row['id']] = $row['id'];
+        }
+
+        //Use in select syntax if we have more than one user
+        if(count($ids) > 1)
+        {
+           return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", $ids) ."')\n";
+        }
+
+        return SugarWidgetFieldid::_get_column_select($layout_def)."=".$this->reporter->db->quoted($input_name0)."\n";
+   	}
+
 	function &queryGroupBy($layout_def)
 	{
         if($layout_def['name'] == 'full_name') {

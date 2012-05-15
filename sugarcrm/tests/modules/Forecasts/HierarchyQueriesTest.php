@@ -240,7 +240,6 @@ public function testForecastTree()
     }
 
     $this->assertEquals(4, $opportunities);
-
 }
 
 

@@ -578,5 +578,9 @@ $mod_strings = array (
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
+
+//BEGIN SUGARCRM flav=pro ONLY
+    'LBL_REPORTS_TO' => 'Reports To',
+//END SUGARCRM flav=pro ONLY
 );
 ?>
