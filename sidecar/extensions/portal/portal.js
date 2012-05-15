@@ -31,7 +31,7 @@
                                     primary: true,
                                     events: {
                                         click: "function(){ var self = this; " +
-                                            "this.model.isValid();" +
+                                            "if(this.model.isValid()) {" +
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
@@ -45,6 +45,7 @@
                                             "app.sync(" +
                                             "function(){console.log(\"sync success firing\");}); }" +
                                             "});" +
+                                            "}" +
                                             "}"
                                     }
                                 }
