@@ -206,4 +206,10 @@
        return app.lang.get(key, module);
     });
 
+
+    Handlebars.registerHelper("debugger", function() {
+        console.log("debugger");
+        debugger;
+    });
+
 })(SUGAR.App);
