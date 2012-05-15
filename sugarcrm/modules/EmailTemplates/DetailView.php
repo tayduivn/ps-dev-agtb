@@ -167,7 +167,7 @@ if(! isset($notes_list)) {
 $attachments = '';
 for($i=0; $i<count($notes_list); $i++) {
 	$the_note = $notes_list[$i];
-	$attachments .= "<a href=\"index.php?entryPoint=download&id={$the_note->id}&type=Notes\">".$the_note->name.$the_note->description."</a><br />";
+	$attachments .= "<a href=\"index.php?entryPoint=download&id={$the_note->id}&type=Notes\">".$the_note->name."</a><br />";
 }
 
 $xtpl->assign("ATTACHMENTS", $attachments);
