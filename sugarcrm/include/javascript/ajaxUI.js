@@ -268,6 +268,12 @@ SUGAR.ajaxUI = {
             }
             return true;
         } else {
+
+            if(YAHOO.util.Selector.query("input[type=submit]", form)[0].value == "Save")
+            {
+                ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
+            }
+
             form.submit();
             return false;
         }
