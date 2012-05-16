@@ -763,7 +763,7 @@ fixtures.metadata = {
             views: {
                 detail: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n",
                 edit: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                    "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
+                    "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{#eq this ../value}}checked{{/eq}}>{{this}}</label>{{/eachOptions}}"
             }
         },
         "checkbox": {
