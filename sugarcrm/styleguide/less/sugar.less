@@ -162,14 +162,20 @@ table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-chil
 table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
   .border-radius(0 0 4px 4px)
 }
-table th, table td { position: relative; white-space: nowrap; max-width: 100px; overflow: hidden; 
-}
+table th { white-space: nowrap;}
+table.datatable tbody td { white-space: nowrap; max-width: 100px; overflow-x: hidden;}
+table th, table td { position: relative;}
+
 table th { min-width: 20px; color: @tableHeader !important;}
 table th .btn-group { margin: 0 0 0 -10px; }
 table th .btn input { margin: -2px 0 0 0; }
+table th .toggle-all {margin: 10px;}
 table td .btn-toolbar { margin: -5px 0 -10px; }
 .dblclick input { padding: 3px 3px 2px; position: absolute; top: 9px; left: 3px; width: 80% !important; }
-
+table tfoot td {
+  font-weight: bold;
+  border-top: 2px solid @grayLight !important;
+}
 
 /* Activity streams */
 #stream {position: relative;}
@@ -420,7 +426,7 @@ article .avatar {
 
 /* blocks */
 .block {
-	margin-bottom: 15px;
+	margin-bottom: 20px;
   position: relative;
 	display: block;
 }
@@ -511,12 +517,21 @@ article .avatar {
 }
 
 .row-fluid > #charts.span12 {margin-left: 0 !important;}
-.drawerTrig {font-size: 8px; padding: 1px 5px 0; z-index: 1020; position: absolute;}
+.drawerTrig {font-size: 6px; padding: 4px 5px 0 4px; z-index: 1010; position: absolute;}
 h4 i {color: @grayLight;}
 .drawerTrig.pull-right {
   .border-radius(0 2px 2px 0);
-  margin-right: -18px;
+  margin-right: -17px;
   position: relative;
+}
+
+.drawerTrig.pull-left {
+  .border-radius(2px);
+  margin-right: 0;
+  padding: 4px 4px 0 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .block.tabs-left .nav-tabs li .actions {
@@ -535,9 +550,10 @@ h4 i {color: @grayLight;}
   position: relative;
 }
 .block h4 {
-  padding: 10px 0 10px;
+  padding: 0 0 10px;
   font-weight: 600;
   border-bottom: 1px solid @grayLight;
+  margin-bottom: 10px;
 }
 
 .span2 .block .actions {
@@ -663,13 +679,12 @@ article:hover .actions,  tr:hover .actions {
 .bordered {
 	box-shadow: @grayLight 1px 0 0;
 }
+#drawer {
+	position: relative;
+}
 
 .search-query {
   .border-radius(4px);
-}
-
-.block h4+ul.list {
-  margin-top: 10px;
 }
 
 .block ul.list ul {
@@ -687,21 +702,54 @@ article:hover .actions,  tr:hover .actions {
   display: inline;
 }
 
+.topline .row-fluid {
+  margin: 0;  
+  padding: 0;
+}
+.topline hr {
+  margin: 0 0 -1px;
+  padding: 0;
+  border-top: 2px solid @grayLight;
+}
+.topline table {
+  margin: 0;
+}
 .topline .span2 {
   border-right: 1px solid  @grayLighter;
   padding: 10px;
+  text-align: center;
+}
+.topline h2 {
+  padding: 0;
+}
+.topline .btn {
+  margin: 5px;
 }
 
 #overview .span3 {
-  padding: 10px 0 10px 10px;
+  padding: 10px 0;
   margin-right: -11px;
 }
 
 #overview .progress {
   margin: 8px;
+    position: relative;
 }
+
 #overview .progress, #overview .progress .bar  {
-  height: 16px;
+  height: 20px;
+  line-height: 20px;
+  text-align: left;
+  font-size: 16px;
+
+}
+.progress .bar b {
+  .opacity(30);
+  width: 40px;
+  text-align: left;
+  color: #000;
+  position: absolute;
+  right: -60px;
 }
 
 /* vcard */
