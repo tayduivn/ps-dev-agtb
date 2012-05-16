@@ -5,18 +5,18 @@
 
         <div class="existing">
             {{#each value}}
-            <div class="control-group" data-emailAddress={{email}}>
+            <div class="control-group" data-emailAddress={{email_address}}>
             <div class="controls pull-left">
-                            <input type="text" class="span2 input-append existing" id="{{email}}" placeholder="email address" value="{{email}}">
+                            <input type="text" class="span2 input-append existing" id="{{email_address}}" placeholder="email address" value="{{email_address}}">
                         </div>
             <div class="btn-toolbar pull-left">
-                          <div class="btn-group" data-toggle="buttons-checkbox" data-parentEmail="{{email}}">
-                            <button type="button" class="btn {{#if is_primary}}active{{/if}} is_primary" data-emailproperty="is_primary" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
-                            <button type="button" class="btn {{#if opted_out}}active{{/if}}" data-emailproperty="opted_out" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
-                            <button type="button" class="btn {{#if is_invalid}}active{{/if}}" data-emailproperty="is_invalid" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
+                          <div class="btn-group" data-toggle="buttons-checkbox" data-parentEmail="{{email_address}}">
+                            <button type="button" class="btn btn-edit {{eq primary_address "1" "active" ""}} is_primary" data-emailproperty="primary_address" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                            <button type="button" class="btn btn-edit {{eq opt_out "1" "active" ""}}" data-emailproperty="opt_out" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
+                            <button type="button" class="btn btn-edit {{eq invalid_email "1" "active" ""}}" data-emailproperty="invalid_email" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
                           </div>
                           <div class="btn-group">
-                            <a href="javascript:void(0)" class="btn removeEmail" rel="tooltip" data-parentEmail="{{email}}"><i class="icon-minus"></i></a>
+                            <a href="javascript:void(0)" class="btn removeEmail" rel="tooltip" data-parentEmail="{{email_address}}"><i class="icon-minus"></i></a>
                           </div>
                         </div>
                               {{/each}}
@@ -31,7 +31,10 @@
                 </div>
                     </div>
                       </div>
-        <p class="help-block"></p>
+
             </div>
+    </div>
+    <div class="help-group control-group">
+    <p class="help-block"></p>
     </div>
 </div>

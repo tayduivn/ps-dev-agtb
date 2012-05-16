@@ -58,7 +58,7 @@
                     value = value || "";
                     value = value.toString();
 
-                    if(value.length < minLength) {
+                    if (value.length < minLength) {
                         return minLength;
                     }
                 }
@@ -85,8 +85,19 @@
              * @return {Boolean} Should return true if not valid
              */
             email: function(field, value) {
+                var results = [];
                 if (field.type == "email") {
-                    return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(value))
+                    if (value.length && value.length > 0) {
+                        _.each(value, function(fieldProperties) {
+                            var isValid = (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(fieldProperties.email_address));
+                            if (!isValid) {
+                                results.push(fieldProperties.email_address);
+                            }
+                        });
+                    }
+                    if (results.length > 0) {
+                        return results;
+                    }
                 }
             }
 
