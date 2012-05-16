@@ -86,27 +86,33 @@ describe("Handlebars Helpers", function() {
             var val1 = "hello",
                 val2 = ["world", "fizz", "hello", "buzz"],
                 returnTrue = "Success!",
-                returnFalse = "Failure!";
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
+            expect(Handlebars.helpers.has(val1, val2, returnCb)).toEqual(returnTrue);
         });
 
         it("should return the false value if the first value is found in the second value (array)", function() {
             var val1 = "hello",
                 val2 = ["world", "fizz", "sidecar", "buzz"],
                 returnTrue = "Success!",
-                returnFalse = "Failure!";
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
+            expect(Handlebars.helpers.has(val1, val2, returnCb)).toEqual(returnFalse);
         });
 
         it("should return the true value if the first value is found in the second value (scalar)", function() {
             var val1 = "hello",
                 val2 = "hello",
                 returnTrue = "Success!",
-                returnFalse = "Failure!";
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
+            expect(Handlebars.helpers.has(val1, val2, returnCb)).toEqual(returnTrue);
         });
     });
 
@@ -152,6 +158,30 @@ describe("Handlebars Helpers", function() {
                 returnCb.inverse = function() { return returnFalse; };
 
             expect(Handlebars.helpers.eq(val1, val2, returnCb)).toEqual(returnFalse);
+        });
+    });
+
+    describe("notEq", function() {
+        it("should return the false value if conditional evaluates true", function() {
+            var val1 = 1,
+                val2 = 1,
+                returnTrue = "Success!",
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
+
+            expect(Handlebars.helpers.notEq(val1, val2, returnCb)).toEqual(returnFalse);
+        });
+
+        it("should return the true value if conditional evaluates false", function() {
+            var val1 = 1,
+                val2 = 2,
+                returnTrue = "Success!",
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
+
+            expect(Handlebars.helpers.notEq(val1, val2, returnCb)).toEqual(returnTrue);
         });
     });
 

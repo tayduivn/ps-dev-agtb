@@ -654,11 +654,11 @@ fixtures.metadata = {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
-                    "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{#has this.key ..\/value.hours}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>" +
                     " : " +
-                    "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{#has this.key ..\/value.minutes}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>" +
                     " " +
-                    "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                    "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{#has this.key ..\/value.amPm}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
                     " <p class=\"help-block\">" +
                     "<\/p> <\/div>",
                 "default": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
@@ -743,7 +743,7 @@ fixtures.metadata = {
             "views": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                    "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                    "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                     "<\/p> <\/div>",
                 "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
