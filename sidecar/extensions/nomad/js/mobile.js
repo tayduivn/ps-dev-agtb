@@ -3,14 +3,11 @@
 	$('#logo').bind('touchmove', function (e) {
 		e.preventDefault();} 
 	);
-	$('#logo, h1.nomad').swipeRight(function () {
+	$('#logo').swipeRight(function () {
 		closeBottomMenu();
 		$('html').find('body').addClass('onL');
 	});
 	$('#logo').swipeLeft(function () {
-		$('html').find('body').removeClassClass('onL');
-	});
-	$('.cube').swipeLeft(function () {
 	      $('html').find('body').toggleClass('onL');
 	      return false;
 	});
@@ -56,7 +53,7 @@
 	});
 
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.cube').live('click', function () {
+    $('#logo').live('click', function () {
 	if($('body').hasClass('onL')){
 	    $('#logo').trigger('swipeLeft');
 	}else{
