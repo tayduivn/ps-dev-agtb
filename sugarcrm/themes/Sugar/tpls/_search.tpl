@@ -4,7 +4,7 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
-            <input size=20 id='sugar_spot_search'  title='' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
+            <input size=20 id='sugar_spot_search' accesskey="0" title='' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
             <div id="sugar_spot_search_results" style="display:none;">
                 {if $FTS_AUTOCOMPLETE_ENABLE}

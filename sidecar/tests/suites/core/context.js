@@ -26,7 +26,7 @@ describe("Context", function() {
         expect(context.attributes.model).toBeUndefined();
         expect(context.attributes.collection).toBeUndefined();
 
-        context.prepareData();
+        context.prepare();
 
         expect((context.attributes.model instanceof Backbone.Model)).toBeTruthy();
         expect((context.attributes.collection instanceof Backbone.Collection)).toBeTruthy();
@@ -41,7 +41,7 @@ describe("Context", function() {
             module: 'Cases'
         });
 
-        context.prepareData();
+        context.prepare();
 
         expect(context.attributes.model).toBeDefined();
         expect(context.attributes.model.id).toEqual("123");
@@ -53,7 +53,7 @@ describe("Context", function() {
             module: 'Cases'
         });
 
-        context.prepareData();
+        context.prepare();
 
         expect(context.get("module")).toEqual('Cases');
         expect(context.get("model") instanceof app.Bean).toBeTruthy();
@@ -134,6 +134,87 @@ describe("Context", function() {
         expect(context.get('collection').orderBy.direction).toEqual('updownallaround');
     });
 
+    it("should prepare data for a link path", function() {
+        var context = app.context.getContext({
+            link: "accounts",
+            parentModelId: 'xyz',
+            parentModule: "Contacts"
+        });
+
+        context.prepare();
+
+        expect(context.get("parentModel")).toBeDefined();
+        expect(context.get("parentModel").module).toEqual("Contacts");
+        expect(context.get("parentModel").id).toEqual("xyz");
+
+        expect(context.get("collection")).toBeDefined();
+        expect(context.get("collection").module).toEqual("Accounts");
+        expect(context.get("collection").link).toBeDefined();
+        expect(context.get("collection").link.name).toEqual("accounts");
+        expect(context.get("collection").link.bean).toEqual(context.get("parentModel"));
+    });
+
+    it("should prepare data for a link path with pre-filled parent model", function() {
+        var context = app.context.getContext({
+            link: "accounts",
+            parentModel: app.data.createBean("Contacts", { id: "xyz "})
+        });
+
+        context.prepare();
+
+        expect(context.get("collection")).toBeDefined();
+        expect(context.get("collection").module).toEqual("Accounts");
+        expect(context.get("collection").link).toBeDefined();
+        expect(context.get("collection").link.name).toEqual("accounts");
+        expect(context.get("collection").link.bean).toEqual(context.get("parentModel"));
+    });
+
+    it("should prepare data for a related record path", function() {
+        var context = app.context.getContext({
+            link: "accounts",
+            parentModelId: 'xyz',
+            parentModule: "Contacts",
+            modelId: 'asd'
+        });
+
+        context.prepare();
+
+        expect(context.get("parentModel")).toBeDefined();
+        expect(context.get("parentModel").module).toEqual("Contacts");
+        expect(context.get("parentModel").id).toEqual("xyz");
+
+        expect(context.get("model")).toBeDefined();
+        expect(context.get("model").module).toEqual("Accounts");
+        expect(context.get("model").id).toEqual("asd");
+        expect(context.get("model").link).toBeDefined();
+        expect(context.get("model").link.name).toEqual("accounts");
+        expect(context.get("model").link.bean).toEqual(context.get("parentModel"));
+        expect(context.get("model").link.isNew).toBeTruthy();
+    });
+
+    it("should prepare data for a create related record path", function() {
+        var context = app.context.getContext({
+            link: "accounts",
+            parentModelId: 'xyz',
+            parentModule: "Contacts",
+            create: true
+        });
+
+        context.prepare();
+
+        expect(context.get("parentModel")).toBeDefined();
+        expect(context.get("parentModel").module).toEqual("Contacts");
+        expect(context.get("parentModel").id).toEqual("xyz");
+
+        expect(context.get("model")).toBeDefined();
+        expect(context.get("model").module).toEqual("Accounts");
+        expect(context.get("model").isNew()).toBeTruthy();
+        expect(context.get("model").link).toBeDefined();
+        expect(context.get("model").link.name).toEqual("accounts");
+        expect(context.get("model").link.bean).toEqual(context.get("parentModel"));
+        expect(context.get("model").link.isNew).toBeTruthy();
+    });
+
     describe("Child context", function() {
 
         it("should create child contexts and prepare data", function() {
@@ -148,16 +229,23 @@ describe("Context", function() {
 
             expect(context.children.length).toEqual(2);
             expect(subcontext.parent).toEqual(context);
-            expect(subcontext.attributes..module).toEqual("Accounts");
+            expect(subcontext.attributes.module).toEqual("Accounts");
 
             expect(subrelatedContext.parent).toEqual(context);
-            expect(subrelatedContext.attributes.link).toEqual("Accounts");
-            expect(subrelatedContext.attributes..parentModel).toEqual(model);
+            expect(subrelatedContext.attributes.link).toEqual("accounts");
+            expect(subrelatedContext.attributes.parentModel).toEqual(model);
 
-            subcontext.prepareData();
+            var subcontext2 = context.getChildContext({ module: "Accounts" });
+            expect(subcontext).toEqual(subcontext2);
+            var subrelatedContext2 = context.getChildContext({ link: "accounts" });
+            expect(subrelatedContext).toEqual(subrelatedContext2);
+
+            expect(context.children.length).toEqual(2);
+
+            subcontext.prepare();
             expect(subcontext.attributes.model).toBeDefined();
 
-            subrelatedContext.prepareRelatedData();
+            subrelatedContext.prepare();
             expect(subcontext.attributes.model).toBeDefined();
             expect(subcontext.attributes.model.module).toEqual("Accounts");
 

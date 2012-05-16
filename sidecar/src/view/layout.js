@@ -36,13 +36,11 @@
                 var module = this.module;
                 // Switch context if necessary
                 if (def.context) {
-
                     context = this.context.getChildContext(def.context);
+                    context.prepare();
                     if (def.context.link) {
-                        context.prepareRelatedData();
                         module = context.get('collection').module;
                     } else {
-                        context.prepareData();
                         module = def.context.module || this.module;
                     }
                 }

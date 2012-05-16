@@ -301,7 +301,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $highlighArray;
     }
 
-    private function canAppendWildcard($queryString)
+    protected function canAppendWildcard($queryString)
     {
         $queryString = trim(html_entity_decode($queryString, ENT_QUOTES));
         if( substr($queryString, -1) ===  self::WILDCARD_CHAR) {

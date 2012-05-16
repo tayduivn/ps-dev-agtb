@@ -38,14 +38,27 @@ array (
   'name' => 'product_id',
   'vname' => 'LBL_PRODUCT_ID',
   'type' => 'id',
-  'required' => true
+  'required' => true,
+  'reportable' => false,
 ),
+  'products' =>
+  array(
+    'name' => 'products',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_products',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Products',
+    'bean_name'=>'Product',
+    'vname'=>'LBL_PRODUCTS',
+  ),
 'opportunity_id' =>
 array (
   'name' => 'opportunity_id',
   'type' => 'id',
   'vname' => 'LBL_OPPORTUNITY_ID',
   'required'=>false,
+  'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
 'price' =>
@@ -147,6 +160,12 @@ array (
     'cols' => 80,
 ),
 
+),
+    'relationships' => array (
+        'opportunity_lines_products' =>
+            array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'product_id',
+                'relationship_type'=>'one-to-many'),
 )
 
 );

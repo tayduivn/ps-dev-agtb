@@ -37,4 +37,7 @@ $mod_strings = array (
     'LBL_WORST_CASE' => 'Worst case',
     'LBL_PROFIT_MARGIN' => 'Profit Margin',
     'LBL_NOTE' => 'Note',
+    'LBL_TAX_CLASS' => 'Tax Class',
+    'LBL_QUANTITY' => 'Quantity',
+    'LBL_PRICE' => 'Price',
 );

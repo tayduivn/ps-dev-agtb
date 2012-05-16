@@ -62,22 +62,55 @@
         },
 
         /**
-         * Renders the view onto the page.
+         * Renders a view for the given context.
          *
-         * This method should be overriden by subclasses instead of the formal render function
-         * if they need more advanced rendering or do not use a template.
+         * This method uses this view's {@link View.View#template} property to render itself.
+         * @param ctx Template context.
          * @protected
          */
-        _render: function() {
-            // Bad templates can cause a JS error that we want to catch here
+        _renderWithContext: function(ctx) {
             if (this.template) {
                 try {
-                    this.$el.html(this.template(this));
+                    this.$el.html(this.template(ctx));
                 } catch (e) {
                     app.logger.error("Failed to render '" + this.name + "' view.\n" + e);
                     // TODO: trigger app event to render an error message
                 }
             }
+        },
+
+        /**
+         * Renders the view onto the page.
+         *
+         * This method uses this view as the context for the view's Handlebars {@link View.View#template}.
+         * You can override this method if you have custom rendering logic and don't use Handlebars templating
+         * or if you need to pass different context object for the template.
+         *
+         * Example:
+         * <pre><code>
+         * app.view.views.CustomView = app.view.View.extend({
+         *    _render: function() {
+         *      var customCtx = {
+         *         // Your custom context for this view template
+         *      };
+         *      this._renderWithContext(customCtx);
+         *    }
+         * });
+         *
+         * // Or totally different logic that doesn't use this.template
+         * app.view.views.AnotherCustomView = app.view.View.extend({
+         *    _render: function() {
+         *       // Never do this :)
+         *       return "&lt;div&gt;Hello, world!&lt;/div&gt;";
+         *    }
+         * });
+         *
+         *
+         * </code></pre>
+         * @protected
+         */
+        _render: function() {
+            this._renderWithContext(this);
         },
 
         /**

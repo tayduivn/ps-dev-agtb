@@ -72,25 +72,71 @@
          * @return {Core.Context} New instance of the child context.
          */
         getChildContext: function(def) {
-            var context = app.context.getContext(def);
+            var context;
 
-            if (def.link) {
-                context.set({ parentModel: this.get("model") });
+            // Re-use a child context if it already exists
+            // We search by either link name or module name
+            // Consider refactoring the way we store children: hash v.s. array
+            var name = def.link || def.module;
+            if (name) {
+                context = _.find(this.children, function(child) {
+                    return ((child.get("link") == name) || (child.get("module") == name));
+                });
             }
 
-            this.children.push(context);
-            context.parent = this;
+            if (!context) {
+                context = app.context.getContext(def);
+                this.children.push(context);
+                context.parent = this;
+            }
+
+            if (def.link) {
+                var parentModel = this.get("model");
+                context.set({
+                    parentModel: parentModel,
+                    parentModule: parentModel ? parentModel.module : null
+                });
+            }
+
             return context;
         },
 
         /**
          * Prepares instances of model and collection.
+         *
+         * This method does nothing if this context already contains an instance of a model or a collection.
+         * Pass `true` to re-create model and collection.
+         *
+         * @param {Boolean} force(optional) Flag indicating if data instances must be re-created.
          */
-        prepareData: function() {
+        prepare: function(force) {
+            if (!force && (this.get("model") || this.get("collection"))) return;
+
+            var modelId = this.get("modelId"),
+                create = this.get("create"),
+                link = this.get("link");
+
+            this.set(link ?
+                this._prepareRelated(link, modelId, create) :
+                this._prepare(modelId, create)
+            );
+
+        },
+
+        /**
+         * Prepares instances of model and collection.
+         *
+         * This method assumes that the module name (`module`) is set on the context.
+         * If not, instances of standard Backbone.Model and Backbone.Collection are created.
+         *
+         * @param {String} modelId Bean ID.
+         * @param {Boolean} create Create flag.
+         * @return {Object} State to set on this context.
+         * @private
+         */
+        _prepare: function(modelId, create) {
             var model, collection,
-                modelId = this.get("modelId"),
-                module = this.get("module"),
-                create = this.get("create");
+                module = this.get("module");
 
             if (modelId) {
                 model = app.data.createBean(module, { id: modelId });
@@ -103,22 +149,45 @@
                 collection = app.data.createBeanCollection(module);
             }
 
-            this.set({collection: collection, model: model});
+            return {
+                collection: collection,
+                model: model
+            };
         },
 
         /**
-         * Prepares instances of related models and collections.
+         * Prepares instances of related model and collection.
+         *
+         * This method assumes that either a parent model (`parentModel`) or
+         * parent model ID (`parentModelId`) and parent model module name (`parentModule`) are set on this context.
+         *
+         * @param {String} link Relationship link name.
+         * @param {String} modelId Related bean ID.
+         * @param {Boolean} create Create flag.
+         * @return {Object} State to set on this context.
+         * @private
          */
-        prepareRelatedData: function() {
+        _prepareRelated: function(link, modelId, create) {
             var model, collection,
-                parentModel = this.get("parentModel"),
-                link = this.get("link");
+                parentModel = this.get("parentModel");
 
-            if (parentModel && link) {
-                collection = parentModel.getRelatedCollection(link);
+            parentModel = parentModel || app.data.createBean(this.get("parentModule"), { id: this.get("parentModelId") });
+            if (modelId) {
+                model = app.data.createRelatedBean(parentModel, modelId, link);
+                collection = app.data.createRelatedCollection(parentModel, link, [model]);
+            } else if (create === true) {
                 model = app.data.createRelatedBean(parentModel, null, link);
-                this.set({collection: collection, model: model});
+                collection = app.data.createRelatedCollection(parentModel, link, [model]);
+            } else {
+                model = app.data.createRelatedBean(parentModel, null, link);
+                collection = app.data.createRelatedCollection(parentModel, link);
             }
+
+            return {
+                parentModel: parentModel,
+                collection: collection,
+                model: model
+            };
         },
 
 

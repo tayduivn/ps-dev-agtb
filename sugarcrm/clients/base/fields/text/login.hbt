@@ -1,5 +1,5 @@
 <div class="controls">
     <label class="hide">{{getLabel label model.module}}</label>
-    <input type="text" class="center" value="{{value}}" placeholder="{{label}}">
+    <input type="text" class="center" value="{{value}}" placeholder="{{getLabel label model.module}}">
     <p class="help-block"></p>
 </div>
