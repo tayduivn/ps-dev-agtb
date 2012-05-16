@@ -91,19 +91,18 @@
             // since we don't know the alert key. Ostensibly, validation errors will show
             // field by field; so feedback will be provided as appropriate.
             app.alert.dismissAll();
-            var self = this;
 
             _.each(errors, function(fieldError, key) {
                 var errorMsg = '';
                 if (_.isObject(fieldError)) {
                     _.each(fieldError, function(result, fieldName) {
-                        errorMsg +=  "(Message) " + self.getErrorString(fieldName, model) + "\n";
-                    });
+                        errorMsg +=  "(Message) " + this.getErrorString(fieldName, model) + "\n";
+                    }, this);
                 } else {
                     errorMsg = fieldError;
                 }
-                app.logger.error("validation failed for field `" + key + "`:\n" + errorMsg);
-            });
+                app.logger.debug("validation failed for field `" + key + "`:\n" + errorMsg);
+            }, this);
         },
 
         /**
