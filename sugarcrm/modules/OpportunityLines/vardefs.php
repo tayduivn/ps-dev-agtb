@@ -61,6 +61,17 @@ array (
   'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
+  'opportunities' =>
+  array(
+    'name' => 'opportunities',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_opportunities',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Opportunities',
+    'bean_name'=>'Opportunity',
+    'vname'=>'LBL_OPPORTUNITIES',
+  ),
 'price' =>
 array (
     'name' => 'price',
@@ -165,6 +176,10 @@ array (
         'opportunity_lines_products' =>
             array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
                 'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'product_id',
+                'relationship_type'=>'one-to-many'),
+        'opportunity_lines_opportunities' =>
+            array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
                 'relationship_type'=>'one-to-many'),
 )
 
