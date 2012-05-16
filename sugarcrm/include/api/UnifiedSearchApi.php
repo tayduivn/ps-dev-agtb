@@ -51,7 +51,13 @@ class UnifiedSearchApi extends SugarApi {
         // $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
     }
 
-    protected function parseSearchOptions($api, $args) {
+    /**
+     * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @return array Many elements containing each setting the search engine uses
+     */
+    protected function parseSearchOptions(ServiceBase $api, array $args) {
         $options = array();
 
         $options['query'] = '';
@@ -173,7 +179,7 @@ class UnifiedSearchApi extends SugarApi {
         return $options;
     }
 
-    public function globalSearch($api, $args) {
+    public function globalSearch(ServiceBase $api, array $args) {
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
@@ -199,7 +205,15 @@ class UnifiedSearchApi extends SugarApi {
 
     }
 
-    public function globalSearchSpot($api, $args, $searchEngine, $options) {
+    /**
+     * This function is used to hand off the global search to the built-in SugarSearchEngine (aka SugarSpot)
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller
+     * @parma $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
+     * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
+     */
+    protected function globalSearchSpot(ServiceBase $api, array $args, SugarSearchEngine $searchEngine, array $options) {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
 
         
@@ -292,6 +306,10 @@ class UnifiedSearchApi extends SugarApi {
     }
 
     protected $resultSetSortData;
+    /**
+     * This function is used to resort the results that come out of SpotSearch, they are clumped per module and we need them sorted by potentially multiple columns.
+     * For reference on how this function reacts, look at the PHP manual for usort()
+     */
     public function resultSetSort($left, $right) {
         $greaterThan = 0;
         foreach ( $this->resultSetSortData as $key => $isAscending ) {
