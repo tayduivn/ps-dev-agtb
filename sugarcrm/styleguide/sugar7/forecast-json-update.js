@@ -17,9 +17,18 @@
 ,
 		'print':'on'
 ,
-		'goal_marker_type':'group'
-,
-		'goal_marker_color':'#3FB300'
+        'goal_marker_type': [
+        'group',
+        'group'
+    ],
+        'goal_marker_color': [
+            '#3FB300',
+            '#444444'
+        ]
+        ,       'goal_marker_label' : [
+        'Quota',
+        'Likely'
+    ]
 ,
         'label_name':'Sales Stage'
 ,
@@ -143,9 +152,14 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+        'goalmarkervalue' : [
+            410,
+            200
+        ],
+        'goalmarkervaluelabel' : [
+            '410K',
+            '200K'
+        ]
 
 	}
 ,
@@ -189,9 +203,14 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410k',
-		'goalmarkerlabel' : 'Quota'
+        'goalmarkervalue' : [
+            410,
+            50
+        ],
+        'goalmarkervaluelabel' : [
+            '410k',
+            '50k'
+        ]
 
 	}
 ,
@@ -234,9 +253,14 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+        'goalmarkervalue' : [
+            410,
+            110
+        ],
+        'goalmarkervaluelabel' : [
+            '410K',
+            '110k'
+        ]
 
 	}
 

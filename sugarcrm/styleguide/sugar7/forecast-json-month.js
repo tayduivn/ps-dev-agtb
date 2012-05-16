@@ -256,11 +256,11 @@
 		],
 		'goalmarkervalue' : [
             410,
-            200
+            110
             ],
 		'goalmarkervaluelabel' : [
             '410K',
-            '200k'
+            '110k'
             ]
 
 	}
