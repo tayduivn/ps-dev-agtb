@@ -4248,6 +4248,17 @@ h3.nomad {
   font-size: 12px;
   background: #000000;
 }
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+}
+.alerts .alert {
+  position: relative;
+}
 /* Alert overrider */
 .alert-warning {
   background: #fdfce8;

@@ -991,6 +991,18 @@ float: none !important;}
  background: @black;
 }
 
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width:100%;
+  overflow: hidden;
+  .alert {
+    position:relative;
+  }
+}
+
 /* Alert overrider */
 .alert-warning {background: lighten(@yellow, 40%); color: darken(desaturate(@yellow,10%),28%); border-top:1px solid fade(darken(@yellow,50%),25%);}
 .alert-general {background: lighten(@blue, 46%); color: darken(@blue,20%); border-top:1px solid fade(darken(@blue,10%),25%);}
