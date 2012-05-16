@@ -85,7 +85,7 @@
                 controller: "{" +
                     "render : function(){" +
                     "this.app.view.Field.prototype.render.call(this);" +
-                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"forecasts-module\"); }" +
+                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"core-module\"); }" +
                     "}}"
             },
             "password": {

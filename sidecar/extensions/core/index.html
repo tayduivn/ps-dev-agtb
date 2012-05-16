@@ -55,14 +55,14 @@
         <script src='views/tree-view.js'></script>
 	    <script src='views/filter-view.js'></script>
 
-        <script src='forecasts.js'></script>
+        <script src='core.js'></script>
 
 		<script language="javascript" src="../../lib/sinon/sinon.js"></script>
 		<link rel="stylesheet" href="../../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../../lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
 
-        <link rel="stylesheet" href="css/bootstrap-forecast.css"/>
+        <link rel="stylesheet" href="css/bootstrap-core.css"/>
 
         <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-tooltip.js"></script>
         <script src="../../lib/twitterbootstrap/bootstrap/js/bootstrap-popover.js"></script>
@@ -74,8 +74,8 @@
         <script language="javascript" src="../../lib/datatables/media/js/jquery.dataTables.js"></script>
     </head>
     <body>
-    	<div id="forecasts-module">
-			<div id="forecasts" style="" >
+    	<div id="core-module">
+			<div id="core" style="" >
                 <div id="alert" class="alert-top">
 
                 </div>
@@ -96,7 +96,7 @@
 		<script language="javascript">
 			var syncResult, view, layout, html;
             var App = SUGAR.App.init({
-                el: "#forecasts"
+                el: "#core"
             });
             App.api.debug = App.config.debugSugarApi;
             App.start();
