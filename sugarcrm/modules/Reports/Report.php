@@ -100,6 +100,8 @@ class Report
     var $chart_type = 'vBarF';
     var $table_name = 'saved_reports';
     var $chart_description = '';
+    var $label_name = '';
+    var $value_name = '';
     var $chart_group_position = array();
     var $chart_numerical_position = 0;
     var $group_header;
@@ -178,6 +180,12 @@ class Report
         }
         if (!empty($this->report_def['chart_description'])) {
             $this->chart_description = $this->report_def['chart_description'];
+        }
+        if (!empty($this->report_def['label_name'])) {
+            $this->label_name = $this->report_def['label_name'];
+        }
+        if (!empty($this->report_def['value_name'])) {
+            $this->value_name = $this->report_def['value_name'];
         }
 
 
