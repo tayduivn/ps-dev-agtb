@@ -2235,4 +2235,48 @@ EOQ;
             return $result == true;
         }
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * This is a convenience function to get all the user ids that report to the invoking user instance
+     *
+     * @param $fromCache boolean value indicating whether or not to use the available cached values (true by default)
+     * @param $where String for optional SQL where select clause against the users table
+     *
+     */
+    function get_reports_to_hierarchy($fromCache=true, $where='')
+    {
+        if(empty($this->id))
+        {
+           return array();
+        }
+
+        if(empty($where))
+        {
+            $where = "status = 'Active' AND id != '{$this->id}'";
+        }
+
+        $sql = $this->db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', false, $where);
+
+        if($fromCache)
+        {
+           $cached_ids = get_register_value('reports_to_hierarchy', $sql);
+           if(!empty($cached_ids))
+           {
+               return $cached_ids;
+           }
+        }
+
+        $result = $this->db->query($sql);
+        $ids = array();
+        while($row = $this->db->fetchByAssoc($result))
+        {
+            $ids[$row['id']] = $row['id'];
+        }
+        //Cache the results for this reports to hierarchy sql statement
+        set_register_value('reports_to_hierarchy', $sql ,$ids);
+        return $ids;
+    }
+    //END SUGARCRM flav=pro ONLY
 }

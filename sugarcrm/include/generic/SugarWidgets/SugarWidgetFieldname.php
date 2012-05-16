@@ -283,15 +283,12 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
             $input_name0 = $current_user->id;
         }
 
-        $sql = $this->reporter->db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', false, "status = 'Active'");
-        $result = $this->reporter->db->query($sql);
-        $ids = array();
-        while($row = $this->reporter->db->fetchByAssoc($result))
-        {
-            $ids[$row['id']] = $row['id'];
-        }
+        $user = new User();
+        $user->retrieve($input_name0);
+        $ids = $user->get_reports_to_hierarchy();
 
-        //Use in select syntax if we have more than one user
+        //Use in select syntax if we have more than one user.  This may be Mysql specific as other DBs may
+        //be able to handle a direct recursive query.
         if(count($ids) > 1)
         {
            return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", $ids) ."')\n";
