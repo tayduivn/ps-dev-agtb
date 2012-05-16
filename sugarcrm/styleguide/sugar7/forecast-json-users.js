@@ -154,12 +154,12 @@
 
         ],
         'goalmarkervalue' : [
-            410,
-            200
+            500,
+            485
         ],
         'goalmarkervaluelabel' : [
-            '410K',
-            '200K'
+            '500k',
+            '485K'
         ]
 
     }
@@ -168,18 +168,18 @@
 
         'label': 'James',
 
-        'gvalue': '110',
+        'gvalue': '300',
 
-        'gvaluelabel': '110K',
+        'gvaluelabel': '300K',
 
         'values': [
-            10
-            ,
-            10
+            20
             ,
             20
             ,
-            70
+            20
+            ,
+            240
 
 
         ],
@@ -205,12 +205,12 @@
 
         ],
         'goalmarkervalue' : [
-            410,
-            50
+            500,
+            485
         ],
         'goalmarkervaluelabel' : [
-            '410k',
-            '50k'
+            '500k',
+            '485k'
         ]
 
     }
@@ -255,12 +255,12 @@
 
         ],
         'goalmarkervalue' : [
-            410,
-            10
+            500,
+            485
         ],
         'goalmarkervaluelabel' : [
-            '410K',
-            '110k'
+            '500k',
+            '485k'
         ]
 
     }

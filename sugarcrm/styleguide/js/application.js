@@ -25,7 +25,6 @@
       if ( $(window).width() > 768) {		
       // tooltip demo
       $('body').tooltip({
-        delay: { show: 400 },
         selector: "[rel=tooltip]"
       })
       $('table').tooltip({
@@ -41,8 +40,9 @@
       })  
       }
 
+      $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
      $("th:contains('Subject')").css("width","50%")
-     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input')").css("width","1%")
+     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","0")
 
       // keybinding
       $(document).keyup(function(e){

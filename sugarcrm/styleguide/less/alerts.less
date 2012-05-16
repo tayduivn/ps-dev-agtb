@@ -6,8 +6,8 @@
   padding: 8px 20px 8px 10px;
   margin-bottom: @baseLineHeight;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
-  background-color: @warningBackground;
-  border: 1px solid @warningBorder;
+  background-color: @grayLighter;
+  border: 1px solid @grayLight;
   .border-radius(4px);
 }
 .alert [class^=icon-] {
@@ -15,7 +15,7 @@
 }
 .alert,
 .alert-heading {
-  color:  darken(@warningBackground, 70%)
+  color:  @gray;
 }
 
 // Adjust close link position
@@ -50,6 +50,7 @@
 }
 .alert-warning {
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  border: 1px solid @warningBorder;
   background-color: @warningBackground;
 }
 .alert-info {

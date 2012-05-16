@@ -118,7 +118,7 @@
         <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
         <div class="bordered">
           <div class="block">
-            <h4>Filters:</h4>
+            <h4>Filters</h4>
             <div class="control-group">
               <label for="select01" class="control-label">Date Range:</label>
               <div class="controls ">
@@ -133,7 +133,7 @@
           </ul>
         </div>
         <div class="block">
-          <h4>Chart Options:</h4>
+          <h4>Chart Options</h4>
           <div class="control-group">
             <label for="select01" class="control-label">Horizontal (x):</label>
             <div class="controls ">
@@ -175,13 +175,13 @@
           </div>
         </div>         
         <div class="block">
-          <h4>Team:</h4>
+          <h4>Team</h4>
           <ul class="list" >
             <li><i class="icon-folder-open"></i> Sabra Khan
               <ul>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Mark Gibson</a></li>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> James Joplin</a></li>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Terrence Li</a></li>
+                <li><a href="forecast_james_pro.html"><i class="icon-folder-close"></i> Mark Gibson</a></li>
+                <li><a href="forecast_james_pro.html"><i class="icon-folder-close"></i> James Joplin</a></li>
+                <li><a href="forecast_james_pro.html"><i class="icon-folder-close"></i> Terrence Li</a></li>
               </ul>
             </li>
           </ul>
@@ -201,194 +201,140 @@
           </div>
         </div>
         <div class="span5">
-          <div class="accordion" id="overview">
-            <div class="accordion-group">
-              <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#overview" href="#collapseOne">
-                  Progress
-                </a>
-              </div>
-              <div id="collapseOne" class="accordion-body collapse in">
-                <div class="accordion-inner">
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Quota
-                    </div>
-                    <div class="span8">
-                      <div class="progress progress-success">
-                        <div class="bar" style="width: 80%;"><b>80%</b></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Likely
-                    </div>
-                    <div class="span8">
-                      <div class="progress progress-mid">
-                        <div class="bar" style="width: 60%;"><b>60%</b></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Days Left
-                    </div>
-                    <div class="span8">
-                      <div class="progress progress-min">
-                        <div class="bar" style="width: 10%;"><b>10</b></div>
-                      </div>
-                    </div>
-                  </div>
+           <div class="block thumbnail">
+              <h4>Progress</h4>
+              <div class="row-fluid" id="countdown">
+                <div class="span3">
+                  Quota<br>
+                  <h3 class="alert">500,000</h3>
+                </div>
+                <div class="span3">
+                  Closed<br>
+                  <h3 class="alert alert-success">480,000</h3>
+                </div>
+                <div class="span3">
+                  To Go<br>
+                  <h3 class="alert alert-warning">20,000</h3>
+                </div>
+                <div class="span3">
+                  Days Left<br>
+                  <h3 class="alert alert-danger">10</h3>
                 </div>
               </div>
-            </div>
-            <div class="accordion-group">
-              <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#overview" href="#collapseTwo">
-                  Risks
-                </a>
-              </div>
-              <div id="collapseTwo" class="accordion-body collapse">
-                <div class="accordion-inner">
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Accuracy
-                    </div>
-                    <div class="span6">
-                      <div class="progress progress-success">
-                        <div class="bar" style="width: 80%;" rel="tooltip" data-original-title="80%"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Bias
-                    </div>
-                    <div class="span6">
-                      <div class="progress progress-mid">
-                        <div class="bar" style="width: 60%;" rel="tooltip" data-original-title="60%"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row-fluid ">
-                    <div class="span3">
-                      Thrash
-                    </div>
-                    <div class="span6">
-                      <div class="progress progress-min">
-                        <div class="bar" style="width: 30%;" rel="tooltip" data-original-title="30%"></div>
-                      </div>
-                    </div>
-                  </div>
+              <div class="row-fluid" id="outLook">
+                <h4>Outlook</h4>
+                <div class="span4">
+                  Optimistic<br>
+                  <h3 class="">225,000</h3>
+                  (1 opportunity)
+                </div>
+                <div class="span4">
+                  Realistic<br>
+                  <h3 class="">225,000</h3>
+                  (1 opportunity)
+                </div>
+                <div class="span4">
+                  Pessimistic<br>
+                  <h3 class="">275,000</h3>
+                  (1 opportunity)
                 </div>
               </div>
-            </div>
-            <div class="accordion-group">
-              <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#overview" href="#collapseThree">
-                  Change Log
-                </a>
+              <br>
+              <div class="row-fluid" id="changeLog">
+                <div class="span12">
+              <h4>Change Log</h4>
+              <ul class="listed">
+                <li>
+                  Forecast Likely 10k <i class="icon-arrow-up"></i> <date class="date">2012/02/02 12:15 PM EST</date>
+                </li>
+                <li>
+                  Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
+                </li>
+                <li>
+                  Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
+                </li>
+              </ul>
               </div>
-              <div id="collapseThree" class="accordion-body collapse">
-                <div class="accordion-inner">
-                  <ul class="listed">
-                    <li>
-                      Forecast Likely 10k <i class="icon-arrow-up"></i> <date class="date">2012/02/02 12:15 PM EST</date>
-                    </li>
-                    <li>
-                      Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
-                    </li>
-                    <li>
-                      Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <br>
+
       <div class="topline thumbnail">
         <div class="row-fluid">
-            <div class="span2 grayLighter">
+            <div class="span2">
                 Sabra Khan's<br>
                 <h2>Forecast</h2>
             </div>
-            <div class="span2">
-                Best<br>
-                <h2>210,000</h2>
-            </div>
-            <div class="span2">
-                Worst<br>
-                <h2>150,000</h2>
-            </div>
-            <div class="span2">
-                Likely<br>
-                <h2>180,000</h2>
-            </div>
-            <div class="span2">
+            <div class="span3">
                 Quota<br>
-                <h2>150,000</h2>
+                <h2>500,000</h2>
+            </div>            
+            <div class="span3">
+                Best (Adjusted)<br>
+                <h2>700,000</h2>
             </div>
-            <div class="span2"><a href="forecast.html" class="btn btn-primary btn-large">Commit</a></div>
+            <div class="span3">
+                Likely (Adjusted)<br>
+                <h2>485,000</h2>
+            </div>
+            <div class="span1"><a href="forecast.html" class="btn btn-primary">Commit</a></div>
           </div>
           <hr>
           <table class="table table-striped datatableInput">
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Proposed</th>
-                <th>Best</th>
-                <th>Worst</th>
-                <th>Likely</th>
+                <th>Amount</th>
                 <th>Quota</th>
-                <th>Adjusted</th>
+                <th>Best</th>
+                <th>Best (Adjusted)</th>
+                <th>Likely</th>
+                <th>Likely (Adjusted)</th>
                 <th><i class="icon-cog pull-right"></i></th>
               </tr>
             </thead>
             <tbody id="listed">
               <tr>
                 <td><a href="">Mark Gibson</a></td>
-                <td><span class="dblclick">480,000</span> </td>
-                <td><span class="dblclick">490,000</span></td>                
-                <td><span class="dblclick">450,000</span></td>
-                <td><span class="dblclick">420,000</span></td>
-                <td><span class="dblclick">450,000</span></td>
-                <td><span class="dblclick">450,000</span></td>
+                <td>100,000</td>
+                <td>100,000</td>                
+                <td>110,000</td>
+                <td><span class="dblclick">150,000</span></td>
+                <td>85,000</td>
+                <td><span class="dblclick">95,000</span></td>
                 <td></td>
               </tr>
               <tr>
-                <td><a href="forecast_james.html">James Joplin</a>  <a href="" rel="clickoverTop" class="pull-right" data-title="Changes by James Joplin <a href='' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="Likely <i class='icon-arrow-up'></i> 10k <date class='date'>2012/02/02 12:15 PM EST</date> <button class='btn btn-mini pull-right' data-toggle='button'><i class='icon-ok icon-sm'></i></button><hr>Likely <i class='icon-arrow-up'></i> 10k <date class='date'>2012/02/02 12:15 PM EST</date> <button class='btn btn-mini pull-right' data-toggle='button'><i class='icon-ok icon-sm'></i></button>"><i class="icon-exclamation-sign label label-warning"></i></a></td>
-                <td><span class="dblclick">330,000</span></td>
-                <td><span class="dblclick">340,000</span></td>                
-                <td><span class="dblclick">310,000</span></td>
-                <td><span class="dblclick">300,000</span></td>
-                <td><span class="dblclick">320,000</span></td>
-                <td><span class="dblclick">450,000</span></td>
+                <td><a href="forecast_james_pro.html">James Joplin</a>  <a href="" rel="clickoverTop" class="pull-right" data-title="Changes by James Joplin <a href='' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="Likely <i class='icon-arrow-up'></i> 10k <date class='date'>2012/02/02 12:15 PM EST</date> <button class='btn btn-mini pull-right' data-toggle='button'><i class='icon-ok icon-sm'></i></button><hr>Likely <i class='icon-arrow-up'></i> 10k <date class='date'>2012/02/02 12:15 PM EST</date> <button class='btn btn-mini pull-right' data-toggle='button'><i class='icon-ok icon-sm'></i></button>"><i class="icon-exclamation-sign label label-warning"></i></a></td>
+                <td>300,000</td>
+                <td>200,000</td>                
+                <td>210,000</td>
+                <td><span class="dblclick">250,000</span></td>
+                <td>185,000</td>
+                <td><span class="dblclick">195,000</span></td>
                 <td></td>
               </tr>
               <tr>
                 <td><a href="">Terrence Li</a></td>
-                <td><span class="dblclick">410,000</span></td>
-                <td><span class="dblclick">420,000</span></td>                
-                <td><span class="dblclick">400,000</span></td>
-                <td><span class="dblclick">390,000</span></td>
-                <td><span class="dblclick">405,000</span></td>
-                <td><span class="dblclick">450,000</span></td>
+                <td>300,000</td>
+                <td>200,000</td>                
+                <td>210,000</td>
+                <td><span class="dblclick">250,000</span></td>
+                <td>185,000</td>
+                <td><span class="dblclick">195,000</span></td>
                 <td></td>
               </tr>             
             </tbody> 
             <tfoot>
               <tr>
-                <td class="tright">Total:</td>
-                <td>1,840,000</td>
-                <td>1,250,000</td>
-                <td>1,320,000</td>
-                <td>1,220,000</td>
-                <td>1,480,000</td>
-                <td>1,480,000</td>
+                <td></td>
+                <td>700,000</td>
+                <td>500,000</td>                
+                <td>530,000</td>
+                <td>700,000</td>
+                <td>455,000</td>
+                <td>485,000</td>
                 <td></td>
               </tr>
             </tfoot>                                                                     

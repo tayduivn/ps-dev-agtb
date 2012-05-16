@@ -2663,8 +2663,8 @@ input[type="submit"].btn.btn-mini {
   padding: 8px 20px 8px 10px;
   margin-bottom: 18px;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  background-color: #fcf8e3;
-  border: 1px solid #edc959;
+  background-color: #f5f5f5;
+  border: 1px solid #cdcccb;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -2674,7 +2674,7 @@ input[type="submit"].btn.btn-mini {
 }
 .alert,
 .alert-heading {
-  color: #6e5e0c;
+  color: #58595b;
 }
 .alert .close {
   position: relative;
@@ -2703,6 +2703,7 @@ input[type="submit"].btn.btn-mini {
 }
 .alert-warning {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid #edc959;
   background-color: #fcf8e3;
 }
 .alert-info {

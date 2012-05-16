@@ -471,7 +471,7 @@ article .avatar {
 }
 
 .block.tabs-left .nav-tabs p {
-  margin: -18px 0 10px 90px;
+  margin: -18px 50px 10px 90px;
 }
 
 .block.tabs-left .nav-tabs li li .avatar {
@@ -500,15 +500,9 @@ article .avatar {
   background: none !important;
   border: none !important;
 }
-.block.tabs-left .nav-tabs .on > a { background: none !important; border: none;   }
 
 .block.tabs-left .nav-tabs .on {
-  padding: 11px 0 4px 8px; 
-  float: none;
-  margin: -11px -60px 7px -8px;
-  border: none;   
-  background: darken(@grayLighter, 4%);
-  .border-radius(4px 0 0 4px);
+
 }
 
 .bordered .tabs-left .nav-tabs > li > a, .bordered .tabs-left .nav-tabs .on > a, .bordered .tabs-left .nav-tabs .on {
@@ -517,11 +511,11 @@ article .avatar {
 }
 
 .row-fluid > #charts.span12 {margin-left: 0 !important;}
-.drawerTrig {font-size: 6px; padding: 4px 5px 0 4px; z-index: 1010; position: absolute;}
+.drawerTrig {font-size: 6px; padding: 6px 5px 2px 4px; z-index: 1010; position: absolute;}
 h4 i {color: @grayLight;}
 .drawerTrig.pull-right {
   .border-radius(0 2px 2px 0);
-  margin-right: -17px;
+  margin-right: -26px;
   position: relative;
 }
 
@@ -539,7 +533,7 @@ h4 i {color: @grayLight;}
   top: 0;
 }
 
-.block.tabs-left .nav-tabs li.active .actions {
+.block.tabs-left .nav-tabs li.on .actions {
   display: block;
   top: 11px;
   right: 60px;
@@ -563,7 +557,7 @@ h4 i {color: @grayLight;}
 }
 .block .actions, article .actions, .subnav .actions {
   position: absolute;
-  top: 5px;
+  top: -5px;
   right: 0;
 }
 
@@ -677,7 +671,8 @@ article:hover .actions,  tr:hover .actions {
 	margin-right: 15px;
 }
 .bordered {
-	box-shadow: @grayLight 1px 0 0;
+ border-right: @btnBorder 1px solid;
+ margin-right: -10px;
 }
 #drawer {
 	position: relative;
@@ -714,42 +709,68 @@ article:hover .actions,  tr:hover .actions {
 .topline table {
   margin: 0;
 }
-.topline .span2 {
+.topline .span2, .topline .span3 {
   border-right: 1px solid  @grayLighter;
   padding: 10px;
+  text-align: center;
+}
+#countdown  {
+  padding: 5px 0;
+}
+#countdown .row-fluid [class*="span"]:first-child {
+margin-left: 0;
+}
+#countdown .span3 {
+  text-align: center;
+  margin: 0 0 0 5px;
+}
+#outLook .span4  {
+  text-align: center;
+  margin: 5px 0 0 5px;
+}
+#countdown .span3 .alert  {
+  padding: 5px 0;
+  margin: 5px;
+}
+#outLook h4, #changeLog h4 {
+  margin-top: 5px;
+  .border-radius(0);
+  border-top: 1px solid @grayLight;
+}
+#outLook h4 {
+  margin-top: 0;
+}
+#changeLog .listed li {
+  padding: 5px 10px;
+}
+
+.topline .span1  {
+  padding: 10px 0;
   text-align: center;
 }
 .topline h2 {
   padding: 0;
 }
 .topline .btn {
-  margin: 5px;
+  margin: 10px 0 0 -10px;
 }
 
-#overview .span3 {
-  padding: 10px 0;
-  margin-right: -11px;
-}
 
-#overview .progress {
-  margin: 8px;
+#riskPreview .progress {
     position: relative;
 }
 
-#overview .progress, #overview .progress .bar  {
-  height: 20px;
+#riskPreview .progress, #riskPreview .progress .bar  {
+  height: 10px;
   line-height: 20px;
   text-align: left;
-  font-size: 16px;
-
 }
 .progress .bar b {
-  .opacity(30);
-  width: 40px;
-  text-align: left;
-  color: #000;
+  color: @gray;
   position: absolute;
-  right: -60px;
+  left: 50%;
+  top: 8px;
+  font-weight: normal;
 }
 
 /* vcard */

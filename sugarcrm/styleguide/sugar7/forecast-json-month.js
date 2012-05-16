@@ -113,104 +113,31 @@
 	'values': [
 
 	{
-
 		'label': 'January',
-
-		'gvalue': '400',
-
-		'gvaluelabel': '400K',
-
-		'values': [
-			100
-,
-			200
-,
-			50
-,
-            50
-
-
-		],
-
-		'valuelabels': [
-			'100K'
-,
-			'200K'
-,
-			'50K'
-,
-            '50K'
-
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : [
-            410,
-            200
-        ],
-		'goalmarkervaluelabel' : [
-            '410K',
-            '200K'
-        ]
-
+		'gvalue': '50',
+		'gvaluelabel': '50K',
+		'values': [10, 20, 20, 10],
+		'valuelabels': ['10K','20K','20K','10K'],
+		'links': ['','',''],
+		'goalmarkervalue' : [200,185],
+		'goalmarkervaluelabel' : ['200K','185K']
 	}
 ,
 	{
 
 		'label': 'Febuary',
-
-		'gvalue': '590',
-
-		'gvaluelabel': '590K',
-
-		'values': [
-			120
-,
-			190
-,
-			240
-,
-            40
-
-
-		],
-
-		'valuelabels': [
-			'120K'
-,
-			'190K'
-,
-			'240K'
-,
-            '40K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
+		'gvalue': '100',
+		'gvaluelabel': '100K',
+		'values': [10,10,40,40],
+		'valuelabels': ['10K','10K','40K','40K'],
+		'links': ['','',''],
 		'goalmarkervalue' : [
-            410,
-            50
+            200,
+            185
             ],
 		'goalmarkervaluelabel' : [
-            '410k',
-            '50k'
+            '200k',
+            '185k'
             ]
 
 	}
@@ -219,16 +146,16 @@
 
 		'label': 'March',
 
-		'gvalue': '410',
+		'gvalue': '200',
 
-		'gvaluelabel': '410K',
+		'gvaluelabel': '200K',
 
 		'values': [
+			1
+,
 			10
 ,
-			100
-,
-			200
+			90
 ,
             100
 
@@ -255,12 +182,12 @@
 
 		],
 		'goalmarkervalue' : [
-            410,
-            110
+            200,
+            185
             ],
 		'goalmarkervaluelabel' : [
-            '410K',
-            '110k'
+            '200K',
+            '185k'
             ]
 
 	}
