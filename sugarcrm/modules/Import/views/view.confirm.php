@@ -448,7 +448,7 @@ eoq;
         foreach ($rows as &$row) {
             if (is_array($row)) {
                 foreach ($row as &$val) {
-                    $val = htmlentities($val, ENT_QUOTES, 'UTF-8');
+                    $val = strip_tags($val);
                 }
             }
         }
