@@ -899,6 +899,16 @@ color: @gray;
   width: 32px;
 }
 
+.control-group.error * {
+  color:red !important;
+  .icon-exclamation-sign {
+    line-height:26px;
+  }
+  small {
+    font-size:smaller;
+  }
+}
+
 .control-group {
   .btn.fright {
     min-width: 20px;
@@ -966,6 +976,11 @@ float: none !important;}
 
 .login .btn.btn-sugar {width: 140px!important;}
 
+.login .control-group.error input {
+  background:@white url(../img/exclamation.png) 97% 50% no-repeat;
+  color:@red;
+}
+
 .alert {
  z-index: 2000;
  position: absolute;
@@ -982,6 +997,18 @@ float: none !important;}
  margin: 0;
  font-size: 12px;
  background: @black;
+}
+
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width:100%;
+  overflow: hidden;
+  .alert {
+    position:relative;
+  }
 }
 
 /* Alert overrider */
