@@ -312,9 +312,9 @@ class UnifiedSearchApi extends SugarApi {
             // Figured out if the left is greater than the right, now time to act
             if ( $greaterThan != 0 ) {
                 if ( $isAscending ) {
-                    return -$greaterThan;
-                } else {
                     return $greaterThan;
+                } else {
+                    return -$greaterThan;
                 }
             }
         }

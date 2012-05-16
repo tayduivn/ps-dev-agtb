@@ -34,6 +34,8 @@ class RestTestList extends RestTestBase {
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         $this->accounts = array();
+        $this->opps = array();
+        $this->contacts = array();
     }
     
     public function tearDown()
@@ -61,7 +63,7 @@ class RestTestList extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}'");
+        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -73,7 +75,7 @@ class RestTestList extends RestTestBase {
             $account = new Account();
             $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
             $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
-            if ( $i < 10 ) {
+            if ( $i > 25 && $i < 36 ) {
                 $account->assigned_user_id = $GLOBALS['current_user']->id;
             } else {
                 // The rest are assigned to admin
@@ -82,9 +84,10 @@ class RestTestList extends RestTestBase {
             $account->save();
             $this->accounts[] = $account;
             if ( $i > 33 ) {
-                // Favorite the last seven
+                // Favorite the last six
                 $fav = new SugarFavorites();
                 $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
+                $fav->new_with_id = true;
                 $fav->module = 'Accounts';
                 $fav->record_id = $account->id;
                 $fav->created_by = $GLOBALS['current_user']->id;
@@ -129,8 +132,155 @@ class RestTestList extends RestTestBase {
 
         // Test Favorites
         $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
-        print_r($restReply);
-        $this->assertEquals(7,count($restReply['reply']['records']));
+        $this->assertEquals(6,count($restReply['reply']['records']));
+
+        // Test My Items
+        $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
+        $this->assertEquals(10,count($restReply['reply']['records']));
+
+        // Test Favorites & My Items
+        $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
+        $this->assertEquals(2,count($restReply['reply']['records']));
+
+
+        // Get a list, no searching
+        $restReply = $this->_restCall("Accounts?max_num=10");
+        $this->assertEquals(10,count($restReply['reply']['records']));
+        
+    }
+
+
+    public function testGlobalSearch() {
+        // Make sure there is at least one page of accounts
+        for ( $i = 0 ; $i < 40 ; $i++ ) {
+            $account = new Account();
+            $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
+            $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
+            if ( $i > 25 && $i < 36 ) {
+                $account->assigned_user_id = $GLOBALS['current_user']->id;
+            } else {
+                // The rest are assigned to admin
+                $account->assigned_user_id = '1';
+            }
+            $account->save();
+            $this->accounts[] = $account;
+            if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Accounts';
+                $fav->record_id = $account->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+
+        for ( $i = 0 ; $i < 30 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT ".count($this->contacts);
+            $contact->last_name = "TEST ".create_guid();
+            if ( $i > 15 && $i < 26 ) {
+                $contact->assigned_user_id = $GLOBALS['current_user']->id;
+            } else {
+                // The rest are assigned to admin
+                $contact->assigned_user_id = '1';
+            }
+            $contact->save();
+            $this->contacts[] = $contact;
+            if ( $i > 23 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Contacts',$contact->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Contacts';
+                $fav->record_id = $contact->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+
+        for ( $i = 0 ; $i < 30 ; $i++ ) {
+            $opportunity = new Opportunity();
+            $opportunity->name = "UNIT ".count($this->opps)." TEST ".create_guid();
+            
+            if ( $i > 15 && $i < 26 ) {
+                $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
+            } else {
+                // The rest are assigned to admin
+                $opportunity->assigned_user_id = '1';
+            }
+            $opportunity->save();
+            $this->opps[] = $opportunity;
+            if ( $i > 23 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Opportunities',$opportunity->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Opportunities';
+                $fav->record_id = $opportunity->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+
+
+        // Test searching for a lot of records
+        $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
+
+        $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
+
+        // Test Offset
+        $restReply2 = $this->_restCall("search/?offset=".$restReply['reply']['next_offset']);
+
+        $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
+
+        // Test finding one record
+        $restReply3 = $this->_restCall("search/?q=".rawurlencode($this->opps[17]->name));
+        
+        $tmp = array_keys($restReply3['reply']['records']);
+        $firstRecord = $restReply3['reply']['records'][$tmp[0]];
+        $this->assertEquals($this->opps[17]->name,$firstRecord['name'],"The search failed for record: ".$this->opps[17]->name);
+
+        // Sorting descending
+        $restReply4 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
+        
+        $tmp = array_keys($restReply4['reply']['records']);
+        $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
+                              $restReply4['reply']['records'][$tmp[1]]['id'],
+                              'Second record is not lower than the first, decending order failed.');
+
+        // Sorting ascending
+        $restReply5 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
+        
+        $tmp = array_keys($restReply5['reply']['records']);
+        $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
+                                 $restReply5['reply']['records'][$tmp[1]]['id'],
+                                 'Second record is not lower than the first, ascending order failed.');
+
+        // Test Favorites
+        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10");
+        $this->assertEquals(18,count($restReply['reply']['records']));
+
+        // Test My Items
+        $restReply = $this->_restCall("search?my_items=1&max_num=50&max_num_module=20");
+        $this->assertEquals(30,count($restReply['reply']['records']));
+
+        // Test Favorites & My Items
+        $restReply = $this->_restCall("search?favorites=1&my_items=1&max_num=10");
+        $this->assertEquals(6,count($restReply['reply']['records']));
+
+
+        // Get a list, no searching
+        $restReply = $this->_restCall("search?max_num=10");
+        $this->assertEquals(10,count($restReply['reply']['records']));
+        
     }
 
 }

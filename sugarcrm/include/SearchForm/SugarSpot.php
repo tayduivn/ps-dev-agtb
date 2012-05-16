@@ -285,7 +285,8 @@ class SugarSpot
     {
         if(empty($query)) {
             if(!((isset($options['my_items']) && $options['my_items'] == true )
-                 || (isset($options['favorites']) && $options['favorites'] == 2))) {
+                 || (isset($options['favorites']) && $options['favorites'] == 2)
+                 || (isset($options['allowEmptySearch']) && $options['allowEmptySearch'] == true))) {
                 // Make sure we aren't just searching for my items or favorites
                 return array();
             }
@@ -399,6 +400,9 @@ class SugarSpot
             }
             // If we are just searching by favorites, add a no-op query parameter so we still search
             if (!empty($options['favorites']) && $options['favorites'] == 2 ) {
+                $allowBlankSearch = true;
+            }
+            if (!empty($options['allowEmptySearch']) && $options['allowEmptySearch'] == true ) {
                 $allowBlankSearch = true;
             }
 
