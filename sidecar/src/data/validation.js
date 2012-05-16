@@ -89,7 +89,7 @@
                 if (field.type == "email") {
                     if (value.length && value.length > 0) {
                         _.each(value, function(fieldProperties) {
-                            var isValid = (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(fieldProperties.email_address));
+                            var isValid = app.utils.isValidEmailAddress(fieldProperties.email_address);
                             if (!isValid) {
                                 results.push(fieldProperties.email_address);
                             }
