@@ -106,8 +106,3 @@ if (isset($this->field_defs['modified_user_id']))
         )
     );
 }
-
-if (isset($this->field_defs['campaign_name']))
-{
-    $this->field_defs['campaign_name']['additionalFields']['id'] = 'campaign_id';
-}
