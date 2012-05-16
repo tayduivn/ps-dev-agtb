@@ -3056,7 +3056,7 @@ SUGAR.util = function () {
 		/**
 		 * Renders Query UI Help Dialog
 		 */
-		showHelpTips: function(el,helpText,myPos,atPos) {
+		showHelpTips: function(el,helpText,myPos,atPos,elmId) {
 				if(myPos == undefined || myPos == "") {
 					myPos = "left top";
 				}
@@ -3064,8 +3064,9 @@ SUGAR.util = function () {
 					atPos = "right top";
 				}
 
-					var $dialog = $('<div></div>')
-					.html(helpText)
+				var $dialog = elmId ? ( $("#"+elmId).length > 0 ? $("#"+elmId) : $('<div></div>').attr("id", elmId) ) : $('<div></div>');
+
+                $dialog.html(helpText)
 					.dialog({
 						autoOpen: false,
 						title: SUGAR.language.get('app_strings', 'LBL_HELP'),
