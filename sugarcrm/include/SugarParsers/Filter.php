@@ -38,9 +38,25 @@ class SugarParsers_Filter
      */
     protected $parsedFilter;
 
+    /**
+     * Default Bean to start with
+     *
+     * @var SugarBean
+     */
+    protected $bean;
 
-    public function __construct()
+    /**
+     * Links from the bean
+     *
+     * @var array
+     */
+    protected $bean_links = array();
+
+
+    public function __construct(SugarBean $bean)
     {
+        $this->bean = $bean;
+        $this->bean_links = $this->bean->get_linked_fields();
         $this->loadFilters();
     }
 
@@ -78,7 +94,6 @@ class SugarParsers_Filter
         $_filters = array();
         $stripArrayKeys = false;
         foreach ($array as $key => $value) {
-
             // we we have the class, lets check the value to see if it's an array and contains any more $variables
             // we can ignore this if the key is in as in requires an array of values
             $valueHasVariables = $this->valueArrayHasVariables($value);
@@ -86,8 +101,17 @@ class SugarParsers_Filter
             // since the value is an array with no variables and there is only one, lets explode it out
             if ($valueHasVariables === false && is_array($value) && count($value) === 1) {
                 // make the key and value be the contents of the array
-                $key = array_shift(array_keys($value));
-                $value = array_shift($value);
+                if (isset($this->bean_links[$key])) {
+                    // we have a link filed.  add an and to this before the value
+                    $valueHasVariables = true;
+                    $value = array('$and' => array($value));
+                } else {
+                    $_key = array_shift(array_keys($value));
+                    if(!is_integer($_key)) {
+                        $key = $_key;
+                    }
+                    $value = array_shift($value);
+                }
             }
 
             $_filterKey = count($_filters);

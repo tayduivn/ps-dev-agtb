@@ -22,7 +22,6 @@
 require_once("include/SugarParsers/Filter.php");
 class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     /**
      * @var SugarParsers_Filter
      */
@@ -30,7 +29,7 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->obj = new SugarParsers_Filter();
+        $this->obj = new SugarParsers_Filter(new Account());
     }
 
     public function tearDown()
@@ -218,8 +217,22 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("UT", $andFilterObject['state']->getValue());
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['country']);
         $this->assertEquals("USA", $andFilterObject['country']->getValue());
-
     }
+
+    /**
+     * @group SugarParser
+     */
+    public function testLinkFilterNoControlStatement()
+    {
+        $obj = json_decode('{"member_of":{"billing_address_state":"NY"}}');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+
+        $andFilterObject = array_shift($pFilter['member_of']->getValue());
+
+        $this->assertEquals('NY', $andFilterObject->getValue());
+    }
+
 }
 
 require_once('include/SugarParsers/Converter/AbstractConverter.php');

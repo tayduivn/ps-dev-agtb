@@ -59,13 +59,12 @@ class ChartApi extends SugarApi
         if (isset($args['filter'])) {
             require_once('include/SugarParsers/Filter.php');
             require_once('include/SugarParsers/Converter/Report.php');
-            $filter = new SugarParsers_Filter();
+            $filter = new SugarParsers_Filter($ReportBuilder->getDefaultModule(true));
             // fix the filter args
             $filter->parseJson(html_entity_decode($args['filter'], ENT_QUOTES));
-            $filters = $filter->convert(new SugarParsers_Converter_Report());
-
-            $ReportBuilder->addFilter($filters);
-
+            $converter = new SugarParsers_Converter_Report();
+            $converter->setReportBuilder($ReportBuilder);
+            $ReportBuilder->addFilter($filter->convert($converter));
         }
 
         $chart_contents = $ReportBuilder->addSummaryCount()->toJson();

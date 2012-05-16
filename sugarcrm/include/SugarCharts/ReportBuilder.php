@@ -93,19 +93,11 @@ class ReportBuilder
      * @param null|string $key      The key for the module we are adding
      * @return ReportBuilder
      */
-    public function addModule($module, $key = null)
+    public function addModule($module, $key)
     {
         $bean = $this->getBean($module);
 
-        if (empty($key)) {
-            // see if the key already exist
-            if (!isset($this->table_keys[$module])) {
-                // module is not already added, so lest just add it
-                $key = $module;
-            }
-        }
-
-        $this->table_keys[$module] = $key;
+        $this->table_keys[$key] = array('module' => $module, 'key' => $key);
 
         $this->defaultReport['full_table_list'][$key] = array(
             'value' => $bean->module_dir,
@@ -145,16 +137,19 @@ class ReportBuilder
             $key = $bean->module_dir . ':' . $link['name'];
 
             //$child_bean = $this->getBean($link['module']);
-            $this->table_keys[$link['module']] = $key;
+            $this->table_keys[$key] = array('module' => $link['module'], 'key' => $key);
+            //$this->table_keys[$link['module']] = $key;
             $this->link_keys[$link['name']] = $key;
             if (!is_null($field)) {
-                $this->addGroupBy($field, $link['module']);
+                $this->addGroupBy($field, $link['module'], $key);
             }
 
             if (!isset($this->defaultReport['full_table_list'][$key])) {
+                $parent = $this->findParentTableKey($bean_rel->getRelatedModuleName(), $key, $field);
+
                 $arrLink = array(
                     'name' => $bean->module_dir . ' > ' . $link['module'],
-                    'parent' => $this->table_keys[$module],
+                    'parent' => $parent,
                     'children' => array(),
                     'link_def' => array(
                         'name' => $link['name'],
@@ -178,13 +173,49 @@ class ReportBuilder
     }
 
     /**
+     * Utility Method for finding the parent of the field/module combo
+     *
+     * @param string $bean_name         Module Name
+     * @param string $key               Potential Key name we are working with
+     * @param null|string $field        Do we have a field we are working with?
+     * @return array|string
+     */
+    protected function findParentTableKey($bean_name, $key, $field = null)
+    {
+        $parent = "";
+        $potentialParents = $this->getKeyTable($bean_name);
+        if (is_array($potentialParents)) {
+            if (empty($field) && isset($potentialParents[$key])) {
+                unset($potentialParents[$key]);
+            } elseif (!empty($field) && isset($potentialParents[$key])) {
+                $parent = $key;
+            }
+
+            // for now take the first one on what's left
+            if (empty($parent)) {
+                if (count($potentialParents) >= 1) {
+                    $parent = array_shift(array_keys($potentialParents));
+                } else {
+                    // it's empty, so just set it to self;
+                    $parent = "self";
+                }
+            }
+        } else {
+            $parent = $potentialParents;
+        }
+
+        return $parent;
+    }
+
+    /**
      * Add A Field To Group By
      *
      * @param string $field         Which field do we want to group by
-     * @param null|string $module   Which module the field belongs to
+     * @param string|null $module   Which module the field belongs to
+     * @param string|null $key      Potential Key that we are working with
      * @return ReportBuilder
      */
-    public function addGroupBy($field, $module = null)
+    public function addGroupBy($field, $module = null, $key = null)
     {
         if (empty($module)) {
             $module = $this->self_module;
@@ -197,11 +228,11 @@ class ReportBuilder
             $this->defaultReport['group_defs'][] = array(
                 'name' => $field,
                 'label' => $bean_field['vname'],
-                'table_key' => $this->table_keys[$module],
+                'table_key' => $this->findParentTableKey($bean->module_dir, $key, $field),
                 'type' => $bean_field['type'],
             );
 
-            $this->addSummaryColumn($field, $bean);
+            $this->addSummaryColumn($field, $bean, $key);
         }
 
         return $this;
@@ -211,10 +242,11 @@ class ReportBuilder
      * Add a Column to the Summary Output
      *
      * @param string $field         Which field to add
-     * @param string $module        Which module does the field belong to
+     * @param string|null $module   Which module does the field belong to
+     * @param string|null $key      Potential Key that we are working with
      * @return ReportBuilder
      */
-    public function addSummaryColumn($field, $module = null)
+    public function addSummaryColumn($field, $module = null, $key = null)
     {
         if (!($module instanceof SugarBean)) {
             if (empty($module)) {
@@ -232,7 +264,7 @@ class ReportBuilder
             $this->defaultReport['summary_columns'][] = array(
                 'name' => $field,
                 'label' => $bean_field['vname'],
-                'table_key' => $this->table_keys[$module],
+                'table_key' => $this->findParentTableKey($module, $key, $field),
             );
         }
 
@@ -258,6 +290,8 @@ class ReportBuilder
     }
 
     /**
+     *
+     *
      * @param $filter
      */
     public function addFilter($filter)
@@ -286,7 +320,9 @@ class ReportBuilder
     }
 
     /**
-     * @param string $module Which Module To Load
+     * Get the SugarBean
+     *
+     * @param string $module    Which Module To Load
      * @return SugarBean
      */
     public function getBean($module)
@@ -306,23 +342,46 @@ class ReportBuilder
      */
     public function getKeyTable($module = null)
     {
-        if (is_null($module) || !isset($this->table_keys[$module])) {
-            return $this->table_keys;
-        } else {
-            return $this->table_keys[$module];
+        // find all the array that match the current module
+        $found = array();
+
+        foreach ($this->table_keys as $key => $map) {
+            if ($map['module'] == $module) {
+                $found[$key] = $map;
+            }
         }
+
+        // if we found none, return the whole array
+        if (empty($found)) {
+            return $this->table_keys;
+        }
+
+        // if we only have one return the key
+        if (count($found) == 1) {
+            return array_shift(array_keys($found));
+        }
+
+        // just return all found.
+        return $found;
+
     }
 
     /**
      * Convert A Table Key into a SugarBean
      *
-     * @param string $tableKey
+     * @param string $tableKey          Table key we are working with
      * @return SugarBean|boolean
      */
     public function getBeanFromTableKey($tableKey)
     {
-        $key = array_search($tableKey, $this->table_keys);
-        return ($key === false) ? false : $this->getBean($key);
+        $module = false;
+        foreach ($this->table_keys as $key => $map) {
+            if ($key == $tableKey) {
+                $module = $map['module'];
+                break;
+            }
+        }
+        return ($module === false) ? false : $this->getBean($module);
     }
 
     /**

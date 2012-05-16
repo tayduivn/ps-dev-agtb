@@ -22,6 +22,10 @@ require_once('include/SugarCharts/ReportBuilder.php');
 
 class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testConstructorSetsModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -31,6 +35,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts', $actual['module']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testConstructorSetsSelfTable()
     {
         $rb = new ReportBuilder('Accounts');
@@ -45,6 +53,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
             'children' => array())), $actual['full_table_list']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testToJson()
     {
         $rb = new ReportBuilder('Accounts');
@@ -53,12 +65,20 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotNull($test);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testToArray()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertTrue(is_array($rb->toArray()));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddModuleWithKey()
     {
         $rb = new ReportBuilder('Accounts');
@@ -74,57 +94,70 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
             'children' => array()), $actual['full_table_list']['contacts']);
     }
 
-    public function testAddModuleWithoutKey()
-    {
-        $rb = new ReportBuilder('Accounts');
-        $rb->addModule('Contacts');
-        $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
-
-        $this->assertSame(array(
-            'value' => 'Contacts',
-            'module' => 'Contacts',
-            'label' => 'Contacts',
-            'parent' => '',
-            'children' => array()), $actual['full_table_list']['Contacts']);
-    }
-
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetTableKeyWithModuleReturnsString()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertEquals('self', $rb->getKeyTable('Accounts'));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetTableKeyWithNotModuleReturnsArray()
     {
         $rb = new ReportBuilder('Accounts');
-        $this->assertSame(array('Accounts' => 'self'), $rb->getKeyTable());
+        $this->assertSame(array('self' => array('module' => 'Accounts', 'key' => 'self')), $rb->getKeyTable());
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetBeanReturnsAccountSugarBeanFromCache()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertInstanceOf('Account', $rb->getBean('Accounts'));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetBeanReturnsContactSugarBeanAfterCreate()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertInstanceOf('Contact', $rb->getBean('Contacts'));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetDefaultModuleAsString()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertEquals('Accounts', $rb->getDefaultModule());
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetDefaultModuleAsAccountBean()
     {
         $rb = new ReportBuilder('Accounts');
         $this->assertInstanceOf('Account', $rb->getDefaultModule(true));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddSummaryCount()
     {
         $rb = new ReportBuilder('Accounts');
@@ -141,6 +174,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['summary_columns'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddSummaryColumnWithoutModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -155,6 +192,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['summary_columns'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddSummaryColumnWithModuleAsString()
     {
         $rb = new ReportBuilder('Accounts');
@@ -169,6 +210,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['summary_columns'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddSummaryColumnWithModuleAsSugarBean()
     {
         $rb = new ReportBuilder('Accounts');
@@ -183,6 +228,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['summary_columns'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddGroupByWithModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -198,6 +247,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['group_defs'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddGroupByWithoutModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -213,6 +266,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         ), $actual['group_defs'][0]);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddLinkSetsTableInList()
     {
         $rb = new ReportBuilder('Accounts');
@@ -223,6 +280,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($actual['full_table_list']['Accounts:contacts']));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddLinkSetsFieldInSummaryColumns()
     {
         $rb = new ReportBuilder('Accounts');
@@ -233,6 +294,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:contacts', $actual['summary_columns'][0]['table_key']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddLinkSetsFieldInGroupDefs()
     {
         $rb = new ReportBuilder('Accounts');
@@ -243,6 +308,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:contacts', $actual['group_defs'][0]['table_key']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddLinkToAccountModule()
     {
         $rb = new ReportBuilder('Accounts');
@@ -253,6 +322,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:member_of', $actual['group_defs'][0]['table_key']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testAddFilter()
     {
 
@@ -274,6 +347,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($filter, $actual['filters_def']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetBeanFromTableKeyReturnsFalse()
     {
         $rb = new ReportBuilder('Accounts');
@@ -282,6 +359,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($return);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetBeanFromTableKeyReturnsAccountBean()
     {
         $rb = new ReportBuilder('Accounts');
@@ -290,6 +371,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Account', $return);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetLinkTableReturnsArrayWhenLinkDoesntExist()
     {
         $rb = new ReportBuilder('Accounts');
@@ -298,6 +383,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($return));
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testGetLinkTableReturnsStringWhenLinkExist()
     {
         $rb = new ReportBuilder('Accounts');

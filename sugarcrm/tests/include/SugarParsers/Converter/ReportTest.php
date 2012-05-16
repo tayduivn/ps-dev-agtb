@@ -31,12 +31,11 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->filter = new SugarParsers_Filter();
+        $this->filter = new SugarParsers_Filter(new Account());
     }
 
     public function tearDown()
     {
-        unset($this->obj);
         unset($this->filter);
         $filterDict = new FilterDictionary();
         $filterDict->resetCache();
@@ -267,6 +266,9 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testLinkFilterConvert()
     {
         $obj = json_decode('{"member_of":{"$and":[{"billing_address_state":"UT"},{"billing_address_country":"USA"}]}}');
