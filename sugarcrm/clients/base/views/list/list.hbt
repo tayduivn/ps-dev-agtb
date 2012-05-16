@@ -33,11 +33,13 @@
                     </table>
                     {{/each}}
                 </div>
-                <div class="block-footer">
-                    {{#each meta.buttons}}
-                    {{field ../context ../this ../model}}
-                    {{/each}}
-                </div>
+                {{#notEq collection.next_offset "-1"}}
+                    <div class="block-footer">
+                            {{#each meta.buttons}}
+                                {{field ../context ../this ../model}}
+                            {{/each}}
+                    </div>
+                {{/notEq}}
                 <ul class="nav nav-pills actions">
                     <li>
                         <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i
