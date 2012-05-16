@@ -200,7 +200,7 @@ class ModuleApi extends SugarApi {
             }
         }
 
-        if ($bean->field_defs['email']) {
+        if (isset($bean->field_defs['email'])) {
                 $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
                 $emails = array();
                 $emailProps = array(
