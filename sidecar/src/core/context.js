@@ -91,16 +91,14 @@
             }
 
             if (def.link) {
-                context.set({ parentModel: this.get("model") });
+                var parentModel = this.get("model");
+                context.set({
+                    parentModel: parentModel,
+                    parentModule: parentModel ? parentModel.module : null
+                });
             }
 
             return context;
-        },
-
-        _prepareData: function(force, preparator) {
-            // The data has already been prepared
-            if (!force && (this.get("model") || this.get("collection"))) return;
-            this.set(preparator.call(this));
         },
 
         /**
@@ -111,55 +109,85 @@
          *
          * @param {Boolean} force(optional) Flag indicating if data instances must be re-created.
          */
-        prepareData: function(force) {
-            this._prepareData(force, function() {
-                var model, collection,
-                    modelId = this.get("modelId"),
-                    module = this.get("module"),
-                    create = this.get("create");
+        prepare: function(force) {
+            if (!force && (this.get("model") || this.get("collection"))) return;
 
-                if (modelId) {
-                    model = app.data.createBean(module, { id: modelId });
-                    collection = app.data.createBeanCollection(module, [model]);
-                } else if (create === true) {
-                    model = app.data.createBean(module);
-                    collection = app.data.createBeanCollection(module, [model]);
-                } else {
-                    model = app.data.createBean(module);
-                    collection = app.data.createBeanCollection(module);
-                }
+            var modelId = this.get("modelId"),
+                create = this.get("create"),
+                link = this.get("link");
 
-                return {
-                    collection: collection,
-                    model: model
-                };
-            });
+            this.set(link ?
+                this._prepareRelated(link, modelId, create) :
+                this._prepare(modelId, create)
+            );
 
         },
 
         /**
-         * Prepares instances of related models and collections.
+         * Prepares instances of model and collection.
          *
-         * This method does nothing if this context already contains an instance of a model or a collection.
-         * Pass `true` to re-create model and collection.
+         * This method assumes that the module name (`module`) is set on the context.
+         * If not, instances of standard Backbone.Model and Backbone.Collection are created.
          *
-         * @param {Boolean} force(optional) Flag indicating if data instances must be re-created.
+         * @param {String} modelId Bean ID.
+         * @param {Boolean} create Create flag.
+         * @return {Object} State to set on this context.
+         * @private
          */
-        prepareRelatedData: function(force) {
-            this._prepareData(force, function() {
-                var model, collection,
-                    parentModel = this.get("parentModel"),
-                    link = this.get("link");
+        _prepare: function(modelId, create) {
+            var model, collection,
+                module = this.get("module");
 
-                if (parentModel && link) {
-                    collection = parentModel.getRelatedCollection(link);
-                    model = app.data.createRelatedBean(parentModel, null, link);
-                    return {
-                        collection: collection,
-                        model: model
-                    };
-                }
-            });
+            if (modelId) {
+                model = app.data.createBean(module, { id: modelId });
+                collection = app.data.createBeanCollection(module, [model]);
+            } else if (create === true) {
+                model = app.data.createBean(module);
+                collection = app.data.createBeanCollection(module, [model]);
+            } else {
+                model = app.data.createBean(module);
+                collection = app.data.createBeanCollection(module);
+            }
+
+            return {
+                collection: collection,
+                model: model
+            };
+        },
+
+        /**
+         * Prepares instances of related model and collection.
+         *
+         * This method assumes that either a parent model (`parentModel`) or
+         * parent model ID (`parentModelId`) and parent model module name (`parentModule`) are set on this context.
+         *
+         * @param {String} link Relationship link name.
+         * @param {String} modelId Related bean ID.
+         * @param {Boolean} create Create flag.
+         * @return {Object} State to set on this context.
+         * @private
+         */
+        _prepareRelated: function(link, modelId, create) {
+            var model, collection,
+                parentModel = this.get("parentModel");
+
+            parentModel = parentModel || app.data.createBean(this.get("parentModule"), { id: this.get("parentModelId") });
+            if (modelId) {
+                model = app.data.createRelatedBean(parentModel, modelId, link);
+                collection = app.data.createRelatedCollection(parentModel, link, [model]);
+            } else if (create === true) {
+                model = app.data.createRelatedBean(parentModel, null, link);
+                collection = app.data.createRelatedCollection(parentModel, link, [model]);
+            } else {
+                model = app.data.createRelatedBean(parentModel, null, link);
+                collection = app.data.createRelatedCollection(parentModel, link);
+            }
+
+            return {
+                parentModel: parentModel,
+                collection: collection,
+                model: model
+            };
         },
 
 
