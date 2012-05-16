@@ -4146,6 +4146,12 @@ h3.nomad {
   height: 32px;
   width: 32px;
 }
+.control-group.error * {
+  color: red !important;
+}
+.control-group.error * .icon-exclamation-sign {
+  line-height: 26px;
+}
 .control-group .btn.fright {
   min-width: 20px;
   padding-left: 4px;
