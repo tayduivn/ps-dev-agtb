@@ -42,7 +42,7 @@ function validateCronInterval(formId) {
 	var fieldIsValid = function(value, min, max) {
 		var inRange = function(value, min, max) {
 			return (value >= min && value <= max);
-		}	
+		}
 		//Check for *
 		if (value == "*") {
 			return true;
@@ -139,3 +139,18 @@ function allDays() {
 
 }
 
+function updateVisibility()
+{
+	if($('#adv_interval').is(':checked')) {
+		$('#job_interval_advanced').parent().parent().show();
+		$('#job_interval_basic').parent().parent().hide();
+		$('#LBL_ADV_OPTIONS').show();
+	} else {
+		$('#job_interval_advanced').parent().parent().hide();
+		$('#job_interval_basic').parent().parent().show();
+		$('#LBL_ADV_OPTIONS').hide();
+	}
+}
+
+$('#EditView_tabs').ready(updateVisibility);
+$('#adv_interval').ready(function() {$('#adv_interval').click(updateVisibility); });
