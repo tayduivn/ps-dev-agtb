@@ -17,9 +17,19 @@
 ,
 		'print':'on'
 ,
-		'goal_marker_type':'group'
+		'goal_marker_type': [
+            'group',
+            'group'
+            ]
 ,
-		'goal_marker_color':'#3FB300'
+		'goal_marker_color': [
+            '#3FB300',
+            '#444444'
+           ]
+,       'goal_marker_label' : [
+        'Quota',
+        'Likely'
+          ]
 ,
         'label_name':'Sales Stage'
 ,
@@ -143,9 +153,14 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            200
+        ],
+		'goalmarkervaluelabel' : [
+            '410K',
+            '200K'
+        ]
 
 	}
 ,
@@ -189,9 +204,14 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410k',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            50
+            ],
+		'goalmarkervaluelabel' : [
+            '410k',
+            '50k'
+            ]
 
 	}
 ,
@@ -234,416 +254,17 @@
 
 
 		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
+		'goalmarkervalue' : [
+            410,
+            110
+            ],
+		'goalmarkervaluelabel' : [
+            '410K',
+            '110k'
+            ]
 
 	}
-,
-	{
 
-		'label': 'April',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'May',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'June',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'July',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'August',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'September',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'October',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'November',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
-,
-	{
-
-		'label': 'December',
-
-		'gvalue': '410',
-
-		'gvaluelabel': '410K',
-
-		'values': [
-			10
-,
-			100
-,
-			200
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
-		'goalmarkervalue' : 410,
-		'goalmarkervaluelabel' : '410K',
-		'goalmarkerlabel' : 'Quota'
-
-	}
 
 
 

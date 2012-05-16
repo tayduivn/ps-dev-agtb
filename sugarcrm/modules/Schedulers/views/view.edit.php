@@ -28,10 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/MVC/View/views/view.edit.php');
-require_once("include/Expressions/Dependency.php");
-require_once("include/Expressions/Trigger.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
-require_once("include/Expressions/Actions/ActionFactory.php");
 
 class SchedulersViewEdit extends ViewEdit {
 	protected static $xtDays = array(
@@ -117,7 +113,7 @@ class SchedulersViewEdit extends ViewEdit {
 		// we have a "BASIC" type of hour setting
 			$exHours = explode('/', $exInterval[1]);
 			$this->ss->assign('basic_interval', $exInterval[1]);
-			$$this->ss->assign('basic_period', 'hour');
+			$this->ss->assign('basic_period', 'hour');
 		// Minutes
 		} elseif(strpos($exInterval[0], '*/') !== false && $exInterval[1] == '*' ) {
 			// we have a "BASIC" type of min setting
@@ -138,32 +134,5 @@ class SchedulersViewEdit extends ViewEdit {
 		$this->ss->assign("basic_visibility", $this->bean->adv_interval?"display: none":"");
 
 		parent::display();
-
-		$dep = new Dependency("adv_interval");
-		$triggerExp = 'true';
-		$triggerFields = Parser::getFieldsFromExpression('$adv_interval');
-		$dep->setTrigger(new Trigger($triggerExp, $triggerFields));
-		$dep->addAction(ActionFactory::getNewAction('SetPanelVisibility', array(
-		    'target' => 'LBL_ADV_OPTIONS',
-		    'value' => '$adv_interval',
-		)));
-		$dep->addAction(ActionFactory::getNewAction('SetVisibility', array(
-		    'target' => 'job_interval_advanced',
-		    'value' => '$adv_interval',
-		)));
-		$dep->addAction(ActionFactory::getNewAction('SetVisibility', array(
-		    'target' => 'job_interval_basic',
-		    'value' => 'not($adv_interval)',
-		)));
-		//Evaluate the trigger immediatly when the page loads
-		$dep->setFireOnLoad(true);
-		$javascript = $dep->getJavascript();
-		echo  <<<EOQ
-	   <script type=text/javascript>
-	   		SUGAR.forms.AssignmentHandler.register('job_interval_basic');
-	   		SUGAR.forms.AssignmentHandler.register('job_interval_advanced');
-		   {$javascript}
-	   </script>
-EOQ;
 	}
 }
