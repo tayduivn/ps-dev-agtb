@@ -266,11 +266,6 @@
          * @return {View.Field} a new instance of field.
          */
         createField: function(params) {
-            /**
-             * Widget type (text, bool, int, etc.).
-             * @property {String}
-             * @member View.Field
-             */
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;

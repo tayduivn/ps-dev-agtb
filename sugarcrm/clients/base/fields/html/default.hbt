@@ -1,1 +1,1 @@
-<span name="{{name}}">{{{fieldDef.default_value}}}</span>
+<span name="{{name}}">{{{def.default_value}}}</span>

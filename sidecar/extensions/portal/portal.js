@@ -279,9 +279,9 @@
             },
             "button": {
                 "views": {
-                    "default": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
-                        "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
-                        "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                    "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
+                        "{{else}}javascript:void(0){{/if}}\" class=\"btn {{def.class}} {{#if def.primary}}btn-primary{{/if}}\">" +
+                        "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
                 }
             },
             "hr": {
@@ -292,7 +292,7 @@
             "enum": {
                 "views": {
                     "signupView": "<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
-                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\">{{#eachOptions fieldDef.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\">{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "default": ""
                 },
