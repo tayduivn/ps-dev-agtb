@@ -2,11 +2,9 @@
     {{#each meta.panels}}
     <div class="card2">
         {{#each fields}}
-            {{#eq name "name"}}
-
-            {{else}}}
+            {{#notEq name "name"}}
                 {{field ../../../context ../../../this ../../../model}}
-            {{/eq}}
+            {{/notEq}}
         {{/each}}
                 <span class="extend">
                   <div class="row-fluid">
