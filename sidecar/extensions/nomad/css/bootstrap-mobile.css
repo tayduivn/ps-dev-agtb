@@ -4228,6 +4228,10 @@ h3.nomad {
 .login .btn.btn-sugar {
   width: 140px!important;
 }
+.login .control-group.error input {
+  background: #ffffff url(../img/exclamation.png) 97% 50% no-repeat;
+  color: #e61718;
+}
 .alert {
   z-index: 2000;
   position: absolute;
