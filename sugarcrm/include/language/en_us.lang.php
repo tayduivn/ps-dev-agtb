@@ -4166,6 +4166,11 @@ $app_list_strings['eapm_list_documents']= array(
         2 => 'Access',
         3 => 'Invalid',
     );
+$app_list_strings['oauth_client_type_dom'] = array(
+    'oauth1' => 'OAuth 1.0 Authentication',
+    'oauth2_sugar' => 'OAuth 2.0 Sugar User',
+    'oauth2_portal_support' => 'OAuth 2.0 Support Portal User',
+);
 
 $app_list_strings ['emailTemplates_type_list'] = array (
     '' => '' ,

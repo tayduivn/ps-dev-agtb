@@ -58,7 +58,15 @@ $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
             'source'=>'non-db',
             'vname'=>'LBL_TOKENS',
           ),
-
+          'client_type' =>
+          array (
+            'name' => 'client_type',
+            'type' => 'enum',
+            'options' => 'oauth_client_type_dom',
+            'len' => 50,
+            'comment' => 'Is this client an OAuth1 or OAuth2 client',
+            'default'=>'oauth1',
+          ),
     ),
     'indices' => array (
        array('name' =>'ckey', 'type' =>'unique', 'fields'=>array('c_key')),
