@@ -148,11 +148,11 @@ describe("Context", function() {
 
             expect(context.children.length).toEqual(2);
             expect(subcontext.parent).toEqual(context);
-            expect(subcontext.attributes..module).toEqual("Accounts");
+            expect(subcontext.attributes.module).toEqual("Accounts");
 
             expect(subrelatedContext.parent).toEqual(context);
-            expect(subrelatedContext.attributes.link).toEqual("Accounts");
-            expect(subrelatedContext.attributes..parentModel).toEqual(model);
+            expect(subrelatedContext.attributes.link).toEqual("accounts");
+            expect(subrelatedContext.attributes.parentModel).toEqual(model);
 
             var subcontext2 = context.getChildContext({ module: "Accounts" });
             expect(subcontext).toEqual(subcontext2);
