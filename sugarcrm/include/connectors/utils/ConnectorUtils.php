@@ -893,6 +893,30 @@ class ConnectorUtils
         }
     }
 
+     /**
+     * setConnectorStrings
+     * This method outputs the language Strings for a given connector instance
+     *
+     * @param String $source_id String value of the connector id to write language strings for (e.g., ext_soap_marketo)
+     * @param String $connector_strings array value of the connector_strings
+     * @param String $language optional String value for the language to use (defaults to $GLOBALS['current_language'])
+    */
+    public static function setConnectorStrings(
+        $source_id,
+        $connector_strings,
+        $language = ''
+        )
+    {
+        $lang = empty($language) ? $GLOBALS['current_language'] : $language;
+        $lang .= '.lang.php';
+        $dir = str_replace('_', '/', $source_id);
+
+      if (!write_array_to_file("connector_strings", $connector_strings, "custom/modules/Connectors/connectors/sources/{$dir}/language/{$lang}")) {
+           //Log error and return empty array
+           $GLOBALS['log']->fatal("Cannot write connectory_strings to file custom/modules/Connectors/connectors/sources/{$dir}/language/{$lang}");
+           return false;
+        }
+    }
 
     /**
      * installSource
