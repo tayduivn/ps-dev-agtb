@@ -285,7 +285,7 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 		$sugarChart = SugarChartFactory::getInstance('','Reports');
 
 		$sugarChart->setData($chart_rows);
-		$sugarChart->setProperties($chartTitle, '', $chartType);
+		$sugarChart->setProperties($chartTitle, '', $chartType,'on','value','on',$reporter->label_name,$reporter->value_name);
 
 		$xmlFile = get_cache_file_name($reporter);
 

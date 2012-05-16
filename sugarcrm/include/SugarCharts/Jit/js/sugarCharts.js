@@ -153,7 +153,12 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                             } else {
                                                 value = "elem.value";
                                             }
-                                            eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
+
+                                            if(properties.label_name != "undefined" && properties.label_name != "") {
+                                                eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
+                                            } else {
+                                                eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
+                                            }
                                         }
                                     }
                                 }
