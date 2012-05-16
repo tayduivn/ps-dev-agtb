@@ -170,16 +170,16 @@
      * @method eq
      * @param val1
      * @param val2
-     * @param {Boolean} retTrue
-     * @param {Boolean} retFalse
-     * @return {String}
+     * @return {String} block Block inside the condition
      */
-    Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
+    Handlebars.registerHelper('eq', function(val1, val2, block) {
+        if (!block) return "";
+
         if (val1 == val2) {
-            return retTrue;
+            return block(this);
         }
 
-        return (!_.isUndefined(retFalse)) ? retFalse : "";
+        return block.inverse(this);
     });
 
     /**

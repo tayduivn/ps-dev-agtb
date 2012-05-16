@@ -136,18 +136,22 @@ describe("Handlebars Helpers", function() {
             var val1 = 1,
                 val2 = 1,
                 returnTrue = "Success!",
-                returnFalse = "Failure!";
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.eq(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
+            expect(Handlebars.helpers.eq(val1, val2, returnCb)).toEqual(returnTrue);
         });
 
         it("should return the false value if conditional evaluates false", function() {
             var val1 = 1,
                 val2 = 2,
                 returnTrue = "Success!",
-                returnFalse = "Failure!";
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.eq(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
+            expect(Handlebars.helpers.eq(val1, val2, returnCb)).toEqual(returnFalse);
         });
     });
 
