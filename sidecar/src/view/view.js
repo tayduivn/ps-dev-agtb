@@ -62,7 +62,7 @@
         },
 
         /**
-         * Renders a view with the given context.
+         * Renders a view for the given context.
          *
          * This method uses this view's {@link View.View#template} property to render itself.
          * @param ctx Template context.

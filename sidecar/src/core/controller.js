@@ -57,7 +57,7 @@
             this.context.set(params);
 
             // Prepare model and collection
-            this.context.prepareData();
+            this.context.prepare();
             // Create an instance of the layout and bind it to the data instance
             this.layout = app.view.createLayout({
                 name: params.layout,

@@ -303,13 +303,14 @@
          *
          * @param {Data.Bean} bean the related beans are linked to the specified bean
          * @param {String} link relationship link name
+         * @param {Array/Data.BeanCollection} models(optional) an array of related beans to populate the newly created collection with
          * @return {Data.BeanCollection} a new instance of the bean collection
          */
-        createRelatedCollection: function(bean, link) {
+        createRelatedCollection: function(bean, link, models) {
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
-            var collection = this.createBeanCollection(relatedModule, undefined, {
+            var collection = this.createBeanCollection(relatedModule, models, {
                 /**
                  * Link information.
                  *
