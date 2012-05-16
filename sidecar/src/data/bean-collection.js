@@ -18,7 +18,7 @@
 
         _prepareModel: function(model, options) {
             model = Backbone.Collection.prototype._prepareModel.call(this, model, options);
-            if (model) model.link = this.link;
+            if (model && !model.link) model.link = this.link;
             return model;
         },
 
