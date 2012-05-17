@@ -48,25 +48,29 @@
 <script type="text/javascript">
 
 //cleanup because this happens in a screwy order in a quickcreate, and the standard $(document).ready and YUI functions don't work quite right
-function initTime(){ldelim}
-	if(typeof(Time) != "undefined"){ldelim}
-		var combo_{{$idname}} = new Time("{$fields[{{sugarvar key='name' stringFormat=true}}].value}", "{{$idname}}", "{$TIME_FORMAT}", "{{$tabindex}}");
-		//Render the remaining widget fields
-		var text = combo_{{$idname}}.html('{{$displayParams.updateCallback}}');
-		document.getElementById('{{$idname}}_time').innerHTML = text;
-		
-		//addToValidateBinaryDependency('{$form_name}',"{{$idname}}_hours", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_HOURS}" ,"{{$idname}}_date");
-		//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_minutes", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MINUTES}" ,"{{$idname}}_date");
-		//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_meridiem", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MERIDIEM}","{{$idname}}_date");
+var timeclosure_{{$idname}} = function(){ldelim}
+	var idname = "{{$idname}}";
+	var timeField = "{$fields[{{sugarvar key='name' stringFormat=true}}].value}";
+	var timeFormat = "{$fields[{{sugarvar key='name' stringFormat=true}}].value}";
+	var tabIndex = "{{$tabindex}}";
+	var callback = "{{$displayParams.updateCallback}}";
 	
-	{rdelim}
-	else{ldelim}
-		setTimeout(initTime, 500);
-	{rdelim}
+	{literal}
+	function initTime(){
+		if(typeof(Time) != "undefined"){
+			var combo = new Time(timeField, idname, timeFormat, tabIndex);
+			//Render the remaining widget fields
+			var text = combo.html(callback);
+			document.getElementById(idname + "_time").innerHTML = text;	
+		}
+		else{
+			setTimeout(initTime, 500);
+		}
+	}
+	{/literal}
+	initTime();
 {rdelim}
-
-initTime();
-
+timeclosure_{{$idname}}();
 </script>
 
 <script type="text/javascript">
