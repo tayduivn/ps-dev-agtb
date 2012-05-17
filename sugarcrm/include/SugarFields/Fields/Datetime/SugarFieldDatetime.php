@@ -199,7 +199,6 @@ class SugarFieldDatetime extends SugarFieldBase {
                 $vardef['date_formatted_value'] = $timedate->asUserDate($sdt,$current_user);
             }
 
-            $vardef['date_formatted_value'] = $timedate->asUserDate($sdt,$current_user);
         }
 
         return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
