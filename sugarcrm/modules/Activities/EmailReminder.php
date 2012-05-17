@@ -285,7 +285,7 @@ class EmailReminder
             }
         }        
         // fetch contacts
-        $query = "SELECT user_id FROM {$field_part}s_contacts WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
+        $query = "SELECT contact_id FROM {$field_part}s_contacts WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
         $re = $db->query($query);
         while($row = $db->fetchByAssoc($re) ) {
             $contact = new Contact();
@@ -300,7 +300,7 @@ class EmailReminder
             }
         }        
         // fetch leads
-        $query = "SELECT user_id FROM {$field_part}s_leads WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
+        $query = "SELECT lead_id FROM {$field_part}s_leads WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
         $re = $db->query($query);
         while($row = $db->fetchByAssoc($re) ) {
             $lead = new Lead();
