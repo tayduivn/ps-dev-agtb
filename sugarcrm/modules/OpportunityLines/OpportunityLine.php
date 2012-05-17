@@ -63,7 +63,6 @@ class OpportunityLine extends SugarBean
                     WHERE id = '$category_id'";
 
         $result = $this->db->query($query, true, "Error getting product category additional fields: ");
-
         $row = $this->db->fetchByAssoc($result);
 
         if ($row != null)

@@ -50,17 +50,18 @@ class OpportunityLineBundle extends SugarBean
         }
     }
 
-    function clear_opportunitylinebundle_opportunityline_relationship($bundle_id)
+    public function clear_opportunitylinebundle_opportunityline_relationship($bundle_id)
     {
         $query = "delete from $this->rel_opportunity_lines where (bundle_id='$bundle_id') and deleted=0";
         $this->db->query($query,true,"Error clearing line bundle to line relationship: ");
     }
 
-    function clear_line_linebundle_relationship($line_id)
+    public function clear_line_linebundle_relationship($line_id)
     {
         $query = "delete from $this->rel_opportunity_lines where opportunity_line_id='$line_id' and bundle_id = '$this->id' and deleted=0";
         $this->db->query($query,true,"Error clearing line item to oppBundle relationship: ");
     }
+
     /**
      * set_opportunitylinebundle_opportunity_relationship
      *
