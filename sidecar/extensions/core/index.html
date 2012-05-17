@@ -23,8 +23,10 @@
 		<script src='../../src/view/template.js'></script>
 		<script src='../../src/core/context.js'></script>
 		<script src='../../src/core/controller.js'></script>
-		<script src='../../src/core/router.js'></script>
-        <script src='../../src/core/language.js'></script>
+
+        <script src='router.js'></script>
+
+		<script src='../../src/core/language.js'></script>
 		<script src='../../src/core/metadata-manager.js'></script>
         <script src='../../src/core/acl.js'></script>
         <script src='../../src/utils/logger.js'></script>
@@ -99,6 +101,7 @@
                 el: "#core"
             });
             App.api.debug = App.config.debugSugarApi;
+            debugger;
             App.start();
 		</script>
     </body>
