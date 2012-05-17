@@ -317,7 +317,20 @@
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                }
+                },
+                controller: "{" +
+                    "handleValidationError: function(errors) {" +
+                    "var self = this;" +
+                    "this.$('.control-group').addClass(\"error\");" +
+                    "this.$('.help-block').html(\"\");" +
+                    "this.$('.controls').addClass('input-append');" +
+                    "_.each(errors, function(errorContext, errorName) {" +
+                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
+                    "});" +
+                    "this.$('.add-on').remove();" +
+                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
+                    "}" +
+                    "}"
             },
             "phone": {
                 "views": {
