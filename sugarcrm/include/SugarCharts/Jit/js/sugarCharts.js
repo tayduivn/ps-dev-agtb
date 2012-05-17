@@ -171,13 +171,19 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                             var legend = barChart.getLegend(),
                                 cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
                                 rows = Math.ceil(legend["name"].length/cols),
-                                table = "<table cellpadding='0' cellspacing='0' align='left'>";
+                                table = "";
+                                if(legend['wmlegend'] != "undefined") {
+                                    var wmcols = 2,
+                                        wmrows = Math.ceil(legend["wmlegend"]["name"].length/wmcols);
+                                    table += "<table cellpadding='0' cellspacing='0' align='left' width='100%'><tr><td width='70%'>";
+                                }
+                                table += "<table cellpadding='0' cellspacing='0' align='left'>";
                             var j = 0;
-                            for(i=0;i<rows;i++) {
+                            for(var i=0;i<rows;i++) {
                                 table += "<tr>";
                                 for(td=0;td<cols;td++) {
 
-                                    table += '<td width=\'16\' valign=\'top\'>';
+                                    table += '<td valign=\'top\'>';
                                     if(legend["name"][j] != undefined) {
                                         table += '<div class=\'query-color\' style=\'background-color:'
                                             + legend["color"][j] +'\'>&nbsp;</div>';
@@ -192,12 +198,37 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                     table += '</td>';
                                     j++;
                                 }
+
+
+
                                 table += "</tr>";
                             }
-
                             table += "</table>";
+                            if(legend['wmlegend'] != "undefined") {
+                                table += "</td>";
+                                table += "<td width='30%'>";
+
+                                    table += "<table cellpadding='0' cellspacing='0' align='right'>"
+                                    for(var i=0;i<wmrows;i++) {
+                                        table += "<tr>";
+                                        for(var i=0;i<legend['wmlegend']['name'].length;i++) {
+                                            table += "<td valign='top' rowspan><div class='waterMark' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
+                                            table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
+                                        }
+                                        table += "</tr>";
+                                    }
+                                    table += "</table>";
+
+                                table += "</td>";
+                                table += "</tr></table>";
+                            }
+
                             list.innerHTML = table;
 
+                            jQuery('#legend'+chartId).ready(function() {
+                                var chartWidth = jQuery('#'+chartId).width() - 20;
+                                $('#legend'+chartId).width(chartWidth)
+                            })
 
                             //save canvas to image for pdf consumption
                             $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);

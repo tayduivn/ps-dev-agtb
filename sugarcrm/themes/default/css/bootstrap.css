@@ -4202,6 +4202,13 @@ input[type="submit"].btn.small {
   background-image: url(../../../../sugarcrm/index.php?entryPoint=getImage&imageName=chartBg.png);
   background-repeat: repeat-x;
 }
+.waterMark {
+  width: 19px;
+  height: 18px;
+  background-image: url(../../../../sugarcrm/index.php?entryPoint=getImage&imageName=watermark-white.png);
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
 .query-color {
   width: 16px;
   height: 16px;
