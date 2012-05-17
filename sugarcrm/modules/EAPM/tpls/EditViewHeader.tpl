@@ -64,7 +64,7 @@
 {{sugar_button module="$module" id="Audit" view="$view" appendTo="action_button"}}
 {{/if}}
 {{/if}}
-{{sugar_action_menu buttons=$action_button class="fancymenu" }}
+{{sugar_action_menu buttons=$action_button class="fancymenu" flat=true}}
     <td align='right'>
 </td>
 
