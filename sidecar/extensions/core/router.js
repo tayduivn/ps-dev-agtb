@@ -1,4 +1,5 @@
 (function(app) {
+
     /**
      * Extend the router to add core specific routing functionality.
      * @class Core.Router
@@ -6,7 +7,7 @@
      * @alias SUGAR.App.router
      */
     $.getScript("../../src/core/router.js", function() {
-        app.augment("router", _.extend(app.router, {
+        var CoreRouter = Backbone.Router.extend({
             /**
              * Extends the Routes hash map with core specific routes.
              * @property {Object}
@@ -22,14 +23,14 @@
              * @param module Module name.
              */
             index: function(module) {
-                debugger;
                 app.logger.debug("Route changed to index of " + module);
                 app.controller.loadView({
                     module: module || "Opportunities",
                     layout: "forecasts"
                 });
             }
-        }), false);
+        });
+        var extendedRouter = _.extend(app.router, new CoreRouter())
+        app.augment("router", extendedRouter, false);
     }, this);
-
 })(SUGAR.App);
