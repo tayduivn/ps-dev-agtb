@@ -132,6 +132,14 @@
             });
         },
 
+        dashboard: function() {
+            app.logger.debug("Route changed to index of Cases");
+            app.controller.loadView({
+                module: "Cases", //TODO: This should probably not be Cases
+                layout: "dashboard"
+            });
+        },
+
         /**
          * Handles arbitrary layout for a module that doesn't have a record associated with the layout.
          * @param module Module name.
