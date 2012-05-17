@@ -7,7 +7,7 @@
                 model.save(null, {
                     success: function () {
                         console.log('---saved successfully');
-                        app.router.navigate("", {trigger: true});
+                        app.router.goBack();
                     },
                     error: function () {
                         console.log('---save error');
@@ -15,7 +15,7 @@
                 });
             },
             "click #backRecord": function () {
-                app.router.navigate("", {trigger: true});
+                app.router.goBack();
             }
         }
     });
