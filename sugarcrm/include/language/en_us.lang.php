@@ -4112,7 +4112,9 @@ $app_list_strings ['emailTemplates_type_list'] = array (
     '' => '' ,
     'campaign' => 'Campaign' ,
     'email' => 'Email',
+    //BEGIN SUGARCRM flav=pro ONLY
     'workflow' => 'Workflow',
+    //END SUGARCRM flav=pro ONLY
   );
 
 $app_list_strings ['emailTemplates_type_list_campaigns'] = array (
