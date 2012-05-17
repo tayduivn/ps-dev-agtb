@@ -389,6 +389,15 @@
                     }
                 }
             }
+        },
+
+        /**
+         * Checks if an email address is valid
+         * @param {String} address
+         * @return {Boolean}
+         */
+        isValidEmailAddress: function(address) {
+            return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(address));
         }
     });
 }(SUGAR.App));
