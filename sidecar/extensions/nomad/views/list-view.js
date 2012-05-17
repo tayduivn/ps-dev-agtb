@@ -2,7 +2,7 @@
 
     app.view.views.ListView = app.view.View.extend({
         ITEM_TYPE_DELAY:400,
-        MAX_PAGE_SIZE:25,
+        MAX_PAGE_SIZE:20,
         events:{
             'click  .show-more-top-btn':'showMoreTopRecords',
             'click  .show-more-bottom-btn':'showMoreBottomRecords',
@@ -20,6 +20,11 @@
             this.activeArticle = null;
 
             this.timerId = null;
+        },
+        render:function(){
+            app.view.View.prototype.render.call(this);
+
+            this.contextMenuEl = this.$('.context-menu');
         },
         onKyeDown:function(){
             if(this.timerId){
@@ -131,6 +136,7 @@
             }
 
             this.activeArticle = $(e.target);
+            this.contextMenuEl.appendTo(this.activeArticle.find('.menu-container'));
             this.activeArticle.find('.grip').addClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
         },
