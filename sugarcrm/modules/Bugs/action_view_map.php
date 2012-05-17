@@ -26,16 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class ViewSidecar extends SugarView
-{
- 	function ViewSidecar() {
-		$this->options['show_footer'] = false;
- 		parent::SugarView();
- 	}
-
-
- 	function display()
- 	{
-        $this->ss->display("SidecarView.tpl");
- 	}
-}
+$action_view_map = array(
+    'index' => 'index',
+    'sidecar' => 'sidecar',
+);
