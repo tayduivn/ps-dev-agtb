@@ -146,11 +146,11 @@
      * @method contains
      * @param val
      * @param {Object/Array} array
-     * @param {Boolean} retTrue
-     * @param {Boolean} retFalse
-     * @return {Boolean}
+     * @return {String} block Block inside the condition=
      */
-    Handlebars.registerHelper('has', function(val, array, retTrue, retFalse) {
+    Handlebars.registerHelper('has', function(val, array, block) {
+        if (!block) return "";
+        
         // Since we need to check both just val = val 2 and also if val is in an array, we cast
         // non arrays into arrays
         if (!_.isArray(array) && !_.isObject(array)) {
@@ -160,26 +160,42 @@
         if (_.find(array, function(item) {
             return item === val;
         })) {
-            return retTrue;
+            return block(this);
         }
 
-        return (!_.isUndefined(retFalse)) ? retFalse : "";
+        return block.inverse(this);
     });
 
     /**
      * @method eq
      * @param val1
      * @param val2
-     * @param {Boolean} retTrue
-     * @param {Boolean} retFalse
-     * @return {String}
+     * @return {String} block Block inside the condition
      */
-    Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
+    Handlebars.registerHelper('eq', function(val1, val2, block) {
+        if (!block) return "";
+
         if (val1 == val2) {
-            return retTrue;
+            return block(this);
         }
 
-        return (!_.isUndefined(retFalse)) ? retFalse : "";
+        return block.inverse(this);
+    });
+
+    /**
+     * @method notEq // inverse of eq
+     * @param val1
+     * @param val2
+     * @return {String} block Block inside the condition
+     */
+    Handlebars.registerHelper('notEq', function(val1, val2, block) {
+        if (!block) return "";
+
+        if (val1 != val2) {
+            return block(this);
+        }
+
+        return block.inverse(this);
     });
 
     /**

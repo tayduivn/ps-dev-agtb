@@ -24,36 +24,76 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestUpdate extends RestTestBase {
+class RestTestUpdate extends RestTestBase
+{
     public function setUp()
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $this->_restLogin($this->_user->user_name, $this->_user->user_name);
     }
-    
+
     public function tearDown()
     {
-        if ( isset($this->account->id) ) {
+        if (isset($this->account->id)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
+        }
+        if (isset($this->contact->id)) {
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testUpdate() {
+    public function testUpdate()
+    {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
-        $restReply = $this->_restCall("Accounts/{$this->account->id}",json_encode(array('name'=>'UNIT TEST - AFTER')),"PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('name' => 'UNIT TEST - AFTER')), "PUT");
 
-        $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same.");
-        
+        $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same.");
+
         $account2 = new Account();
         $account2->retrieve($this->account->id);
-        
-        $this->assertEquals("UNIT TEST - AFTER",$account2->name,"Did not update the account name.");
+
+        $this->assertEquals("UNIT TEST - AFTER", $account2->name, "Did not update the account name.");
     }
 
+
+    public function testUpdateEmail()
+    {
+        $this->contact = new Contact();
+        $this->contact->first_name = "UNIT TEST - BEFORE";
+        $this->contact->save();
+        $emails = array(
+                        array(
+                            'email_address'=>'test@test.com',
+                            'opt_out'=>'0',
+                            'invalid_email'=>'0',
+                            'primary_address'=>'1'
+                        ),
+                        array(
+                            'email_address'=>'asdf@test.com',
+                            'opt_out'=>'0',
+                            'invalid_email'=>'1',
+                            'primary_address'=>'0'
+                        ),
+                    );
+        $restReply = $this->_restCall("Contacts/{$this->contact->id}", json_encode(array(
+            'first_name' => 'UNIT TEST - AFTER',
+            'email' => $emails,
+        )), "PUT");
+
+        $this->assertEquals($this->contact->id, $restReply['reply']['id'], "The returned contact id was not the same.");
+
+        $contact2 = new Contact();
+        $contact2->retrieve($this->contact->id);
+        $restReply = $this->_restCall("Contacts/{$this->contact->id}");
+
+        $this->assertEquals($restReply['reply']['email'], $emails,"Returned emails don't match");
+        $this->assertEquals("UNIT TEST - AFTER", $contact2->name, "Did not update the contact email.");
+    }
 }

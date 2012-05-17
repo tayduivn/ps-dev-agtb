@@ -56,7 +56,7 @@
                     value = value || "";
                     value = value.toString();
 
-                    if(value.length < minLength) {
+                    if (value.length < minLength) {
                         return minLength;
                     }
                 }
@@ -83,8 +83,19 @@
              * @return {Boolean} Should return true if not valid
              */
             email: function(field, value) {
+                var results = [];
                 if (field.type == "email") {
-                    return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(value))
+                    if (value.length && value.length > 0) {
+                        _.each(value, function(fieldProperties) {
+                            var isValid = app.utils.isValidEmailAddress(fieldProperties.email_address);
+                            if (!isValid) {
+                                results.push(fieldProperties.email_address);
+                            }
+                        });
+                    }
+                    if (results.length > 0) {
+                        return results;
+                    }
                 }
             }
 
@@ -105,7 +116,7 @@
          * @method
          */
         requiredValidator: function(field, fieldName, model, value) {
-            if (!_.isUndefined(field.required) && (field.required === true) && (fieldName !== "id")) {
+            if (!_.isUndefined(field.required) && (field.required === true) && (fieldName !== "id") && _.isUndefined(field.auto_increment)) {
                 var currentValue = model.get(fieldName);
                 var currentUndefined = _.isUndefined(currentValue);
                 var valueEmpty = _.isNull(value) || value === "";
