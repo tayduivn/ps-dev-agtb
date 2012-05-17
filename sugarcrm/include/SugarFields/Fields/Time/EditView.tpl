@@ -46,14 +46,27 @@
 <input type="hidden" id="{{$idname}}" name="{{$idname}}" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}">
 <script type="text/javascript" src="include/SugarFields/Fields/Time/Time.js"></script>
 <script type="text/javascript">
-var combo_{{$idname}} = new Time("{$fields[{{sugarvar key='name' stringFormat=true}}].value}", "{{$idname}}", "{$TIME_FORMAT}", "{{$tabindex}}");
-//Render the remaining widget fields
-var text = combo_{{$idname}}.html('{{$displayParams.updateCallback}}');
-document.getElementById('{{$idname}}_time').innerHTML = text;
 
-//addToValidateBinaryDependency('{$form_name}',"{{$idname}}_hours", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_HOURS}" ,"{{$idname}}_date");
-//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_minutes", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MINUTES}" ,"{{$idname}}_date");
-//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_meridiem", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MERIDIEM}","{{$idname}}_date");
+//cleanup because this happens in a screwy order in a quickcreate, and the standard $(document).ready and YUI functions don't work quite right
+function initTime(){ldelim}
+	if(typeof(Time) != "undefined"){ldelim}
+		var combo_{{$idname}} = new Time("{$fields[{{sugarvar key='name' stringFormat=true}}].value}", "{{$idname}}", "{$TIME_FORMAT}", "{{$tabindex}}");
+		//Render the remaining widget fields
+		var text = combo_{{$idname}}.html('{{$displayParams.updateCallback}}');
+		document.getElementById('{{$idname}}_time').innerHTML = text;
+		
+		//addToValidateBinaryDependency('{$form_name}',"{{$idname}}_hours", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_HOURS}" ,"{{$idname}}_date");
+		//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_minutes", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MINUTES}" ,"{{$idname}}_date");
+		//addToValidateBinaryDependency('{$form_name}', "{{$idname}}_meridiem", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MERIDIEM}","{{$idname}}_date");
+	
+	{rdelim}
+	else{ldelim}
+		setTimeout(initTime, 500);
+	{rdelim}
+{rdelim}
+
+initTime();
+
 </script>
 
 <script type="text/javascript">
