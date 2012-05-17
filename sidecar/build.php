@@ -47,7 +47,6 @@ fclose($minFile);
 
 // Generate Docs
 $docs = shell_exec('jsduck src lib/sugarapi --output docs 2>&1');
-$coredocs = shell_exec('jsduck extensions/core --output extensions/core/docs 2>&1');
 
 // Add library files to unminified
 $unminified = file_get_contents("temp");
