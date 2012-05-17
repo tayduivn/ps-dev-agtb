@@ -21,8 +21,8 @@
             no_results_text: "Searching for " // TODO Add labels support
         }).change(function(event) {
             var selected = $(event.target).find(':selected');
-            self.model.set(self.fieldDef.id_name, self.unformat(selected.attr('id')));
-            self.model.set(self.fieldDef.name, self.unformat(selected.attr('value')));
+            self.model.set(self.def.id_name, self.unformat(selected.attr('id')));
+            self.model.set(self.def.name, self.unformat(selected.attr('value')));
         });
         return result;
     },
@@ -49,7 +49,7 @@
      */
     search: function(event) {
         var self = this;
-        var collection = app.data.createBeanCollection(this.fieldDef.module);
+        var collection = app.data.createBeanCollection(this.def.module);
         collection.fetch({
             params: {basicSearch:event.target.value},  // TODO update this to filtering API
             success: function(data) {

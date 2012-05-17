@@ -7,62 +7,63 @@
  * keeps an internal dictionary of alerts created which can later be accessed
  * by key. This is useful so that client code can dismiss a particular alert.
  *
- * Note that the client application must define an AlertView implementation
- * and add as an additional component. This module will use that, if found,
+ * Note that the client application must define an implementation of the Backbone view
+ * and add it as an additional component. This module will use that, if found,
  * by calling: 
- * <code>
+ * <pre><code>
  * app.additionalComponents.alert.show(options)
- * </code>
+ * </code></pre>
  * This implementation will be in charge of rendering the alert to it's UI.
  * It must also provide a close method. See portal src/view/views/alert-view.js for an example.
  */
 (function(app) {
 
-    var _alerts = {}, _alert = null;
+    // Dictionary of alerts
+    var _alerts = {};
 
-    _alert = {
+    var _alert = {
 
         /**
          * Displays an alert message and adds to internal dictionary of alerts.
          * Use supplied key later to dismiss the alert. Caller is responsible for using language translation
          * before calling!
          *
-         * @param {Object} Options.
-         * For example, to create an alert view with a message:
-         * <code>
+         * @param {Object} options(optional)
+         * The options are application specific and are driven by the alert view referenced in {@link Config#additionalComponents} hash.
+         * For example, if your custom alert implementation may support the following options:
+         * <pre><code>
          * var a2 = SUGAR.App.alert('mykey', {level:"warning", title:'My Title', messages:'hi again', autoclose:false})
-         * </code>
+         * </code></pre>
          * Alternatively, you can pass an array of strings for the messages property to get separate paragraphs:
-         * <code>
+         * <pre><code>
          * var a2 = SUGAR.App.alert('mykey', {level:"info", title:'Title', messages:['para 1', 'para 2'], autoclose:true})
-         * </code>
+         * </code></pre>
          * Note: If the level property is 'process' (a loading indicator), messages is ignored. The 
          * title is the only thing displayed resulting in something like : 'Loading...' 
          * @return {Backbone.View} Alert instance 
          * @method
          */
         show: function(key, options) {
-            var _alertView = null;
             if (!app.additionalComponents.alert) return null;
 
             // Your AlertView implementation must define this:
-            _alertView = app.additionalComponents.alert.show(options);
-            if(_alertView) {
-                _alerts[key] = _alertView;
+            var alertView = app.additionalComponents.alert.show(options);
+            if (alertView) {
+                _alerts[key] = alertView;
             } else {
                 app.logger.error("alert.js: Unable to show alert");
             }
-            return _alertView; // just for tests ;)
+            return alertView; // just for tests ;)
         },
 
         /**
          * Removes an alert message by key.
-         * @param {String} The key provided when previously calling show.
-         * @return {Boolean} Indicating if dismiss was successful or not.
+         * @param {String} key The key provided when previously calling show.
+         * @return {Boolean} Flag indicating if dismiss was successful or not.
          * @method
          */
         dismiss: function(key) {
-            if(_alerts[key]) {
+            if (_alerts[key]) {
                 
                 // Your AlertView implementation must define this:
                 _alerts[key].close();
@@ -73,7 +74,7 @@
         },
 
         /**
-         * Removes all alert messages
+         * Removes all alert messages.
          * @method
          */
         dismissAll: function() {
@@ -84,13 +85,15 @@
         },
 
         /**
-         * For tests .. don't use this!
-         * TODO: Is there a better way to do this?
+         * @ignore
          */
         _get: function(key) {
+            // TODO: We need this method for testing only
+            // Is there a better way to do this?
             return _alerts[key];
         }
     };
 
     app.augment("alert", _alert, false);
+
 })(SUGAR.App);

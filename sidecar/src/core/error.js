@@ -92,9 +92,17 @@
             // field by field; so feedback will be provided as appropriate.
             app.alert.dismissAll();
 
-            _.each(errors, function(fieldError) {
-                app.logger.error("validation failed: " + fieldError);
-            });
+            _.each(errors, function(fieldError, key) {
+                var errorMsg = '';
+                if (_.isObject(fieldError)) {
+                    _.each(fieldError, function(result, fieldName) {
+                        errorMsg +=  "(Message) " + this.getErrorString(fieldName, model) + "\n";
+                    }, this);
+                } else {
+                    errorMsg = fieldError;
+                }
+                app.logger.debug("validation failed for field `" + key + "`:\n" + errorMsg);
+            }, this);
         },
 
         /**
