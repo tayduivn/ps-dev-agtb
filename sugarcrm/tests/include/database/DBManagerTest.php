@@ -2176,6 +2176,128 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    // Inserts a 2D array of data into the specified table
+    // First row of array must be the column headers, first column must be PK column name
+    public function insertTableArray( $tableName, $tableDataArray ) {
+
+        $sqlPrefix = "INSERT INTO $tableName ( {$tableDataArray[0][0]} ";  // has to be at least one column
+        for ($col = 1; $col < count($tableDataArray[0]); $col++) {
+            $sqlPrefix .= ", {$tableDataArray[0][$col]}";
+        }
+        $sqlPrefix .= ") VALUES (";
+        $sqlPostfix = ")";
+        $sqlBody = "";
+
+        // do the inserts for each row of data
+        for ($row = 1; $row< count($tableDataArray); $row++) {
+            $rowData = $tableDataArray[$row];
+            $sqlBody = "'{$rowData[0]}'";
+            for ($col = 1; $col < count($rowData); $col++) {
+                $sqlBody .= ",'{$rowData[$col]}'";
+            }
+
+            // Insert the data
+            $sql = $sqlPrefix . $sqlBody . $sqlPostfix;
+            $result = $this->_db->query($sql);
+        }
+    }
+
+    // Deletes a 2D array of data from the specified table
+    // First row of array must be column headers, first column must be PK column name
+    public function deleteTableArray( $tableName, $tableDataArray ) {
+
+        $sql = "DELETE FROM $tableName WHERE {$tableDataArray[0][0]} IN ( '{$tableDataArray[1][0]}'";  // has to be at least one column
+        for ($row = 2; $row < count($tableDataArray); $row++) {
+            $sql .= ",'{$tableDataArray[$row][0]}'";
+        }
+        $sql .= ")";
+
+        // Delete the data
+        $result = $this->_db->query($sql);
+
+    }
+
+
+    public function testRecursiveQueryMultiHierarchy()
+    {
+        $this->_db->preInstall();
+
+        // Setup test data
+        $tableName = 'forecast_tree';
+        $this->assertTrue($this->_db->tableExists($tableName), "Table $tableName does not exist");
+        $tableDataArray = array(  array( 'id',             'parent_id',      'name',     'hierarchy_type', 'user_id' )
+        , array( 'sales_test_1',    null,            'sales1',   'sales_test',     'user1'   )
+        , array( 'sales_test_11',  'sales_test_1',   'sales11',  'sales_test',     'user11'  )
+        , array( 'sales_test_12',  'sales_test_1',   'sales12',  'sales_test',     'user12'  )
+        , array( 'sales_test_13',  'sales_test_1',   'sales13',  'sales_test',     'user13'  )
+        , array( 'sales_test_121', 'sales_test_12',  'sales121', 'sales_test',     'user121' )
+        , array( 'sales_test_122', 'sales_test_12',  'sales122', 'sales_test',     'user122' )
+        , array( 'sales_test_131', 'sales_test_13',  'sales131', 'sales_test',     'user131' )
+        , array( 'sales_test_132', 'sales_test_13',  'sales132', 'sales_test',     'user132' )
+        , array( 'sales_test_133', 'sales_test_13',  'sales133', 'sales_test',     'user133' )
+        , array( 'prod_test_1',     null,            'prod1',    'prod_test',      'user1'   )
+        , array( 'prod_test_11',   'prod_test_1',    'prod11',   'prod_test',      'user11'  )
+        , array( 'prod_test_12',   'prod_test_1',    'prod12',   'prod_test',      'user12'  )
+        , array( 'prod_test_13',   'prod_test_1',    'prod13',   'prod_test',      'user13'  )
+        , array( 'prod_test_121',  'prod_test_12',   'prod121',  'prod_test',      'user121' )
+        , array( 'prod_test_122',  'prod_test_12',   'prod122',  'prod_test',      'user122' )
+        , array( 'prod_test_131',  'prod_test_13',   'prod131',  'prod_test',      'user131' )
+        , array( 'prod_test_132',  'prod_test_13',   'prod132',  'prod_test',      'user132' )
+        , array( 'prod_test_133',  'prod_test_13',   'prod133',  'prod_test',      'user133' )
+        , array( 'prod_test_1321', 'prod_test_132',  'prod1321', 'prod_test',      'user1321')
+        );
+
+        $this->insertTableArray( $tableName, $tableDataArray );
+
+        // idStarting, Up/Down, Forecast_Tree Type, expected result count
+        $resultsDataArray = array( array('sales_test_1',    false, 'sales_test',9)
+        ,array('sales_test_13',   false, 'sales_test',4)
+        ,array('sales_test_131',  true,  'sales_test',3)
+        ,array('sales_test_13',   true,  'sales_test',2)
+        ,array('sales_test_1',    true,  'sales_test',1)
+        ,array('prod_test_1',     false, 'prod_test',10)
+        ,array('prod_test_13',    false, 'prod_test', 5)
+        ,array('prod_test_1321',  true,  'prod_test', 4)
+        ,array('prod_test_133',   true,  'prod_test', 3)
+        ,array('prod_test_1',     true,  'prod_test', 1)
+        );
+
+        // Loop through each test
+        foreach ( $resultsDataArray as $resultsRow ) {
+
+            // Get where clause
+            //$whereArray = array('hierarchy_type',$resultsRow[2]);
+            //$whereClause = $this->_db->getColumnWhereClause($tableName, $whereArray);
+            $whereClause = "hierarchy_type=\'$resultsRow[2]\'";
+
+            // Get hierarchical result set
+            $key = 'id';
+            $parent_key = 'parent_id';
+            $fields = 'id, parent_id, _level';
+            $lineage = $resultsRow[1];
+            $startWith = "id ='$resultsRow[0]'";
+            $level = null;
+
+            $hierarchicalSQL = $this->_db->getRecursiveSelectSQL($tableName, $key, $parent_key, $fields, $lineage, $startWith, $level, $whereClause);
+            $result = $this->_db->query($hierarchicalSQL);
+            $resultsCnt = 0;
+
+            while($row = $this->_db->fetchByAssoc($result))
+            {
+                $resultsCnt++;
+                //$this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
+                //if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+                //$this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
+            }
+            $this->assertEquals($resultsCnt, $resultsRow[3], "Incorrect number or records. Found: $resultsCnt  "
+                ." Expected: $resultsRow[3]  for ID: $resultsRow[0]");
+        }
+
+        // remove data from table
+        $result = $this->deleteTableArray( $tableName, $tableDataArray );
+
+    }
+
     public function testGetIndicesContainsPrimary()
     {
         $indices = $this->_db->get_indices('accounts');
