@@ -61,7 +61,27 @@ array (
   'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
-  'opportunities' =>
+'opportunity_name' =>
+  array (
+    'name' => 'opportunity_name',
+    'rname' => 'name',
+    'id_name' => 'opportunity_id',
+    'vname' => 'LBL_OPPORTUNITY_NAME',
+    'type' => 'relate',
+    'table' => 'opportunities',
+    'join_name'=>'opportunities',
+    'isnull' => 'true',
+    'module' => 'Opportunities',
+    'dbType' => 'varchar',
+    'link'=>'opportunities',
+    'len' => '255',
+    'source'=>'non-db',
+    'unified_search' => true,
+    'required' => true,
+    'importable' => 'required',
+    'required' => true,
+  ),
+'opportunities' =>
   array(
     'name' => 'opportunities',
     'type' => 'link',
