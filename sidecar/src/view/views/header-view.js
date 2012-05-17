@@ -55,7 +55,7 @@
             // header view twice; (once for initial page load; I assume so we "look fast"),
             // and then again once app:sync:complete fires. This makes sense, but our events
             // get lost since, ultimately, backbone.render gets recalled. This fixes that ;=)
-            this.delegateEvents(); //todo!!!!!
+            this.delegateEvents();
         },
         hide: function() {
             this.$el.hide();

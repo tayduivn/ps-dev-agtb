@@ -65,6 +65,8 @@
             }
         },
         showMoreTopRecords:function () {
+            app.alert.show('show_top_records', {level:'general', messages:'Loading...'});
+
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult,0);
 
             if (offset === 0) {
@@ -102,9 +104,12 @@
 
                     this.collection.offset += this.collection.length - app.config.maxQueryResult;
 
+                    app.alert.dismiss('show_top_records');
+
                 }, this)});
         },
         showMoreBottomRecords:function () {
+            app.alert.show('show_bottom_records', {level:'general', messages:'Loading...'});
             this.collection.paginate({add:true,
                 success:_.bind(function () {
                     if (this.collection.length > this.getMaxPageSize()) {
@@ -119,6 +124,7 @@
                     if (this.collection.next_offset === -1) {
                         this.$('.show-more-bottom-btn').hide();
                     }
+                    app.alert.dismiss('show_bottom_records');
 
                 }, this)});
         },
