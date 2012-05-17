@@ -27,28 +27,64 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/OpportunityLines/OpportunityLine.php');
 
-require_once 'modules/OpportunityLines/OpportunityLine.php';
+class OpportunityLinesTest  extends Sugar_PHPUnit_Framework_TestCase {
 
-
-class getProductCategoryOwnerTest extends Sugar_PHPUnit_Framework_TestCase
-{
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        global $current_user, $beanFiles, $beanList;
+        include('include/modules.php');
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestOppLineItemUtilities::removeAllCreatedLines();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestProductCategoryUtilities::removeAllCreatedProductCategories();
+        unset($GLOBALS['current_user']);
     }
 
-    public function testGetProductCategoryOwner()
+    public function testGetExperts()
     {
+        $this->markTestIncomplete("Not fully implemented yet.");
+        $category = SugarTestProductCategoryUtilities::createProductCategory();
+        $user_1 = SugarTestUserUtilities::createAnonymousUser();
+        $category->assigned_user_id = $user_1->id;
+        $category->save();
+
+        $sub_category = SugarTestProductCategoryUtilities::createProductCategory();
+        $user_2 = SugarTestUserUtilities::createAnonymousUser();
+        $sub_category->assigned_user_id = $user_2->id;
+        $sub_category->parent_id = $category->id;
+        $sub_category->save();
+
+        $sub_sub_category = SugarTestProductCategoryUtilities::createProductCategory();
+        $user_3 = SugarTestUserUtilities::createAnonymousUser();
+        $sub_sub_category->assigned_user_id = $user_3->id;
+        $sub_sub_category->parent_id = $sub_category->id;
+        $sub_sub_category->save();
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->category_id = $sub_sub_category->id;
+        $product->save();
+
+        $opp_line = SugarTestOppLineItemUtilities::createLine();
+        $opp_line->product_id = $product->id;
+        $opp_line->save();
+
+        $opp_line->getExperts();
+        $this->assertContains($user_1->id, $opp_line->experts);
+        $this->assertContains($user_2->id, $opp_line->experts);
+        $this->assertContains($user_3->id, $opp_line->experts);
+    }
+
+
+    public function testGetProductOwners()
+    {
+        $this->markTestIncomplete("Not fully implemented yet.");
         $product_category = SugarTestProductCategoryUtilities::createProductCategory();
         $product_category->assigned_user_id = $GLOBALS['current_user']->id;
         $product_category->save();
@@ -60,9 +96,8 @@ class getProductCategoryOwnerTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_line = SugarTestOppLineItemUtilities::createLine();
         $opp_line->product_id = $product->id;
         $opp_line->save();
-
-        $opp_line->getProductCategoryOwner();
-
-        $this->assertTrue($opp_line->product_owner_id == $GLOBALS['current_user']->id);
+        $opp_line->getProductOwners();
+        $this->assertEquals($GLOBALS['current_user']->id, $opp_line->product_owner_id);
     }
+
 }

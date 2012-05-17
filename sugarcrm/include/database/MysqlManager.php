@@ -137,7 +137,6 @@ class MysqlManager extends DBManager
 	    "collation" => true,
 	    "create_db" => true,
 	    "disable_keys" => true,
-        "recursive_query" => true,
 	);
 
 	/**

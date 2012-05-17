@@ -323,6 +323,16 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testMultipleFiltersConvert()
+    {
+        $this->filter = new SugarParsers_Filter(new Opportunity());
+        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"}, {"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $this->filter->parse($obj);
+        $converter = new SugarParsers_Converter_Report();
+        $converter->setReportBuilder($this->createTestReportBuilder());
+        $actual = $this->filter->convert($converter);
+    }
+
     protected function createTestReportBuilder()
     {
         $rb = new ReportBuilder('Accounts');
