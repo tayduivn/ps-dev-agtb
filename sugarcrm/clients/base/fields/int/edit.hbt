@@ -1,7 +1,7 @@
 <div class="row-fluid control-group">
     <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4">
-        {{#if fieldDef.auto_increment}}
+        {{#if def.auto_increment}}
         {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
         {{else}}
         <input type="text" class="input-xlarge" value="{{value}}">
