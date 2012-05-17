@@ -247,6 +247,28 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame(array('seed_chris_id'), $reports_to->getValue());
     }
 
+    /**
+     * testMultipleFilters
+     *
+     * @group SugarParser
+     *
+     */
+    public function testMultipleFilters()
+    {
+        $this->obj = new SugarParsers_Filter(new Opportunity());
+        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"},{"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+
+        $arguments = $pFilter[0]->getValue();
+        $this->assertEquals(2, count($arguments), 'Assert that there are two arguments defined');
+        $filter1 = array_shift($arguments);
+        $this->assertEquals('abc123', $filter1->getValue(), 'Assert that the first filter argument value is abc123');
+        $filter2 = array_shift($arguments);
+        //The reports_to filter is nested
+        $reportsFilter = $filter2->getValue();
+        $this->assertSame(array('seed_chris_id'), $reportsFilter['user_name']->getValue(), "Assert that the second filter argument is array('seed_chris_id')");
+    }
 }
 
 require_once('include/SugarParsers/Converter/AbstractConverter.php');
