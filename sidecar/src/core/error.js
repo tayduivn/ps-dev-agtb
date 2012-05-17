@@ -68,7 +68,8 @@
             var errorName2Keys = {
               "maxLength":"ERROR_MAX_FIELD_LENGTH",
                "minLength":"ERROR_MIN_FIELD_LENGTH",
-               "required":"ERROR_FIELD_REQUIRED"
+               "required":"ERROR_FIELD_REQUIRED",
+                "email":"ERROR_EMAIL"
             };
             var module = context.module || '';
             var errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);

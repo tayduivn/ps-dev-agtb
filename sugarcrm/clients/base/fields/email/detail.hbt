@@ -5,13 +5,13 @@
                           {{#each value}}
         <div class="control-group">
         <div class="controls pull-left span2">
-                        {{email}}
+                        {{email_address}}
                     </div>
         <div class="btn-toolbar pull-left">
                       <div class="btn-group" data-toggle="buttons-checkbox">
-                        <button type="button" class="btn {{#if is_primary}}active{{/if}} disabled" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
-                        <button type="button" class="btn {{#if opted_out}}active{{/if}} disabled" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
-                        <button type="button" class="btn {{#if is_invalid}}active{{/if}} disabled" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
+                        <button type="button" class="btn {{eq primary_address "1" "active" ""}} disabled" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                        <button type="button" class="btn {{eq opt_out "1" "active" ""}} disabled" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
+                        <button type="button" class="btn {{eq invalid_email "1" "active" ""}} disabled" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
                       </div>
                     </div>
                           {{/each}}
