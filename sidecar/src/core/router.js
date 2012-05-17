@@ -157,6 +157,13 @@
                 self.navigate("#");
             }});
         },
+        signup: function() {
+            app.controller.loadView({
+                module: "Signup",
+                layout: "signup",
+                create: true
+            });
+        },
 
         /**
          * Handles `record` route.

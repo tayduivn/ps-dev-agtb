@@ -61,6 +61,37 @@ array (
   'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
+'opportunity_name' =>
+  array (
+    'name' => 'opportunity_name',
+    'rname' => 'name',
+    'id_name' => 'opportunity_id',
+    'vname' => 'LBL_OPPORTUNITY_NAME',
+    'type' => 'relate',
+    'table' => 'opportunities',
+    'join_name'=>'opportunities',
+    'isnull' => 'true',
+    'module' => 'Opportunities',
+    'dbType' => 'varchar',
+    'link'=>'opportunities',
+    'len' => '255',
+    'source'=>'non-db',
+    'unified_search' => true,
+    'required' => true,
+    'importable' => 'required',
+    'required' => true,
+  ),
+'opportunities' =>
+  array(
+    'name' => 'opportunities',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_opportunities',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Opportunities',
+    'bean_name'=>'Opportunity',
+    'vname'=>'LBL_OPPORTUNITIES',
+  ),
 'price' =>
 array (
     'name' => 'price',
@@ -165,6 +196,10 @@ array (
         'opportunity_lines_products' =>
             array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
                 'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'product_id',
+                'relationship_type'=>'one-to-many'),
+        'opportunity_lines_opportunities' =>
+            array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
                 'relationship_type'=>'one-to-many'),
 )
 

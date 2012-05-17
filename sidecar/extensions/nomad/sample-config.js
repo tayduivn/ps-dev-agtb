@@ -14,6 +14,9 @@
         additionalComponents: {
             "header": {
                 target: '#header'
+            },
+            alert: {
+                target: '#alert'
             }
         },
         orderByDefaults: {

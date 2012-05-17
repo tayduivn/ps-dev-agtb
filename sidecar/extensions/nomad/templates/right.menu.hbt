@@ -1,0 +1,3 @@
+{{#each this}}
+<li><a href="#{{this}}/create">Create  {{this}}</a></li>
+{{/each}}

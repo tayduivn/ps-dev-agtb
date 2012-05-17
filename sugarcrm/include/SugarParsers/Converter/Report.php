@@ -132,7 +132,7 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
             if ($this->checkFieldExist($def_bean, $field_name)) {
                 return array(
                     "name" => $field_name,
-                    "table_key" => $this->reportBuilder->getKeyTable($def_bean->module_dir),
+                    "table_key" => $this->table_key,
                     "qualifier_name" => $operator,
                     "input_name0" => $value
                 );

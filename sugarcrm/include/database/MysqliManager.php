@@ -87,6 +87,16 @@ class MysqliManager extends MysqlManager
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
 
+
+    /**
+     * Create DB Driver
+     */
+	public function __construct()
+	{
+        parent::__construct();
+        $this->capabilities["recursive_query"] = true;
+	}
+
 	/**
 	 * @see DBManager::$backendFunctions
 	 */

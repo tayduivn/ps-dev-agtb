@@ -300,6 +300,39 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    public function testReportsToFilterConvert()
+    {
+        $obj = json_decode('{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}');
+        $this->filter->parse($obj);
+
+        $converter = new SugarParsers_Converter_Report();
+        $converter->setReportBuilder($this->createTestReportBuilder());
+
+        $actual = $this->filter->convert($converter);
+
+        $expected = array("Filter_1" => array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'user_name',
+                'table_key' => 'Accounts:assigned_user_link',
+                'qualifier_name' => 'reports_to',
+                'input_name0' => array('seed_chris_id')
+            ),
+        ));
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testMultipleFiltersConvert()
+    {
+        $this->filter = new SugarParsers_Filter(new Opportunity());
+        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"}, {"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $this->filter->parse($obj);
+        $converter = new SugarParsers_Converter_Report();
+        $converter->setReportBuilder($this->createTestReportBuilder());
+        $actual = $this->filter->convert($converter);
+    }
+
     protected function createTestReportBuilder()
     {
         $rb = new ReportBuilder('Accounts');

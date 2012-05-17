@@ -9,10 +9,6 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                 'label' => 'Save',
                 'value' => 'save',
                 'primary' => true,
-                'events' =>
-                array(
-                    'click' => 'function(){ var self = this; this.model.save(null, {success:function(){self.app.navigate(self.context, self.model, \'detail\');}});}',
-                ),
             ),
             array(
                 'name' => 'cancel_button',
