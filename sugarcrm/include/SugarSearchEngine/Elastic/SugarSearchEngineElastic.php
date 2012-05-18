@@ -40,7 +40,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function __construct($params = array())
     {
         $this->_config = $params;
-        $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
+        $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
