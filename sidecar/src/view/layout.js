@@ -178,6 +178,15 @@
                 _.extend(fields, component.getFields(module));
             });
             return fields;
+        },
+
+        /**
+         * Gets a string representation of this layout.
+         * @return {String} String representation of this layout.
+         */
+        toString: function() {
+            return "layout-" + (this.options.type || this.options.name) + "-" +
+                app.view.Component.prototype.toString.call(this);
         }
 
     });

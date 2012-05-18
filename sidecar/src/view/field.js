@@ -324,6 +324,15 @@
          * @param {Object} errors hash of validation errors
          */
         handleValidationError: function(errors) {
+        },
+
+        /**
+         * Gets a string representation of this view.
+         * @return {String} String representation of this view.
+         */
+        toString: function() {
+            return "field-" + this.name + "-" + this.sfId + "-" +
+                app.view.Component.prototype.toString.call(this);
         }
 
     });

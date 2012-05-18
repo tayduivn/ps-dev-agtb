@@ -74,14 +74,11 @@
          * @return {String} String representation of this component.
          */
         toString: function() {
-            var type = "component";
-            if (this instanceof app.view.Layout) type = "layout";
-            else if (this instanceof app.view.View) type = "view";
-            else if (this instanceof app.view.Field) type = "field";
-            return type + "-" + this.cid +
+            return this.cid +
+                "-" + (this.$el && this.$el.id ? this.$el.id : "<no-id>") +
                 "/" + this.module +
-                "/model:" + this.model +
-                "collection:" + this.collection;
+                "/" + this.model +
+                "/" + this.collection;
         }
 
     });
