@@ -10,11 +10,7 @@
     {{field ../context ../view ../model}}
     {{/with}}
     </div>
-    <span id="listing-action-item1">
+    <span id="listing-action-item1" class="menu-container">
         <i class="grip">|||</i>
-        <span class="hide actions">
-          <a href="#{{model.module}}/{{model.id}}/edit" title="Edit" class="edit-item-btn"><i class="icon-pencil icon-md"></i><br>Edit</a>
-          <a href="#" title="Remove" class="remove-item-btn"><i class="icon-trash icon-md"></i><br>Remove</a>
-        </span>
     </span>
 </article>
