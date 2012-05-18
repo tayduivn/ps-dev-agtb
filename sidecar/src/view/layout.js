@@ -25,12 +25,9 @@
             // TODO: Do we need this?
             //_.bindAll(this, 'render', 'bindData');
 
-            this._components = []; // list of components
+            if (!this.meta) return;
 
-            if (!this.meta) {
-                app.logger.warn("Layout metadata is missing, module: " + this.module);
-                return;
-            }
+            this._components = []; // list of components
 
             /**
              * CSS class.
@@ -130,10 +127,24 @@
          * Renders all the components.
          */
         render: function() {
-            //default layout will pass render container divs and pass down to all its views.
-            _.each(this._components, function(component) {
-                component.render();
-            }, this);
+            if (this._components && this._components.length > 0) {
+                //default layout will pass render container divs and pass down to all its views.
+                _.each(this._components, function(component) {
+                    component.render();
+                }, this);
+            }
+            else {
+                // This should never happen :)
+                app.logger.warn("Can't render anything because the layout has no components: " + this.toString() + "\n" +
+                    "Either supply metadata or override Layout.render method");
+                // TODO: Revisit this. At least the message should be localized
+                app.alert.show("no-layout", {
+                    level: "error",
+                    title: "Error",
+                    messages: ["Oops! We are not able to render anything. Please try again later or contact the support"]
+                });
+            }
+            return this;
         },
 
         /**
