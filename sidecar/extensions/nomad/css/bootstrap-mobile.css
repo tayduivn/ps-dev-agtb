@@ -4140,6 +4140,7 @@ h3.nomad {
   background: none;
   box-shadow: none;
   display: block;
+  float: left;
 }
 #createRecord.form-horizontal .controls {
   margin-left: 26%;
