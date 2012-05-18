@@ -44,4 +44,5 @@ $mod_strings = array (
     'LBL_SEARCH_FORM_TITLE' => 'Opportunity Line Item Search',
     'LBL_LIST_OPPORTUNITY_LINE_NAME' => 'Name',
     'LBL_LIST_OPPORTUNITY_NAME' => 'Opportunity Name',
+    'LBL_EXPERT_ID' => 'Product Expert',
 );
