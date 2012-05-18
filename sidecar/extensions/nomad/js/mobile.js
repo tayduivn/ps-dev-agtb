@@ -9,16 +9,16 @@ var handler = function(e) {
 $('article').onpress(handler);
 */
 
-$('body').onpress('.xxx',function(e){
-    e.preventDefault();
-    //$(this).remove();
-    $('.listing').append(article_tpl);
-});
+    $('body').onpress('.xxx',function(e){
+        e.preventDefault();
+        //$(this).remove();
+        $('.listing').append(article_tpl);
+    });
 
 
-var article_tpl = '\
-              <article>\                <i class="icon-star-empty"></i>\                <div>\                  <a href="perkin_kleiners.html">Perkin Kleiners</a><br>\                  Cupertino, CA\                </div>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="perkin_kleiners.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\              <article style="padding-left:0;">\                  <a href="">x d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsx d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd </a>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="weyland.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\
-';
+    var article_tpl = '\
+	      <article>\                <i class="icon-star-empty"></i>\                <div>\                  <a href="perkin_kleiners.html">Perkin Kleiners</a><br>\                  Cupertino, CA\                </div>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="perkin_kleiners.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\              <article style="padding-left:0;">\                  <a href="">x d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsx d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd </a>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="weyland.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\
+    ';
 
     $('body').onpress('article .grip',function (e) {
 	e.preventDefault();
@@ -84,7 +84,7 @@ var article_tpl = '\
 	});
 
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('#logo').live('click', function () {
+    $('body').onpress('.cube', function () {
 	if($('body').hasClass('onL')){
 	    $('#logo').trigger('swipeLeft');
 	}else{
@@ -94,7 +94,7 @@ var article_tpl = '\
     });
 
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.launch').live('click', function () {
+    $('body').onpress('.launch', function () {
 	if($('body').hasClass('onR')===true){
 	    $('#create').trigger('swipeRight');
 	} else {
