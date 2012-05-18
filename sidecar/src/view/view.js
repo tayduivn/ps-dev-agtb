@@ -8,6 +8,8 @@
      */
     app.view.View = app.view.Component.extend({
 
+        className: "view",
+
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -18,6 +20,21 @@
 
             // TODO: Do we need this?
             //_.bindAll(this);
+
+            // temp variables used to check metadata values for listeners
+            var tmpModule = options.module,
+                tmpLayout = app.metadata.getCurrentLayout(),
+                tmpView   = options.name;
+
+            // if we have all three pieces of data, check and see if there are listeners in the metadata
+            if( tmpModule && tmpLayout && tmpView )  {
+                this.listeners = app.metadata.getListeners( tmpModule , tmpLayout, tmpView );
+
+                // if there were listeners outlined in metadata, parse through them and add event listeners
+                if( this.listeners != null )  {
+                    this.parseEventListeners();
+                }
+            }
 
             /**
              * Name of the view (required).
@@ -47,7 +64,16 @@
              */
             this.fields = {};
 
-            this.$el.addClass("view " + this.name);
+            /**
+             * CSS class.
+             *
+             * CSS class which is specified as the `className` parameter
+             * in `params` hash for {@link View.ViewManager#createView} method.
+             *
+             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
+             * @cfg {String} className
+             */
+            this.$el.addClass(options.className || this.name || "");
 
             /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
@@ -199,6 +225,19 @@
         bindDataChange: function() {
             if (this.collection) {
                 this.collection.on("reset", this.render, this);
+            }
+        },
+
+        /**
+         * Parses through this.listeners and applies event listeners and handlers as specified in metadata
+         */
+        parseEventListeners: function() {
+            // check again that listeners are not null before proceeding
+            if( this.listeners != null )  {
+                var listeners = this.listeners;
+                for( var i in listeners )  {
+                    app.events.on( i , this[listeners[i]], this);
+                }
             }
         }
 

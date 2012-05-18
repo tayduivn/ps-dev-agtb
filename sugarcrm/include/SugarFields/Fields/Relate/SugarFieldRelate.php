@@ -241,6 +241,10 @@ class SugarFieldRelate extends SugarFieldBase {
         return $new_field;
     }
 
+    public function apiFormatField($data, $bean, $args, $fieldName, $properties) {
+        $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+    }
+
     /**
      * @see SugarFieldBase::importSanitize()
      */

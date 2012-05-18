@@ -3,7 +3,7 @@
 
     events: {
         'change .existing': 'updateExistingAddress',
-        'click button': 'updateExistingProperty',
+        'click .btn-edit': 'updateExistingProperty',
         'click .removeEmail': 'remove',
         'change .newEmail': 'add'
     },
@@ -12,14 +12,14 @@
      */
     add: function() {
         var newAddress = this.$('.newEmail').val(),
-            newObj = {email: newAddress},
             existingAddresses = this.model.get(this.name) || [];
-
+        var newObj = {email_address: newAddress};
         if (existingAddresses.length<1) {
-            newObj.is_primary = true;
+            newObj.primary_address = true;
         }
         existingAddresses.push(newObj);
         this.model.set(this.name, existingAddresses);
+        this.render();
     },
     /**
      * Removes email address from dom and model
@@ -30,7 +30,7 @@
             existingAddresses = this.model.get(this.name);
 
         _.each(existingAddresses, function(emailInfo, index) {
-            if (emailInfo.email == emailAddress) {
+            if (emailInfo.email_address == emailAddress) {
                 existingAddresses[index] = false;
             }
         });
@@ -47,17 +47,17 @@
             property = $(event.target).data('emailproperty') || $(event.target).parent().data('emailproperty'),
             existingAddresses = this.model.get(this.name);
 
-        if (property == 'is_primary') {
-            existingAddresses=this.massUpdateProperty(existingAddresses, property, false);
+        if (property == 'primary_address') {
+            existingAddresses=this.massUpdateProperty(existingAddresses, property, "0");
             this.$('.is_primary').removeClass('active');
         }
 
         _.each(existingAddresses, function(emailInfo, index) {
-            if (emailInfo.email == emailAddress) {
-                if (existingAddresses[index][property]) {
-                    existingAddresses[index][property] = false;
+            if (emailInfo.email_address == emailAddress) {
+                if (existingAddresses[index][property] == "1") {
+                    existingAddresses[index][property] = "0";
                 } else {
-                    existingAddresses[index][property] = true;
+                    existingAddresses[index][property] = "1";
                 }
             }
         });
@@ -88,8 +88,8 @@
             var newEmail = $(event.target).val();
             var existingEmails = this.model.get(this.name);
             _.each(existingEmails, function(emailInfo, index) {
-                if (emailInfo.email == oldEmail) {
-                    existingEmails[index].email = newEmail;
+                if (emailInfo.email_address == oldEmail) {
+                    existingEmails[index].email_address = newEmail;
                 }
             });
             this.render();
@@ -102,6 +102,26 @@
      */
     bindDomChange: function(model, fieldName) {
         // empty because we are handling this with the events and callbacks above
+    },
+
+    /**
+     * Handles how validation errors are displayed on fields
+     *
+     * This method should be implemented in the extension dir per platform
+     *
+     * @param {Object} errors hash of validation errors
+     */
+    handleValidationError: function(errors) {
+        var self = this;
+        _.each(errors,function(emailAddress){
+            this.$('[data-emailaddress="' + emailAddress + '"]').addClass("error");
+        });
+
+        this.$('.help-block').html("");
+        this.$('.help-group').addClass("error");
+        _.each(errors, function(errorContext, errorName) {
+            self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
+        });
     }
 
 })

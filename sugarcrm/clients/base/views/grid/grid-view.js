@@ -10,6 +10,9 @@
 
         gTable: '',
 
+        // boolean for enabled expandable row behavior
+        isExpandableRows: '' ,
+
         /**
          * Initialize the View
          *
@@ -17,9 +20,10 @@
          * @param {Object} options
          */
         initialize: function(options){
+            //set expandable behavior to false by default
+            this.isExpandableRows = false;
+
             app.view.View.prototype.initialize.call(this, options);
-            // add event listener for treeview:node_select so grid can be updated via a tree-view event
-            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
         },
 
         /**
@@ -31,23 +35,36 @@
 
             this.gTable = this.$el.find('#gridTable').dataTable();
 
-            $('#gridTable tr').on( 'click', function() {
-                if ( self.gTable.fnIsOpen(this) )  {
-                    self.gTable.fnClose( this );
-                } else {
-                    self.gTable.fnOpen( this, self.formatAdditionalDetails(this), 'details' );
-                }
-            });
+            // if isExpandable, add expandable row behavior
+            if( this.isExpandableRows )  {
+                $('#gridTable tr').on( 'click', function() {
+                    if ( self.gTable.fnIsOpen(this) )  {
+                        self.gTable.fnClose( this );
+                    } else {
+                        self.gTable.fnOpen( this, self.formatAdditionalDetails(this), 'details' );
+                    }
+                });
+            }
         },
 
         /**
-         * Event Handler for if a node is selected in a tree-view
+         * Event Handler for filtering the grid by an ID value
          *
-         * @param params
+         * @param params event data
          */
-        handleTreeNodeSelect: function(params)
+        filterGridById: function(params)
         {
-            this.gTable.fnFilter( params.selected.id );
+            var id;
+            // This part of the function needs to be able to handle
+            // any configuration of data that comes in from params that might possibly need
+            // to be able to filter the grid table.
+            if( params.hasOwnProperty( 'selected' ) && params.selected.hasOwnProperty('id') ) {
+                // This configuration works for the jsTree treeview:node_select event
+                id = params.selected.id;
+            } else if( params.hasOwnProperty('id') )  {
+                id = params.id;
+            }
+            this.gTable.fnFilter( id );
         },
 
         /**

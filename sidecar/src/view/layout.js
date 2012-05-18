@@ -11,6 +11,8 @@
      */
     app.view.Layout = app.view.Component.extend({
 
+        className: "layout",
+
         /**
          * TODO docs (describe constructor options, see Component class for an example).
          *
@@ -25,11 +27,21 @@
 
             this._components = []; // list of components
 
+            if (!this.meta) {
+                app.logger.warn("Layout metadata is missing, module: " + this.module);
+                return;
+            }
+
             /**
              * CSS class.
+             *
+             * CSS class which is specified as the `className` parameter
+             * in `params` hash for {@link View.ViewManager#createLayout} method.
+             *
+             * By default the layout is rendered as `div` element with CSS class `"layout <layoutType>"`.
              * @cfg {String} className
              */
-            this.$el.addClass("layout " + (options.className || this.meta.type));
+            this.$el.addClass(options.className || (this.meta.type ? this.meta.type : ""));
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
@@ -130,15 +142,12 @@
          * @return {Array} The list of fields used by this layout.
          */
         getFields: function() {
-            // TODO: Fix this method:
-            // This method has a bug: it doesn't check for module, it collects fields from its views regadless of module
             var fields = [];
-            var self = this;
-            _.each(this._components, function(view) {
-                if (view.context.get('module') == self.context.get('module')) {
-                    fields = _.union(fields, view.getFields());
+            _.each(this._components, function(component) {
+                if (component.module == this.module) {
+                    fields = _.union(fields, component.getFields());
                 }
-            });
+            }, this);
 
             return fields;
         }
