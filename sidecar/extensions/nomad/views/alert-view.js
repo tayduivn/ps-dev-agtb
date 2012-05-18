@@ -30,10 +30,10 @@
                 }, 9000);
             }
 
-            var tmpl = app.template.get('alerts');
+            var tmpl = app.template.get('panel.alert');
 
             if (tmpl) {
-                alert.$el.append(tmpl(alert)).appendTo(this.$el);
+                alert.$el.append(tmpl(alert)).prependTo(this.$el);
             }
 
             return alert;
