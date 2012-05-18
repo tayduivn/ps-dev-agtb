@@ -68,7 +68,14 @@
                                     ]
                                 }
                             ]
-                        }
+                        },
+                        controller: "{" +
+                            "render: function(data) { " +
+                            "app.view.View.prototype.render.call(this);" +
+                            "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); }" +
+                            "return this;" +
+                            "}" +
+                            "}"
                     }
                 },
                 "layouts": {
@@ -126,12 +133,12 @@
                     },
                     "company": {
                         "name": "company",
-                        "type": "text",
+                        "type": "varchar",
                         "required": true
                     },
                     "jobtitle": {
                         "name": "jobtitle",
-                        "type": "text"
+                        "type": "varchar"
                     },
                     "hr1": {
                         "name": "hr1",
@@ -260,12 +267,7 @@
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                controller: "{" +
-                    "render : function(){" +
-                    "this.app.view.Field.prototype.render.call(this);" +
-                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"portal\"); }" +
-                    "}}"
+                }
             },
             "password": {
                 "views": {
@@ -300,10 +302,47 @@
                     "fieldTag:\"select\",\n" +
                     "render:function(){" +
                     "   var result = this.app.view.Field.prototype.render.call(this);" +
-                //    "   this.$(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
+                    "   $(this.fieldTag + \"[name=\" + this.name + \"]\").chosen();" +
                     "   return result;" +
                     "}\n" +
                     "}"
+            },
+            "email": {
+                "views": {
+                    "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                        "<div class=\"controls\">\n" +
+                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<\/p> <\/div>",
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                        "<div class=\"controls\">\n" +
+                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                controller: "{" +
+                    "handleValidationError: function(errors) {" +
+                    "var self = this;" +
+                    "this.$('.control-group').addClass(\"error\");" +
+                    "this.$('.help-block').html(\"\");" +
+                    "this.$('.controls').addClass('input-append');" +
+                    "_.each(errors, function(errorContext, errorName) {" +
+                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
+                    "});" +
+                    "this.$('.add-on').remove();" +
+                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
+                    "}" +
+                    "}"
+            },
+            "phone": {
+                "views": {
+                    "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                        "<div class=\"controls\">\n" +
+                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<\/p> <\/div>",
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                        "<div class=\"controls\">\n" +
+                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                }
             }
         },
         'viewTemplates': {
