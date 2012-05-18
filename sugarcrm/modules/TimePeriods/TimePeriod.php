@@ -169,8 +169,36 @@ class TimePeriod extends SugarBean {
 		}
 		return $fiscal_years;
 	}
+    
+    function get_timeperiods_dom()
+    {
+        static $timeperiods;
+
+        if (!isset($timeperiods))
+        {
+            $query = 'select name from timeperiods where deleted=0';
+            $db = DBManagerFactory::getInstance();
+            $result = $db->query($query,true," Error filling in timeperiods domain: ");
+
+            while (($row  =  $db->fetchByAssoc($result)) != null)
+            {
+                $timeperiods[$row['name']]=$row['name'];
+            }
+
+            if (!isset($timeperiods))
+            {
+                $timeperiods=array();
+            }
+        }
+        return $timeperiods;
+    }
 }
 
 function get_fiscal_year_dom() {
     return TimePeriod::get_fiscal_year_dom();
+}
+
+function get_timeperiods_dom()
+{
+    return TimePeriod::get_timeperiods_dom();
 }
