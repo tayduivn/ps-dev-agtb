@@ -74,6 +74,7 @@
 	}
 	return false;
     });
+
     $('article').live('swipeLeft',function () {
 	var anchor=$(this);
 	anchor.closest('.listing').find("article span[id^=listing-action] .grip.on").closest('article').trigger('swipeRight');
@@ -84,7 +85,8 @@
 	$(this).find('.grip').removeClass('on');
 	$(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
     });	
-    $('article .grip').live('click', function () {
+    $('body').onpress('article .grip', function (e) {
+	e.preventDefault();
 	if($(this).hasClass('on')===false){
 	    $(this).closest('article').trigger('swipeLeft');
 	}else{
