@@ -1,13 +1,11 @@
 <a href="#" title="Dashboard" class="cube" id="logo"></a>
-<a href="#" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
+<a href="#" class="launch create-entity" id="create"><i class="icon-plus icon-md"></i></a>
 <div class="navbar-inner">
   <div class="nav-collapse">
     <ul class="nav" id="moduleList">
-        <li id="userAdmin"><a href="sabra_khan.html" id="userTab">Sabra Khan</a></li>
-        <li class="divider-horizontal"></li>
     </ul>
     <ul class="nav" id="createList">
-        <li id="quickTitle"><a name>Quick Create</a></li>
+        <li id="quickTitle"><a href="#">Quick Create</a></li>
         <li class="divider-horizontal"></li>
      </ul>
   </div><!-- /.nav-collapse -->
