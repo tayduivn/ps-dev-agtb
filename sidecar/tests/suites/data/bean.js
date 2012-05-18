@@ -25,8 +25,8 @@ describe("Bean", function() {
         expect(error.required).toBeTruthy();
 
         var spy = sinon.spy();
-        bean.on("app:error:validation:account_name", spy);
-        bean.on("app:error:validation:name", spy);
+        bean.on("error:validation:account_name", spy);
+        bean.on("error:validation:name", spy);
         expect(bean.isValid()).toBeFalsy();
         expect(spy).toHaveBeenCalledTwice();
     });

@@ -120,13 +120,6 @@
              */
             this.type = this.options.def.type;
 
-            /**
-             * Label key (used for i18n).
-             * @property {String}
-             * @member View.Field
-             */
-            this.label = this.options.def.label || this.name;
-
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
@@ -143,8 +136,18 @@
                  */
                 // Beware of shallow clone! We assume here that vardef object has only primitive types
                 this.def = clonedVarDef ? _.extend(clonedVarDef, options.def) : options.def;
-                this.model.on("app:error:validation:" + this.name, this.handleValidationError, this);
+                this.model.on("error:validation:" + this.name, this.handleValidationError, this);
             }
+            else {
+                this.def = this.options.def;
+            }
+
+            /**
+             * Label key (used for i18n).
+             * @property {String}
+             * @member View.Field
+             */
+            this.label = this.def.label || this.def.vname || this.name;
 
             /**
              * Compiled template.

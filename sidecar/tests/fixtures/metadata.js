@@ -340,6 +340,20 @@ fixtures.metadata = {
                     name: "accounts",
                     type: "link",
                     relationship: "contacts_accounts"
+                },
+                account_name: {
+                    name: "account_name",
+                    id_name: "account_id",
+                    type: "relate",
+                    module: "Accounts",
+                    vname: "LBL_ACCOUNT_NAME"
+                },
+                account_id: {
+                    name: "account_id",
+                    id_name: "account_id",
+                    type: "relate",
+                    module: "Accounts",
+                    vname: "LBL_ACCOUNT_ID"
                 }
 
             },
@@ -383,7 +397,12 @@ fixtures.metadata = {
                                 "fields": [
                                     {name: "first_name", label: "First Name", "class": "foo"},
                                     {name: "last_name", label: "Last Name"},
-                                    {name: "phone_work", label: "Phone"},
+                                    {
+                                        name: "phone_home",
+                                        label: "Phone",
+                                        displayParams: {
+                                            required: true
+                                        }},
                                     {name: "email1", label: "Email"}
                                 ]
                             }
@@ -412,7 +431,10 @@ fixtures.metadata = {
                                     {name: "last_name", label: "Last Name"},
                                     {name: "phone_work", label: "Phone"},
                                     "phone_home",
-                                    {name: "email1", label: "Email"}
+                                    {name: "email1", label: "Email"},
+                                    {name: "myButton", label: "My button", type: "button"},
+                                    {name: "foo", label: "Field that doesn't exist in vardefs", type: "xyz"},
+                                    {name: "account_name" }
                                 ]
                             }
                         ]
@@ -561,7 +583,7 @@ fixtures.metadata = {
                                     {name: "password", label: "Password"}
                                 ]
                             }
-                        ],
+                        ]
                     },
                     "controller": "{customCallback : function(){return \"overridden\";}}"
                 }
