@@ -162,14 +162,13 @@
         },
 
         /**
-         * Extracts the fields from the metadata for directly related views/panels
-         * TODO: Possibly refactor
+         * Extracts the field names from the metadata for directly related views/panels.
+         * @param {String} module(optional) Module name.
          * @return {Array} List of fields used on this view
          */
-        getFields: function() {
+        getFieldNames: function(module) {
             var fields = [];
-            var module = this.context.get('module');
-            var fieldMetadata;
+            module = module || this.context.get('module');
 
             if (this.meta && this.meta.panels) {
                 _.each(this.meta.panels, function(panel) {
@@ -177,22 +176,45 @@
                 });
             }
 
-            var result = _.filter(_.uniq(fields), function(value) {
-                return value;
-            });
+            fields = _.compact(_.uniq(fields));
 
-            // we need to find the relates and add the actual id fields
-            fieldMetadata = app.metadata.getModule(module, 'fields');
+            var fieldMetadata = app.metadata.getModule(module, 'fields');
             if (fieldMetadata) {
-                _.each(result, function(entry) {
-                    if (fieldMetadata[entry] && fieldMetadata[entry].type == 'relate') {
-                        result.push(fieldMetadata[entry].id_name);
+                // Filter out all fields that are not actual bean fields
+                fields = _.reject(fields, function(name) {
+                    return _.isUndefined(fieldMetadata[name]);
+                });
+
+                // we need to find the relates and add the actual id fields
+                var relates = [];
+                _.each(fields, function(name) {
+                    if (fieldMetadata[name].type == 'relate') {
+                        relates.push(fieldMetadata[name].id_name);
                     }
                 });
+
+                fields = fields.concat(relates);
             }
 
+            return fields;
+        },
 
-            return result;
+        /**
+         * Gets a hash of fields that are currently displayed on this view.
+         *
+         * The hash has field names as keys and field definitions as values.
+         * @param {String} module(optional) Module name.
+         * @return {Object} The currently displayed fields.
+         */
+        getFields: function(module) {
+            var fields = {};
+            var fieldNames = this.getFieldNames(module);
+            _.each(this.fields, function(field) {
+                if (_.include(fieldNames, field.name)) {
+                    fields[field.name] = field.def;
+                }
+            });
+            return fields;
         },
 
         /**

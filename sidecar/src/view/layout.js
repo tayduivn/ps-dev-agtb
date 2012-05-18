@@ -139,18 +139,36 @@
         /**
          * Gets a list of all fields used on this layout and its sub layouts/views.
          *
+         * @param {String} module(optional) Module name.
          * @return {Array} The list of fields used by this layout.
          */
-        getFields: function() {
+        getFieldNames: function(module) {
             var fields = [];
+            module = module || this.module;
             _.each(this._components, function(component) {
-                if (component.module == this.module) {
-                    fields = _.union(fields, component.getFields());
+                if (component.module == module) {
+                    fields = _.union(fields, component.getFieldNames());
                 }
             }, this);
 
             return fields;
+        },
+
+        /**
+         * Gets a hash of fields that are currently displayed on this layout.
+         *
+         * The hash has field names as keys and field definitions as values.
+         * @param {String} module(optional) Module name.
+         * @return {Object} The currently displayed fields.
+         */
+        getFields: function(module) {
+            var fields = {};
+            _.each(this._components, function(component) {
+                _.extend(fields, component.getFields(module));
+            });
+            return fields;
         }
+
     });
 
 })(SUGAR.App);
