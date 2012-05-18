@@ -229,7 +229,7 @@
 
                 objectToFetch.fetch(options);
             } else {
-                app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined.");
+                app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined, module: " + this.get("module"));
             }
 
 

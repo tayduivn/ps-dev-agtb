@@ -1,2 +1,1 @@
-TODO: Implement
-See extensions/nomad/mockups/accounts_msg_process_multiple.html
+<strong>{{#each alertMessages}}<p>{{this}}</p>{{/each}}</strong>
