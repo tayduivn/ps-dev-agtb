@@ -28,18 +28,22 @@ class OpportunityLine extends SugarBean
     var $product_id;
     var $product_category_id;
     var $experts;
-    var $product_owner_id;
+    var $expert_id;
     var $table_name = "opportunity_line";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";
 
+    function save($check_notify = FALSE)
+    {
+        $this->getExperts();
+        return parent::save($check_notify);
+    }
+
     function getExperts()
     {
-        $query = "SELECT " . $this->db->convert("p.category_id", "IFNULL", array("pt.category_id")) . " category_id
-                FROM products p
-                LEFT JOIN product_templates pt on p.product_template_id = pt.id
-                WHERE p.id = '$this->product_id'
-                    AND p.deleted = 0";
+        $query = "SELECT pt.category_id category_id
+                FROM product_templates pt
+                WHERE pt.id = '$this->product_id'";
 
         $result = $this->db->query($query,true," Error getting product category id: ");
 
@@ -69,11 +73,17 @@ class OpportunityLine extends SugarBean
         {
             $this->experts[] = $row['assigned_user_id'];
             $this->getProductOwners($row['parent_id']);
-            $this->product_owner_id = $row['id'];
+            $this->expert_id = $row['assigned_user_id'];
         }
         else
         {
-            $this->product_owner_id = '';
+            $this->expert_id = '';
         }
     }
+}
+
+function get_expert_array()
+{
+    require_once("include/utils.php");
+    return get_user_array();
 }

@@ -52,6 +52,14 @@ array (
     'bean_name'=>'Product',
     'vname'=>'LBL_PRODUCTS',
   ),
+'expert_id' =>
+    array (
+    'name' => 'expert_id',
+    'vname' => 'LBL_EXPERT_ID',
+    'type' => 'enum',
+    'function' => 'get_user_array',
+    'dbType' => 'varchar',
+),
 'opportunity_id' =>
 array (
   'name' => 'opportunity_id',

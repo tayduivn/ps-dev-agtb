@@ -31,6 +31,7 @@ $searchFields['OpportunityLines'] =
     array (
         'name' => array( 'query_type'=>'default'),
         'opportunity_name'=> array('query_type'=>'default','db_field'=>array('opportunities.name')),
+        'expert_id' => array('query_type'=>'default'),
         'price'=> array('query_type'=>'default'),
         'discount_price'=> array('query_type'=>'default'),
         'discount_usdollar'=> array('query_type'=>'default'),
