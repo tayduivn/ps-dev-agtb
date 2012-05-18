@@ -198,17 +198,14 @@
 
                 if(item.hasOwnProperty("listeners"))
                 {
-                    return listenerArray[item.view] = item.listeners;
+                    listenerArray[item.view] = item.listeners;
                 }
                 else if( item.hasOwnProperty("layout") && item.layout.hasOwnProperty("components"))
                 {
                     this.parseComponentsForEvents( item.layout.components , listenerArray );
                 }
-                else
-                {
-                    return;
-                }
             }
+            return;
         },
 
         /**
@@ -245,7 +242,7 @@
          * @return {Object} Layout metadata if layout name is specified. Otherwise, metadata for all layouts of the given module.
          */
         getLayout: function(module, layout) {
-            // reset currentLayout
+            // reset currentLayout to null
             _metadata.currentLayout = null;
             var metadata = this.getModule(module, "layouts");
 
