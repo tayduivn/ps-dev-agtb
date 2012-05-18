@@ -40,9 +40,9 @@
       })  
       }
 
-      $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
      $("th:contains('Subject')").css("width","50%")
-     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","0")
+     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%")
+     $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
 
       // keybinding
       $(document).keyup(function(e){
@@ -90,14 +90,6 @@
         		$(this).html('More &nbsp;<i class="icon-chevron-down"></i>');
         		return false;  
       })
-
-      //popover
-      $("[rel=popover]").popover()
-      $("[rel=popoverTop]").popover({placement: "top"})
-
-      //clickovers  
-      $('[rel="clickover"]').clickover() 
-      $('[rel="clickoverTop"]').clickover({placement: "top"})
 
 
       // column collapse
@@ -155,23 +147,24 @@
   	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
   	    return false;
   	})
-    $('#moduleTwitter.filtered input').quicksearch('#moduleTwitter article')
-    $('#moduleLog.filtered input').quicksearch('#moduleLog article')
-    $('#moduleRelated.filtered input').quicksearch('#moduleRelated article')
-    $('#moduleActivity.filtered input').quicksearch('#moduleActivity article')
-    $('#moduleActivity.filtered input').quicksearch('#moduleActivity .results li')
 
-    // DATATABLE
-    //--------------
+    // Select widget
+    $(".chzn-select").chosen()
+    $(".chzn-select-deselect").chosen({allow_single_deselect:true})
+
+    //popover
+    $("[rel=popover]").popover()
+    $("[rel=popoverTop]").popover({placement: "top"})
+
+    //clickovers  
+    $('[rel="clickover"]').clickover() 
+    $('[rel="clickoverTop"]').clickover({placement: "top"})
+
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
       "bInfo": false,
       "bAutoWidth": false
     })
-
-    // Select widget
-    $(".chzn-select").chosen()
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true})
 
 }(window.jQuery)
