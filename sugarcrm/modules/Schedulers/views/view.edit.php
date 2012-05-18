@@ -39,6 +39,13 @@ class SchedulersViewEdit extends ViewEdit {
 				5 => 'SAT',
 				6 => 'SUN');
 
+	public function __construct()
+ 	{
+ 		parent::ViewEdit();
+ 		$this->useForSubpanel = true;
+ 		//$this->useModuleQuickCreateTemplate = true;
+ 	}
+ 	
     /**
 	 * @see SugarView::_getModuleTitleListParam()
 	 */
@@ -48,6 +55,7 @@ class SchedulersViewEdit extends ViewEdit {
 
     	return "<a href='index.php?module=Schedulers&action=index'>".$mod_strings['LBL_MODULE_TITLE']."</a>";
     }
+    
 
     function display(){
 		global $mod_strings;
@@ -132,7 +140,7 @@ class SchedulersViewEdit extends ViewEdit {
 
 		$this->ss->assign("adv_visibility", $this->bean->adv_interval?"":"display: none");
 		$this->ss->assign("basic_visibility", $this->bean->adv_interval?"display: none":"");
-
+		
 		parent::display();
 	}
 }

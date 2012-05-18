@@ -25,12 +25,9 @@
             // TODO: Do we need this?
             //_.bindAll(this, 'render', 'bindData');
 
-            this._components = []; // list of components
+            if (!this.meta) return;
 
-            if (!this.meta) {
-                app.logger.warn("Layout metadata is missing, module: " + this.module);
-                return;
-            }
+            this._components = []; // list of components
 
             /**
              * CSS class.
@@ -130,27 +127,68 @@
          * Renders all the components.
          */
         render: function() {
-            //default layout will pass render container divs and pass down to all its views.
-            _.each(this._components, function(component) {
-                component.render();
-            }, this);
+            if (this._components && this._components.length > 0) {
+                //default layout will pass render container divs and pass down to all its views.
+                _.each(this._components, function(component) {
+                    component.render();
+                }, this);
+            }
+            else {
+                // This should never happen :)
+                app.logger.warn("Can't render anything because the layout has no components: " + this.toString() + "\n" +
+                    "Either supply metadata or override Layout.render method");
+                // TODO: Revisit this. At least the message should be localized
+                app.alert.show("no-layout", {
+                    level: "error",
+                    title: "Error",
+                    messages: ["Oops! We are not able to render anything. Please try again later or contact the support"]
+                });
+            }
+            return this;
         },
 
         /**
          * Gets a list of all fields used on this layout and its sub layouts/views.
          *
+         * @param {String} module(optional) Module name.
          * @return {Array} The list of fields used by this layout.
          */
-        getFields: function() {
+        getFieldNames: function(module) {
             var fields = [];
+            module = module || this.module;
             _.each(this._components, function(component) {
-                if (component.module == this.module) {
-                    fields = _.union(fields, component.getFields());
+                if (component.module == module) {
+                    fields = _.union(fields, component.getFieldNames());
                 }
             }, this);
 
             return fields;
+        },
+
+        /**
+         * Gets a hash of fields that are currently displayed on this layout.
+         *
+         * The hash has field names as keys and field definitions as values.
+         * @param {String} module(optional) Module name.
+         * @return {Object} The currently displayed fields.
+         */
+        getFields: function(module) {
+            var fields = {};
+            _.each(this._components, function(component) {
+                _.extend(fields, component.getFields(module));
+            });
+            return fields;
+        },
+
+        /**
+         * Gets a string representation of this layout.
+         * @return {String} String representation of this layout.
+         */
+        toString: function() {
+            return "layout-" + (this.options.type || this.options.name) + "-" +
+                app.view.Component.prototype.toString.call(this);
         }
+
     });
 
 })(SUGAR.App);

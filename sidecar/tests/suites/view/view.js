@@ -63,13 +63,16 @@ describe("View.View", function() {
     });
 
     it('should return its fields', function(){
-        var fields,
-            view = app.view.createView({
+        var view = app.view.createView({
                 context: context,
                 name: "detail"
             });
-        fields = view.getFields();
-        expect(fields).toEqual(["first_name", "last_name", "phone_work", "phone_home", "email1"]);
+        expect(view.getFieldNames()).toEqual([ 'first_name', 'last_name', 'phone_work', 'phone_home', 'email1', 'account_name', 'account_id' ]);
+
+        expect(view.getFields()).toEqual({});
+        view.render();
+        expect(_.isEmpty(view.getFields())).toBeFalsy();
+        expect(_.pluck(view.getFields(), "name")).toEqual([ 'first_name', 'last_name', 'phone_work', 'phone_home', 'email1', 'account_name' ]);
     });
 
 
