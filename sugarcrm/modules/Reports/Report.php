@@ -2012,6 +2012,28 @@ return str_replace(' > ','_',
                 $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
                 $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                
+                // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
+                // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
+                if (strpos($display_column['name'], '_usdoll') !== false && $display_column['type'] == 'currency') {
+                	// Get the fields
+					$fields = $display_column['fields'];
+					// Get truncated field names: amount, currency_id, amount_usdollar
+					$currencyId = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_CURRENCY");
+					$amount = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT");
+					$amountUSDollar = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_USDOLLAR");
+					// If currency is set to US Dolar, and the amount and amountUSDollar are equal, skip pre-processing
+					// Otherwise, use the currency and amount to convert to dollar and ignore amount_usdollar
+					if (!($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
+						// Get currency
+						$currency = new Currency();
+						$currency->retrieve($fields[$currencyId]);
+						// Just convert to dollar, because if the currency isn't found, conversion rate is set to one, and won't change anything
+						$display = $currency->convertToDollar($fields[$amount]);
+					}
+                }
+                
+                // Call the conversion to prefered currency
                 $display = currency_format_number($display, $params);
 
             }
