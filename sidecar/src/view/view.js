@@ -84,7 +84,7 @@
                 try {
                     this.$el.html(this.template(ctx));
                 } catch (e) {
-                    app.logger.error("Failed to render '" + this.name + "' view.\n" + e);
+                    app.logger.error("Failed to render " + this + "\n" + e);
                     // TODO: trigger app event to render an error message
                 }
             }
@@ -136,7 +136,7 @@
             try {
                 field.render();
             } catch (e) {
-                app.logger.error("Failed to render field '" + field.name + "' on '" + this.name + "' view.\n" + e);
+                app.logger.error("Failed to render " + field + " on " + this + "\n" + e);
                 // TODO: trigger app event to render an error message
             }
         },
@@ -223,6 +223,14 @@
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+        /**
+         * Gets a string representation of this view.
+         * @return {String} String representation of this view.
+         */
+        toString: function() {
+            return "view-" + this.name + "-" + app.view.Component.prototype.toString.call(this);
         }
 
     });
