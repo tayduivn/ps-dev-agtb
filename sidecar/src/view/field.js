@@ -235,7 +235,6 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
-            //debugger;
             this._loadTemplate();
 
             if (this.model instanceof Backbone.Model) {
@@ -260,7 +259,6 @@
          * @param {String} fieldName field name.
          */
         bindDomChange: function(model, fieldName) {
-            //debugger;
             if (!(model instanceof Backbone.Model)) return;
 
             var self = this;

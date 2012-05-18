@@ -1,9 +1,9 @@
 <div class="control-group">
     <label class="control-label">{{getLabel label model.module}}</label>
     <div class="controls">
-        <select name="{{name}}" {{#if fieldDef.multi}} multiple {{/if}}>
-            {{#eachOptions fieldDef.options}}
-                <option value="{{{this.key}}}" {{has this.key ../value "selected" ""}}>{{this.value}}</option>
+        <select name="{{name}}" {{#if def.multi}} multiple {{/if}}>
+            {{#eachOptions def.options}}
+                <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
             {{/eachOptions}}
         </select>
     </div>

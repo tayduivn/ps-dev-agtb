@@ -16,7 +16,6 @@
             </div>
           </section>
           {{#each meta.panels}}
-          {{log this}}
           <div class="block-footer show-more-top-btn" style="display: none">
               <a class="btn loading wide " href="javascript:void(0)">Show More</a>
           </div>

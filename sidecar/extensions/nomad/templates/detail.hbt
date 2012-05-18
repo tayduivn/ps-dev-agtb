@@ -1,6 +1,5 @@
 <h1 class="nomad">Details</h1>
 <div class="bizcard">
-    <img src="../img/avatar_sabra.jpg" class="avatar" alt="{{model.attributes.name}} avatar">
     <div class="card">
 
         {{#with meta.panels.[0]}}

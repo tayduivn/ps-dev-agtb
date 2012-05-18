@@ -1,2 +1,2 @@
-<label class="control-label">{{getLabel label model.module}}</label>
+<label class="control-label">{{getLabel label model.module}}</label>:
 <span class="value">{{value}}</span>
