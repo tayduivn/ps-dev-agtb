@@ -1,26 +1,21 @@
-
-
 <h1 class="nomad">Create Item</h1>
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">
         <fieldset class="pad">
 
-            {{#each meta.panels}}
-                {{#each ../context.attributes.collection.models}}
-                    {{#each ../fields}}
-                        {{field     ../../../context    ../../../this   ../this}}
-                    {{/each}}
+            {{#meta.panels}}
+                {{#each fields}}
+                    {{field     ../../context    ../../this   ../../model}}
                 {{/each}}
-            {{/each}}
+            {{/meta.panels}}
 
         </fieldset>
     </div>
 </div>
-
 <fieldset>
     <div>
-        <a href="opportunity.html#demo-success" class="btn btn-primary" id="saveRecord">Save</a>
-        <a href="opportunity.html" class="btn btn-inverse" id="backRecord">Cancel</a>
+        <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Save</a>
+        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
     </div>
 </fieldset>
 

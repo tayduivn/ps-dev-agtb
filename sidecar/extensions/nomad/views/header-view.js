@@ -26,14 +26,15 @@
                 this._renderLeftList();
                 this._renderRightList();
             }
+            //this.delegateEvents();
         },
 
         onCreateClicked:function(){
-
+            $(document.body).removeClass('onR');
         },
 
         onModuleTabClicked:function(){
-
+            $(document.body).removeClass('onL');
         },
 
         onHomeClicked:function(e){
