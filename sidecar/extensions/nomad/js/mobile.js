@@ -1,4 +1,22 @@
 (function($) {
+
+/*
+var handler = function(e) {
+    e.preventDefault();
+    alert('handler');
+};
+
+$('article').onpress(handler);
+*/
+
+    $('article .grip').onpress(function () {
+	if($(this).hasClass('on')===false){
+	    $(this).closest('article').trigger('swipeLeft');
+	}else{
+	    $(this).closest('article').trigger('swipeRight');
+	}
+    });
+
 	// swipe for top nav
 	$('#logo').bind('touchmove', function (e) {
 		e.preventDefault();} 
@@ -81,13 +99,7 @@
 	$(this).find('.grip').removeClass('on');
 	$(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
     });	
-    $('article .grip').live('click', function () {
-	if($(this).hasClass('on')===false){
-	    $(this).closest('article').trigger('swipeLeft');
-	}else{
-	    $(this).closest('article').trigger('swipeRight');
-	}
-    });
+
     // search toggle
     $('.navbar').find('#search').on('click', function () {
     	$('body').find('#searchForm').toggleClass('hide');
