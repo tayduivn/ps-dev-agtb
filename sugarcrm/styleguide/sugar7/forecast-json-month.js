@@ -38,18 +38,7 @@
 
 	],
 
-	'label': [
-
-		'Qualified'
-,
-		'Proposed'
-,
-		'Quotes'
-,
-        'Closed/Won'
-
-	],
-
+	'label': ['Qualified','Proposal','Negotiation','Closed'],
 	'color': [
 
 		'#8c2b2b'
@@ -137,50 +126,18 @@
             ],
 		'goalmarkervaluelabel' : [
             '200k',
-            '185k'
+            '195k'
             ]
 
 	}
 ,
 	{
-
 		'label': 'March',
-
 		'gvalue': '200',
-
 		'gvaluelabel': '200K',
-
-		'values': [
-			1
-,
-			10
-,
-			90
-,
-            100
-
-		],
-
-		'valuelabels': [
-			'10K'
-,
-			'100K'
-,
-			'200K'
-,
-            '100K'
-
-		],
-
-		'links': [
-			''
-,
-			''
-,
-			''
-
-
-		],
+		'values': [1,10,20,60],
+		'valuelabels': ['1K','10K','20K','60K'],
+		'links': ['','',''],
 		'goalmarkervalue' : [
             200,
             185

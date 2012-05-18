@@ -109,9 +109,12 @@
       <h1>Perkin Kleiners <i class="icon-star"></i></h1>
     </div>
     <div class="btn-toolbar pull-right">
-      <div class="dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-        <ul class="dropdown-menu menu">
+      <div class="btn-group">
+        <a class="btn btn-success" href="edit.html">Edit</a>
+        <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
           <li><a href="#">Edit</a></li>
           <li><a href="#">Duplicate</a></li>
           <li><a href="index.html">Delete</a></li>
@@ -130,7 +133,7 @@
   </div>     
   <div class="container-fluid">     
     <div class="row-fluid">
-      <div class="span8">
+      <div class="span7">
         <a href="" class="pull-right">
           <img src="http://placehold.it/125x125" class="avatar" alt="avatar abcindustries">
         </a>
@@ -203,7 +206,7 @@
                 </div>
               </li>
               <li>
-                <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
+                <a href="#doc1" data-toggle="tab"><span class="label label-file">File</span></a>
                 <p>
                   <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
                   <br>
@@ -257,32 +260,37 @@
                   <br>
                   <date class="date">Posted 2 days ago at 1:20 pm EST</date>
                 </p>
-                <div class="actions hide">
+                <div class="actions">
                   <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
                   <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
                 </div>
               </li>
-            </ul>      
-            <ul class="nav nav-pills actions">
-              <li class="dropdown pull-right">  
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i class="icon caret"></i></a>
-                <ul class="dropdown-menu menu">
+            </ul>
+            <div class="btn-toolbar pull-right">
+              <div class="btn-group">
+                <a class="btn btn-success" href="edit.html">Edit</a>
+                <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Edit</a></li>
+                  <li><a href="#">Duplicate</a></li>
+                  <li><a href="index.html">Delete</a></li>
+                  <li class="divider"></li>
                   <li><a data-toggle="modal" href="#contactModal">Add Contact</a></li>
-                  <li><a data-toggle="modal" href="#noteModal">Add Note</a></li>                           
-                  <li><a data-toggle="modal" href="#taskModal">Add Task</a></li>
+                  <li><a data-toggle="modal" href="#noteModal">Add Note</a></li>
+                  <li><a data-toggle="modal" href="#oppModal">Add Opportunity</a></li>                                     
+                  <li><a data-toggle="modal" href="#taskModal">Add Task</a></li>          
                   <li class="divider"></li>
                   <li><a href="#">Compose Email</a></li>
                   <li><a href="#">Log Call</a></li>
                   <li><a href="#">Schedule Meeting</a></li>
                 </ul>
-              </li>    
-              <li>  
-                <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-              </li>    
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="span4 tab-content" id="folded">
+        <div class="span5 tab-content" id="folded">
           <div class="tab-pane active" id="overview">
             <div class="block" id="moduleTwitter">
               <h4>InsideView</h4>

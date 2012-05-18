@@ -42,11 +42,11 @@
 
     'Qualified'
     ,
-    'Proposed'
+    'Proposal'
     ,
-    'Quotes'
+    'Negotiation'
     ,
-    'Closed/Won'
+    'Closed'
 
 ],
 
@@ -114,20 +114,17 @@
 
     {
 
-        'label': 'Mark',
-
-        'gvalue': '140',
-
-        'gvaluelabel': '140K',
-
+        'label': 'Mark Gibson',
+        'gvalue': '100',
+        'gvaluelabel': '100',
         'values': [
             20
             ,
             20
             ,
-            50
+            30
             ,
-            50
+            30
 
 
         ],
@@ -137,9 +134,9 @@
             ,
             '20K'
             ,
-            '50K'
+            '30K'
             ,
-            '50K'
+            '30K'
 
 
         ],
@@ -155,87 +152,44 @@
         ],
         'goalmarkervalue' : [
             500,
-            485
+            470
         ],
         'goalmarkervaluelabel' : [
             '500k',
-            '485K'
+            '470K'
         ]
 
-    }
-    ,
+    },
     {
 
-        'label': 'James',
-
+        'label': 'James Joplin',
         'gvalue': '300',
+        'gvaluelabel': '300K',
+        'values': [20,20,20,240],
+        'valuelabels': ['10K','10K','20K','70K'],
+        'links': ['','',''],
+        'goalmarkervalue' : [500,470],
+        'goalmarkervaluelabel' : ['500k','470k']
+    },
+    {
 
+        'label': 'Terrence Li',
+        'gvalue': '300',
         'gvaluelabel': '300K',
 
         'values': [
-            20
-            ,
-            20
-            ,
-            20
-            ,
-            240
-
-
-        ],
-
-        'valuelabels': [
-            '10K'
-            ,
-            '10K'
-            ,
-            '20K'
-            ,
-            '70K'
-
-        ],
-
-        'links': [
-            ''
-            ,
-            ''
-            ,
-            ''
-
-
-        ],
-        'goalmarkervalue' : [
-            500,
-            485
-        ],
-        'goalmarkervaluelabel' : [
-            '500k',
-            '485k'
-        ]
-
-    }
-    ,
-    {
-
-        'label': 'Terrence',
-
-        'gvalue': '410',
-
-        'gvaluelabel': '410K',
-
-        'values': [
-            10
+            1
             ,
             100
             ,
             200
             ,
-            100
+            50
 
         ],
 
         'valuelabels': [
-            '10K'
+            '1K'
             ,
             '100K'
             ,
@@ -256,11 +210,11 @@
         ],
         'goalmarkervalue' : [
             500,
-            485
+            470
         ],
         'goalmarkervaluelabel' : [
             '500k',
-            '485k'
+            '470K'
         ]
 
     }

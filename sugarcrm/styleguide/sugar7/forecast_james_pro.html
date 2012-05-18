@@ -124,7 +124,7 @@
           <div class="block">
             <h4>Filters</h4>
             <div class="control-group">
-              <label for="select01" class="control-label">Date Range:</label>
+              <label for="select01" class="control-label">Forecast Period:</label>
               <div class="controls ">
                 <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
                   <option value="pk" selected="selected">Q1 2012</option> 
@@ -140,9 +140,9 @@
                 <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
                   <option value="pk" selected="selected">All</option> 
                   <option value="pk">Closed</option>
-                  <option value="pk">Proposed</option>
+                  <option value="pk">Proposal</option>
+                  <option value="pk">Negotiation</option>
                   <option value="pk">Qualified</option>
-                  <option value="pk">Quotes</option>
                 </select>
               </div>
             </div>  
@@ -184,9 +184,7 @@
             <div class="controls">
               <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
                 <option value="pk" selected="selected">Revenue</option> 
-                <option value="pk">x</option>
-                <option value="pk">x</option>
-                <option value="pk">x</option> 
+                <option value="pk">Recurring</option> 
               </select>
             </div>
           </div>
@@ -194,7 +192,7 @@
             <label for="select01" class="control-label">Group By:</label>
             <div class="controls">
               <select data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
-                <option value="pk" selected="selected">Recurring</option> 
+                <option value="pk">Revenue Type</option> 
                 <option value="pk" selected="selected">Sales Stage</option> 
               </select>
             </div>
@@ -246,36 +244,17 @@
               </div>
               <div class="span3">
                 Closed<br>
-                <h3 class="alert alert-success">180,000</h3>
+                <h3 class="alert alert-success">90,000</h3>
               </div>
               <div class="span3">
                 To Go<br>
-                <h3 class="alert alert-warning">20,000</h3>
+                <h3 class="alert alert-warning">110,000</h3>
               </div>
               <div class="span3">
                 Days Left<br>
                 <h3 class="alert alert-danger">10</h3>
               </div>
             </div>
-            <div class="row-fluid" id="outLook">
-              <h4>Outlook</h4>
-              <div class="span4">
-                Optimistic<br>
-                <h3 class="">25,000</h3>
-                (1 opportunity)
-              </div>
-              <div class="span4">
-                Realistic<br>
-                <h3 class="">25,000</h3>
-                (1 opportunity)
-              </div>
-              <div class="span4">
-                Pessimistic<br>
-                <h3 class="">75,000</h3>
-                (1 opportunity)
-              </div>
-            </div>
-            <br>
             <div class="row-fluid" id="changeLog">
               <div class="span12">
             <h4>Change Log</h4>
@@ -284,10 +263,21 @@
                 Forecast Likely 10k <i class="icon-arrow-up"></i> <date class="date">2012/02/02 12:15 PM EST</date>
               </li>
               <li>
-                Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
+                Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/02/01 10:15 PM EST</date>
               </li>
               <li>
-                Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/02/02 12:15 PM EST</date>
+                Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/01/02 1:15 PM EST</date>
+              </li>
+              <div class="extend hide">
+                <li>
+                  Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/01/01 12:15 PM EST</date>
+                </li>
+                <li>
+                  Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/01/01 12:00 PM EST</date>
+                </li>
+              </div>
+              <li>
+                <a href="" class="more">More  <i class="icon-chevron-down"></i></a>
               </li>
             </ul>
             </div>
@@ -304,15 +294,15 @@
             </div>
             <div class="span3">
                 Quota<br>
-                <h2>150,000</h2>
+                <h2>200,000</h2>
             </div>
             <div class="span3">
                 Best<br>
-                <h2>210,000</h2>
+                <h2>215,000</h2>
             </div>
             <div class="span3">
                 Likely<br>
-                <h2>180,000</h2>
+                <h2>195,000</h2>
             </div>
             <div class="span1"><a href="forecast.html" class="btn btn-primary">Commit</a></div>
           </div>
@@ -322,8 +312,8 @@
             <tr>
               <th class="tcenter"><b rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b></th>
               <th>Opportunity</th>
-              <th>Stage</th>
               <th>Expected Close</th>
+              <th>Stage</th>
               <th>Probability</th>
               <th>Amount</th>
               <th>Best</th>
@@ -334,36 +324,36 @@
           <tbody id="listed">
             <tr>
               <td class="tcenter"><input type="checkbox" checked="checked"></td>
-              <td><a href="100seat.html">Opp A</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="Sub Opp A <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>Sub Opp B <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Purchased with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a>
+              <td><a href="100seat.html">Opp A</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a>
               </td>
-              <td>Proposed</td> 
-              <td>2012/1/12</td>
-              <td><span class="dblclick">70%</span></td>
+              <td>3/12/2012</td>
+              <td>Proposal</td> 
+              <td><span class="dblclick">60%</span></td>
               <td>100,000</td>
-              <td><span class="dblclick">70,000</span></td>
               <td><span class="dblclick">60,000</span></td>
+              <td><span class="dblclick">50,000</span></td>
               <td></td>
             </tr>
             <tr>
               <td class="tcenter"><input type="checkbox" checked="checked"></td>
-              <td><a href="100seat.html">Opp B</a> <a href="" rel="clickoverTop" data-title="Opp B Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="Sub Opp A <span class='pull-right'>$50,000</span><hr>Sub Opp B <span class='pull-right'>$50,000</span><hr><p>Up sell: Opp B</p><p>Cross sell: Opp C</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>                          
-              <td>Quotes</td>
-              <td>2012/1/12</td>
+              <td><a href="100seat.html">Opp B</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>                          
+              <td>3/13/2012</td>
+              <td>Negotiation</td>
               <td><span class="dblclick">70%</span></td>
               <td>100,000</td>
-              <td><span class="dblclick">70,000</span></td>
-              <td><span class="dblclick">60,000</span></td>
+              <td><span class="dblclick">65,000</span></td>
+              <td><span class="dblclick">55,000</span></td>
               <td></td>
             </tr>
             <tr>
               <td class="tcenter"><input type="checkbox" checked="checked"></td>
-              <td><a href="100seat.html">Opp C</a> <a href="" rel="clickoverTop" data-title="Opp C Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="Sub Opp A <span class='pull-right'>$50,000</span><hr>Sub Opp B <span class='pull-right'>$50,000</span><hr><p>Up sell: Opp B</p><p>Cross sell: Opp C</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>     
+              <td><a href="100seat.html">Opp C</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>     
+              <td>3/14/2012</td>
               <td>Closed</td>               
-              <td>2012/1/12</td>
-              <td><span class="dblclick">80%</span></td>
+              <td><span class="dblclick">100%</span></td>
               <td>100,000</td>
-              <td><span class="dblclick">70,000</span></td>
-              <td><span class="dblclick">60,000</span></td>
+              <td><span class="dblclick">90,000</span></td>
+              <td><span class="dblclick">90,000</span></td>
               <td></td>
             </tr>              
           </tbody> 
@@ -375,8 +365,8 @@
               <td></td>
               <td></td>
               <td>300,000</td>
-              <td>210,000</td>
-              <td>180,000</td>
+              <td>215,000</td>
+              <td>195,000</td>
               <td></td>
             </tr>    
           </tfoot>                                                                     
