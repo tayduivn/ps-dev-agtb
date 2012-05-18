@@ -9,7 +9,20 @@ var handler = function(e) {
 $('article').onpress(handler);
 */
 
-    $('article .grip').onpress(function () {
+$('body').onpress('.xxx',function(e){
+    e.preventDefault();
+    //$(this).remove();
+    $('.listing').append(article_tpl);
+});
+
+
+var article_tpl = '\
+              <article>\                <i class="icon-star-empty"></i>\                <div>\                  <a href="perkin_kleiners.html">Perkin Kleiners</a><br>\                  Cupertino, CA\                </div>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="perkin_kleiners.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\              <article style="padding-left:0;">\                  <a href="">x d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsx d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd </a>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="weyland.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\
+';
+
+    $('body').onpress('article .grip',function (e) {
+	e.preventDefault();
+
 	if($(this).hasClass('on')===false){
 	    $(this).closest('article').trigger('swipeLeft');
 	}else{
@@ -201,13 +214,16 @@ $('article').onpress(handler);
         }, 3000);
     }
 
-    $(".icon-star-empty, .icon-star").live('click tap',function(){
+
+    $('body').onpress('.icon-star-empty, .icon-star',function(){
 	var rn=Math.floor(Math.random()*100);
 	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
 	setTimeout(function(ia){
             $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
         }, 3000);
     });
+
+
       $("a[title=Remove]").live('click tap',function(){
   	var rn=Math.floor(Math.random()*100);
   	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-success" style="display:block;"><strong>Success!</strong> You removed an item!</div>');
