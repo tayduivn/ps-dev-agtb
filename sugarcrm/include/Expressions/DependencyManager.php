@@ -204,12 +204,9 @@ class DependencyManager
         global $app_list_strings;
 
         foreach ($fields as $field => $def) {
-            if ($def['type'] == "enum" && isset ($def ['visibility_grid'])) {
+            if ($def['type'] == "enum" && !empty ($def ['visibility_grid'])) {
                 $grid = $def ['visibility_grid'];
-                if (!isset($grid['values']) || empty($grid['trigger']))
-                    continue;
-
-                if( !isset($fields[$grid['trigger']]) )
+                if (!isset($grid['values']) || !isset($fields[$grid['trigger']]))
                     continue;
 
                 $trigger_list_id = $fields[$grid ['trigger']]['options'];
