@@ -237,7 +237,7 @@
 	return false;
     });
 
-    $('#nomad.flow #back .back').on(fd_touch_event,function(){ // return to listing
+    $('body').onpress('#nomad.flow #back .back',function(){ // return to listing
 	if(fd_detail_view.hasClass('in_focus')) {
 	    fd_detail_view.removeClass('make_static');
 	    fd_back_btn.hide();
@@ -249,7 +249,7 @@
 	return false;
     });
 
-    $('#nomad.flow article').on(fd_touch_event,function(){ // show details
+    $('body').onpress('#nomad.flow article',function(){ // show details
 	fd_detail_view.anim({ translateX: '-'+ window.innerWidth +'px', opacity: '1'}, .25, 'ease-out',function(){
 	    fd_detail_view.addClass('make_static');
 	    fd_detail_view.addClass('in_focus')
@@ -259,7 +259,7 @@
 	return false;
     });
 
-    $('#nomad .list.detail h1.nomad').on(fd_touch_event,function(){
+    $('body').on('#nomad .list.detail h1.nomad',function(){
 	$('#nomad.flow #back .back').trigger(fd_touch_event);
 	return false;
     })
