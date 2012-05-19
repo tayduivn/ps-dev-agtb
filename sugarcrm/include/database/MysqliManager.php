@@ -437,6 +437,9 @@ class MysqliManager extends MysqlManager
                TRUNCATE TABLE _hierarchy_current_set;
 
                -- cleanup WHERE clause
+               IF LENGTH(TRIM(p_where_clause)) = 0 THEN
+                  SET p_where_clause := NULL;
+               END IF;
                IF p_where_clause IS NOT NULL THEN
                   SET p_where_clause := LTRIM(p_where_clause);
                   IF UPPER(SUBSTR(p_where_clause, 1, 5)) = 'WHERE' THEN  -- remove WHERE
