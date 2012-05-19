@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['OpportunityLine'] = array('table' => 'opportunity_line','audited'=>false,
+$dictionary['OpportunityLine'] = array('table' => 'opportunity_lines','audited'=>false,
 		'comment' => 'The opportunity line item assoicated with the product',
 'fields' => array (
 
@@ -203,11 +203,11 @@ array (
     'relationships' => array (
         'opportunity_lines_products' =>
             array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
-                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'product_id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'product_id',
                 'relationship_type'=>'one-to-many'),
         'opportunity_lines_opportunities' =>
             array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
-                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
                 'relationship_type'=>'one-to-many'),
 )
 

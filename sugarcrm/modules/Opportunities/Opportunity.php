@@ -534,7 +534,7 @@ $query .= 			"LEFT JOIN users
      */
     public function deleteOpportunityLines()
     {
-        $query = "DELETE FROM opportunity_line WHERE opportunity_id = '{$this->id}'";
+        $query = "DELETE FROM opportunity_lines WHERE opportunity_id = '{$this->id}'";
         $this->db->query($query);
     }
 

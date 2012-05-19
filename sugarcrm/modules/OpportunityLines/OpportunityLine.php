@@ -29,7 +29,7 @@ class OpportunityLine extends SugarBean
     var $product_category_id;
     var $experts;
     var $expert_id;
-    var $table_name = "opportunity_line";
+    var $table_name = "opportunity_lines";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";
 
@@ -45,7 +45,7 @@ class OpportunityLine extends SugarBean
                 FROM product_templates pt
                 WHERE pt.id = '$this->product_id'";
 
-        $result = $this->db->query($query,true," Error getting product category id: ");
+        $result = $this->db->query($query,true, "Error getting product category id: ");
 
         $row = $this->db->fetchByAssoc($result);
 

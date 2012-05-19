@@ -75,8 +75,7 @@ if( $memory_limit != "" && $memory_limit != "-1" ){ // if memory_limit is set
         ini_set("memory_limit", "$memory_needed" . "M");
     }
 }
-$large_scale_test = empty($sugar_config['large_scale_test']) ?
-	false : $sugar_config['large_scale_test'];
+$large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
 
 $seed_user = new User();
 $user_demo_data = new UserDemoData($seed_user, $large_scale_test);
@@ -131,100 +130,9 @@ $replacements[] = '';
 //create timeperiods - pro only
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
+require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 $timedate = TimeDate::getInstance();
-$now = $timedate->getNow();
-$timedate->tzUser($now); // use local TZ to calculate dates
-$timeperiods=array();
-
-$timeperiod = new TimePeriod();
-$year = $timedate->getNow()->format('Y');
-$timeperiod->name = "Year ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =1;
-$fiscal_year_id=$timeperiod->save();
-//create a time period record for the first quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q1 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 2nd quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q2 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 3rd quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q3 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 4th quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q4 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-
-//Create another set of timeperiod records for the following year
-$year = $timedate->getNow()->modify('+1 year')->format('Y');
-$timeperiod->name = "Year ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =1;
-$fiscal_year_id=$timeperiod->save();
-
-//create a time period record for the first quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q1 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 2nd quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q2 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 3rd quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q3 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 4th quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q4 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-
+$timeperiods = TimePeriodsSeedData::populateSeedData();
 
 //build a collection of users
 $query = "SELECT id from users";
@@ -473,6 +381,7 @@ for($i = 0; $i < $number_companies; $i++) {
     $opp->worst_case = $worst_case[$key];
     $opp->likely_case = $likely_case[$key];
     $opp->best_case = $best_case[$key];
+    $opp->timeperiod_id = array_rand($timeperiods);
 //END SUGARCRM flav=pro ONLY
 	$opp->assigned_user_id = $account->assigned_user_id;
 	$opp->assigned_user_name = $account->assigned_user_name;

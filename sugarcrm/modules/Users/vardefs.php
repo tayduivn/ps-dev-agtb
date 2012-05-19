@@ -25,7 +25,13 @@ $dictionary['User'] = array(
         'id' => array(
             'name' => 'id',
             'vname' => 'LBL_ID',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'type' => 'user_name',
+            'dbType' => 'id',
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav!=pro ONLY
             'type' => 'id',
+            //END SUGARCRM flav!=pro ONLY
             'required' => true,
         ) ,
         'user_name' => array(

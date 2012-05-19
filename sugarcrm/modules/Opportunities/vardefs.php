@@ -519,7 +519,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 
    'opportunity_lines' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
-   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
+   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav=pro ONLY
 )
