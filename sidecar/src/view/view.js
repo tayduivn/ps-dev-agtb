@@ -70,6 +70,12 @@
              * @property {String}
              */
             this.fallbackFieldTemplate = "default";
+
+            /**
+             * Reference to the parent layout instance.
+             * @property {View.Layout}
+             */
+            this.layout = this.options.layout;
         },
 
         /**
