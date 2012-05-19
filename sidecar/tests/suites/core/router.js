@@ -1,9 +1,14 @@
 describe("Router", function() {
-    var app, router;
+    var app, router, defaultModule;
 
     beforeEach(function() {
         app = SugarTest.app;
         router = app.router;
+        defaultModule = app.config.defaultModule;
+    });
+
+    afterEach(function() {
+        app.config.defaultModule = defaultModule;
     });
 
     it("should call the controller to load a view for the default route", function() {
@@ -37,14 +42,27 @@ describe("Router", function() {
         expect(route).toEqual("Contacts/create");
     });
 
-    it("should handle index route", function() {
+    it("should handle index route with default module", function() {
+        app.config.defaultModule = "Cases";
         var mock = sinon.mock(app.controller);
         mock.expects("loadView").once().withArgs({
-            module:'Contacts',
-            layout:'list'
+            module: 'Cases',
+            layout: 'list'
         });
 
-        router.index('Contacts');
+        router.index();
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should handle index route with unspecified default module", function() {
+        app.config.defaultModule = null;
+        var mock = sinon.mock(app.controller);
+        mock.expects("loadView").once().withArgs({
+            module: 'Home',
+            layout: 'home'
+        });
+
+        router.index();
         expect(mock.verify()).toBeTruthy();
     });
 
