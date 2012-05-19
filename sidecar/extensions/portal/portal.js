@@ -53,7 +53,7 @@
                                     value: "signup",
                                     class: 'pull-left',
                                     events: {
-                                        click: "function(){ var self = this; " +
+                                        click: "function(){ " +
                                             "app.router.signup();" +
                                             "}"
                                     }
@@ -666,6 +666,12 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels(base_metadata);
+
+        // Example of a custom route: URL hash, route name, route handler
+        app.router.route("foo", "foo", function() {
+            app.logger.debug("Navigating to foo!!!");
+        });
+
     });
 
     app.view.Field=app.view.Field.extend({

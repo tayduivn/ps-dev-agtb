@@ -70,6 +70,12 @@
         platform: "portal",
 
         /**
+         * Default module to load for the home route (index).
+         * If not specified, the framework loads `home` layout for the module `Home`.
+         */
+        defaultModule: "Cases",
+
+        /**
          * A list of metadata types to fetch by default.
          * @cfg {Array}
          */
