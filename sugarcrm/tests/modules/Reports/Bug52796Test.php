@@ -173,11 +173,11 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 		// Loop through all results, and check if after conversion_rate change, the amounts are calculated properly
 		while ($row = $this->reportInstance->get_next_row('result', 'display_columns')) {
 			// Extract the amount in dollars from the first row and strip commas
-			preg_match('/[0-9]+,?[0-9]+\.[0-9]+/', $row['cells'][1], $matches);
+			preg_match('/([0-9]+,)*[0-9]+\.[0-9]+/', $row['cells'][1], $matches);
 			$dollars = str_replace(",", "", $matches[0]);
 			
 			// Extract the calculated amount in euros from the second row and strip commas
-			preg_match('/[0-9]+,?[0-9]+\.[0-9]+/', $row['cells'][2], $matches);
+			preg_match('/([0-9]+,)*[0-9]+\.[0-9]+/', $row['cells'][2], $matches);
 			$euros = str_replace(",", "", $matches[0]);
 			
 			$actual = $euros;
