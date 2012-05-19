@@ -25,9 +25,15 @@
             // TODO: Do we need this?
             //_.bindAll(this, 'render', 'bindData');
 
+            this._components = []; // list of components
+
             if (!this.meta) return;
 
-            this._components = []; // list of components
+            /**
+             * Reference to the parent layout instance.
+             * @property {View.Layout}
+             */
+            this.layout = this.options.layout;
 
             /**
              * CSS class.
@@ -92,6 +98,7 @@
          * @param {Object} def Metadata definition
          */
         addComponent: function(component, def) {
+            if (!component.layout) component.layout = this;
             this._components.push(component);
             this._placeComponent(component, def);
         },
@@ -119,7 +126,8 @@
             var i = _.isNumber(component) ? component : this._components.indexOf(component);
 
             if (i > -1) {
-                this._components.splice(i, 1);
+                var removed = this._components.splice(i, 1);
+                removed[0].layout = null;
             }
         },
 
