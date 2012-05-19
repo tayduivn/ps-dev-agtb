@@ -27,7 +27,7 @@ $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_co
 $count = $large_scale_test ? 500 : 50;
 
 //Retrieve a sample of the product_template entries to use and store this in product_line_data array
-$result = $db->limitQuery("select id, name, list_price, discount_price, discount_usdollar, currency_id, tax_class from product_templates", 0, $count);
+$result = $db->limitQuery("SELECT id, name, list_price, discount_price, discount_usdollar, currency_id, tax_class FROM products", 0, $count);
 $product_line_data = array();
 while(($row = $db->fetchByAssoc($result)))
 {
