@@ -156,12 +156,9 @@ class Account extends Company {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-        //Combine the email logic original here with bug #26450.
-		if( (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
-        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails' )
-        	||
-        	(!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] != 'Accounts' &&
-        	!empty($_REQUEST['return_module']) && $_REQUEST['return_module'] != 'Accounts') ){
+        //Email logic
+		if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
+        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails') {
 			$_REQUEST['parent_name'] = '';
 			$_REQUEST['parent_id'] = '';
 		}
