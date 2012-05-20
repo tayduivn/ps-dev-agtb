@@ -5,12 +5,11 @@ describe("Relationships", function() {
     beforeEach(function() {
         dm.reset();
         metadata = SugarTest.loadFixture("metadata");
+        dm.declareModels(metadata.modules);
     });
 
     describe("Factory", function() {
         it("should be able to create a related bean instance from a bean ID", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), attrs, contact;
             opportunity.id = "opp-1";
 
@@ -28,8 +27,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to create a related bean instance from a bean", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), attrs, contact, relation;
             opportunity.id = "opp-1";
 
@@ -48,8 +45,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to create a new related bean instance", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), attrs, contact;
             opportunity.id = "opp-1";
 
@@ -66,7 +61,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to create a collection of related beans", function() {
-            dm.declareModels(metadata);
             var opportunity = dm.createBean("Opportunities");
             opportunity.id = "opp-1";
 
@@ -91,8 +85,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to fetch related beans", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), contacts;
             opportunity.id = "1";
 
@@ -123,8 +115,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to create a related bean", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
             contact = dm.createRelatedBean(opportunity, null, "contacts", {
@@ -148,8 +138,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to delete a relationship", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
             contact = dm.createRelatedBean(opportunity, null, "contacts", { id: "2" });
@@ -168,8 +156,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to update a relationship", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
             contact = dm.createRelatedBean(opportunity, null, "contacts",
@@ -190,8 +176,6 @@ describe("Relationships", function() {
         });
 
         it("should be able to create a relationship for two existing beans", function() {
-            dm.declareModels(metadata);
-
             var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
             contact = dm.createRelatedBean(opportunity, null, "contacts",
