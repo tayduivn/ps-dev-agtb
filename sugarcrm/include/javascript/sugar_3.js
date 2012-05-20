@@ -3428,6 +3428,22 @@ SUGAR.searchForm = function() {
 	                    }
 					}
 				}
+
+                //clear thesearch form accesekeys and reset them to the appropriate link
+                adv = document.getElementById('advanced_search_link');
+                bas = document.getElementById('basic_search_link');
+                adv.setAttribute('accesskey','');
+                bas.setAttribute('accesskey','');
+                a_key = SUGAR.language.get("app_strings", "LBL_ADV_SEARCH_LNK_KEY");
+
+                //reset the ccesskey based on theview
+                if(theView === 'advanced_search'){
+
+                    bas.setAttribute('accesskey',a_key);
+                }else{
+                    adv.setAttribute('accesskey',a_key);
+                }
+                
 				// show the good search form.
 				document.getElementById(module + theView + 'SearchForm').style.display = '';
                 //if its not the first tab show there is a previous tab.
