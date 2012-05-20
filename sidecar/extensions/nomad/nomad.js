@@ -2,6 +2,18 @@
 
     var _rrh = {
 
+        associate: function(module, id, link) {
+            var relatedModule = app.data.getRelatedModule(module, link);
+            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);            
+            app.controller.loadView({
+                module: relatedModule,
+                layout: "associate",
+                viaLink: link,
+                toId: id,
+                toModule: module
+            });
+        },
+
         list: function(module, id, link) {
             app.logger.debug("Route changed to list rels: " + module + "/" + id + "/" + link);
             app.controller.loadView({
@@ -48,6 +60,7 @@
         app.router.route(":module/:id/link/:link", "relationships", _rrh.list);
         app.router.route(":module/:id/link/:link/:relatedId", "relationships", _rrh.record);
         app.router.route(":module/:id/link/:link/create", "relationships", _rrh.create);
+        app.router.route(":module/:id/link/:link/associate", "relationships", _rrh.associate);
     });
 
     app.augment("nomad", {
