@@ -59,6 +59,7 @@
         // Register relationship routes
         app.router.route(":module/:id/link/:link", "relationships", _rrh.list);
         app.router.route(":module/:id/link/:link/:relatedId", "relationships", _rrh.record);
+        app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships", _rrh.record);
         app.router.route(":module/:id/link/:link/create", "relationships", _rrh.create);
         app.router.route(":module/:id/link/:link/associate", "relationships", _rrh.associate);
     });
