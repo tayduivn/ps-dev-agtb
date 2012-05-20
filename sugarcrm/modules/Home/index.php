@@ -506,38 +506,38 @@ if (empty($pages)){
 //BEGIN SUGARCRM flav=dce ONLY
     $pages[0]['columns'] = $dceColumns;
     $pages[0]['numColumns'] = '2';
-    $pages[0]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_5_NAME'];  // "DCE"
+    $pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_5_NAME';  // "DCE"
 //END SUGARCRM flav=dce ONLY
 //BEGIN SUGARCRM flav!=dce ONLY
 	$pages[0]['columns'] = $columns;
 	$pages[0]['numColumns'] = '2';
-	$pages[0]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_1_NAME'];	// "My Sugar"
+	$pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_1_NAME';	// "My Sugar"
 	$pageIndex++;
 //BEGIN SUGARCRM flav=pro ONLY
 
 	$pages[$pageIndex]['columns'] = $salesColumns;
 	$pages[$pageIndex]['numColumns'] = '2';
-	$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_2_NAME'];	// "Sales Page"
+	$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_2_NAME';	// "Sales Page"
 	$pageIndex++;
 
 	if(ACLController::checkAccess('Leads', 'view', false)){
 		$pages[$pageIndex]['columns'] = $marketingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_6_NAME';	// "Marketing Page"
 		$pageIndex++;
 	}
 
 	if(ACLController::checkAccess('Cases', 'view', false)){
 		$pages[$pageIndex]['columns'] = $supportColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_3_NAME'];	// "Support Page"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_3_NAME';	// "Support Page"
 		$pageIndex++;
 	}
 
 	if(ACLController::checkAccess('Trackers', 'view', false, 'Tracker')){
 		$pages[$pageIndex]['columns'] = $trackingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_4_NAME'];	// "Tracker"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_4_NAME';	// "Tracker"
 		$pageIndex++;
 	}
 
@@ -586,7 +586,12 @@ foreach($pages as $pageNum => $page){
     if($pageNum != $activePage)
         $divPages[] = $pageNum;
 
-    $pageData[$pageNum]['pageTitle'] = $page['pageTitle'];
+    // If it's one of the default tabs (has 'pageTitleLabel' defined) pick translated value
+    if (!empty($page['pageTitleLabel'])) {
+    	$pageData[$pageNum]['pageTitle'] = $mod_strings[$page['pageTitleLabel']];
+    } else {
+        $pageData[$pageNum]['pageTitle'] = $page['pageTitle'];	
+	}
 
     if($pageNum == $activePage){
         $pageData[$pageNum]['tabClass'] = 'current';
