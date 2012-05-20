@@ -5062,3 +5062,32 @@ function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $
     }
     return $sendUrl;
 }
+
+/**
+ * getReportNameTranslation
+ *
+ * Translates the report name if a translation exists, 
+ * otherwise just returns the name
+ *
+ * @param string $reportName
+ * @return string translated report name
+ */
+function getReportNameTranslation($reportName) {
+	global $current_language;
+	 
+	// Used for translating reports
+    $mod_strings = return_module_language($current_language, 'Reports');
+ 
+	// Search for the report name in the default language and get the key
+	$key = array_search($reportName, return_module_language("", "Reports"));
+	
+	// If the key was found, use it to get a translation, otherwise just use report name
+	if (!empty($key)) {
+		$title = $mod_strings[$key]; 
+	} else {
+		$title = $reportName;
+	}
+	
+	return $title;
+}
+ 
