@@ -47,6 +47,7 @@ class Bug44819Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         // Save the user id
         $id = $user->id;
+        $user->is_admin = false;    // ensure non-admin user
         // Delete the user
         $user->deleted = 1;
         $user->save();
