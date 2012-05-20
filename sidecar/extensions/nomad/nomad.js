@@ -1,4 +1,55 @@
 (function(app) {
+
+    var _rrh = {
+
+        list: function(module, id, link) {
+            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/" + link);
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                layout: "list"
+            });
+        },
+
+        create: function(module, id, link) {
+            app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                create: true,
+                layout: "edit"
+            });
+        },
+
+        record: function(module, id, link, relatedId, action) {
+            app.logger.debug("Route changed to action rel: " + module + "/" + id + "/" + link + "/" + relatedId);
+
+            action = action || "detail";
+
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                modelId: relatedId,
+                action: action,
+                layout: action
+            });
+        }
+
+    };
+
+    app.events.on("app:init", function() {
+        app.metadata.set(app.baseMetadata);
+        app.data.declareModels(app.baseMetadata);
+
+        // Register relationship routes
+        app.router.route(":module/:id/link/:link", "relationships", _rrh.list);
+        app.router.route(":module/:id/link/:link/:relatedId", "relationships", _rrh.record);
+        app.router.route(":module/:id/link/:link/create", "relationships", _rrh.create);
+    });
+
     app.augment("nomad", {
 
         deviceReady: function() {

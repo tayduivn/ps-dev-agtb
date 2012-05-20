@@ -53,11 +53,7 @@
                 if (def.context) {
                     context = this.context.getChildContext(def.context);
                     context.prepare();
-                    if (def.context.link) {
-                        module = context.get('collection').module;
-                    } else {
-                        module = def.context.module || this.module;
-                    }
+                    module = context.get("module");
                 }
 
                 if (def.view) {

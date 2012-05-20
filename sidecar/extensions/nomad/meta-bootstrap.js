@@ -1,5 +1,5 @@
 (function(app) {
-    var base_metadata = {
+    app.baseMetadata = {
         _hash: '',
         "modules": {
             "Login": {
@@ -47,15 +47,5 @@
             }
         }
     };
-
-    app.events.on("app:init", function() {
-        app.metadata.set(base_metadata);
-        app.data.declareModels(base_metadata);
-
-        // Example of a custom route: URL hash, route name, route handler
-        app.router.route("foo", "foo", function() {
-            app.logger.debug("Handling route foo!!!");
-        });
-    });
 
 })(SUGAR.App);
