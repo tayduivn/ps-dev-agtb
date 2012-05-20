@@ -95,7 +95,7 @@ EOHTML;
  		//END SUGARCRM flav!=sales ONLY
 
  		$showDeleteButton = FALSE;
- 		if(  $_REQUEST['record'] != $GLOBALS['current_user']->id && $GLOBALS['current_user']->isAdminForModule('Users') )
+ 		if(  $_REQUEST['record'] != $GLOBALS['current_user']->id && $GLOBALS['current_user']->isAdminForModule('Users') && $_REQUEST['record'] != 1 /* Don't show DELETE button for default Administrator user */)
         {
             $showDeleteButton = TRUE;
  		     if( empty($this->bean->user_name) ) //Indicates just employee
