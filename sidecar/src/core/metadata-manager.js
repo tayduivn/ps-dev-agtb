@@ -95,12 +95,18 @@
                                     field = { name: field };
                                 }
 
-                                // Patch label
-                                field.label = field.label || fieldDef.vname || fieldDef.name;
                                 // Assign type
                                 field.type = field.type || fieldDef.type;
                                 // Patch type
                                 field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
+                                // TODO: This should be done on the server-side on my opinion
+
+                                if (_.isObject(field.displayParams)) {
+                                    _.extend(field, field.displayParams);
+                                    delete field.displayParams;
+                                }
 
                                 panel.fields[fieldIndex] = field;
                             }

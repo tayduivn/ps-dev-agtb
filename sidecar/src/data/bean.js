@@ -65,18 +65,22 @@
          * Checks if a bean is valid.
          *
          * This method is called before {@link Data.Bean#save}.
-         * Failed validations trigger an `"app:error:validation:<field-name>"` event.
+         * Failed validations trigger an `"error:validation:<field-name>"` event.
          *
+         * @param {Array} fields(optional) A hash of fields to validate.
+         * If not specified, all fields will be validated. View-agnostic validation will be run.
+         * Keys are field names, values are field definitions (combination of view defs and vardefs).
          * @return {Boolean} Flag indicating if this bean is valid or not.
          */
-        isValid: function() {
-            var errors = this._doValidate();
+        isValid: function(fields) {
+            var errors = this._doValidate(fields);
             return this._processValidationErrors(errors);
         },
 
         /**
          * Validates a bean.
          *
+         * @param {Array} fields(optional) A hash of fields to validate. See {@link Data.Bean#isValid} method for details.
          * @return {Object} validation errors object.
          *
          * - keys: field names, values: errors hash
@@ -98,14 +102,13 @@
          *
          * @private
          */
-        _doValidate: function() {
+        _doValidate: function(fields) {
             var value, errors = {};
-            _.each(this.fields, function(field, fieldName) {
+            _.each(fields || this.fields, function(field, fieldName) {
                 value = this.get(fieldName);
 
                 _addValidationError(errors,
-                    app.validation.requiredValidator(field, field.name, this, value),
-                    fieldName, "required");
+                    app.validation.requiredValidator(field, field.name, this, value), fieldName, "required");
 
                 if (value) {
                     _.each(app.validation.validators, function(validator, validatorName) {
@@ -128,7 +131,7 @@
             if (!_.isEmpty(errors)) {
                 app.error.handleValidationError(this, errors);
                 _.each(errors, function(fieldErrors, fieldName) {
-                    this.trigger("app:error:validation:" + fieldName, fieldErrors);
+                    this.trigger("error:validation:" + fieldName, fieldErrors);
                 }, this);
 
                 isValid = false;
@@ -139,12 +142,18 @@
 
         /**
          * Overloads standard bean save so we can run validation outside of the standard validation loop.
-         * @param {Object} attributes model attributes
-         * @param {Object} options standard save options as described by Backbone docs
+         *
+         * This method checks if this bean is valid. Pass `fieldsToValidate` option in the options hash,
+         * to validate a limited set of fields. See {@link Data.Bean#isValid} method for details.
+         *
+         * @param {Object} attributes(optional) model attributes
+         * @param {Object} options(optional) standard save options as described by Backbone docs and
+         * optional `fieldsToValidate` parameter.
          */
         save: function(attributes, options) {
             // we only validate on save
-            return this.isValid() ? Backbone.Model.prototype.save.call(this, attributes, options) : false;
+            return this.isValid(options ? options.fieldsToValidate : null) ?
+                Backbone.Model.prototype.save.call(this, attributes, options) : false;
         },
 
         /**

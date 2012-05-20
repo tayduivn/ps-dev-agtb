@@ -1,1 +1,0 @@
-<strong>{{#each alertMessages}}<p>{{this}}</p>{{/each}}</strong>
