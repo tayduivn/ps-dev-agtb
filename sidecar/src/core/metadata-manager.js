@@ -95,12 +95,18 @@
                                     field = { name: field };
                                 }
 
-                                // Patch label
-                                field.label = field.label || fieldDef.vname || fieldDef.name;
                                 // Assign type
                                 field.type = field.type || fieldDef.type;
                                 // Patch type
                                 field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
+                                // TODO: This should be done on the server-side on my opinion
+
+                                if (_.isObject(field.displayParams)) {
+                                    _.extend(field, field.displayParams);
+                                    delete field.displayParams;
+                                }
 
                                 panel.fields[fieldIndex] = field;
                             }
@@ -140,17 +146,21 @@
          * @return {Object} Module metadata of specific type if type is specified. Otherwise, module's overall metadata.
          */
         getModule: function(module, type) {
-            var metadata = _metadata[module];
-
-            // Load metadata in memory if it's not there yet
-            if (!metadata) {
-                _metadata[module] = this._patchMetadata(module, _get(module));
+            var metadata;
+            if (module) {
                 metadata = _metadata[module];
+
+                // Load metadata in memory if it's not there yet
+                if (!metadata) {
+                    _metadata[module] = this._patchMetadata(module, _get(module));
+                    metadata = _metadata[module];
+                }
+
+                if (metadata && type) {
+                    metadata = metadata[type];
+                }
             }
 
-            if (metadata && type) {
-                metadata = metadata[type];
-            }
             return metadata;
         },
 
@@ -292,7 +302,7 @@
                     }
 
                     if (callback) {
-                        callback.call(self, null, metadata);
+                        callback.call(self);
                     }
                 },
                 error: function(error) {

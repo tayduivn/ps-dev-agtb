@@ -777,7 +777,8 @@ SUGAR.expressions.GridToolTip = {
             return types;
         }
 
-        return false;
+        //If we have dropped down here, we have no idea what the return should be.
+        return "generic";
     };
 
     /**

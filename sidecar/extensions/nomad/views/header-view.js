@@ -5,7 +5,7 @@
             'click #moduleList li a': 'onModuleTabClicked',
             'click #createList li a': 'onCreateClicked',
             'click .cube': 'onHomeClicked',
-            'click .icon-plus': 'onAddClicked'
+            'click .create-entity': 'onAddClicked'
         },
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
@@ -51,7 +51,9 @@
             var tmpl = app.template.get('left.menu');
 
             if (tmpl) {
-                this.$('#moduleList').append(tmpl(_.keys(app.metadata.getModuleList())));
+                this.$('#moduleList').append(tmpl({items:_.keys(app.metadata.getModuleList()),
+                    userName:app.user.get('full_name'),
+                    userId:app.user.get('id')}));
             }
         },
 

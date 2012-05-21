@@ -10,7 +10,9 @@
             'swipeLeft article':'onSwipeLeftItem',
             'swipeRight article':'onSwipeRightItem',
             'click .remove-item-btn':'onRemoveItem',
-            'keydown .search-query':'onKyeDown'
+            'keydown .search-query':'onKyeDown',
+            'click .favorites-btn':'onClickFavoritesBtn',
+            'click .my-items-btn':'onClickMyItemsBtn'
         },
         initialize: function(options) {
             // Mobile shows only the first two fields
@@ -158,6 +160,14 @@
                 var model = this.collection.get(cid);
                 model.destroy();
             }
+        },
+        onClickFavoritesBtn:function (e) {
+            e.preventDefault();
+            this.collection.fetch();
+        },
+        onClickMyItemsBtn:function (e) {
+            e.preventDefault();
+            this.collection.fetch();
         },
         onEditItem:function(){
             app.logger.debug('EDIT ONE!');

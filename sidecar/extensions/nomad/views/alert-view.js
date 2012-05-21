@@ -9,28 +9,35 @@
          * @param options(optional) Alert options.
          * @return {Object} Alert instance.
          */
+        render:function () {
+            app.view.View.prototype.render.call(this);
+            this.$el.removeClass("alert");//hot fix styles
+        },
         show:function (options) {
-            this.alertType = options.level || 'general'; //general, success, error, warning
-            this.alertMessages = (_.isString(options.messages)) ? [options.messages] : options.messages;
-            this.autoClose = !!options.autoClose;
+            var alert = {
+                $el:$('<div>'),
+                autoClose:!!options.autoClose,
+                messages:(_.isString(options.messages)) ? [options.messages] : options.messages,
+                type:options.level || 'general',
+                close:function(){
+                    this.$el.remove();
+                }
+            };
 
-            this.$el.addClass('alert-' + this.alertType);
-            this.$el.show();
-            this.render();
-
-            if(this.autoClose) {
-                setTimeout(_.bind(function () {
-                    this.$el.fadeOut();
-                }, this), 9000);
+            if(alert.autoClose) {
+                setTimeout(function () {
+                    alert.$el.remove();
+                }, 9000);
             }
 
-            return this;
-        },
-        close:function(){
-            this.$el.hide();
+            var tmpl = app.template.get('panel.alert');
+
+            if (tmpl) {
+                alert.$el.append(tmpl(alert)).prependTo(this.$el);
+            }
+
+            return alert;
         }
-
-
     });
 
 })(SUGAR.App);

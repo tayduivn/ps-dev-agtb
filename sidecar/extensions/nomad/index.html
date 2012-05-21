@@ -36,6 +36,7 @@
     <script src='../../src/core/language.js'></script>
     <script src='../../src/core/metadata-manager.js'></script>
     <script src='../../src/core/acl.js'></script>
+    <script src='../../src/core/user.js'></script>
     <script src='../../src/utils/logger.js'></script>
 
     <script src='../../src/data/bean.js'></script>
@@ -55,15 +56,14 @@
     <script src='config.js'></script>
     <script src='views/field.js'></script>
     <script src='hbt-helpers.js'></script>
-    <!--<script src='layouts/list-layout.js'></script>-->
-    <!--<script src='layouts/detail-layout.js'></script>-->
-    <!--<script src='layouts/edit-layout.js'></script>-->
+    <script src='layouts/associate-layout.js'></script>
     <script src='views/header-view.js'></script>
     <script src='views/alert-view.js'></script>
     <script src='views/login-view.js'></script>
     <script src='views/list-view.js'></script>
     <script src='views/detail-view.js'></script>
     <script src='views/edit-view.js'></script>
+    <script src='views/associate-view.js'></script>
 
     <!-- Pre-compiled templates -->
     <!-- Fields -->
@@ -99,6 +99,8 @@
     <script src='compiled/list.js'></script>
     <script src='compiled/detail.js'></script>
     <script src='compiled/edit.js'></script>
+    <script src='compiled/associate.js'></script>
+    <script src='compiled/panel.alert.js'></script>
 
     <!-- Controllers for fields -->
     <script src='templates/fields/int/int.js'></script>
@@ -127,7 +129,7 @@
 <div id="nomad">
     <div id="header" class="navbar navbar-fixed-top hide"></div>
     <div id="content"></div>
-    <div id="alert" style="display: none;"></div>
+    <div id="alert"></div>
 </div>
 </body>
 

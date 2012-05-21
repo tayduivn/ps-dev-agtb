@@ -1,4 +1,4 @@
-<h1 class="nomad">{{context.attributes.module}}</h1>
+<h1 class="nomad">{{getLabel Associate}} {{context.attributes.module}}</h1>
 <div class="container-fluid">
   <div class="row-fluid">
       <div class="span12 listing fav filtered" id="listing-{{context.attributes.module}}">
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<span class="hide actions context-menu">
-          <a href="#" title="Edit" class="edit-item-btn"><i class="icon-pencil icon-md"></i><br>Edit</a>
-          <a href="#" title="Remove" class="remove-item-btn"><i class="icon-trash icon-md"></i><br>Remove</a>
-</span>
+<!--
+    TODO: Add Save/Cancel buttons
+    See extensions/mockups/associate_account.html
+-->
