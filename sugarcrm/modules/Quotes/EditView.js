@@ -58,7 +58,9 @@ function set_billing_return(popup_reply_data)
                 }
 			} else if(the_key == 'billing_account_name') {
 				window.document.forms[form_name].elements[the_key].value = val;
-				window.document.forms[form_name].elements['shipping_account_name'].value = val;
+                if(typeof window.document.forms[form_name].elements['shipping_account_name'] !== 'undefined') {
+				    window.document.forms[form_name].elements['shipping_account_name'].value = val;
+                }
 			} else if(override_values) {
 				window.document.forms[form_name].elements[the_key].value = val;
 			}
