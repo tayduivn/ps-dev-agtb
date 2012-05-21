@@ -73,6 +73,8 @@
 		CAL.year = {$year};
 		CAL.month = {$month};
 		CAL.day = {$day};
+
+		CAL.print = {$isPrint};
 		
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
