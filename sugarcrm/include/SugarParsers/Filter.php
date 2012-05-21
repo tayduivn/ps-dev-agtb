@@ -110,6 +110,14 @@ class SugarParsers_Filter
             // we can ignore this if the key is in as in requires an array of values
             $valueHasVariables = $this->valueArrayHasVariables($value);
 
+            // if the integer is a key, it will screw up the link check, so lets get the key name from the child value
+            if (is_integer($key)) {
+                $_key = array_shift(array_keys($value));
+                if (!is_integer($_key)) {
+                    $key = $_key;
+                }
+                $value = array_shift($value);
+            }
             // make the key and value be the contents of the array
             $bean = (empty($this->current_parent_module)) ? $this->bean : BeanFactory::getBean($this->current_parent_module);
             $links = $bean->get_linked_fields();
@@ -126,7 +134,6 @@ class SugarParsers_Filter
                     $key = $_key;
                 }
                 $value = array_shift($value);
-
             }
 
             $_filterKey = count($_filters);

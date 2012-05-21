@@ -271,7 +271,7 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMultipleFilters()
     {
         $this->obj = new SugarParsers_Filter(new Opportunity());
-        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"},{"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $obj = json_decode('{ "$and" : [{"timeperiod_id":"abc123"},{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
         $this->obj->parse($obj);
         $pFilter = $this->obj->getParsedFilter();
 
