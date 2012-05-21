@@ -13230,12 +13230,6 @@ $jit.BarChart = new Class({
 
       }
 
-
-
-
-
-
-      
       
       ch.push({
         'id': prefix + val.label,
@@ -13516,7 +13510,14 @@ $jit.BarChart = new Class({
         acum = Math.max.apply(null, valArray);
       }
       maxValue = maxValue>acum? maxValue:acum;
+
+     if (n.getData('goalMarker') != "" && n.getData('goalMarker') != undefined) {
+         var waterMarkMax  =  Math.max.apply(null,n.getData('goalMarker'));
+         maxValue = maxValue>waterMarkMax? maxValue:waterMarkMax;
+     }
     });
+
+      //console.log(maxValue);
     return maxValue;
   },
   

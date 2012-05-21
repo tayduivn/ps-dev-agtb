@@ -255,11 +255,11 @@
 
 		],
 		'goalmarkervalue' : [
-            410,
+            800,
             110
             ],
 		'goalmarkervaluelabel' : [
-            '410K',
+            '800K',
             '110k'
             ]
 
