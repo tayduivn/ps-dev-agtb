@@ -539,12 +539,6 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     } else {
         $this->setUserVariable($varName, "ORDER_BY", $sortBy);
     }
-    if($sortBy == 'amount') {
-        $sortBy = 'amount*1';
-    }
-    if($sortBy == 'amount_usdollar') {
-        $sortBy = 'amount_usdollar*1';
-    }
 
     $desc = $this->getSessionVariable($varName, $sortBy."S");
 
@@ -1830,11 +1824,11 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 		/**
 		 * @deprecated only used by legacy opportunites listview, nothing current. Leaving for BC
 		 */
-		if($orderBy == 'amount*1')
+		if($orderBy == 'amount')
 		{
 			$this->xTemplateAssign('amount_arrow', $imgArrow);
 		}
-		else if($orderBy == 'amount_usdollar*1')
+		else if($orderBy == 'amount_usdollar')
 		{
 			$this->xTemplateAssign('amount_usdollar_arrow', $imgArrow);
 		}
