@@ -183,6 +183,14 @@
                 collection = app.data.createRelatedCollection(parentModel, link);
             }
 
+            if (!this.has("parentModule")) {
+                this.set({ "parentModule": parentModel.module }, { silent: true });
+            }
+
+            if (!this.has("module")) {
+                this.set({ "module": model.module }, { silent: true });
+            }
+
             return {
                 parentModel: parentModel,
                 collection: collection,

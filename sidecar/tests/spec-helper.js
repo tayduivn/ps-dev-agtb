@@ -60,7 +60,7 @@ var SugarTest = {};
         var meta = (useJSMetadata) ? fixtures.metadata : SugarTest.loadFixture("metadata");
         SugarTest.app.metadata.set(meta);
         SugarTest.dm.reset();
-        SugarTest.dm.declareModels(meta);
+        SugarTest.dm.declareModels(meta.modules);
         SugarTest.metadata = meta;
     };
 

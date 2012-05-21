@@ -275,10 +275,9 @@ SUGAR.App = (function() {
 
             async.waterfall([function(callback) {
                 app.metadata.sync(callback);
-            }, function(metadata, callback) {
-                // declare models
-                app.data.declareModels(metadata);
-                callback(null, metadata);
+            }, function(callback) {
+                app.data.declareModels();
+                callback(null);
             }], function(err, result) {
                 if (err) {
                     app.error.handleHTTPError(err);

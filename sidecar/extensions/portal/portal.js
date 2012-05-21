@@ -704,7 +704,7 @@
     };
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
-        app.data.declareModels(base_metadata);
+        app.data.declareModels();
 
         // Example of a custom route: URL hash, route name, route handler
         app.router.route("foo", "foo", function() {
