@@ -34,7 +34,7 @@ $popupMeta = array('moduleMain' => 'OpportunityLine',
                 'varName' => 'OPPORTUNITY_LINE',
                 'orderBy' => 'name',
                 'whereClauses' => 
-                    array('name' => 'opportunity_line.name', 
+                    array('name' => 'opportunity_lines.name',
                         'opportunity_name' => 'opportunities.name'),
                 'searchInputs' =>
                     array('name', 'opportunity_name'),

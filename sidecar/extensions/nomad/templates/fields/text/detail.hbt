@@ -1,4 +1,2 @@
-<div class="row-fluid">
-    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
-    <div class="span4" name="{{name}}">{{value}}</div>
-</div>
+<label class="control-label">{{getLabel label model.module}}</label>:
+<span class="value">{{value}}</span>

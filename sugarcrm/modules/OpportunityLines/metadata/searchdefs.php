@@ -76,6 +76,12 @@ $searchdefs['OpportunityLines'] = array(
         'default' => true,
         'width' => '10%',
       ),
+      'expert_id' => 
+      array (
+        'name' => 'expert_id',
+        'default' => true,
+        'width' => '10%',
+      )
     ),
   ),
 );

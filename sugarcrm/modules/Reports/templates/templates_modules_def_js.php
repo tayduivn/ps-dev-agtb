@@ -410,8 +410,6 @@ for(module_name in module_defs)
 				module_defs[module_name].group_by_field_defs[field_def.name+':'+stype] = { name: field_def.name+':'+stype, field_def_name: field_def.name, vname: date_summary_types[stype]+': '+ field_def.vname,column_function:stype,summary_type:'column',field_type:field_type };
 			}
 
-
-//			module_defs[module_name].group_by_field_defs[ field_def.name ] = field_def;
 		}
 
 		if(field_def.name == 'amount')
@@ -495,10 +493,6 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 qualifiers[qualifiers.length] = {name:'tp_yesterday',value:'<?php echo $mod_strings['LBL_YESTERDAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_today',value:'<?php echo $mod_strings['LBL_TODAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_tomorrow',value:'<?php echo $mod_strings['LBL_TOMORROW']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_week',value:'<?php echo $mod_strings['LBL_LAST_WEEK']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_next_week',value:'<?php echo $mod_strings['LBL_NEXT_WEEK']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_7_days',value:'<?php echo $mod_strings['LBL_LAST_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_7_days',value:'<?php echo $mod_strings['LBL_NEXT_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_month',value:'<?php echo $mod_strings['LBL_LAST_MONTH']; ?>'};
@@ -506,10 +500,6 @@ qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_str
 qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_quarter',value:'<?php echo $mod_strings['LBL_LAST_QUARTER']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_this_quarter',value:'<?php echo $mod_strings['LBL_THIS_QUARTER']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};

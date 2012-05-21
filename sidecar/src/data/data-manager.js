@@ -183,10 +183,13 @@
 
         /**
          * Declares bean models and collections classes for each module definition.
-         * @param metadata metadata hash in which keys are module names and values are module definitions.
+         * @param modules(optional) metadata hash in which keys are module names and values are module definitions.
+         * Data manager uses {@link Core.MetadataManager#getModules} method to fetch metadata
+         * if `modules` parameter is not specified.
          */
-        declareModels: function(metadata) {
-            _.each(metadata.modules, function(module, name) {
+        declareModels: function(modules) {
+            modules = modules || app.metadata.getModules();
+            _.each(modules, function(module, name) {
                 this.declareModel(name, module);
             }, this);
         },
@@ -245,9 +248,7 @@
          * @return {Data.Bean} a new instance of the related bean or existing bean instance updated with relationship link information.
          */
         createRelatedBean: function(bean1, beanOrId2, link, attrs) {
-            var name = bean1.fields[link].relationship;
-            var relationship = bean1.relationships[name];
-            var relatedModule = bean1.module == relationship.lhs_module ? relationship.rhs_module : relationship.lhs_module;
+            var relatedModule = this.getRelatedModule(bean1.module, link);
 
             attrs = attrs || {};
             if (_.isString(beanOrId2)) {
@@ -307,9 +308,7 @@
          * @return {Data.BeanCollection} a new instance of the bean collection
          */
         createRelatedCollection: function(bean, link, models) {
-            var name = bean.fields[link].relationship;
-            var relationship = bean.relationships[name];
-            var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
+            var relatedModule = this.getRelatedModule(bean.module, link);
             var collection = this.createBeanCollection(relatedModule, models, {
                 /**
                  * Link information.
@@ -331,6 +330,36 @@
 
             bean._setRelatedCollection(link, collection);
             return collection;
+        },
+
+        /**
+         * Checks if a bean for a given module can have multiple related beans via a given link.
+         * @param {String} module Name of the module to do the check for.
+         * @param {String} link Relationship link name.
+         * @return {Boolean} `true` if the module's link is 'many'-type relationship, `false` otherwise.
+         */
+        canHaveMany: function(module, link) {
+            var meta = app.metadata.getModule(module);
+            var name = meta.fields[link].relationship;
+            var relationship = meta.relationships[name];
+            var t = relationship.relationship_type.split("-");
+            var type = module === relationship.rhs_module ? t[0] : t[2];
+            return type === "many";
+        },
+
+        /**
+         * Gets related module name.
+         * @param {String} module Name of the parent module.
+         * @param {String} link Relationship link name.
+         * @return {String} The name of the related module.
+         */
+        getRelatedModule: function(module, link) {
+            var meta = app.metadata.getModule(module);
+            var name = meta.fields[link].relationship;
+            var relationship = meta.relationships[name];
+
+            return module === relationship.rhs_module ?
+                relationship.lhs_module : relationship.rhs_module;
         },
 
         /**

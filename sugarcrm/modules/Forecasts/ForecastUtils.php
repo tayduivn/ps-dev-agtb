@@ -837,7 +837,7 @@ function createOppDataByUserQuery($user_id, $timeperiod_id)
     $query .= " FROM timeperiods t, opportunities o";
     $query .= " LEFT JOIN opp_line_bundle_opp olbo on o.id = olbo.opportunity_id
                 LEFT JOIN opp_line_bundle_opp_line olbol on olbo.bundle_id = olbol.bundle_id
-                LEFT JOIN opportunity_line ol on olbol.opportunity_line_id = ol.id";
+                LEFT JOIN opportunity_lines ol on olbol.opportunity_line_id = ol.id";
     $query .= " WHERE o.assigned_user_id = '$user_id'
                     AND t.id = '$timeperiod_id'
                     AND o.date_closed <= t.end_date

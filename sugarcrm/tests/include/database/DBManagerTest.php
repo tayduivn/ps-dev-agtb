@@ -2218,6 +2218,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @group hierarchies
+     */
     public function testRecursiveQueryMultiHierarchy()
     {
         $this->_db->preInstall();

@@ -2,7 +2,7 @@
 
     app.view.views.ListView = app.view.View.extend({
         ITEM_TYPE_DELAY:400,
-        MAX_PAGE_SIZE:25,
+        MAX_PAGE_SIZE:20,
         events:{
             'click  .show-more-top-btn':'showMoreTopRecords',
             'click  .show-more-bottom-btn':'showMoreBottomRecords',
@@ -10,7 +10,9 @@
             'swipeLeft article':'onSwipeLeftItem',
             'swipeRight article':'onSwipeRightItem',
             'click .remove-item-btn':'onRemoveItem',
-            'keydown .search-query':'onKyeDown'
+            'keydown .search-query':'onKyeDown',
+            'click .favorites-btn':'onClickFavoritesBtn',
+            'click .my-items-btn':'onClickMyItemsBtn'
         },
         initialize: function(options) {
             // Mobile shows only the first two fields
@@ -20,6 +22,11 @@
             this.activeArticle = null;
 
             this.timerId = null;
+        },
+        render:function(){
+            app.view.View.prototype.render.call(this);
+
+            this.contextMenuEl = this.$('.context-menu');
         },
         onKyeDown:function(){
             if(this.timerId){
@@ -60,6 +67,8 @@
             }
         },
         showMoreTopRecords:function () {
+            app.alert.show('show_top_records', {level:'general', messages:'Loading...'});
+
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult,0);
 
             if (offset === 0) {
@@ -97,9 +106,12 @@
 
                     this.collection.offset += this.collection.length - app.config.maxQueryResult;
 
+                    app.alert.dismiss('show_top_records');
+
                 }, this)});
         },
         showMoreBottomRecords:function () {
+            app.alert.show('show_bottom_records', {level:'general', messages:'Loading...'});
             this.collection.paginate({add:true,
                 success:_.bind(function () {
                     if (this.collection.length > this.getMaxPageSize()) {
@@ -114,6 +126,7 @@
                     if (this.collection.next_offset === -1) {
                         this.$('.show-more-bottom-btn').hide();
                     }
+                    app.alert.dismiss('show_bottom_records');
 
                 }, this)});
         },
@@ -131,6 +144,7 @@
             }
 
             this.activeArticle = $(e.target);
+            this.contextMenuEl.appendTo(this.activeArticle.find('.menu-container'));
             this.activeArticle.find('.grip').addClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
         },
@@ -146,6 +160,14 @@
                 var model = this.collection.get(cid);
                 model.destroy();
             }
+        },
+        onClickFavoritesBtn:function (e) {
+            e.preventDefault();
+            this.collection.fetch();
+        },
+        onClickMyItemsBtn:function (e) {
+            e.preventDefault();
+            this.collection.fetch();
         },
         onEditItem:function(){
             app.logger.debug('EDIT ONE!');

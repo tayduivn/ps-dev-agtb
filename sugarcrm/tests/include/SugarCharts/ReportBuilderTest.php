@@ -396,6 +396,14 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:member_of', $return);
     }
 
+    public function testMultiLevelLink()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->addLink('assigned_user_link', 'user_name', array('Accounts', 'contacts'));
+        $return = $rb->getLinkTable();
+        $this->assertEquals('Accounts:contacts:assigned_user_link', $return['assigned_user_link']);
+    }
+
     protected function objectToArray($d)
     {
         if (is_object($d)) {

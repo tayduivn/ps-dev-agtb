@@ -30,7 +30,7 @@
              */
             element: function(settings, original) {
                 var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.context.fieldDef.options), function (value, key) {
+                _.each(app.lang.getAppListStrings(settings.context.def.options), function (value, key) {
                     var option = $("<option>").val(key).append(value);
                     selEl.append(option);
                 });
@@ -71,14 +71,14 @@
 
         var self = this;
 
-        this.cteField = this.$el.find('.cte' + this.cteclass);
+        this.cteField = this.$el.find('.cte' + this.def.cteclass);
         this.cteIcon = this.cteField.parent().find('.cteIcon');
         this.undoIcon = this.cteField.parent().find('.cteUndoIcon');
 
         this.undoIcon.on('click', null, self, this.doUndo);
         this.cteField.editable(self.doChange,
             {
-                type: self.ctetype || "text",
+                type: self.def.ctetype || "text",
                 select: true,
                 onedit: self.doEdit,
                 onreset: function(){console.log("onreset"); console.log(this);},

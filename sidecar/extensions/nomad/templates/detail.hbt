@@ -1,29 +1,38 @@
+<h1 class="nomad">Details</h1>
+<div class="bizcard">
+    <div class="card">
 
+        {{#with meta.panels.[0]}}
+            <h3>
+            {{#with fields.[0]}}
+            {{field     ../../context    ../../this   ../../model}}
+            {{/with}}
+            </h3>
 
-<h1 class="nomad">Create Opportunity</h1>
-<div class="form-horizontal" id="createRecord">
-  <div id="scroll">
-  <fieldset class="pad">
+            {{#with fields.[1]}}
+            {{field     ../../context    ../../this   ../../model}}
+            {{/with}}
 
-    {{#each model.attributes}}
-      <div class="control-group">
-        {{field context view model}}
-      </div>
-    {{/each}}
+            {{#with fields.[2]}}
+            {{field     ../../context    ../../this   ../../model}}
+            {{/with}}
 
-    {{#each meta.panels}}
-    <div class="items">
-    {{#each ../context.attributes.collection.models}}
-        <div class="control-group">
-            {{#each ../fields}}
-                {{field     ../../../context    ../../../this   ../this}}
-            {{/each}}
-        </div>
-    {{/each}}
+            {{#with fields.[3]}}
+            {{field     ../../context    ../../this   ../../model}}
+            {{/with}}
+
+            {{#with fields.[4]}}
+            {{field     ../../context    ../../this   ../../model}}
+            {{/with}}
+        {{/with}}
+
     </div>
-    {{/each}}
-
-  </fieldset>
-  </div>
+    <a href="#{{model.module}}/{{model.id}}/edit"><i class="icon-chevron-right more"></i></a>
+    <div id="record-action" class="row-fluid">
+    </div>
 </div>
-
+<fieldset>
+    <div>
+        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+    </div>
+</fieldset>

@@ -9,35 +9,35 @@
          * @param options(optional) Alert options.
          * @return {Object} Alert instance.
          */
-        show: function(options) {
-            // TODO: Implement
+        render:function () {
+            app.view.View.prototype.render.call(this);
+            this.$el.removeClass("alert");//hot fix styles
+        },
+        show:function (options) {
+            var alert = {
+                $el:$('<div>'),
+                autoClose:!!options.autoClose,
+                messages:(_.isString(options.messages)) ? [options.messages] : options.messages,
+                type:options.level || 'general',
+                close:function(){
+                    this.$el.remove();
+                }
+            };
 
-            // This method should return some object that implements 'close' function
-            // It can be a custom Backbone.View but not necessarily
+            if(alert.autoClose) {
+                setTimeout(function () {
+                    alert.$el.remove();
+                }, 9000);
+            }
 
-            // Alerts are managed by SUGAR.App.alert module (view/alert.js)
-            // From any place in the app one can invoke:
-            // app.alert.show(key, { ...});
-            // app.alert.dismiss(key); -- this calls the 'close' function on whatever object we return from this method
+            var tmpl = app.template.get('panel.alert');
 
-            // For our mobile app the options are:
-            // - autoclose: true/false
-            // - level: error, warning, success, info
-            // - message: already localized message
+            if (tmpl) {
+                alert.$el.append(tmpl(alert)).prependTo(this.$el);
+            }
 
-            // We need to be able to show multiple alerts on top of each other
-            // Multiple alerts can be of the same type (level) or different types
-
-            // Some of them are autocloseable with a timeout, others should be manually closeable by tapping 'x' icon
-
-            // See extensions/nomad/mockups/accounts_msg_process_multiple.html
-            // and sidecar/src/views/alert-view.js for portal implementation
-
-            // The handlebars template should be in extensions/nomad/templates/alert.hbt
-
-            return null;
+            return alert;
         }
-
     });
 
 })(SUGAR.App);

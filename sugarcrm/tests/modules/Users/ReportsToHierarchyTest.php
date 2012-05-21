@@ -34,6 +34,7 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $GLOBALS['db']->preInstall();
         global $beanList, $beanFiles, $current_user;
         require('include/modules.php');
 
@@ -68,14 +69,39 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @outputBuffering disabled
-     *
+     * @group hierarchies
      */
     public function testReportsToHierarchyFunction()
     {
         global $current_user;
         $ids = $current_user->get_reports_to_hierarchy();
-        //This should return 4 ids (employee1, employee2, employee3 and employee4)
+        $this->assertEquals(5, count($ids));
+
+        $ids = $current_user->get_reports_to_hierarchy(false, false);
         $this->assertEquals(4, count($ids));
+
+        $ids = $this->employee1->get_reports_to_hierarchy();
+        $this->assertEquals(1, count($ids));
+
+        $ids = $this->employee1->get_reports_to_hierarchy(false, false);
+        $this->assertEquals(0, count($ids));
+
+        $ids = $this->employee2->get_reports_to_hierarchy();
+        $this->assertEquals(3, count($ids));
+
+        $ids = $this->employee2->get_reports_to_hierarchy(false, false);
+        $this->assertEquals(2, count($ids));
+
+        $ids = $this->employee3->get_reports_to_hierarchy();
+        $this->assertEquals(2, count($ids));
+
+        $ids = $this->employee3->get_reports_to_hierarchy(false, false);
+        $this->assertEquals(1, count($ids));
+
+        $ids = $this->employee4->get_reports_to_hierarchy();
+        $this->assertEquals(1, count($ids));
+
+        $ids = $this->employee4->get_reports_to_hierarchy(false, false);
+        $this->assertEquals(0, count($ids));
     }
 }
