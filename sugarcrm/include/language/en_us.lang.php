@@ -3293,7 +3293,6 @@ $app_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User',
     'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To ID',
     'LBL_EXPORT_FULL_NAME' => 'Full Name',
-    'LBL_EXPORT_TITLE' => 'Create',
     'LBL_EXPORT_TEAM_ID' => 'Team ID',
     'LBL_EXPORT_TEAM_NAME' => 'Teams',
     'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
