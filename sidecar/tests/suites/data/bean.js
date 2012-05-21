@@ -39,7 +39,7 @@ describe("Bean", function() {
     });
 
     it("should be able to create a collection of related beans", function() {
-        dm.declareModels(metadata);
+        dm.declareModels(metadata.modules);
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
 

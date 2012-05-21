@@ -183,10 +183,13 @@
 
         /**
          * Declares bean models and collections classes for each module definition.
-         * @param metadata metadata hash in which keys are module names and values are module definitions.
+         * @param modules(optional) metadata hash in which keys are module names and values are module definitions.
+         * Data manager uses {@link Core.MetadataManager#getModules} method to fetch metadata
+         * if `modules` parameter is not specified.
          */
-        declareModels: function(metadata) {
-            _.each(metadata.modules, function(module, name) {
+        declareModels: function(modules) {
+            modules = modules || app.metadata.getModules();
+            _.each(modules, function(module, name) {
                 this.declareModel(name, module);
             }, this);
         },
