@@ -349,16 +349,12 @@ class TeamSetManager {
         sugar_cache_clear(TEAM_SET_CACHE_KEY);
 
         if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
-            //unlink($cachefile);
-            // resolve race conditions when other process tries to include the file while we remove it
-            file_put_contents($cachefile, "<?php\n\n".'$teamSets = array();'."\n ?>");
+            unlink($cachefile);
         }
 
         sugar_cache_clear(TEAM_SET_MD5_CACHE_KEY);
         if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php')) ) {
-            //unlink($cachefile);
-            // resolve race conditions when other process tries to include the file while we remove it
-            file_put_contents($cachefile, "<?php\n\n".'$teamSetsMD5 = array();'."\n ?>");
+            unlink($cachefile);
         }
     }
 
