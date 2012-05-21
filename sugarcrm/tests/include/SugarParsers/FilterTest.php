@@ -211,8 +211,8 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->parse($obj);
         $pFilter = $this->obj->getParsedFilter();
 
-        $this->assertInstanceOf("SugarParsers_Filter_And", $pFilter['member_of']);
-        $andFilterObject = $pFilter['member_of']->getValue();
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $pFilter['member_of']);
+        $andFilterObject = $pFilter['member_of']->getValue()->getValue();
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['state']);
         $this->assertEquals("UT", $andFilterObject['state']->getValue());
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['country']);
@@ -245,6 +245,18 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $reports_to = array_shift($pFilter['assigned_user_link']->getValue());
 
         $this->assertSame(array('seed_chris_id'), $reports_to->getValue());
+    }
+
+    public function testMultiLinkToFilter()
+    {
+        $obj = json_decode('{"contacts": {"assigned_user_link":{ "user_name" : "seed_chris_id"} } }');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $pFilter['contacts']);
+        $linkFilterObject = $pFilter['contacts']->getValue();
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $linkFilterObject['assigned_user_link']);
+        $this->assertEquals('Users', $linkFilterObject['assigned_user_link']->getTargetModule());
     }
 
 }

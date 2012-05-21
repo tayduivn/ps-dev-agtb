@@ -29,14 +29,21 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $filter;
 
+    /**
+     * @var SugarParsers_Converter_Report
+     */
+    protected $converter;
+
     public function setUp()
     {
+        $this->converter = new SugarParsers_Converter_Report($this->createTestReportBuilder());
         $this->filter = new SugarParsers_Filter(new Account());
     }
 
     public function tearDown()
     {
         unset($this->filter);
+        unset($this->converter);
         $filterDict = new FilterDictionary();
         $filterDict->resetCache();
     }
@@ -46,15 +53,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEqualFilterConvert()
     {
-        $obj = json_decode('{"billing_postalcode":"90210"}');
+        $obj = json_decode('{"billing_address_postalcode":"90210"}');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'equals',
                 'input_name0' => '90210'
@@ -69,15 +76,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNotEqualFilterConvert()
     {
-        $obj = json_decode('{"billing_postalcode": { "$not" : "90210" } }');
+        $obj = json_decode('{"billing_address_postalcode": { "$not" : "90210" } }');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'not_equals',
                 'input_name0' => '90210'
@@ -93,15 +100,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInFilterConvert()
     {
 
-        $obj = json_decode('{"billing_postalcode": { "$in" : ["90210", "46052"] }}');
+        $obj = json_decode('{"billing_address_postalcode": { "$in" : ["90210", "46052"] }}');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'one_of',
                 'input_name0' => array(
@@ -120,15 +127,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNotInFilterConvert()
     {
 
-        $obj = json_decode('{"billing_postalcode": { "$not" : { "$in" : ["90210", "46052"] }}}');
+        $obj = json_decode('{"billing_address_postalcode": { "$not" : { "$in" : ["90210", "46052"] }}}');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'not_one_of',
                 'input_name0' => array(
@@ -146,21 +153,21 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAndFilterConvert()
     {
-        $obj = json_decode('{"$and" : [{"first_name":"William"},{"last_name":"Williamson"}] }');
+        $obj = json_decode('{"$and" : [{"name":"William"},{"name":"Williamson"}] }');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'first_name',
+                'name' => 'name',
                 'table_key' => 'self',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'William'
             ),
             1 => array(
-                'name' => 'last_name',
+                'name' => 'name',
                 'table_key' => 'self',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'Williamson'
@@ -176,21 +183,21 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOrFilterConvert()
     {
-        $obj = json_decode('{"$or" : [{"first_name":"William"},{"first_name":"Jon"}] }');
+        $obj = json_decode('{"$or" : [{"name":"William"},{"name":"Jon"}] }');
 
         $this->filter->parse($obj);
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'OR',
             0 => array(
-                'name' => 'first_name',
+                'name' => 'name',
                 'table_key' => 'self',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'William'
             ),
             1 => array(
-                'name' => 'first_name',
+                'name' => 'name',
                 'table_key' => 'self',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'Jon'
@@ -206,15 +213,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmptyFilterConvert()
     {
-        $obj = json_decode('{"billing_postalcode":"$empty"}');
+        $obj = json_decode('{"billing_address_postalcode":"$empty"}');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'empty',
                 'input_name0' => null
@@ -229,15 +236,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNotEmptyFilterConvert()
     {
-        $obj = json_decode('{"billing_postalcode": { "$not" : "$empty" }}');
+        $obj = json_decode('{"billing_address_postalcode": { "$not" : "$empty" }}');
         $this->filter->parse($obj);
 
-        $actual = $this->filter->convert(new SugarParsers_Converter_Report());
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'billing_postalcode',
+                'name' => 'billing_address_postalcode',
                 'table_key' => 'self',
                 'qualifier_name' => 'not_empty',
                 'input_name0' => null
@@ -255,9 +262,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $obj = json_decode('{"postalcode": { "$not" : "$empty" }}');
         $this->filter->parse($obj);
 
-        $converter = new SugarParsers_Converter_Report();
-        $converter->setReportBuilder($this->createTestReportBuilder());
-        $actual = $this->filter->convert($converter);
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
@@ -274,23 +279,19 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $obj = json_decode('{"member_of":{"$and":[{"billing_address_state":"UT"},{"billing_address_country":"USA"}]}}');
 
         $this->filter->parse($obj);
-
-        $converter = new SugarParsers_Converter_Report();
-        $converter->setReportBuilder($this->createTestReportBuilder());
-
-        $actual = $this->filter->convert($converter);
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
                 'name' => 'billing_address_state',
-                'table_key' => 'Accounts:member_of',
+                'table_key' => 'self:member_of',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'UT'
             ),
             1 => array(
                 'name' => 'billing_address_country',
-                'table_key' => 'Accounts:member_of',
+                'table_key' => 'self:member_of',
                 'qualifier_name' => 'equals',
                 'input_name0' => 'USA'
             )
@@ -305,22 +306,28 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $obj = json_decode('{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}');
         $this->filter->parse($obj);
 
-        $converter = new SugarParsers_Converter_Report();
-        $converter->setReportBuilder($this->createTestReportBuilder());
-
-        $actual = $this->filter->convert($converter);
+        $actual = $this->filter->convert($this->converter);
 
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
                 'name' => 'user_name',
-                'table_key' => 'Accounts:assigned_user_link',
+                'table_key' => 'self:assigned_user_link',
                 'qualifier_name' => 'reports_to',
                 'input_name0' => array('seed_chris_id')
             ),
         ));
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testMultiLinkToFilterConvert()
+    {
+        $obj = json_decode('{"contacts": {"assigned_user_link":{ "user_name" : "seed_chris_id"} } }');
+        $this->filter->parse($obj);
+        $actual = $this->filter->convert($this->converter);
+        $this->assertEquals('self:contacts:assigned_user_link', $actual['Filter_1'][0]['table_key']);
+
     }
 
     protected function createTestReportBuilder()
