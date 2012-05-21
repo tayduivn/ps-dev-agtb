@@ -33,39 +33,39 @@ require_once 'modules/Forecasts/ForecastUtils.php';
 
 class syncTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $product;
-    private $lineItem;
-    private $product_bundle;
     private $quote;
+    private $product_bundle;
+    private $product;
     private $opp;
+    private $opp_line_bundle;
+    private $opp_line;
 
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
         $this->product = SugarTestProductUtilities::createProduct();
-
-        $this->lineItem = SugarTestOppLineItemUtilities::createLine();
-
         $this->product_bundle = SugarTestProductBundleUtilities::createProductBundle();
-
         $this->quote = SugarTestQuoteUtilities::createQuote();
-
         $this->opp = SugarTestOpportunityUtilities::createOpportunity();
+        $this->opp_line_bundle = SugarTestOppLineBundleUtilities::createLineBundle();
+        $this->opp_line = SugarTestOppLineItemUtilities::createLine();
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestOppLineItemUtilities::removeAllCreatedLines();
         SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        unset($GLOBALS['current_user']);
     }
 
+    /**
+     * testSyncQuoteWithOpportunity
+     */
     public function testSyncQuoteWithOpportunity()
     {
         //case #1: Quote has a bundle with a product. Opp has no bundles. Sync quote with opp.
@@ -115,5 +115,24 @@ class syncTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestOppLineBundleUtilities::setCreatedLineBundle($bundleId);
         SugarTestOppLineItemUtilities::setCreatedLine($itemId);
+    }
+
+
+    /**
+     * testSyncOpportunityWithQuote
+     *
+     */
+    public function testSyncOpportunityWithQuote()
+    {
+        $this->opp_line->product_id = $this->product->id;
+        $this->opp_line->save();
+        $this->opp_line_bundle->set_opportunitylinebundle_opportunityline_relationship($this->opp_line->id, 1, $this->opp_line_bundle->id);
+        $this->opp_line_bundle->set_opportunitylinebundle_opportunity_relationship($this->opp->id, $this->opp_line_bundle->id, 1);
+        $result = syncQuoteWithOpportunity($this->quote->id, $this->opp->id, 'to_quote');
+        $this->assertNotEmpty($result);
+        $product = new Product();
+        $product->retrieve($result['quote']['bundles'][0]['products'][0]['id']);
+        $this->assertEquals($this->opp_line->quantity, $product->quantity, 'Assert that the quantity value was synced');
+        $this->assertEquals($this->opp_line->tax_class, $product->tax_class, 'Assert that the tax_class value was synced');
     }
 }

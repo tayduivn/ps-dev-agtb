@@ -184,6 +184,28 @@ describe("View Manager", function() {
                 context: context
             });
             expect(layout instanceof app.view.Layout).toBeTruthy();
+            expect(layout._components.length).toEqual(1);
+            expect(layout._components[0].layout).toEqual(layout);
+        });
+
+        it('layout that has a child layout', function () {
+            var parent = app.view.createLayout({
+                name : "parent",
+                context: context
+            });
+
+            var child = app.view.createLayout({
+                name : "child",
+                context: context
+            });
+
+            parent.addComponent(child);
+            expect(parent._components.length).toEqual(1);
+            expect(child.layout).toEqual(parent);
+
+            parent.removeComponent(child);
+            expect(child.layout).toBeNull();
+            expect(parent._components.length).toEqual(0);
         });
 
         it("layout with a custom controller", function () {
@@ -273,14 +295,40 @@ describe("View Manager", function() {
             view = new app.view.View({ name: "test", context: context });
         });
 
+        it("with viewdef merged with vardef", function() {
+            var def = fixtures.metadata.modules.Cases.views.edit.meta.panels[0].fields[0];
+            var ctx = app.context.getContext();
+            ctx.set({
+                module: "Cases",
+                model: app.data.createBean("Cases")
+            });
+            var result = app.view.createField({
+                def: def,
+                context: ctx,
+                view: new app.view.View({ name: "edit", context: context })
+            });
+
+            expect(result instanceof app.view.Field).toBeTruthy();
+            expect(result.type).toEqual("float");
+            expect(result.name).toEqual("case_number");
+            expect(result.label).toEqual("Case Number");
+            expect(result.def.round).toEqual(2);
+            expect(result.def.precision).toEqual(2);
+            expect(result.def.number_group_seperator).toEqual(",");
+            expect(result.def.decimal_seperator).toEqual(".");
+            expect(result.def.class).toEqual("foo");
+        });
+
+
         it("with default template", function() {
             var fieldId = app.view.getFieldId();
+            var def = {
+                type: 'addresscombo',
+                name: "address",
+                label: "Address"
+            };
             var result = app.view.createField({
-                def: {
-                    type: 'addresscombo',
-                    name: "address",
-                    label: "Address"
-                },
+                def: def,
                 context: context,
                 view: view
             });
@@ -290,7 +338,7 @@ describe("View Manager", function() {
             expect(result.name).toEqual("address");
             expect(result.label).toEqual("Address");
             expect(result.context).toEqual(context);
-            expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
+            expect(result.def).toEqual(def);
             expect(result.model).toEqual(bean);
             expect(result.sfId).toEqual(fieldId + 1);
             expect(view.fields[result.sfId]).toEqual(result);

@@ -25,8 +25,8 @@ describe("Bean", function() {
         expect(error.required).toBeTruthy();
 
         var spy = sinon.spy();
-        bean.on("app:error:validation:account_name", spy);
-        bean.on("app:error:validation:name", spy);
+        bean.on("error:validation:account_name", spy);
+        bean.on("error:validation:name", spy);
         expect(bean.isValid()).toBeFalsy();
         expect(spy).toHaveBeenCalledTwice();
     });
@@ -39,7 +39,7 @@ describe("Bean", function() {
     });
 
     it("should be able to create a collection of related beans", function() {
-        dm.declareModels(metadata);
+        dm.declareModels(metadata.modules);
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
 

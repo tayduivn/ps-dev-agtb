@@ -40,4 +40,9 @@ $mod_strings = array (
     'LBL_TAX_CLASS' => 'Tax Class',
     'LBL_QUANTITY' => 'Quantity',
     'LBL_PRICE' => 'Price',
+    'LBL_LIST_FORM_TITLE' => 'Opportunity Line Item List',
+    'LBL_SEARCH_FORM_TITLE' => 'Opportunity Line Item Search',
+    'LBL_LIST_OPPORTUNITY_LINE_NAME' => 'Name',
+    'LBL_LIST_OPPORTUNITY_NAME' => 'Opportunity Name',
+    'LBL_EXPERT_ID' => 'Product Expert',
 );

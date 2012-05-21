@@ -14,7 +14,7 @@
                         <thead>
                         <tr role="row">
                             {{#each fields}}
-                            <th class="{{#if sorting}}sorting{{eq ../../../context.attributes.collection.orderBy.field name ../../../this.orderBy.direction ""}} orderBy{{name}}{{/if}}"
+                            <th class="{{#if sorting}}sorting{{#eq ../../../context.attributes.collection.orderBy.field name}}{{{../../../../this.orderBy.direction}}}{{/eq}} orderBy{{name}}{{/if}}"
                                 role="columnheader" data-fieldname="{{name}}">
                                 {{getLabel label ../../context.attributes.module}}
                             </th>
@@ -33,11 +33,13 @@
                     </table>
                     {{/each}}
                 </div>
-                <div class="block-footer">
-                    {{#each meta.buttons}}
-                    {{field ../context ../this ../model}}
-                    {{/each}}
-                </div>
+                {{#notEq collection.next_offset "-1"}}
+                    <div class="block-footer">
+                            {{#each meta.buttons}}
+                                {{field ../context ../this ../model}}
+                            {{/each}}
+                    </div>
+                {{/notEq}}
                 <ul class="nav nav-pills actions">
                     <li>
                         <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i

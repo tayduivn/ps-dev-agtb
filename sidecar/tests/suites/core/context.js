@@ -217,7 +217,7 @@ describe("Context", function() {
 
     describe("Child context", function() {
 
-        it("should create child contexts and prepare data", function() {
+        it("should create and prepare child contexts from a parent model", function() {
             var model = app.data.createBean("Contacts", { id: "xyz"});
             var context = app.context.getContext({
                 module: "Contacts",
@@ -225,29 +225,51 @@ describe("Context", function() {
             });
 
             var subcontext = context.getChildContext({ module: "Accounts" });
-            var subrelatedContext = context.getChildContext({ link: "accounts" });
 
-            expect(context.children.length).toEqual(2);
+            expect(context.children.length).toEqual(1);
             expect(subcontext.parent).toEqual(context);
-            expect(subcontext.attributes.module).toEqual("Accounts");
-
-            expect(subrelatedContext.parent).toEqual(context);
-            expect(subrelatedContext.attributes.link).toEqual("accounts");
-            expect(subrelatedContext.attributes.parentModel).toEqual(model);
+            expect(subcontext.get("module")).toEqual("Accounts");
 
             var subcontext2 = context.getChildContext({ module: "Accounts" });
             expect(subcontext).toEqual(subcontext2);
+
+            expect(context.children.length).toEqual(1);
+
+            subcontext.prepare();
+            expect(subcontext.get("model")).toBeDefined();
+            expect(subcontext.get("module")).toEqual("Accounts");
+
+            context.clear();
+            expect(context.children.length).toEqual(0);
+            expect(context.parent).toBeNull();
+        });
+
+        it("should create and prepare child contexts from a link name", function() {
+            var model = app.data.createBean("Contacts", { id: "xyz"});
+            var context = app.context.getContext({
+                module: "Contacts",
+                model: model
+            });
+
+            var subrelatedContext = context.getChildContext({ link: "accounts" });
+
+            expect(context.children.length).toEqual(1);
+
+            expect(subrelatedContext.parent).toEqual(context);
+            expect(subrelatedContext.get("link")).toEqual("accounts");
+            expect(subrelatedContext.get("parentModel")).toEqual(model);
+
             var subrelatedContext2 = context.getChildContext({ link: "accounts" });
             expect(subrelatedContext).toEqual(subrelatedContext2);
 
-            expect(context.children.length).toEqual(2);
-
-            subcontext.prepare();
-            expect(subcontext.attributes.model).toBeDefined();
+            expect(context.children.length).toEqual(1);
 
             subrelatedContext.prepare();
-            expect(subcontext.attributes.model).toBeDefined();
-            expect(subcontext.attributes.model.module).toEqual("Accounts");
+
+            expect(subrelatedContext.get("model")).toBeDefined();
+            expect(subrelatedContext.get("model").module).toEqual("Accounts");
+            expect(subrelatedContext.get("parentModule")).toEqual("Contacts");
+            expect(subrelatedContext.get("module")).toEqual("Accounts");
 
             context.clear();
             expect(context.children.length).toEqual(0);
@@ -255,7 +277,6 @@ describe("Context", function() {
             subrelatedContext.clear();
             expect(context.parent).toBeNull();
         });
-
     });
 
 });

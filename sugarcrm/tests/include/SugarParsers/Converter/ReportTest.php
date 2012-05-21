@@ -301,6 +301,9 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testReportsToFilterConvert()
     {
         $obj = json_decode('{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}');
@@ -321,6 +324,9 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @group SugarParser
+     */
     public function testMultiLinkToFilterConvert()
     {
         $obj = json_decode('{"contacts": {"assigned_user_link":{ "user_name" : "seed_chris_id"} } }');
@@ -328,6 +334,19 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $this->filter->convert($this->converter);
         $this->assertEquals('self:contacts:assigned_user_link', $actual['Filter_1'][0]['table_key']);
 
+    }
+
+    /**
+     * @group SugarParser
+     */
+    public function testMultipleFiltersConvert()
+    {
+        $this->filter = new SugarParsers_Filter(new Opportunity());
+        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"}, {"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $this->filter->parse($obj);
+        $converter = new SugarParsers_Converter_Report();
+        $converter->setReportBuilder($this->createTestReportBuilder());
+        $actual = $this->filter->convert($converter);
     }
 
     protected function createTestReportBuilder()

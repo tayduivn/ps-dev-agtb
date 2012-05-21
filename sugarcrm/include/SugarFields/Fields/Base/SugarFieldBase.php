@@ -78,6 +78,10 @@ class SugarFieldBase {
         return $rawField;
     }
 
+    public function apiFormatField($data, $bean, $args, $fieldName, $properties) {
+        $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+    }
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex = -1, $view){
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);

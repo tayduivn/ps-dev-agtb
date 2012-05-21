@@ -158,6 +158,9 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			case 'oci8':
 				$schemaFileName = $schemaFileName . '_oracle.sql';
 				break;
+            case 'ibm_db2':
+                $schemaFileName = $schemaFileName . '_ibm_db2.sql';
+                break;				
 		}
 
 

@@ -150,6 +150,9 @@ public function tearDown()
     SugarTestOpportunityUtilities::removeAllCreatedOpps();
 }
 
+/**
+ * @group hierarchies
+ */
 public function testForecastTree()
 {
     global $current_user;
@@ -219,7 +222,7 @@ public function testForecastTree()
     FROM opportunities
     LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
 
-    LEFT JOIN  opportunity_line l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
+    LEFT JOIN  opportunity_lines l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
 
      AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
                                         tst INNER JOIN team_memberships team_memberships ON tst.team_id =

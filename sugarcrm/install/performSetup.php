@@ -393,6 +393,10 @@ echo "<br>";
     );
 
     global $db;
+
+    //Call preInstall function
+    $db->preInstall();
+
     addDefaultRoles($ACLaccessOverride);
 //END SUGARCRM flav=dce ONLY
 

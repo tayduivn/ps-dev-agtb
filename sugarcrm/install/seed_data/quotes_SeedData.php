@@ -105,7 +105,7 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 	                       $product->$field = $row[$field];
 						}
 					}	                
-
+					$product->product_template_id = $row['id'];
 					$product->name = $products['name'];
 					$product->id = create_guid();
 					$product->new_with_id = true;

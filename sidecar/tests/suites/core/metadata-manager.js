@@ -56,12 +56,20 @@ describe('Metadata Manager', function() {
         expect(app.metadata.getStrings("appListStrings")).toBe(meta.appListStrings);
     });
 
+    it('should patch field displayParams metadata', function() {
+        var field = app.metadata.getView("Contacts", "edit").panels[0].fields[2];
+        expect(_.isObject(field)).toBeTruthy();
+        expect(field.name).toEqual("phone_home");
+        expect(field.type).toEqual("text");
+        expect(field.label).toEqual("Phone");
+        expect(field.required).toBeTruthy();
+    });
+
     it('should patch view metadata', function() {
         var field = app.metadata.getView("Contacts", "detail").panels[0].fields[3];
         expect(_.isObject(field)).toBeTruthy();
         expect(field.name).toEqual("phone_home");
         expect(field.type).toEqual("text");
-        expect(field.label).toEqual("LBL_PHONE_HOME");
     });
 
     it("should delegate to view-manager if has a custom view controller", function() {
@@ -149,5 +157,26 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:f:password"]).toBeUndefined();
         });
 
+    });
+
+
+    describe('Event Listeners through Metadata', function(){
+        var app;
+
+        beforeEach(function() {
+            app = SugarTest.app;
+            SugarTest.seedMetadata();
+        });
+
+        it("should find event listeners in metadata", function() {
+            var module = "Cases",
+                layout = "list",
+                view   = "grid";
+
+            // have to call the layout first before we can get the listeners
+            var listLayout = app.metadata.getLayout("Cases","list");
+            var gridListeners = app.metadata.getListeners( module, layout, view );
+            expect(gridListeners).toEqual([{"treeview:node_select" : "filterGridById"}])
+        });
     });
 });

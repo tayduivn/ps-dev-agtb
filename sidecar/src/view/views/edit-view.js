@@ -23,6 +23,7 @@
                     app.alert.dismiss('save_edit_view');
                     self.app.navigate(self.context, self.model, 'detail');
                 },
+                fieldsToValidate: this.getFields(this.model.module)
             });
         },
         bindDataChange: function() {

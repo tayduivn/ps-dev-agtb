@@ -247,12 +247,34 @@ fixtures.metadata = {
                         ]
                     }
                 },
+                // added complex layout with listeners for testing purposes
                 "list": {
                     "meta": {
                         //Default layout is a single view
-                        "type": "simple",
-                        "components": [
-                            {view: "list"}
+                        "type" : "fluid",
+                        "components" : [
+                            {
+                                "size" : "2",
+                                "layout" : {
+                                    "type" : "rows",
+                                    "components" : [
+                                        {
+                                            "view" : "tree"
+                                        }
+                                    ]
+
+                                }
+                            },
+                            {
+                                "size" : "10",
+                                "view" : "grid",
+                                "listeners" : [
+                                    {
+                                        "treeview:node_select" : "filterGridById"
+                                    }
+                                ]
+
+                            }
                         ]
                     }
                 },
@@ -340,6 +362,20 @@ fixtures.metadata = {
                     name: "accounts",
                     type: "link",
                     relationship: "contacts_accounts"
+                },
+                account_name: {
+                    name: "account_name",
+                    id_name: "account_id",
+                    type: "relate",
+                    module: "Accounts",
+                    vname: "LBL_ACCOUNT_NAME"
+                },
+                account_id: {
+                    name: "account_id",
+                    id_name: "account_id",
+                    type: "relate",
+                    module: "Accounts",
+                    vname: "LBL_ACCOUNT_ID"
                 }
 
             },
@@ -383,7 +419,12 @@ fixtures.metadata = {
                                 "fields": [
                                     {name: "first_name", label: "First Name", "class": "foo"},
                                     {name: "last_name", label: "Last Name"},
-                                    {name: "phone_work", label: "Phone"},
+                                    {
+                                        name: "phone_home",
+                                        label: "Phone",
+                                        displayParams: {
+                                            required: true
+                                        }},
                                     {name: "email1", label: "Email"}
                                 ]
                             }
@@ -412,7 +453,10 @@ fixtures.metadata = {
                                     {name: "last_name", label: "Last Name"},
                                     {name: "phone_work", label: "Phone"},
                                     "phone_home",
-                                    {name: "email1", label: "Email"}
+                                    {name: "email1", label: "Email"},
+                                    {name: "myButton", label: "My button", type: "button"},
+                                    {name: "foo", label: "Field that doesn't exist in vardefs", type: "xyz"},
+                                    {name: "account_name" }
                                 ]
                             }
                         ]
@@ -561,7 +605,7 @@ fixtures.metadata = {
                                     {name: "password", label: "Password"}
                                 ]
                             }
-                        ],
+                        ]
                     },
                     "controller": "{customCallback : function(){return \"overridden\";}}"
                 }
@@ -612,11 +656,11 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = this.app.utils.unformatNumberString(value, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator, false);\n" +
+                "  value = this.app.utils.unformatNumberString(value, this.def.number_group_seperator, this.def.decimal_seperator, false);\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, this.fieldDef.round, this.fieldDef.precision, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator);\n" +
+                " value = this.app.utils.formatNumber(value, this.def.round, this.def.precision, this.def.number_group_seperator, this.def.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -654,11 +698,11 @@ fixtures.metadata = {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
-                    "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{#has this.key ..\/value.hours}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>" +
                     " : " +
-                    "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{#has this.key ..\/value.minutes}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>" +
                     " " +
-                    "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                    "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{#has this.key ..\/value.amPm}}selected{{/has}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
                     " <p class=\"help-block\">" +
                     "<\/p> <\/div>",
                 "default": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
@@ -734,7 +778,7 @@ fixtures.metadata = {
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator, \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.def.number_group_seperator, \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -743,7 +787,7 @@ fixtures.metadata = {
             "views": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                    "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                    "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                     "<\/p> <\/div>",
                 "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
@@ -763,7 +807,7 @@ fixtures.metadata = {
             views: {
                 detail: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n",
                 edit: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                    "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
+                    "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{#eq this ../value}}checked{{/eq}}>{{this}}</label>{{/eachOptions}}"
             }
         },
         "checkbox": {
@@ -798,7 +842,7 @@ fixtures.metadata = {
                     "{{value.state}}<br>" +
                     "{{value.country}}<br>" +
                     "{{#if gmap}}{{#if value.city}}{{#if value.street}}" +
-                    "<iframe width=\"{{gmap_width}}\" height=\"{{gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
+                    "<iframe width=\"{{def.gmap_width}}\" height=\"{{def.gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
                     "{{/if}}{{/if}}{{/if}}",
                 "edit": "<h3>{{label}}<\/h3>" +
                     "<input type=\"text\" class=\"input-xlarge address_street\" value=\"{{value.street}}\"><br>" +
@@ -863,21 +907,21 @@ fixtures.metadata = {
         },
         "button": {
             "views": {
-                "default": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
-                    "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
-                    "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
+                    "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if def.primary}}btn-primary{{/if}}\">" +
+                    "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "navElement": {
             "views": {
-                "default": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">" +
-                    "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                    "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "iframe": {
             "views": {
-                "detail": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n",
+                "detail": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{def.height}}\" width=\"{{def.width}}\"</iframe>{{/if}}\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
                     "<\/p> <\/div>"
@@ -960,7 +1004,7 @@ fixtures.metadata = {
             '<div class="{{../name}}">' +
             '<table class="table table-striped"><thead><tr>' +
             '{{#each fields}}' +
-            '<th width="{{width}}%">{{label}}</th>' +
+            '<th width="{{def.width}}%">{{label}}</th>' +
             '{{/each}}' +
             '</tr></thead><tbody>' +
             '{{#each ../context.attributes.collection.models}}' +

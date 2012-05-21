@@ -22,12 +22,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-global $sugar_config, $db, $timedate;
+global $sugar_config, $db, $timedate, $sugar_demodata;
 $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
 $count = $large_scale_test ? 500 : 50;
 
 //Retrieve a sample of the product_template entries to use and store this in product_line_data array
-$result = $db->limitQuery("select id, name, list_price, discount_price, discount_usdollar, currency_id, tax_class from product_templates", 0, $count);
+$result = $db->limitQuery("SELECT id, name, list_price, discount_price, discount_usdollar, currency_id, tax_class FROM products", 0, $count);
 $product_line_data = array();
 while(($row = $db->fetchByAssoc($result)))
 {
@@ -43,6 +43,9 @@ while(($row = $db->fetchByAssoc($result)))
     //Get a random product_line_data entry
     $key = array_rand($product_line_data);
     $product = $product_line_data[$key];
+
+    $key = array_rand($sugar_demodata['users']);
+    $user = $sugar_demodata['users'][$key];
 
     $opportunityLineBundle->id = null;
     $opportunityLineBundle->name = $row['name'];
@@ -70,11 +73,47 @@ while(($row = $db->fetchByAssoc($result)))
     $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
     $opportunityLine->date_modified = $timedate->asDb($timedate->getNow());
     $opportunityLine->profit_margin = $opportunityLine->price * .3;
+    $opportunityLine->name = $product['name'];
     $opportunityLine->note = $product['name'];
+    $opportunityLine->expert_id = $user['id'];
     $opportunityLine->deleted = 0;
     $opportunityLine->save();
 
     $opportunityLineBundle->set_opportunitylinebundle_opportunity_relationship($row['id'], '', 1);
     $opportunityLineBundle->set_opportunitylinebundle_opportunityline_relationship($opportunityLine->id, 1, '');
+
+    //Get a random product_line_data entry
+    $key = array_rand($product_line_data);
+    $product = $product_line_data[$key];
+
+    $key = array_rand($sugar_demodata['users']);
+    $user = $sugar_demodata['users'][$key];
+
+    $opportunityLine = new OpportunityLine();
+    $opportunityLine->id = null;
+    $opportunityLine->product_id = $product['id'];
+    $opportunityLine->opportunity_id = $row['id'];
+    $opportunityLine->quantity = 1;
+    $opportunityLine->price = $product['list_price'];
+    $opportunityLine->discount_price = $product['discount_price'];
+    $opportunityLine->discount_usdollar = $product['discount_usdollar'];
+    $opportunityLine->best_case = $opportunityLine->price;
+    $opportunityLine->likely_case = $opportunityLine->discount_price;
+    $opportunityLine->worst_case = $opportunityLine->discount_price * .75;
+    $opportunityLine->currency_id = $product['currency_id'];
+    $opportunityLine->tax_class = $product['tax_class'];
+    $opportunityLine->created_by = $opp->assigned_user_id;
+    $opportunityLine->modified_user_id = $opp->assigned_user_id;
+    $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
+    $opportunityLine->date_modified = $timedate->asDb($timedate->getNow());
+    $opportunityLine->profit_margin = $opportunityLine->price * .3;
+    $opportunityLine->name = $product['name'];
+    $opportunityLine->note = $product['name'];
+    $opportunityLine->expert_id = $user['id'];
+    $opportunityLine->deleted = 0;
+    $opportunityLine->save();
+
+    $opportunityLineBundle->set_opportunitylinebundle_opportunity_relationship($row['id'], '', 2);
+    $opportunityLineBundle->set_opportunitylinebundle_opportunityline_relationship($opportunityLine->id, 2, '');
 
 }

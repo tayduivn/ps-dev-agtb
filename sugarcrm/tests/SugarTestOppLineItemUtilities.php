@@ -68,7 +68,7 @@ class SugarTestOppLineItemUtilities
     public static function removeAllCreatedLines()
     {
         $line_ids = self::getCreatedLineIds();
-        $GLOBALS['db']->query('DELETE FROM opportunity_line WHERE id IN (\'' . implode("', '", $line_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM opportunity_lines WHERE id IN (\'' . implode("', '", $line_ids) . '\')');
     }
 
     public static function getCreatedLineIds()

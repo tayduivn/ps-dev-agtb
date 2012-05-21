@@ -95,12 +95,18 @@
                                     field = { name: field };
                                 }
 
-                                // Patch label
-                                field.label = field.label || fieldDef.vname || fieldDef.name;
                                 // Assign type
                                 field.type = field.type || fieldDef.type;
                                 // Patch type
                                 field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
+                                // TODO: This should be done on the server-side on my opinion
+
+                                if (_.isObject(field.displayParams)) {
+                                    _.extend(field, field.displayParams);
+                                    delete field.displayParams;
+                                }
 
                                 panel.fields[fieldIndex] = field;
                             }
@@ -140,17 +146,21 @@
          * @return {Object} Module metadata of specific type if type is specified. Otherwise, module's overall metadata.
          */
         getModule: function(module, type) {
-            var metadata = _metadata[module];
-
-            // Load metadata in memory if it's not there yet
-            if (!metadata) {
-                _metadata[module] = this._patchMetadata(module, _get(module));
+            var metadata;
+            if (module) {
                 metadata = _metadata[module];
+
+                // Load metadata in memory if it's not there yet
+                if (!metadata) {
+                    _metadata[module] = this._patchMetadata(module, _get(module));
+                    metadata = _metadata[module];
+                }
+
+                if (metadata && type) {
+                    metadata = metadata[type];
+                }
             }
 
-            if (metadata && type) {
-                metadata = metadata[type];
-            }
             return metadata;
         },
 
@@ -180,16 +190,86 @@
         },
 
         /**
+         * Parses through an array of components looking for any attached listeners
+         *
+         * Expects the following metadata structure
+         *      metadata[layout].meta.components[].layout.components[].listeners
+         *
+         * @param comp {Array} of components
+         * @param listenerArray {Array} to push listeners to
+         * @return {*}
+         */
+        parseComponentsForEvents : function( comp , listenerArray )  {
+            var item;
+
+            for( var i in comp )
+            {
+                item = comp[i];
+
+                if(item.hasOwnProperty("listeners"))
+                {
+                    listenerArray[item.view] = item.listeners;
+                }
+                else if( item.hasOwnProperty("layout") && item.layout.hasOwnProperty("components"))
+                {
+                    this.parseComponentsForEvents( item.layout.components , listenerArray );
+                }
+            }
+            return;
+        },
+
+        /**
+         * Returns any listeners outlined in the layout metadata
+         *
+         * @param module {String} which module in the metadata to look in
+         * @param layout {String} which layout in the module's metadata to look in
+         * @param view {String} which view in the layout's metadata to look in
+         * @return {*}
+         */
+        getListeners: function(module, layout, view )  {
+            var retListeners = null;
+            if( _metadata[module].layouts.hasOwnProperty(layout) &&
+                _metadata[module].layouts[layout].meta.hasOwnProperty("listeners") &&
+                _metadata[module].layouts[layout].meta.listeners.hasOwnProperty(view) )  {
+                retListeners = _metadata[module].layouts[layout].meta.listeners[view];
+            }
+            return retListeners;
+        },
+
+        /**
+         * Returns the currentLayout (list, edit, detail, etc)
+         *
+         * @return {*} if currentLayout has loaded yet, this will return a String value
+         */
+        getCurrentLayout: function() {
+            return _metadata.currentLayout;
+        },
+
+        /**
          * Gets layout metadata.
          * @param {String} module Module name.
          * @param {String} layout(optional) Layout name.
          * @return {Object} Layout metadata if layout name is specified. Otherwise, metadata for all layouts of the given module.
          */
         getLayout: function(module, layout) {
+            // reset currentLayout to null
+            _metadata.currentLayout = null;
             var metadata = this.getModule(module, "layouts");
+
+            var listeners = {};
+            if( metadata && metadata.hasOwnProperty(layout) && metadata[layout].meta.components )  {
+                this.parseComponentsForEvents( metadata[layout].meta.components , listeners );
+            }
 
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
+
+                // Set currentLayout
+                _metadata.currentLayout = layout;
+            }
+
+            if( !jQuery.isEmptyObject(listeners) ) {
+                metadata.listeners = listeners;
             }
 
             return metadata;
@@ -292,7 +372,7 @@
                     }
 
                     if (callback) {
-                        callback.call(self, null, metadata);
+                        callback.call(self);
                     }
                 },
                 error: function(error) {

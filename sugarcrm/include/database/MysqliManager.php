@@ -87,6 +87,16 @@ class MysqliManager extends MysqlManager
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
 
+
+    /**
+     * Create DB Driver
+     */
+	public function __construct()
+	{
+        parent::__construct();
+        $this->capabilities["recursive_query"] = true;
+	}
+
 	/**
 	 * @see DBManager::$backendFunctions
 	 */
@@ -381,12 +391,15 @@ class MysqliManager extends MysqlManager
 	{
 		return function_exists("mysqli_connect") && empty($GLOBALS['sugar_config']['mysqli_disabled']);
 	}
+
+
     /**
      * Create or updates the stored procedures for the recursive query capabilities
      * @return resource
      */
     public function createRecursiveQuerySPs()
     {
+
         $dropRecursiveQuerySPs_statement = "DROP   PROCEDURE IF EXISTS _hierarchy";
         $this->query($dropRecursiveQuerySPs_statement);
 
@@ -398,21 +411,20 @@ class MysqliManager extends MysqlManager
                                        , p_startWith              VARCHAR(250)
                                        , p_level                  VARCHAR(100)    -- not used
                                        , p_fields                 VARCHAR(250)
+                                       , p_where_clause           VARCHAR(250)
                                        )
             root:BEGIN
 
                DECLARE _level             INT;
                DECLARE _last_row_count    INT;
 
-               -- DROP TABLE IF EXISTS   _hierarchy_return_set;
-
                CREATE TEMPORARY TABLE IF NOT EXISTS _hierarchy_return_set (
                       _id          VARCHAR(100)
                     , _parent_id   VARCHAR(100)
                     , _level       INT
+                    , INDEX(_id, _level)
+                    , INDEX(_parent_id, _level)
                );
-
-               -- DROP TABLE IF EXISTS   _hierarchy_current_set;
 
                CREATE TEMPORARY TABLE  IF NOT EXISTS _hierarchy_current_set (
                       _id          VARCHAR(100)
@@ -424,11 +436,26 @@ class MysqliManager extends MysqlManager
                TRUNCATE TABLE _hierarchy_return_set;
                TRUNCATE TABLE _hierarchy_current_set;
 
+               -- cleanup WHERE clause
+               IF LENGTH(TRIM(p_where_clause)) = 0 THEN
+                  SET p_where_clause := NULL;
+               END IF;
+               IF p_where_clause IS NOT NULL THEN
+                  SET p_where_clause := LTRIM(p_where_clause);
+                  IF UPPER(SUBSTR(p_where_clause, 1, 5)) = 'WHERE' THEN  -- remove WHERE
+                     SET p_where_clause := LTRIM(SUBSTR(p_where_clause, 6));
+                  END IF;
+                  IF UPPER(SUBSTR(p_where_clause, 1, 4)) <> 'AND ' THEN -- Add AND
+                     SET p_where_clause := CONCAT('AND ', p_where_clause);
+                  END IF;
+               END IF;
+
                -- Get StartWith records
                SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set( _id, _parent_id, _level ) '
                                  ,'     SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', _level
                                  ,'       FROM  ', p_tablename
-                                 ,'      WHERE  ', p_startWith
+                                 ,'      WHERE  ', p_startWith, ' '
+                                 , IFNULL( p_where_clause, '' )
                                 );
                PREPARE stmt FROM @_sql;
                EXECUTE stmt;
@@ -440,21 +467,23 @@ class MysqliManager extends MysqlManager
 
                   SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
                                      ,'            ( _id, _parent_id, _level )'
-                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'    -- ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' ?'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
                                      ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
                                      ,'     WHERE  t.', p_parent_key_column, ' = hrs._id '                -- The Parent - Child equijoin
-                                     ,'       AND  hrs._level = @_last_level'    -- ,'       AND  hrs._level = ?'
+                                     ,'       AND  hrs._level = @_last_level  '
+                                     , IFNULL( p_where_clause, '' )
                                      ,';'
                                     );
                   -- SELECT 'Down Tree Insert: ', @_sql;
 
                ELSEIF p_mode = 'U' THEN
                   SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
-                                     ,'            ( _id, _parent_id, _level )'    -- ,'            ( _id, _parent_id, _level )'
+                                     ,'            ( _id, _parent_id, _level )'
                                      ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
                                      ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
                                      ,'     WHERE  t.', p_key_column, ' = hrs._parent_id '                -- The Parent - Child equijoin
-                                     ,'       AND  hrs._level = @_last_level'     -- ,'       AND  hrs._level = ?'
+                                     ,'       AND  hrs._level = @_last_level   '
+                                     , IFNULL( p_where_clause, '' )
                                      ,';'
                                     );
 
@@ -489,28 +518,12 @@ class MysqliManager extends MysqlManager
                     SELECT *
                       FROM _hierarchy_current_set;
 
-               -- This returns the results
-               -- SET @_sql = CONCAT( 'SELECT hrs.*, ', p_fields
-               --                    ,' FROM _hierarchy_return_set hrs '
-               --                    ,' INNER JOIN ', p_tableName, ' t '
-               --                    ,'          ON hrs._id = t.', p_key_column
-               --                    ,';'
-               --                   );
-
-               -- SELECT 'Final result query: ', @_sql;
-
-               -- PREPARE stmt FROM @_sql;
-               -- EXECUTE stmt;
-
-               -- DROP TABLE IF EXISTS _hierarchy_return_set;  -- oddly this does get executed
-
-               -- DROP TABLE IF EXISTS _hierarchy_current_set;  -- oddly this does get executed
-
             END;
         ";
         $this->query($createRecursiveQuerySPs_statement);
         return true;
     }
+
 
     public function preInstall()
     {
@@ -530,12 +543,11 @@ class MysqliManager extends MysqlManager
      * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @return string               Recursive SQL query or equivalent representation.
      */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
     {
         $mode = ($lineage) ? 'U' : 'D';
-
         // First execute the stored procedure to load the _hierarchy_return_set with the hierarchy data
-        $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
+        $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields', '$whereClause')";
         $result = $this->queryMulti($sql_sp, false, false, false, true);
 
         // Now build the sql to return that allows the caller to execute sql in a way to simulate the CTE of the other dbs,

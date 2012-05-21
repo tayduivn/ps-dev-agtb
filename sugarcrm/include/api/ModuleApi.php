@@ -181,15 +181,15 @@ class ModuleApi extends SugarApi {
             }
 
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            if ( $type == 'link' ) {
+            if ( $type == 'link') {
                 // There is a different API to fetch linked records, don't try to encode all of the related data.
                 continue;
             }
             $field = $sfh->getSugarField($type);
             
             if ( $field != null ) {
-                if ( method_exists($field,'retrieveForApi') ) {
-                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
+                if ( method_exists($field,'apiFormatField') ) {
+                    $field->apiFormatField(&$data, $bean, $args, $fieldName, $properties);
                 } else {
                     if ( isset($bean->$fieldName) ) {
                         $data[$fieldName] = $bean->$fieldName;
@@ -198,6 +198,27 @@ class ModuleApi extends SugarApi {
                     }
                 }
             }
+        }
+
+        if (isset($bean->field_defs['email'])) {
+                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
+                $emails = array();
+                $emailProps = array(
+                    'email_address',
+                    'opt_out',
+                    'invalid_email',
+                    'primary_address'
+                );
+                foreach($emailsRaw as $rawEmail) {
+                    $formattedEmail = array();
+                    foreach ($emailProps as $property) {
+                        if (isset($rawEmail[$property])) {
+                            $formattedEmail[$property] = $rawEmail[$property];
+                        }
+                    }
+                    array_push($emails, $formattedEmail);
+                }
+                $data['email'] = $emails;
         }
 
         return $data;

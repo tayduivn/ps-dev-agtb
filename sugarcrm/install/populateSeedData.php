@@ -75,8 +75,7 @@ if( $memory_limit != "" && $memory_limit != "-1" ){ // if memory_limit is set
         ini_set("memory_limit", "$memory_needed" . "M");
     }
 }
-$large_scale_test = empty($sugar_config['large_scale_test']) ?
-	false : $sugar_config['large_scale_test'];
+$large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
 
 $seed_user = new User();
 $user_demo_data = new UserDemoData($seed_user, $large_scale_test);
@@ -104,7 +103,6 @@ $possible_duration_hours_arr = array( 0, 1, 2, 3);
 $possible_duration_minutes_arr = array('00' => '00','15' => '15', '30' => '30', '45' => '45');
 $account_ids = Array();
 $accounts = Array();
-$opportunity_ids = Array();
 
 // Determine the assigned user for all demo data.  This is the default user if set, or admin
 $assigned_user_name = "admin";
@@ -131,100 +129,9 @@ $replacements[] = '';
 //create timeperiods - pro only
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
+require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 $timedate = TimeDate::getInstance();
-$now = $timedate->getNow();
-$timedate->tzUser($now); // use local TZ to calculate dates
-$timeperiods=array();
-
-$timeperiod = new TimePeriod();
-$year = $timedate->getNow()->format('Y');
-$timeperiod->name = "Year ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =1;
-$fiscal_year_id=$timeperiod->save();
-//create a time period record for the first quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q1 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 2nd quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q2 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 3rd quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q3 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 4th quarter.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q4 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-
-//Create another set of timeperiod records for the following year
-$year = $timedate->getNow()->modify('+1 year')->format('Y');
-$timeperiod->name = "Year ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =1;
-$fiscal_year_id=$timeperiod->save();
-
-//create a time period record for the first quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q1 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 2nd quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q2 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 3rd quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q3 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-//create a timeperiod record for the 4th quarter next year.
-$timeperiod = new TimePeriod();
-$timeperiod->name = "Q4 ".$year;
-$timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-$timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-$timeperiod->is_fiscal_year =0;
-$timeperiod->parent_id=$fiscal_year_id;
-$current_timeperiod_id = $timeperiod->save();
-$timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
-
+$timeperiods = TimePeriodsSeedData::populateSeedData();
 
 //build a collection of users
 $query = "SELECT id from users";
@@ -460,43 +367,6 @@ for($i = 0; $i < $number_companies; $i++) {
     //Set the user to accept the call
     $seed_user->id = $call->assigned_user_id;
     $call->set_accept_status($seed_user,'accept');
-
-	//Create new opportunities
-	$opp = new Opportunity();
-//BEGIN SUGARCRM flav=pro ONLY
-	$opp->team_id = $account->team_id;
-	$opp->team_set_id = $account->team_set_id;
-    $worst_case = array("2500", "7500", "15000", "25000");
-    $likely_case = array("5000", "10000", "20000", "50000");
-    $best_case = array("7500", "12500", "25000", "60000");
-    $key = array_rand($best_case);
-    $opp->worst_case = $worst_case[$key];
-    $opp->likely_case = $likely_case[$key];
-    $opp->best_case = $best_case[$key];
-//END SUGARCRM flav=pro ONLY
-	$opp->assigned_user_id = $account->assigned_user_id;
-	$opp->assigned_user_name = $account->assigned_user_name;
-	$opp->name = substr($account_name." - 1000 units", 0, 50);
-	$opp->date_closed = create_date();
-	$opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
-	$opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
-	// If the deal is already one, make the date closed occur in the past.
-	if($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
-	{
-		$opp->date_closed = create_past_date();
-	}
-	$opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
-	$amount = array("10000", "25000", "50000", "75000");
-	$key = array_rand($amount);
-	$opp->amount = $amount[$key];
-	$probability = array("10", "70", "40", "60");
-	$key = array_rand($probability);
-	$opp->probability = $probability[$key];
-	$opp->save();
-	$opportunity_ids[] = $opp->id;
-	// Create a linking table entry to assign an account to the opportunity.
-	$opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
-
 }
 
 $titles = $sugar_demodata['titles'];
@@ -512,6 +382,8 @@ $lead_status_max = count($app_list_strings['lead_status_dom']) - 1;
 $title_max = count($titles) - 1;
 ///////////////////////////////////////////////////////////////////////////////
 ////	DEMO CONTACTS
+
+$contacts = array();
 for($i=0; $i<$number_contacts; $i++) {
 	$contact = new Contact();
 	$contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0,$first_name_max)];
@@ -559,11 +431,9 @@ for($i=0; $i<1000; $i++)
 	$contact->primary_address_postalcode = mt_rand(10000,99999);
 	$contact->primary_address_country = 'USA';
 	$contact->save();
+    $contacts[] = $contact->id;
 	// Create a linking table entry to assign an account to the contact.
 	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id), false);
-	// This assumes that there will be one opportunity per company in the seed data.
-	$opportunity_key = array_rand($opportunity_ids);
-	$contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
 
 	//Create new tasks
 	$task = new Task();
@@ -825,11 +695,11 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$manufacturer_id_max = count($manufacturer_id_arr) - 1;
 	$productcategory_id_max = count($productcategory_id_arr) - 1;
 	$producttype_id_max = count($producttype_id_arr) - 1;
+	$template = new ProductTemplate;
 	$template->manufacturer_id = $manufacturer_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->category_id = $productcategory_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->type_id = $producttype_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->currency_id = $dollar_id;
-	$template = new ProductTemplate;
 	$template->name = $v['name'];
 	$template->tax_class = $v['tax_class'];
 	$template->cost_price = $v['cost_price'];
@@ -988,11 +858,31 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/products_SeedData.php');
     include('install/seed_data/quotes_SeedData.php');
-    include('install/seed_data/opportunities_SeedData.php');
+    //include('install/seed_data/opportunities_SeedData.php');
 
     //This is set to yes at the begininning of this file
 	unset($_SESSION['disable_workflow']);
 //END SUGARCRM flav=pro ONLY
+
+    require_once('modules/Opportunities/OpportunitiesSeedData.php');
+    //BEGIN SUGARCRM flav=com ONLY
+    OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts);
+    //END SUGARCRM flav=com ONLY
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    //Create at least 100 Opportunities
+    $products = $account->build_related_list('SELECT id FROM products', new Product(), 0, 50);
+    $opportunity_ids = OpportunitiesSeedData::populateSeedData(($number_companies < 100 ? 100 : $number_companies), $app_list_strings, $accounts, $timeperiods, $products, $sugar_demodata['users']);
+    //END SUGARCRM flav=pro ONLY
+
+    foreach($contacts as $id)
+    {
+        $contact->retrieve($id);
+        // This assumes that there will be one opportunity per company in the seed data.
+        $opportunity_key = array_rand($opportunity_ids);
+        $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
+    }
+
 //BEGIN SUGARCRM flav=ent ONLY
     include('install/seed_data/entreport_SeedData.php');
 //END SUGARCRM flav=ent ONLY

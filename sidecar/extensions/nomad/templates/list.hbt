@@ -9,25 +9,36 @@
               <input type="text" class="search-query" placeholder="Search all {{context.attributes.module}}">
               <aside>
                 <div class="btn-group">
-                  <a title="Starred" href="#" class="btn"><i class="icon-star"></i></a>
-                  <a title="Account" href="#" class="btn"><i class="icon-user"></i></a>
+                  <a title="Starred" href="#" class="btn favorites-btn"><i class="icon-star"></i></a>
+                  <a title="Account" href="#" class="btn my-items-btn"><i class="icon-user"></i></a>
                 </div>
               </aside>
             </div>
           </section>
           {{#each meta.panels}}
-          <div class="block-footer show-more-top-btn" style="display: none">
-              <a class="btn loading wide " href="javascript:void(0)">Show More</a>
-          </div>
-          <div class="items">
-          {{#each ../context.attributes.collection.models}}
-              {{listItem this ../../this ../fields}}
-          {{/each}}
-          </div>
-          <div class="block-footer show-more-bottom-btn" {{#if ../context.attributes.collection.models.length}} {{else}}style="display: none"{{/if}}>
-              <a class="btn loading wide" href="javascript:void(0)">Show More</a>
-          </div>
+              <article class="nav show-more-top-btn" style="display: none">
+                  <div>
+                      <a class="show_more_posts" href="javascript:void(0)">Show more activity...</a>
+                  </div>
+              </article>
+              <div class="items">
+              {{#each ../context.attributes.collection.models}}
+                  {{listItem this ../../this ../fields}}
+              {{/each}}
+              </div>
+              {{#if ../context.attributes.collection.models.length}}
+                  <article class="nav show-more-bottom-btn">
+                      <div>
+                          <a class="show_more_posts" href="javascript:void(0)" href="#more">Show more activity...</a>
+                      </div>
+                  </article>
+              {{/if}}
           {{/each}}
       </div>
     </div>
 </div>
+
+<span class="hide actions context-menu">
+          <a href="#" title="Edit" class="edit-item-btn"><i class="icon-pencil icon-md"></i><br>Edit</a>
+          <a href="#" title="Remove" class="remove-item-btn"><i class="icon-trash icon-md"></i><br>Remove</a>
+</span>

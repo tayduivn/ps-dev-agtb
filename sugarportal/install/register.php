@@ -74,7 +74,7 @@ $out =<<<EOQ
 <table cellspacing="0" cellpadding="0" border="0" align="center" class="shell">
 <tr>
     <th width="400">{$mod_strings['LBL_STEP']} {$next_step}: {$mod_strings['LBL_REG_TITLE']}</th>
-	<th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="include/images/sugarcrm_login.gif" alt="SugarCRM" border="0"></a></th>
+	<th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="include/images/sugarcrm_login_65.png" alt="SugarCRM" border="0"></a></th>
 </tr>
 <tr>
     <td colspan="2" width="600">{$notConfirmed}</td>

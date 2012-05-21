@@ -21,7 +21,7 @@ describe("sugarfields", function() {
         this.field = SugarFieldTest.createField("account_name", "relate");
         var model = new Backbone.Model({account_id: "1234", account_name: "bob"});
         this.field = _.extend(this.field, controller);
-        this.field.fieldDef = fieldDef;
+        this.field.def = fieldDef;
         this.field.model = model;
 
     });
