@@ -148,6 +148,10 @@
   	    return false;
   	})
 
+
+
+
+
     // Select widget
     $(".chzn-select").chosen()
     $(".chzn-select-deselect").chosen({allow_single_deselect:true})
@@ -157,14 +161,14 @@
     $("[rel=popoverTop]").popover({placement: "top"})
 
     //clickovers  
-    $('[rel="clickover"]').clickover() 
-    $('[rel="clickoverTop"]').clickover({placement: "top"})
-
+    //$('[rel="clickover"]').clickover()
+    //$('[rel="clickoverTop"]').clickover({placement: "top"})
+    /*
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
       "bInfo": false,
       "bAutoWidth": false
-    })
+    })  */
 
 }(window.jQuery)
