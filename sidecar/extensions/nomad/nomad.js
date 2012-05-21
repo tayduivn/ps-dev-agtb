@@ -9,8 +9,8 @@
                 module: relatedModule,
                 layout: "associate",
                 viaLink: link,
-                toId: id,
-                toModule: module
+                toModule: module,
+                toId: id
             });
         },
 
@@ -57,11 +57,11 @@
         app.data.declareModels(app.baseMetadata);
 
         // Register relationship routes
-        app.router.route(":module/:id/link/:link", "relationships", _rrh.list);
-        app.router.route(":module/:id/link/:link/:relatedId", "relationships", _rrh.record);
-        app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships", _rrh.record);
-        app.router.route(":module/:id/link/:link/create", "relationships", _rrh.create);
-        app.router.route(":module/:id/link/:link/associate", "relationships", _rrh.associate);
+        app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
+        app.router.route(":module/:id/link/:link/:relatedId", "relationships:detail", _rrh.record);
+        app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
+        app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
+        app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
     });
 
     app.augment("nomad", {
