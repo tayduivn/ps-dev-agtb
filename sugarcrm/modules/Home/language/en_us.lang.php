@@ -38,6 +38,7 @@ $mod_strings = array (
   'LBL_EMAIL_ADDRESS' => 'Email Address:',
   'LBL_MY_PIPELINE_FORM_TITLE' => 'My Pipeline',
   'LBL_PIPELINE_FORM_TITLE' => 'Pipeline By Sales Stage',
+  'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
   //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_CAMPAIGN_ROI_FORM_TITLE' => 'Campaign ROI',
   //END SUGARCRM flav!=sales ONLY
