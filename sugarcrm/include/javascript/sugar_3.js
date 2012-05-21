@@ -1878,7 +1878,8 @@ sugarListView.prototype.confirm_action = function(del) {
 sugarListView.get_num_selected = function () {
     var selectCount = $("input[name='selectCount[]']:first");
     if(selectCount.length > 0)
-        return parseInt(selectCount.val());
+    if(selectCount.length > 0)
+        return parseInt(selectCount.val().replace("+", ""));
     return 0;
 
 }
@@ -2360,7 +2361,7 @@ sugarListView.prototype.check_entire_list = function(form, field, value, list_co
 		}
 	}
 	document.MassUpdate.select_entire_list.value = 1;
-	sugarListView.update_count(list_count, false);
+    sugarListView.update_count(list_count, false);
     sugarListView.prototype.toggleSelected();
 }
 
@@ -2414,7 +2415,7 @@ sugarListView.prototype.check_boxes = function() {
 		if (theForm.select_entire_list.value == 1) {
 			document.MassUpdate.massall.disabled = true;
             sugarListView.prototype.toggleSelected();
-            $("#button_select_all_top").click();
+            $("a[name=selectall]:first").click();
         }
 
 		for(var wp = 0 ; wp < inputs_array.length; wp++) {
