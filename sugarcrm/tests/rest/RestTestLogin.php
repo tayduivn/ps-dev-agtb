@@ -34,6 +34,16 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
+        $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
+        if ( isset($this->contact->id) ) {
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->contact->id."'");
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '".$this->contact->id."'");
+        }
+        if ( isset($this->apiuser->id) ) {
+            $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
+            $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '".$this->apiuser->id."'");
+        }
     }
 
     protected function _restCall($urlPart,$postBody,$httpAction='')
@@ -63,22 +73,131 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply);
     }
     
-    public function testRestLogin()
+    public function testRestLoginUser()
     {
+        // Create a unit test login ID
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        $consumer->id = 'UNIT-TEST-regularlogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = '_unit_regularlogin';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'user';
+        $consumer->save();
+
         $args = array(
+            'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
-            'type' => 'text',
-            'client-info' => array(
-                'uuid'=>'SugarUnitTest',
-            ),
+            'client_id' => $consumer->c_key,
+            'client_secret' => '',
         );
         
-        $reply = $this->_restCall('login',json_encode($args));
-        $this->assertNotEmpty($reply['reply']['token']);
-        $this->assertNotEmpty($reply['reply']['current_user']['user_name']);
-        $this->assertNotEmpty($reply['reply']['current_user']['full_name']);
-        $this->assertNotEmpty($reply['reply']['current_user']['id']);
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
                                                           
     }
+
+    public function testRestLoginSupportPortal()
+    {
+        // Create a unit test login ID
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        $consumer->id = 'UNIT-TEST-portallogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = '_unit_portallogin';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'support_portal';
+        $consumer->save();
+
+        // Create a portal API user
+        $this->apiuser = BeanFactory::newBean('Users');
+        $this->apiuser->id = "UNIT-TEST-apiuser";
+        $this->apiuser->new_with_id = true;
+        $this->apiuser->first_name = "Portal";
+        $this->apiuser->last_name = "Apiuserson";
+        $this->apiuser->username = "_unittest_apiuser";
+        $this->apiuser->portal_only = true;
+        $this->apiuser->status = 'Active';
+        $this->apiuser->save();
+
+        // Create a contact to log in as
+        $this->contact = BeanFactory::newBean('Contacts');
+        $this->contact->id = "UNIT-TEST-littleunittest";
+        $this->contact->new_with_id = true;
+        $this->contact->first_name = "Little";
+        $this->contact->last_name = "Unittest";
+        $this->contact->description = "Little Unittest";
+        $this->contact->portal_name = "liltest@unit.com";
+        $this->contact->portal_active = '1';
+        $this->contact->portal_password = User::getPasswordHash("unittest");
+        $this->contact->save();
+
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->contact->portal_name,
+            'password' => 'unittest',
+            'client_id' => $consumer->c_key,
+            'client_secret' => '',
+        );
+        
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+                                                          
+    }
+
+    public function testRestLoginRefresh()
+    {
+        // Do a normal login
+        
+        // Create a unit test login ID
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        $consumer->id = 'UNIT-TEST-regularlogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = '_unit_regularlogin';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'user';
+        $consumer->save();
+
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => $consumer->c_key,
+            'client_secret' => '',
+        );
+        
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        
+        $refreshToken = $reply['reply']['refresh_token'];
+
+        
+        $args = array(
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $refreshToken,
+            'client_id' => $consumer->c_key,
+            'client_secret' => '',
+        );
+        
+        $reply2 = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply2['reply']['access_token']);
+        $this->assertNotEmpty($reply2['reply']['refresh_token']);
+        $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply2['reply']['access_token']);
+        $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply2['reply']['token_type']);
+        
+    }
+
 }

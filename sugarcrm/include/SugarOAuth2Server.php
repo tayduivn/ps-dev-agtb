@@ -38,11 +38,13 @@ class SugarOAuth2Server extends OAuth2
         if ( ! isset($currentOAuth2Server) ) {
             $oauthStorageName = 'SugarOAuth2Storage';
             if ( file_exists('custom/include/SugarOAuth2StorageCstm.php') ) {
+                require_once('custom/include/SugarOAuth2StorageCstm.php');
                 $oauthStorageName = 'SugarOAuth2StorageCstm';
             }
             
             $oauthServerName = 'SugarOAuth2Server';
             if ( file_exists('custom/include/SugarOAuth2ServerCstm.php') ) {
+                require_once('custom/include/SugarOAuth2ServerCstm.php');
                 $oauthServerName = 'SugarOAuth2ServerCstm';
             }
             
@@ -53,4 +55,22 @@ class SugarOAuth2Server extends OAuth2
 
         return $currentOAuth2Server;
     }
+
+
+	/**
+	 * Generates an unique access token.
+	 *
+	 * Implementing classes may want to override this function to implement
+	 * other access token generation schemes.
+	 *
+	 * @return
+	 * An unique access token.
+	 *
+	 * @ingroup oauth2_section_4
+	 * @see OAuth2::genAuthCode()
+	 */
+	protected function genAccessToken() {
+		return create_guid();
+	}
+
 }

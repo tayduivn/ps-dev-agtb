@@ -33,6 +33,7 @@ class AuthenticationController
 	public $loggedIn = false; //if a user has attempted to login
 	public $authenticated = false;
 	public $loginSuccess = false;// if a user has successfully logged in
+    public $nextStep = null; // Will be set with an array of at least module, action if the user needs to be sent somewhere after logging in
 	
 	protected static $authcontrollerinstance = null;
 
@@ -118,11 +119,15 @@ class AuthenticationController
 			$config = new Administration();
 			$config->retrieveSettings();
 		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && $_REQUEST['action'] != 'AdminWizard' ) {
-				$GLOBALS['module'] = 'Configurator';
-				$GLOBALS['action'] = 'AdminWizard';
-				ob_clean();
-				header("Location: index.php?module=Configurator&action=AdminWizard");
-				sugar_cleanup(true);
+                if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true ) {
+                    $this->nextStep = array('module'=>'Configurator','action'=>'AdminWizard');
+                } else {
+                    ob_clean();
+                    $GLOBALS['module'] = 'Configurator';
+                    $GLOBALS['action'] = 'AdminWizard';
+                    header("Location: index.php?module=Configurator&action=AdminWizard");
+                    sugar_cleanup(true);
+                }
 			}
 
 			$ut = $GLOBALS['current_user']->getPreference('ut');
@@ -131,11 +136,15 @@ class AuthenticationController
 				$checkTimeZone = false;
 			} // if
 			if(empty($ut) && $checkTimeZone && $_REQUEST['action'] != 'SetTimezone' && $_REQUEST['action'] != 'SaveTimezone' ) {
-				$GLOBALS['module'] = 'Users';
-				$GLOBALS['action'] = 'Wizard';
-				ob_clean();
-				header("Location: index.php?module=Users&action=Wizard");
-				sugar_cleanup(true);
+                if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true && empty($this->nextStep) ) {
+                    $this->nextStep = array('module'=>'Users','action'=>'Wizard');
+                } else {
+                    $GLOBALS['module'] = 'Users';
+                    $GLOBALS['action'] = 'Wizard';
+                    ob_clean();
+                    header("Location: index.php?module=Users&action=Wizard");
+                    sugar_cleanup(true);
+                }
 			}
 		}else{
 			//kbrill bug #13225

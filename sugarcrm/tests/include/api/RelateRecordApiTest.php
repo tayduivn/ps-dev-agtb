@@ -24,7 +24,6 @@
 
 require_once 'include/api/SugarApi/RestService.php';
 require_once 'include/api/RelateRecordApi.php';
-require_once('tests/include/SugarSecurity/SugarSecurityUnitTest.php');
 
 class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -54,8 +53,6 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new RestService();
         //Fake the security
-        $api->security = new SugarSecurityUnitTest();
-        $api->security->userId = $GLOBALS['current_user']->id;
         $api->user = $GLOBALS['current_user'];
 
 

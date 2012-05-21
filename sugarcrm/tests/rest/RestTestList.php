@@ -27,11 +27,7 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestList extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-
+        parent::setUp();
         $this->accounts = array();
     }
     
@@ -41,7 +37,7 @@ class RestTestList extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account->id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testList() {
@@ -72,7 +68,7 @@ class RestTestList extends RestTestBase {
         $this->assertEquals($this->accounts[17]->name,$firstRecord['name'],"The search failed for record: ".$this->accounts[17]->name);
 
         // Sorting descending
-        $restReply4 = $this->_restCall("Accounts?orderBy=id:DESC");
+        $restReply4 = $this->_restCall("Accounts?order_by=id:DESC");
         
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
@@ -80,7 +76,7 @@ class RestTestList extends RestTestBase {
                               'Second record is not lower than the first, decending order failed.');
 
         // Sorting ascending
-        $restReply5 = $this->_restCall("Accounts?orderBy=id:ASC");
+        $restReply5 = $this->_restCall("Accounts?order_by=id:ASC");
         
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],

@@ -25,34 +25,70 @@
 class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
+    protected $refreshToken;
+    protected $_user;
+    protected $consumerId;
+
+    public function setUp()
+    {
+        //Create an anonymous user for login purposes/
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->_user;
+
+        // Create a unit test oauth2 client ID
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        $consumer->id = 'UNIT-TEST-regularlogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = '_unit_regularlogin';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'user';
+        $consumer->save();
+        
+        $this->consumerId = $consumer->c_key;
+    }
+
+    public function tearDown() 
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
+        $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");
+    }
 
     protected function _restLogin($username = '', $password = '')
     {
         if ( empty($username) && empty($password) ) {
-            $username = $GLOBALS['current_user']->user_name;
+            $username = $this->_user->user_name;
             // Let's assume test users have a password the same as their username
-            $password = $GLOBALS['current_user']->user_name;
+            $password = $this->_user->user_name;
         }
 
         $args = array(
-            'username' => $this->_user->user_name,
-            'password' => $this->_user->user_name,
-            'type' => 'text',
-            'client-info' => array(
-                'uuid'=>'SugarUnitTest',
-            ),
+            'grant_type' => 'password',
+            'username' => $username,
+            'password' => $password,
+            'client_id' => $this->consumerId,
+            'client_secret' => '',
         );
         
-        $reply = $this->_restCall('login',json_encode($args));
-        if ( empty($reply['reply']['token']) ) {
-            throw new Exception("Rest authentication failed.");
+        // Prevent an infinite loop, put a fake authtoken in here.
+        $this->authToken = 'LOGGING_IN';
+
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        if ( empty($reply['reply']['access_token']) ) {
+            throw new Exception("Rest authentication failed, message looked like: ".$reply['replyRaw']);
         }
-        $this->authToken = $reply['reply']['token'];
+        $this->authToken = $reply['reply']['access_token'];
+        $this->refreshToken = $reply['reply']['refresh_token'];
     }
 
     protected function _restCall($urlPart,$postBody='',$httpAction='')
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
+
+        if ( empty($this->authToken) ) {
+            $this->_restLogin();
+        }
         
         $ch = curl_init($urlBase.$urlPart);
         if (!empty($postBody)) {
@@ -67,7 +103,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             }
         }
         
-        if ( !empty($this->authToken) ) {
+        if ( !empty($this->authToken) && $this->authToken != 'LOGGING_IN' ) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('oauth_token: '.$this->authToken));
         }
 

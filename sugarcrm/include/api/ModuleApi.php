@@ -152,7 +152,7 @@ class ModuleApi extends SugarApi {
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
-        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->security->userId ) {
+        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $GLOBALS['current_user']->id ) {
             $isOwner = true;
         }
         
@@ -169,7 +169,7 @@ class ModuleApi extends SugarApi {
         foreach ( $bean->field_defs as $fieldName => $properties ) {
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->security->userId,$isOwner) < 1 ) { 
+            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$GLOBALS['current_user']->id,$isOwner) < 1 ) { 
                 // No read access to this field, skip it.
                 continue;
             }

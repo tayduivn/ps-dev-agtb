@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarOauth2Server.php');
+require_once('include/SugarOAuth2Server.php');
 
 class OAuth2Api extends SugarApi {
     public function registerApiRest() {
@@ -28,22 +28,52 @@ class OAuth2Api extends SugarApi {
             'token' => array(
                 'reqType' => 'POST',
                 'path' => array('oauth2','token'),
-                'pathVars' => array(''),
+                'pathVars' => array('',''),
                 'method' => 'token',
                 'shortHelp' => 'OAuth2 token requests.',
                 'longHelp' => 'include/api/help/oauth2_token.html',
                 'rawReply' => true, // The OAuth server sets specific headers and outputs in the exact format requested by the spec, so we don't want to go around messing with it.
+                'noLoginRequired' => true,
+            ),
+            'oauth_logout' => array(
+                'reqType' => 'POST',
+                'path' => array('oauth2','logout'),
+                'pathVars' => array('',''),
+                'method' => 'logout',
+                'shortHelp' => 'OAuth2 logout.',
+                'longHelp' => 'include/api/help/oauth2_logout.html',
+                'noLoginRequired' => true,
             ),
         );
     }
 
     public function token($api, $args) {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
-        
-        $oauth2Server->grantAccessToken($args);
+
+        try {
+            $oauth2Server->grantAccessToken($args);
+        } catch (Exception $e) {
+            throw new SugarApiExceptionInvalidLogin($e->getMessage());
+        }
         
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         return '';
+    }
+
+    public function logout($api, $args) {
+        $oauth2Server = SugarOAuth2Server::getOAuth2Server();
+
+        if ( isset($args['refresh_token']) ) {
+            // Nuke the refresh token as well.
+            // No security checks needed here to make sure the refresh token is theirs, 
+            // because if someone else has your refresh token logging out is the nicest possible thing they could do.
+            $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
+        }
+
+        // The OAuth access token is actually just a session, so we can nuke that here.
+        session_regenerate_id(true);
+
+        return array('success'=>true);
     }
 
 }

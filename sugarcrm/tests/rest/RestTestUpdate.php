@@ -24,16 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestUpdate extends RestTestBase
-{
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name, $this->_user->user_name);
-    }
-
+class RestTestUpdate extends RestTestBase {
     public function tearDown()
     {
         if (isset($this->account->id)) {
@@ -44,7 +35,7 @@ class RestTestUpdate extends RestTestBase
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
             $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testUpdate()

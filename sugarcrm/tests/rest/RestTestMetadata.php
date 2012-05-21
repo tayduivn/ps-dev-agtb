@@ -25,19 +25,6 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadata extends RestTestBase {
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-    
-    public function tearDown()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    }
-
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
 

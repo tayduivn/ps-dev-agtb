@@ -22,11 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/SugarApi/ServiceBase.php');
 require_once('include/api/SugarApi/ServiceDictionaryRest.php');
-require_once('include/SugarSecurity/SugarSecurityFactory.php');
+require_once('include/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
 
-    // Until we get rid of the old /service/core stuff, we need the session id around
     public $sessionId;
     public $user;
 
@@ -134,7 +133,7 @@ class RestService extends ServiceBase {
             $this->handleException($e);
         } catch ( Exception $e ) {
             // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
+            $apiException = new SugarApiExceptionError($e->getMessage(),0,$e);
             $this->handleException($apiException);
         }
     }
@@ -158,6 +157,8 @@ class RestService extends ServiceBase {
 
     protected function handleException(SugarApiException $exception) {
         header("HTTP/1.1 {$exception->errorCode}");
+
+        $GLOBALS['log']->fatal('An unknown exception happened: '.$exception->getMessage());
         
         // TODO: Translate error messages
         echo("ERROR: ".$exception->getMessage());
@@ -178,20 +179,23 @@ class RestService extends ServiceBase {
     protected function authenticateUser() {
         $valid = false;
         
-        
-
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->verifyAccessToken($this->sessionId);
         } else if ( isset($_REQUEST[session_name()]) ) {
             // They just have a regular web session
             $this->sessionId = $_REQUEST[session_name()];
+            // The OAuth server starts a session to validate the token, we have to start it manually, like a sucker.
+            session_start();
         }
         
-        if ( !empty($this->sessionId) ) {            
-            $this->security = SugarSecurityFactory::loadClassFromSession($this->sessionId);
-            if ( $this->security != null ) {
+        if ( !empty($this->sessionId) ) {
+            if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
+                $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
             }
         }
 
@@ -199,6 +203,12 @@ class RestService extends ServiceBase {
         if ( $valid === false ) {
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarApplication::trackLogin();
+        //END SUGARCRM flav=pro ONLY
+
+        LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];
     }
