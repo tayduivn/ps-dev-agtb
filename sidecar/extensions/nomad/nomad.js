@@ -54,7 +54,7 @@
 
     app.events.on("app:init", function() {
         app.metadata.set(app.baseMetadata);
-        app.data.declareModels(app.baseMetadata);
+        app.data.declareModels();
 
         // Register relationship routes
         app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
