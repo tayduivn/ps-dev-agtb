@@ -75,6 +75,21 @@ describe("Relationships", function() {
 
     });
 
+    describe("Utils", function() {
+
+        it("should be able to check if a module can have multiple related beans", function() {
+            expect(dm.canHaveMany("Opportunities", "contacts")).toBeTruthy();
+            expect(dm.canHaveMany("Opportunities", "accounts")).toBeFalsy();
+            expect(dm.canHaveMany("Opportunities", "calls")).toBeTruthy();
+        });
+
+        it("should be able to get related module name", function() {
+            expect(dm.getRelatedModule("Opportunities", "contacts")).toEqual("Contacts");
+            expect(dm.getRelatedModule("Opportunities", "calls")).toEqual("Calls");
+            expect(dm.getRelatedModule("Opportunities", "accounts")).toEqual("Accounts");
+        });
+    });
+
     describe("CRUD", function() {
 
         var server;

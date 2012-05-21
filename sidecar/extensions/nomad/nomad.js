@@ -1,4 +1,69 @@
 (function(app) {
+
+    var _rrh = {
+
+        associate: function(module, id, link) {
+            var relatedModule = app.data.getRelatedModule(module, link);
+            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);            
+            app.controller.loadView({
+                module: relatedModule,
+                layout: "associate",
+                viaLink: link,
+                toModule: module,
+                toId: id
+            });
+        },
+
+        list: function(module, id, link) {
+            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/" + link);
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                layout: "list"
+            });
+        },
+
+        create: function(module, id, link) {
+            app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                create: true,
+                layout: "edit"
+            });
+        },
+
+        record: function(module, id, link, relatedId, action) {
+            app.logger.debug("Route changed to action rel: " + module + "/" + id + "/" + link + "/" + relatedId);
+
+            action = action || "detail";
+
+            app.controller.loadView({
+                parentModule: module,
+                parentModelId: id,
+                link: link,
+                modelId: relatedId,
+                action: action,
+                layout: action
+            });
+        }
+
+    };
+
+    app.events.on("app:init", function() {
+        app.metadata.set(app.baseMetadata);
+        app.data.declareModels(app.baseMetadata);
+
+        // Register relationship routes
+        app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
+        app.router.route(":module/:id/link/:link/:relatedId", "relationships:detail", _rrh.record);
+        app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
+        app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
+        app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
+    });
+
     app.augment("nomad", {
 
         deviceReady: function() {
