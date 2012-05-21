@@ -173,16 +173,31 @@ class TimePeriod extends SugarBean {
     function get_timeperiods_dom()
     {
         static $timeperiods;
+        global $timedate;
 
         if (!isset($timeperiods))
         {
-            $query = 'select name from timeperiods where deleted=0';
+            //get current timeperiod
+            $nowDate = $timedate->nowDbDate();
             $db = DBManagerFactory::getInstance();
+            $current_timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < '$nowDate' AND end_date > '$nowDate' and is_fiscal_year = 0", false, " Error getting current timeperiod: ");
+            
+            if(!empty($current_timeperiod))
+            {
+                $timeperiods[$current_timeperiod] = 'Current Timeperiod';
+            } else {
+                //Log an error message here
+                $GLOBALS['log']->error();
+            }
+            $query = 'SELECT name FROM timeperiods WHERE deleted=0';
             $result = $db->query($query,true," Error filling in timeperiods domain: ");
 
             while (($row  =  $db->fetchByAssoc($result)) != null)
             {
-                $timeperiods[$row['name']]=$row['name'];
+                if(!isset($timeperiods[$row['name']]))
+                {
+                    $timeperiods[$row['name']]=$row['name'];
+                }
             }
 
             if (!isset($timeperiods))
