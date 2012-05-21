@@ -63,12 +63,7 @@ class Calendar {
 	public $day_end_time; // working day end time in format '11:00'
 	public $scroll_slot; // first slot of working day
 	public $celcount; // count of slots in a working day	
-
-    /**
-     * @var bool $print Whether is print mode.
-     */
-    private $print = false;
-		
+	
 	/**
 	 * constructor
 	 * @param string $view 
@@ -346,16 +341,6 @@ class Calendar {
 		}
 		return $day->get_date_str();
 	}
-
-    public function setPrint($print)
-    {
-        $this->print = $print;
-    }
-    
-    public function isPrint()
-    {
-        return $this->print;
-    }
 
 }
 
