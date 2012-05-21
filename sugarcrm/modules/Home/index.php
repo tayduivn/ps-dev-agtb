@@ -588,9 +588,9 @@ foreach($pages as $pageNum => $page){
 
     // If it's one of the default tabs (has 'pageTitleLabel' defined) pick translated value
     if (!empty($page['pageTitleLabel'])) {
-    	$pageData[$pageNum]['pageTitle'] = $mod_strings[$page['pageTitleLabel']];
+    	$pageData[$pageNum]['pageTitle'] = htmlentities($mod_strings[$page['pageTitleLabel']], ENT_QUOTES);
     } else {
-        $pageData[$pageNum]['pageTitle'] = $page['pageTitle'];	
+        $pageData[$pageNum]['pageTitle'] = htmlentities($page['pageTitle'], ENT_QUOTES);
 	}
 
     if($pageNum == $activePage){
