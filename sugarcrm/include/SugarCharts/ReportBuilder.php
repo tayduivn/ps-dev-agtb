@@ -115,16 +115,75 @@ class ReportBuilder
      *
      * @param string $link              The Link name to load the field from
      * @param string $field             The field to add to the group by
-     * @param string $module            The Parent module for the link.
+     * @param string|array $path        The Parent module for the link, this can be a string or an array with the path to the new link
      * @return ReportBuilder
      */
-    public function addLink($link, $field = null, $module = null)
+    public function addLink($link, $field = null, $path = null)
     {
-        if (empty($module)) {
-            $module = $this->self_module;
+        if (empty($path)) {
+            $path = array($this->self_module);
+        } else if (!is_array($path)) {
+            $path = array($path);
         }
-        $bean = $this->getBean($module);
 
+        $last_item = array_pop(array_values($path));
+        if($last_item !== $link) {
+            array_push($path, $link);
+        }
+
+        $key = array();
+        $module = null;
+
+        $last_item = array_pop(array_values($path));
+        foreach ($path as $step) {
+            if (empty($module) && ($step == $this->self_module || $step == "self")) {
+                $module = $this->getDefaultModule(true);
+                $key[] = $step;
+            } else {
+                // make this module
+                if (!($module instanceof SugarBean)) {
+                    $module = $this->getBean($module);
+                }
+
+                $_bean_links = $module->get_linked_fields();
+                if (isset($_bean_links[$step])) {
+                    // we have a link
+                    // get the final module and set it
+                    $tmp_module = $this->getBean($_bean_links[$step]['module']);
+                    if ($tmp_module !== false) {
+
+                        $_field = null;
+                        if ($last_item == $step && isset($tmp_module->field_defs[$field])) {
+                            // make sure the field exists
+                            $_field = $field;
+                        }
+
+                        $key[] = $step;
+
+                        // now add the link
+                        $this->_addLink($step, join(":", $key), $module, $_field);
+
+                        $module = $tmp_module;
+
+                        continue;
+                    }
+                } else {
+                    return $this;
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $link
+     * @param string $key
+     * @param SugarBean $bean
+     * @param string $field
+     */
+    protected function _addLink($link, $key, $bean, $field = null)
+    {
         $links = $bean->get_linked_fields();
 
         if (isset($links[$link]) && $bean->load_relationship($link)) {
@@ -134,7 +193,11 @@ class ReportBuilder
 
             $link = $links[$link];
 
-            $key = $bean->module_dir . ':' . $link['name'];
+            if (empty($key)) {
+                $key = $bean->module_dir . ':' . $link['name'];
+            } elseif(is_array($key)) {
+                $key = join(":", $key);
+            }
 
             //$child_bean = $this->getBean($link['module']);
             $this->table_keys[$key] = array('module' => $link['module'], 'key' => $key);
@@ -168,8 +231,6 @@ class ReportBuilder
                 $this->defaultReport['full_table_list'][$key] = $arrLink;
             }
         }
-
-        return $this;
     }
 
     /**

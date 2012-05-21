@@ -45,6 +45,18 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
     protected $table_key = "self";
 
     /**
+     * This is the var to hold all the link so we can build a key for them
+     *
+     * @var array
+     */
+    protected $link_path = array();
+
+    public function __construct(ReportBuilder $reportBuilder)
+    {
+        $this->setReportBuilder($reportBuilder);
+    }
+
+    /**
      * Set the ReportBuilderObject
      *
      * @param ReportBuilder $reportBuilder
@@ -62,29 +74,11 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
      */
     public function convert($value)
     {
+        $this->link_path = array('self');
+
         foreach ($value as $key => $val) {
 
-            /* @var $val SugarParsers_Filter_AbstractFilter */
-            if ($val::isControlVariable()) {
-                if (!($val instanceOf SugarParsers_Filter_Not)) {
-                    $this->controlStatement = $val->getOperator(true, $this->is_not);
-                } else if ($val instanceof SugarParsers_Filter_Not) {
-                    $this->is_not = true;
-                }
-
-                $val = $val->getValue();
-            }
-
-            // check to see if the key is a link
-            $linkName = $this->checkLinkExistsInReportBuilder($key);
-            if ($linkName !== false) {
-                $this->table_key = $linkName;
-            }
-
             $this->_convert($key, $val);
-
-            // reset it to the default value;
-            $this->table_key = "self";
         }
 
         return array("Filter_1" => array_merge(array(
@@ -100,6 +94,23 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
      */
     protected function _convert($key, $value)
     {
+
+        // check to see if the key is a link
+        $removeLinkLevel = false;
+        if ($value instanceof SugarParsers_Filter_Link) {
+            $removeLinkLevel = $this->parseLinkFilter($key, $value);
+            $value = $value->getValue();
+        }
+
+        if ($value instanceof SugarParsers_Filter_AbstractFilter && $value::isControlVariable()) {
+            if (!($value instanceOf SugarParsers_Filter_Not)) {
+                $this->controlStatement = $value->getOperator(true, $this->is_not);
+            } else if ($value instanceof SugarParsers_Filter_Not) {
+                $this->is_not = true;
+            }
+            $value = $value->getValue();
+        }
+
         if (is_array($value)) {
             foreach ($value as $k => $v) {
                 $this->_convert($k, $v);
@@ -114,6 +125,11 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
                 $this->_reportFilters[] = $filter;
             }
         }
+
+        if ($removeLinkLevel === true && count($this->link_path) > 1) {
+            // remove the link path
+            array_pop($this->link_path);
+        }
     }
 
     /**
@@ -124,29 +140,20 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
      */
     protected function createFilter($field_name, $operator, $value)
     {
-        if ($this->reportBuilder instanceof ReportBuilder) {
-            // we need to check to see if the files exist
-
-            /* @var $def_bean SugarBean */
-            $def_bean = $this->reportBuilder->getBeanFromTableKey($this->table_key);
-            if ($this->checkFieldExist($def_bean, $field_name)) {
-                return array(
-                    "name" => $field_name,
-                    "table_key" => $this->table_key,
-                    "qualifier_name" => $operator,
-                    "input_name0" => $value
-                );
-            }
-
-            return array();
-        } else {
+        // we need to check to see if the files exist
+        $table_key = join(":", $this->link_path);
+        /* @var $def_bean SugarBean */
+        $def_bean = $this->reportBuilder->getBeanFromTableKey($table_key);
+        if ($this->checkFieldExist($def_bean, $field_name)) {
             return array(
                 "name" => $field_name,
-                "table_key" => $this->table_key,
+                "table_key" => $table_key,
                 "qualifier_name" => $operator,
                 "input_name0" => $value
             );
         }
+
+        return array();
 
     }
 
@@ -164,6 +171,32 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         return false;
     }
 
+    protected function parseLinkFilter($link_name, SugarParsers_Filter_Link $filter_link)
+    {
+        /* @var SugarBean $bean */
+        $bean = BeanFactory::getBean($filter_link->getParentModule());
+
+        // no bean found, just return it
+        if ($bean === false) {
+            return false;
+        }
+
+        // now that we have the bean, lets make sure that the link exists
+        $links = $bean->get_linked_fields();
+
+        if (isset($links[$link_name])) {
+
+            $this->reportBuilder->addLink($link_name, null, $this->link_path);
+
+            // success we have a link.
+            $this->link_path[] = $link_name;
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param string $link
      * @return bool|array
@@ -171,10 +204,7 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
     protected function checkLinkExistsInReportBuilder($link)
     {
         // make sure the link was added to the ReportBuilder
-        if (!($this->reportBuilder instanceOf ReportBuilder)) return false;
-
         $rbLinkKey = $this->reportBuilder->getLinkTable($link);
-
         // if we got an array back, try adding it
         if (is_array($rbLinkKey)) {
             $this->reportBuilder->addLink($link);

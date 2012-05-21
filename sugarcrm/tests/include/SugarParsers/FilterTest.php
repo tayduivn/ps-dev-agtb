@@ -211,8 +211,8 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->parse($obj);
         $pFilter = $this->obj->getParsedFilter();
 
-        $this->assertInstanceOf("SugarParsers_Filter_And", $pFilter['member_of']);
-        $andFilterObject = $pFilter['member_of']->getValue();
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $pFilter['member_of']);
+        $andFilterObject = $pFilter['member_of']->getValue()->getValue();
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['state']);
         $this->assertEquals("UT", $andFilterObject['state']->getValue());
         $this->assertInstanceOf("SugarParsers_Filter_Equal", $andFilterObject['country']);
@@ -248,6 +248,21 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group SugarParser
+     */
+    public function testMultiLinkToFilter()
+    {
+        $obj = json_decode('{"contacts": {"assigned_user_link":{ "user_name" : "seed_chris_id"} } }');
+        $this->obj->parse($obj);
+        $pFilter = $this->obj->getParsedFilter();
+
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $pFilter['contacts']);
+        $linkFilterObject = $pFilter['contacts']->getValue();
+        $this->assertInstanceOf("SugarParsers_Filter_Link", $linkFilterObject['assigned_user_link']);
+        $this->assertEquals('Users', $linkFilterObject['assigned_user_link']->getTargetModule());
+    }
+
+    /**
      * testMultipleFilters
      *
      * @group SugarParser
@@ -256,7 +271,7 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMultipleFilters()
     {
         $this->obj = new SugarParsers_Filter(new Opportunity());
-        $obj = json_decode('{ "$and" : [{"timperiod_id ":"abc123"},{"opportunities_assigned_user":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $obj = json_decode('{ "$and" : [{"timeperiod_id":"abc123"},{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
         $this->obj->parse($obj);
         $pFilter = $this->obj->getParsedFilter();
 
