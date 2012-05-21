@@ -47,12 +47,13 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                    if (this.app.additionalComponents.subnav) {
-                        this.app.additionalComponents.subnav.model = app.controller.context.attributes.model;
-                        this.app.additionalComponents.subnav.meta = this.meta;
-                    }
-                }, this
-            );
+                if (this.context.get('subnavModel')) {
+                    this.context.get('subnavModel').set({
+                        'title': this.model.get('name'),
+                        'meta': this.meta
+                    });
+                }
+            }, this);
         }
     }
 

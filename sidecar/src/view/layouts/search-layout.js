@@ -1,30 +1,19 @@
 (function(app) {
 
-    var _meta = {
-        "type": "columns",
+    var _meta = {"type": "simple",
         "components": [
-            {
-                "layout": {
-                    "type": "leftside",
-                    "components": [
-                        {
-                            "view": "results"
-                        }
-                    ]
-                }
-            },
-            {
-                "layout": {
-                    "type": "rightside",
-                    "components": [
-                        {
-                            "view": "preview"
-                        }
-                    ]
-                }
-            }
+            {"view": "subnav"},
+            {"layout": {"type": "columns", "components": [
+                {"layout": {"type": "leftside", "components": [
+                    {"view": "results"}
+                ]}},
+                {"layout": {"type": "rightside", "components": [
+                    {"view": "preview"}
+                ]}}
+            ]}}
         ]
     };
+
     app.view.layouts.SearchLayout = app.view.Layout.extend({
 
         initialize: function(options) {

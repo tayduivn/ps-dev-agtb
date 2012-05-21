@@ -474,19 +474,7 @@
                 "</div>                             \n" +
                 "</div>\n" +
                 "</div>         \n" +
-                "</form>",
-            "subnav": "<div class=\"subnav\">" +
-                "<div class=\"btn-toolbar pull-left\">" +
-                "<h1>{{fieldWithName this \"name\"}}</h1>" +
-                "</div>" +
-                "<div class=\"btn-toolbar pull-right\">" +
-                "<div class=\"btn-group\">" +
-                "{{#each meta.buttons}}" +
-                "{{field ../this ../model}}  " +
-                "{{/each}}" +
-                "</div>" +
-                "</div>" +
-                "</div>"
+                "</form>"
         },
         "appListStrings": {
             "state_dom": {
