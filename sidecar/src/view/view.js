@@ -21,21 +21,6 @@
             // TODO: Do we need this?
             //_.bindAll(this);
 
-            // temp variables used to check metadata values for listeners
-            var tmpModule = options.module,
-                tmpLayout = app.metadata.getCurrentLayout(),
-                tmpView   = options.name;
-
-            // if we have all three pieces of data, check and see if there are listeners in the metadata
-            if( tmpModule && tmpLayout && tmpView )  {
-                this.listeners = app.metadata.getListeners( tmpModule , tmpLayout, tmpView );
-
-                // if there were listeners outlined in metadata, parse through them and add event listeners
-                if( this.listeners != null )  {
-                    this.parseEventListeners();
-                }
-            }
-
             /**
              * Name of the view (required).
              * @cfg {String}
@@ -179,6 +164,21 @@
                 //TODO trigger app event to notify user about no access or render a "no access" template
             }
 
+            // temp variables used to check metadata values for listeners
+            var tmpModule = this.options.module,
+                tmpLayout = app.metadata.getCurrentLayout(),
+                tmpView   = this.options.name;
+
+            // if we have all three pieces of data, check and see if there are listeners in the metadata
+            if( tmpModule && tmpLayout && tmpView )  {
+                this.listeners = app.metadata.getListeners( tmpModule , tmpLayout, tmpView );
+
+                // if there were listeners outlined in metadata, parse through them and add event listeners
+                if( this.listeners != null )  {
+                    this.parseEventListeners();
+                }
+            }
+
             return this;
         },
 
@@ -263,7 +263,7 @@
             if( this.listeners != null )  {
                 var listeners = this.listeners;
                 for( var i in listeners )  {
-                    app.events.on( i , this[listeners[i]], this);
+                    this.layout.events.on( i , this[listeners[i]] , this);
                 }
             }
         }, 
