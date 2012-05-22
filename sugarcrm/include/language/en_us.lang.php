@@ -2435,6 +2435,14 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
+
+    //Forecast specific error messages
+    'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
+    'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
+    'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
+    'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
     //END SUGARCRM flav=pro ONLY
 
     'LBL_ACCOUNT'=>'Account',
