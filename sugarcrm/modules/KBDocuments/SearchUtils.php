@@ -805,7 +805,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
 	    // do not do full text search if $query_include[0] is '*' or not defined -bug 47789
         // Bug 52409 - Also check if $query_must and $query_exclude aren't empty
-        if ((!empty($query_include) && $query_include[0] != '*') || !empty($query_must) || !empty($query_exclude)) {
+        if ((!empty($query_include) && $query_include[0] != '*') || !empty($query_must)) {
         	// If we are doing a full text search, remove from $query_include the '*' value if it exists
         	if (!empty($query_include)) {
         		   $query_include = array_values(array_diff($query_include, array("*")));
