@@ -32,6 +32,7 @@
 <script src='../sidecar/src/data/data-manager.js'></script>
 <script src='../sidecar/src/data/validation.js'></script>
 
+<script src='../sidecar/src/view/alert.js'></script>
 <script src='../sidecar/src/view/hbt-helpers.js'></script>
 <script src='../sidecar/src/view/view-manager.js'></script>
 <script src='../sidecar/src/view/component.js'></script>
@@ -49,7 +50,6 @@
 
 <script src='clients/base/views/grid/grid-view.js'></script>
 <script src='clients/base/views/tree/tree-view.js'></script>
-<script src='clients/base/views/tree/filter-view.js'></script>
 
 <script src='include/SidecarView/SidecarView.js'></script>
 
