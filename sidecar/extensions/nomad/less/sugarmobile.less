@@ -148,7 +148,7 @@ padding-left:0;
 }
 
 article [id^="listing-action"] i.grip {
-  position: absolute;
+  float:right;
   vertical-align: middle;
   top: 0;
   right: 0;
@@ -159,8 +159,12 @@ article [id^="listing-action"] i.grip {
   font-style: normal;
   height: 100%;
   color: darken(@grayLight, 15%);
+  margin-top:-61px;
+  margin-right:-32px;
 }
+
 article [id^="listing-action"] i.on {
+  position:absolute;
   left: 0;
   #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
   color: @black;
