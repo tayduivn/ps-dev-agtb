@@ -3277,6 +3277,9 @@ h1 {
 #content .layout.list > .view.list {
   display: inline;
 }
+#listing-Accounts .items article {
+  -webkit-transform: translatez(0);
+}
 /* activity and twitter */
 article {
   position: relative;
