@@ -127,7 +127,7 @@ class ReportBuilder
         }
 
         $last_item = array_pop(array_values($path));
-        if($last_item !== $link) {
+        if ($last_item !== $link) {
             array_push($path, $link);
         }
 
@@ -195,7 +195,7 @@ class ReportBuilder
 
             if (empty($key)) {
                 $key = $bean->module_dir . ':' . $link['name'];
-            } elseif(is_array($key)) {
+            } elseif (is_array($key)) {
                 $key = join(":", $key);
             }
 
@@ -473,5 +473,31 @@ class ReportBuilder
         }
 
         return $this->self_module;
+    }
+
+    /**
+     * Change the chart type,  If the value is not valid, it will default to hBarF.
+     *
+     * @param $chartType
+     */
+    public function setChartType($chartType)
+    {
+        $validCharts = array('hBarF', 'vBarF', 'pieF', 'lineF', 'funnelF');
+
+        if(in_array($chartType, $validCharts)) {
+            $this->defaultReport['chart_type'] = $chartType;
+        } else {
+            $this->defaultReport['chart_type'] = 'hBarF';
+        }
+    }
+
+    /**
+     * Return the ChartType Setting
+     *
+     * @return string
+     */
+    public function getChartType()
+    {
+        return $this->defaultReport['chart_type'];
     }
 }

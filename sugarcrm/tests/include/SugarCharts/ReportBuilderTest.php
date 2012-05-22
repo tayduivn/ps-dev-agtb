@@ -404,6 +404,22 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:contacts:assigned_user_link', $return['assigned_user_link']);
     }
 
+    public function testSetSetValidChartType()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->setChartType('funnelF');
+
+        $this->assertEquals('funnelF', $rb->getChartType());
+    }
+
+    public function testSetInvalidChartTypeEqualshBarF()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->setChartType('SomeInvalidChartTypeF');
+
+        $this->assertEquals('hBarF', $rb->getChartType());
+    }
+
     protected function objectToArray($d)
     {
         if (is_object($d)) {
