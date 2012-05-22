@@ -32,6 +32,7 @@
 <script src='../sidecar/src/data/data-manager.js'></script>
 <script src='../sidecar/src/data/validation.js'></script>
 
+<script src='../sidecar/src/view/alert.js'></script>
 <script src='../sidecar/src/view/hbt-helpers.js'></script>
 <script src='../sidecar/src/view/view-manager.js'></script>
 <script src='../sidecar/src/view/component.js'></script>
