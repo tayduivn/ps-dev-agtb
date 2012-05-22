@@ -249,7 +249,7 @@ class M2MRelationship extends SugarRelationship
             if ($rhs->$rhsLinkName instanceof Link2)
             {
                 $rhs->$rhsLinkName->load();
-                $this->calllBeforeDelete($rhs, $lhs, $rhsLinkName);
+                $this->callBeforeDelete($rhs, $lhs, $rhsLinkName);
             }
         }
 
