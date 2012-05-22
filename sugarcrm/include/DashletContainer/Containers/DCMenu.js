@@ -772,8 +772,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 this.visible = true;
                 this.get('boundingBox').setStyle('visibility','visible');
                 //Animate a slide out
-                var shim = 15;  //The padding of the dashletPanel border
-                var animX = (SUGAR.themes.theme_name == 'RTL') ? this.get("x") + this.get("width") - shim : this.get("x") - this.get("width") - shim;
+                var spotLeft = $("#sugar_spot_search_results").offset().left;
+                var spotWidth = $("#sugar_spot_search_results").width();
+                var shim = 35;  //The padding of the dashletPanel border
+                var animX = (SUGAR.themes.theme_name == 'RTL') ? spotLeft + spotWidth + shim + 5: spotLeft - this.get("width") - shim;
                 var animY = 42;
                 var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY]} });
                 animDCcont.set('duration', .25);

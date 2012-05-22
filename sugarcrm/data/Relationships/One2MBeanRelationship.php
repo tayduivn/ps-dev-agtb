@@ -69,8 +69,13 @@ class One2MBeanRelationship extends One2MRelationship
             $lhs->$lhsLinkName->load();
         }
 
-        $this->updateFields($lhs, $rhs, $additionalFields);
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callBeforeAdd($lhs, $rhs);
+            $this->callBeforeAdd($rhs, $lhs);
+        }
 
+        $this->updateFields($lhs, $rhs, $additionalFields);
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
@@ -120,6 +125,12 @@ class One2MBeanRelationship extends One2MRelationship
             return;
 
         $rhs->$rhsID = '';
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callBeforeDelete($lhs, $rhs);
+            $this->callBeforeDelete($rhs, $lhs);
+        }
 
         if ($save && !$rhs->deleted)
         {
