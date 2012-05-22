@@ -20,6 +20,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * PHP Report Builder.  This will create a report on the fly to run via the API
+ */
 class ReportBuilder
 {
 
@@ -351,7 +354,7 @@ class ReportBuilder
     }
 
     /**
-     *
+     * Add Filter
      *
      * @param $filter
      */

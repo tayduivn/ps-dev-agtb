@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -29,7 +30,7 @@
 require_once("modules/Reports/templates/templates_chart.php");
 
 /**
- * Handle setting up the
+ * Handle setting up the Charting for Display
  */
 class ChartDisplay
 {
@@ -76,14 +77,6 @@ class ChartDisplay
     protected $chartRows = array();
 
     /**
-     * Default Constructor
-     *
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Set the Reporter to use
      *
      * @param Report $reporter
@@ -117,6 +110,8 @@ class ChartDisplay
     }
 
     /**
+     * Return the SugarChart's object with all the values set and ready for display/consumption.
+     *
      * @return JitReports|string
      */
     public function getSugarChart()
@@ -166,6 +161,9 @@ class ChartDisplay
         }
     }
 
+    /**
+     * Generate the Title for the Chart
+     */
     protected function parseChartTitle()
     {
         global $current_language, $do_thousands;
@@ -210,6 +208,9 @@ class ChartDisplay
         $this->chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . get_k();
     }
 
+    /**
+     * Format the ChartRows from the Reporting engine
+     */
     protected function parseChartRows()
     {
         $chart_rows = array();
