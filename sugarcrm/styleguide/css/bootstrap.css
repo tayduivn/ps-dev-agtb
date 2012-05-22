@@ -6429,7 +6429,7 @@ table.datatable tr td .actions a:hover {
 .card2 {
   margin: -10px 0 20px;
 }
-.card2 .row-fluid {
+.card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
   padding: 10px 0 0;
   border-bottom: 1px solid #e8e8e8;
@@ -6438,7 +6438,7 @@ table.datatable tr td .actions a:hover {
   padding: 0 0 10px 0;
 }
 .card2 .extend + .row-fluid,
-.card2 .row-fluid:last-child {
+.card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 .card2 .input-append .add-on {
