@@ -79,8 +79,13 @@ function testPopulateSeedData()
     $accounts = $account->build_related_list("SELECT id FROM accounts WHERE deleted = 0", $account, 0, $total);
     $timeperiods = $account->build_related_list("SELECT id FROM timeperiods WHERE deleted = 0", $timeperiod, 0, $total);
     $products = $account->build_related_list("SELECT id FROM products WHERE deleted = 0", $product, 0, $total);
-    $users = $user->build_related_list("SELECT id FROM users WHERE deleted = 0", $user, 0, $total);
 
+    $result = $GLOBALS['db']->query("SELECT id FROM users WHERE deleted = 0 AND status = 'Active'");
+    $users = array();
+    while(($row = $GLOBALS['db']->fetchByAssoc($result)))
+    {
+        $users[$row['id']] = $row['id'];
+    }
     $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $timeperiods, $products, $users);
     $this->assertEquals(25, count($this->createdOpportunities));
 }

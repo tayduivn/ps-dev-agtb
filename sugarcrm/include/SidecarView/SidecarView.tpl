@@ -1,4 +1,3 @@
-<script language="javascript" src="../sidecar/lib/jquery/jquery.min.js"></script>
 <script language="javascript" src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script language="javascript" src="../sidecar/lib/backbone/underscore.js"></script>
 <script language="javascript" src="../sidecar/lib/backbone/backbone.js"></script>

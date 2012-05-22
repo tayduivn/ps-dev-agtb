@@ -43,6 +43,12 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
 		}
+
+        if ($input_name0 == 'last_current_next')
+        {
+            return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";
+        }
+
 		return $this->_get_column_select($layout_def)." = ".$this->reporter->db->quoted($input_name0)."\n";
 	}
 

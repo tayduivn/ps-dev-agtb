@@ -267,7 +267,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_TIMEPERIOD_ID',
-    'type' => 'id',
+    'type' => 'enum',
+    'dbType' => 'id',
+    'function' => array('name'=>'get_timeperiods_dom', 'include'=>'modules/TimePeriods/TimePeriod.php'),
     'reportable' => false,
   ),
   'timeperiods' =>
