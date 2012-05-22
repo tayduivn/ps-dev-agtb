@@ -476,10 +476,14 @@ html {
   height: 100%;
   position: absolute;
   left: 0;
+  top: 0;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   display: block;
+  .items {
+    margin-top:93px;
+  }
 }
 
 
@@ -528,6 +532,8 @@ html {
 .topelbar {
   position:relative;
   height:34px;
+  width:100%;
+  top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
   a.btn {
@@ -550,6 +556,22 @@ html {
       min-height:22px;
     }
   }
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
 }
 
 .filtered .topelbar {
@@ -1229,3 +1251,38 @@ float: none !important;}
 .navbar-bottom button:hover {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
 }
+
+
+
+/*
+.listing {
+  top:0;
+  height:100%;
+}
+
+.items {
+  margin-top:93px;
+}
+
+.topelbar {
+  top:50px;
+  width:100%;
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
+}
+*/
+
