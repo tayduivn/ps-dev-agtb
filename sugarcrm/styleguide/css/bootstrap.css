@@ -6604,8 +6604,7 @@ tr:hover .actions {
 .span2 .input-prepend input {
   width: inherit;
 }
-.vcard span,
-.block span {
+.vcard span {
   display: block;
 }
 .block span.label {
