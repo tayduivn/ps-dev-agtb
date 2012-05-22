@@ -6032,6 +6032,11 @@ table tfoot td {
   -moz-transition: all .2s linear;
   transition: all .2s linear;
 }
+
+#folded .subdetail {
+	width: inherit;
+}
+
 #folded .tab-pane#overview {
   background: #ffffff;
   border-left: none;
