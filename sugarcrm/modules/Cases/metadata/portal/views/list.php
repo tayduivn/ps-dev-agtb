@@ -14,7 +14,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
     array(
         0 =>
         array(
-            'name' => 'show_more_button_back',
+            'name' => 'create_new',
             'type' => 'navelement',
             'icon' => 'icon-plus',
             'label' => ' ',

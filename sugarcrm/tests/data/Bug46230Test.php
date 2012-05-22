@@ -41,28 +41,32 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
-        $this->stored_service_object = $GLOBALS['service_object'];
-        unset($GLOBALS['service_object']);
+        if(isset($GLOBALS['service_object'])) {
+            $this->stored_service_object = $GLOBALS['service_object'];
+            unset($GLOBALS['service_object']);
+        }
     }
-    
+
     public function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        $GLOBALS['service_object'] = $this->stored_service_object;
+        if(!empty($this->stored_service_object)) {
+            $GLOBALS['service_object'] = $this->stored_service_object;
+        }
     }
-    
+
     public function providerData()
     {
         return array(
             array('Partner', 'Banking', '1'),
             array('Analyst', 'Energy', '0'),
             array('Customer', 'Education', '0'),
-            ); 
+            );
     }
     /**
-     * @dataProvider providerData 
+     * @dataProvider providerData
      * @group 46230
      */
     public function testGetListViewArray($type, $industry, $is_industry_hidden)
@@ -71,7 +75,7 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
         $this->account->industry = $industry;
         $dependency = 'or(equal($account_type,"Analyst"),equal($account_type,"Customer"))';
         $this->account->field_defs['industry']['dependency'] = $dependency;
-        
+
         $res = $this->account->get_list_view_array();
 
         if ($is_industry_hidden == '1')
