@@ -15,9 +15,25 @@
             {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
             {{/with}}
         {{/each}}
+        {{log this}}
     </div>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
-    <div id="record-action" class="row-fluid">
+    <div id="record-action" class="row-fluid"></div>
+</div>
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12" id="listing"><i></i>
+            <ul class="actions">
+                {{#each customData.links}}
+                    <li><a href="#">
+                        {{#with this}}
+                        {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
+                        {{/with}}
+                        <i class="icon-chevron-right more"></i>
+                    </a></li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
 </div>
 <fieldset>
