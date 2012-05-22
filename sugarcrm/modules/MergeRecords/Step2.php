@@ -84,7 +84,6 @@ $ListView = new ListViewSmarty();
 $ListView->should_process = true;
 $ListView->mergeduplicates = false;
 $ListView->export = false;
-$ListView->select = false;
 $ListView->delete = false;
 $module = $_REQUEST['merge_module'];
 $metadataFile = null;

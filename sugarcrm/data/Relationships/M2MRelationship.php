@@ -330,7 +330,8 @@ class M2MRelationship extends SugarRelationship
             $query = "SELECT $targetKey id FROM $from WHERE $where AND $rel_table.deleted=$deleted";
             //Limit is not compatible with return_as_array
             if (!empty($params['limit']) && $params['limit'] > 0) {
-                $query = DBManagerFactory::getInstance()->limitQuery($query, 0, $params['limit'], false, "", false);
+                $offset = isset($params['offset']) ? $params['offset'] : 0;
+                $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);
             }
             return $query;
         }

@@ -777,7 +777,8 @@ SUGAR.expressions.GridToolTip = {
             return types;
         }
 
-        return false;
+        //If we have dropped down here, we have no idea what the return should be.
+        return "generic";
     };
 
     /**
@@ -933,14 +934,19 @@ SUGAR.expressions.GridToolTip = {
     //Initialize the Autocomplete. It will used a hidden input that is updated by a listener on the formula input
     $( "#fb_ac_input" ).autocomplete({
         source: function(e, fn){
+            var expectedType = getExpectedComponentType();
+            //If expected type is false, we shouldn't show the autocomplete
+            if (expectedType === false)
+                return false;
+
             //Fields
             if(e.term[0] == "$")
             {
-                fn(getFieldsByType(getExpectedComponentType(), e.term.substr(1), 10));
+                fn(getFieldsByType(expectedType, e.term.substr(1), 10));
                 acMode = "fields";
             }
             else {
-                fn(getFunctionsByType(getExpectedComponentType(), e.term, 10));
+                fn(getFunctionsByType(expectedType, e.term, 10));
                 acMode = "functions";
             }
         },

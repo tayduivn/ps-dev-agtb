@@ -455,7 +455,7 @@ SUGAR.append(SUGAR.themes, {
     	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: SUGAR.language.translate('', 'LBL_QUICK_CREATE_TITLE')});
         if( typeof($("#dcmenuSugarCube").attr("title")) != 'undefined' )
         {
 		    $("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
