@@ -47,9 +47,9 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		global $app_strings;
 		$initial_filter = '';
 
-		$this->title = $app_strings['LBL_SELECT_BUTTON_TITLE'];
-		$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
-		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];
+	    $this->title     = $this->getTitle();
+        $this->accesskey = $this->getAccesskey();
+        $this->value     = $this->getValue();
 
 		if (is_array($this->button_properties)) {
 			if( isset($this->button_properties['title'])) {
@@ -157,5 +157,30 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' />\n";
 	}
+
+    /**
+    * @return string
+    */
+    protected function getTitle()
+    {
+       return translate('LBL_SELECT_BUTTON_TITLE');
+    }
+
+    /**
+    * @return string
+    */
+    protected function getAccesskey()
+    {
+       return translate('LBL_SELECT_BUTTON_KEY');
+    }
+
+    /**
+    * @return string
+    */
+    protected function getValue()
+    {
+       return translate('LBL_SELECT_BUTTON_LABEL');
+    }
+
 }
 ?>
