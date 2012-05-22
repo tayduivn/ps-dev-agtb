@@ -49,7 +49,7 @@
 
 <script src='clients/base/views/grid/grid-view.js'></script>
 <script src='clients/base/views/tree/tree-view.js'></script>
-<script src='clients/base/views/tree/filter-view.js'></script>
+<script src='clients/base/views/filter/filter-view.js'></script>
 
 <script src='include/SidecarView/SidecarView.js'></script>
 
