@@ -24,11 +24,11 @@
                 errMessages.push(app.error.getErrorString(errorName, errorContext));
             });
 
-            //get template and output result
+            //get template and output the result
             template = app.template.get('field.messages');
             this.$('.controls').append(template(errMessages));
 
-            app.alert.show('field_validation_error', {level:'general', messages:'Validation error!'});
+            app.alert.show('field_validation_error', {level:'error', messages:'Validation error!'});
         }
     });
 
