@@ -21,13 +21,7 @@ class ChartApi extends SugarApi
     {
         $this->requireArgs($args, array('module', 'chart_type'));
 
-        switch ($args['chart_type']) {
-            case 'bar':
-                return $this->generateBar($api, $args);
-                break;
-        }
-
-        return array();
+        return $this->generateChart($api, $args);
     }
 
     protected function getReportBuilder($args)
@@ -68,10 +62,36 @@ class ChartApi extends SugarApi
         return $ReportBuilder;
     }
 
-    protected function generateBar($api, $args)
+    protected function mapChartType($type)
+    {
+        switch ($type) {
+            case 'vbar':
+                $chartType = 'vBarF';
+                break;
+            case 'funnel':
+                $chartType = 'funnelF';
+                break;
+            case 'pie':
+                $chartType = 'pieF';
+                break;
+            case 'line':
+                $chartType = 'lineF';
+                break;
+            case 'bar':
+            case 'hbar':
+            default:
+                $chartType = 'hBarF';
+                break;
+        }
+
+        return $chartType;
+    }
+
+    protected function generateChart($api, $args)
     {
         $ReportBuilder = $this->getReportBuilder($args);
         // now we have the chart data in the format for the reporting engine.
+        $ReportBuilder->setChartType($this->mapChartType($args['chart_type']));
         $chart_contents = $ReportBuilder->addSummaryCount()->toJson();
 
         /* @var $reporter Report */
