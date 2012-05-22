@@ -167,17 +167,18 @@ article [id^="listing-action"] i.grip {
   color: darken(@grayLight, 15%);
   margin-top:-61px;
   margin-right:-32px;
+  &.on {
+    position:absolute;
+    left: 0;
+    #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
+    color: @black;
+    text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
+    @shadow: 1px 0 4px rgba(0,0,0,.4);
+    .box-shadow(@shadow);
+    margin-top:0;
+  }
 }
 
-article [id^="listing-action"] i.on {
-  position:absolute;
-  left: 0;
-  #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
-  color: @black;
-  text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
-  @shadow: 1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
 article [id^="listing-action"] span {
   position: absolute;
   top: 0;

@@ -3353,7 +3353,7 @@ article [id^="listing-action"] i.grip {
   margin-top: -61px;
   margin-right: -32px;
 }
-article [id^="listing-action"] i.on {
+article [id^="listing-action"] i.grip.on {
   position: absolute;
   left: 0;
   background-color: #404040;
@@ -3370,6 +3370,7 @@ article [id^="listing-action"] i.on {
   -webkit-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
   box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
+  margin-top: 0;
 }
 article [id^="listing-action"] span {
   position: absolute;
