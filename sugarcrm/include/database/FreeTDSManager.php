@@ -91,4 +91,9 @@ class FreeTDSManager extends MssqlManager
     {
         return function_exists("mssql_connect") && DBManagerFactory::isFreeTDS();
     }
+
+    public function appendN($sql)
+    {
+        return $this->_appendN($sql);
+    }
 }

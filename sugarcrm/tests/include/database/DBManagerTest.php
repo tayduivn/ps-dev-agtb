@@ -2017,6 +2017,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testValidateQuery($good, $sql)
     {
+        if(get_class($this->_db) == 'FreeTDSManager')
+        {
+            $this->markTestSkipped('Break all tests on FreeTDS driver');
+        }
         $check = $this->_db->validateQuery($sql);
         $this->assertEquals($good, $check);
     }
