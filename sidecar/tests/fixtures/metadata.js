@@ -940,26 +940,26 @@ fixtures.metadata = {
         "detail": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
+            "{{field ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
         "edit": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
+            "{{field ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
@@ -969,11 +969,11 @@ fixtures.metadata = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
+            "{{field ../this ../model}}" +
             "{{/each}}" + "</form>",
         "subpanel": "",
         "list": '<div class="span12 container-fluid subhead">' +
@@ -990,18 +990,18 @@ fixtures.metadata = {
             '{{#each ../fields}}' +
             // SugarField requires the current context, field name, and the current bean in the context
             // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{field ../../../context ../../../this ../this}}</td>' +
+            '<td class="dblclick">{{field ../../../this ../this}}</td>' +
             '{{/each}}' +
             '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
             '{{/each}}' +
             "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
+            "{{field ../this ../model}}" +
             "{{/each}}" +
             "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
             '<li>' +
-            "{{field ../context ../this ../model}}" +
+            "{{field ../this ../model}}" +
             '</li>' +
             "{{/each}}" +
             '{{#if context.attributes.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.attributes.collection.page}}</small></div></li>{{/if}}' +
