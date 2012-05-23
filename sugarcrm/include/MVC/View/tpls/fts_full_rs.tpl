@@ -39,7 +39,7 @@
             {capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}
                 <ul>
                     <li>
-                            <a href="{sugar_ajax_url url=$url}"> <span>{$result->getSummaryText()}</span></a>
+                        <a href="{$url}"> <span>{$result->getSummaryText()}</span></a>
                         <br>
                         <span class="details">
                                 {assign var="resultHits" value=$result->getHighlightedHitText()}
