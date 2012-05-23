@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/SugarFields/SugarFieldHandler.php');
+
+
 abstract class SugarApi {
     // This class intentionally left blank.
     // It primarialy serves as a way to flag which classes could be called from externally facing API's
@@ -39,7 +42,6 @@ abstract class SugarApi {
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      */
     protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
-        require_once('include/SugarFields/SugarFieldHandler.php');
 
         $sfh = new SugarFieldHandler();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -48,7 +50,7 @@ abstract class SugarApi {
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
-        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->security->userId ) {
+        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $GLOBALS['current_user']->id ) {
             $isOwner = true;
         }
         
@@ -60,11 +62,10 @@ abstract class SugarApi {
         } else {
             $fieldList = '';
         }
-
         $data = array();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->security->userId,$isOwner) < 1 ) { 
+            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$GLOBALS['current_user']->id,$isOwner) < 1 ) { 
                 // No read access to this field, skip it.
                 continue;
             }
@@ -83,7 +84,7 @@ abstract class SugarApi {
             
             if ( $field != null ) {
                 if ( method_exists($field,'apiFormatField') ) {
-                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
+                    $field->apiFormatField($data, $bean, $args, $fieldName, $properties);
                 } else {
                     if ( isset($bean->$fieldName) ) {
                         $data[$fieldName] = $bean->$fieldName;
