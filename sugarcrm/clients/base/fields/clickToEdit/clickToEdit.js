@@ -30,7 +30,7 @@
              */
             element: function(settings, original) {
                 var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.context.fieldDef.options), function (value, key) {
+                _.each(app.lang.getAppListStrings(settings.context.def.options), function (value, key) {
                     var option = $("<option>").val(key).append(value);
                     selEl.append(option);
                 });
@@ -71,14 +71,14 @@
 
         var self = this;
 
-        this.cteField = this.$el.find('.cte' + this.cteclass);
+        this.cteField = this.$el.find('.cte' + this.def.cteclass);
         this.cteIcon = this.cteField.parent().find('.cteIcon');
         this.undoIcon = this.cteField.parent().find('.cteUndoIcon');
 
         this.undoIcon.on('click', null, self, this.doUndo);
         this.cteField.editable(self.doChange,
             {
-                type: self.ctetype || "text",
+                type: self.def.ctetype || "text",
                 select: true,
                 onedit: self.doEdit,
                 onreset: function(){console.log("onreset"); console.log(this);},
@@ -102,7 +102,9 @@
      */
     doChange: function(value, settings) {
         settings.context.model.set(settings.context.name, value);
-        settings.context.model.save(settings.context.name, value);
+        // currently does not pass validation on saves
+        // TODO: fix it.
+        // settings.context.model.save(settings.context.name, value);
         return value;
     },
 
@@ -123,7 +125,9 @@
     doUndo: function(e) {
         $(this).hide();
         e.data.model.set(e.data.name, e.data.undoValue);
-        e.data.model.save(e.data.name, e.data.undoValue);
+        // currently does not pass validation on saves
+        // TODO: fix it.
+        // e.data.model.save(e.data.name, e.data.undoValue);
     },
 
     /**

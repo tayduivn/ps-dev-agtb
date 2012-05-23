@@ -242,7 +242,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'best_case' =>
   array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_CASE',
+    'vname' => 'LBL_BEST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -250,7 +250,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'likely_case' =>
   array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY',
+    'vname' => 'LBL_LIKELY_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -258,7 +258,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'worst_case' =>
   array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_CASE',
+    'vname' => 'LBL_WORST_CASE',
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
@@ -267,7 +267,10 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_TIMEPERIOD_ID',
-    'type' => 'id'
+    'type' => 'enum',
+    'dbType' => 'id',
+    'function' => array('name'=>'get_timeperiods_dom', 'include'=>'modules/TimePeriods/TimePeriod.php'),
+    'reportable' => false,
   ),
   'timeperiods' =>
   array(
@@ -518,7 +521,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 
    'opportunity_lines' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
-   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'opportunity_id',
+   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav=pro ONLY
 )

@@ -23,11 +23,67 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OpportunityLine extends SugarBean
 {
-	// Stored fields
-	var $id;
+    // Stored fields
+    var $id;
     var $product_id;
-    var $table_name = "opportunity_line";
-   	var $module_dir = 'OpportunityLines';
-   	var $object_name = "OpportunityLine";
+    var $product_category_id;
+    var $experts;
+    var $expert_id;
+    var $table_name = "opportunity_lines";
+    var $module_dir = 'OpportunityLines';
+    var $object_name = "OpportunityLine";
 
+    function save($check_notify = FALSE)
+    {
+        $this->getExperts();
+        return parent::save($check_notify);
+    }
+
+    function getExperts()
+    {
+        $query = "SELECT pt.category_id category_id
+                FROM product_templates pt
+                WHERE pt.id = '$this->product_id'";
+
+        $result = $this->db->query($query,true, "Error getting product category id: ");
+
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row != null)
+        {
+            $this->product_category_id = $row['category_id'];
+            $this->getProductOwners($this->product_category_id);
+        }
+        else
+        {
+            $this->experts = '';
+        }
+    }
+
+    function getProductOwners($category_id)
+    {
+        $query = "SELECT assigned_user_id, parent_id
+                    FROM product_categories pc
+                    WHERE id = '$category_id'";
+
+        $result = $this->db->query($query, true, "Error getting product category additional fields: ");
+        $row = $this->db->fetchByAssoc($result);
+
+        if ($row != null)
+        {
+            $this->experts[] = $row['assigned_user_id'];
+            $this->getProductOwners($row['parent_id']);
+            $this->expert_id = $row['assigned_user_id'];
+        }
+        else
+        {
+            $this->expert_id = '';
+        }
+    }
+}
+
+function get_expert_array()
+{
+    require_once("include/utils.php");
+    return get_user_array();
 }

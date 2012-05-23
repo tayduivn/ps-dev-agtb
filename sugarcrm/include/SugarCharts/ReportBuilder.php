@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * PHP Report Builder.  This will create a report on the fly to run via the API
+ */
 class ReportBuilder
 {
 
@@ -61,6 +64,13 @@ class ReportBuilder
     protected $table_keys = array();
 
     /**
+     * Mapping of the Links to the Tables
+     *
+     * @var array
+     */
+    protected $link_keys = array();
+
+    /**
      * What's the default module
      *
      * @var string
@@ -86,19 +96,11 @@ class ReportBuilder
      * @param null|string $key      The key for the module we are adding
      * @return ReportBuilder
      */
-    public function addModule($module, $key = null)
+    public function addModule($module, $key)
     {
         $bean = $this->getBean($module);
 
-        if (empty($key)) {
-            // see if the key already exist
-            if(!isset($this->table_keys[$module])) {
-                // module is not already added, so lest just add it
-                $key = $module;
-            }
-        }
-
-        $this->table_keys[$module] = $key;
+        $this->table_keys[$key] = array('module' => $module, 'key' => $key);
 
         $this->defaultReport['full_table_list'][$key] = array(
             'value' => $bean->module_dir,
@@ -116,68 +118,168 @@ class ReportBuilder
      *
      * @param string $link              The Link name to load the field from
      * @param string $field             The field to add to the group by
-     * @param string $module            The Parent module for the link.
+     * @param string|array $path        The Parent module for the link, this can be a string or an array with the path to the new link
      * @return ReportBuilder
      */
-    public function addLink($link, $field, $module = null)
+    public function addLink($link, $field = null, $path = null)
     {
-        if(empty($module)) {
-            $module = $this->self_module;
+        if (empty($path)) {
+            $path = array($this->self_module);
+        } else if (!is_array($path)) {
+            $path = array($path);
         }
-        $bean = $this->getBean($module);
 
-        $links = $bean->get_linked_fields();
+        $last_item = array_pop(array_values($path));
+        if ($last_item !== $link) {
+            array_push($path, $link);
+        }
 
-        if(isset($links[$link]) && $bean->load_relationship($link)) {
-            // we have the link
-            /* @var $bean_rel Link2 */
-            $bean_rel = $bean->$link;
+        $key = array();
+        $module = null;
 
-            $link = $links[$link];
+        $last_item = array_pop(array_values($path));
+        foreach ($path as $step) {
+            if (empty($module) && ($step == $this->self_module || $step == "self")) {
+                $module = $this->getDefaultModule(true);
+                $key[] = $step;
+            } else {
+                // make this module
+                if (!($module instanceof SugarBean)) {
+                    $module = $this->getBean($module);
+                }
 
-            $key = $bean->module_dir . ':' . $link['name'];
+                $_bean_links = $module->get_linked_fields();
+                if (isset($_bean_links[$step])) {
+                    // we have a link
+                    // get the final module and set it
+                    $tmp_module = $this->getBean($_bean_links[$step]['module']);
+                    if ($tmp_module !== false) {
 
-            //$child_bean = $this->getBean($link['module']);
-            $this->table_keys[$link['module']] = $key;
-            $this->addGroupBy($field, $link['module']);
+                        $_field = null;
+                        if ($last_item == $step && isset($tmp_module->field_defs[$field])) {
+                            // make sure the field exists
+                            $_field = $field;
+                        }
 
-            $field_position = count($this->defaultReport['summary_columns']);
+                        $key[] = $step;
 
-            $arrLink = array(
-                'name' => $bean->module_dir . ' > ' . $link['module'],
-                'parent' => $this->table_keys[$module],
-                'children' => array(),
-                'link_def' => array(
-                    'name' => $link['name'],
-                    'relationship_name' => $link['relationship'],
-                    'bean_is_lhs' => ($bean_rel->getSide() == 'LHS'),
-                    'link_type' => $bean_rel->getType(),
-                    'label' => $link['module'],
-                    'module' => $link['module'],
-                    'table_key' => $key,
-                ),
-                'dependents' => array(
-                    'group_by_row_' . $field_position,
-                    'display_summaries_row_group_by_row_' . $field_position,
-                ),
-                'module' => $link['module'],
-                'label' => $link['vname']
-            );
+                        // now add the link
+                        $this->_addLink($step, join(":", $key), $module, $_field);
 
-            $this->defaultReport['full_table_list'][$key] = $arrLink;
+                        $module = $tmp_module;
+
+                        continue;
+                    }
+                } else {
+                    return $this;
+                }
+            }
         }
 
         return $this;
     }
 
     /**
+     * @param string $link
+     * @param string $key
+     * @param SugarBean $bean
+     * @param string $field
+     */
+    protected function _addLink($link, $key, $bean, $field = null)
+    {
+        $links = $bean->get_linked_fields();
+
+        if (isset($links[$link]) && $bean->load_relationship($link)) {
+            // we have the link
+            /* @var $bean_rel Link2 */
+            $bean_rel = $bean->$link;
+
+            $link = $links[$link];
+
+            if (empty($key)) {
+                $key = $bean->module_dir . ':' . $link['name'];
+            } elseif (is_array($key)) {
+                $key = join(":", $key);
+            }
+
+            //$child_bean = $this->getBean($link['module']);
+            $this->table_keys[$key] = array('module' => $link['module'], 'key' => $key);
+            //$this->table_keys[$link['module']] = $key;
+            $this->link_keys[$link['name']] = $key;
+            if (!is_null($field)) {
+                $this->addGroupBy($field, $link['module'], $key);
+            }
+
+            if (!isset($this->defaultReport['full_table_list'][$key])) {
+                $parent = $this->findParentTableKey($bean_rel->getRelatedModuleName(), $key, $field);
+
+                $arrLink = array(
+                    'name' => $bean->module_dir . ' > ' . $link['module'],
+                    'parent' => $parent,
+                    'children' => array(),
+                    'link_def' => array(
+                        'name' => $link['name'],
+                        'relationship_name' => $link['relationship'],
+                        'bean_is_lhs' => ($bean_rel->getSide() == 'LHS'),
+                        'link_type' => $bean_rel->getType(),
+                        'label' => $link['module'],
+                        'module' => $link['module'],
+                        'table_key' => $key,
+                    ),
+                    'dependents' => array(),
+                    'module' => $link['module'],
+                    'label' => $link['vname']
+                );
+
+                $this->defaultReport['full_table_list'][$key] = $arrLink;
+            }
+        }
+    }
+
+    /**
+     * Utility Method for finding the parent of the field/module combo
+     *
+     * @param string $bean_name         Module Name
+     * @param string $key               Potential Key name we are working with
+     * @param null|string $field        Do we have a field we are working with?
+     * @return array|string
+     */
+    protected function findParentTableKey($bean_name, $key, $field = null)
+    {
+        $parent = "";
+        $potentialParents = $this->getKeyTable($bean_name);
+        if (is_array($potentialParents)) {
+            if (empty($field) && isset($potentialParents[$key])) {
+                unset($potentialParents[$key]);
+            } elseif (!empty($field) && isset($potentialParents[$key])) {
+                $parent = $key;
+            }
+
+            // for now take the first one on what's left
+            if (empty($parent)) {
+                if (count($potentialParents) >= 1) {
+                    $parent = array_shift(array_keys($potentialParents));
+                } else {
+                    // it's empty, so just set it to self;
+                    $parent = "self";
+                }
+            }
+        } else {
+            $parent = $potentialParents;
+        }
+
+        return $parent;
+    }
+
+    /**
      * Add A Field To Group By
      *
      * @param string $field         Which field do we want to group by
-     * @param null|string $module   Which module the field belongs to
+     * @param string|null $module   Which module the field belongs to
+     * @param string|null $key      Potential Key that we are working with
      * @return ReportBuilder
      */
-    public function addGroupBy($field, $module = null)
+    public function addGroupBy($field, $module = null, $key = null)
     {
         if (empty($module)) {
             $module = $this->self_module;
@@ -190,11 +292,11 @@ class ReportBuilder
             $this->defaultReport['group_defs'][] = array(
                 'name' => $field,
                 'label' => $bean_field['vname'],
-                'table_key' => $this->table_keys[$module],
+                'table_key' => $this->findParentTableKey($bean->module_dir, $key, $field),
                 'type' => $bean_field['type'],
             );
 
-            $this->addSummaryColumn($field, $bean);
+            $this->addSummaryColumn($field, $bean, $key);
         }
 
         return $this;
@@ -204,10 +306,11 @@ class ReportBuilder
      * Add a Column to the Summary Output
      *
      * @param string $field         Which field to add
-     * @param string $module        Which module does the field belong to
+     * @param string|null $module   Which module does the field belong to
+     * @param string|null $key      Potential Key that we are working with
      * @return ReportBuilder
      */
-    public function addSummaryColumn($field, $module = null)
+    public function addSummaryColumn($field, $module = null, $key = null)
     {
         if (!($module instanceof SugarBean)) {
             if (empty($module)) {
@@ -225,7 +328,7 @@ class ReportBuilder
             $this->defaultReport['summary_columns'][] = array(
                 'name' => $field,
                 'label' => $bean_field['vname'],
-                'table_key' => $this->table_keys[$module],
+                'table_key' => $this->findParentTableKey($module, $key, $field),
             );
         }
 
@@ -251,6 +354,8 @@ class ReportBuilder
     }
 
     /**
+     * Add Filter
+     *
      * @param $filter
      */
     public function addFilter($filter)
@@ -279,7 +384,9 @@ class ReportBuilder
     }
 
     /**
-     * @param string $module Which Module To Load
+     * Get the SugarBean
+     *
+     * @param string $module    Which Module To Load
      * @return SugarBean
      */
     public function getBean($module)
@@ -299,10 +406,60 @@ class ReportBuilder
      */
     public function getKeyTable($module = null)
     {
-        if(is_null($module) || !isset($this->table_keys[$module])) {
+        // find all the array that match the current module
+        $found = array();
+
+        foreach ($this->table_keys as $key => $map) {
+            if ($map['module'] == $module) {
+                $found[$key] = $map;
+            }
+        }
+
+        // if we found none, return the whole array
+        if (empty($found)) {
             return $this->table_keys;
+        }
+
+        // if we only have one return the key
+        if (count($found) == 1) {
+            return array_shift(array_keys($found));
+        }
+
+        // just return all found.
+        return $found;
+
+    }
+
+    /**
+     * Convert A Table Key into a SugarBean
+     *
+     * @param string $tableKey          Table key we are working with
+     * @return SugarBean|boolean
+     */
+    public function getBeanFromTableKey($tableKey)
+    {
+        $module = false;
+        foreach ($this->table_keys as $key => $map) {
+            if ($key == $tableKey) {
+                $module = $map['module'];
+                break;
+            }
+        }
+        return ($module === false) ? false : $this->getBean($module);
+    }
+
+    /**
+     * Return a specify key if a link is passed in, if not return the whole array
+     *
+     * @param string $link        Specific link to get a table key for.
+     * @return array|string
+     */
+    public function getLinkTable($link = null)
+    {
+        if (is_null($link) || !isset($this->link_keys[$link])) {
+            return $this->link_keys;
         } else {
-            return $this->table_keys[$module];
+            return $this->link_keys[$link];
         }
     }
 
@@ -314,10 +471,36 @@ class ReportBuilder
      */
     public function getDefaultModule($asBean = false)
     {
-        if($asBean == true) {
+        if ($asBean == true) {
             return $this->getBean($this->self_module);
         }
 
         return $this->self_module;
+    }
+
+    /**
+     * Change the chart type,  If the value is not valid, it will default to hBarF.
+     *
+     * @param $chartType
+     */
+    public function setChartType($chartType)
+    {
+        $validCharts = array('hBarF', 'vBarF', 'pieF', 'lineF', 'funnelF');
+
+        if(in_array($chartType, $validCharts)) {
+            $this->defaultReport['chart_type'] = $chartType;
+        } else {
+            $this->defaultReport['chart_type'] = 'hBarF';
+        }
+    }
+
+    /**
+     * Return the ChartType Setting
+     *
+     * @return string
+     */
+    public function getChartType()
+    {
+        return $this->defaultReport['chart_type'];
     }
 }

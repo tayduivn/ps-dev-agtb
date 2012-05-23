@@ -480,7 +480,19 @@ function buildExportLink($forecast_type) {
     return $buttons;
 }
 
-
+/**
+ * syncQuoteWithOpportunity
+ * This function helps to sync a Quote's products entries to a Opportunity's line entries.
+ *
+ * @param $quote_id String value of the Quote id to sync
+ * @param $opp_id String value of the Opportunity id to sync
+ * @param $direction String value indicating the direction of the sync (to_opportunity or to_quote).  to_opportunity indicates
+ * that the Quote's product(s) values will be copied into the Opportunity line item(s) values.  to_quote indicates that the Opportunity's
+ * line item(s) values will be copied into the Quote's product(s) values.
+ *
+ * @return bool|mixed Returns an multi-array of result entries with the updated values.  Each entry is an array of the bundle id and
+ * the updated entries for the bundle.  Returns false if no entries were affected.
+ */
 function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
 {
     global $timedate, $current_user;
@@ -494,8 +506,7 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
 
     $opp = new Opportunity();
     $opp->retrieve($opp_id);
-    $oppBundles = array();
-    $oppBundles = $opp->get_line_bundles();
+    $oppBundles = $opp->getOpportunityLineBundles();
 
     if ($direction == 'to_opportunity' && !empty($quoteBundles))
     {
@@ -544,33 +555,30 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
             $products = $productBundle->get_products();
 
             $lineItems = array();
+            $lineEntries = array();
             if ($oppBundleExists)
             {
                 $lineItems = $oppLineBundle->get_line_items();
+                foreach ($lineItems as $lineItem)
+                {
+                    $lineEntries[$lineItem->product_id] = true;
+                }
             }
 
-            $arrOppLines = '';
+            $arrOppLines = array();
 
             foreach ($products as $product)
             {
                 // check if line item already exists
-                $lineItemExists = false;
-                foreach ($lineItems as $lineItem)
-                {
-                    if ($lineItem->product_id == $product->id)
-                    {
-                        $lineItemExists = true;
-                        break;
-                    }
-                }
+                $lineItemExists = isset($lineEntries[$product->id]);
 
                 //sync a line item
                 $oppLine = new OpportunityLine();
                 if ($lineItemExists)
                 {
-                    //just update currency fields
                     $oppLine->retrieve($lineItem->id);
                     $oppLine->price = $product->list_price;
+                    $oppLine->quanity = $product->quantity;
                     $oppLine->discount_price = $product->discount_price;
                     $oppLine->discount_usdollar = $product->discount_usdollar;
                     $oppLine->currency_id = $product->currency_id;
@@ -584,6 +592,7 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
                     $oppLine->product_id = $product->id;
                     $oppLine->opportunity_id = $opp_id;
                     $oppLine->price = $product->list_price;
+                    $oppLine->quanity = $product->quantity;
                     $oppLine->discount_price = $product->discount_price;
                     $oppLine->discount_usdollar = $product->discount_usdollar;
                     $oppLine->currency_id = $product->currency_id;
@@ -593,7 +602,6 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
 
                     //set opp_line_bundle_opp_line relationship
                     $oppLineBundle->set_opportunitylinebundle_opportunityline_relationship($oppLine->id, 1, '');
-
                     $arrOppLines[] = array('id' => $oppLine->id);
                 }
                 
@@ -604,8 +612,7 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
                 $result['opportunity']['bundles'][] = array('id' => $oppLineBundle->id, 'products' => $arrOppLines);
             }
 
-        }//foreach bundles
-
+        } //foreach bundles
         return $result;
     }
     elseif ($direction == 'to_quote' && !empty($oppBundles))
@@ -659,22 +666,18 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
             }
 
             $arrProducts = '';
+            $productEntries = array();
+            foreach ($products as $product)
+            {
+                $productEntries[$product->id] = true;
+            }
 
             foreach ($lineItems as $line)
             {
                 //check if product already exists
-                $quoteProductExists = false;
-                foreach ($products as $product)
-                {
-                    if ($product->id == $line->product_id)
-                    {
-                        $quoteProductExists = true;
-                        break;
-                    }
-                }
+                $quoteProductExists = isset($productEntries[$line->product_id]);
 
                 //sync a line item
-
                 if ($quoteProductExists)
                 {
                     //just update currency fields
@@ -719,10 +722,8 @@ function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
 
         return $result;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 // get summation opportunity data for current user
@@ -836,7 +837,7 @@ function createOppDataByUserQuery($user_id, $timeperiod_id)
     $query .= " FROM timeperiods t, opportunities o";
     $query .= " LEFT JOIN opp_line_bundle_opp olbo on o.id = olbo.opportunity_id
                 LEFT JOIN opp_line_bundle_opp_line olbol on olbo.bundle_id = olbol.bundle_id
-                LEFT JOIN opportunity_line ol on olbol.opportunity_line_id = ol.id";
+                LEFT JOIN opportunity_lines ol on olbol.opportunity_line_id = ol.id";
     $query .= " WHERE o.assigned_user_id = '$user_id'
                     AND t.id = '$timeperiod_id'
                     AND o.date_closed <= t.end_date

@@ -4183,15 +4183,6 @@ h3.nomad {
   height: 32px;
   width: 32px;
 }
-.control-group.error * {
-  color: red !important;
-}
-.control-group.error * .icon-exclamation-sign {
-  line-height: 26px;
-}
-.control-group.error * small {
-  font-size: smaller;
-}
 .control-group .btn.fright {
   min-width: 20px;
   padding-left: 4px;
@@ -4268,10 +4259,6 @@ h3.nomad {
 .login .btn.btn-sugar {
   width: 140px!important;
 }
-.login .control-group.error input {
-  background: #ffffff url(../img/exclamation.png) 97% 50% no-repeat;
-  color: #e61718;
-}
 .alert {
   z-index: 2000;
   position: absolute;
@@ -4291,17 +4278,6 @@ h3.nomad {
   margin: 0;
   font-size: 12px;
   background: #000000;
-}
-.alerts {
-  position: absolute;
-  bottom: 1px;
-  left: 1px;
-  height: auto;
-  width: 100%;
-  overflow: hidden;
-}
-.alerts .alert {
-  position: relative;
 }
 /* Alert overrider */
 .alert-warning {

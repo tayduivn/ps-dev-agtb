@@ -37,7 +37,7 @@ $dictionary['opp_line_bundle_opp_line'] = array (
 	),
 
     'relationships' => array ('opp_line_bundle_opp_line' => array('lhs_module'=> 'OpportunityLineBundles', 'lhs_table'=> 'opp_line_bundle', 'lhs_key' => 'id',
-   		'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_line', 'rhs_key' => 'id',
+   		'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'id',
    		'relationship_type'=>'many-to-many',
    		'join_table'=> 'opp_line_bundle_opp_line', 'join_key_lhs'=>'bundle_id', 'join_key_rhs'=>'opportunity_line_id'))
 );

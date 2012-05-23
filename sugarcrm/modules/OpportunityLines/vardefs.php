@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['OpportunityLine'] = array('table' => 'opportunity_line','audited'=>false,
+$dictionary['OpportunityLine'] = array('table' => 'opportunity_lines','audited'=>false,
 		'comment' => 'The opportunity line item assoicated with the product',
 'fields' => array (
 
@@ -38,7 +38,27 @@ array (
   'name' => 'product_id',
   'vname' => 'LBL_PRODUCT_ID',
   'type' => 'id',
-  'required' => true
+  'required' => true,
+  'reportable' => false,
+),
+  'products' =>
+  array(
+    'name' => 'products',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_products',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Products',
+    'bean_name'=>'Product',
+    'vname'=>'LBL_PRODUCTS',
+  ),
+'expert_id' =>
+    array (
+    'name' => 'expert_id',
+    'vname' => 'LBL_EXPERT_ID',
+    'type' => 'enum',
+    'function' => 'get_expert_array',
+    'dbType' => 'varchar',
 ),
 'opportunity_id' =>
 array (
@@ -46,8 +66,40 @@ array (
   'type' => 'id',
   'vname' => 'LBL_OPPORTUNITY_ID',
   'required'=>false,
+  'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
+'opportunity_name' =>
+  array (
+    'name' => 'opportunity_name',
+    'rname' => 'name',
+    'id_name' => 'opportunity_id',
+    'vname' => 'LBL_OPPORTUNITY_NAME',
+    'type' => 'relate',
+    'table' => 'opportunities',
+    'join_name'=>'opportunities',
+    'isnull' => 'true',
+    'module' => 'Opportunities',
+    'dbType' => 'varchar',
+    'link'=>'opportunities',
+    'len' => '255',
+    'source'=>'non-db',
+    'unified_search' => true,
+    'required' => true,
+    'importable' => 'required',
+    'required' => true,
+  ),
+'opportunities' =>
+  array(
+    'name' => 'opportunities',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_opportunities',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Opportunities',
+    'bean_name'=>'Opportunity',
+    'vname'=>'LBL_OPPORTUNITIES',
+  ),
 'price' =>
 array (
     'name' => 'price',
@@ -147,6 +199,16 @@ array (
     'cols' => 80,
 ),
 
+),
+    'relationships' => array (
+        'opportunity_lines_products' =>
+            array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'product_id',
+                'relationship_type'=>'one-to-many'),
+        'opportunity_lines_opportunities' =>
+            array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+                'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
+                'relationship_type'=>'one-to-many'),
 )
 
 );

@@ -259,6 +259,44 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN (".$str.")\n";
 	}
 
+    /**
+     * queryFilterreports_to
+     *
+     * @param $layout_def
+     * @param bool $rename_columns
+     * @return string
+     */
+    function queryFilterreports_to($layout_def, $rename_columns = true)
+   	{
+        $layout_def['name'] = 'id';
+        $layout_def['type'] = 'id';
+        $input_name0 = $layout_def['input_name0'];
+
+        if (is_array($layout_def['input_name0']))
+        {
+            $input_name0 = $layout_def['input_name0'][0];
+        }
+
+        if ($input_name0 == 'Current User')
+        {
+            global $current_user;
+            $input_name0 = $current_user->id;
+        }
+
+        $user = new User();
+        $user->retrieve($input_name0);
+        $ids = $user->get_reports_to_hierarchy();
+
+        //Use in select syntax if we have more than one user.  This may be Mysql specific as other DBs may
+        //be able to handle a direct recursive query.
+        if(count($ids) > 1)
+        {
+           return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", $ids) ."')\n";
+        }
+
+        return SugarWidgetFieldid::_get_column_select($layout_def)."=".$this->reporter->db->quoted($input_name0)."\n";
+   	}
+
 	function &queryGroupBy($layout_def)
 	{
         if($layout_def['name'] == 'full_name') {

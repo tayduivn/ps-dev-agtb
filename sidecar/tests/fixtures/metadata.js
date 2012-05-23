@@ -247,12 +247,34 @@ fixtures.metadata = {
                         ]
                     }
                 },
+                // added complex layout with listeners for testing purposes
                 "list": {
                     "meta": {
                         //Default layout is a single view
-                        "type": "simple",
-                        "components": [
-                            {view: "list"}
+                        "type" : "fluid",
+                        "components" : [
+                            {
+                                "size" : "2",
+                                "layout" : {
+                                    "type" : "rows",
+                                    "components" : [
+                                        {
+                                            "view" : "tree"
+                                        }
+                                    ]
+
+                                }
+                            },
+                            {
+                                "size" : "10",
+                                "view" : "grid",
+                                "listeners" : [
+                                    {
+                                        "treeview:node_select" : "filterGridById"
+                                    }
+                                ]
+
+                            }
                         ]
                     }
                 },

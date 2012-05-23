@@ -158,4 +158,25 @@ describe('Metadata Manager', function() {
         });
 
     });
+
+
+    describe('Event Listeners through Metadata', function(){
+        var app;
+
+        beforeEach(function() {
+            app = SugarTest.app;
+            SugarTest.seedMetadata();
+        });
+
+        it("should find event listeners in metadata", function() {
+            var module = "Cases",
+                layout = "list",
+                view   = "grid";
+
+            // have to call the layout first before we can get the listeners
+            var listLayout = app.metadata.getLayout("Cases","list");
+            var gridListeners = app.metadata.getListeners( module, layout, view );
+            expect(gridListeners).toEqual([{"treeview:node_select" : "filterGridById"}])
+        });
+    });
 });

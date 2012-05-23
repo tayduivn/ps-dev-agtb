@@ -410,8 +410,6 @@ for(module_name in module_defs)
 				module_defs[module_name].group_by_field_defs[field_def.name+':'+stype] = { name: field_def.name+':'+stype, field_def_name: field_def.name, vname: date_summary_types[stype]+': '+ field_def.vname,column_function:stype,summary_type:'column',field_type:field_type };
 			}
 
-
-//			module_defs[module_name].group_by_field_defs[ field_def.name ] = field_def;
 		}
 
 		if(field_def.name == 'amount')
@@ -462,6 +460,7 @@ qualifiers_name = qualifiers_name.concat(qualifiers);
 qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
 filter_defs['name'] = qualifiers_name;
+filter_defs['timeperiod'] = qualifiers_name;
 filter_defs['fullname'] = qualifiers_name;
 
 
@@ -469,6 +468,10 @@ var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
 var is_not_empty_def = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 var is_empty_def = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+//BEGIN SUGARCRM flav=pro ONLY
+var reports_to_def = {name:'reports_to',value:'<?php echo $mod_strings['LBL_REPORTS_TO']; ?>'};
+//END SUGARCRM flav=pro ONLY
+qualifiers_name.unshift(reports_to_def);
 qualifiers_name.unshift(is_not_empty_def);
 qualifiers_name.unshift(is_empty_def);
 qualifiers_name.unshift(not_one_of_def);
@@ -491,10 +494,6 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 qualifiers[qualifiers.length] = {name:'tp_yesterday',value:'<?php echo $mod_strings['LBL_YESTERDAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_today',value:'<?php echo $mod_strings['LBL_TODAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_tomorrow',value:'<?php echo $mod_strings['LBL_TOMORROW']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_week',value:'<?php echo $mod_strings['LBL_LAST_WEEK']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_next_week',value:'<?php echo $mod_strings['LBL_NEXT_WEEK']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_7_days',value:'<?php echo $mod_strings['LBL_LAST_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_7_days',value:'<?php echo $mod_strings['LBL_NEXT_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_month',value:'<?php echo $mod_strings['LBL_LAST_MONTH']; ?>'};
@@ -502,10 +501,6 @@ qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_str
 qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_quarter',value:'<?php echo $mod_strings['LBL_LAST_QUARTER']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_this_quarter',value:'<?php echo $mod_strings['LBL_THIS_QUARTER']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
@@ -560,7 +555,6 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 filter_defs['enum'] = qualifiers;
 filter_defs['radioenum'] = qualifiers;
 filter_defs['parent_type'] = qualifiers;
-
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
