@@ -3281,6 +3281,9 @@ h1 {
   -webkit-transform: translatez(0);
 }
 /* activity and twitter */
+.listing article {
+  -webkit-transition: all 0.25s ease-in-out;
+}
 article {
   position: relative;
   display: block;
@@ -3689,16 +3692,11 @@ html {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
-  display: block;
 }
 .listing .items {
   margin-top: 93px;
-}
-.listing article {
-  -webkit-transition: all 0.25s ease-in-out;
 }
 .listing article.deleted {
   opacity: 0;
@@ -3785,7 +3783,7 @@ html {
   overflow: hidden;
   -webkit-overflow-scrolling: hidden;
   display: block;
-  z-index: 1;
+  z-index: 2000;
 }
 .searchlist .container-fluid {
   padding: 0 !important;
@@ -3879,7 +3877,7 @@ html {
 h1.nomad,
 h3.nomad {
   color: #ffffff;
-  z-index: 10000;
+  z-index: 2001;
   position: absolute;
   width: 80%;
   margin: 0 10%;
@@ -4074,7 +4072,7 @@ h3.nomad {
   margin: 0;
 }
 .over {
-  z-index: 2000;
+  z-index: 2002;
   position: absolute;
   width: 100%;
   height: auto;
@@ -4273,7 +4271,7 @@ h3.nomad {
   color: #e61718;
 }
 .alert {
-  z-index: 2000;
+  z-index: 2002;
   position: absolute;
   width: 100%;
   height: 42px;
@@ -4458,7 +4456,7 @@ h3.nomad {
   top: 50px;
   height: auto;
   overflow: scroll;
-  z-index: 2000;
+  z-index: 2002;
   -webkit-overflow-scrolling: touch;
 }
 .navbar-bottom.exposed .row-fluid {
@@ -4569,8 +4567,7 @@ h3.nomad {
       padding:0 !important;
     }
 }
-*/
-.pull-right {
+*/.pull-right {
   float: right;
 }
 .pull-left {

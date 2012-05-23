@@ -81,10 +81,14 @@ h1 {font-size: 26px !important;}
 }
 
 #listing-Accounts .items article {
-  -webkit-transform: translateZ(0);
+  -webkit-transform: translatez(0);
 }
 
 /* activity and twitter */
+
+.listing article {
+  -webkit-transition: all 0.25s ease-in-out;
+}
 
 article {
   position: relative;
@@ -482,19 +486,13 @@ html {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
-  display: block;
   .items {
     margin-top:93px;
   }
 }
 
-
-.listing article {
-	-webkit-transition: all .25s ease-in-out;
-}
 
 .listing article.deleted {
     opacity:0;
@@ -572,7 +570,7 @@ html {
       overflow: hidden;
       -webkit-overflow-scrolling: hidden;
       display: block;
-      z-index:1;
+      z-index:2000;
     }
     .container-fluid {
       padding:0 !important;
@@ -682,7 +680,7 @@ html {
 h1.nomad,
 h3.nomad {
   color: @white;
-  z-index: 10000;
+  z-index: 2001;
   position: absolute;
   width: 80%;
   margin: 0 10%;
@@ -836,7 +834,7 @@ color: @gray;
 }
 
 .over {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: auto;
@@ -1023,7 +1021,7 @@ float: none !important;}
 }
 
 .alert {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: 42px;
@@ -1198,7 +1196,7 @@ float: none !important;}
   top:50px;
   height:auto;
   overflow: scroll;
-  z-index:2000;
+  z-index:2002;
   -webkit-overflow-scrolling:touch;
   .row-fluid {
     display: block;
@@ -1283,4 +1281,3 @@ float: none !important;}
     }
 }
 */
-
