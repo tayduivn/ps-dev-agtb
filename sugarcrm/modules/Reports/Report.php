@@ -155,6 +155,10 @@ class Report
             $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
         }
 
+        if (!empty($this->report_def['full_table_list']))
+        {
+            $this->fixReportDefs();
+        }
         $this->cleanLabels();
 
         if (!empty($this->report_def['report_name'])) {
@@ -425,6 +429,85 @@ class Report
         $this->report_def_str = $json->encode($this->report_def);
 
 
+    }
+
+    /**
+     * Bug #52757
+     * Tries to find missed relations and removes them from full_table_list
+     */
+    public function fixReportDefs()
+    {
+        $validTableKeys = array();
+        // Collecting table_keys from display_columns
+        foreach ($this->report_def['display_columns'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from summary_columns
+        foreach ($this->report_def['summary_columns'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from group_defs
+        foreach ($this->report_def['group_defs'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from filter_defs
+        foreach ($this->report_def['filters_def'] as $filters)
+        {
+            foreach ($filters as $column)
+            {
+                if (is_array($column) == false)
+                {
+                    continue;
+                }
+                if (in_array($column['table_key'], $validTableKeys) == false)
+                {
+                    $validTableKeys[] = $column['table_key'];
+                }
+            }
+        }
+
+        // Filling dependencies from validTableKeys
+        $requiredTableKeys = array(
+            'self' => $this->module
+        );
+        foreach ($this->report_def['full_table_list'] as $k => $v)
+        {
+            if (in_array($k, $validTableKeys) == true)
+            {
+                $offset = -1;
+                while (($offset = strpos($k, ':', $offset + 1)) !== false)
+                {
+                    $requiredTableKeys[substr($k, 0, $offset)] = $k;
+                }
+                $requiredTableKeys[$k] = $k;
+            }
+        }
+
+        // Removing incorrect dependencies
+        foreach ($this->report_def['full_table_list'] as $k => $v)
+        {
+            if (in_array($k, $validTableKeys) == true)
+            {
+                continue;
+            }
+            if (!empty($requiredTableKeys[$k]))
+            {
+                continue;
+            }
+            unset($this->report_def['full_table_list'][$k]);
+        }
     }
 
     /**
