@@ -872,7 +872,7 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
     //BEGIN SUGARCRM flav=pro ONLY
     //Create at least 100 Opportunities
     $products = $account->build_related_list('SELECT id FROM products', new Product(), 0, 50);
-    $opportunity_ids = OpportunitiesSeedData::populateSeedData(($number_companies < 100 ? 100 : $number_companies), $app_list_strings, $accounts, $timeperiods, $products, $sugar_demodata['users']);
+    $opportunity_ids = OpportunitiesSeedData::populateSeedData(($number_companies < 100 ? 100 : $number_companies), $app_list_strings, $accounts, $products, $sugar_demodata['users']);
     //END SUGARCRM flav=pro ONLY
 
     foreach($contacts as $id)

@@ -48,13 +48,13 @@ class OpportunitiesSeedData {
  */
 public static function populateSeedData($records, $app_list_strings, $accounts
 //BEGIN SUGARCRM flav=pro ONLY
-    ,$timeperiods, $products, $users
+    ,$products, $users
 //END SUGARCRM flav=pro ONLY
 )
 {
     if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
 //BEGIN SUGARCRM flav=pro ONLY
-       || empty($timeperiods) || empty($products) || empty($users)
+       || empty($products) || empty($users)
 //END SUGARCRM flav=pro ONLY
 
     )
@@ -86,8 +86,6 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->worst_case = $worst_case[$key];
         $opp->likely_case = $likely_case[$key];
         $opp->best_case = $best_case[$key];
-        $key = array_rand($timeperiods);
-        $opp->timeperiod_id = array_rand($timeperiods);
         //END SUGARCRM flav=pro ONLY
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
