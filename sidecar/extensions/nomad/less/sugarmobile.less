@@ -508,20 +508,18 @@ html {
     padding-top:0;
     padding-bottom:0;
     min-height:42px;
-}
-
-.listing article.nav:last-child {
-    border-top: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav:first-child,
-.listing article.nav:nth-child(2),
-.listing article.nav:nth-child(3) {
-    border-bottom: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav div {
-    height:42px;
+    &.show-more-top-btn {
+      top:93px;
+    }
+    &:last-child {
+      border-top: 1px solid darken(@grayLighter, 25%);
+    }
+    div {
+      height:42px;
+    }
+    &:first-child, &:nth-child(2), &:nth-child(3) {
+      border-bottom: 1px solid darken(@grayLighter, 25%);
+    }
 }
 
 .listing > i {
@@ -541,6 +539,9 @@ html {
   top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  
+  
+  margin-right:100px;
   a.btn {
     min-height:20px;
     min-width:50px;
@@ -553,6 +554,7 @@ html {
     display:inline-block;
     width:85px;
     height:16px;
+    float:right;
     position:absolute;
     right:0px;
     top:4px;
@@ -561,6 +563,29 @@ html {
       min-height:22px;
     }
   }
+}
+
+.listing .form-search {
+  margin:0;
+}
+
+.listing .icon-search {
+  position:absolute;
+  margin:8px 0 0 14px;
+  color:darken(@grayLighter, 20%);
+}
+
+.search-query[placeholder] {
+  text-indent: 30px !important;
+}
+
+.listing .search-query {
+  width: 100%;
+  height: 26px;
+  
+  .border-radius(18px);
+  padding-left:0;
+  padding-right:0;
 }
 
 .searchlist {
@@ -583,6 +608,14 @@ html {
   padding-right:94px;
 }
 
+
+.searchlist .listing {
+margin-left: -100px !important;
+padding-left: 100px;
+overflow:visible;
+
+}
+
 @media (max-width: 479px) {
   .topelbar {
     i.opt {
@@ -593,29 +626,6 @@ html {
 
 .tcenter > .btn-group {
   display:inline-block;
-}
-
-.listing .form-search {
-  margin:0;
-}
-
-.listing .icon-search {
-  position:absolute;
-  margin:8px 0 0 14px;
-  color:darken(@grayLighter, 20%);
-}
-
-.search-query[placeholder] {
-  text-indent: 30px !important;
-}
-
-.listing .search-query {
-  width: 98.75%;
-  height: 26px;
-  
-  .border-radius(18px);
-  padding-left:0;
-  padding-right:0;
 }
 
 .navbar [class^="icon-"] {
