@@ -401,7 +401,7 @@ class Importer
 
     protected function sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated)
     {
-        global $mod_strings, $app_list_strings;
+        global $mod_strings, $app_list_strings, $timedate;
         switch ($fieldDef['type'])
         {
             case 'enum':
@@ -444,6 +444,12 @@ class Importer
                 return $rowValue;
                 break;
             case 'fullname':
+                return $rowValue;
+                break;
+            case 'datetimecombo':
+                $userDateFormat =  $timedate->get_date_time_format();
+                $currentDateFormat = $this->ifs->dateformat.' '.$this->ifs->timeformat;
+                $rowValue = $timedate->to_display($rowValue, $currentDateFormat, $userDateFormat);
                 return $rowValue;
                 break;
             default:
