@@ -3956,26 +3956,19 @@ h3.nomad {
 .bizcard .card {
   margin: 0 0 0 16px;
   float: left;
-  line-height: 1.25em;
+  line-height: 1.2em;
 }
 .bizcard .card h3 {
   font-size: 1.75em;
   line-height: 22px;
 }
-.bizcard .card h3 label {
-  font-size: 0.55em;
-}
 .bizcard .card label {
   color: #999;
-  font-size: 0.9em;
   line-height: 1;
   margin-bottom: 0;
 }
 .bizcard .card .value {
-  font-size: 1.2em;
   display: block;
-  margin-bottom: 8px;
-  line-height: 1;
 }
 .bizcard .more {
   float: right;

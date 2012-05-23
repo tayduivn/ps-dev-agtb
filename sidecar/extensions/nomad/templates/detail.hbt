@@ -1,34 +1,39 @@
-<h1 class="nomad">Details</h1>
+<h1 class="nomad">
+{{#with customData.headerField}}
+{{field     ../viewObj.context    ../viewObj    ../viewObj.model}}
+{{/with}}
+</h1>
 <div class="bizcard">
     <div class="card">
-
-        {{#with meta.panels.[0]}}
-            <h3>
-            {{#with fields.[0]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-            </h3>
-
-            {{#with fields.[1]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[2]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[3]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[4]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
+        <h3>
+        {{#with customData.headerField}}
+        {{field     ../viewObj.context    ../viewObj    ../viewObj.model}}
         {{/with}}
-
+        </h3>
+        {{#each customData.fields}}
+            {{#with this}}
+            {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
+            {{/with}}
+        {{/each}}
+        {{log this}}
     </div>
-    <a href="#{{model.module}}/{{model.id}}/edit"><i class="icon-chevron-right more"></i></a>
-    <div id="record-action" class="row-fluid">
+    <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
+    <div id="record-action" class="row-fluid"></div>
+</div>
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12" id="listing"><i></i>
+            <ul class="actions">
+                {{#each customData.links}}
+                    <li><a href="#">
+                        {{#with this}}
+                        {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
+                        {{/with}}
+                        <i class="icon-chevron-right more"></i>
+                    </a></li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
 </div>
 <fieldset>
