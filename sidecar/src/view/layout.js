@@ -62,7 +62,8 @@
                     var view = app.view.createView({
                         context: context,
                         name: def.view,
-                        module: module
+                        module: module,
+                        layout: this
                     });
                     context.set({view:view});
                     this.addComponent(view, def);
@@ -73,14 +74,16 @@
                         this.addComponent(app.view.createLayout({
                             context: context,
                             name: def.layout,
-                            module: module
+                            module: module,
+                            layout: this
                         }), def);
                     } else if (_.isObject(def.layout)) {
                         //Inline definition of a sublayout
                         this.addComponent(app.view.createLayout({
                             context: context,
                             module: module,
-                            meta: def.layout
+                            meta: def.layout,
+                            layout: this
                         }), def);
                     }
                 }

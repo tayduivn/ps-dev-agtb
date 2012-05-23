@@ -327,6 +327,14 @@
         },
 
         /**
+         * Gets HTML placeholder for a field.
+         * @return {String} HTML placeholder for the field as Handlebars safe string.
+         */
+        getPlaceholder: function() {
+            return new Handlebars.SafeString('<span sfuuid="' + this.sfId + '"></span>');
+        },
+
+        /**
          * Gets a string representation of this view.
          * @return {String} String representation of this view.
          */

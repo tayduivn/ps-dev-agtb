@@ -3,11 +3,11 @@
     <div>
     <a href="#{{model.module}}/{{model.id}}">
         {{#with fields.[0]}}
-        {{field ../context ../view ../model}}
+        {{field ../view ../model}}
         {{/with}}
     </a><br>
     {{#with fields.[1]}}
-    {{field ../context ../view ../model}}
+    {{field ../view ../model}}
     {{/with}}
     </div>
     <span id="listing-action-item1" class="menu-container">

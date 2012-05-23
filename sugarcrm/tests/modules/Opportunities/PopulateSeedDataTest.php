@@ -69,7 +69,6 @@ function testPopulateSeedData()
     global $app_list_strings;
     $total = 200;
     $account = new Account();
-    $timeperiod = new TimePeriod();
     $product = new Product();
     $user = new User();
     $account->disable_row_level_security = true;
@@ -78,23 +77,16 @@ function testPopulateSeedData()
     $user->disable_row_level_security = true;
 
     $accounts = $account->build_related_list("SELECT id FROM accounts WHERE deleted = 0", $account, 0, $total);
-    $tps = $account->build_related_list("SELECT id FROM timeperiods WHERE deleted = 0", $timeperiod, 0, $total);
-    $timeperiods = array();
-    foreach($tps as $id=>$timeperiod)
-    {
-        $timeperiods[$id] = $timeperiod->name;
-    }
-
     $products = $account->build_related_list("SELECT id FROM products WHERE deleted = 0", $product, 0, $total);
-
     $result = $GLOBALS['db']->query("SELECT id FROM users WHERE deleted = 0 AND status = 'Active'");
     $users = array();
     while(($row = $GLOBALS['db']->fetchByAssoc($result)))
     {
         $users[$row['id']] = $row['id'];
     }
-    $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $timeperiods, $products, $users);
+    $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $products, $users);
     $this->assertEquals(200, count($this->createdOpportunities));
+
 }
 
 
