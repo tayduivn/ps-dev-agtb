@@ -7,27 +7,26 @@
  */
 (function(app) {
 
-    var _getFieldPlaceholder = function(field) {
-        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
-    };
-
     /**
      * Creates a field widget.
      * @method field
-     * @param {Core.Context} context
-     * @param {View.View} view
-     * @param {Data.Bean} bean
+     * @param {View.View} view Parent view
+     * @param {Data.Bean} model Reference to the model
      * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
-    Handlebars.registerHelper('field', function(context, view, bean) {
+    Handlebars.registerHelper('field', function(view, model) {
+        // Handlebars passes a special hash object (template params) as the last argument
+        // So, if model is not specified then the model parameter is actually this hash object
+        // Hence, the following hack
+        if (!(model instanceof Backbone.Model)) model = null;
+
         var field = app.view.createField({
             def: this,
             view: view,
-            context: context,
-            model: bean
+            model: model
         });
 
-        return _getFieldPlaceholder(field);
+        return field.getPlaceholder();
     });
 
     /**
@@ -49,33 +48,32 @@
 
         var field = app.view.createField({
             def: def,
-            view: this,
-            context: this.context
+            view: this
         });
 
-        return _getFieldPlaceholder(field);
+        return field.getPlaceholder();
     });
 
     /**
      * Creates a field widget for a given field name.
      * @method fieldWithName
-     * @param {Core.Context} context Current app context
      * @param {View.View} view Parent view
-     * @param {Data.Bean} bean
      * @param {String} name Field name
-     * @param {String} viewName Specify it to call a template from another view
+     * @param {Data.Bean} model Reference to the model
+     * @param {String} viewName Name of the view template to use for the field
      * @return {String} HTML placeholder for the widget.
      */
-    Handlebars.registerHelper('fieldWithName', function(context, view, bean, name, viewName) {
+    Handlebars.registerHelper('fieldWithName', function(view, name, model, viewName) {
+        if (!(model instanceof Backbone.Model)) model = null;
+        viewName = _.isString(viewName) ? viewName : null;
         var field = app.view.createField({
             def: { name: name, type: "base" },
             view: view,
-            context: context,
-            model: bean || context.get("model"),
-            viewName: viewName || null // override view name (template for "default" view will be used instead of view.name)
+            model: model,
+            viewName: viewName || null // override fallback field template
         });
 
-        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
+        return field.getPlaceholder();
     });
 
     /**

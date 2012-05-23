@@ -152,5 +152,14 @@ function updateVisibility()
 	}
 }
 
-$('#EditView_tabs').ready(updateVisibility);
+function initScheduler(){
+	if(typeof(adv_interval) != "undefined" && adv_interval){
+		$('#adv_interval').prop("checked", true);
+	}
+}
+
+$('#EditView_tabs').ready(function() {
+	initScheduler();
+	updateVisibility();
+});
 $('#adv_interval').ready(function() {$('#adv_interval').click(updateVisibility); });

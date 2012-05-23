@@ -356,13 +356,13 @@
                 "{{#each meta.panels}}" +
                 "<div class=\"modal-body tcenter\">\n" +
                 "{{#each fields}}\n" +
-                "<div>{{field ../../context ../../this ../../model}}</div>" +
+                "<div>{{field ../../this ../../model}}</div>" +
                 "{{/each}}" +
                 "</div>          \n" +
                 "{{/each}}" +
                 "<div class=\"modal-footer\">\n" +
                 "{{#each meta.buttons}}" +
-                "{{field ../context ../this ../model}}" +
+                "{{field ../this ../model}}" +
                 "{{/each}}" +
                 "</div>\n" +
                 "</div>                             \n" +
@@ -380,13 +380,13 @@
                 "{{#each meta.panels}}" +
                 "<div class=\"modal-body tcenter\">\n" +
                 "{{#each fields}}\n" +
-                "{{field ../../context ../../this ../../model}}" +
+                "{{field ../../this ../../model}}" +
                 "{{/each}}" +
                 "</div>          \n" +
                 "{{/each}}" +
                 "<div class=\"modal-footer\">\n" +
                 "{{#each meta.buttons}}" +
-                "{{field ../context ../this ../model}}" +
+                "{{field ../this ../model}}" +
                 "{{/each}}" +
                 "</div>\n" +
                 "</div>                             \n" +
@@ -395,12 +395,12 @@
                 "</form>",
             "subnav": "<div class=\"subnav\">" +
                 "<div class=\"btn-toolbar pull-left\">" +
-                "<h1>{{fieldWithName context this null \"name\"}}</h1>" +
+                "<h1>{{fieldWithName this \"name\"}}</h1>" +
                 "</div>" +
                 "<div class=\"btn-toolbar pull-right\">" +
                 "<div class=\"btn-group\">" +
                 "{{#each meta.buttons}}" +
-                "{{field ../context ../this ../model}}  " +
+                "{{field ../this ../model}}  " +
                 "{{/each}}" +
                 "</div>" +
                 "</div>" +

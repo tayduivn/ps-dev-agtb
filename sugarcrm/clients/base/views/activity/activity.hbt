@@ -11,11 +11,11 @@
                         {{#each ../context.attributes.collection.models}}
                         <li class="activity" data-id="">
                             <a data-toggle="tab"><span class="label label-note">Note</span></a>
-                            <p>{{fieldWithName ../../context ../../this this "id"}}
-                                <a>{{fieldWithName ../../context ../../this this "name"}}</a>
+                            <p>{{fieldWithName ../../this "id" this}}
+                                <a>{{fieldWithName ../../this "name" this}}</a>
                                 <br>
                                 <date class="date">
-                                    Posted on {{fieldWithName ../../context ../../this this "date_entered"}}
+                                    Posted on {{fieldWithName ../../this "date_entered" this}}
                                 </date>
                             </p>
                             <div class="actions">
@@ -32,7 +32,7 @@
                 </div>
                 <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
                     <li>
-                        {{field ../context ../this ../model}}
+                        {{field ../this ../model}}
                     </li>
                     {{/each}}
                     {{#if context.attributes.collection.page}}

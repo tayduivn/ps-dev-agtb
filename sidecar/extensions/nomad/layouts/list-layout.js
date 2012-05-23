@@ -3,6 +3,7 @@
     var _meta = {
         type: "list",
         components: [
+            { view:"searchlist" },
             { view: "list" }
         ]
     };
