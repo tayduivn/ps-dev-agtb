@@ -483,13 +483,12 @@ class SugarSpot
                             // Already in the list of fields it will return
                             continue;
                         }
-                        if ( isset($seed->field_defs[$extraField]) ) {
+                        if ( isset($seed->field_defs[$extraField]) && ! isset($return_fields[$extraField]) ) {
                             $return_fields[$extraField] = $seed->field_defs[$extraField];
                         }
                     }
                 }
             }
-
             $searchForm = new SearchForm ( $seed, $moduleName ) ;
             $searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
             $where_clauses = $searchForm->generateSearchWhere() ;
@@ -518,18 +517,21 @@ class SugarSpot
                 foreach($where_clauses as $n => $clause)
                 {
                     $allfields = $return_fields;
-                    $skey = $search_keys[$n];
-                    if(isset($seed->field_defs[$skey]))
-                    {
-                        // Joins for foreign fields aren't produced unless the field is in result, hence the merge
-                        $allfields[$skey] = $seed->field_defs[$skey];
+                    if ( !empty($return_fields) ) {
+                        // We don't have any specific return_fields, so leaving this blank will include everything in the query
+                        $skey = $search_keys[$n];
+                        if(isset($seed->field_defs[$skey]))
+                        {
+                            // Joins for foreign fields aren't produced unless the field is in result, hence the merge
+                            $allfields[$skey] = $seed->field_defs[$skey];
+                        }
                     }
                     // Individual UNION's don't allow order by
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
-                    $query_parts[] = $ret_array_start['select'] . $ret_array_start['from'] . $ret_array['where'];
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'];
                 }
                 // So we add it to the output of all of the unions
-                $main_query = "(".join(") UNION (", $query_parts).")";
+                $main_query = "(".join(")\n UNION (", $query_parts).")";
                 if ( !empty($orderBy) ) { 
                     $main_query .= " ORDER BY ".$orderBy; 
                 }

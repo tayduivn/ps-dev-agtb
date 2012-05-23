@@ -36,6 +36,7 @@ class RestTestList extends RestTestBase {
         $this->accounts = array();
         $this->opps = array();
         $this->contacts = array();
+        $this->cases = array();
     }
     
     public function tearDown()
@@ -55,6 +56,11 @@ class RestTestList extends RestTestBase {
             $contactIds[] = $contact->id;
         }
         $contactIds = "('".implode("','",$contactIds)."')";
+        $caseIds = array();
+        foreach ( $this->cases as $aCase ) {
+            $caseIds[] = $aCase->id;
+        }
+        $caseIds = "('".implode("','",$caseIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -65,6 +71,9 @@ class RestTestList extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
+        $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
+        $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
@@ -146,6 +155,63 @@ class RestTestList extends RestTestBase {
         // Get a list, no searching
         $restReply = $this->_restCall("Accounts?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
+        
+    }
+
+    public function testCaseSearch() {
+        // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
+        // Make sure there is at least one page of cases
+        for ( $i = 0 ; $i < 40 ; $i++ ) {
+            $aCase = new aCase();
+            $aCase->name = "UNIT TEST ".count($this->cases)." - ".create_guid();
+            $aCase->billing_address_postalcode = sprintf("%08d",count($this->cases));
+            if ( $i > 25 && $i < 36 ) {
+                $aCase->assigned_user_id = $GLOBALS['current_user']->id;
+            } else {
+                // The rest are assigned to admin
+                $aCase->assigned_user_id = '1';
+            }
+            $aCase->save();
+            $this->cases[] = $aCase;
+            if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Cases',$aCase->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Cases';
+                $fav->record_id = $aCase->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+
+        // Test searching for a lot of records
+        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+
+        $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
+
+        // Test Offset
+        $restReply2 = $this->_restCall("Cases?offset=".$restReply['reply']['next_offset']);
+
+        $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
+
+        // Test finding one record
+        $restReply3 = $this->_restCall("Cases/?q=".rawurlencode($this->cases[17]->name));
+        
+        $tmp = array_keys($restReply3['reply']['records']);
+        $firstRecord = $restReply3['reply']['records'][$tmp[0]];
+        $this->assertEquals($this->cases[17]->name,$firstRecord['name'],"The search failed for record: ".$this->cases[17]->name);
+
+        // Here is where the problem came
+        // First searching for specific fields broke
+        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&fields=name,case_number");
+        $this->assertGreaterThan(0,count($restReply['reply']['records']));
+
+        // Then searching without specific fields broke
+        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST"));
+        $this->assertGreaterThan(0,count($restReply['reply']['records']));
         
     }
 
