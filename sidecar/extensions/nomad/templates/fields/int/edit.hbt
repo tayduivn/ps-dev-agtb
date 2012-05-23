@@ -1,18 +1,6 @@
-<!--<div class="row-fluid">
-    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
-    <div class="span4">
-        {{#if auto_increment}}
-            {{value}}
-        {{else}}
-            <input type="text" class="input-xlarge" value="{{value}}">
-        {{/if}}
-        <p class="help-block"></p>
-    </div>
-</div>-->
-
 <div class="control-group">
     <label class="control-label">{{getLabel label model.module}}</label>
     <div class="controls">
-        <input type="text" class="span4" value="{{value}}">
+        <input type="number" class="span4" value="{{value}}">
     </div>
 </div>

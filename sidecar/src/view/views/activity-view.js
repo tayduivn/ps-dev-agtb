@@ -11,7 +11,9 @@
             'click #saveNote': 'saveNote',
             'click .search': 'showSearch',
             'click .addNote': 'openNoteModal',
-            'click .icon-eye-open': 'loadChildDetailView'
+            'click .icon-eye-open': 'loadChildDetailView',
+            'click [name=show_more_button_back]': 'showPreviousRecords',
+            'click [name=show_more_button_forward]': 'showNextRecords'
         },
         render: function() {
             app.view.View.prototype.render.call(this);
@@ -71,7 +73,31 @@
 
             var activity = this.collection.get(activityId);
             app.events.trigger("app:view:activity:subdetail", activity);
+        },
+        showPreviousRecords: function() {
+            var self = this;
+            app.alert.show('show_previous_records', {level: 'process', title: 'Loading'});
+            this.context.get("collection").paginate({
+                page: -1,
+                success: function() {
+                    app.alert.dismiss('show_previous_records');
+                    self.render();
+                },
+                relate: true
+            });
+        },
+        showNextRecords: function() {
+            var self = this;
+            app.alert.show('show_next_records', {level: 'process', title: 'Loading'});
+            this.context.get("collection").paginate({
+                success: function() {
+                    app.alert.dismiss('show_next_records');
+                    self.render();
+                },
+                relate: true
+            });
         }
+
     });
 
 })(SUGAR.App);

@@ -39,7 +39,7 @@
  		{capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}
             <ul class='fts_spot_ul' >
                 <li >
-                    <span class="spot_fts_summary"><a href="{sugar_ajax_url url=$url}">{$result->getSummaryText()}</a></span>
+                    <span class="spot_fts_summary"><a href="{$url}">{$result->getSummaryText()}</a></span>
                     <br>
                     <span class="details">
                             {foreach from=$result->getHighlightedHitText() key=k item=v}

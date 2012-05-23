@@ -26,6 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{if $fields.recurring_source.value != '' && $fields.recurring_source.value != 'Sugar'}
+<div class="clear"></div>
+<div class="error">{$MOD.LBL_SYNCED_RECURRING_MSG}</div>
+{/if}
 {{include file='include/EditView/header.tpl'}}
 <input type="hidden" name="send_invites">
 <input type="hidden" name="user_invitees">

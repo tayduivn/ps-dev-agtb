@@ -100,28 +100,23 @@ describe("Validation", function() {
         });
     });
 
-    xdescribe("'email' validator", function() {
+    describe("'email' validator", function() {
         var result,
             field = {type: "email"};
 
-        it("should be able to validate a valid url", function() {
-            result = validation.validators.url(field, "somebody's.name@name.com");
+        it("should be able to validate a valid email", function() {
+            result = validation.validators.email(field, [{email_address: "somebody's.name@name.com"}]);
             expect(result).toBeUndefined();
 
-            result = validation.validators.url(field, "generic@generic.domain.net");
-            expect(result).toBeUndefined();
-
-            result = validation.validators.url(field, "test.email@test.google.com");
+            result = validation.validators.email(field, [{email_address: "generic@generic.domain.net"}, {email_address: "test.email@test.google.com"}]);
             expect(result).toBeUndefined();
         });
 
-        it("should be able to invalidate an invalid url", function() {
-            result = validation.validators.url(field, "ema#l@something.something.com");
-            expect(result).toBeDefined();
+        it("should be able to invalidate invalid emails", function() {
+            result = validation.validators.email(field, [{email_address: "ema#l@something.something.com"}, {email_address: "email@.something.something.com"}]);
+            expect(result).toEqual(["email@.something.something.com"]);
         });
 
-        result = validation.validators.url(field, "email@.something.something.com");
-        expect(result).toBeDefined();
     });
 
     describe("'required' validator", function() {

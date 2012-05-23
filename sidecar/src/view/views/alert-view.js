@@ -6,6 +6,11 @@
      */
     app.view.views.AlertView = app.view.View.extend({
 
+
+        initialize: function(options) {
+            app.view.View.prototype.initialize.call(this, options);
+            this.$el.removeClass("alert");//hot fix styles
+        },
         /**
          * Displays an alert message and returns alert instance. 
          * @param {Object} options

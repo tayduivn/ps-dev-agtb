@@ -5318,7 +5318,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $this->logicHookDepth[$event]--;
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")
+            if (in_array($event, array('after_relationship_add', 'after_relationship_delete', 'before_delete')))
             {
                 $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }
@@ -5559,6 +5559,27 @@ function save_relationship_changes($is_update, $exclude=array())
         //if it is not one of the above views then it should be implemented on the page level
         return true;
     }
+
+    /**
+    * Get owner field
+    *
+    * @return STRING
+    */
+    function getOwnerField()
+    {
+        if (isset($this->field_defs['assigned_user_id']))
+        {
+            return $this->assigned_user_id;
+        }
+
+        if (isset($this->field_defs['created_by']))
+        {
+            return $this->created_by;
+        }
+
+        return '';
+    }
+
     /**
     * Returns true of false if the user_id passed is the owner
     *

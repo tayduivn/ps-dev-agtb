@@ -3,7 +3,7 @@
     <div class="card2">
         {{#each fields}}
             {{#notEq name "name"}}
-                {{field ../../../context ../../../this ../../../model}}
+                {{field ../../../this}}
             {{/notEq}}
         {{/each}}
                 <span class="extend">

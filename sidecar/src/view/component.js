@@ -67,6 +67,18 @@
          */
         bindDataChange: function() {
             // Override this method to wire up model/collection events
+        },
+
+        /**
+         * Gets a string representation of this component.
+         * @return {String} String representation of this component.
+         */
+        toString: function() {
+            return this.cid +
+                "-" + (this.$el && this.$el.id ? this.$el.id : "<no-id>") +
+                "/" + this.module +
+                "/" + this.model +
+                "/" + this.collection;
         }
 
     });

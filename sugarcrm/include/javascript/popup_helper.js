@@ -312,3 +312,8 @@ SUGAR.util.doWhen("window.document.forms['popup_query_form'] != null "
         }
     }
 );
+$(document).ready(function(){
+    $("ul.clickMenu").each(function(index, node){
+        $(node).sugarActionMenu();
+    });
+});

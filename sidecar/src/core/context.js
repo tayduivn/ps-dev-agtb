@@ -183,6 +183,14 @@
                 collection = app.data.createRelatedCollection(parentModel, link);
             }
 
+            if (!this.has("parentModule")) {
+                this.set({ "parentModule": parentModel.module }, { silent: true });
+            }
+
+            if (!this.has("module")) {
+                this.set({ "module": model.module }, { silent: true });
+            }
+
             return {
                 parentModel: parentModel,
                 collection: collection,
@@ -222,9 +230,9 @@
                     options.relate = true;
                 }
                 if (this.get("layout")) {
-                    options.fields = this.get("layout").getFields();
+                    options.fields = this.get("layout").getFieldNames();
                 } else if (this.get("view")) {
-                    options.fields = this.get("view").getFields();
+                    options.fields = this.get("view").getFieldNames();
                 }
 
                 objectToFetch.fetch(options);

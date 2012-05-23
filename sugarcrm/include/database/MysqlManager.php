@@ -1450,6 +1450,184 @@ class MysqlManager extends DBManager
 	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 
+    /**
+     * Create or updates the stored procedures for the recursive query capabilities
+     * @return resource
+     */
+    public function createRecursiveQuerySPs()
+    {
 
+        $dropRecursiveQuerySPs_statement = "DROP   PROCEDURE IF EXISTS _hierarchy";
+        $this->query($dropRecursiveQuerySPs_statement);
+
+        $createRecursiveQuerySPs_statement = "
+            CREATE PROCEDURE _hierarchy( p_tablename              VARCHAR(100)
+                                       , p_key_column             VARCHAR(100)
+                                       , p_parent_key_column      VARCHAR(100)
+                                       , p_mode                   VARCHAR(100)
+                                       , p_startWith              VARCHAR(250)
+                                       , p_level                  VARCHAR(100)    -- not used
+                                       , p_fields                 VARCHAR(250)
+                                       )
+            root:BEGIN
+
+               DECLARE _level             INT;
+               DECLARE _last_row_count    INT;
+
+               DROP TABLE IF EXISTS   _hierarchy_return_set;
+
+               CREATE TEMPORARY TABLE _hierarchy_return_set (
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
+                    , _level       INT
+               );
+
+               DROP TABLE IF EXISTS   _hierarchy_current_set;
+            
+               CREATE TEMPORARY TABLE _hierarchy_current_set (
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
+                    , _level       INT
+               );
+
+               SET _level := 1;
+
+               -- Get StartWith records
+               SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set( _id, _parent_id, _level ) '
+                                 ,'     SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', _level 
+                                 ,'       FROM  ', p_tablename
+                                 ,'      WHERE  ', p_startWith 
+                                );
+               PREPARE stmt FROM @_sql;
+               EXECUTE stmt;
+               SET _last_row_count = ROW_COUNT();
+   
+
+               -- Create the statement to get the next set of data
+               IF p_mode = 'D' THEN -- Down the tree
+
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'    -- ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' ?'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_parent_key_column, ' = hrs._id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level'    -- ,'       AND  hrs._level = ?'
+                                     ,';'
+                                    );
+                  -- SELECT 'Down Tree Insert: ', @_sql;
+
+               ELSEIF p_mode = 'U' THEN
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'    -- ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_key_column, ' = hrs._parent_id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level'     -- ,'       AND  hrs._level = ?'
+                                     ,';'
+                                    );
+
+                  -- SELECT 'Up Tree Insert: ', @_sql;
+
+               ELSE  -- Unknown mode, abort
+                  LEAVE root;
+               END IF;
+
+               PREPARE next_recs_stmt FROM @_sql;
+
+               -- loop recursively finding parents/children
+               WHILE  ( _last_row_count > 0)
+               DO
+                  SET _level = _level+1;
+
+                  INSERT INTO _hierarchy_return_set
+                       SELECT *
+                         FROM _hierarchy_current_set;
+
+                  TRUNCATE TABLE _hierarchy_current_set;
+
+                  SET @_last_level := _level-1;
+                  SET @_curr_level := _level;
+
+                  EXECUTE next_recs_stmt;
+                  SET _last_row_count := ROW_COUNT();
+
+               END WHILE;
+
+               INSERT INTO _hierarchy_return_set
+                    SELECT *
+                      FROM _hierarchy_current_set;
+
+               -- This returns the results
+               SET @_sql = CONCAT( 'SELECT hrs.*, ', p_fields
+                                  ,' FROM _hierarchy_return_set hrs '
+                                  ,' INNER JOIN ', p_tableName, ' t '
+                                  ,'          ON hrs._id = t.', p_key_column
+                                  ,';'
+                                 );
+
+               -- SELECT 'Final result query: ', @_sql;
+
+               PREPARE stmt FROM @_sql;
+               EXECUTE stmt;
+   
+               DROP TABLE IF EXISTS _hierarchy_return_set;  -- oddly this does get executed
+            
+               DROP TABLE IF EXISTS _hierarchy_current_set;  -- oddly this does get executed
+
+            END;
+        ";
+
+        return $this->query($createRecursiveQuerySPs_statement);
+    }
+
+
+    /**
+     * Generates the a recursive SQL query or equivalent stored procedure implementation.
+     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
+     * Databases supporting recursive CTEs only need to set the recursive_query capability to true
+     * @param string    $tablename       table name
+     * @param string    $key             primary key field name
+     * @param string    $parent_key      foreign key field name self referencing the table
+     * @param string    $fields          list of fields that should be returned
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies starting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
+     * @return string               Recursive SQL query or equivalent representation.
+     */
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
+    {
+        $mode = ($lineage) ? 'U' : 'D';
+
+        // TODO NOTE to Jim:
+        // Please review the parameters above and how we can best handle this in the stored procedure
+        // use the DBManager implementation as an example of what is expected to come out as a result.
+        // For now I just passed most parameter straight into the stored procedure as strings, but I
+        // figure you may want to manipulate these in PHP so they are in the most convenient form for
+        // use in the stored procedure.
+
+        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
+        return $sql;
+    }
+
+    /**
+     * Returns a DB specific FROM clause which can be used to select against functions.
+     * Note that depending on the database that this may also be an empty string.
+     * @return string
+     */
+    public function getFromDummyTable()
+    {
+        return '';
+    }
+
+    /**
+     * Returns a DB specific piece of SQL which will generate GUID (UUID)
+     * This string can be used in dynamic SQL to do multiple inserts with a single query.
+     * I.e. generate a unique Sugar id in a sub select of an insert statement.
+     * @return string
+     */
+    public function getGuidSQL()
+    {
+        return 'UUID()';
+    }
 
 }

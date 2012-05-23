@@ -1,29 +1,43 @@
-
-
-<h1 class="nomad">Create Opportunity</h1>
-<div class="form-horizontal" id="createRecord">
-  <div id="scroll">
-  <fieldset class="pad">
-
-    {{#each model.attributes}}
-      <div class="control-group">
-        {{field context view model}}
-      </div>
-    {{/each}}
-
-    {{#each meta.panels}}
-    <div class="items">
-    {{#each ../context.attributes.collection.models}}
-        <div class="control-group">
-            {{#each ../fields}}
-                {{field     ../../../context    ../../../this   ../this}}
-            {{/each}}
-        </div>
-    {{/each}}
+<h1 class="nomad">
+{{#with customData.headerField}}
+{{field     ../viewObj}}
+{{/with}}
+</h1>
+<div class="bizcard">
+    <div class="card">
+        <h3>
+        {{#with customData.headerField}}
+        {{field     ../viewObj}}
+        {{/with}}
+        </h3>
+        {{#each customData.fields}}
+            {{#with this}}
+            {{field     ../../viewObj}}
+            {{/with}}
+        {{/each}}
+        {{log this}}
     </div>
-    {{/each}}
-
-  </fieldset>
-  </div>
+    <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
+    <div id="record-action" class="row-fluid"></div>
 </div>
-
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12" id="listing"><i></i>
+            <ul class="actions">
+                {{#each customData.links}}
+                    <li><a href="#">
+                        {{#with this}}
+                        {{field     ../../viewObj}}
+                        {{/with}}
+                        <i class="icon-chevron-right more"></i>
+                    </a></li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+<fieldset>
+    <div>
+        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+    </div>
+</fieldset>
