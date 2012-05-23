@@ -3277,6 +3277,9 @@ h1 {
 #content .layout.list > .view.list {
   display: inline;
 }
+#listing-Accounts .items article {
+  -webkit-transform: translatez(0);
+}
 /* activity and twitter */
 article {
   position: relative;
@@ -3350,7 +3353,7 @@ article [id^="listing-action"] i.grip {
   margin-top: -61px;
   margin-right: -32px;
 }
-article [id^="listing-action"] i.on {
+article [id^="listing-action"] i.grip.on {
   position: absolute;
   left: 0;
   background-color: #404040;
@@ -3367,6 +3370,7 @@ article [id^="listing-action"] i.on {
   -webkit-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
   box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
+  margin-top: 0;
 }
 article [id^="listing-action"] span {
   position: absolute;
@@ -3684,10 +3688,14 @@ html {
   height: 100%;
   position: absolute;
   left: 0;
+  top: 0;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   display: block;
+}
+.listing .items {
+  margin-top: 93px;
 }
 .listing article {
   -webkit-transition: all 0.25s ease-in-out;
@@ -3736,6 +3744,8 @@ html {
 .topelbar {
   position: relative;
   height: 34px;
+  width: 100%;
+  top: 50px;
   padding: 5px;
   background-color: #f5f5f5;
   background-image: -moz-linear-gradient(top, #fcfcfc, #ebebeb);
@@ -3766,6 +3776,19 @@ html {
 .topelbar aside a.btn {
   min-width: 18px;
   min-height: 22px;
+}
+.searchlist .listing {
+  height: 93px;
+  position: relative;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: hidden;
+  display: block;
+  z-index: 1;
+}
+.searchlist .container-fluid {
+  padding: 0 !important;
 }
 .filtered .topelbar {
   padding-right: 94px;
@@ -3956,26 +3979,19 @@ h3.nomad {
 .bizcard .card {
   margin: 0 0 0 16px;
   float: left;
-  line-height: 1.25em;
+  line-height: 1.2em;
 }
 .bizcard .card h3 {
   font-size: 1.75em;
   line-height: 22px;
 }
-.bizcard .card h3 label {
-  font-size: 0.55em;
-}
 .bizcard .card label {
   color: #999;
-  font-size: 0.9em;
   line-height: 1;
   margin-bottom: 0;
 }
 .bizcard .card .value {
-  font-size: 1.2em;
   display: block;
-  margin-bottom: 8px;
-  line-height: 1;
 }
 .bizcard .more {
   float: right;
@@ -4523,6 +4539,37 @@ h3.nomad {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d4d4d', endColorstr='#292929', GradientType=0);
 }
+/*
+.listing {
+  top:0;
+  height:100%;
+}
+
+.items {
+  margin-top:93px;
+}
+
+.topelbar {
+  top:50px;
+  width:100%;
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
+}
+*/
 .pull-right {
   float: right;
 }

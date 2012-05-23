@@ -1,2 +1,4 @@
+{{#nothing}}
 <label class="control-label">{{getLabel label model.module}}</label>:
+{{/nothing}}
 <span class="value">{{value}}</span>

@@ -1,7 +1,7 @@
 <h1 class="nomad">{{context.attributes.module}}</h1>
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 listing fav filtered" style="top:50px">
+        <div class="span12 listing fav filtered">
             <section class="search topelbar">
                 <i class="icon-search"></i>
                 <div class="form-search row-fluid">
