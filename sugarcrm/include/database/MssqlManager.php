@@ -430,8 +430,26 @@ class MssqlManager extends DBManager
                 if ($start == 0) {
                     $match_two = strtolower($matches[2]);
                     if (!strpos($match_two, "distinct")> 0 && strpos($match_two, "distinct") !==0) {
-    					//proceed as normal
-                    	$newSQL = $matches[1] . " TOP $count " . $matches[2] . $matches[3];
+                        if ($count > 20) {
+                            $orderByMatch = array();
+                            preg_match('/^(.*)(ORDER BY)(.*)$/is',$matches[3], $orderByMatch);
+                            if (!empty($orderByMatch[3])) {
+                                $newSQL = "SELECT TOP $count * FROM
+                                    (
+                                        " . $matches[1] . " ROW_NUMBER()
+                                        OVER (ORDER BY " . $this->returnOrderBy($sql, $orderByMatch[3]) . ") AS row_number,
+                                        " . $matches[2] . $orderByMatch[1]. "
+                                    ) AS a
+                                    WHERE row_number > $start";
+                            }
+                            else {
+                                $newSQL = $matches[1] . " TOP $count " . $matches[2] . $matches[3];
+                            }
+                        }
+                        else {
+                          //proceed as normal
+                          $newSQL = $matches[1] . " TOP $count " . $matches[2] . $matches[3];
+                        }
                     }
                     else {
                         $distinct_o = strpos($match_two, "distinct");
