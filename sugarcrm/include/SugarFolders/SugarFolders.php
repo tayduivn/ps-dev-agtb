@@ -315,7 +315,7 @@ class SugarFolder {
 				  " JOIN emails_text on emails.id = emails_text.email_id
                   WHERE folders_rel.folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0";
 			if ($this->is_group) {
-				$q = $q . " AND emails.assigned_user_id is null";
+				$q = $q . " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
 			$r = $this->db->limitQuery($q . $order, $start, $pageSize);
 		}
@@ -374,7 +374,7 @@ class SugarFolder {
 		//END SUGARCRM flav=pro ONLY
 			" WHERE folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0" ;
 			if ($this->is_group) {
-				$q .= " AND emails.assigned_user_id IS null";
+				$q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
 			$r = $this->db->query ( $q ) ;
 		}
@@ -403,7 +403,7 @@ class SugarFolder {
 		//END SUGARCRM flav=pro ONLY
                "AND fr.polymorphic_id = emails.id AND emails.status = 'unread' AND emails.deleted = 0" ;
             if ($this->is_group) {
-                $q .= " AND emails.assigned_user_id IS null";
+                $q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
             }
             $r = $this->db->query ( $q ) ;
         }
