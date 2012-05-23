@@ -57,13 +57,31 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
 		}
+
+        if ($input_name0 == 'last_current_next')
+        {
+            return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";
+        }
+
 		return $this->_get_column_select($layout_def)." <> ".$this->reporter->db->quoted($input_name0)."\n";
 	}
 
 	public function queryFilterone_of($layout_def) {
 		$arr = array ();
-		foreach ($layout_def['input_name0'] as $value) {
-			$arr[] = $this->reporter->db->quoted($value);
+		foreach ($layout_def['input_name0'] as $value)
+        {
+            if($value == 'last_current_next')
+            {
+                $last_cur_next_arr = array_keys(TimePeriod::getLastCurrentNextIds());
+                foreach ($last_cur_next_arr as $timeperiod)
+                {
+                    $arr[] = $this->reporter->db->quoted($timeperiod);
+                }
+            }
+            else
+            {
+                $arr[] = $this->reporter->db->quoted($value);
+            }
 		}
 		$str = implode(",", $arr);
 		return $this->_get_column_select($layout_def)." IN (".$str.")\n";
@@ -71,10 +89,21 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 
 	public function queryFilternot_one_of($layout_def) {
 		$arr = array ();
-		foreach ($layout_def['input_name0'] as $value) {
-			$arr[] = $this->reporter->db->quoted($value);
+		foreach ($layout_def['input_name0'] as $value)
+        {
+            if($value == 'last_current_next')
+            {
+                $last_cur_next_arr = array_keys(TimePeriod::getLastCurrentNextIds());
+                foreach ($last_cur_next_arr as $timeperiod)
+                {
+                    $arr[] = $this->reporter->db->quoted($timeperiod);
+                }
+            }
+            else
+            {
+                $arr[] = $this->reporter->db->quoted($value);
+            }
 		}
-	    $reporter = $this->layout_manager->getAttribute("reporter");
 		$str = implode(",", $arr);
 		return $this->_get_column_select($layout_def)." NOT IN (".$str.")\n";
 	}
