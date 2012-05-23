@@ -5,7 +5,7 @@
 
             {{#meta.panels}}
                 {{#each fields}}
-                    {{field     ../../context    ../../this   ../../model}}
+                    {{field     ../../this}}
                 {{/each}}
             {{/meta.panels}}
 

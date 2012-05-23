@@ -9,7 +9,7 @@
                 {{#each meta.panels}}
                 {{#each fields}}
                 <div class="control-group">
-                    {{field ../../context ../../this ../../model}}
+                    {{field ../../this}}
                 </div>
                 {{/each}}
                 {{/each}}
