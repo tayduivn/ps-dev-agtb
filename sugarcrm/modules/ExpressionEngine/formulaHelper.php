@@ -138,6 +138,13 @@ class FormulaHelper
             $def = $focus->field_defs[$name];
             if ($val[1] == "relate" && $focus->load_relationship($name)) {
                 $relatedModule = $focus->$name->getRelatedModuleName();
+                //MB will sometimes produce extra link fields that we need to ignore
+                if (!empty($def['vname']) && translate($def['vname'], $module) == $def['vname'] && !empty($def['side'])
+                    && (substr($name, -4 == "_ida") || substr($name, -4 == "_idb"))
+                ){
+                    continue;
+                }
+
                 $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
                 $links[$name] = array(
                     "label" => "$relatedModule ($label)",
