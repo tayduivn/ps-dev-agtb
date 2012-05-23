@@ -1633,6 +1633,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 $widget_args['start_link_wrapper'] = $this->start_link_wrapper;
                 $widget_args['end_link_wrapper'] = $this->end_link_wrapper;
                 $widget_args['subpanel_module'] = $this->subpanel_module;
+                $widget_args['parent_bean'] = $subpanel_def->parent_bean;
 
                 $widget_contents = $layout_manager->widgetDisplay($widget_args);
                 $cell_width = empty($widget_args['width']) ? '' : $widget_args['width'];
