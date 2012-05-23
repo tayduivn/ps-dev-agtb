@@ -80,6 +80,10 @@ h1 {font-size: 26px !important;}
   display:inline;
 }
 
+#listing-Accounts .items article {
+  -webkit-transform: translateZ(0);
+}
+
 /* activity and twitter */
 
 article {
@@ -163,17 +167,18 @@ article [id^="listing-action"] i.grip {
   color: darken(@grayLight, 15%);
   margin-top:-61px;
   margin-right:-32px;
+  &.on {
+    position:absolute;
+    left: 0;
+    #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
+    color: @black;
+    text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
+    @shadow: 1px 0 4px rgba(0,0,0,.4);
+    .box-shadow(@shadow);
+    margin-top:0;
+  }
 }
 
-article [id^="listing-action"] i.on {
-  position:absolute;
-  left: 0;
-  #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
-  color: @black;
-  text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
-  @shadow: 1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
 article [id^="listing-action"] span {
   position: absolute;
   top: 0;
@@ -476,10 +481,14 @@ html {
   height: 100%;
   position: absolute;
   left: 0;
+  top: 0;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   display: block;
+  .items {
+    margin-top:93px;
+  }
 }
 
 
@@ -528,6 +537,8 @@ html {
 .topelbar {
   position:relative;
   height:34px;
+  width:100%;
+  top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
   a.btn {
@@ -550,6 +561,22 @@ html {
       min-height:22px;
     }
   }
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
 }
 
 .filtered .topelbar {
@@ -736,25 +763,18 @@ text-shadow: 0 -1px 0 @black;
 .bizcard .card {
   margin: 0 0 0 16px;
   float:left;
-  line-height:1.25em;
+  line-height:1.2em;
   h3 {
     font-size:1.75em;
     line-height:22px;
-    label {
-      font-size: 0.55em;
-    }
   }
   label {
     color: #999;
-    font-size: 0.9em;
     line-height: 1;
     margin-bottom: 0;
   }
   .value {
-    font-size: 1.2em;
     display: block;
-    margin-bottom: 8px;
-    line-height: 1;
   }
 }
 
@@ -1202,3 +1222,38 @@ float: none !important;}
 .navbar-bottom button:hover {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
 }
+
+
+
+/*
+.listing {
+  top:0;
+  height:100%;
+}
+
+.items {
+  margin-top:93px;
+}
+
+.topelbar {
+  top:50px;
+  width:100%;
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
+}
+*/
+
