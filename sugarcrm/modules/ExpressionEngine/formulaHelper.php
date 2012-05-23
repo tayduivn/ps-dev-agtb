@@ -29,11 +29,11 @@ class FormulaHelper
      * @param array $fieldDef
      * @return array
      */
-    public static function cleanFields($fieldDef, $includeLinks = true, $forRelatedField = false)
+    public static function cleanFields($fieldDef, $includeLinks = true, $forRelatedField = false, $returnKeys = false)
     {
         $fieldArray = array();
         foreach ($fieldDef as $fieldName => $def) {
-            if ($fieldName == 'deleted' || $fieldName == 'email1' || empty($def['type']))
+            if (!is_array($def) || $fieldName == 'deleted' || $fieldName == 'email1' || empty($def['type']))
                 continue;
             //Check the studio property of the field def.
             if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
@@ -48,10 +48,10 @@ class FormulaHelper
                 case "float":
                 case "decimal":
                 case "currency":
-                    $fieldArray[] = array($fieldName, 'number');
+                    $fieldArray[$fieldName] = array($fieldName, 'number');
                     break;
                 case "bool":
-                    $fieldArray[] = array($fieldName, 'boolean');
+                    $fieldArray[$fieldName] = array($fieldName, 'boolean');
                     break;
                 case "varchar":
                 case "name":
@@ -60,23 +60,27 @@ class FormulaHelper
                 case "url":
                 case "encrypt":
                 case "enum":
-                    $fieldArray[] = array($fieldName, 'string');
+                    $fieldArray[$fieldName] = array($fieldName, 'string');
                     break;
                 case "date":
                 case "datetime":
                 case "datetimecombo":
-                    $fieldArray[] = array($fieldName, 'date');
+                    $fieldArray[$fieldName] = array($fieldName, 'date');
                     break;
                 case "link":
                     if ($includeLinks)
-                        $fieldArray[] = array($fieldName, 'relate');
+                        $fieldArray[$fieldName] = array($fieldName, 'relate');
                     break;
                 default:
                     //Do Nothing
                     break;
             }
         }
-        return $fieldArray;
+
+        if ($returnKeys)
+            return $fieldArray;
+
+        return array_values($fieldArray);
     }
 
     protected static function isFalse($v){
@@ -134,6 +138,13 @@ class FormulaHelper
             $def = $focus->field_defs[$name];
             if ($val[1] == "relate" && $focus->load_relationship($name)) {
                 $relatedModule = $focus->$name->getRelatedModuleName();
+                //MB will sometimes produce extra link fields that we need to ignore
+                if (!empty($def['vname']) && translate($def['vname'], $module) == $def['vname'] && !empty($def['side'])
+                    && (substr($name, -4 == "_ida") || substr($name, -4 == "_idb"))
+                ){
+                    continue;
+                }
+
                 $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
                 $links[$name] = array(
                     "label" => "$relatedModule ($label)",

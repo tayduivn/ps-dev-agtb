@@ -2469,6 +2469,7 @@ $app_strings = array (
 //BEGIN SUGARCRM flav=dce ONLY
     'LBL_BROWSER_TITLE' => 'Sugar DCE',
 //END SUGARCRM flav=dce ONLY
+    'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
 //BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
 //END SUGARCRM flav!=dce ONLY

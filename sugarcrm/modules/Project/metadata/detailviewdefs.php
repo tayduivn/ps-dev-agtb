@@ -88,6 +88,7 @@ $viewdefs['Project']['DetailView'] = array(
                         'htmlOptions' => array(
                             'title' => '{$APP.LBL_DELETE_BUTTON_TITLE}',
                             'accessKey' => '{$APP.LBL_DELETE_BUTTON_KEY}',
+                            'id'    => 'delete_button',
                             'class' => 'button',
                             'onclick' =>
                                 '{if $IS_TEMPLATE}'.
@@ -156,7 +157,7 @@ $viewdefs['Project']['DetailView'] = array(
 				array( 'customCode' =>
                         '<input title="{$SAVE_AS}" ' .
                         'class="button" type="submit" ' .
-                        'name="SaveAsTemplate" value="{$SAVE_AS}"'.
+                        'name="SaveAsTemplate" id="save_as_template_button" value="{$SAVE_AS}"'.
                         'onclick="'.
                         '{if $IS_TEMPLATE}'.
                             'prep_save_as_project(this.form)'.
@@ -171,6 +172,7 @@ $viewdefs['Project']['DetailView'] = array(
                         'htmlOptions' => array(
                             'name' => 'SaveAsTemplate',
                             'class' => 'button',
+                            'id'=> 'save_as_template_button',
                             'onclick' =>
                                 '{if $IS_TEMPLATE}'.
                                 'prep_save_as_project(this.form)'.
@@ -184,7 +186,7 @@ $viewdefs['Project']['DetailView'] = array(
 				array( 'customCode' =>
                         '<input title="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
                         'class="button" type="submit" ' .
-                        'name="ExportToProject" value="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
+                        'name="ExportToProject" id="export_to_ms_project_button" value="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
                         'onclick="prep_export_to_project(this.form);"/>',
                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
                     'sugar_html' => array(
@@ -193,6 +195,7 @@ $viewdefs['Project']['DetailView'] = array(
                         'htmlOptions' => array(
                             'title' => '{$MOD.LBL_EXPORT_TO_MS_PROJECT}',
                             'name' => 'ExportToProject',
+                            'id'=> 'export_to_ms_project_button',
                             'onclick' => 'prep_export_to_project(this.form);'
                         ),
                     ),
