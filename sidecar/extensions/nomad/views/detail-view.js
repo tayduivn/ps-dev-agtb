@@ -50,23 +50,7 @@
 
             //pass custom data object as the context
             this._renderWithContext(dataObj);
-        },
-
-        /**
-         * Iterate over all the fields and get needed ones, depending on filterFunc result
-         * @param filterFunc
-         * @return {*}
-         */
-        filterFields: function (filterFunc) {
-            var filteredFields = [];
-            _.each(this.meta.panels, function (panel, panelIndex) {
-                _.each(panel.fields, function (field, fieldIndex) {
-                    if (filterFunc(field, fieldIndex, panel, panelIndex)) filteredFields.push(field);
-                });
-            });
-            return filteredFields;
         }
-
     });
 
 })(SUGAR.App);
