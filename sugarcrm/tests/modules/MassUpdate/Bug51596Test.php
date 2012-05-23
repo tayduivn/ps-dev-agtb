@@ -122,10 +122,24 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
     {
         unset($_REQUEST['massupdate'], $_REQUEST['entire'], $_REQUEST['module'], $_POST['do_not_call']);
 
-        $this->account2->mark_deleted($this->account2->id);
-        $this->account1->mark_deleted($this->account1->id);
-        $this->contact2->mark_deleted($this->contact2->id);
-        $this->contact1->mark_deleted($this->contact1->id);
+        if (!empty($this->account2))
+        {
+            $this->account2->mark_deleted($this->account2->id);
+        }
+        if (!empty($this->account1))
+        {
+            $this->account1->mark_deleted($this->account1->id);
+        }
+        if (!empty($this->contact2))
+        {
+            $this->contact2->mark_deleted($this->contact2->id);
+        }
+        if (!empty($this->contact1))
+        {
+            $this->contact1->mark_deleted($this->contact1->id);
+        }
+
+
 
         self::unregisterExtension('Contacts', 'bug51596test.php');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
