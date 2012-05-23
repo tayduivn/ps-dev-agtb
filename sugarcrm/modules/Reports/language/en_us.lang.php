@@ -482,6 +482,8 @@ $mod_strings = array (
   	'DEFAULT_REPORT_TITLE_51' => 'Opportunities Won By User',
   	'DEFAULT_REPORT_TITLE_52' => 'All Open Opportunities',
   	'DEFAULT_REPORT_TITLE_53' => 'All Closed Opportunities',
+    'DEFAULT_REPORT_TITLE_56' => 'Opportunities Product Breakdown For Past, Current, Next Timeperiod By Month',
+    'DEFAULT_REPORT_TITLE_57' => 'Opportunities Sales Stage For Past, Current, Next Timeperiod By Month'
     //END SUGARCRM flav=sales || flav=pro || flav=ent ONLY
 
     //'LBL_CHART_ON_DASHLET' => 'Do not Display Chart on Dashlet',

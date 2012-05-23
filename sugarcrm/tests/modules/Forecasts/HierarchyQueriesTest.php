@@ -42,6 +42,8 @@ public function setUp()
     global $beanList, $beanFiles, $current_user;
     require('include/modules.php');
 
+    $GLOBALS['db']->preInstall();
+
     $current_user = SugarTestUserUtilities::createAnonymousUser();
     $current_user->user_name = 'employee0';
     $current_user->save();
@@ -144,6 +146,7 @@ public function setUp()
 
 public function tearDown()
 {
+    $GLOBALS['db']->dropTableName('_hierarchy_return_set');
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestOppLineItemUtilities::removeAllCreatedLines();
     SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
@@ -209,7 +212,7 @@ public function testForecastTree()
 
     $hierarchy = "'" . implode("','", $hierarchy) . "'";
 
-    //Would we really do it this way???
+    //Would we really do it this way with an in clause substituted?
     $sql = "SELECT IFNULL(opportunities.id,'') primaryid
     ,IFNULL(opportunities.name,'') opportunities_name
     ,opportunities.probability
@@ -245,5 +248,48 @@ public function testForecastTree()
     $this->assertEquals(4, $opportunities);
 }
 
+
+public function testForecastTreeWithSubSelectOnTempTable()
+{
+    //Here is the alternate method where we use a sub-select against the temporary table created
+    $hierarchy_sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', true, "status = 'Active' AND id = '{$this->employee4->id}'");
+    $result = $GLOBALS['db']->query($hierarchy_sql);
+
+    $hierarchy = "select _id from _hierarchy_return_set";
+
+    $sql = "SELECT IFNULL(opportunities.id,'') primaryid
+    ,IFNULL(opportunities.name,'') opportunities_name
+    ,opportunities.probability
+    ,opportunities.best_case
+    ,opportunities.worst_case
+    ,IFNULL(l1.id,'') l1_id
+    ,l1.user_name l1_user_name,IFNULL(l2.id,'') l2_id
+    ,l2.product_id l2_product_id,l2.quantity l2_quantity,l2.price l2_price ,IFNULL( l2.currency_id,'') l2_price_currency
+
+    FROM opportunities
+    LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
+
+    LEFT JOIN  opportunity_lines l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
+
+     AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
+                                        tst INNER JOIN team_memberships team_memberships ON tst.team_id =
+                                        team_memberships.team_id AND team_memberships.user_id in ({$hierarchy}) AND team_memberships.deleted=0)
+     WHERE (((l1.id in ({$hierarchy})
+    )) AND opportunities.team_set_id IN (SELECT tst.team_set_id FROM
+                                    team_sets_teams tst INNER JOIN team_memberships team_memberships ON
+                                    tst.team_id = team_memberships.team_id AND team_memberships.user_id in ({$hierarchy})
+                                    AND team_memberships.deleted=0))
+    AND  opportunities.deleted=0
+     LIMIT 0,100";
+
+    $result = $GLOBALS['db']->query($sql);
+    $opportunities = 0;
+    while($row = $GLOBALS['db']->fetchByAssoc($result))
+    {
+       $opportunities++;
+    }
+
+    $this->assertEquals(4, $opportunities);
+}
 
 }

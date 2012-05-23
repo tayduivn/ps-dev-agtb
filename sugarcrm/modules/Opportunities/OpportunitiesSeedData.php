@@ -86,6 +86,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->worst_case = $worst_case[$key];
         $opp->likely_case = $likely_case[$key];
         $opp->best_case = $best_case[$key];
+        $key = array_rand($timeperiods);
         $opp->timeperiod_id = array_rand($timeperiods);
         //END SUGARCRM flav=pro ONLY
         $opp->assigned_user_id = $account->assigned_user_id;
