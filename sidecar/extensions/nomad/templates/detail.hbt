@@ -1,6 +1,6 @@
 <h1 class="nomad">
 {{#with customData.headerField}}
-{{field     ../viewObj.context    ../viewObj    ../viewObj.model}}
+{{field     ../viewObj    ../viewObj.model}}
 {{/with}}
 </h1>
 <div class="bizcard">
@@ -9,15 +9,14 @@
     <div class="card">
         <h3>
         {{#with customData.headerField}}
-        {{field     ../viewObj.context    ../viewObj    ../viewObj.model}}
+        {{field     ../viewObj    ../viewObj.model}}
         {{/with}}
         </h3>
         {{#each customData.fields}}
             {{#with this}}
-            {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
+            {{field    ../../viewObj    ../../viewObj.model}}
             {{/with}}
         {{/each}}
-        {{log this}}
     </div>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid"></div>
@@ -29,7 +28,7 @@
                 {{#each customData.links}}
                     <li>
                     {{#with this}}
-                    {{field     ../../viewObj.context    ../../viewObj    ../../viewObj.model}}
+                    {{field     ../../viewObj    ../../viewObj.model}}
                     {{/with}}
                     </li>
                 {{/each}}
