@@ -36,6 +36,7 @@
     <script src='../../src/core/language.js'></script>
     <script src='../../src/core/metadata-manager.js'></script>
     <script src='../../src/core/acl.js'></script>
+    <script src='../../src/core/user.js'></script>
     <script src='../../src/utils/logger.js'></script>
 
     <script src='../../src/data/bean.js'></script>
@@ -53,15 +54,18 @@
 
     <!-- Nomad extension scripts -->
     <script src='config.js'></script>
+    <script src='views/field.js'></script>
     <script src='hbt-helpers.js'></script>
-    <!--<script src='layouts/list-layout.js'></script>-->
-    <!--<script src='layouts/detail-layout.js'></script>-->
-    <!--<script src='layouts/edit-layout.js'></script>-->
+    <script src='layouts/associate-layout.js'></script>
+    <script src='layouts/list-layout.js'></script>
     <script src='views/header-view.js'></script>
+    <script src='views/alert-view.js'></script>
     <script src='views/login-view.js'></script>
     <script src='views/list-view.js'></script>
+    <script src='views/searchlist-view.js'></script>
     <script src='views/detail-view.js'></script>
     <script src='views/edit-view.js'></script>
+    <script src='views/associate-view.js'></script>
 
     <!-- Pre-compiled templates -->
     <!-- Fields -->
@@ -71,28 +75,40 @@
     <script src='compiled/list-text.js'></script>
     <script src='compiled/list-int.js'></script>
     <script src='compiled/list-name.js'></script>
+    <!--
     <script src='compiled/detail-enum.js'></script>
     <script src='compiled/detail-int.js'></script>
     <script src='compiled/detail-name.js'></script>
+    -->
     <script src='compiled/detail-text.js'></script>
     <script src='compiled/edit-enum.js'></script>
     <script src='compiled/edit-int.js'></script>
     <script src='compiled/edit-name.js'></script>
     <script src='compiled/edit-text.js'></script>
+    <script src='compiled/edit-textarea.js'></script>
+    <script src='compiled/left.menu.js'></script>
+    <script src='compiled/right.menu.js'></script>
+    <script src='compiled/field.messages.js'></script>
 
     <!-- Buttons -->
     <script src='compiled/login-loginButton.js'></script>
 
     <!-- Views -->
     <script src='compiled/header.js'></script>
+    <script src='compiled/alert.js'></script>
     <script src='compiled/login.js'></script>
     <script src='compiled/list.item.js'></script>
     <script src='compiled/list.js'></script>
     <script src='compiled/detail.js'></script>
     <script src='compiled/edit.js'></script>
+    <script src='compiled/associate.js'></script>
+    <script src='compiled/panel.alert.js'></script>
+    <script src='compiled/searchlist.js'></script>
 
     <!-- Controllers for fields -->
     <script src='templates/fields/int/int.js'></script>
+    <script src='templates/fields/enum/enum.js'></script>
+    <script src='templates/fields/textarea/textarea.js'></script>
 
     <script src='nomad.js'></script>
     <script src='meta-bootstrap.js'></script>
@@ -114,9 +130,9 @@
 </head>
 <body>
 <div id="nomad">
-
     <div id="header" class="navbar navbar-fixed-top hide"></div>
     <div id="content"></div>
+    <div id="alert"></div>
 </div>
 </body>
 

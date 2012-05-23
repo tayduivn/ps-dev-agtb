@@ -6,6 +6,11 @@
      * @alias SUGAR.App.router
      */
     var Router = Backbone.Router.extend({
+
+        // TODO: This router does not support routes that don't require users been authenticated
+        // For example, one can not navigate to http://localhost:8888/portal#signup
+        // This must be refactored!!!
+
         /**
          * Routes hash map.
          * @property {Object}
@@ -13,7 +18,8 @@
         routes: {
             "": "index",
             "logout": "logout",
-            ":module": "index",
+            "signup": "signup", // TODO: This route is useless. See comment above
+            ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
             ":module/:id/:action": "record",
@@ -95,16 +101,33 @@
             return route;
         },
 
-        // Routes
+        // ----------------------------------------------------
+        // Route handlers
+        // ----------------------------------------------------
 
         /**
          * Handles `index` route.
+         *
+         * Loads `home` layout for `Home` module or `list` route with default module defined in app.config
+         */
+        index: function() {
+            app.logger.debug("Route changed to index");
+            if (app.config.defaultModule) {
+                this.list(app.config.defaultModule);
+            }
+            else {
+                this.layout("Home", "home");
+            }
+        },
+
+        /**
+         * Handles `list` route.
          * @param module Module name.
          */
-        index: function(module) {
-            app.logger.debug("Route changed to index of " + module);
+        list: function(module) {
+            app.logger.debug("Route changed to list of " + module);
             app.controller.loadView({
-                module: module || "Cases", //TODO: This should probably not be Casess
+                module: module,
                 layout: "list"
             });
         },
@@ -156,6 +179,18 @@
             app.logout({success: function(data) {
                 self.navigate("#");
             }});
+        },
+
+        /**
+         * Handles `signup` route.
+         */
+        signup: function() {
+            app.logger.debug("Route changed to signup");
+            app.controller.loadView({
+                module: "Signup",
+                layout: "signup",
+                create: true
+            });
         },
 
         /**

@@ -6,6 +6,8 @@ body {
   position: relative;
   padding: 47px 0;
   background: @grayDarker url(../img/black_linen_v2.png);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  -webkit-focus-ring-color:  rgba(0, 0, 0, 0) !important;
 }
 
 a,a:focus,a:active{
@@ -78,6 +80,10 @@ h1 {font-size: 26px !important;}
   display:inline;
 }
 
+#listing-Accounts .items article {
+  -webkit-transform: translateZ(0);
+}
+
 /* activity and twitter */
 
 article {
@@ -148,7 +154,7 @@ padding-left:0;
 }
 
 article [id^="listing-action"] i.grip {
-  position: absolute;
+  float:right;
   vertical-align: middle;
   top: 0;
   right: 0;
@@ -159,15 +165,20 @@ article [id^="listing-action"] i.grip {
   font-style: normal;
   height: 100%;
   color: darken(@grayLight, 15%);
+  margin-top:-61px;
+  margin-right:-32px;
+  &.on {
+    position:absolute;
+    left: 0;
+    #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
+    color: @black;
+    text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
+    @shadow: 1px 0 4px rgba(0,0,0,.4);
+    .box-shadow(@shadow);
+    margin-top:0;
+  }
 }
-article [id^="listing-action"] i.on {
-  left: 0;
-  #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
-  color: @black;
-  text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
-  @shadow: 1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
+
 article [id^="listing-action"] span {
   position: absolute;
   top: 0;
@@ -470,10 +481,14 @@ html {
   height: 100%;
   position: absolute;
   left: 0;
+  top: 0;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   display: block;
+  .items {
+    margin-top:93px;
+  }
 }
 
 
@@ -522,6 +537,8 @@ html {
 .topelbar {
   position:relative;
   height:34px;
+  width:100%;
+  top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
   a.btn {
@@ -544,6 +561,22 @@ html {
       min-height:22px;
     }
   }
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
 }
 
 .filtered .topelbar {
@@ -730,12 +763,19 @@ text-shadow: 0 -1px 0 @black;
 .bizcard .card {
   margin: 0 0 0 16px;
   float:left;
-  line-height:1.25em;
-}
-
-.bizcard .card h3 {
-  font-size:1.75em;
-  line-height:22px;
+  line-height:1.2em;
+  h3 {
+    font-size:1.75em;
+    line-height:22px;
+  }
+  label {
+    color: #999;
+    line-height: 1;
+    margin-bottom: 0;
+  }
+  .value {
+    display: block;
+  }
 }
 
 .bizcard .more {
@@ -877,6 +917,7 @@ color: @gray;
   background: none;
   box-shadow: none;
   display: block;
+  float:left;
 }
 #createRecord.form-horizontal .controls {
   margin-left: 26%;
@@ -897,6 +938,16 @@ color: @gray;
 #createRecord .avatar {
   height: 32px;
   width: 32px;
+}
+
+.control-group.error * {
+  color:red !important;
+  .icon-exclamation-sign {
+    line-height:26px;
+  }
+  small {
+    font-size:smaller;
+  }
 }
 
 .control-group {
@@ -966,6 +1017,11 @@ float: none !important;}
 
 .login .btn.btn-sugar {width: 140px!important;}
 
+.login .control-group.error input {
+  background:@white url(../img/exclamation.png) 97% 50% no-repeat;
+  color:@red;
+}
+
 .alert {
  z-index: 2000;
  position: absolute;
@@ -982,6 +1038,18 @@ float: none !important;}
  margin: 0;
  font-size: 12px;
  background: @black;
+}
+
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width:100%;
+  overflow: hidden;
+  .alert {
+    position:relative;
+  }
 }
 
 /* Alert overrider */
@@ -1181,3 +1249,38 @@ float: none !important;}
 .navbar-bottom button:hover {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
 }
+
+
+
+/*
+.listing {
+  top:0;
+  height:100%;
+}
+
+.items {
+  margin-top:93px;
+}
+
+.topelbar {
+  top:50px;
+  width:100%;
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:1;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
+}
+*/
+

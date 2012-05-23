@@ -68,7 +68,8 @@
             var errorName2Keys = {
               "maxLength":"ERROR_MAX_FIELD_LENGTH",
                "minLength":"ERROR_MIN_FIELD_LENGTH",
-               "required":"ERROR_FIELD_REQUIRED"
+               "required":"ERROR_FIELD_REQUIRED",
+                "email":"ERROR_EMAIL"
             };
             var module = context.module || '';
             var errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);
@@ -92,9 +93,17 @@
             // field by field; so feedback will be provided as appropriate.
             app.alert.dismissAll();
 
-            _.each(errors, function(fieldError) {
-                app.logger.error("validation failed: " + fieldError);
-            });
+            _.each(errors, function(fieldError, key) {
+                var errorMsg = '';
+                if (_.isObject(fieldError)) {
+                    _.each(fieldError, function(result, fieldName) {
+                        errorMsg +=  "(Message) " + this.getErrorString(fieldName, model) + "\n";
+                    }, this);
+                } else {
+                    errorMsg = fieldError;
+                }
+                app.logger.debug("validation failed for field `" + key + "`:\n" + errorMsg);
+            }, this);
         },
 
         /**

@@ -42,7 +42,9 @@ abstract class SugarApi {
         require_once('include/SugarFields/SugarFieldHandler.php');
 
         $sfh = new SugarFieldHandler();
+        //BEGIN SUGARCRM flav=pro ONLY
         $aclField = new ACLField();
+        //END SUGARCRM flav=pro ONLY
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
@@ -61,10 +63,12 @@ abstract class SugarApi {
 
         $data = array();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->security->userId,$isOwner) < 1 ) { 
                 // No read access to this field, skip it.
                 continue;
             }
+            //END SUGARCRM flav=pro ONLY
             if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
                 // They want to skip this field
                 continue;
@@ -78,7 +82,7 @@ abstract class SugarApi {
             $field = $sfh->getSugarField($type);
             
             if ( $field != null ) {
-                if ( method_exists($field,'retrieveForApi') ) {
+                if ( method_exists($field,'apiFormatField') ) {
                     $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
                 } else {
                     if ( isset($bean->$fieldName) ) {
@@ -88,6 +92,28 @@ abstract class SugarApi {
                     }
                 }
             }
+        }
+
+        if (isset($bean->field_defs['email']) &&
+            (empty($fieldList) || in_array('email',$fieldList))) {
+                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
+                $emails = array();
+                $emailProps = array(
+                    'email_address',
+                    'opt_out',
+                    'invalid_email',
+                    'primary_address'
+                );
+                foreach($emailsRaw as $rawEmail) {
+                    $formattedEmail = array();
+                    foreach ($emailProps as $property) {
+                        if (isset($rawEmail[$property])) {
+                            $formattedEmail[$property] = $rawEmail[$property];
+                        }
+                    }
+                    array_push($emails, $formattedEmail);
+                }
+                $data['email'] = $emails;
         }
 
         return $data;

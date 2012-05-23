@@ -38,24 +38,40 @@ class SugarACL
     const ACL_READ_WRITE = 4;
 
     /**
+     * Load bean from context
+     * @static
+     * @param $module
+     * @param array $context
+     * @return SugarBean
+     */
+    protected static function loadBean($module, $context = array())
+    {
+        if(isset($context['bean']) && $context['bean'] instanceof SugarBean && $context['bean']->module_dir == $module) {
+            $bean = $context['bean'];
+        } else {
+            $bean = BeanFactory::newBean($module);
+        }
+        return $bean;
+    }
+
+    /**
      * Load ACLs for module
      * @param string $module
+     * @param array $context
      * @return array ACLs list
      */
     public static function loadACLs($module, $context = array())
     {
         if(!isset(self::$acls[$module])) {
             self::$acls[$module] = array();
-            if(isset($context['bean']) && $context['bean'] instanceof SugarBean && $context['bean']->module_dir == $module) {
-                $bean = $context['bean'];
-            } else {
-                $bean = BeanFactory::newBean($module);
-                // Be sure we got a SugarBean:
-                // Some modules do not extend SugarBean (ie DynamicFields)
-    			// TODO: see how we can support ACLs for those too
-                if(! $bean instanceof SugarBean) {
-    				return array();
-                }
+
+            $bean = self::loadBean($module, $context);
+
+            // Be sure we got a SugarBean:
+            // Some modules do not extend SugarBean (ie DynamicFields)
+            // TODO: see how we can support ACLs for those too
+            if(! $bean instanceof SugarBean) {
+                return array();
             }
 
             if(isset($GLOBALS['dictionary'][$bean->object_name]['acls'])) {

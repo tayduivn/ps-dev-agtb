@@ -16,22 +16,10 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
         array(
             'name' => 'show_more_button_back',
             'type' => 'navelement',
-            'icon' => 'icon-plus',
-            'label' => ' ',
-            'route' =>
-            array(
-                'action' => 'create',
-                'module' => 'Notes',
-            ),
-        ),
-        1 =>
-        array(
-            'name' => 'show_more_button_back',
-            'type' => 'navelement',
             'icon' => 'icon-chevron-left',
             'label' => ' '
         ),
-        2 =>
+        1 =>
         array(
             'name' => 'show_more_button_forward',
             'type' => 'navelement',

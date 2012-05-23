@@ -56,7 +56,7 @@
                     value = value || "";
                     value = value.toString();
 
-                    if(value.length < minLength) {
+                    if (value.length < minLength) {
                         return minLength;
                     }
                 }
@@ -67,7 +67,7 @@
              * NOTE: Should be noted we can't do full validation of urls w/ javascript as that is impossible.
              * @param {String} field bean field metadata
              * @param {String} value bean field value
-             * @return {Boolean} Should return true if not valid
+             * @return {Boolean} `true` if the field is not valid
              */
             url: function(field, value) {
                 if (field.type == "url") {
@@ -77,14 +77,26 @@
 
             /**
              * Validates that a given value is a valid email address.
+             *
              * NOTE: Should be noted that we can't do full email validation w/ javascript.
              * @param {String} field bean field metadata
-             * @param {String} value bean field value
-             * @return {Boolean} Should return true if not valid
+             * @param {String} emails bean field value which is an array of email objects
+             * @return {Array} Array of invalid email addresses.
              */
-            email: function(field, value) {
+            email: function(field, emails) {
+                var results;
                 if (field.type == "email") {
-                    return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(value))
+                    if (emails.length > 0) {
+                        _.each(emails, function(email) {
+                            if (!app.utils.isValidEmailAddress(email.email_address)) {
+                                if (!results) results = [];
+                                results.push(email.email_address);
+                            }
+                        });
+                    }
+                    if (results && results.length > 0) {
+                        return results;
+                    }
                 }
             }
 
@@ -105,7 +117,7 @@
          * @method
          */
         requiredValidator: function(field, fieldName, model, value) {
-            if (!_.isUndefined(field.required) && (field.required === true) && (fieldName !== "id")) {
+            if ((field.required === true) && (fieldName !== "id") && _.isUndefined(field.auto_increment)) {
                 var currentValue = model.get(fieldName);
                 var currentUndefined = _.isUndefined(currentValue);
                 var valueEmpty = _.isNull(value) || value === "";

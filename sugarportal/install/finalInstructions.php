@@ -50,13 +50,13 @@ $out =<<<EOQ
     <tr>
       <th width="400">{$mod_strings['LBL_STEP']} {$next_step}: {$mod_strings['LBL_SCRIPT_COPY']}</th>
       <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-      	<IMG src="include/images/sugarcrm_login.gif" alt="SugarCRM" border="0"></a>
+      	<IMG src="include/images/sugarcrm_login_65.png" alt="SugarCRM" border="0"></a>
       </th>
     </tr>
 
     <tr>
       <td colspan="2" width="600" style="background-position:right; background-repeat : no-repeat;">
-	    <p><img src="include/images/logo_sugarportal.gif" alt="SugarCRM" border="0"></p>
+	    <p><img src="include/images/logo_sugarportal_65.png" alt="SugarCRM" border="0"></p>
         <h2>{$mod_strings['LBL_IMPORTANT']}</h2>
         <b>{$mod_strings['LBL_COPY_SCRIPT']}</b>
         <textarea cols="80" rows="4" readonly><script type='text/javascript' src='{$_SESSION['setup_site_url']}/sugarportal.js'></script></textarea>
