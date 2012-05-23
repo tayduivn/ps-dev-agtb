@@ -2,12 +2,12 @@
     <div class="card2">
         {{#each meta.panels}}
         {{#each fields}}
-        {{field ../../context ../../this ../../model}}
+        {{field ../../this}}
         {{/each}}
         {{/each}}
         <div class="form-actions">
             {{#each meta.buttons}}
-            {{field ../context ../this ../model}}
+            {{field ../this}}
             {{/each}}
         </div>
     </div>
