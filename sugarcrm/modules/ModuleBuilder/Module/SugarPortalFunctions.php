@@ -34,8 +34,7 @@ class SugarPortalFunctions{
 	{
 	    global $mod_strings;
 		$nodes = array();
-        $nodes[] = array( 'name'=>$mod_strings['LBL_UP_STYLE_SHEET'], 'action' =>'module=ModuleBuilder&action=portalstyle', 'imageTitle' => 'SPUploadCSS',);
-        $nodes[] = array( 'name'=>$mod_strings['LBL_SYNCPORTAL'], 'action'=>'module=ModuleBuilder&action=portalsync','imageTitle' => 'SPSync', );
+        $nodes[] = array( 'name'=>$mod_strings['LBL_PORTAL_CONFIGURE'], 'action'=>'module=ModuleBuilder&action=portalconfig','imageTitle' => 'SPSync', );
 		return $nodes;
 	}
 	

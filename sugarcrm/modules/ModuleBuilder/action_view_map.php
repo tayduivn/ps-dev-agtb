@@ -59,6 +59,7 @@
  						'portalpreview' => 'portalpreview',
  						'portalsync' => 'portalsync',
  						'portalstylesave' => 'portalstylesave',
+                        'portalconfig' => 'portalconfig',
  						//END SUGARCRM flav=ent ONLY
 
  					);
