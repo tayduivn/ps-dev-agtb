@@ -137,6 +137,9 @@ class ViewEditFormula extends SugarView
  				case "link":
 					$fieldArray[] = array($fieldName, 'relate');
  					break;
+                 case "radioenum":
+            		$fieldArray[] = array($fieldName, 'string');
+             		break;
                  default:
  					//Do Nothing
  					break;
