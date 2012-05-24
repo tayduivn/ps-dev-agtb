@@ -7,7 +7,9 @@
         logLevel: app.logger.levels.DEBUG,
         logWriter: app.logger.ConsoleWriter,
         logFormatter: app.logger.SimpleFormatter,
-        serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
+        serverUrl: '../../../sugarcrm/rest/v10',
+        //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
+        restVersion: '10',
         maxQueryResult: 20,
         platform: "mobile",
         defaultModule: "Accounts",
@@ -21,6 +23,10 @@
             }
         },
         orderByDefaults: {
+            'Accounts': {
+                field: 'name',
+                direction: 'asc'
+            },
             'Cases': {
                 field: 'case_number',
                 direction: 'asc'

@@ -226,7 +226,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     //Create a custom sortable list that prevents duplicate drops
     var listContainsItem = function(list, val)
     {
-        var c = list.children("li[val=" + val + "].original").not("li.ui-sortable-helper, li:hidden");
+        var c = list.children('li[val="' + val + '"].original').not("li.ui-sortable-helper, li:hidden");
         return c.length != 0;
     }
 
@@ -301,7 +301,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             over: function(event, ui) {
                 $("ul.ddd_parent_option").removeClass("valid invalid");
                 if (listContainsItem($(this), $(ui.item).attr("val")))
-                   $(this).addClass("invalid");
+                    $(this).addClass("invalid");
                 else
                     $(this).addClass("valid");
             },

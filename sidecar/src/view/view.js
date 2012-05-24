@@ -8,8 +8,6 @@
      */
     app.view.View = app.view.Component.extend({
 
-        className: "view",
-
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -49,17 +47,6 @@
             this.fields = {};
 
             /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createView} method.
-             *
-             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || this.name || "");
-
-            /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
              * Defaults to `"default"`.
              *
@@ -75,6 +62,8 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
+
+            this.$el.data("comp", "view_" + this.name);
         },
 
         /**

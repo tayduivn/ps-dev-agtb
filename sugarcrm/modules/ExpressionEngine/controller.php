@@ -25,7 +25,7 @@ require_once ('modules/ExpressionEngine/formulaHelper.php');
 class ExpressionEngineController extends SugarController
 {
 	var $action_remap = array ( ) ;
-    var $non_admin_actions = array("functionDetail", "execFunction", "getRelatedField", "getRelatedValue", "getRelatedValues");
+    var $non_admin_actions = array("functionDetail", "getRelatedValues");
 	
 	function process(){
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
@@ -120,10 +120,6 @@ class ExpressionEngineController extends SugarController
         $this->view = 'validateRelatedField';
     }
 
-    function action_getRelatedValue() {
-        $this->view ='getRelatedField';
-    }
-
     function action_selectRelatedField() {
         $this->view ='selectRelatedField';
     }
@@ -168,7 +164,7 @@ class ExpressionEngineController extends SugarController
                             //If the relationship is invalid, just move onto another field
                             if (!$focus->load_relationship($link))
                                 break;
-                            $beans = $focus->$link->getBeans();
+                            $beans = $focus->$link->getBeans(array("enforce_teams" => true));
                             //No related beans means no value
                             if (empty($beans))
                                 break;
@@ -179,12 +175,16 @@ class ExpressionEngineController extends SugarController
                         {
                             $relBean = BeanFactory::getBean($rfDef['relModule'], $rfDef['relId']);
                         }
-                        //If we found a bean, grab a value from it
-                        if (!empty($relBean))
+                        //If we found a bean and the current user has access to the related field, grab a value from it
+                        if (!empty($relBean) && ACLField::hasAccess($rfDef['relate'], $relBean->module_dir, $GLOBALS['current_user']->id, true))
                         {
-                            $ret[$link]['relId'] = $relBean->id;
-                            $ret[$link]['related'][$rfDef['relate']] =
-                                FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
+                            $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
+                            if (isset($validFields[$rfDef['relate']]))
+                            {
+                                $ret[$link]['relId'] = $relBean->id;
+                                $ret[$link]['related'][$rfDef['relate']] =
+                                    FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
+                            }
                         }
                     }
                     break;
@@ -205,14 +205,27 @@ class ExpressionEngineController extends SugarController
                 $rField = $rfDef['relate'];
                 if(!empty($id) && $focus->load_relationship($link))
                 {
-                    $relBeans = $focus->$link->getBeans();
+                    $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
                     $sum = 0;
                     $count = 0;
                     $min = false;
                     $max = false;
+                    if (!empty($relBeans))
+                    {
+                        //Check if the related record vardef has banned this field from formulas
+                        $relBean = reset($relBeans);
+                        $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
+                        if (!isset($validFields[$rField])) {
+                            break;
+                        }
+
+                    }
                     foreach($relBeans as $bean)
                     {
-                        if (isset($bean->$rField) && is_numeric($bean->$rField)) {
+                        if (isset($bean->$rField) && is_numeric($bean->$rField) &&
+                            //ensure the user can access the fields we are using.
+                            ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
+                        ) {
                             $count++;
                             $sum += floatval($bean->$rField);
                             if ($min === false || $bean->$rField < $min)

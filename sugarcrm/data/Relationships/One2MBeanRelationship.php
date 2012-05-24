@@ -217,9 +217,19 @@ class One2MBeanRelationship extends One2MRelationship
                     $where .= " AND $add_where";
             }
 
+            $from = $this->def['rhs_table'];
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!empty($params['enforce_teams']))
+            {
+                $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                $from .= ", $relatedSeed->table_name";
+                $relatedSeed->add_team_security_where_clause($from);
+            }
+            //END SUGARCRM flav=pro ONLY
+
             if (empty($params['return_as_array'])) {
                 //Limit is not compatible with return_as_array
-                $query = "SELECT id FROM {$this->def['rhs_table']} $where";
+                $query = "SELECT id FROM $from $where";
                 if (!empty($params['limit']) && $params['limit'] > 0) {
                     $offset = isset($params['offset']) ? $params['offset'] : 0;
                     $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);

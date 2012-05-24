@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains WebStorm.
- * User: mpopov
- * Date: 5/18/12
- * Time: 5:21 PM
- * To change this template use File | Settings | File Templates.
- */
-
 (function(app) {
 
     app.view.Field = app.view.Field.extend({
@@ -32,4 +24,4 @@
         }
     });
 
-})(SUGAR.App)
+})(SUGAR.App);
