@@ -1,0 +1,22 @@
+<div class="modal hide" id="noteModal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">?</a>
+        <h3>Add a Note</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <fieldset>
+                {{#each meta.panels}}
+                {{#each fields}}
+                {{field ../../this ../../context.attributes.createModel}}
+                {{/each}}
+                {{/each}}
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        {{#each meta.buttons}}
+        {{field ../this ../createModel}}
+        {{/each}}
+    </div>
+</div>
