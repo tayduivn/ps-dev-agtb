@@ -438,12 +438,6 @@ class User extends Person {
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 
-		//Don't allow deletion of default Administrator user
-		if ($isUpdate && $this->id == 1 && $this->deleted == 1)
-		{
-			sugar_die(translate('ERR_CANNOT_DELETE_ADMIN', 'Users'));
-		}
-		
 		//BEGIN SUGARCRM flav=pro ONLY
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);

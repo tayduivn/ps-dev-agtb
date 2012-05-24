@@ -89,8 +89,7 @@ class UsersViewDetail extends ViewDetail {
                 if (!$current_user->is_group){
                     $buttons .= "<input title='".$app_strings['LBL_DUPLICATE_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_DUPLICATE_BUTTON_KEY']."' class='button' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.isDuplicate.value=true; this.form.action.value='EditView'\" type='submit' name='Duplicate' value='".$app_strings['LBL_DUPLICATE_BUTTON_LABEL']."'>  ";
                     
-                    if($this->bean->id != $current_user->id && $_REQUEST['record'] != 1 /* Don't show DELETE button for default Administrator user */)
-                    {
+                    if($this->bean->id != $current_user->id) {
                         $buttons .="<input type='button' class='button' onclick='confirmDelete();' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
                     }
                     
