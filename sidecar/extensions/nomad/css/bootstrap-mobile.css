@@ -3273,8 +3273,8 @@ h1 {
 }
 #nomad,
 #content,
-#content .layout.list,
-#content .layout.list > .view.list {
+#content > div,
+#content > div > div {
   display: inline;
 }
 #listing-Accounts .items article {
