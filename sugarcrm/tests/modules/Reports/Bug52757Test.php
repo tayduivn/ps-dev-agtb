@@ -48,6 +48,12 @@ class Bug52757Test extends Sugar_PHPUnit_Framework_TestCase
      */
     function setUp()
     {
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+
         $this->report = new Report();
         $this->report->report_def['full_table_list'] = array(
             'self' => array(
@@ -70,6 +76,8 @@ class Bug52757Test extends Sugar_PHPUnit_Framework_TestCase
     function tearDown()
     {
         unset($this->report);
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
     }
 
     /**
