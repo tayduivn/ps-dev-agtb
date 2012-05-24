@@ -21,7 +21,12 @@ if (!defined('sugarEntry') || !sugarEntry)
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/*
 
+This code has been moved into include/SugarCharts/ChartDisplay.php as a class so that it can be:
+1. unittested
+2. more reusable
+3. cleaner!
 
 $do_thousands = false;
 
@@ -284,7 +289,7 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 
 		$sugarChart = SugarChartFactory::getInstance('','Reports');
 
-		$sugarChart->setData($chart_rows);
+        $sugarChart->setData($chart_rows);
 		$sugarChart->setProperties($chartTitle, '', $chartType,'on','value','on',$reporter->label_name,$reporter->value_name);
 
 		$xmlFile = get_cache_file_name($reporter);
@@ -313,3 +318,4 @@ function get_cache_file_name($reporter) {
 
     return $filename;
 }
+*/

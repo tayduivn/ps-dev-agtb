@@ -77,10 +77,12 @@ class ChartsDashlet extends Dashlet {
             $reporter->get_total_header_row();
 			$reporter->run_chart_queries();
 			
-			require_once("modules/Reports/templates/templates_chart.php");
-	
-			ob_start();	
-			template_chart($reporter, true, true, $this->id);
+			ob_start();
+            require_once("include/SugarCharts/ChartDisplay.php");
+            $chartDisplay = new ChartDisplay();
+            $chartDisplay->setReporter($reporter);
+            echo $chartDisplay->legacyDisplay($this->id, true);
+
 			$str = ob_get_contents();	
 			ob_end_clean();
 			
