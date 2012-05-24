@@ -1259,7 +1259,7 @@ function set_relationships($session, $set_relationship_list){
  *      'module2_id' -- The ID of the bean in the specified module
  * @return Empty error on success, Error on failure
  */
-function handle_set_relationship($set_relationship_value, $session)
+function handle_set_relationship($set_relationship_value, $session='')
 {
     global  $beanList, $beanFiles;
     $error = new SoapError();
@@ -1377,7 +1377,7 @@ function handle_set_relationship($set_relationship_value, $session)
     	$mod->load_relationship($key);
     	$mod->$key->add($module2_id);
     }
-    else if ($module1 == 'Contacts' && $module2 == 'Notes'){
+    else if ($module1 == 'Contacts' && $module2 == 'Notes' && !empty($session)){
         $mod->$key = $module2_id;
         $mod->save_relationship_changes(false);
         if (!empty($mod->account_id)) {
