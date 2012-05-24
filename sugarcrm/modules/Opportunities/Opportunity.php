@@ -409,7 +409,7 @@ $query .= 			"LEFT JOIN users
             $date_close_db = $timedate->to_db_date($this->date_closed);
         }
 
-        $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' and end_date > '{$date_close_db}' AND deleted = 0");
+        $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' and end_date > '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
         if(!empty($timeperiod))
         {
             $this->timeperiod_id = $timeperiod;
