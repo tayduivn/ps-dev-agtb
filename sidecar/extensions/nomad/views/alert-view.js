@@ -11,7 +11,7 @@
          */
         render:function () {
             app.view.View.prototype.render.call(this);
-            this.$el.removeClass("alert");//hot fix styles
+            this.$el.removeClass("alert");//hot fix styles TODO:remove it
         },
         show:function (options) {
             var alert = {

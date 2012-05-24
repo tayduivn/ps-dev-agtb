@@ -16,7 +16,6 @@
             app.view.View.prototype.render.call(this);
         },
         onKeyUp: function (e) {
-
             if (this.timerId) {
                 window.clearTimeout(this.timerId);
             }
@@ -25,10 +24,12 @@
         },
         onClickFavoritesBtn: function (e) {
             e.preventDefault();
+            $(e.currentTarget).toggleClass('active');
             this.collection.fetch();
         },
         onClickMyItemsBtn: function (e) {
             e.preventDefault();
+            $(e.currentTarget).toggleClass('active');
             this.collection.fetch();
         },
         search: function (text) {
