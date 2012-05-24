@@ -7,7 +7,6 @@
      * @extends View.View
      */
     app.view.views.ListView = app.view.View.extend({
-
         events: {
             'click [class*="orderBy"]': 'setOrderBy',
             'click .search': 'showSearch',
@@ -17,13 +16,6 @@
             'click [name=show_more_button]': 'showMoreRecords',
             'click [name=show_more_button_back]': 'showPreviousRecords',
             'click [name=show_more_button_forward]': 'showNextRecords'
-        },
-        render : function() {
-            app.view.View.prototype.render.call(this);
-            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
-        },
-        handleTreeNodeSelect : function(json_data) {
-            console.log(json_data);
         },
         bind: function(context) {
             var collection = context.get("collection");

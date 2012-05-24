@@ -13,8 +13,6 @@
 
         className: "layout",
 
-        events: Backbone.Events,
-
         /**
          * TODO docs (describe constructor options, see Component class for an example).
          *

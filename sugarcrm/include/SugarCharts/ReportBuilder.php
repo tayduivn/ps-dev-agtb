@@ -20,6 +20,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Reports/Report.php');
+
 /**
  * PHP Report Builder.  This will create a report on the fly to run via the API
  */
@@ -81,12 +83,48 @@ class ReportBuilder
      * Class Constructor
      *
      * @param string $module    The Default Starting Module
+     * @param string $saved_report_id       Load a report from the reporting engine
      */
-    public function __construct($module)
+    public function __construct($module, $saved_report_id = null)
     {
         $this->self_module = $module;
         $this->defaultReport['module'] = $module;
         $this->addModule($this->self_module, 'self');
+
+        // try and load the saved report id
+        $this->loadSavedReport($saved_report_id);
+    }
+
+    public function loadSavedReport($saved_report_id)
+    {
+        if(is_guid($saved_report_id)) {
+            // we have a guid, lest try and load the saved report
+            /* @var $saved_report SavedReport */
+            $saved_report = BeanFactory::getBean('Reports', $saved_report_id);
+
+            if($saved_report !== false && $saved_report->module == $this->defaultReport['module']) {
+                // we have a loaded report and it matches the base module for report builder
+                // lets process it and break it up so we can add stuff to it.
+                // now load up a report bean to convert the report since that is where all the code exist
+                $report = new Report($saved_report->content);
+
+                $this->defaultReport = $report->report_def;
+
+                foreach($this->defaultReport['full_table_list'] as $key => $table_def) {
+                    $this->table_keys[$key] = array('module' => $table_def['module'], 'key' => $key);
+
+                    if(isset($table_def['link_def'])) {
+                        $this->link_keys[$table_def['link_def']['name']] = $key;
+                    }
+                }
+
+                // success, return true
+                return true;
+            }
+        }
+
+        // we did not load a report, return false.
+        return false;
     }
 
     /**
