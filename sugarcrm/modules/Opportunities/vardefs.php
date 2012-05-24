@@ -139,6 +139,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'required' => true,
   	'options' => 'numeric_range_search_dom',
     'enable_range_search' => true,
+    'calculated' => true,
+    'formula' => 'rollupSum($opportunity_lines, "total_price")',
   ),
   'amount_usdollar' =>
   array (
@@ -440,7 +442,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'opportunity_lines',
         'type' => 'link',
         'vname' => 'LBL_OPPORTUNITY_LINES',
-        'relationship' => 'opportunity_lines',
+        'relationship' => 'opportunity_lines_opportunities',
         'source' => 'non-db',
    ),
  //END SUGARCRM flav=pro ONLY
