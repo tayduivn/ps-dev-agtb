@@ -45,4 +45,5 @@ $mod_strings = array (
     'LBL_LIST_OPPORTUNITY_LINE_NAME' => 'Name',
     'LBL_LIST_OPPORTUNITY_NAME' => 'Opportunity Name',
     'LBL_EXPERT_ID' => 'Product Expert',
+    'LBL_TOTAL_PRICE' => 'Total Price',
 );

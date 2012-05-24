@@ -129,6 +129,15 @@ array (
     'comment' => 'Discount price expressed in USD',
     'studio' => array('editview' => false),
 ),
+'total_price' =>
+array(
+    'name' => 'total_price',
+    'vname' => 'LBL_TOTAL_PRICE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+    'comment' => 'Total price (discount price * quantity)',
+),
 'best_case' =>
 array (
     'name' => 'best_case',
