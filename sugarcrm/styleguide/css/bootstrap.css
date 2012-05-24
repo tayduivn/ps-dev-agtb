@@ -3315,10 +3315,33 @@ input[type="submit"].btn.btn-mini {
   margin-right: 0;
 }
 .navbar .dropdown-menu {
+  float: none;
+  min-width: 221px;
+  margin-left: 0;
   margin-top: 1px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.navbar .dropdown-menu li {
+  padding: 5px;
+  /*
+    a:hover {
+      background-color: transparent;
+    }
+    */
+
+}
+.navbar .dropdown-menu li a {
+  display: inline;
+  padding-left: 4px;
+}
+.navbar .dropdown-menu li.active {
+  color: #ffffff;
+  background-color: #1571ce;
+}
+.navbar .dropdown-menu li.active strong {
+  color: #ffffff;
 }
 .navbar .dropdown-menu:before {
   content: '';
@@ -7208,6 +7231,11 @@ color: @red;
 .hidden {
   display: none;
   visibility: hidden;
+}
+#searchForm {
+  position: relative;
+  display: inline-block;
+  float: right;
 }
 @media (max-width: 480px) {
   .nav-collapse {

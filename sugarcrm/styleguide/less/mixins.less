@@ -431,6 +431,12 @@
   border-bottom: 1px solid @white;
 }
 
+.dropdownMinWidth(@columnSpan: 3) {
+  float: none; // undo default grid column styles
+  min-width: ((@gridColumnWidth) * @columnSpan) + (@gridGutterWidth * (@columnSpan - 1)) + 1;
+  margin-left: 0; // undo default grid column styles
+}
+
 // Button backgrounds
 // ------------------
 .buttonBackground(@startColor, @endColor) {
