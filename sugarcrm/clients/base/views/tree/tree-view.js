@@ -22,7 +22,9 @@
          */
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
-            app.events.register("treeview:node_select", this);
+            // IF the above line is the only thing in this function,
+            // we can remove the whole function
+            // Leaving function here in case we need to add more to initialize FOR NOW!
         },
 
         /**
@@ -124,7 +126,7 @@
                             "icons" : true
                         },
                 "json_data" : tree_data
-            }).on("select_node.jstree", null, self.layout, this.treeNodeSelect);
+            }).on("select_node.jstree", this.treeNodeSelect );
         },
 
         /**
@@ -134,9 +136,10 @@
          */
         treeNodeSelect: function(event, data)
         {
-            var layout = event.data;
             jsData = data.inst.get_json();
-            layout.events.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
+
+            // TEMPORARY triggering on app.events
+            app.events.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
         }
     });
 
