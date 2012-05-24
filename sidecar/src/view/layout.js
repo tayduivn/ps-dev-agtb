@@ -131,6 +131,17 @@
         },
 
         /**
+         * Gets a component by name.
+         * @param {String} name Component name.
+         * @return {View.View/View.Layout} Component with the given name.
+         */
+        getComponent: function (name) {
+            return _.find(this._components, function(component) {
+                return component.name === name;
+            });
+        },
+
+        /**
          * Renders all the components.
          */
         render: function() {
