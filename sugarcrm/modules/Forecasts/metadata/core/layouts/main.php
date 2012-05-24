@@ -4,13 +4,15 @@ $viewdefs['Forecasts']['core']['layout']['main'] = array(
     'components' => array(
         0 => array(
             'layout' => array(
-                'type' => 'columns',
+                'type' => 'fluid',
                 'components' =>
                     array(
                         0 => array(
                             'view' => 'chart',
+							'size' => '7',
                         ),
                         1 => array(
+							'size' => '5',
                             'layout' => array(
                                 'type' => 'rows',
                                 'components' => array(

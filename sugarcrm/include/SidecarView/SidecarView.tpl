@@ -51,6 +51,7 @@
 <script src='clients/base/views/grid/grid-view.js'></script>
 <script src='clients/base/views/tree/tree-view.js'></script>
 <script src='clients/base/views/filter/filter-view.js'></script>
+<script src='clients/base/views/progress/progress-view.js'></script>
 
 <script src='include/SidecarView/SidecarView.js'></script>
 
@@ -58,8 +59,6 @@
 <link rel="stylesheet" href="../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
 <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-
-<link rel="stylesheet" href="css/bootstrap-core.css"/>
 
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-tooltip.js"></script>
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-popover.js"></script>
