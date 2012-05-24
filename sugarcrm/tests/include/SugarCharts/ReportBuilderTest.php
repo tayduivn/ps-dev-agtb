@@ -420,6 +420,44 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('hBarF', $rb->getChartType());
     }
 
+    public function testLoadSavedReportReturnsFalseWithNonValidGuid()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $return = $rb->loadSavedReport('this is only a test');
+
+        $this->assertFalse($return);
+    }
+
+    public function testLoadSavedReportReturnsFalseWhenSavedReportModuleDoesntMatchParentModule()
+    {
+        $report = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum","force_label":"Type"}],"summary_columns":[{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"UnitTestReport","chart_type":"pieF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"user_name","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","input_name0":["seed_chris_id"]}}}}';
+        /* @var $saved_report SavedReport */
+        $saved_report = BeanFactory::getBean('Reports');
+        $saved_report->save_report(-1, 1, 'TestReport', 'Opportunities', 'summary', $report, 1, 1, 'pieF');
+
+        $rb = new ReportBuilder('Accounts');
+        $return = $rb->loadSavedReport($saved_report->id);
+
+        $this->assertFalse($return);
+
+        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $saved_report->id . "')");
+    }
+
+    public function testLoadSavedReportReturnsTrue()
+    {
+        $report = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum","force_label":"Type"}],"summary_columns":[{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"UnitTestReport","chart_type":"pieF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"user_name","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","input_name0":["seed_chris_id"]}}}}';
+        /* @var $saved_report SavedReport */
+        $saved_report = BeanFactory::getBean('Reports');
+        $saved_report->save_report(-1, 1, 'TestReport', 'Opportunities', 'summary', $report, 1, 1, 'pieF');
+
+        $rb = new ReportBuilder('Opportunities');
+        $return = $rb->loadSavedReport($saved_report->id);
+
+        $this->assertTrue($return);
+
+        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $saved_report->id . "')");
+    }
+
     protected function objectToArray($d)
     {
         if (is_object($d)) {
