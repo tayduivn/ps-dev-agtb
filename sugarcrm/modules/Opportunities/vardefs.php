@@ -241,6 +241,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'merge_filter' => 'enabled',
   ),
   //BEGIN SUGARCRM flav=PRO ONLY
+  'committed' =>
+  array (
+    'name' => 'committed',
+    'vname' => 'LBL_COMMITTED',
+    'type' => 'bool',
+    'default' => '0',
+    'reportable'=>true,
+    'comment' => 'Indicates whether or not the opportunity has been marked as committed for forecasting'
+  ),
   'best_case' =>
   array (
     'name' => 'best_case',
