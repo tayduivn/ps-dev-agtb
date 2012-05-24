@@ -46,7 +46,7 @@ describe("App", function() {
     it("should initialize addtional components", function() {
         var components = {login:{target:'#footer'}};
         SugarTest.app.loadAdditionalComponents(components);
-        expect(SugarTest.app.additionalComponents.login).toBeDefined();
+        expect(SugarTest.app.additionalComponents.login.name).toEqual('login');
     });
 
     describe("when augmented", function() {
