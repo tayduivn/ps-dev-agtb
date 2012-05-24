@@ -11,8 +11,6 @@
      */
     app.view.Layout = app.view.Component.extend({
 
-        className: "layout",
-
         /**
          * TODO docs (describe constructor options, see Component class for an example).
          *
@@ -35,16 +33,7 @@
              */
             this.layout = this.options.layout;
 
-            /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createLayout} method.
-             *
-             * By default the layout is rendered as `div` element with CSS class `"layout <layoutType>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || (this.meta.type ? this.meta.type : ""));
+            this.$el.data("comp", "layout_" + this.meta.type);
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
