@@ -51,11 +51,6 @@ footer {
 .successBackground {background-color: @successBackground;}
 .warningBackground {background-color: @warningBackground;}
 
-.thegray::after {
-  background-color: @graylight !important;
-  color: @gray !important;  
-}
-
 /* Typography */
 h1 {font-size: 26px !important;}
 
@@ -267,6 +262,10 @@ border-right: 1px solid @grayLighter;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
+
+#folded > div {
+    width: inherit;
+}
 
 #folded .tab-pane#overview {
     background: @white;
@@ -634,13 +633,13 @@ position: relative;
 .card2 {
   margin: -10px 0 20px;
 }
-.card2 .row-fluid {
+.card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
   padding: 10px 0 0;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 #folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
-.card2 .extend + .row-fluid, .card2 .row-fluid:last-child {
+.card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 
@@ -801,7 +800,7 @@ margin-left: 0;
 .block span.add-on {margin-left:0 !important;}
 .span2 .input-prepend input {width: inherit;}
 
-.vcard span, .block span {
+.vcard span {
 	display: block;	
 }
 .block span.label {
