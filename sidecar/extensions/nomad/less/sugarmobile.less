@@ -81,10 +81,14 @@ h1 {font-size: 26px !important;}
 }
 
 #listing-Accounts .items article {
-  -webkit-transform: translateZ(0);
+  -webkit-transform: translatez(0);
 }
 
 /* activity and twitter */
+
+.listing article {
+  -webkit-transition: all 0.25s ease-in-out;
+}
 
 article {
   position: relative;
@@ -482,19 +486,13 @@ html {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
-  display: block;
   .items {
     margin-top:93px;
   }
 }
 
-
-.listing article {
-	-webkit-transition: all .25s ease-in-out;
-}
 
 .listing article.deleted {
     opacity:0;
@@ -508,20 +506,18 @@ html {
     padding-top:0;
     padding-bottom:0;
     min-height:42px;
-}
-
-.listing article.nav:last-child {
-    border-top: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav:first-child,
-.listing article.nav:nth-child(2),
-.listing article.nav:nth-child(3) {
-    border-bottom: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav div {
-    height:42px;
+    &.show-more-top-btn {
+      top:93px;
+    }
+    &:last-child {
+      border-top: 1px solid darken(@grayLighter, 25%);
+    }
+    div {
+      height:42px;
+    }
+    &:first-child, &:nth-child(2), &:nth-child(3) {
+      border-bottom: 1px solid darken(@grayLighter, 25%);
+    }
 }
 
 .listing > i {
@@ -541,6 +537,9 @@ html {
   top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  
+  
+  margin-right:100px;
   a.btn {
     min-height:20px;
     min-width:50px;
@@ -553,6 +552,7 @@ html {
     display:inline-block;
     width:85px;
     height:16px;
+    float:right;
     position:absolute;
     right:0px;
     top:4px;
@@ -561,38 +561,6 @@ html {
       min-height:22px;
     }
   }
-}
-
-.searchlist {
-    .listing {
-      height: 93px;
-      position: relative;
-      left: 0;
-      width: 100%;
-      overflow: hidden;
-      -webkit-overflow-scrolling: hidden;
-      display: block;
-      z-index:1;
-    }
-    .container-fluid {
-      padding:0 !important;
-    }
-}
-
-.filtered .topelbar {
-  padding-right:94px;
-}
-
-@media (max-width: 479px) {
-  .topelbar {
-    i.opt {
-      display:none !important;
-    }
-  }
-}
-
-.tcenter > .btn-group {
-  display:inline-block;
 }
 
 .listing .form-search {
@@ -610,12 +578,52 @@ html {
 }
 
 .listing .search-query {
-  width: 98.75%;
+  width: 100%;
   height: 26px;
   
   .border-radius(18px);
   padding-left:0;
   padding-right:0;
+}
+
+.searchlist {
+    .listing {
+      height: 93px;
+      position: relative;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-overflow-scrolling: hidden;
+      display: block;
+      z-index:2000;
+    }
+    .container-fluid {
+      padding:0 !important;
+    }
+}
+
+.filtered .topelbar {
+  padding-right:94px;
+}
+
+
+.searchlist .listing {
+margin-left: -100px !important;
+padding-left: 100px;
+overflow:visible;
+
+}
+
+@media (max-width: 479px) {
+  .topelbar {
+    i.opt {
+      display:none !important;
+    }
+  }
+}
+
+.tcenter > .btn-group {
+  display:inline-block;
 }
 
 .navbar [class^="icon-"] {
@@ -682,7 +690,7 @@ html {
 h1.nomad,
 h3.nomad {
   color: @white;
-  z-index: 10000;
+  z-index: 2001;
   position: absolute;
   width: 80%;
   margin: 0 10%;
@@ -836,7 +844,7 @@ color: @gray;
 }
 
 .over {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: auto;
@@ -1008,7 +1016,7 @@ float: none !important;}
 .login .btn.btn-sugar {width: 140px!important;}
 
 .alert {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: 42px;
@@ -1171,7 +1179,7 @@ float: none !important;}
   top:50px;
   height:auto;
   overflow: scroll;
-  z-index:2000;
+  z-index:2002;
   -webkit-overflow-scrolling:touch;
   .row-fluid {
     display: block;
@@ -1256,4 +1264,3 @@ float: none !important;}
     }
 }
 */
-

@@ -14,32 +14,26 @@
          * @protected
          */
          _render: function () {
-            //find 'name' field, otherwise get the first field as header field
-            var headerField, headerPanelInd, headerFieldInd;
-            headerField = this.filterFields(function (field, fieldIndex, panel, panelIndex) {
-                if (field.name == "name") {
-                    headerField = field;
-                    headerPanelInd = panelIndex;
-                    headerFieldInd = fieldIndex;
-                    return true;
-                }
-            })[0];
-            if (!headerField) {
-                headerField = this.meta.panels[0].fields[0];
-                headerPanelInd = 0;
-                headerFieldInd = 0;
-            }
+            //iterate over all fields and get the needed ones
+            //TODO: if it can be the case, when there is no 'name' field,
+            //we need to iterate firstly to try to find 'name' field,
+            //if it not exists - get first non-image and non-link field as header
+            //and only after that get other four fields to output
+            var headerField, image, linkFields = [], fields = [];
+            _.each(this.meta.panels, function (panel, panelIndex) {
+                _.each(panel.fields, function (field, fieldIndex) {
 
-            //get four other fields to output
-            var fields = [], i = 0;
-            while (fields.length < 4) {
-                if (!(headerFieldInd == i && headerPanelInd == 0)) fields.push(this.meta.panels[0].fields[i]);
-                i++;
-            }
+                    if (!headerField && field.name == "name") {         //find header field (first 'name' type)
+                        headerField = field;
+                    } else if (!image && field.type == "image") {       //find first image
+                        image = field;
+                    } else if (field.type == "link") {                  //find links fields
+                        linkFields.push(field);
+                    } else if (fields.length < 4) {                     //find four other fields to output
+                        fields.push(field);
+                    }
 
-            //get link type fields
-            var linkFields = this.filterFields(function (field, fieldIndex, panel, panelIndex) {
-                if (field.type == "link") return true;
+                });
             });
 
             //create custom data object
@@ -48,6 +42,7 @@
                     viewObj: self,
                     customData: {
                         headerField: headerField,
+                        image: image,
                         fields: fields,
                         links: linkFields
                     }
@@ -55,23 +50,7 @@
 
             //pass custom data object as the context
             this._renderWithContext(dataObj);
-        },
-
-        /**
-         * Iterate over all the fields and get needed ones, depending on filterFunc result
-         * @param filterFunc
-         * @return {*}
-         */
-        filterFields: function (filterFunc) {
-            var filteredFields = [];
-            _.each(this.meta.panels, function (panel, panelIndex) {
-                _.each(panel.fields, function (field, fieldIndex) {
-                    if (filterFunc(field, fieldIndex, panel, panelIndex)) filteredFields.push(field);
-                });
-            });
-            return filteredFields;
         }
-
     });
 
 })(SUGAR.App);

@@ -18,6 +18,12 @@ $viewdefs['Bugs']['portal']['layout']['detail'] = array(
                             'link' => 'notes',
                         ),
                     ),
+                    2 => array(
+                        'view' => 'editmodal',
+                        'context' => array(
+                            'link' => 'notes',
+                        ),
+                    ),
                 ),
             ),
         ),
