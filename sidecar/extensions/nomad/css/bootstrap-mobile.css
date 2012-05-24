@@ -4577,7 +4577,8 @@ h3.nomad {
       padding:0 !important;
     }
 }
-*/.pull-right {
+*/
+.pull-right {
   float: right;
 }
 .pull-left {
