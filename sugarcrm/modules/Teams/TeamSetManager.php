@@ -350,14 +350,14 @@ class TeamSetManager {
         // TeamSetCache
         sugar_cache_clear(TEAM_SET_CACHE_KEY);
         $cachefile = sugar_cached('modules/Teams/TeamSetCache.php');
-        if(sugar_file_put_contents_atomic($cacheFile, "<?php\n\n".'$teamSets = array();'."\n ?>") === false) {
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSets = array();'."\n ?>") === false) {
             $GLOBALS['log']->error("File $cachefile could not be written (flush)");
         }
 
         // TeamSetMD5Cache
         sugar_cache_clear(TEAM_SET_MD5_CACHE_KEY);
         $cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php');
-        if(sugar_file_put_contents_atomic($cacheFile, "<?php\n\n".'$teamSetsMD5 = array();'."\n ?>") === false) {
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSetsMD5 = array();'."\n ?>") === false) {
             $GLOBALS['log']->error("File $cachefile could not be written (flush)");
         }
     }
