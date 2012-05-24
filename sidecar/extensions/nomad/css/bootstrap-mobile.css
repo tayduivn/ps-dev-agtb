@@ -2959,7 +2959,7 @@ input[type="submit"].btn.btn-mini {
   top: 0;
   right: 0;
   left: 0;
-  z-index: 1030;
+  z-index: 2001;
 }
 .navbar-fixed-top .navbar-inner {
   padding-left: 0;
@@ -3273,8 +3273,8 @@ h1 {
 }
 #nomad,
 #content,
-#content .layout.list,
-#content .layout.list > .view.list {
+#content > div,
+#content > div > div {
   display: inline;
 }
 #listing-Accounts .items article {
@@ -3837,13 +3837,13 @@ html {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 #saveRecord {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 .navbar #back .icon-chevron-left {
   position: absolute;
@@ -4577,7 +4577,8 @@ h3.nomad {
       padding:0 !important;
     }
 }
-*/.pull-right {
+*/
+.pull-right {
   float: right;
 }
 .pull-left {
