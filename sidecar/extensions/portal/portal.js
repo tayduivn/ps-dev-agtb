@@ -1026,4 +1026,40 @@
         app.router.route("signup", "signup", _rrh.signup);
     });
 
+    /**
+     * Upload attachments of the bean to the server
+     *
+     * This method must be called after the bean has been saved to the server (in `success` callback)
+     *
+     * @param {String} module module name
+     * @param {String} fieldName the field that contains the attachement
+     * @param {Array} $files `file` type inputs to upload
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    app.Bean.prototype.uploadAttachment = function(module, fieldName, $files, callbacks) {
+
+        callbacks = callbacks || {};
+
+        this.fileField = fieldName;
+
+        // process the upload
+        return app.api.attachment('create', this, $files, {
+            success: function(rsp, textStatus, xhr) {
+                var responseText, rspField = rsp[fieldName];
+                if (rspField) {
+                    //success
+                    if (callbacks.success) callbacks.success(rsp);
+                } else {
+                    //error
+                    responseText = '(' + rsp.xhr.code + ') ' + rsp.xhr.message;
+                    if (callbacks.error) callbacks.error(xhr, responseText);
+                }
+            },
+            error: function(xhr) {
+                var responseText = xhr.responseText;
+                if (callbacks.error) callbacks.error(xhr, responseText);
+            }
+        });
+    };
+
 })(SUGAR.App);

@@ -54,7 +54,16 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
                     'default' => true,
                     'enabled' => true,
                     'width' => 35,
-                    'required' => true
+                    'required' => true,
+                    'rows' => 5,
+                ),
+                2 =>
+                array(
+                    'name' => 'filename',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 35,
                 )
             )
         )

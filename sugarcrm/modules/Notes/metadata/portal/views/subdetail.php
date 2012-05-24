@@ -52,6 +52,14 @@ $viewdefs['Notes']['portal']['view']['subdetail'] = array(
                     'enabled' => true,
                     'width' => 35
                 ),
+                4 =>
+                array(
+                    'name' => 'filename',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 35
+                ),
             )
         )
     )

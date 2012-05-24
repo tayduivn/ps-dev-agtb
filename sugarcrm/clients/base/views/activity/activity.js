@@ -6,40 +6,16 @@
  */
 ({
     events: {
-        'click #saveNote': 'saveNote',
         'click .search': 'showSearch',
         'click .addNote': 'openNoteModal',
-        'click .activity a': 'loadChildDetailView'
+        'click .activity a': 'loadChildDetailView',
+        'click [name=show_more_button_back]': 'showPreviousRecords',
+        'click [name=show_more_button_forward]': 'showNextRecords'
     },
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }
-    },
-    // Delegate events
-    saveNote: function() {
-        var self = this;
-        this.$('#saveNote').button('loading');
-
-        var args = {
-            name: this.$('[name=subject]').val(),
-            description: this.$('[name=description]').val()
-        }
-
-        var newNote = app.data.createRelatedBean(app.controller.context.get('model'), null, "notes", args);
-        newNote.save(null, {
-            relate: true,
-            success: function(data) {
-                self.$('#saveNote').button();
-                self.$('#noteModal').modal('hide').find('form').get(0).reset();
-                //refetch is necessary to ensure we pull in any logic hook or workflow updates
-                self.collection.fetch({relate: true});
-            },
-            error: function(data) {
-                self.$('#saveNote').button();
-                self.$('#noteModal').modal('hide').find('form').get(0).reset();
-            }
-        });
     },
     showSearch: function() {
         var $searchEl = $('.search');
@@ -50,6 +26,8 @@
     },
     openNoteModal: function() {
         this.$('#noteModal').modal('show');
+        // triggers an event to show the modal
+        this.layout.trigger("app:view:activity:editmodal");
         this.$('li.open').removeClass('open');
         return false;
     },
@@ -67,6 +45,28 @@
 
         // clears the current listened model and push the new one
         this.model.clear().set(activity.toJSON());
+    },
+    showPreviousRecords: function() {
+        var self = this;
+        app.alert.show('show_previous_records', {level: 'process', title: 'Loading'});
+        this.context.get("collection").paginate({
+            page: -1,
+            success: function() {
+                app.alert.dismiss('show_previous_records');
+                self.render();
+            },
+            relate: true
+        });
+    },
+    showNextRecords: function() {
+        var self = this;
+        app.alert.show('show_next_records', {level: 'process', title: 'Loading'});
+        this.context.get("collection").paginate({
+            success: function() {
+                app.alert.dismiss('show_next_records');
+                self.render();
+            },
+            relate: true
+        });
     }
-
 })
