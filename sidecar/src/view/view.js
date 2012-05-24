@@ -263,7 +263,8 @@
             if( this.listeners != null )  {
                 var listeners = this.listeners;
                 for( var i in listeners )  {
-                    this.layout.events.on( i , this[listeners[i]] , this);
+                    // TEMPORARY triggering on app.events
+                    app.events.on( i , this[listeners[i]] , this);
                 }
             }
         }, 
