@@ -1207,7 +1207,7 @@ function set_relationship($session, $set_relationship_value){
 		$error->set_error('invalid_login');
 		return $error->get_soap_array();
 	}
-	return handle_set_relationship($set_relationship_value);
+	return handle_set_relationship($set_relationship_value, $session);
 }
 
 $server->register(
@@ -1236,7 +1236,7 @@ function set_relationships($session, $set_relationship_list){
 	$count = 0;
 	$failed = 0;
 	foreach($set_relationship_list as $set_relationship_value){
-		$reter = handle_set_relationship($set_relationship_value);
+		$reter = handle_set_relationship($set_relationship_value, $session);
 		if($reter['number'] == 0){
 			$count++;
 		}else{
@@ -1259,7 +1259,7 @@ function set_relationships($session, $set_relationship_list){
  *      'module2_id' -- The ID of the bean in the specified module
  * @return Empty error on success, Error on failure
  */
-function handle_set_relationship($set_relationship_value)
+function handle_set_relationship($set_relationship_value, $session)
 {
     global  $beanList, $beanFiles;
     $error = new SoapError();
@@ -1376,7 +1376,17 @@ function handle_set_relationship($set_relationship_value)
     	$key = strtolower($module2);
     	$mod->load_relationship($key);
     	$mod->$key->add($module2_id);
-    }else{
+    }
+    else if ($module1 == 'Contacts' && $module2 == 'Notes'){
+        $mod->$key = $module2_id;
+        $mod->save_relationship_changes(false);
+        if (!empty($mod->account_id)) {
+            // when setting a relationship from a Contact to a Note, if the Contacts is related to an Account,
+            // we want to associate that Account to the Note as well
+            $ret = set_relationship($session, array('module1'=>'Accounts', 'module1_id'=>$mod->account_id, 'module2'=>'Notes', 'module2_id'=>$module2_id));
+        }
+    }
+    else{
     	$mod->$key = $module2_id;
     	$mod->save_relationship_changes(false);
     }
