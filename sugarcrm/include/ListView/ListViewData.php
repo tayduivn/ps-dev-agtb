@@ -495,8 +495,9 @@ class ListViewData {
         }
         
         $queryString = '';
-
-        if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search")
+		
+        if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" || 
+        	isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"] > 1) || $_REQUEST["type_basic"][0] != ""))
         {
             $queryString = "-advanced_search";
         }
