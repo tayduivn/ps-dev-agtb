@@ -13,6 +13,9 @@
     },
     render: function() {
         var self = this;
+        if (app.acl.hasAccess('create', this.module)) {
+            this.context.set('isCreateEnabled', true);
+        }
         app.view.View.prototype.render.call(self);
     },        
     showMoreRecords: function() {
