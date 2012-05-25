@@ -11,11 +11,11 @@
                         {{#each ../context.attributes.collection.models}}
                         <li class="activity" data-id="">
                             <a data-toggle="tab"><span class="label label-note">Note</span></a>
-                            <p>{{fieldWithName ../../context ../../this this "id"}}
-                                <a>{{fieldWithName ../../context ../../this this "name"}}</a>
+                            <p>{{fieldWithName ../../this "id" this}}
+                                <a>{{fieldWithName ../../this "name" this}}</a>
                                 <br>
                                 <date class="date">
-                                    Posted on {{fieldWithName ../../context ../../this this "date_entered"}}
+                                    Posted on {{fieldWithName ../../this "date_entered" this}}
                                 </date>
                             </p>
                             <div class="actions">
@@ -30,50 +30,30 @@
                         <a class="btn addNote" rel="tooltip" title="Add a note or attachment"><i class="icon-plus"></i> Add Note</a>
                     </div>
                 </div>
-
+                <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
+                    <li>
+                        {{field ../this ../model}}
+                    </li>
+                    {{/each}}
+                    {{#if context.attributes.collection.page}}
+                    {{#eq context.attributes.collection.page "1"}}
+                    {{#notEq context.attributes.collection.next_offset "-1"}}
+                    <li>
+                        <div class="page_counter">
+                            <small>Page {{context.attributes.collection.page}}</small>
+                        </div>
+                    </li>
+                    {{/notEq}}
+                    {{else}}
+                    <li>
+                        <div class="page_counter">
+                            <small>Page {{context.attributes.collection.page}}</small>
+                        </div>
+                    </li>
+                    {{/eq}}
+                    {{/if}}
+                </ul>
             </div>
         </div>
-    </div>
-</div>
-
-
-<div class="modal hide" id="noteModal">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
-
-        <h3>Add a Note</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label for="input01" class="control-label">Subject:</label>
-
-                    <div class="controls">
-                        <input type="text" id="input01" name="subject" class="input-xlarge">
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label for="select01" class="control-label">Note:</label>
-
-                    <div class="controls">
-                        <textarea class="input-xlarge" name="description"></textarea>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label for="select01" class="control-label">Attachement:</label>
-
-                    <div class="controls">
-                        <input type="file">
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a id="saveNote" data-loading-text="Saving..." class="btn loading btn-primary">
-            Save
-        </a>
-        <button class="btn cancel" data-dismiss="modal">Cancel</button>
     </div>
 </div>

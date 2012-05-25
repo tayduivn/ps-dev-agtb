@@ -11,8 +11,6 @@
      */
     app.view.Layout = app.view.Component.extend({
 
-        className: "layout",
-
         /**
          * TODO docs (describe constructor options, see Component class for an example).
          *
@@ -35,16 +33,7 @@
              */
             this.layout = this.options.layout;
 
-            /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createLayout} method.
-             *
-             * By default the layout is rendered as `div` element with CSS class `"layout <layoutType>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || (this.meta.type ? this.meta.type : ""));
+            this.$el.data("comp", "layout_" + this.meta.type);
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
@@ -60,7 +49,8 @@
                     var view = app.view.createView({
                         context: context,
                         name: def.view,
-                        module: module
+                        module: module,
+                        layout: this
                     });
                     context.set({view:view});
                     this.addComponent(view, def);
@@ -71,14 +61,16 @@
                         this.addComponent(app.view.createLayout({
                             context: context,
                             name: def.layout,
-                            module: module
+                            module: module,
+                            layout: this
                         }), def);
                     } else if (_.isObject(def.layout)) {
                         //Inline definition of a sublayout
                         this.addComponent(app.view.createLayout({
                             context: context,
                             module: module,
-                            meta: def.layout
+                            meta: def.layout,
+                            layout: this
                         }), def);
                     }
                 }
@@ -125,6 +117,17 @@
                 var removed = this._components.splice(i, 1);
                 removed[0].layout = null;
             }
+        },
+
+        /**
+         * Gets a component by name.
+         * @param {String} name Component name.
+         * @return {View.View/View.Layout} Component with the given name.
+         */
+        getComponent: function (name) {
+            return _.find(this._components, function(component) {
+                return component.name === name;
+            });
         },
 
         /**

@@ -1,34 +1,39 @@
-<h1 class="nomad">Details</h1>
+<h1 class="nomad">
+{{#with customData.headerField}}
+{{field  ../viewObj}}
+{{/with}}
+</h1>
 <div class="bizcard">
+    {{#nothing}}TODO: research how to get image data{{/nothing}}
+    <img src="{{! getFieldValue model image}}" class="avatar" alt="{{! getFieldValue model image}}">
     <div class="card">
-
-        {{#with meta.panels.[0]}}
-            <h3>
-            {{#with fields.[0]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-            </h3>
-
-            {{#with fields.[1]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[2]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[3]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[4]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
+        <h3>
+        {{#with customData.headerField}}
+        {{field  ../viewObj}}
         {{/with}}
-
+        </h3>
+        {{#each customData.fields}}
+            {{#with this}}
+            {{field  ../../viewObj}}
+            {{/with}}
+        {{/each}}
     </div>
-    <a href="#{{model.module}}/{{model.id}}/edit"><i class="icon-chevron-right more"></i></a>
-    <div id="record-action" class="row-fluid">
+    <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
+    <div id="record-action" class="row-fluid"></div>
+</div>
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12" id="listing"><i></i>
+            <ul class="actions">
+                {{#each customData.links}}
+                    <li>
+                    {{#with this}}
+                    {{field  ../../viewObj}}
+                    {{/with}}
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
 </div>
 <fieldset>

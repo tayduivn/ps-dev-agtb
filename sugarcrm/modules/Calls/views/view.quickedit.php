@@ -1,4 +1,6 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,26 +20,10 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/views/view.ajax.php');
-require_once("/modules/ExpressionEngine/formulaHelper.php");
 
-class ViewGetRelatedField extends ViewAjax
+require_once('include/MVC/View/views/view.quickedit.php');
+
+class CallsViewQuickEdit extends ViewQuickEdit
 {
-    var $vars = array("tmodule", "record_id", "field");
-
-    function __construct()
-    {
-        parent::ViewAjax();
-        foreach($this->vars as $var)
-        {
-            if (empty($_REQUEST[$var]))
-                sugar_die("Required paramter $var not set in ViewRelFields");
-            $this->$var = $_REQUEST[$var];
-        }
-
-    }
-
-    function display() {
-        echo json_encode(FormulaHelper::getFieldValue($this->tmodule, $this->record_id, $this->field));
-    }
+	protected $headerTpl = 'modules/Calls/tpls/header.tpl';
 }

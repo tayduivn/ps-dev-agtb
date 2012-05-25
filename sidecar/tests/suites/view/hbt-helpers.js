@@ -44,7 +44,7 @@ describe("Handlebars Helpers", function() {
             var def = {name: "TestName", label: "TestLabel", type: "text"};
 
             var fieldId = app.view.getFieldId();
-            var result = Handlebars.helpers.field.call(def, context, view, model);
+            var result = Handlebars.helpers.field.call(def, view, model);
             expect(result.toString()).toMatch(/<span sfuuid=.*(\d+).*/);
             expect(app.view.getFieldId()).toEqual(fieldId + 1);
             expect(view.fields[fieldId + 1]).toBeDefined();

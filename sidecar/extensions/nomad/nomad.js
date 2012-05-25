@@ -54,7 +54,7 @@
 
     app.events.on("app:init", function() {
         app.metadata.set(app.baseMetadata);
-        app.data.declareModels(app.baseMetadata);
+        app.data.declareModels();
 
         // Register relationship routes
         app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
@@ -67,8 +67,9 @@
     app.augment("nomad", {
 
         deviceReady: function() {
+            app.isNative = !_.isUndefined(window.cordova);
             app.init({el: "#nomad" });
-            app.logger.debug('App initialized');
+            app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
             app.api.debug = app.config.debugSugarApi;
             app.start();
             app.logger.debug('App started');
