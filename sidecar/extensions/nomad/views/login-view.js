@@ -5,19 +5,30 @@
     app.view.views.LoginView = app.view.View.extend({
 
         className: "login",
-
+        
         events: {
             "click #login_btn": function() {
+                var loginBtn = this.$('#login_btn');
+                if(loginBtn.is('[disabled=disabled]')) return false;
+                
                 var self = this;
                 var model = this.context.get("model");
                 var url = model.get("url");
                 var args = {password: model.get("password"), username: model.get("username")};
                 app.logger.debug(args.username + ":" + args.password + "@" + url);
+
+                var validatedFields = model.fields;
+                if(!app.isNative) {
+                    // don't validate the URL field
+                    validatedFields = {
+                        username: model.fields.username, 
+                        password: model.fields.password
+                    }
+                }
                 
-                if(this.model.isValid()) {
+                if(this.model.isValid(validatedFields)) {
                     app.alert.dismiss('field_validation_error');
-                    var loginBtn = this.$('#login_btn');
-                    loginBtn.text('Loading...');
+                    loginBtn.attr('disabled', 'disabled').text('Loading...');
                     app.login(args, null, {
                         success: function() {
                             app.logger.debug("logged in successfully!");
@@ -27,7 +38,7 @@
                         },
                         error: function(error) {
                             app.logger.debug("login failed: " + error);
-                            loginBtn.text('Login');
+                            loginBtn.removeAttr('disabled').text('Login');
                         }
                     });
                 }

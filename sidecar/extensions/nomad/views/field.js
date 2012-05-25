@@ -9,7 +9,7 @@
             var template,
                 errMessages = [];
 
-            this.$('.control-group').addClass("error");
+            this.$el.parent('.control-group').addClass("error");
 
             //create data array for template
             _.each(errors, function(errorContext, errorName) {

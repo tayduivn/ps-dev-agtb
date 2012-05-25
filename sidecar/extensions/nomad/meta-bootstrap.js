@@ -16,7 +16,8 @@
                     },
                     "url": {
                         "name": "url",
-                        "type": "url"
+                        "type": "url",
+                        required: true
                     }
                 },
                 "views": {
