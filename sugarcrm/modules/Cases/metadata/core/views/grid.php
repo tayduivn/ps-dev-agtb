@@ -19,8 +19,7 @@ $viewdefs['Cases']['core']['view']['grid'] = array(
                 array(
                     'name' => 'name',
                     'label' => 'Name',
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'cte',
+                    'clickToEdit' => true,
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -28,16 +27,14 @@ $viewdefs['Cases']['core']['view']['grid'] = array(
                 array(
                     'name' => 'status',
                     'label' => 'Status',
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'ctestatus',
-                    'ctetype' => 'chosen',
+                    'clickToEdit' => true,
                     'default' => true,
                     'enabled' => true,
                 ),
                 3 =>
                 array(
                     'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'label' => 'Modified Date',
                     'default' => true,
                     'enabled' => true,
                 ),

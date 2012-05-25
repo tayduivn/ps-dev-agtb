@@ -20,8 +20,7 @@ $viewdefs['Opportunities']['core']['view']['grid'] = array(
                     'label' => 'Opportunity Amount',
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'cteopp',
+                    'clickToEdit' => true,
                 ),
                 2 =>
                 array(
@@ -29,6 +28,7 @@ $viewdefs['Opportunities']['core']['view']['grid'] = array(
                     'label' => 'Opp. Type',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true,
                 ),
                 3 =>
                 array(
@@ -36,9 +36,6 @@ $viewdefs['Opportunities']['core']['view']['grid'] = array(
                     'label' => 'Lead Source',
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'clickToEdit',
-                    'cteclass' => 'ctels',
-                    'ctetype' => 'chosen',
                 ),
                 4 =>
                 array(
