@@ -1,12 +1,4 @@
 <div id="content">
-<h1 class="nomad">Associate {{module}}</h1>
-<div class="form-horizontal" id="createRecord" style="display:inline;">
-    <fieldset>
-        <div>
-            <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Cancel</a>
-        </div>
-    </fieldset>
-</div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 listing fav filtered" id="listing-{{module}}">

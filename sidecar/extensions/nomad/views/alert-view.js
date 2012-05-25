@@ -20,7 +20,7 @@
                 messages:(_.isString(options.messages)) ? [options.messages] : options.messages,
                 type:options.level || 'general',
                 close:function(){
-                    this.$el.remove();
+                    alert.$el.remove();
                 }
             };
 

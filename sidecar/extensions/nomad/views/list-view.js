@@ -10,8 +10,7 @@
             'swipeRight article': 'onSwipeRightItem',
             'click .remove-item-btn': 'onRemoveItem',
             'click .edit-item-btn': 'onEditItem',
-            'click .menu-item':'onClickMenuItem',
-            'click .menu-cancel':'onClickMenuCancel'
+            'click .menu-item':'onClickMenuItem'
         },
         initialize: function (options) {
             // Mobile shows only the first two fields
@@ -177,9 +176,6 @@
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);
-        },
-        onClickMenuCancel:function(){
-            this.trigger('menu:cancel:clicked');
         }
     });
 

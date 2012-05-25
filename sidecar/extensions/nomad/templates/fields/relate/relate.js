@@ -7,32 +7,48 @@
         initialize: function(options) {
             app.view.Field.prototype.initialize.call(this, options);
 
+            this.relateLayout = app.view.createLayout({
+                name: 'relate'
+            });
+
             var module = app.metadata.getModule(this.view.module).fields[this.name].module;
 
-            this.menuView = app.view.createView({module: module,
+            var listView = app.view.createView({module: module,
                 name: 'list',
                 template: app.template.get('list.menu'),
                 context: app.context.getContext({module: module}).prepare()
             });
-            this.menuView.context.set({view:this.menuView});
+            listView.context.set({view:listView});
 
-            this.menuView.setListItemHelper(Handlebars.helpers.listMenuItem);
+            listView.setListItemHelper(Handlebars.helpers.listMenuItem);
 
-            this.menuView.on('menu:item:clicked',function(item){
-                alert(item.get('name'));
-                $(this.menuView.el).remove();
-                $(app.controller.el).show();
+            listView.on('menu:item:clicked',function(item){
+                this.setValue(item.get('name'));
+                this.hideMenu();
             },this);
 
-            this.menuView.on('menu:cancel:clicked',function(){
-                $(this.menuView.el).remove();
-                $(app.controller.el).show();
+            var searchboxView = app.view.createView({
+                template: app.template.get('list.menu.header'),
+                name: 'searchlist',
+                context: app.context.getContext({module: module})
+            });
+
+            searchboxView.on('menu:cancel:clicked',function(){
+                this.hideMenu();
             },this);
+
+            this.relateLayout.addComponent(searchboxView);
+            this.relateLayout.addComponent(listView);
 
         },
+        hideMenu:function(){
+            this.relateLayout.$el.remove();
+            $(app.controller.el).show();
+        },
         onClick: function() {
-            $(this.menuView.el).appendTo(document.body);
-            this.menuView.context.loadData();
+            this.relateLayout.$el.appendTo(document.body);
+            this.relateLayout.render();
+            this.relateLayout.getComponent('list').context.loadData();
 
             $(app.controller.el).hide();
         }
