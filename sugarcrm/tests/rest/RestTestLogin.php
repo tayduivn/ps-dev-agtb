@@ -75,6 +75,45 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
     
     public function testRestLoginUser()
     {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+        );
+        
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+                                                          
+    }
+
+    public function testRestLoginUserAutocreateKey()
+    {
+        $GLOBALS['db']->query("DELETE FROM oauth_keys WHERE c_key = 'sugar'");
+
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+        );
+        
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+                                                          
+    }
+
+
+    public function testRestLoginCustomIdUser()
+    {
         // Create a unit test login ID
         $consumer = BeanFactory::newBean('OAuthKeys');
         $consumer->id = 'UNIT-TEST-regularlogin';
@@ -101,18 +140,44 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
                                                           
     }
 
+    public function testRestLoginRefresh()
+    {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+        );
+        
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        
+        $refreshToken = $reply['reply']['refresh_token'];
+
+        
+        $args = array(
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $refreshToken,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+        );
+        
+        $reply2 = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply2['reply']['access_token']);
+        $this->assertNotEmpty($reply2['reply']['refresh_token']);
+        $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply2['reply']['access_token']);
+        $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply2['reply']['token_type']);
+        
+    }
+
     public function testRestLoginSupportPortal()
     {
-        // Create a unit test login ID
-        $consumer = BeanFactory::newBean('OAuthKeys');
-        $consumer->id = 'UNIT-TEST-portallogin';
-        $consumer->new_with_id = true;
-        $consumer->c_key = '_unit_portallogin';
-        $consumer->c_secret = '';
-        $consumer->oauth_type = 'oauth2';
-        $consumer->client_type = 'support_portal';
-        $consumer->save();
-
         // Create a portal API user
         $this->apiuser = BeanFactory::newBean('Users');
         $this->apiuser->id = "UNIT-TEST-apiuser";
@@ -140,7 +205,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
             'grant_type' => 'password',
             'username' => $this->contact->portal_name,
             'password' => 'unittest',
-            'client_id' => $consumer->c_key,
+            'client_id' => 'support_portal',
             'client_secret' => '',
         );
         
@@ -149,44 +214,15 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($reply['reply']['refresh_token']);
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
-                                                          
-    }
 
-    public function testRestLoginRefresh()
-    {
-        // Do a normal login
-        
-        // Create a unit test login ID
-        $consumer = BeanFactory::newBean('OAuthKeys');
-        $consumer->id = 'UNIT-TEST-regularlogin';
-        $consumer->new_with_id = true;
-        $consumer->c_key = '_unit_regularlogin';
-        $consumer->c_secret = '';
-        $consumer->oauth_type = 'oauth2';
-        $consumer->client_type = 'user';
-        $consumer->save();
 
-        $args = array(
-            'grant_type' => 'password',
-            'username' => $this->_user->user_name,
-            'password' => $this->_user->user_name,
-            'client_id' => $consumer->c_key,
-            'client_secret' => '',
-        );
-        
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
-        $this->assertNotEmpty($reply['reply']['access_token']);
-        $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
-        
         $refreshToken = $reply['reply']['refresh_token'];
 
         
         $args = array(
             'grant_type' => 'refresh_token',
             'refresh_token' => $refreshToken,
-            'client_id' => $consumer->c_key,
+            'client_id' => 'support_portal',
             'client_secret' => '',
         );
         
@@ -198,6 +234,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply2['reply']['token_type']);
         
+                                                          
     }
 
 }

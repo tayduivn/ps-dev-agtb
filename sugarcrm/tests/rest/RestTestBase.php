@@ -27,7 +27,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected $authToken;
     protected $refreshToken;
     protected $_user;
-    protected $consumerId;
+    protected $consumerId = "sugar";
 
     public function setUp()
     {
@@ -35,17 +35,6 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
 
-        // Create a unit test oauth2 client ID
-        $consumer = BeanFactory::newBean('OAuthKeys');
-        $consumer->id = 'UNIT-TEST-regularlogin';
-        $consumer->new_with_id = true;
-        $consumer->c_key = '_unit_regularlogin';
-        $consumer->c_secret = '';
-        $consumer->oauth_type = 'oauth2';
-        $consumer->client_type = 'user';
-        $consumer->save();
-        
-        $this->consumerId = $consumer->c_key;
     }
 
     public function tearDown() 
