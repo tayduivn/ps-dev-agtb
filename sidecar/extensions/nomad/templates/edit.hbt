@@ -1,4 +1,4 @@
-<h1 class="nomad">Create Item</h1>
+<h1 class="nomad">Create {{model.module}}</h1>
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">
         <fieldset class="pad">
@@ -15,7 +15,7 @@
 <fieldset>
     <div>
         <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Save</a>
-        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Cancel</a>
     </div>
 </fieldset>
 
