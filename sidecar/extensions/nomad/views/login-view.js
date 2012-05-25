@@ -13,18 +13,33 @@
                 var url = model.get("url");
                 var args = {password: model.get("password"), username: model.get("username")};
                 app.logger.debug(args.username + ":" + args.password + "@" + url);
-                app.login(args, null, {
-                    success: function() {
-                        app.logger.debug("logged in successfully!");
-                        app.sync(function() {
-                            app.logger.debug("sync success firing");
-                        });
-                    },
-                    error: function(error) {
-                        app.logger.debug("login failed: " + error);
-                    }
-                });
+                
+                if(this.model.isValid()) {
+                    app.alert.dismiss('field_validation_error');
+                    var loginBtn = this.$('#login_btn');
+                    loginBtn.text('Loading...');
+                    app.login(args, null, {
+                        success: function() {
+                            app.logger.debug("logged in successfully!");
+                            app.sync(function() {
+                                app.logger.debug("sync success firing");
+                            });
+                        },
+                        error: function(error) {
+                            app.logger.debug("login failed: " + error);
+                            loginBtn.text('Login');
+                        }
+                    });
+                }
             }
+        },
+        
+        render: function() {
+            app.view.View.prototype.render.call(this, arguments);
+            if(_.isUndefined(window.cordova)) {
+                this.$('#url').hide();
+            }
+            return this;
         }
     });
 
