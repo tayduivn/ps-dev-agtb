@@ -463,18 +463,21 @@ class Report
             }
         }
         // Collecting table_keys from filter_defs
-        foreach ($this->report_def['filters_def'] as $filters)
+        $filters_def = array();
+        $recursiveArrayIterator = new RecursiveArrayIterator($this->report_def['filters_def']);
+        $recursiveIteratorIterator = new RecursiveIteratorIterator($recursiveArrayIterator, RecursiveIteratorIterator::SELF_FIRST);
+        foreach($recursiveIteratorIterator as $k => $v)
         {
-            foreach ($filters as $column)
+            if (is_array($v) && !empty($v['table_key']))
             {
-                if (is_array($column) == false)
-                {
-                    continue;
-                }
-                if (in_array($column['table_key'], $validTableKeys) == false)
-                {
-                    $validTableKeys[] = $column['table_key'];
-                }
+                $filters_def[] = $v;
+            }
+        }
+        foreach ($filters_def as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
             }
         }
 
