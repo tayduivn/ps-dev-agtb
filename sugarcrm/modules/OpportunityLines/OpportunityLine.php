@@ -26,15 +26,25 @@ class OpportunityLine extends SugarBean
     // Stored fields
     var $id;
     var $product_id;
+    var $discount_price;
+    var $quantity;
+    var $total_price;
+    var $expert_id;
+
     var $product_category_id;
     var $experts;
-    var $expert_id;
+
     var $table_name = "opportunity_lines";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";
 
     function save($check_notify = FALSE)
     {
+        if(!empty($this->discount_price) && !empty($this->quantity))
+        {
+            $this->total_price = $this->discount_price * $this->quantity;
+        }
+
         $this->getExperts();
         return parent::save($check_notify);
     }

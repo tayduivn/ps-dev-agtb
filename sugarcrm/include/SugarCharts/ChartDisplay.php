@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once("modules/Reports/templates/templates_chart.php");
+//require_once("modules/Reports/templates/templates_chart.php");
 
 /**
  * Handle setting up the Charting for Display
@@ -88,8 +88,11 @@ class ChartDisplay
         // set the default stuff we need on the reporter
         // and run the queries
         $this->reporter->is_saved_report = true;
-        $this->reporter->get_total_header_row();
-        $this->reporter->run_chart_queries();
+        // only run if the chart_rows variable is empty
+        if(empty($this->reporter->chart_rows)) {
+            $this->reporter->get_total_header_row();
+            $this->reporter->run_chart_queries();
+        }
 
         // set the chart type
         $this->chartType = $this->reporter->chart_type;
@@ -198,14 +201,14 @@ class ChartDisplay
             array_pop($this->reporter->chart_rows);
         } else {
             $total_row = array_pop($this->reporter->chart_rows);
-            $total = get_total($this->reporter, $total_row);
+            $total = $this->get_total($total_row);
         }
 
-        $symbol = print_currency_symbol($this->reporter->report_def);
+        $symbol = $this->print_currency_symbol();
 
         $mod_strings = return_module_language($current_language, 'Reports');
 
-        $this->chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . get_k();
+        $this->chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . $this->get_k();
     }
 
     /**
@@ -216,7 +219,7 @@ class ChartDisplay
         $chart_rows = array();
         $chart_groupings = array();
         foreach ($this->reporter->chart_rows as $row) {
-            $row_remap = get_row_remap($row, $this->reporter);
+            $row_remap = $this->get_row_remap($row);
             $chart_groupings[$row_remap['group_base_text']] = true; // store all the groupingstem
             if (empty($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']])) {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']] = $row_remap;
@@ -286,5 +289,165 @@ class ChartDisplay
     public function isStackable()
     {
         return $this->stackChart;
+    }
+
+
+    protected function print_currency_symbol()
+    {
+        $report_defs = $this->reporter->report_def;
+        $currency_symbol = '';
+        if (isset($report_defs['numerical_chart_column_type']) && $report_defs['numerical_chart_column_type'] == 'currency') {
+            global $current_user;
+            $currency = new Currency();
+            if ($current_user->getPreference('currency'))
+                $currency->retrieve($current_user->getPreference('currency'));
+            else
+                $currency->retrieve('-99');
+
+            $currency_symbol = $currency->symbol;
+        } else if (!isset($report_defs['numerical_chart_column_type'])) {
+            return '';
+        }
+
+        return $currency_symbol;
+    }
+
+    protected function get_row_remap($row)
+    {
+        $row_remap = array();
+        $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
+        global $do_thousands;
+        if ($do_thousands) {
+            // MRF - Bug # 13501, 47148 - added floor() below:
+            $row_remap['numerical_value'] = round(unformat_number(floor($row_remap['numerical_value'])) / 1000);
+        }
+        $row_remap['group_text'] = $group_text = (isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? chop($row['cells'][$this->reporter->chart_group_position]['val']) : '';
+        $row_remap['group_key'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $row['cells'][$this->reporter->chart_group_position]['key'] : '');
+        $row_remap['count'] = $row['count'];
+        $row_remap['group_label'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $this->reporter->chart_header_row[$this->reporter->chart_group_position]['label'] : '');
+        $row_remap['numerical_label'] = $this->reporter->chart_header_row[$this->reporter->chart_numerical_position]['label'];
+        $row_remap['numerical_key'] = $this->reporter->chart_header_row[$this->reporter->chart_numerical_position]['column_key'];
+        $row_remap['module'] = $this->reporter->module;
+        if (count($this->reporter->report_def['group_defs']) > 1) { // multiple group by, use second group by as legend
+            $second_group_by_key = $this->reporter->report_def['group_defs'][1]['table_key'] . ':' . $this->reporter->report_def['group_defs'][1]['name'];
+            foreach ($row['cells'] as $cell) {
+                if ($cell['key'] == $second_group_by_key) {
+                    $row_remap['group_base_text'] = $cell['val'];
+                }
+            }
+        }
+        else { // single group by
+            $row_remap['group_base_text'] = $row['cells'][0]['val'];
+        }
+
+        //jclark - bug 47329 - report charts show html link text
+        $row_remap['group_text'] = strip_tags($row_remap['group_text']);
+        $row_remap['group_base_text'] = strip_tags($row_remap['group_base_text']);
+        //end jclark fix
+
+        return $row_remap;
+
+    }
+
+    protected function get_total($total_row)
+    {
+        $total_index = 0;
+        if (!empty ($this->reporter->chart_total_header_row)) {
+            for ($i = 0; $i < count($this->reporter->chart_total_header_row); $i++) {
+                if ($this->reporter->chart_total_header_row[$i]['column_key'] == $this->reporter->report_def['numerical_chart_column']) {
+                    $total_index = $i;
+                    break;
+                }
+            }
+        } else {
+            $total_index = 0; // special for dashlets!!
+        }
+        $total = $total_row['cells'][$total_index]['val'];
+        global $do_thousands;
+        if ($this->get_maximum() > 100000 && (!isset($this->reporter->report_def['do_round'])
+            || (isset($this->reporter->report_def['do_round']) && $this->reporter->report_def['do_round'] == 1))
+        ) {
+            $do_thousands = true;
+            $total = round(unformat_number($total) / 1000);
+            return $total;
+        } else {
+            $do_thousands = false;
+            return unformat_number($total);
+        }
+
+    }
+
+    protected function get_k()
+    {
+        global $do_thousands, $app_strings;
+        if ($do_thousands) {
+            return $app_strings['LBL_THOUSANDS_SYMBOL'];
+        } else {
+            return '';
+        }
+    }
+
+    protected function get_maximum()
+    {
+        $numbers = array();
+        foreach ($this->reporter->chart_rows as $row) {
+            $row_remap = $this->get_row_remap($row);
+            array_push($numbers, $row_remap['numerical_value']);
+        }
+        return $this->get_max_from_numbers($numbers);
+    }
+
+    protected function get_max_from_numbers($numbers)
+    {
+        if (!empty ($numbers)) {
+            $max = max($numbers);
+            if ($max < 1)
+                return $max;
+            $base = pow(10, floor(log10($max)));
+            return ceil($max / $base) * $base;
+        } else {
+            return 0;
+        }
+    }
+
+    public function get_cache_file_name()
+    {
+        global $current_user;
+
+        $xml_cache_dir = sugar_cached("xml/");
+        if ($this->reporter->is_saved_report == true) {
+            $filename = $xml_cache_dir . $this->reporter->saved_report_id . '_saved_chart.xml';
+        } else {
+            $filename = $xml_cache_dir . $current_user->id . '_' . time() . '_curr_user_chart.xml';
+        }
+
+        if (!is_dir(dirname($filename))) {
+            create_cache_directory("xml/");
+        }
+
+        return $filename;
+    }
+
+    public function legacyDisplay($id, $is_dashlet = false)
+    {
+
+        if ($is_dashlet) {
+            $height = '480';
+            $width = '100%';
+            $guid = $id;
+        } else {
+            $width = '100%';
+            $height = '480';
+            $guid = $this->reporter->saved_report_id;
+        }
+
+        $sugarChart = $this->getSugarChart();
+        if (is_object($sugarChart)) {
+            $xmlFile = $this->get_cache_file_name();
+            $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
+            return $sugarChart->display($guid, $xmlFile, $width, $height);
+        }
+
+        return $sugarChart;
     }
 }

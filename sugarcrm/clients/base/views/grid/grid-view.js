@@ -33,7 +33,13 @@
             var self = this;
             app.view.View.prototype.render.call(this);
 
-            this.gTable = this.$el.find('#gridTable').dataTable();
+            this.gTable = this.$el.find('#gridTable').dataTable(
+                {
+                    "bFilter": false,
+                    "bInfo":false,
+                    "bPaginate": false
+                }
+            );
 
             // if isExpandable, add expandable row behavior
             if( this.isExpandableRows )  {

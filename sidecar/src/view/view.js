@@ -8,8 +8,6 @@
      */
     app.view.View = app.view.Component.extend({
 
-        className: "view",
-
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -50,17 +48,6 @@
             this.fields = {};
 
             /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createView} method.
-             *
-             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || this.name || "");
-
-            /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
              * Defaults to `"default"`.
              *
@@ -76,6 +63,8 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
+
+            this.$el.data("comp", "view_" + this.name);
         },
 
         /**
@@ -89,6 +78,11 @@
             if (this.template) {
                 try {
                     this.$el.html(this.template(ctx));
+                    // See the following resources
+                    // https://github.com/documentcloud/backbone/issues/310
+                    // http://tbranyen.com/post/missing-jquery-events-while-rendering
+                    // http://stackoverflow.com/questions/5125958/backbone-js-views-delegateevents-do-not-get-bound-sometimes
+                    this.delegateEvents();
                 } catch (e) {
                     app.logger.error("Failed to render " + this + "\n" + e);
                     // TODO: trigger app event to render an error message
@@ -165,7 +159,9 @@
             }
 
             // temp variables used to check metadata values for listeners
-            var tmpModule = this.options.module,
+            // check docs for getParentViewModule for info on parentViewModule var
+            var parentViewModule = this.getParentViewModule(this.options),
+                tmpModule = (parentViewModule == null ) ? this.options.module : parentViewModule,
                 tmpLayout = app.metadata.getCurrentLayout(),
                 tmpView   = this.options.name;
 
@@ -267,7 +263,39 @@
                     app.events.on( i , this[listeners[i]] , this);
                 }
             }
-        }, 
+        },
+
+        /**
+         * Returns the parent view's Module name
+         *
+         * In nested layouts where views have a separate context from it's parent layout,
+         * the this.options.module will refer to the immediate view's associated module.
+         * Since we're storing metadata and views and listeners using the parent module name as the key,
+         * we need to make sure we can get that ultimate parent module name
+         *
+         * @param opts {Object} an object of this.options
+         * @return {*} null or {String} name of the parent's Module
+         */
+        getParentViewModule: function(opts) {
+            var parentViewModule = null;
+            /**
+             * currently this.options can go down to this.options.context.parent with .parent always being null
+             * in repeated tests I have not been able to get this.options.context.parent.parent to have it's own data
+             */
+            if( opts.hasOwnProperty("context") && opts.context.hasOwnProperty("parent") && opts.context.parent != null
+                && opts.context.parent.hasOwnProperty("parent") && opts.context.parent.parent == null )
+            {
+                parentViewModule = opts.context.parent.attributes.module;
+            }
+            else if( opts.hasOwnProperty("context") && opts.context.hasOwnProperty("parent") && opts.context.parent != null
+                && opts.context.parent.hasOwnProperty("parent") && opts.context.parent.parent != null )
+            {
+                // this is here just in case parent.parent ever has it's own parent.options,
+                // in which case we'll just recurse through it here
+                this.getParentViewModule(opts.context.parent.parent.options);
+            }
+            return parentViewModule;
+        },
 
        /**
          * Gets a string representation of this view.

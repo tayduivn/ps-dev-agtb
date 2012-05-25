@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,31 +19,47 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 56851 2010-06-07 22:17:02Z jenny $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-$mod_strings = array (
-    'LBL_PRODUCT_ID' => 'Product ID',
-    'LBL_OPPORTUNITY_ID' => 'Opportunity ID',
-    'LBL_DISCOUNT_PRICE' => 'Discount Price',
-    'LBL_DISCOUNT_USDOLLAR' => 'Discount Price (US Dollar)',
-    'LBL_BEST_CASE' => 'Best case',
-    'LBL_LIKELY_CASE' => 'Likely case',
-    'LBL_WORST_CASE' => 'Worst case',
-    'LBL_PROFIT_MARGIN' => 'Profit Margin',
-    'LBL_NOTE' => 'Note',
-    'LBL_TAX_CLASS' => 'Tax Class',
-    'LBL_QUANTITY' => 'Quantity',
-    'LBL_PRICE' => 'Price',
-    'LBL_LIST_FORM_TITLE' => 'Opportunity Line Item List',
-    'LBL_SEARCH_FORM_TITLE' => 'Opportunity Line Item Search',
-    'LBL_LIST_OPPORTUNITY_LINE_NAME' => 'Name',
-    'LBL_LIST_OPPORTUNITY_NAME' => 'Opportunity Name',
-    'LBL_EXPERT_ID' => 'Product Expert',
-    'LBL_TOTAL_PRICE' => 'Total Price',
+$viewdefs['Notes']['portal']['view']['editmodal'] = array(
+    'buttons' =>
+    array(
+        array(
+            'name' => 'save_button',
+            'type' => 'button',
+            'label' => 'Save',
+            'value' => 'save',
+            'primary' => true,
+        ),
+        array(
+            'name' => 'cancel_button',
+            'type' => 'button',
+            'label' => 'Cancel',
+            'value' => 'cancel',
+            'primary' => false,
+        ),
+    ),
+    'panels' => array(
+        array(
+            'label' => 'Edit',
+            'fields' => array(
+                0 =>
+                array(
+                    'name' => 'name',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 35,
+                    'required' => true
+                ),
+                1 =>
+                array(
+                    'name' => 'description',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 35,
+                    'required' => true
+                )
+            )
+        )
+    )
 );

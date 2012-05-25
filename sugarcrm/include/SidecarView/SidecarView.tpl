@@ -67,11 +67,19 @@
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-modal.js"></script>
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-alert.js"></script>
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/application.js"></script>
-<script language="javascript" src="../sidecar/lib/jeditable/jquery.jeditable.mini.js"></script>
+<script language="javascript" src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
 <script language="javascript" src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
 
 <script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
+
+{literal}
+<style type="text/css">
+    .view {
+        border:none;
+    }
+</style>
+{/literal}
 
 <div id="core-module">
     <div id="core" style="" >

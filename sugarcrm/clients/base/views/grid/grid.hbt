@@ -1,8 +1,6 @@
 <div class="span12 container-fluid subhead">
-    This is The Grid.
-    <h3>{{context.attributes.module}}</h3>
     {{#each meta.panels}}
-    <table id="gridTable">
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatable" id="gridTable">
         <thead>
             <tr>
             {{#each fields}}
