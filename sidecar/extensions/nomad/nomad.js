@@ -67,8 +67,9 @@
     app.augment("nomad", {
 
         deviceReady: function() {
+            app.isNative = !_.isUndefined(window.cordova);
             app.init({el: "#nomad" });
-            app.logger.debug('App initialized');
+            app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
             app.api.debug = app.config.debugSugarApi;
             app.start();
             app.logger.debug('App started');

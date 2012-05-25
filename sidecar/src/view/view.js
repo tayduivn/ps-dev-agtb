@@ -77,6 +77,11 @@
             if (this.template) {
                 try {
                     this.$el.html(this.template(ctx));
+                    // See the following resources
+                    // https://github.com/documentcloud/backbone/issues/310
+                    // http://tbranyen.com/post/missing-jquery-events-while-rendering
+                    // http://stackoverflow.com/questions/5125958/backbone-js-views-delegateevents-do-not-get-bound-sometimes
+                    this.delegateEvents();
                 } catch (e) {
                     app.logger.error("Failed to render " + this + "\n" + e);
                     // TODO: trigger app event to render an error message
