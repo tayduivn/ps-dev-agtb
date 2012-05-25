@@ -36,7 +36,7 @@
         
         render: function() {
             app.view.View.prototype.render.call(this, arguments);
-            if(_.isUndefined(window.cordova)) {
+            if(!app.isNative) {
                 this.$('#url').hide();
             }
             return this;
