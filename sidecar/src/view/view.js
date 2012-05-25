@@ -8,8 +8,6 @@
      */
     app.view.View = app.view.Component.extend({
 
-        className: "view",
-
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -50,17 +48,6 @@
             this.fields = {};
 
             /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createView} method.
-             *
-             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || this.name || "");
-
-            /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
              * Defaults to `"default"`.
              *
@@ -76,6 +63,8 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
+
+            this.$el.data("comp", "view_" + this.name);
         },
 
         /**
@@ -89,6 +78,11 @@
             if (this.template) {
                 try {
                     this.$el.html(this.template(ctx));
+                    // See the following resources
+                    // https://github.com/documentcloud/backbone/issues/310
+                    // http://tbranyen.com/post/missing-jquery-events-while-rendering
+                    // http://stackoverflow.com/questions/5125958/backbone-js-views-delegateevents-do-not-get-bound-sometimes
+                    this.delegateEvents();
                 } catch (e) {
                     app.logger.error("Failed to render " + this + "\n" + e);
                     // TODO: trigger app event to render an error message
