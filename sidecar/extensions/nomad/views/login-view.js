@@ -3,6 +3,9 @@
 (function(app) {
 
     app.view.views.LoginView = app.view.View.extend({
+
+        className: "login",
+
         events: {
             "click #login_btn": function() {
                 var self = this;

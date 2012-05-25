@@ -75,16 +75,20 @@ h1 {font-size: 26px !important;}
 
 #nomad,
 #content,
-#content .layout.list,
-#content .layout.list > .view.list {
+#content > div,
+#content > div > div {
   display:inline;
 }
 
 #listing-Accounts .items article {
-  -webkit-transform: translateZ(0);
+  -webkit-transform: translatez(0);
 }
 
 /* activity and twitter */
+
+.listing article {
+  -webkit-transition: all 0.25s ease-in-out;
+}
 
 article {
   position: relative;
@@ -482,19 +486,13 @@ html {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
-  display: block;
   .items {
     margin-top:93px;
   }
 }
 
-
-.listing article {
-	-webkit-transition: all .25s ease-in-out;
-}
 
 .listing article.deleted {
     opacity:0;
@@ -508,20 +506,18 @@ html {
     padding-top:0;
     padding-bottom:0;
     min-height:42px;
-}
-
-.listing article.nav:last-child {
-    border-top: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav:first-child,
-.listing article.nav:nth-child(2),
-.listing article.nav:nth-child(3) {
-    border-bottom: 1px solid darken(@grayLighter, 25%);
-}
-
-.listing article.nav div {
-    height:42px;
+    &.show-more-top-btn {
+      top:93px;
+    }
+    &:last-child {
+      border-top: 1px solid darken(@grayLighter, 25%);
+    }
+    div {
+      height:42px;
+    }
+    &:first-child, &:nth-child(2), &:nth-child(3) {
+      border-bottom: 1px solid darken(@grayLighter, 25%);
+    }
 }
 
 .listing > i {
@@ -541,6 +537,9 @@ html {
   top:50px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  
+  
+  margin-right:100px;
   a.btn {
     min-height:20px;
     min-width:50px;
@@ -553,6 +552,7 @@ html {
     display:inline-block;
     width:85px;
     height:16px;
+    float:right;
     position:absolute;
     right:0px;
     top:4px;
@@ -561,6 +561,31 @@ html {
       min-height:22px;
     }
   }
+}
+
+.listing .form-search {
+  margin:0;
+}
+
+.listing .icon-search {
+  position:absolute;
+  margin:8px 0 0 14px;
+  color:darken(@grayLighter, 20%);
+}
+
+.search-query {
+  &[placeholder] {
+    text-indent: 30px !important;
+  }
+}
+
+.listing .search-query {
+  width: 100%;
+  height: 26px;
+  
+  .border-radius(18px);
+  padding-left:0;
+  padding-right:0;
 }
 
 .searchlist {
@@ -572,7 +597,7 @@ html {
       overflow: hidden;
       -webkit-overflow-scrolling: hidden;
       display: block;
-      z-index:1;
+      z-index:2000;
     }
     .container-fluid {
       padding:0 !important;
@@ -581,6 +606,14 @@ html {
 
 .filtered .topelbar {
   padding-right:94px;
+}
+
+
+.searchlist .listing {
+margin-left: -100px !important;
+padding-left: 100px;
+overflow:visible;
+
 }
 
 @media (max-width: 479px) {
@@ -595,29 +628,6 @@ html {
   display:inline-block;
 }
 
-.listing .form-search {
-  margin:0;
-}
-
-.listing .icon-search {
-  position:absolute;
-  margin:8px 0 0 14px;
-  color:darken(@grayLighter, 20%);
-}
-
-.search-query[placeholder] {
-  text-indent: 30px !important;
-}
-
-.listing .search-query {
-  width: 98.75%;
-  height: 26px;
-  
-  .border-radius(18px);
-  padding-left:0;
-  padding-right:0;
-}
-
 .navbar [class^="icon-"] {
   color: @white;
   text-shadow: 0 -1px 0 @black;
@@ -627,14 +637,14 @@ html {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 
 #saveRecord {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 
 .navbar #back .icon-chevron-left {
@@ -682,7 +692,7 @@ html {
 h1.nomad,
 h3.nomad {
   color: @white;
-  z-index: 10000;
+  z-index: 2001;
   position: absolute;
   width: 80%;
   margin: 0 10%;
@@ -836,7 +846,7 @@ color: @gray;
 }
 
 .over {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: auto;
@@ -961,10 +971,12 @@ color: @gray;
 /* Log In
 ----------*/
 .login {
-	background: #E61718 url(../img/leather-red.png);
+  background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
   height:100%;
+  width:100%;
+  display:inline-block !important;
 }
 .login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;
@@ -1023,7 +1035,7 @@ float: none !important;}
 }
 
 .alert {
- z-index: 2000;
+ z-index: 2002;
  position: absolute;
  width: 100%;
  height: 42px;
@@ -1198,7 +1210,7 @@ float: none !important;}
   top:50px;
   height:auto;
   overflow: scroll;
-  z-index:2000;
+  z-index:2002;
   -webkit-overflow-scrolling:touch;
   .row-fluid {
     display: block;
@@ -1283,4 +1295,3 @@ float: none !important;}
     }
 }
 */
-

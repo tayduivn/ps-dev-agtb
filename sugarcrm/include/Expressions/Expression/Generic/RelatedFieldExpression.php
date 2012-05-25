@@ -112,31 +112,6 @@ class RelatedFieldExpression extends GenericExpression
                 }
 
                 return AH.getRelatedField(linkField, 'related', relField);
-                if (!module || (!record && !linkId))
-                    return "";
-
-                if (linkId && linkId != "")
-                {
-                    url += SUGAR.util.paramsToUrl({
-                        module:"ExpressionEngine",
-                        action:"getRelatedValue",
-                        record_id: linkId,
-                        field: relField,
-                        tmodule:module
-                    });
-                } else {
-                    url += SUGAR.util.paramsToUrl({
-                        module:"ExpressionEngine",
-                        action:"execFunction",
-                        id: record,
-                        rel_id : linkId,
-                        tmodule:module,
-                        "function":"related",
-                        params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
-                    });
-                }
-                //The response should the be the JSON encoded value of the related field
-                return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.
