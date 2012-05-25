@@ -3800,7 +3800,7 @@ html {
   padding-left: 0;
   padding-right: 0;
 }
-.searchlist .listing {
+[data-comp=view_searchlist] .listing {
   height: 93px;
   position: relative;
   left: 0;
@@ -3810,7 +3810,7 @@ html {
   display: block;
   z-index: 2000;
 }
-.searchlist .container-fluid {
+[data-comp=view_searchlist] .container-fluid {
   padding: 0 !important;
 }
 .filtered .topelbar {
