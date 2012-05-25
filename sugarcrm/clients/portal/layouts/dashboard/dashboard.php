@@ -1,4 +1,8 @@
 <?php
+
+// TODO: Grab module list programatically to show
+$shownModules = array();
+
 $viewdefs['Cases']['portal']['layout']['dashboard'] = array(
     'type' => 'columns',
     'components' => array(
@@ -12,8 +16,16 @@ $viewdefs['Cases']['portal']['layout']['dashboard'] = array(
                     array(
                         'view' => 'list',
                         'context' => array(
-                            'module' => 'Leads',
+                            'module' => 'Bugs',
                         ),
+                    ),
+                ),
+            ),
+            'layout' => array(
+                'type' => 'fluid',
+                'components' => array(
+                    array(
+                        'view' => 'list',
                     ),
                 ),
             ),

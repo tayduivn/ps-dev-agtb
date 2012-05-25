@@ -99,7 +99,6 @@
         _createComponent: function(type, name, params) {
             var layoutType = type === "layout" ? params.type : null;
             var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
-
             var component = new Klass(params);
             component.bindDataChange();
 
@@ -330,4 +329,3 @@
     app.augment("view", _viewManager, false);
 
 })(SUGAR.App);
-
