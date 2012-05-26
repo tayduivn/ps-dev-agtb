@@ -121,6 +121,7 @@
                 this._prepare(modelId, create)
             );
 
+            return this;
         },
 
         /**

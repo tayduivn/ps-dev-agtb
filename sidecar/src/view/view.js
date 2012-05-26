@@ -31,12 +31,11 @@
              * @member {View.View}
              */
             this.id = options.id || this.getID();
-
             /**
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = app.template.getView(this.name, this.module) ||
+            this.template = options.template || app.template.getView(this.name, this.module) ||
                             app.template.getView(this.name);
 
             /**
