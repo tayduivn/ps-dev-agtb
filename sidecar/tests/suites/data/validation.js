@@ -79,24 +79,42 @@ describe("Validation", function() {
         });
     });
 
-    xdescribe("'url' validator", function() {
-        var result,
-            field = {type: "url"};
+    describe("'url' validator", function() {
+        var field = {type: "url"},
+            v = validation.validators.url;
 
         it("should be able to validate a valid url", function() {
-            result = validation.validators.url(field, "http://www.google.com");
-            expect(result).toBeUndefined();
+            expect(v(field, "http://www.google.com")).toBeUndefined();
+            expect(v(field, "http://docs.google.com")).toBeUndefined();
 
-            result = validation.validators.url(field, "http://docs.google.com");
-            expect(result).toBeUndefined();
+            expect(v(field, "http://example.com")).toBeUndefined();
+            expect(v(field, "https://example.com")).toBeUndefined();
 
-            result = validation.validators.url(field, "test.google.com");
-            expect(result).toBeUndefined();
+            expect(v(field, "http://example.com/sugar")).toBeUndefined();
+            expect(v(field, "https://example.com/sugar")).toBeUndefined();
+
+            expect(v(field, "http://example.com:8888")).toBeUndefined();
+            expect(v(field, "http://example.com:8888/sugar")).toBeUndefined();
+
+            expect(v(field, "http://192.168.129.107/sugar")).toBeUndefined();
+            expect(v(field, "https://192.168.129.107/sugar")).toBeUndefined();
+
+            expect(v(field, "http://192.168.129.107:8888")).toBeUndefined();
+            expect(v(field, "http://192.168.129.107:8888/sugar")).toBeUndefined();
+
+            expect(v(field, "http://127.0.0.1/sugar")).toBeUndefined();
+            expect(v(field, "https://127.0.0.1/sugar")).toBeUndefined();
+
+            expect(v(field, "http://127.0.0.1:8888")).toBeUndefined();
+            expect(v(field, "http://127.0.0.1:8888/sugar")).toBeUndefined();
         });
 
         it("should be able to invalidate an invalid url", function() {
-            result = validation.validators.url(field, "something.something");
-            expect(result).toBeDefined();
+            expect(v(field, "test.google.com")).toBeTruthy();
+            expect(v(field, "http://localhost")).toBeTruthy();
+            expect(v(field, "http://localhost:8888")).toBeTruthy();
+            expect(v(field, "http://localhost/sugar")).toBeTruthy();
+            expect(v(field, "http://localhost:8888/sugar")).toBeTruthy();
         });
     });
 
