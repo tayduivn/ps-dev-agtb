@@ -2,7 +2,7 @@
 
     app.view.views.SearchlistView = app.view.View.extend({
         ITEM_TYPE_DELAY: 400,
-
+        className: "searchlist",
         events: {
             'keyup .search-query': 'onKeyUp',
             'click .favorites-btn': 'onClickFavoritesBtn',
