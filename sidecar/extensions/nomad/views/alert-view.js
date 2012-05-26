@@ -9,32 +9,25 @@
          * @param options(optional) Alert options.
          * @return {Object} Alert instance.
          */
-        render:function () {
-            app.view.View.prototype.render.call(this);
-            this.$el.removeClass("alert");//hot fix styles TODO:remove it
-        },
-        show:function (options) {
+        show: function(options) {
             var alert = {
-                $el:$('<div>'),
-                autoClose:!!options.autoClose,
-                messages:(_.isString(options.messages)) ? [options.messages] : options.messages,
-                type:options.level || 'general',
-                close:function(){
+                $el: $('<div>'),
+                autoClose: !!options.autoClose,
+                messages: (_.isString(options.messages)) ? [options.messages] : options.messages,
+                type: options.level || 'general',
+                close: function() {
                     alert.$el.remove();
                 }
             };
 
-            if(alert.autoClose) {
-                setTimeout(function () {
+            if (alert.autoClose) {
+                setTimeout(function() {
                     alert.$el.remove();
-                }, 9000);
+                }, app.config.alertAutoCloseDelay || 9000);
             }
 
             var tmpl = app.template.get('panel.alert');
-
-            if (tmpl) {
-                alert.$el.append(tmpl(alert)).prependTo(this.$el);
-            }
+            alert.$el.append(tmpl(alert)).prependTo(this.$el);
 
             return alert;
         }
