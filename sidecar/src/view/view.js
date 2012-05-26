@@ -217,6 +217,17 @@
         },
 
         /**
+         * Returns a field by name.
+         * @param {String} name Field name.
+         * @return {View.Field} Instance of the field widget.
+         */
+        getField: function(name) {
+            return _.find(this.fields, function(field) {
+                return field.name == name;
+            });
+        },
+
+        /**
          * Returns the html id of this view's el. Will create one if one doesn't exist.
          * @return {String} id of this view.
          */
