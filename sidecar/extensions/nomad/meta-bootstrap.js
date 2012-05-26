@@ -6,15 +6,18 @@
                 "fields": {
                     "username": {
                         "name": "username",
-                        "type": "varchar"
+                        "type": "varchar",
+                        required: true
                     },
                     "password": {
                         "name": "password",
-                        "type": "password"
+                        "type": "password",
+                        required: true
                     },
                     "url": {
                         "name": "url",
-                        "type": "url"
+                        "type": "url",
+                        required: true
                     }
                 },
                 "views": {

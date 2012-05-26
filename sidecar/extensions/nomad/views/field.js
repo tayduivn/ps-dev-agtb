@@ -13,7 +13,7 @@
             var template,
                 errMessages = [];
 
-            this.$('.control-group').addClass("error");
+            this.$el.parent('.control-group').addClass("error");
 
             //create data array for template
             _.each(errors, function(errorContext, errorName) {
@@ -23,7 +23,7 @@
             //get template and output the result
             template = app.template.get('field.messages');
             this.$('.controls').append(template(errMessages));
-
+            
             app.alert.show('field_validation_error', {level:'error', messages:'Validation error!'});
         }
     });
