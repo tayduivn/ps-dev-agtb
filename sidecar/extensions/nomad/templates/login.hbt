@@ -6,12 +6,12 @@
                 <h3 class="brand">SugarCRM</h3>
             </div>
             <div class="modal-body">
-                {{#meta.panels}}
+                {{#each meta.panels}}
                 {{#fields}}
                 <div class="control-group">
                     {{field ../../this}}
                 </div>
-                {{/each}}
+                {{/fields}}
                 {{/each}}
             </div>
             <div class="modal-footer">
