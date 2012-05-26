@@ -82,17 +82,16 @@ var SugarTest = {};
 beforeEach(function(){
     SugarTest.resetWaitFlag();
 
-    if (SUGAR.App) {
-        SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
-        SUGAR.App.config.env = "test";
-        SUGAR.App.config.appId = "portal";
-        SUGAR.App.config.maxQueryResult = 20;
+    SugarTest.app = SUGAR.App.init({el: "body", silent: true});
 
-        SugarTest.app = SUGAR.App.init({el: "body", silent: true});
+    SugarTest.app.config.logLevel = SUGAR.App.logger.levels.TRACE;
+    SugarTest.app.config.env = "test";
+    SugarTest.app.config.appId = "portal";
+    SugarTest.app.config.maxQueryResult = 20;
 
-        SugarTest.storage = {};
-        SUGAR.App.cache.store = SugarTest.keyValueStore;
-    }
+
+    SugarTest.storage = {};
+    SugarTest.app.cache.store = SugarTest.keyValueStore;
 });
 
 afterEach(function() {

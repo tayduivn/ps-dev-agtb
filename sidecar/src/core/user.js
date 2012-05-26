@@ -93,6 +93,7 @@
          * @private
          */
         _reset: function(user) {
+            app.logger.debug(user);
             // Clear local storage if complete reset is requested
             // or the new user that is about to be set has different ID (multiple users per domain are not supported)
             if (!user || (user.id != _usr.id)) {
