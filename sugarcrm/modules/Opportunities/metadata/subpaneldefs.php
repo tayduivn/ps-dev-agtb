@@ -187,6 +187,9 @@ $layout_defs['Opportunities'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=ent ONLY
 
         'opportunity_lines' => array(
             'order' => 50,
@@ -194,14 +197,16 @@ $layout_defs['Opportunities'] = array(
             'sort_order' => 'asc',
             'sort_by' => 'best_case',
             'subpanel_name' => 'ForOpportunities',
-            'get_subpanel_data' => 'opportunity_line_bundles',
+            'get_subpanel_data' => 'opportunity_lines',
             'add_subpanel_data' => 'opportunity_id',
             'title_key' => 'LBL_OPPORTUNITY_LINES_SUBPANEL_TITLE',
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
             ),
         ),
-        //END SUGARCRM flav=pro ONLY
+
+        //END SUGARCRM flav=ent ONLY
+
         //BEGIN SUGARCRM flav!=sales ONLY
 
         'project' => array(

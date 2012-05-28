@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -83,7 +83,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp1->team_set_id = '1';
         $opp1->save();
 
-        $line_bundle_1 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_1 = SugarTestOppLineItemUtilities::createLine();
         $line_1->name = $opp1->name;
         $line_1->opportunity_id = $opp1->id;
@@ -94,9 +93,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_1->likely_case = 1200;
         $line_1->worst_case = 1100;
         $line_1->save();
-        
-        $line_bundle_1->set_opportunitylinebundle_opportunity_relationship($opp1->id, '', '1');
-        $line_bundle_1->set_opportunitylinebundle_opportunityline_relationship($line_1->id, '1', '');
     
         $opp2 = SugarTestOpportunityUtilities::createOpportunity();
         $opp2->date_closed = $timedate->getNow()->asDbDate();
@@ -109,7 +105,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp2->team_set_id = '1';
         $opp2->save();
 
-        $line_bundle_2 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_2 = SugarTestOppLineItemUtilities::createLine();
         $line_2->name = $opp2->name;
         $line_2->opportunity_id = $opp2->id;
@@ -120,8 +115,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_2->likely_case = 1200;
         $line_2->worst_case = 1100;        
         $line_2->save();
-        $line_bundle_2->set_opportunitylinebundle_opportunity_relationship($opp2->id, '', '1');
-        $line_bundle_2->set_opportunitylinebundle_opportunityline_relationship($line_2->id, '1', '');
     
         $opp3 = SugarTestOpportunityUtilities::createOpportunity();
         $opp3->date_closed = $timedate->getNow()->modify('+4 month')->asDbDate();
@@ -134,7 +127,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp3->team_set_id = '1';
         $opp3->save();
 
-        $line_bundle_3 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_3 = SugarTestOppLineItemUtilities::createLine();
         $line_3->name = $opp3->name;
         $line_3->opportunity_id = $opp3->id;
@@ -145,9 +137,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_3->likely_case = 1200;
         $line_3->worst_case = 1100;        
         $line_3->save();
-        $line_bundle_3->set_opportunitylinebundle_opportunity_relationship($opp3->id, '', '1');
-        $line_bundle_3->set_opportunitylinebundle_opportunityline_relationship($line_3->id, '1', '');
-    
+
         $opp4 = SugarTestOpportunityUtilities::createOpportunity();
         $opp4->date_closed = $timedate->getNow()->modify('+4 month')->asDbDate();
         $opp4->assigned_user_id = $employee3->id;
@@ -159,7 +149,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp4->team_set_id = '1';
         $opp4->save();
 
-        $line_bundle_4 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_4 = SugarTestOppLineItemUtilities::createLine();
         $line_4->name = $opp4->name;
         $line_4->opportunity_id = $opp4->id;
@@ -170,8 +159,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_4->likely_case = 1200;
         $line_4->worst_case = 1100;        
         $line_4->save();
-        $line_bundle_4->set_opportunitylinebundle_opportunity_relationship($opp4->id, '', '1');
-        $line_bundle_4->set_opportunitylinebundle_opportunityline_relationship($line_4->id, '1', '');
     
         $opp5 = SugarTestOpportunityUtilities::createOpportunity();
         $opp5->date_closed = $timedate->getNow()->modify('+4 month')->asDbDate();
@@ -184,7 +171,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp5->team_set_id = '1';
         $opp5->save();
 
-        $line_bundle_5 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_5 = SugarTestOppLineItemUtilities::createLine();
         $line_5->name = $opp5->name;
         $line_5->opportunity_id = $opp5->id;
@@ -195,8 +181,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_5->likely_case = 1200;
         $line_5->worst_case = 1100;        
         $line_5->save();
-        $line_bundle_5->set_opportunitylinebundle_opportunity_relationship($opp5->id, '', '1');
-        $line_bundle_5->set_opportunitylinebundle_opportunityline_relationship($line_5->id, '1', '');        
 
         self::$report_defs = array();
         self::$report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"name","label":"Name","table_key":"Opportunities:opportunity_lines"},{"name":"user_name","label":"User Name","table_key":"Opportunities:assigned_user_link"},{"name":"price","label":"Price","table_key":"Opportunities:opportunity_lines"},{"name":"quantity","label":"Quantity","table_key":"Opportunities:opportunity_lines"},{"name":"best_case","label":"Best case","table_key":"Opportunities:opportunity_lines"},{"name":"likely_case","label":"Likely case","table_key":"Opportunities:opportunity_lines"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"name","label":"Product","table_key":"Opportunities:opportunity_lines:products","type":"name"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"name","label":"Product","table_key":"Opportunities:opportunity_lines:products"},{"name":"likely_case","label":"SUM: Likely case","field_type":"currency","group_function":"sum","table_key":"Opportunities:opportunity_lines"}],"report_name":"Test 1","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"Opportunities:opportunity_lines:likely_case:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:timeperiods":{"name":"Opportunities  >  Time Periods","parent":"self","link_def":{"name":"timeperiods","relationship_name":"opportunities_timeperiods","bean_is_lhs":false,"link_type":"one","label":"TimePeriods","module":"TimePeriods","table_key":"Opportunities:timeperiods"},"dependents":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Filter.1_table_filter_row_3","Filter.1_table_filter_row_2",null,null,"Filter.1_table_filter_row_2",null,null,"Filter.1_table_filter_row_2",null,null,"Filter.1_table_filter_row_2",null,null,"Filter.1_table_filter_row_2",null,null,"Filter.1_table_filter_row_1",null,null,"Filter.1_table_filter_row_1",null,null,"Filter.1_table_filter_row_1",null,null,"Filter.1_table_filter_row_1","group_by_row_2","display_summaries_row_group_by_row_2","Filter.1_table_filter_row_1",null,null,"Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"TimePeriods","label":"TimePeriods"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2",null,null,null,null,null,"Filter.1_table_filter_row_3","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","Filter.1_table_filter_row_2","display_cols_row_8"],"module":"Users","label":"Assigned to User"},"Opportunities:opportunity_lines":{"name":"Opportunities  >  Opportunity Line Items ","parent":"self","link_def":{"name":"opportunity_lines","relationship_name":"opportunity_lines","bean_is_lhs":true,"link_type":"many","label":"Opportunity Line Items","module":"OpportunityLines","table_key":"Opportunities:opportunity_lines"},"dependents":["group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_3","display_summaries_row_group_by_row_3","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","display_summaries_row_8","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_1","display_summaries_row_group_by_row_1","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","group_by_row_2","display_summaries_row_group_by_row_2","display_summaries_row_3","display_cols_row_4","display_cols_row_5","display_cols_row_6","display_cols_row_7","display_cols_row_10"],"module":"OpportunityLines","label":"Opportunity Line Items"},"Opportunities:opportunity_lines:products":{"name":"Opportunities  >  Opportunity Line Items  >  Products","parent":"Opportunities:opportunity_lines","link_def":{"name":"products","relationship_name":"opportunity_lines_products","bean_is_lhs":false,"link_type":"one","label":"Products","module":"Products","table_key":"Opportunities:opportunity_lines:products"},"dependents":["group_by_row_3","display_summaries_row_group_by_row_3","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_1","display_summaries_row_group_by_row_1","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2"],"module":"Products","label":"Products"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"name","table_key":"Opportunities:timeperiods","qualifier_name":"is","runtime":1,"input_name0":["last_current_next"]},"1":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","runtime":1,"input_name0":["Current User"]},"2":{"name":"probability","table_key":"self","qualifier_name":"greater","runtime":1,"input_name0":"25","input_name1":"on"}}}}', 'detailed_summary', 'vBarF');
@@ -209,7 +193,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('ForecastSeedReport1', 'ForecastSeedReport2', 'ForecastSeedReport3')");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestOppLineItemUtilities::removeAllCreatedLines();
-        SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         parent::tearDownAfterClass();
     }

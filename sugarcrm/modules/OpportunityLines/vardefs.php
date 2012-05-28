@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -41,17 +41,6 @@ array (
   'required' => true,
   'reportable' => false,
 ),
-  'products' =>
-  array(
-    'name' => 'products',
-    'type' => 'link',
-    'relationship' => 'opportunity_lines_products',
-    'source'=>'non-db',
-    'link_type'=>'one',
-    'module'=>'Products',
-    'bean_name'=>'Product',
-    'vname'=>'LBL_PRODUCTS',
-  ),
 'expert_id' =>
     array (
     'name' => 'expert_id',
@@ -69,26 +58,6 @@ array (
   'reportable' => false,
   'comment' => 'The opportunity id for the line item entry'
 ),
-'opportunity_name' =>
-  array (
-    'name' => 'opportunity_name',
-    'rname' => 'name',
-    'id_name' => 'opportunity_id',
-    'vname' => 'LBL_OPPORTUNITY_NAME',
-    'type' => 'relate',
-    'table' => 'opportunities',
-    'join_name'=>'opportunities',
-    'isnull' => 'true',
-    'module' => 'Opportunities',
-    'dbType' => 'varchar',
-    'link'=>'opportunities',
-    'len' => '255',
-    'source'=>'non-db',
-    'unified_search' => true,
-    'required' => true,
-    'importable' => 'required',
-    'required' => true,
-  ),
 'opportunities' =>
   array(
     'name' => 'opportunities',
@@ -100,44 +69,6 @@ array (
     'bean_name'=>'Opportunity',
     'vname'=>'LBL_OPPORTUNITIES',
   ),
-'price' =>
-array (
-    'name' => 'price',
-    'vname' => 'LBL_PRICE',
-    'type' => 'currency',
-    'len' => '26,6',
-    'audited'=>true,
-    'comment' => 'Price for product'
-),
-'discount_price' =>
-array (
-    'name' => 'discount_price',
-    'vname' => 'LBL_DISCOUNT_PRICE',
-    'type' => 'currency',
-    'len' => '26,6',
-    'audited'=>true,
-    'comment' => 'Discounted price ("Unit Price" in Quote)'
-),
-'discount_usdollar' =>
-array (
-    'name' => 'discount_usdollar',
-    'vname' => 'LBL_DISCOUNT_USDOLLAR',
-    'dbType' => 'decimal',
-    'group'=>'discount_price',
-    'type' => 'currency',
-    'len' => '26,6',
-    'comment' => 'Discount price expressed in USD',
-    'studio' => array('editview' => false),
-),
-'total_price' =>
-array(
-    'name' => 'total_price',
-    'vname' => 'LBL_TOTAL_PRICE',
-    'dbType' => 'decimal',
-    'type' => 'currency',
-    'len' => '26,6',
-    'comment' => 'Total price (discount price * quantity)',
-),
 'best_case' =>
 array (
     'name' => 'best_case',
@@ -161,51 +92,6 @@ array (
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
-),
-'profit_margin' =>
-array (
-    'name' => 'profit_margin',
-    'vname' => 'LBL_PROFIT_MARGIN',
-    'dbType' => 'decimal',
-    'type' => 'currency',
-    'len' => '26,6',
-),
-'currency_id' =>
-array (
-    'name' => 'currency_id',
-    'dbType' => 'id',
-    'vname'=>'LBL_CURRENCY',
-    'type' => 'varchar',
-    'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
-    'required'=>false,
-    'reportable'=>false,
-    'comment' => 'Currency of the product'
-),
-'tax_class' =>
-array (
-    'name' => 'tax_class',
-    'vname' => 'LBL_TAX_CLASS',
-    'type' => 'enum',
-    'options' => 'tax_class_dom',
-    'len' => 100,
-    'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
-),
-'quantity' =>
-array (
-    'name' => 'quantity',
-    'vname' => 'LBL_QUANTITY',
-    'type' => 'int',
-    'len'=>5,
-    'comment' => 'Quantity in use'
-),
-'note' =>
-array (
-    'name' => 'note',
-    'vname' => 'LBL_NOTE',
-    'type' => 'text',
-    'comment' => 'Full text of the note',
-    'rows' => 6,
-    'cols' => 80,
 ),
 
 ),

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -41,10 +41,6 @@ class SugarTestOppLineItemUtilities
         $time = mt_rand();
         $name = 'SugarLine';
         $line = new OpportunityLine();
-        $line->tax_class = 'Taxable';
-        $line->price = '100.00';
-        $line->discount_price = '100.00';
-        $line->quantity = '100';
         if(!empty($id))
         {
             $line->new_with_id = true;

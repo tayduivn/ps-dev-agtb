@@ -52,12 +52,16 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
-    'OpportunityLines' => 'Opportunity Lines',
     'Products' => 'Products',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
+
+  //BEGIN SUGARCRM flav=ent ONLY
+    'OpportunityLines' => 'Opportunity Lines',
+  //END SUGARCRM flav=ent ONLY
+
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',

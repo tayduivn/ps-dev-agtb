@@ -158,6 +158,8 @@ $mod_strings = array (
   'LBL_LIKELY_CASE' => 'Likely case',
   'LBL_WORST_CASE' => 'Worst case',
   //END SUGARCRM flav=pro ONLY
+  //END SUGARCRM flav=ent ONLY
+  'LBL_OPPORTUNITY_LINES_SUBPANEL_TITLE' => 'Opportunity Line Items',
 
 );
 

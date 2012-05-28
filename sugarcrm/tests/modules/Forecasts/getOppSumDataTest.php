@@ -27,10 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
 require_once 'modules/Forecasts/ForecastUtils.php';
-
 
 class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -53,7 +50,6 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         SugarTestOppLineItemUtilities::removeAllCreatedLines();
-        SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
     }
 
@@ -65,11 +61,7 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_1->probability = '10';
         $opp_1->save();
 
-        $line_bundle_1 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_1 = SugarTestOppLineItemUtilities::createLine();
-
-        $line_bundle_1->set_opportunitylinebundle_opportunity_relationship($opp_1->id, '', '1');
-        $line_bundle_1->set_opportunitylinebundle_opportunityline_relationship($line_1->id, '1', '');
 
         $result = getOppSummationData($this->sales_rep->id, '', 'Direct');
 
@@ -111,11 +103,7 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_2->probability = '10';
         $opp_2->save();
 
-        $line_bundle_2 = SugarTestOppLineBundleUtilities::createLineBundle();
         $line_2 = SugarTestOppLineItemUtilities::createLine();
-
-        $line_bundle_2->set_opportunitylinebundle_opportunity_relationship($opp_2->id, '', '1');
-        $line_bundle_2->set_opportunitylinebundle_opportunityline_relationship($line_2->id, '1', '');
 
         $result = getOppSummationData($this->manager->id, '', 'Rollup');
 

@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -30,20 +31,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_OPPORTUNITY_ID' => 'Opportunity ID',
-    'LBL_DISCOUNT_PRICE' => 'Discount Price',
-    'LBL_DISCOUNT_USDOLLAR' => 'Discount Price (US Dollar)',
     'LBL_BEST_CASE' => 'Best case',
     'LBL_LIKELY_CASE' => 'Likely case',
     'LBL_WORST_CASE' => 'Worst case',
-    'LBL_PROFIT_MARGIN' => 'Profit Margin',
     'LBL_NOTE' => 'Note',
-    'LBL_TAX_CLASS' => 'Tax Class',
-    'LBL_QUANTITY' => 'Quantity',
-    'LBL_PRICE' => 'Price',
     'LBL_LIST_FORM_TITLE' => 'Opportunity Line Item List',
     'LBL_SEARCH_FORM_TITLE' => 'Opportunity Line Item Search',
     'LBL_LIST_OPPORTUNITY_LINE_NAME' => 'Name',
     'LBL_LIST_OPPORTUNITY_NAME' => 'Opportunity Name',
     'LBL_EXPERT_ID' => 'Product Expert',
-    'LBL_TOTAL_PRICE' => 'Total Price',
 );

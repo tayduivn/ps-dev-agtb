@@ -82,11 +82,7 @@ include("metadata/saved_reportsMetaData.php");
 //END SUGARCRM flav=pro || flav=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-include("metadata/opportunity_line_bundle_opportunity.php");
-include("metadata/opportunity_line_bundle_opportunity_line.php");
-
 //BEGIN SUGARCRM flav!=sales ONLY
-
 include("metadata/product_bundle_noteMetaData.php");
 include("metadata/product_bundle_productMetaData.php");
 include("metadata/product_bundle_quoteMetaData.php");

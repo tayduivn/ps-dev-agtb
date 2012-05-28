@@ -64,10 +64,9 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
     $timedate = TimeDate::getInstance();
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    $opportunityLineBundle = new OpportunityLineBundle();
+    //BEGIN SUGARCRM flav=ent ONLY
     $opportunityLine = new OpportunityLine();
-    //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=ent ONLY
 
     while($records-- > 0)
     {
@@ -110,7 +109,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
 
 
-        //BEGIN SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
         $line_item_count = mt_rand(0,2);
 
         while($line_item_count-- >= 0)
@@ -123,42 +122,21 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $key = array_rand($users);
             $user = $users[$key];
 
-            $opportunityLineBundle->id = null;
-            $opportunityLineBundle->name = $product->name;
-            $opportunityLineBundle->created_by = $opp->assigned_user_id;
-            $opportunityLineBundle->modified_user_id = $opp->assigned_user_id;
-            $opportunityLineBundle->date_modified = $timedate->asDb($timedate->getNow());
-            $opportunityLineBundle->date_entered = $opportunityLineBundle->date_modified;
-            $opportunityLineBundle->deleted = 0;
-            $opportunityLineBundle->save();
-
             $opportunityLine->id = null;
             $opportunityLine->product_id = $product->id;
             $opportunityLine->opportunity_id = $opp->id;
-            $opportunityLine->quantity = 1;
-            $opportunityLine->price = $product->list_price;
-            $opportunityLine->discount_price = $product->discount_price;
-            $opportunityLine->discount_usdollar = $product->discount_usdollar;
-            $opportunityLine->best_case = $opportunityLine->price;
-            $opportunityLine->likely_case = $opportunityLine->discount_price;
-            $opportunityLine->worst_case = $opportunityLine->discount_price * .75;
-            $opportunityLine->currency_id = $product->currency_id;
-            $opportunityLine->tax_class = $product->tax_class;
+            $opportunityLine->best_case = $opp->amount;
+            $opportunityLine->likely_case = $opp->amount * .85;
+            $opportunityLine->worst_case = $opp->amount * .7;
             $opportunityLine->created_by = $opp->assigned_user_id;
             $opportunityLine->modified_user_id = $opp->assigned_user_id;
             $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
             $opportunityLine->date_modified = $opportunityLine->date_entered;
-            $opportunityLine->profit_margin = $opportunityLine->price * .3;
-            $opportunityLine->name = $product->name;
-            $opportunityLine->note = $product->name;
+            $opportunityLine->description = $product->name;
             $opportunityLine->expert_id = $user['id'];
-            $opportunityLine->deleted = 0;
             $opportunityLine->save();
-
-            $opportunityLineBundle->set_opportunitylinebundle_opportunity_relationship($opp->id, '', $line_item_count);
-            $opportunityLineBundle->set_opportunitylinebundle_opportunityline_relationship($opportunityLine->id, $line_item_count, '');
         }
-        //END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=ent ONLY
 
         $opportunity_ids[] = $opp->id;
     }

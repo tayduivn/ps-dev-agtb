@@ -75,13 +75,11 @@ public function setUp()
     $this->opp1->likely_case = '1200';
     $this->opp1->worst_case = '1100';
     $this->opp1->save();
-    $line_bundle_1 = SugarTestOppLineBundleUtilities::createLineBundle();
+
     $line_1 = SugarTestOppLineItemUtilities::createLine();
     $line_1->team_set_id = $current_user->id;
     $line_1->team_id = $current_user->id;
     $line_1->save();
-    $line_bundle_1->set_opportunitylinebundle_opportunity_relationship($this->opp1->id, '', '1');
-    $line_bundle_1->set_opportunitylinebundle_opportunityline_relationship($line_1->id, '1', '');
 
     $this->opp2 = SugarTestOpportunityUtilities::createOpportunity();
     $this->opp2->assigned_user_id = $this->employee1->id;
@@ -90,13 +88,11 @@ public function setUp()
     $this->opp2->likely_case = '1200';
     $this->opp2->worst_case = '1100';
     $this->opp2->save();
-    $line_bundle_2 = SugarTestOppLineBundleUtilities::createLineBundle();
+
     $line_2 = SugarTestOppLineItemUtilities::createLine();
     $line_2->team_set_id = $this->employee1->id;
     $line_2->team_id = $this->employee1->id;
     $line_2->save();
-    $line_bundle_2->set_opportunitylinebundle_opportunity_relationship($this->opp2->id, '', '1');
-    $line_bundle_2->set_opportunitylinebundle_opportunityline_relationship($line_2->id, '1', '');
 
     $this->opp3 = SugarTestOpportunityUtilities::createOpportunity();
     $this->opp3->assigned_user_id = $this->employee2->id;
@@ -105,13 +101,11 @@ public function setUp()
     $this->opp3->likely_case = '1200';
     $this->opp3->worst_case = '1100';
     $this->opp3->save();
-    $line_bundle_3 = SugarTestOppLineBundleUtilities::createLineBundle();
+
     $line_3 = SugarTestOppLineItemUtilities::createLine();
     $line_3->team_set_id = $this->employee2->id;
     $line_3->team_id = $this->employee2->id;
     $line_3->save();
-    $line_bundle_3->set_opportunitylinebundle_opportunity_relationship($this->opp3->id, '', '1');
-    $line_bundle_3->set_opportunitylinebundle_opportunityline_relationship($line_3->id, '1', '');
 
     $this->opp4 = SugarTestOpportunityUtilities::createOpportunity();
     $this->opp4->assigned_user_id = $this->employee3->id;
@@ -120,13 +114,11 @@ public function setUp()
     $this->opp4->likely_case = '1200';
     $this->opp4->worst_case = '1100';
     $this->opp4->save();
-    $line_bundle_4 = SugarTestOppLineBundleUtilities::createLineBundle();
+
     $line_4 = SugarTestOppLineItemUtilities::createLine();
     $line_4->team_set_id = $this->employee3->id;
     $line_4->team_id = $this->employee3->id;
     $line_4->save();
-    $line_bundle_4->set_opportunitylinebundle_opportunity_relationship($this->opp4->id, '', '1');
-    $line_bundle_4->set_opportunitylinebundle_opportunityline_relationship($line_4->id, '1', '');
 
     $this->opp5 = SugarTestOpportunityUtilities::createOpportunity();
     $this->opp5->assigned_user_id = $this->employee4->id;
@@ -135,13 +127,11 @@ public function setUp()
     $this->opp5->likely_case = '1200';
     $this->opp5->worst_case = '1100';
     $this->opp5->save();
-    $line_bundle_5 = SugarTestOppLineBundleUtilities::createLineBundle();
+
     $line_5 = SugarTestOppLineItemUtilities::createLine();
     $line_5->team_set_id = $this->employee4->id;
     $line_5->team_id = $this->employee4->id;
     $line_5->save();
-    $line_bundle_5->set_opportunitylinebundle_opportunity_relationship($this->opp5->id, '', '1');
-    $line_bundle_5->set_opportunitylinebundle_opportunityline_relationship($line_5->id, '1', '');
 }
 
 public function tearDown()
@@ -149,7 +139,6 @@ public function tearDown()
     $GLOBALS['db']->dropTableName('_hierarchy_return_set');
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestOppLineItemUtilities::removeAllCreatedLines();
-    SugarTestOppLineBundleUtilities::removeAllCreatedLineBundles();
     SugarTestOpportunityUtilities::removeAllCreatedOpps();
 }
 

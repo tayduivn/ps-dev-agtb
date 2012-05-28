@@ -514,21 +514,7 @@ $query .= 			"LEFT JOIN users
 	}
 
 
-    //BEGIN SUGARCRM flav=PRO ONLY
-    /**
-     * deleteOpportunityLineBundles
-     *
-     */
-    public function deleteOpportunityLineBundles()
-    {
-        $query = "DELETE FROM opportunity_line_bundles WHERE id IN (SELECT bundle_id FROM opp_line_bundle_opp WHERE opportunity_id = '{$this->id}')";
-        $this->db->query($query);
-        $query = "DELETE FROM opp_line_bundle_opp_line WHERE bundle_id IN (SELECT id FROM opp_line_bundle_opp WHERE opportunity_id = '{$this->id}')";
-        $this->db->query($query);
-        $query = "DELETE FROM opp_line_bundle_opp WHERE opportunity_id = '{$this->id}'";
-        $this->db->query($query);
-    }
-
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * deleteOpportunityLines
      *
@@ -538,32 +524,5 @@ $query .= 			"LEFT JOIN users
         $query = "DELETE FROM opportunity_lines WHERE opportunity_id = '{$this->id}'";
         $this->db->query($query);
     }
-
-    /**
-     * deleteAllRelatedLineInformation
-     *
-     */
-    public function deleteAllRelatedLineInformation()
-    {
-        $this->deleteOpportunityLineBundles();
-        $this->deleteOpportunityLines();
-    }
-
-    /**
-     * get_opportunity_line_bundles
-     *
-     * This function returns an array of OpportunityLineBundle instances for the Opportunity
-     * @return array
-     */
-    function getOpportunityLineBundles()
-    {
-        if(empty($this->id))
-        {
-            return null;
-        }
-
-        $query = "SELECT bundle_id as id FROM  opp_line_bundle_opp WHERE opportunity_id='{$this->id}' AND deleted=0 ORDER BY bundle_index";
-        return $this->build_related_list($query, new OpportunityLineBundle());
-    }
-    //END SUGARCRM flav=PRO ONLY
+    //END SUGARCRM flav=ent ONLY
 }

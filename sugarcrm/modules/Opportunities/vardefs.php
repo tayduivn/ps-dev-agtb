@@ -436,16 +436,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'source' => 'non-db',
 
   ),
-   /*
-    'opportunity_line_bundles' =>
-    array (
-        'name' => 'opportunity_line_bundles',
-        'type' => 'link',
-        'vname'=>'LBL_OPPORTUNITY_LINE_BUNDLES',
-        'relationship' => 'opportunity_line_bundle_opportunity',
-        'source'=>'non-db',
-    ),
-   */
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
   'opportunity_lines' =>
    array(
         'name' => 'opportunity_lines',
@@ -454,7 +446,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'relationship' => 'opportunity_lines_opportunities',
         'source' => 'non-db',
    ),
- //END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=ent ONLY
 ),
 		'indices' => array (
 			array(
@@ -529,12 +521,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'timeperiod_id',
    'relationship_type'=>'one-to-many'),
+   //END SUGARCRM flav=pro ONLY
 
+   //BEGIN SUGARCRM flav=ent ONLY
    'opportunity_lines' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
    'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
-   //END SUGARCRM flav=pro ONLY
+   //END SUGARCRM flav=ent ONLY
 )
 
 //This enables optimistic locking for Saves From EditView

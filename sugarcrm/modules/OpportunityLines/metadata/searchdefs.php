@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -41,9 +42,9 @@ $searchdefs['OpportunityLines'] = array(
   array (
     'basic_search' => 
     array (
-      'name' => 
+      'opportunity_name' =>
       array (
-        'name' => 'name',
+        'name' => 'opportunity_name',
         'default' => true,
         'width' => '10%',
       ),
@@ -58,21 +59,9 @@ $searchdefs['OpportunityLines'] = array(
     ),
     'advanced_search' => 
     array (
-      'name' => 
-      array (
-        'name' => 'name',
-        'default' => true,
-        'width' => '10%',
-      ),
       'opportunity_name' => 
       array (
         'name' => 'opportunity_name',
-        'default' => true,
-        'width' => '10%',
-      ),
-      'price' => 
-      array (
-        'name' => 'price',
         'default' => true,
         'width' => '10%',
       ),

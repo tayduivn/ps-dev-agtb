@@ -75,7 +75,6 @@ class SugarTestOpportunityUtilities
         $opp_ids = self::getCreatedOppIds();
         $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opp_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode("', '", $opp_ids) . '\')');
-        $GLOBALS['db']->query('DELETE FROM opp_line_bundle_opp WHERE opportunity_id IN (\'' . implode("', '", $opp_ids) . '\')');
     }
 
     public static function getCreatedOppIds()

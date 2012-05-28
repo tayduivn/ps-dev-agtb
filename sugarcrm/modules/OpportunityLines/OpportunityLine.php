@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -26,14 +26,8 @@ class OpportunityLine extends SugarBean
     // Stored fields
     var $id;
     var $product_id;
-    var $discount_price;
-    var $quantity;
-    var $total_price;
     var $expert_id;
-
-    var $product_category_id;
     var $experts;
-
     var $table_name = "opportunity_lines";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";

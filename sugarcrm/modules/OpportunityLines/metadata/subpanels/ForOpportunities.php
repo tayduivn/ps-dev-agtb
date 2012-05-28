@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Subpanel Layout definition for Contacts
@@ -39,47 +40,14 @@ $subpanel_layout = array(
 	'where' => '',
 
 	'list_fields' => array(
-		'first_name'=>array(
-			'name'=>'first_name',
+		'product_id'=>array(
+			'name'=>'product_id',
 			'usage' => 'query_only',
 		),
-		'last_name'=>array(
-			'name'=>'last_name',
-		 	'usage' => 'query_only',
-		),
-		'salutation'=>array(
-			'name'=>'salutation',
-		 	'usage' => 'query_only',
-		),
-		'name'=>array(
-			'name'=>'name',		
-			'vname' => 'LBL_LIST_NAME',
-			'widget_class' => 'SubPanelDetailViewLink',
-		 	'module' => 'Contacts',
-			'width' => '43%',
-		),
-		'primary_address_city'=>array(
-			'name'=>'primary_address_city',		
-			'vname' => 'LBL_LIST_CITY',
-			'width' => '20%',
-		),
-		'primary_address_state'=>array(
-			'name'=>'primary_address_state',		
-			'vname' => 'LBL_LIST_STATE',
-			'width' => '10%',
-		),
-		'email1'=>array(
-			'name'=>'email1',		
-			'vname' => 'LBL_LIST_EMAIL',
-			'widget_class' => 'SubPanelEmailLink',
-			'width' => '30%',
-			'sortable' => false,
-		),
-		'phone_work'=>array (
-			'name'=>'phone_work',		
-			'vname' => 'LBL_LIST_PHONE',
-			'width' => '15%',
-		),
+        'likely_case'=>array(
+            'name'=>'likely_case',
+            'usage' => 'query_only',
+        ),
 		'edit_button'=>array(
 			'vname' => 'LBL_EDIT_BUTTON',
 			'widget_class' => 'SubPanelEditButton',
