@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
     'LBL_PRODUCT_ID' => 'Product ID',
+    'LBL_PRODUCT_NAME' => 'Product Name',
     'LBL_OPPORTUNITY_ID' => 'Opportunity ID',
     'LBL_BEST_CASE' => 'Best case',
     'LBL_LIKELY_CASE' => 'Likely case',

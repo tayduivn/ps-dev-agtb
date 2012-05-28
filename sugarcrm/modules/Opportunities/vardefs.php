@@ -294,6 +294,13 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'bean_name'=>'TimePeriod',
     'vname'=>'LBL_TIMEPERIODS',
   ),
+  'primary_quote_id' =>
+  array (
+    'name' => 'primary_quote_id',
+    'type' => 'id',
+    'vname' => 'LBL_PRIMARY_QUOTE_ID',
+    'comment' => 'The primary quote this opportunity is associated with'
+  ),
   //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (

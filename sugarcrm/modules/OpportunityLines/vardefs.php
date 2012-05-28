@@ -33,13 +33,40 @@ array (
   'reportable'=>false,
   'comment' => 'Unique identifier'
 ),
+'product_name' =>
+array (
+    'name' => 'product_name',
+    'rname' => 'name',
+    'id_name' => 'product_id',
+    'vname' => 'LBL_PRODUCT_NAME',
+    'join_name'=>'products',
+    'type' => 'relate',
+    'link' => 'products',
+    'table' => 'products',
+    'isnull' => 'true',
+    'module' => 'Products',
+    'dbType' => 'varchar',
+    'len' => '255',
+    'source' => 'non-db',
+    'unified_search' => true,
+),
 'product_id' =>
 array (
-  'name' => 'product_id',
-  'vname' => 'LBL_PRODUCT_ID',
-  'type' => 'id',
-  'required' => true,
-  'reportable' => false,
+    'name' => 'product_id',
+    'rname' => 'id',
+    'id_name' => 'product_id',
+    'vname' => 'LBL_PRODUCT_ID',
+    'type' => 'relate',
+    'table' => 'products',
+    'isnull' => 'true',
+    'module' => 'Products',
+    'dbType' => 'id',
+    'reportable'=>false,
+    'source' => 'non-db',
+    'massupdate' => false,
+    'duplicate_merge'=> 'disabled',
+    'hideacl'=>true,
+
 ),
 'expert_id' =>
     array (
@@ -92,6 +119,16 @@ array (
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
+),
+'products' =>
+array (
+    'name' => 'products',
+    'type' => 'link',
+    'relationship' => 'opportunity_lines_products',
+    'link_type' => 'one',
+    'source' => 'non-db',
+    'vname' => 'LBL_PRODUCT',
+    'duplicate_merge'=> 'disabled',
 ),
 
 ),

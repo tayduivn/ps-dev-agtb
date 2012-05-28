@@ -26,8 +26,12 @@ class OpportunityLine extends SugarBean
     // Stored fields
     var $id;
     var $product_id;
+    var $opportunity_id;
     var $expert_id;
     var $experts;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
     var $table_name = "opportunity_lines";
     var $module_dir = 'OpportunityLines';
     var $object_name = "OpportunityLine";

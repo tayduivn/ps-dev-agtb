@@ -34,30 +34,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $subpanel_layout = array(
 	'top_buttons' => array(
 		array('widget_class' => 'SubPanelTopCreateButton'),
-		array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Products'),
 	),
 
-	'where' => '',
-
 	'list_fields' => array(
-		'product_id'=>array(
-			'name'=>'product_id',
-			'usage' => 'query_only',
+        'name'=>array(
+            'vname' => 'LBL_LIST_OPPORTUNITY_LINE_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '40%',
+        ),
+		'product_name'=>array(
+            'vname' => 'LBL_PRODUCT_NAME',
+         	'widget_class' => 'SubPanelDetailViewLink',
+         	'module' => 'Products',
+         	'target_record_key' => 'product_id',
+         	'target_module' => 'Products',
+            'sortable' => false
 		),
+        'best_case'=>array(
+            'vname' => 'LBL_BEST_CASE',
+            'name'=>'best_case',
+        ),
         'likely_case'=>array(
+            'vname' => 'LBL_LIKELY_CASE',
             'name'=>'likely_case',
-            'usage' => 'query_only',
+        ),
+        'worst_case'=>array(
+            'vname' => 'LBL_WORST_CASE',
+            'name' => 'worst_case',
         ),
 		'edit_button'=>array(
 			'vname' => 'LBL_EDIT_BUTTON',
 			'widget_class' => 'SubPanelEditButton',
-		 	'module' => 'Contacts',
+		 	'module' => 'OpportunityLines',
 			'width' => '5%',
 		),
 		'remove_button'=>array(
 			'vname' => 'LBL_REMOVE',
 			'widget_class' => 'SubPanelRemoveButton',
-		 	'module' => 'Contacts',
+		 	'module' => 'OpportunityLines',
 			'width' => '5%',
 		),
 	),

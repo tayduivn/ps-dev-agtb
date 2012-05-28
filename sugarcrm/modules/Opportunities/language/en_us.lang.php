@@ -144,6 +144,8 @@ $mod_strings = array (
   // SNIP
   'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
 
+  'LBL_PRIMARY_QUOTE_ID' => 'Primary Quote',
+
   //BEGIN SUGARCRM flav=pro ONLY
   'LBL_CONTRACTS'=>'Contracts',
   'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
@@ -158,9 +160,10 @@ $mod_strings = array (
   'LBL_LIKELY_CASE' => 'Likely case',
   'LBL_WORST_CASE' => 'Worst case',
   //END SUGARCRM flav=pro ONLY
-  //END SUGARCRM flav=ent ONLY
-  'LBL_OPPORTUNITY_LINES_SUBPANEL_TITLE' => 'Opportunity Line Items',
 
+  //BEGIN SUGARCRM flav=ent ONLY
+  'LBL_OPPORTUNITY_LINES_SUBPANEL_TITLE' => 'Opportunity Line Items',
+  //END SUGARCRM flav=ent ONLY
 );
 
 ?>
