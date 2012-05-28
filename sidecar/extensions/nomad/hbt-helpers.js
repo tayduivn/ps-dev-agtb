@@ -22,4 +22,14 @@
         }));
     });
 
+    Handlebars.registerHelper('include', function(templateName, model, view, fields) {
+        var template = (view.options.partials) ? view.options.partials[templateName] : app.template.get(templateName);
+
+        return new Handlebars.SafeString(template({
+            model: model,
+            view: view,
+            context: app.controller.context,
+            fields: fields
+        }));
+    });
 })(SUGAR.App);

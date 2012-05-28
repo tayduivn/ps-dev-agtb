@@ -76,7 +76,7 @@
         _renderWithContext: function(ctx) {
             if (this.template) {
                 try {
-                    this.$el.html(this.template(ctx));
+                    this.$el.html(this.template(ctx,ctx.options));
                     // See the following resources
                     // https://github.com/documentcloud/backbone/issues/310
                     // http://tbranyen.com/post/missing-jquery-events-while-rendering
