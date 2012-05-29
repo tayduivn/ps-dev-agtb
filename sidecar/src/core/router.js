@@ -1,4 +1,46 @@
 (function(app) {
+
+    /**
+     * Gets called before a route gets triggered.
+     *
+     *
+     * The default implementation provides `before` and `after` callbacks that should be executed
+     * before and after a route gets triggered.
+     *
+     * @class Core.Routing
+     * @singleton
+     * @alias SUGAR.App.routing
+     */
+    app.augment("routing", {
+
+        /**
+         * Checks if a user is authenticated before triggering a route.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         * @return {Boolean} Flag indicating if route should be triggered (`true`).
+         */
+        before: function(route, args) {
+            app.logger.trace("BEFORE: " + route);
+            // Check if a user is un-athenticated and redirect him to login
+            // skip this check for "login" route and all white-listed routes (app.config.unsecureRoutes)
+//            if ((route != "login") && !app.api.isAuthenticated()) {
+//                app.router.login();
+//                return false;
+//            }
+            return true;
+        },
+
+        /**
+         * Gets called after a route gets triggered.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         */
+        after: function(route, args) {
+            app.logger.trace("AFTER: " + route);
+        }
+
+    });
+
     /**
      * Router manages the watching of the address hash and routes to the correct handler.
      * @class Core.Router
@@ -24,6 +66,43 @@
             ":module/create": "create",
             ":module/:id/:action": "record",
             ":module/:id": "record"
+        },
+
+        /**
+         * Calls {@link Core.Routing#before} before invoking a route handler
+         * and {@link Core.Routing#after} after the handler is invoked.
+         *
+         * @param {Function} handler Route callback handler.
+         * @private
+         */
+        _routeHandler: function(handler) {
+            var args = _.toArray(arguments).splice(1),
+                route = handler.route;
+
+            if (app.routing.before(route, args)) {
+                app.logger.debug("CONTINUE");
+                handler.apply(this, args);
+                app.routing.after(route, args);
+            }
+            else {
+                app.logger.debug("REJECTED");
+            }
+        },
+
+        /**
+         * Registeres a handler for a named route.
+         *
+         * This method wraps the handler into {@link Core.Router#_routeHandler} method.
+         *
+         * @param {String} route Route expression.
+         * @param {String} name Route name.
+         * @param {Function/String} callback Route handler.
+         */
+        route: function(route, name, callback) {
+            if (!callback) callback = this[name];
+            callback.route = name;
+            callback = _.wrap(callback, this._routeHandler);
+            Backbone.Router.prototype.route.call(this, route, name, callback);
         },
 
         /**
