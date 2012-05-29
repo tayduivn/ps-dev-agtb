@@ -1,15 +1,34 @@
 <?php
 $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
-    'type' => 'fluid',
+    'type' => 'forecasts',
     'components' =>
     array(
         0 => array(
-            'layout' => 'left',
-			'size'   => 2,
+            'view' => 'filter',
         ),
         1 => array(
-            'layout' => 'main',
-			'size'   => 10,
+            'view' => 'chartOptions',
+        ),
+        2 => array(
+            'view' => 'tree',
+            'context' => array(
+                'module' => 'Users'
+            )
+        ),
+        3 => array(
+            'view' => 'chart',
+        ),
+        4 => array(
+            'view' => 'progress',
+        ),
+        5 => array(
+            'view' => 'changeLog',
+        ),
+        6 => array(
+            'view' => 'grid',
+            'context' => array(
+                'module' => 'Opportunities'
+            )
         )
     )
 );

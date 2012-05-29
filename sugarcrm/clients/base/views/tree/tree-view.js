@@ -118,7 +118,7 @@
 
             console.log(tree_data);
 
-            $("#jsTree").jstree({
+            $(".jst").jstree({
                 "plugins" : ["themes","json_data","ui","crrm"],
                 "themes" : {
                             "theme" : "classic",
@@ -139,7 +139,7 @@
             jsData = data.inst.get_json();
 
             // TEMPORARY triggering on app.events
-            app.events.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
+            this.dispatch.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
         }
     });
 

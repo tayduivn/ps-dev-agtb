@@ -35,7 +35,6 @@
 
             this.gTable = this.$el.find('#gridTable').dataTable(
                 {
-                    "bFilter": false,
                     "bInfo":false,
                     "bPaginate": false
                 }
