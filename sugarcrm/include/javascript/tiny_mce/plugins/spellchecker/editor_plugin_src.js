@@ -27,7 +27,7 @@
 
 			t.url = url;
 			t.editor = ed;
-			t.rpcUrl = ed.getParam("spellchecker_rpc_url", this.url+"index.php?entryPoint=tinymce_spellchecker_rpc");
+			t.rpcUrl = ed.getParam("spellchecker_rpc_url", this.url.replace("include/javascript/tiny_mce/plugins/spellchecker","")+"index.php?entryPoint=tinymce_spellchecker_rpc");
 
 			if (t.rpcUrl == '{backend}') {
 				// Sniff if the browser supports native spellchecking (Don't know of a better way)
