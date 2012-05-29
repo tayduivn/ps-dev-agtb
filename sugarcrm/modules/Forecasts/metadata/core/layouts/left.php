@@ -15,10 +15,7 @@ $viewdefs['Forecasts']['core']['layout']['left'] = array(
                         'type' => 'simple',
                         'components' => array(
                             0 => array(
-                                'view' => 'tree',
-                                'context' => array(
-                                    'module' => 'Users'
-                                )
+                                'view' => 'tree'
                             )
                         )
                     )
