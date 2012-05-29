@@ -30,7 +30,9 @@ require_once('include/SugarOAuth2Storage.php');
 class SugarOAuth2Server extends OAuth2
 {
     /**
-     * This function will return the OAuth2Server class, it will check the custom/ directory so users can customize the authorization types and storage
+     * This function will return the OAuth2Server class, it will check 
+     * the custom/ directory so users can customize the authorization 
+     * types and storage
      */
     public static function getOAuth2Server() {
         static $currentOAuth2Server = null;
