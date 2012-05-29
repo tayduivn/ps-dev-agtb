@@ -15,11 +15,11 @@
 
             model.save(null, {
                 success: function (model, resp) {
-                    app.alert.show('save_success', {level:'success', messages:'Saved successfully.', autoClose:'true'});
+                    app.alert.show('save_success', {level: 'success', messages: 'Saved successfully.', autoClose: true});
                     app.router.goBack();
                 },
                 error: function (model, resp, options) {
-                    app.alert.show('save_error', {level:'error', messages:'Save error!', autoClose:'true'});
+                    app.alert.show('save_error', {level: 'error', messages: 'Save error!', autoClose: true});
                 }
             });
         },
