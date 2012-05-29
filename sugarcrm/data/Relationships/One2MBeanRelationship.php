@@ -277,8 +277,15 @@ class One2MBeanRelationship extends One2MRelationship
         $alias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
 
         $tableInRoleFilter = "";
-        if ($targetTable == "meetings" && $linkIsLHS == false) $tableInRoleFilter = $alias;
-
+        if ($targetTable == "meetings" && $linkIsLHS == false) { 
+            if ($alias == "meetings_activities_1_meetings_rel" ||
+                $alias == "meetings_activities_1_tasks_rel" ||
+                $alias == "meetings_activities_1_calls_rel" ||
+                $alias == "meetings_activities_1_emails_rel" ||
+                $alias == "meetings_activities_1_notes_rel")
+                $tableInRoleFilter = $alias;
+        }
+        
         //Set up any table aliases required
         $targetTableWithAlias = "$targetTable $alias";
         $targetTable = $alias;
