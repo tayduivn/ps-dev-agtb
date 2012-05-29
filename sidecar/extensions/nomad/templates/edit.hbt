@@ -14,8 +14,10 @@
 </div>
 <fieldset>
     <div>
-        <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Save</a>
+        <span class="blankspacer left"></span>
         <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Cancel</a>
+        <span class="blankspacer right"></span>
+        <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Save</a>
     </div>
 </fieldset>
 
