@@ -47,8 +47,9 @@ class ReportBuilder
         'assigned_user_id' => '1',
         'report_type' => 'summary',
         'full_table_list' => array(),
-        'filters_def' => array(
-        )
+        'filters_def' => array('Filter_1' => array(
+            'operator' => 'AND',
+        ))
     );
 
     /**
@@ -398,7 +399,30 @@ class ReportBuilder
      */
     public function addFilter($filter)
     {
-        $this->defaultReport['filters_def'] = $filter;
+        if(isset($filter['Filter_1'])) {
+            $filter = $filter['Filter_1'];
+        }
+
+        // make sure all filters are int he proper format
+        foreach($this->defaultReport['filters_def']['Filter_1'] as $key => $f) {
+            if(!is_integer($key)) continue;
+
+            if(!isset($f['operator'])) {
+                $this->defaultReport['filters_def']['Filter_1'][$key] = array('operator' => 'AND', $f);
+            }
+        }
+
+        $this->defaultReport['filters_def']['Filter_1'][] = $filter;
+    }
+
+    /**
+     * Return the current list of filters
+     *
+     * @return mixed
+     */
+    public function getFilters()
+    {
+        return $this->defaultReport['filters_def'];
     }
 
     /**
