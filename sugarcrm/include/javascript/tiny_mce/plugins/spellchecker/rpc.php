@@ -7,7 +7,7 @@
  * @copyright Copyright © 2004-2007, Moxiecode Systems AB, All rights reserved.
  */
 
-require_once("./includes/general.php");
+require_once(dirname(__FILE__)."/includes/general.php");
 
 // Set RPC response headers
 header('Content-Type: text/plain');
