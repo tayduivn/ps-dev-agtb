@@ -23,7 +23,9 @@
     });
 
     Handlebars.registerHelper('include', function(templateName, model, view, fields) {
-        var template = (view.options.partials) ? view.options.partials[templateName] : app.template.get(templateName);
+        var template = (view.options.templateOptions && view.options.templateOptions.partials) ?
+            view.options.templateOptions.partials[templateName] :
+            app.template.get(templateName);
 
         return new Handlebars.SafeString(template({
             model: model,
