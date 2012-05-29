@@ -652,13 +652,18 @@ overflow:visible;
 }
 
 .blankspacer {
-  width:30px;
-  height:30px;
-  top: 5px;
-  right: 5px;
-  background:@black;
+  width:50px;
+  height:46px;
+  top: 0px;
   position: absolute;
   z-index: 2002;
+  #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+  &.right {
+    right: 0px;
+  }
+  &.left {
+    left: 0px;
+  }
 }
 
 .navbar #back .icon-chevron-left {
@@ -680,7 +685,6 @@ overflow:visible;
   text-align: center;
   padding-top: 14px;
 }
-
 
 #detailListing .listing {
 /*

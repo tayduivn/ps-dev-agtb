@@ -3,7 +3,8 @@
 <div class="form-horizontal" id="createRecord" style="display:inline;">
     <fieldset>
         <div>
-            <span class="blankspacer"></span>
+            <span class="blankspacer left"></span>
+            <span class="blankspacer right"></span>
             <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Cancel</a>
         </div>
     </fieldset>
