@@ -38,7 +38,10 @@
          * - layout: Name of the layout to .oad
          */
         loadView: function(params) {
-            this.layout = null;
+
+            if (this.layout) {
+                this.layout.dispose();
+            }
 
             // Reset context and initialize it with new params
             this.context.clear({silent: true});
@@ -54,12 +57,10 @@
             });
 
             //A context needs to have a primary layout to render to the page
-            this.context.set({layout:this.layout});
+            this.context.set("layout", this.layout);
 
             // Render the layout with empty data
-            if (this.layout) {
-                this.layout.render();
-            }
+            this.layout.render();
 
             app.trigger("app:view:change", params.layout);
 
@@ -78,8 +79,7 @@
             _.each(app.additionalComponents, function(component) {
                 if (component) {
                     component.remove();
-                    // TODO: Call dispose once it's implemented
-                    //component.dispose();
+                    component.dispose();
                 }
             });
 

@@ -45,6 +45,10 @@
         },
 
         clear: function(options) {
+            _.each(this.children, function(child) {
+                child.clear(options);
+            });
+
             this.children = [];
             this.parent = null;
             Backbone.Model.prototype.clear.call(this, options);

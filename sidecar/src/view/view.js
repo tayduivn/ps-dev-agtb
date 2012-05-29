@@ -146,6 +146,7 @@
          * @return {Object} Reference to this view.
          */
         render: function() {
+            if (this.disposed === true) throw new Error("Unable to render view because it's disposed: " + this);
             if (app.acl.hasAccess(this.name, this.module)) {
                 this._render();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
@@ -233,6 +234,21 @@
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+        /**
+         * Disposes a view.
+         *
+         * This method disposes view fields and calls
+         * {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            _.each(this.fields, function(field) {
+                field.dispose();
+            });
+            this.fields = {};
+            app.view.Component.prototype._dispose.call(this);
         },
 
         /**

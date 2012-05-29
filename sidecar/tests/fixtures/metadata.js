@@ -724,8 +724,10 @@ fixtures.metadata = {
                 "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}]," +
                 "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]" +
                 "}," +
-                "bindDomChange: function (model, fieldName) {\n" +
+                "bindDomChange: function () {\n" +
                 "var self = this\n" +
+                "var model = this.model;\n" +
+                "var fieldName = this.name;\n" +
                 "var date = this.$el.find('input');\n" +
 
                 "var hour = this.$el.find('.date_time_hours');\n" +
@@ -840,8 +842,10 @@ fixtures.metadata = {
                 "};\n" +
                 "return value;\n" +
                 "},\n" +
-                "bindDomChange: function (model, fieldName) {\n" +
+                "bindDomChange: function () {\n" +
                 "var self = this;\n" +
+                "var model = this.model;\n" +
+                "var fieldName = this.name;\n" +
                 "var street = this.$el.find('.address_street');\n" +
                 "var city = this.$el.find('.address_city');\n" +
                 "var country = this.$el.find('.address_country');\n" +
