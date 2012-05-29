@@ -15,7 +15,7 @@ describe("alert", function() {
             };
         view = new SUGAR.App.view.views.AlertView(options);
         components = {alert:{target:'#alert'}};
-        SugarTest.app.loadAdditionalComponents(components);
+        SugarTest.app.controller.loadAdditionalComponents(components);
     });
 
     afterEach(function() {
