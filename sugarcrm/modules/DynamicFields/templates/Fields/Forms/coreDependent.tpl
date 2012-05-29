@@ -31,6 +31,7 @@
 *}
 {* && $vardef.type != 'date' && $vardef.type != 'datetimecombo' *}
 {if $vardef.type != 'enum' && $vardef.type != 'address'
+ && $vardef.type != 'multienum' && $vardef.type != 'radioenum'
  && $vardef.type != 'html' && $vardef.type != 'relate'
  && $vardef.type != 'url' && $vardef.type != 'iframe' && $vardef.type != 'parent'  && $vardef.type != 'image'}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
