@@ -7,26 +7,27 @@
  */
 (function(app) {
 
+    var _getFieldPlaceholder = function(field) {
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
+    };
+
     /**
      * Creates a field widget.
      * @method field
-     * @param {View.View} view Parent view
-     * @param {Data.Bean} model Reference to the model
+     * @param {Core.Context} context
+     * @param {View.View} view
+     * @param {Data.Bean} bean
      * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
-    Handlebars.registerHelper('field', function(view, model) {
-        // Handlebars passes a special hash object (template params) as the last argument
-        // So, if model is not specified then the model parameter is actually this hash object
-        // Hence, the following hack
-        if (!(model instanceof Backbone.Model)) model = null;
-
+    Handlebars.registerHelper('field', function(context, view, bean) {
         var field = app.view.createField({
             def: this,
             view: view,
-            model: model
+            context: context,
+            model: bean
         });
 
-        return field.getPlaceholder();
+        return _getFieldPlaceholder(field);
     });
 
     /**
@@ -48,37 +49,38 @@
 
         var field = app.view.createField({
             def: def,
-            view: this
+            view: this,
+            context: this.context
         });
 
-        return field.getPlaceholder();
+        return _getFieldPlaceholder(field);
     });
 
     /**
      * Creates a field widget for a given field name.
      * @method fieldWithName
+     * @param {Core.Context} context Current app context
      * @param {View.View} view Parent view
+     * @param {Data.Bean} bean
      * @param {String} name Field name
-     * @param {Data.Bean} model Reference to the model
-     * @param {String} viewName Name of the view template to use for the field
+     * @param {String} viewName Specify it to call a template from another view
      * @return {String} HTML placeholder for the widget.
      */
-    Handlebars.registerHelper('fieldWithName', function(view, name, model, viewName) {
-        if (!(model instanceof Backbone.Model)) model = null;
-        viewName = _.isString(viewName) ? viewName : null;
+    Handlebars.registerHelper('fieldWithName', function(context, view, bean, name, viewName) {
         var field = app.view.createField({
             def: { name: name, type: "base" },
             view: view,
-            model: model,
-            viewName: viewName || null // override fallback field template
+            context: context,
+            model: bean || context.get("model"),
+            viewName: viewName || null // override view name (template for "default" view will be used instead of view.name)
         });
 
-        return field.getPlaceholder();
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
     /**
      * @method eachOptions
-     * @param {String} context options key
+     * @param {Core.Context} context
      * @param {Function} block
      * @return {String}
      */
@@ -104,7 +106,6 @@
     });
 
     /**
-     * Builds a route.
      * @method buildRoute
      * @param {Core.Context} context
      * @param {Data.Bean} model
@@ -115,7 +116,8 @@
     Handlebars.registerHelper('buildRoute', function(context, model, action, params) {
         model = model || context.get("model");
 
-        var id = model.id;
+        var id = model.id,
+            route;
 
         params = params || {};
 
@@ -123,7 +125,8 @@
             id = '';
         }
 
-        return new Handlebars.SafeString(app.router.buildRoute(context.get("module"), id, action, params));
+        route = app.router.buildRoute(context.get("module"), id, action, params);
+        return new Handlebars.SafeString(route);
     });
 
     /**
@@ -140,11 +143,10 @@
 
 
     /**
-     * Executes a given block if a given array has a value.
-     * @method has
-     * @param {String/Object} val value
-     * @param {Object/Array} array or hash object
-     * @return {String} Result of the `block` execution if the `array` contains `val` or the result of the inverse block.
+     * @method contains
+     * @param val
+     * @param {Object/Array} array
+     * @return {String} block Block inside the condition=
      */
     Handlebars.registerHelper('has', function(val, array, block) {
         if (!block) return "";
@@ -155,35 +157,48 @@
             array = [array];
         }
 
-        return _.include(array, val) ? block(this) : block.inverse(this);
+        if (_.find(array, function(item) {
+            return item === val;
+        })) {
+            return block(this);
+        }
+
+        return block.inverse(this);
     });
 
     /**
-     * Executes a given block if a given values are equal.
      * @method eq
      * @param val1
      * @param val2
-     * @return {String} Result of the `block` execution if the given values are equal or the result of the inverse block.
+     * @return {String} block Block inside the condition
      */
     Handlebars.registerHelper('eq', function(val1, val2, block) {
         if (!block) return "";
-        return val1 == val2 ? block(this) : block.inverse(this);
+
+        if (val1 == val2) {
+            return block(this);
+        }
+
+        return block.inverse(this);
     });
 
     /**
-     * Opposite of `eq` helper.
-     * @method notEq
+     * @method notEq // inverse of eq
      * @param val1
      * @param val2
-     * @return {String} Result of the `block` execution if the given values are not equal or the result of the inverse block.
+     * @return {String} block Block inside the condition
      */
     Handlebars.registerHelper('notEq', function(val1, val2, block) {
         if (!block) return "";
-        return val1 != val2 ? block(this) : block.inverse(this);
+
+        if (val1 != val2) {
+            return block(this);
+        }
+
+        return block.inverse(this);
     });
 
     /**
-     * Logs a value.
      * @method log
      * @param value
      */
@@ -203,9 +218,8 @@
      * @param {String} module(optional) Module name.
      * @return {String} The string for the given label key.
      */
-    Handlebars.registerHelper("getLabel", function(key, module) {
-        module = _.isString(module) ? module : null;
-        return app.lang.get(key, module);
+    Handlebars.registerHelper("getLabel", function(key, module){
+       return app.lang.get(key, module);
     });
 
 })(SUGAR.App);

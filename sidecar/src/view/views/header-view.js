@@ -10,7 +10,24 @@
         events: {
             'click #moduleList li a': 'onModuleTabClicked',
             'click #createList li a': 'onCreateClicked',
-            'click .cube': 'onHomeClicked'
+            'click .cube': 'onHomeClicked',
+            'click .navbar-search a': 'onSearchClicked',
+            'keyup .search-query': 'onSearchKeyup',
+        },
+        onSearchKeyup: function(evt) {
+            var keycode = evt.keyCode || evt.which;
+            if(keycode === 13) {
+                evt.preventDefault();
+                this.doSearch();
+            }
+        },
+        onSearchClicked: function(evt) {
+            evt.preventDefault();
+            this.doSearch();
+        },
+        doSearch: function() {
+            var term = $('.search-query').val();
+            // TODO...
         },
         onModuleTabClicked: function(evt) {
             evt.preventDefault();

@@ -8,6 +8,8 @@
      */
     app.view.View = app.view.Component.extend({
 
+        className: "view",
+
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -31,11 +33,12 @@
              * @member {View.View}
              */
             this.id = options.id || this.getID();
+
             /**
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = options.template || app.template.getView(this.name, this.module) ||
+            this.template = app.template.getView(this.name, this.module) ||
                             app.template.getView(this.name);
 
             /**
@@ -45,6 +48,17 @@
              * - value: instances of `app.view.Field` class
              */
             this.fields = {};
+
+            /**
+             * CSS class.
+             *
+             * CSS class which is specified as the `className` parameter
+             * in `params` hash for {@link View.ViewManager#createView} method.
+             *
+             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
+             * @cfg {String} className
+             */
+            this.$el.addClass(options.className || this.name || "");
 
             /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
@@ -62,8 +76,6 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
-
-            this.$el.data("comp", "view_" + this.name);
         },
 
         /**
@@ -85,25 +97,18 @@
          *
          * This method uses this view's {@link View.View#template} property to render itself.
          * @param ctx Template context.
-         * @param options(optional) Template options.
-         * <pre><code>
-         * {
-         *    helpers: helpers,
-         *    partials: partials,
-         *    data: data
-         * }
-         * </code></pre>
-         * See Handlebars.js documentation for details.
          * @protected
          */
-        _renderWithContext: function(ctx, options) {
+        _renderWithContext: function(ctx) {
             if (this.template) {
                 try {
-                    this.$el.html(this.template(ctx, options));
-                    // See the following resources
-                    // https://github.com/documentcloud/backbone/issues/310
-                    // http://tbranyen.com/post/missing-jquery-events-while-rendering
+                    this.$el.html(this.template(ctx));
+
+                    // TODO: Remove this comment once read ;)
+                    // We lose our event bindings when we mess with this.el because event are delegated to this.el:
                     // http://stackoverflow.com/questions/5125958/backbone-js-views-delegateevents-do-not-get-bound-sometimes
+                    // Also backbone docs: "Omitting the selector causes the event to be bound to the view's root element (this.el)."
+                    // So any time a view's render is called it would lose it's delegated events. 
                     this.delegateEvents();
                 } catch (e) {
                     app.logger.error("Failed to render " + this + "\n" + e);
@@ -117,8 +122,7 @@
          *
          * The method renders this view with field placeholders.
          *
-         * This method uses this view as the context for the view's Handlebars {@link View.View#template}
-         * and view's `options.templateOptions` property as template options.
+         * This method uses this view as the context for the view's Handlebars {@link View.View#template}.
          * You can override this method if you have custom rendering logic and don't use Handlebars templating
          * or if you need to pass different context object for the template.
          *
@@ -255,37 +259,11 @@
         },
 
         /**
-         * Returns a field by name.
-         * @param {String} name Field name.
-         * @return {View.Field} Instance of the field widget.
-         */
-        getField: function(name) {
-            return _.find(this.fields, function(field) {
-                return field.name == name;
-            });
-        },
-
-        /**
          * Returns the html id of this view's el. Will create one if one doesn't exist.
          * @return {String} id of this view.
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
-        },
-
-        /**
-         * Disposes a view.
-         *
-         * This method disposes view fields and calls
-         * {@link View.Component#_dispose} method of the base class.
-         * @protected
-         */
-        _dispose: function() {
-            _.each(this.fields, function(field) {
-                field.dispose();
-            });
-            this.fields = {};
-            app.view.Component.prototype._dispose.call(this);
         },
 
         /**

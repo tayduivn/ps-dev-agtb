@@ -267,7 +267,7 @@
         createField: function(params) {
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
-            params.context = params.context || params.view.context || app.controller.context;
+            params.context = params.context || app.controller.context;
             params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
             
@@ -311,7 +311,7 @@
          */
         declareComponent: function(type, name, module, controller, layoutType) {
             var ucType                  = app.utils.capitalize(type),
-                className               = app.utils.capitalize(name) + ucType,
+                className               = app.utils.capitalizeHyphenated(name) + ucType,
                 customClassName         = (module || "") + className,
                 layoutClassName         = layoutType ? (app.utils.capitalize(layoutType) + ucType) : null,
                 customLayoutClassName   = layoutType ? ((module || "") + app.utils.capitalize(layoutType) + ucType) : null,
