@@ -1,12 +1,12 @@
-<script language="javascript" src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script language="javascript" src="../sidecar/lib/backbone/underscore.js"></script>
-<script language="javascript" src="../sidecar/lib/backbone/backbone.js"></script>
-<script language="javascript" src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
-<script language="javascript" src="../sidecar/lib/stash/stash.js"></script>
-<script language="javascript" src="../sidecar/lib/async/async.js"></script>
-<script language="javascript" src="../sidecar/lib/jstree/jquery.jstree.js"></script>
+<script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="../sidecar/lib/backbone/underscore.js"></script>
+<script src="../sidecar/lib/backbone/backbone.js"></script>
+<script src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+<script src="../sidecar/lib/stash/stash.js"></script>
+<script src="../sidecar/lib/async/async.js"></script>
+<script src="../sidecar/lib/jstree/jquery.jstree.js"></script>
 <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
-<script language="javascript" src="../sidecar/lib/chosen/chosen.jquery.js"></script>
+<script src="../sidecar/lib/chosen/chosen.jquery.js"></script>
 <!-- App Scripts -->
 
 <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
@@ -48,6 +48,7 @@
 <script src='../sidecar/src/view/layouts/columns-layout.js'></script>
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
+<script src='clients/base/layouts/forecasts-layout/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid-view.js'></script>
 <script src='clients/base/views/tree/tree-view.js'></script>
 <script src='clients/base/views/filter/filter-view.js'></script>
@@ -56,7 +57,8 @@
 
 <script src='include/SidecarView/SidecarView.js'></script>
 
-<script language="javascript" src="../sidecar/lib/sinon/sinon.js"></script>
+<script src="../sidecar/lib/sinon/sinon.js"></script>
+
 <link rel="stylesheet" href="../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
 <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
@@ -67,8 +69,8 @@
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-modal.js"></script>
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap-alert.js"></script>
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/application.js"></script>
-<script language="javascript" src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
-<script language="javascript" src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
+<script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
+<script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
 
 <script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
@@ -83,22 +85,21 @@
 
 <div id="core-module">
     <div id="core" style="" >
-        <div id="alert" class="alert-top">
-
-        </div>
-        <div id="header">
-
-        </div>
-        <div id="content">
-
-        </div>
-        <div id="footer">
-
-        </div>
-
+        <div class="content"></div>
+        <div class="view-filter"></div>
+        <div class="view-chartOptions"></div>
+        <div class="view-tree"></div>
+        <div class="view-chart"></div>
+        <div class="view-grid"></div>
+        <div class="view-progress"></div>
+        <div class="view-changeLog"></div>
     </div>
     <div id="layout" style=""></div>
+
 </div>
+
+<div id="content"></div>
+
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;
