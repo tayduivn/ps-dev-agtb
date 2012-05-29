@@ -8,14 +8,14 @@
      */
     app.view.views.SubdetailView = app.view.View.extend({
         events: {
-            'click .closeSubdetail': 'closeSubdetail'
+            'click [data-toggle=tab]': 'closeSubdetail'
         },
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
             this.fallbackFieldTemplate = "detail";
         },
         render: function() {
-            this.$el.parent().parent().addClass("tab-content").attr("id", "folded");
+            this.$el.parent().addClass("tab-content").attr("id", "folded");
             //avoid to have an empty detail view
         },
         bindDataChange: function() {
@@ -29,8 +29,8 @@
         // Delegate events
         closeSubdetail: function() {
             this.model.clear();
+            $('.nav-tabs').find('li').removeClass('on');
             this.$el.empty();
-            $("li.activity").removeClass("on");
         }
     });
 

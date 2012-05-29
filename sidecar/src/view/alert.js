@@ -45,6 +45,7 @@
          */
         show: function(key, options) {
             if (!app.additionalComponents.alert) return null;
+            this.dismiss(key);
 
             // Your AlertView implementation must define this:
             var alertView = app.additionalComponents.alert.show(options);

@@ -71,6 +71,9 @@
                         },
                         controller: "{" +
                             "render: function(data) { " +
+                            "if (app.config && app.config.logoURL) {" +
+                            "this.logoURL=app.config.logoURL" +
+                            "}" +
                             "app.view.View.prototype.render.call(this);" +
                             "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); }" +
                             "return this;" +
@@ -351,7 +354,7 @@
                 "<div class=\"row\">\n" +
                 "<div class=\"span4 offset4 thumbnail\">\n" +
                 "<div class=\"modal-header tcenter\">\n" +
-                "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                "<h2 class=\"brand\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</h2>\n" +
                 "</div>\n" +
                 "{{#each meta.panels}}" +
                 "<div class=\"modal-body tcenter\">\n" +
