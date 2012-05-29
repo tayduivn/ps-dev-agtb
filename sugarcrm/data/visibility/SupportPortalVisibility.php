@@ -91,17 +91,29 @@ class SupportPortalVisibility extends SugarVisibility
 
                 break;
             case 'Notes':
-                // Notes: Any note that has a visible parent and has the portal_flag set to true
-                // FIXME: Right now we only find notes that are connected to a Case that is connected to one of our Accounts
+                // Notes: Notes that are connected to a Case or a Bug that is connected to one of our Accounts and has the portal_flag set to true
                 if ( $queryType == 'from' ) {
                     $this->bean->load_relationship('cases');
                     
                     $caseBean = BeanFactory::newBean('Cases');
                     $caseBean->load_relationship('accounts');
 
-                    $queryPart = $this->bean->cases->getJoin(array('join_table_alias'=>'cases_pv'))." ".$caseBean->accounts->getJoin(array('join_table_alias'=>'accounts_pv','right_join_table_alias'=>'cases_pv'))." AND accounts_pv.id IN $accountIn ";
+                    $queryPart = $this->bean->cases->getJoin(array('join_table_alias'=>'cases_pv','join_type'=>' LEFT JOIN '));
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    $queryPart .= " AND cases_pv.portal_viewable = 1 ";
+                    //ENd SUGARCRM flav=ent ONLY
+                    $queryPart .= " ".$caseBean->accounts->getJoin(array('join_table_alias'=>'accounts_cases_pv','right_join_table_alias'=>'cases_pv','join_type' => ' LEFT JOIN '))." AND accounts_cases_pv.id IN $accountIn ";
+
+                    $this->bean->load_relationship('bugs');
+                    
+                    $bugBean = BeanFactory::newBean('Bugs');
+                    $bugBean->load_relationship('accounts');
+
+                    $queryPart .= " ".$this->bean->bugs->getJoin(array('join_table_alias'=>'bugs_pv','join_type'=>' LEFT JOIN '));
+                    $queryPart .= " ".$bugBean->accounts->getJoin(array('join_table_alias'=>'accounts_bugs_pv','right_join_table_alias'=>'bugs_pv','join_type' => ' LEFT JOIN '))." AND accounts_bugs_pv.id IN $accountIn ";
+
                 } else if ( $queryType == 'where' ) {
-                    $queryPart = " {$table_alias}.portal_flag = 1 ";
+                    $queryPart = " {$table_alias}.portal_flag = 1 AND ( accounts_bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
                 }
                 break;
             case 'Cases':
