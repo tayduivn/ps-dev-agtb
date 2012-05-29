@@ -23,6 +23,7 @@
 <script src='../sidecar/src/core/language.js'></script>
 <script src='../sidecar/src/core/metadata-manager.js'></script>
 <script src='../sidecar/src/core/acl.js'></script>
+<script src='../sidecar/src/core/user.js'></script>
 <script src='../sidecar/src/utils/logger.js'></script>
 
 <script src='config.js'></script>
