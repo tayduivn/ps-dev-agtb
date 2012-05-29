@@ -1,10 +1,6 @@
 (function(app) {
 
     app.view.Field = app.view.Field.extend({
-        setValue: function(value) {
-            this.model.set(this.name, value);
-            this.render();
-        },
         /**
          * Handles how validation errors are appended to the fields dom element
          * @param {Object} errors hash of validation errors

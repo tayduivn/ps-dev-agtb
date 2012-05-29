@@ -5,6 +5,8 @@
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
+            this.template = app.template.get("list"); //todo:remove it later
+
             // This view behaves like the list view
             this.meta = app.metadata.getView(this.module, "list");
             this.fallbackFieldTemplate = "list";

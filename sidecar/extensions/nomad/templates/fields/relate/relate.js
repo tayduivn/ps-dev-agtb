@@ -11,11 +11,11 @@
                 name: 'relate'
             });
 
-            var module = app.metadata.getModule(this.view.module).fields[this.name].module;
+            var meta = app.metadata.getModule(this.view.module).fields[this.name];
+            var module = meta.module;
 
             var listView = app.view.createView({module: module,
                 name: 'list',
-                //template: app.template.get('list.menu'),
                 context: app.context.getContext({module: module}).prepare()
             });
             listView.context.set({view:listView});
@@ -25,7 +25,9 @@
             });
 
             listView.on('menu:item:clicked',function(item){
-                this.setValue(item.get('name'));
+                this.model.set(this.name,item.get('name'));
+                this.model.set(meta.id_name,item.get('id'));
+
                 this.hideMenu();
             },this);
 
@@ -49,7 +51,8 @@
             //$(app.controller.el).show();
             $(app.controller.layout.el).show();
         },
-        onClick: function() {
+        onClick: function(e) {
+            e.preventDefault();
             //$(app.controller.el).hide();
             $(app.controller.layout.el).hide();
 

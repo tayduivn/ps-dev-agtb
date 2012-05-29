@@ -65,7 +65,10 @@
 
             this.$el.data("comp", "view_" + this.name);
         },
-
+        setPartialsTemplates: function(templates) {
+            this.options.templateOptions = this.options.templateOptions || {};
+            this.options.templateOptions["partials"] = _.extend({}, this.options.templateOptions["partials"], templates);
+        },
         /**
          * Renders a view for the given context.
          *

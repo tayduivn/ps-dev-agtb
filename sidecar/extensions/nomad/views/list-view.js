@@ -17,6 +17,7 @@
         initialize: function (options) {
             // Mobile shows only the first two fields
             options.meta.panels[0].fields.length = 2;
+
             // Default list item partial
             options.templateOptions = {
                 partials: {
@@ -31,9 +32,6 @@
             app.view.View.prototype.render.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
-        },
-        setPartialsTemplates:function(templates){
-            this.options.templateOptions["partials"] = _.extend({}, this.options.templateOptions["partials"], templates);
         },
         search: function (text) {
             this.collection.fetch();

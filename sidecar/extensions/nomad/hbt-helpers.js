@@ -19,7 +19,7 @@
         return new Handlebars.SafeString(template({
             model: model,
             view: view,
-            context: app.controller.context,
+            context: view.context || app.controller.context,
             fields: fields
         }));
     });
