@@ -469,16 +469,20 @@ html {
 
 
 #scroll {
+  /*
   margin: 5px 0 10px;
-  height: 80%;
+  */
+  height: 100%;
   position: absolute;
   left: 0;
-  top: 46px;
+  top: 0px;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling:touch;
-  padding-bottom: 146px;
   display: block;
+  .pad {
+    padding-top:49px;
+  }
 }
 
 .listing {
@@ -674,7 +678,7 @@ overflow:visible;
   @shadow: inset 1px 0 0 lighten(@black, 20%), -1px 0 0 @black;
   .box-shadow(@shadow);
   text-align: center;
-  padding-top: 10px;
+  padding-top: 14px;
 }
 
 
@@ -929,7 +933,7 @@ color: @gray;
   font-size: 12px;
   }
 }
-#createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
+#createRecord input:not([type=checkbox]), #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
   width: 75% !important;
   padding: 0;
   height: 26px;
