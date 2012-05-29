@@ -885,6 +885,8 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 
 //BEGIN SUGARCRM flav=ent ONLY
     include('install/seed_data/entreport_SeedData.php');
+
+    include('install/seed_data/Worksheet_SeedData.php');
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=dce ONLY
     include('install/seed_data/dceSeedData.php');
