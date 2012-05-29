@@ -1869,7 +1869,7 @@ EOQ;
 		}
 
 		//uploadfile
-		if (isset($_FILES['picture']))
+		if (isset($_FILES['picture']) && !empty($_FILES['picture']["name"]))
 		{
 			//confirm only image file type can be uploaded
 			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
