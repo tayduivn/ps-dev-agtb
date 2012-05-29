@@ -150,6 +150,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             // Other than redirect_uri, there isn't a lot of docs on what else to return here
             $returnData = array('redirect_uri'=>'',
                                 'client_id'=>$clientBean->c_key,
+                                'client_secret'=>$clientBean->c_secret,
                                 'client_type'=>$clientBean->client_type,
                                 'record_id'=>$clientBean->id,
             );

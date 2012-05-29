@@ -390,6 +390,8 @@ class SugarBean
     {
         if(empty($this->visibility)) {
             $data = isset($GLOBALS['dictionary'][$this->object_name]['visibility'])?$GLOBALS['dictionary'][$this->object_name]['visibility']:array();
+            // Prepend the Support Portal Visibility to every record, this gets ignored if the user is not a portal user
+            $data = array('SupportPortalVisibility'=>true) + $data;
             $this->visibility = new BeanVisibility($this, $data);
         }
         return $this->visibility;
