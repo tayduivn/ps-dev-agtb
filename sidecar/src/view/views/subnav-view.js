@@ -36,8 +36,8 @@
          * Renders Subnav view
          */
         render: function() {
-            if (!app.api.isAuthenticated()) return;
-            app.view.View.prototype.render.call(this);
+            if (!app.api.isAuthenticated()) return this;
+            return app.view.View.prototype.render.call(this);
         },
         hide: function() {
             this.$el.hide();

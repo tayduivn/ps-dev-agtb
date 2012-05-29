@@ -8,7 +8,7 @@ describe("subnavView", function() {
     it("should show/hide the view when the app route change", function() {
 
         var components = {subnav:{target:'#subnav'}};
-        app.loadAdditionalComponents(components);
+        app.controller.loadAdditionalComponents(components);
         var view = app.additionalComponents.subnav;
         expect(view).toBeDefined();
         expect(view instanceof app.view.View).toBeTruthy();
