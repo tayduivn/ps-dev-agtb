@@ -1,7 +1,7 @@
 <div class="thumbnail">
     <h1>{{meta.panels.0.label}}</h1>
 
-    <div id="jsTree"></div>
+    <div class="jst"></div>
     {{#if meta.options.show_footer}}
     <div class="block-footer">
         Hello World
