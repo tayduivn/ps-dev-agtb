@@ -9,6 +9,14 @@ var handler = function(e) {
 $('article').onpress(handler);
 */
 
+
+
+$('body').onpress('label.checkbox',function(e){
+    $(this).find('input[type=checkbox]').trigger('click');
+    e.preventDefault();
+});
+
+
     $('body').onpress('.xxx',function(e){
         e.preventDefault();
         //$(this).remove();

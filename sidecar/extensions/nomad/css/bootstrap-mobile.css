@@ -4172,7 +4172,7 @@ h3.nomad {
   font-weight: 600;
   font-size: 12px;
 }
-#createRecord input,
+#createRecord input:not([type=checkbox]),
 #createRecord textarea,
 #createRecord select,
 #createRecord .uneditable-input {
