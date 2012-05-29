@@ -12,8 +12,10 @@
         };
         return value;
     },
-    bindDomChange: function(model, fieldName) {
+    bindDomChange: function() {
         var self = this;
+        var model = this.model;
+        var fieldName = this.name;
         var street = this.$el.find('.address_street');
         var city = this.$el.find('.address_city');
         var country = this.$el.find('.address_country');
