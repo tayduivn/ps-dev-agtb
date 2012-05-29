@@ -2,6 +2,7 @@
 
     app.view.views.ListView = app.view.View.extend({
         MAX_PAGE_SIZE: 20,
+
         events: {
             'click  .show-more-top-btn': 'showMoreTopRecords',
             'click  .show-more-bottom-btn': 'showMoreBottomRecords',
@@ -12,12 +13,17 @@
             'click .edit-item-btn': 'onEditItem',
             'click .menu-item':'onClickMenuItem'
         },
+
         initialize: function (options) {
             // Mobile shows only the first two fields
             options.meta.panels[0].fields.length = 2;
+            // Default list item partial
+            options.templateOptions = {
+                partials: {
+                    'list.item': app.template.get("list.item")
+                }
+            };
             app.view.View.prototype.initialize.call(this, options);
-
-            this.listItemHelper = Handlebars.helpers.listItem;
 
             this.activeArticle = null;
         },
@@ -26,8 +32,8 @@
 
             this.contextMenuEl = this.$('.context-menu');
         },
-        setListItemHelper:function(listItemHelper){
-            this.listItemHelper = listItemHelper;
+        setPartialsTemplates:function(templates){
+            this.options.templateOptions["partials"] = _.extend({}, this.options.templateOptions["partials"], templates);
         },
         search: function (text) {
             this.collection.fetch();
@@ -35,7 +41,8 @@
         addOne: function (model, collection, options) {
             app.logger.debug('ADD ONE!');
             var fieldId = app.view.getFieldId();
-            var item = this.listItemHelper(model, this, this.meta.panels[0].fields);
+
+            var item = Handlebars.helpers.include('list.item', model, this, this.meta.panels[0].fields);
 
             if (options.addTop && this.$('.items').children().length) {
                 this.$('.items').children().first().before(item.toString());

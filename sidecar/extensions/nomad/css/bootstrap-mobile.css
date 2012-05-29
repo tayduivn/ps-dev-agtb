@@ -3845,6 +3845,15 @@ html {
   right: 10px;
   z-index: 2002;
 }
+.blankspacer {
+  width: 30px;
+  height: 30px;
+  top: 5px;
+  right: 5px;
+  background: #000000;
+  position: absolute;
+  z-index: 2002;
+}
 .navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;

@@ -3,6 +3,7 @@
 <div class="form-horizontal" id="createRecord" style="display:inline;">
     <fieldset>
         <div>
+            <span class="blankspacer"></span>
             <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Cancel</a>
         </div>
     </fieldset>
@@ -12,7 +13,6 @@
         <div class="span12 listing fav filtered">
             <section class="search topelbar">
                 <i class="icon-search"></i>
-
                 <div class="form-search row-fluid">
                     <input type="text" class="search-query"
                            placeholder="       Search all {{context.attributes.module}}">

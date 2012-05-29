@@ -15,12 +15,14 @@
 
             var listView = app.view.createView({module: module,
                 name: 'list',
-                template: app.template.get('list.menu'),
+                //template: app.template.get('list.menu'),
                 context: app.context.getContext({module: module}).prepare()
             });
             listView.context.set({view:listView});
 
-            listView.setListItemHelper(Handlebars.helpers.listMenuItem);
+            listView.setPartialsTemplates({
+                'list.item': app.template.get("list.menu.item")
+            });
 
             listView.on('menu:item:clicked',function(item){
                 this.setValue(item.get('name'));
@@ -43,14 +45,18 @@
         },
         hideMenu:function(){
             this.relateLayout.$el.remove();
-            $(app.controller.el).show();
+
+            //$(app.controller.el).show();
+            $(app.controller.layout.el).show();
         },
         onClick: function() {
-            this.relateLayout.$el.appendTo(document.body);
+            //$(app.controller.el).hide();
+            $(app.controller.layout.el).hide();
+
+            //this.relateLayout.$el.appendTo(document.body);
+            this.relateLayout.$el.appendTo('#content');
             this.relateLayout.render();
             this.relateLayout.getComponent('list').context.loadData();
-
-            $(app.controller.el).hide();
         }
     });
 
