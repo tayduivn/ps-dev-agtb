@@ -53,6 +53,7 @@
 <script src='clients/base/views/tree/tree-view.js'></script>
 <script src='clients/base/views/filter/filter-view.js'></script>
 <script src='clients/base/views/progress/progress-view.js'></script>
+<script src='clients/base/views/chart/chart-view.js'></script>
 
 <script src='include/SidecarView/SidecarView.js'></script>
 
@@ -70,6 +71,9 @@
 <script src="../sidecar/lib/twitterbootstrap/bootstrap/js/application.js"></script>
 <script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
 <script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
+<script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
 
 {literal}
 <style type="text/css">

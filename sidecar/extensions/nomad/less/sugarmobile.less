@@ -75,8 +75,8 @@ h1 {font-size: 26px !important;}
 
 #nomad,
 #content,
-#content .layout.list,
-#content .layout.list > .view.list {
+#content > div,
+#content > div > div {
   display:inline;
 }
 
@@ -573,8 +573,10 @@ html {
   color:darken(@grayLighter, 20%);
 }
 
-.search-query[placeholder] {
-  text-indent: 30px !important;
+.search-query {
+  &[placeholder] {
+    text-indent: 30px !important;
+  }
 }
 
 .listing .search-query {
@@ -635,14 +637,14 @@ overflow:visible;
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 
 #saveRecord {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2000;
+  z-index: 2002;
 }
 
 .navbar #back .icon-chevron-left {
@@ -959,10 +961,12 @@ color: @gray;
 /* Log In
 ----------*/
 .login {
-	background: #E61718 url(../img/leather-red.png);
+  background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
   height:100%;
+  width:100%;
+  display:inline-block !important;
 }
 .login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;

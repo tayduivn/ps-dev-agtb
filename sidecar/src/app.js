@@ -84,7 +84,7 @@ SUGAR.App = (function() {
              * @property {Object}
              */
             api: null,
-            additionalComponents: []
+            additionalComponents: {}
         }, this, Backbone.Events);
     }
 
