@@ -158,7 +158,7 @@ class RestService extends ServiceBase {
     protected function handleException(SugarApiException $exception) {
         header("HTTP/1.1 {$exception->errorCode}");
 
-        $GLOBALS['log']->fatal('An unknown exception happened: '.$exception->getMessage());
+        $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
         
         // TODO: Translate error messages
         echo("ERROR: ".$exception->getMessage());
