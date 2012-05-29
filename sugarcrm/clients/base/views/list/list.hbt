@@ -25,7 +25,7 @@
                         {{#each ../context.attributes.collection.models}}
                         <tr name="{{module}}_{{attributes.id}}">
                             {{#each ../fields}}
-                            <td>{{field ../../../this ../this}}</td>
+                            <td>{{field ../../../context ../../../this ../this}}</td>
                             {{/each}}
                         </tr>
                         {{/each}}
@@ -36,7 +36,7 @@
                 {{#notEq collection.next_offset "-1"}}
                     <div class="block-footer">
                             {{#each meta.buttons}}
-                                {{field ../this ../model}}
+                                {{field ../context ../this ../model}}
                             {{/each}}
                     </div>
                 {{/notEq}}
@@ -53,7 +53,7 @@
             </div>
             <ul class="nav nav-pills pull-right actions hide">{{#each meta.listNav}}
                 <li>
-                    {{field ../this ../model}}
+                    {{field ../context ../this ../model}}
                 </li>
                 {{/each}}
                 {{#if context.attributes.collection.page}}
