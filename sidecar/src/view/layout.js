@@ -134,6 +134,7 @@
          * Renders all the components.
          */
         render: function() {
+            if (this.disposed === true) throw new Error("Unable to render layout because it's disposed: " + this);
             if (this._components && this._components.length > 0) {
                 //default layout will pass render container divs and pass down to all its views.
                 _.each(this._components, function(component) {
@@ -185,6 +186,21 @@
                 _.extend(fields, component.getFields(module));
             });
             return fields;
+        },
+
+        /**
+         * Disposes a layout.
+         *
+         * Disposes each of this layout's components and calls
+         * {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            _.each(this._components, function(component) {
+                component.dispose();
+            });
+            this._components = [];
+            app.view.Component.prototype._dispose.call(this);
         },
 
         /**

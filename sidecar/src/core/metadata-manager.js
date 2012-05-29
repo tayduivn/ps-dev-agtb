@@ -383,7 +383,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-
+                    app.error.handleHTTPError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

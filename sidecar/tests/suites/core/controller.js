@@ -42,5 +42,14 @@ describe("Controller", function() {
             expect(cbSpy).toHaveBeenCalled();
         });
 
+        it("should render addtional components", function() {
+            var components = {login:{target:'#footer'}};
+            app.controller.loadAdditionalComponents(components);
+            app.controller.loadAdditionalComponents(components); // we should be able to call it multiple times safely
+            expect(app.additionalComponents.login instanceof app.view.View).toBeTruthy();
+            expect(app.additionalComponents.login.name).toEqual('login');
+        });
+
+
     });
 });

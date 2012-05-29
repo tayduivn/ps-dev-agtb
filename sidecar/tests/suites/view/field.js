@@ -70,22 +70,6 @@ describe("Field", function() {
         expect(spy).toHaveBeenCalled();
     });
 
-    it("unbind events", function() {
-        var inputEvents, field;
-        inputEvents = fixtures.metadata.modules.Cases.views.edit.meta.buttons[0].events;
-        field = app.view.createField({
-            def: {name: "status", type: "text"},
-            view: view,
-            context: context,
-            model: bean
-        });
-
-        bean.set({status: "new", id: "anId"});
-        field.unBind();
-
-        expect(field.model).toBeUndefined();
-        //expect(field.context).toBeUndefined();
-    });
     it("handle errors on model validation error", function() {
         var handleSpy = sinon.spy(app.view.Field.prototype, 'handleValidationError');
         var field = app.view.createField({
@@ -143,6 +127,12 @@ describe("Field", function() {
         input.attr('value', 'bob');
         input.trigger('change');
         expect(bean.get('status')).toEqual('bob');
+
+        field.unbindDom();
+        input.attr('value', 'foo');
+        input.trigger('change');
+        expect(bean.get('status')).toEqual('bob');
+
         $('#' + id).remove();
     });
 });

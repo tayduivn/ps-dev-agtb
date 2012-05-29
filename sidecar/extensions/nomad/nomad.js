@@ -62,14 +62,20 @@
         app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
         app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
         app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
+
+        app.api.serverUrl = app.isNative ? app.user.get("serverUrl") : app.config.serverUrl;
+
+        app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
+        app.logger.debug('REST URL: ' + app.api.serverUrl);
     });
 
     app.augment("nomad", {
 
         deviceReady: function() {
             app.isNative = !_.isUndefined(window.cordova);
+            app.logger.debug("Device is ready");
+
             app.init({el: "#nomad" });
-            app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
             app.api.debug = app.config.debugSugarApi;
             app.start();
             app.logger.debug('App started');
