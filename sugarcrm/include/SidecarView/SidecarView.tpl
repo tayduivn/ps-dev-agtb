@@ -82,23 +82,56 @@
     }
 </style>
 {/literal}
-
+<div class="subnav">
+    <div class="btn-toolbar pull-left">
+        <h1>Forecast: Sabra Khan</h1>
+    </div>
+    <div class="btn-toolbar pull-right">
+        <div class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+            <ul class="dropdown-menu menu">
+                <li><a href="#">Duplicate</a></li>
+                <li><a href="#">Save</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Note</a></li>
+                <li><a href="#">Email</a></li>
+                <li><a href="#">PDF</a></li>
+                <li><a href="#">CSV</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 <div id="core-module">
     <div id="core" style="" >
-        <div class="content"></div>
-        <div class="view-filter"></div>
-        <div class="view-chartOptions"></div>
-        <div class="view-tree"></div>
-        <div class="view-chart"></div>
-        <div class="view-grid"></div>
-        <div class="view-progress"></div>
-        <div class="view-changeLog"></div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div id="content"></div>
+                <div class="span2" id="drawer">
+                    <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
+                    <div class="bordered">
+                        <div class="view-filter"></div>
+                        <div class="view-chartOptions"></div>
+                        <div class="view-tree"></div>
+                    </div>
+                </div>
+                <div id="charts" class="span10">
+                    <div class="row-fluid">
+                        <div class="view-chart"></div>
+                        <div class="span5">
+                            <div class="tab-pane active" id="overview">
+                                <div class="block" id="moduleTwitter">
+                                    <div class="view-progress"></div>
+                                    <div class="view-changeLog"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    <div class="view-grid"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="layout" style=""></div>
-
 </div>
-
-<div id="content"></div>
 
 {literal}
 <script language="javascript">
