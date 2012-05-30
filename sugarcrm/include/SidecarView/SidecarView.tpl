@@ -83,7 +83,7 @@
     }
 </style>
 {/literal}
-<div class=".content"></div>
+<div class="content"></div>
 
     <div class="subnav">
         <div class="btn-toolbar pull-left">
