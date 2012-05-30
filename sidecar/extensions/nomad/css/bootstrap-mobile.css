@@ -3313,9 +3313,6 @@ article > input[type=checkbox] {
   padding-right: 0;
   padding-left: 0;
 }
-#detailListing {
-  height: auto;
-}
 #detailListing #listing {
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
@@ -3323,7 +3320,7 @@ article > input[type=checkbox] {
 }
 #detailListing #listing > i {
   display: inline-block;
-  height: 210px;
+  height: 205px;
 }
 #detailListing ul.actions {
   margin: 0;

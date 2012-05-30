@@ -23,7 +23,7 @@
 </div>
 <div class="container-fluid" id="detailListing">
     <div class="row-fluid">
-        <div class="span12" id="listing"><i></i>
+        <div class="span12 listing" id="listing"><i></i>
             <ul class="actions">
                 {{#each links}}
                     <li>
