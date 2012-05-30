@@ -61,7 +61,7 @@ describe("User", function() {
     });
     
     it("should login user", function() {
-        var sync = sinon.stub(SUGAR.App, 'sync', function() { });
+        sinon.stub(app, 'sync', function() { });
         var loginSuccessEventSpy = sinon.spy(),
             userReset = sinon.spy(app.user, '_reset');
 
@@ -81,6 +81,7 @@ describe("User", function() {
         expect(userReset).toHaveBeenCalled();
         expect(userReset.calledWith('jimbo')).toBeTruthy();
         expect(loginSuccessEventSpy).toHaveBeenCalled();
+        app.sync.restore();
     });
 
     it("should reset itself with new data", function() {

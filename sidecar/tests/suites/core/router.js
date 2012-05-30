@@ -122,10 +122,47 @@ describe("Router", function() {
         expect(mock.verify()).toBeTruthy();
     });
 
-    it("should reject the route if the user is not authenticated", function() {
-        app.start();
+    it("should reject a secure route if the user is not authenticated", function() {
+        sinon.stub(app.api, "isAuthenticated", function() { return false; });
         var beforeRouting = app.routing.before("index");
         expect(beforeRouting).toBeFalsy();
+    });
+
+    it("should reject a secure route if the app is not synced", function() {
+        app.isSynced = false;
+        var beforeRouting = app.routing.before("index");
+        expect(beforeRouting).toBeFalsy();
+    });
+
+    it("should always accept an unsecure route", function() {
+        var beforeRouting = app.routing.before("signup");
+        expect(beforeRouting).toBeTruthy();
+    });
+
+    it("should call a route handler and routing.after if routing.before returns true", function() {
+        sinon.stub(app.routing, "before", function() { return true; });
+        var spy = sinon.spy(app.routing, "after");
+        var spy2 = sinon.spy(app.router, "index");
+
+        app.router._routeHandler(app.router.index);
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+        app.routing.before.restore();
+        app.routing.after.restore();
+        app.router.index.restore();
+    });
+
+    it("should not call a route handler and routing.after if routing.before returns false", function() {
+        sinon.stub(app.routing, "before", function() { return false; });
+        var spy = sinon.spy(app.routing, "after");
+        var spy2 = sinon.spy(app.router, "index");
+
+        app.router._routeHandler(app.router.index);
+        expect(spy).not.toHaveBeenCalled();
+        expect(spy2).not.toHaveBeenCalled();
+        app.routing.before.restore();
+        app.routing.after.restore();
+        app.router.index.restore();
     });
 
     // TODO: This test has been disabled, as the paramters don't work properly. Need to add supporting routes

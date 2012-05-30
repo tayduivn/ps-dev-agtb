@@ -1,10 +1,10 @@
 (function(app) {
 
     /**
-     * Gets called before a route gets triggered.
+     * Manages routing behavior.
      *
      *
-     * The default implementation provides `before` and `after` callbacks that should be executed
+     * The default implementation provides `before` and `after` callbacks that are executed
      * before and after a route gets triggered.
      *
      * @class Core.Routing
@@ -17,19 +17,18 @@
          * Checks if a user is authenticated before triggering a route.
          * @param {String} route Route name.
          * @param args(optional) Route parameters.
-         * @return {Boolean} Flag indicating if route should be triggered (`true`).
+         * @return {Boolean} Flag indicating if the route should be triggered (`true`).
          */
         before: function(route, args) {
-            app.logger.trace("BEFORE: " + route);
-            // Check if a user is un-athenticated and redirect him to login
             // skip this check for all white-listed routes (app.config.unsecureRoutes)]
-            if (_.indexOf(app.config.unsecureRoutes, route) === -1 && !app.api.isAuthenticated()) {
+            if (_.indexOf(app.config.unsecureRoutes, route) >= 0) return true;
+
+            // Check if a user is un-athenticated and redirect him to login
+            if (!app.api.isAuthenticated()) {
                 app.router.login();
                 return false;
             }
-            // Check if the metadata has been synced and stop the history while syncing
-            // skip this check for all white-listed routes (app.config.unsecureRoutes)]
-            if (_.indexOf(app.config.unsecureRoutes, route) === -1 && !app.isSynced) {
+            else if (!app.isSynced) {
                 Backbone.history.stop();
                 app.sync();
                 return false;
@@ -39,11 +38,13 @@
 
         /**
          * Gets called after a route gets triggered.
+         *
+         * The default implementation does nothing.
          * @param {String} route Route name.
          * @param args(optional) Route parameters.
          */
         after: function(route, args) {
-            app.logger.trace("AFTER: " + route);
+            // Do nothing
         }
 
     });
@@ -55,10 +56,6 @@
      * @alias SUGAR.App.router
      */
     var Router = Backbone.Router.extend({
-
-        // TODO: This router does not support routes that don't require users been authenticated
-        // For example, one can not navigate to http://localhost:8888/portal#signup
-        // This must be refactored!!!
 
         /**
          * Routes hash map.
@@ -86,12 +83,8 @@
                 route = handler.route;
 
             if (app.routing.before(route, args)) {
-                app.logger.debug("CONTINUE");
                 handler.apply(this, args);
                 app.routing.after(route, args);
-            }
-            else {
-                app.logger.debug("REJECTED");
             }
         },
 

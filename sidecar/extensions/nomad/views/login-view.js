@@ -40,9 +40,6 @@
                         success: function() {
                             app.logger.debug("logged in successfully!");
                             app.user.set("serverUrl", app.api.serverUrl);
-                            app.sync(function() {
-                                app.logger.debug("sync success firing");
-                            });
                         },
                         error: function(error) {
                             app.logger.debug("login failed: " + error);
