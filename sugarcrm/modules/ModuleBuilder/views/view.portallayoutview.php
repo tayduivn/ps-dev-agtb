@@ -56,7 +56,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 	function display() 
 	{
-	    $this->parser = ParserFactory::getParser($this->editLayout,$this->editModule,null,null,MB_PORTAL);
+	    $this->parser = ParserFactory::getParser(MB_PORTAL . strtolower($this->editLayout),$this->editModule,null,null,MB_PORTAL);
 		$smarty = new Sugar_Smarty();
 		
 		//Add in the module we are viewing to our current mod strings
