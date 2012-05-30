@@ -84,6 +84,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return self::DEFAULT_INDEX_TYPE;
     }
 
+    protected function getOwnerField($bean)
+    {
+        // when running full indexing, $bean may be a stdClass and not a SugarBean
+        if ($bean instanceof SugarBean)
+        {
+            return $bean->getOwnerField();
+        }
+        else if (isset($bean->assigned_user_id))
+        {
+            return $bean->assigned_user_id;
+        }
+        else if (isset($bean->created_by))
+        {
+            return $bean->created_by;
+        }
+        return null;
+    }
+
     /**
      *
      * @param SugarBean $bean
@@ -112,7 +130,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
 
         // to index owner
-        $keyValues['doc_owner'] = strval($bean->getOwnerField());
+        $ownerField = $this->getOwnerField($bean);
+        if ($ownerField)
+        {
+            $keyValues['doc_owner'] = strval($ownerField);
+        }
 
         if( empty($keyValues) )
             return null;
