@@ -1,60 +1,92 @@
 (function(app) {
 
+    var _meta = {
+        "panels": [
+            {
+                "label": "Preview",
+                "fields": [
+                    {
+                        "name": "name",
+                        "default": true,
+                        "enabled": true,
+                        "sorting": true,
+                        "width": 35,
+                        "type": "text",
+                        "label": "LBL_SUBJECT"
+                    },
+                    {
+                        "name": "description",
+                        "default": true,
+                        "enabled": true,
+                        "sorting": true,
+                        "width": 35,
+                        "type": "textarea",
+                        "label":"LBL_DESCRIPTION"
+                    },
+                    {
+                        "name": "date_entered",
+                        "default": true,
+                        "enabled": true,
+                        "sorting": true,
+                        "width": 35,
+                        "type": "datetime",
+                        "label": "LBL_DATE_ENTERED"
+                    },
+                    {
+                        "name": "created_by_name",
+                        "default": true,
+                        "enabled": true,
+                        "sorting": true,
+                        "width": 35,
+                        "type": "relate",
+                        "label": "LBL_CREATED"
+                    },
+                    {
+                        "name": "modified_by_name",
+                        "default": true,
+                        "enabled": true,
+                        "sorting": true,
+                        "width": 35,
+                        "type": "relate",
+                        "label": "LBL_MODIFIED_NAME"
+                    }
+                ]
+            }
+        ]
+    };
     /**
      * View that displays a model pulled from the activities stream.
-     * @class View.Views.SubdetailView
-     * @alias SUGAR.App.layout.SubdetailView
+     * @class View.Views.PreviewView
+     * @alias SUGAR.App.view.views.PreviewView
      * @extends View.View
      */
-    app.view.views.SubdetailView = app.view.View.extend({
+    app.view.views.PreviewView = app.view.View.extend({
         events: {
-            'click .closeSubdetail': 'closeSubdetail'
+            'click .closeSubdetail': 'closePreview'
         },
         initialize: function(options) {
+            this.options.meta = _meta;
             app.view.View.prototype.initialize.call(this, options);
-
-            app.events.register(
-                /**
-                 * Fired when the user clicks on a item in the activity stream
-                 * Helps pushing the model to the subdetail view.
-                 *
-                 * <pre><code>
-                 * obj.on("app:view:activity:subdetail", callback);
-                 * </pre></code>
-                 * @event
-                 */
-                "app:view:activity:subdetail",
-                this
-            );
-
-            var self = this;
-            app.events.on("app:view:activity:subdetail", function(model) {
-                if (model) {
-                    self.model.set(model);
-                }
-            });
-
-            this.fallbackFieldTemplate = "detail";
         },
         render: function() {
-            this.$el.parent().parent().addClass("tab-content").attr("id", "folded");
-            //avoid to have an empty detail view
+            // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
+            this.layout.layout.off("search:preview", null, this);
+            this.layout.layout.on("search:preview", this.togglePreview, this);
+
+            this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
+            // TODO: This can get removed once Julien's styleguide pull req is in
+            $(this.$el).css("width", "inherit");
         },
-        bindDataChange: function() {
-            var self = this;
-            if (this.model) {
-                this.model.on("change", function() {
-                        app.view.View.prototype.render.call(this);
-                    }, this
-                );
+        togglePreview: function(model) {
+            if(model) {
+                this.model.set(model);
+                app.view.View.prototype.render.call(this);
             }
         },
-
-        // Delegate events
-        closeSubdetail: function() {
+        closePreview: function() {
             this.model.clear();
             this.$el.empty();
-            $("li.activity").removeClass("on");
+            $("li.search").removeClass("on");
         }
     });
 

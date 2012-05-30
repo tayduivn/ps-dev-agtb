@@ -48,10 +48,10 @@
         fireSearchRequest: function (term) {
             // Callback for the searchahead plugin .. note that
             // 'this' points to the plugin (not the header view!)
-            var plugin = this, markup, commaModuleList;
-            commaModuleList = app.metadata.getDelimitedModuleList(',');
-            
-            app.api.search(term, 'name, _module, id', commaModuleList, maxNumSearch, {
+            var plugin = this, markup, mlist, params;
+            mlist = app.metadata.getDelimitedModuleList(',');
+            params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: maxNumSearch};
+            app.api.search(params, {
                 success:function(data) {
                     plugin.provide(data);
                 }

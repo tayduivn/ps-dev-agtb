@@ -27,8 +27,10 @@
                     self.show();
                     self.bindDataChange();
                 } else {
+                    // If view not in showForLayouts white list, we unbind previously bound change events.
+                    // This makes sense, and, further, is required for static subnav view to work properly.
                     self.hide();
-                    self.bindDataChange();
+                    self.unbind();
                 }
             });
         },
@@ -36,8 +38,9 @@
          * Renders Subnav view
          */
         render: function() {
-            if (!app.api.isAuthenticated()) return this;
-            return app.view.View.prototype.render.call(this);
+            if (!app.api.isAuthenticated()) return;
+            app.view.View.prototype.render.call(this);
+            return this;
         },
         hide: function() {
             this.$el.hide();
@@ -53,7 +56,14 @@
                     }, this
                 );
             }
+        },
+        unbind: function() {
+            var self = this;
+            if (app.controller.context.attributes.model) {
+                app.controller.context.attributes.model.off("change");
+            }
         }
+        
 
     });
 

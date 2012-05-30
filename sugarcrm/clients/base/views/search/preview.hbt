@@ -1,14 +1,14 @@
-<h1>Preview</h1>
 {{#each meta.panels}}
 <div class="tab-pane active">
-    <div class="block" id="">
-        <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
-        <h4><span class="label label-note">Note</span> {{fieldWithName ../this "name" ../model "default"}}</h4>
-        <br>
-
-        {{#each fields}}
-        {{field ../../this ../../model}}
-        {{/each}}
+    <div class="card2">
+        <div class="block" id="">
+            <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
+            <h4>{{getLabel "LBL_MODULE_NAME" ../model.attributes._module}}: {{../model.attributes.name}}</h4>
+            {{#each fields}}
+            {{field ../../this ../../model}}
+            {{/each}}
+        </div>
     </div>
 </div>
 {{/each}}
+

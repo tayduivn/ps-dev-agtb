@@ -298,14 +298,15 @@ SUGAR.App = (function() {
         /**
          * Navigates to a new route.
          * @method
-         * @param {Core.Context} context(optional) Context object to extract the module from.
+         * @param {Core.Context} context(optional) Context object to extract the module from. Context
+         * must be proper context object and, at minimum, have a get method.
          * @param {Data.Bean} model(optional) Model object to route with.
          * @param {String} action(optional) Action name.
          * @param {Object} params(optional) Additional parameters.
          */
         navigate: function(context, model, action, params) {
             var route, id, module;
-            context = context || _app.controller.context;
+            context = (context && context.get) ? context : _app.controller.context;
             model = model || context.get("model");
             id = model.id;
             module = context.get("module") || model.module;

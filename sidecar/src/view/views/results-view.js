@@ -1,7 +1,18 @@
 (function(app) {
 
+    var _meta = {
+        "buttons": [
+            {
+                "name": "show_more_button",
+                "type": "button",
+                "label": "Show More",
+                "class": "loading wide"
+            }
+        ]
+    };
+
     /**
-     * View that displays the activity stream.
+     * View that displays search results.
      * @class View.Views.ResultsView
      * @alias SUGAR.App.layout.ResultsView
      * @extends View.View
@@ -9,131 +20,117 @@
     app.view.views.ResultsView = app.view.View.extend({
         events: {
             'click [name=name]': 'gotoDetail',
-            'click #saveNote': 'saveNote',
-            'click .search': 'showSearch',
-            'click .addNote': 'openNoteModal',
             'click .icon-eye-open': 'loadChildDetailView',
-            'click [name=show_more_button_back]': 'showPreviousRecords',
-            'click [name=show_more_button_forward]': 'showNextRecords'
+            'click span.label': 'sortByModuleName',
+            'hover span.label': 'addPointer',
+            'blur span.label': 'removePointer',
+            'click [name=show_more_button]': 'showMoreResults',
+        },
+        initialize: function(options) {
+            this.options.meta = _meta;
+            app.view.View.prototype.initialize.call(this, options);
         },
         render: function() {
-            var self = this;
+            var self = this, collection;
             self.lastQuery = self.context.get('query');
+
             self.fireSearchRequest(function(data) {
+
                 // Add the records to context's collection
                 if(data && data.records && data.records.length) {
-                    self.context.get('collection').add(data.records, {silent: true});
+                    self.updateCollection(data);
                     app.view.View.prototype.render.call(self);
-
                     self.renderSubnav();
                 } else {
-                    // TODO: No results message???
-                    app.logger.debug("TODO: No search results found .. need to display no results message. ");
+                    self.renderSubnav('No results found for "'+self.lastQuery+'"');
                 }
             });
         },
-        renderSubnav: function() {
+        updateCollection: function(data) {
+            var collection = this.context.get('collection');
+            collection.add(data.records, {silent: true});
+            collection.next_offset = this.nextOffset = data.next_offset ? data.next_offset : -1;
+        },
+        renderSubnav: function(overrideMessage) {
             if (app.additionalComponents.staticSubnav) {
-                app.additionalComponents.staticSubnav.display('Show search results for "'+this.lastQuery+'"');
+                if(overrideMessage) {
+                    app.additionalComponents.staticSubnav.display(overrideMessage);
+                } else {
+                    app.additionalComponents.staticSubnav.display('Show search results for "'+this.lastQuery+'"');
+                }
             }
         },
-        fireSearchRequest: function (cb) {
-            var mlist = '', self = this;
+        fireSearchRequest: function (cb, offset) {
+            var mlist = '', self = this, params;
             mlist = app.metadata.getDelimitedModuleList(',');
+            params = {query: self.lastQuery, moduleList: mlist, maxNum: app.config.maxQueryResult};
+            if (offset) params.offset = offset;
 
-            app.api.search(self.lastQuery, 'name, id', mlist, app.config.maxQueryResult, {
+            app.api.search(params, {
                 success:function(data) {
                     cb(data);
                 },
                 error:function(xhr, e) {
+                    cb(null); // dismiss the alert
                     app.error.handleHTTPError(xhr, e, self);
                     app.logger.error("Failed to fetch search results " + this + "\n" + e);
                 }
             });
         },
-        
         bindDataChange: function() {
             if (this.collection) {
                 this.collection.on("reset", this.render, this);
             }
         },
-
-
-        // Delegate events
-        saveNote: function() {
-            var self = this;
-            this.$el.find('#saveNote').button('loading');
-
-            var args = {
-                name: this.$el.find('[name=subject]').val(),
-                description: this.$el.find('[name=description]').val(),
-                portal_flag: true
-            }
-
-            var newNote = app.data.createRelatedBean(this.app.controller.context.attributes.model, null, "notes", args);
-            newNote.save(null, {
-                relate: true,
-                success: function(data) {
-                    self.$el.find('#saveNote').button();
-                    self.$el.find('#noteModal').modal('hide').find('form').get(0).reset();
-                    self.context.attributes.collection.add(newNote);
-                    self.render();
-                },
-                error: function(data) {
-                    self.$el.find('#saveNote').button();
-                    self.$el.find('#noteModal').modal('hide').find('form').get(0).reset();
-                }
-            });
-        },
-        showSearch: function() {
-            var $searchEl = $('.search');
-            $searchEl.toggleClass('active');
-            $searchEl.parent().parent().parent().find('.dataTables_filter').toggle();
-            $searchEl.parent().parent().parent().find('.form-search').toggleClass('hide');
-            return false;
-        },
         gotoDetail: function(evt) {
-            // TODO: Find root cause why link is not followed
             var href = this.$(evt.currentTarget).parent().parent().attr('href');
             window.location = href;
         },            
-        openNoteModal: function() {
-            this.$el.find('#noteModal').modal('show');
-            this.$el.find('li.open').removeClass('open');
-            return false;
-        },
         loadChildDetailView: function(e) {
-            var activityId = $(e.currentTarget).parent().parent().parent().attr("data-id");
-            $("li.activity").removeClass("on");
-            $(e.currentTarget).parent().parent().parent().addClass("on");
+            var localGGrandparent, correspondingResultId, model;
+            localGGrandparent = this.$(e.currentTarget).parent().parent().parent();
 
-            var activity = this.collection.get(activityId);
-            app.events.trigger("app:view:activity:subdetail", activity);
+            // Remove previous 'on' class on lists <li>'s; add to clicked <li>
+            $(localGGrandparent).parent().find('li').removeClass('on');
+            $(localGGrandparent).addClass("on");
+            correspondingResultId = $(localGGrandparent).find('p a').attr('href').split('/')[1];
+
+            // Grab search result model corresponding to preview icon clicked
+            model = this.collection.get(correspondingResultId);
+
+            // Fire on parent layout .. works nicely for relatively simple page ;=) 
+            this.layout.layout.trigger("search:preview", model);
         },
-        showPreviousRecords: function() {
-            var self = this;
-            app.alert.show('show_previous_records', {level: 'process', title: 'Loading'});
-            this.context.get("collection").paginate({
-                page: -1,
-                success: function() {
-                    app.alert.dismiss('show_previous_records');
-                    self.render();
-                },
-                relate: true
+        sortByModuleName: function(evt) {
+            var li = this.$('li.search').get();
+            li.sort(function(a, b) {
+                a = this.$('span.label', a).text();
+                b = this.$('span.label', b).text();
+                return (a < b) ? -1 : ((a > b) ? 1 : 0);
             });
+            this.$('ul.nav-tabs').append(li).show();
         },
-        showNextRecords: function() {
-            var self = this;
-            app.alert.show('show_next_records', {level: 'process', title: 'Loading'});
-            this.context.get("collection").paginate({
-                success: function() {
-                    app.alert.dismiss('show_next_records');
-                    self.render();
-                },
-                relate: true
-            });
+        addPointer: function(evt) {
+            this.$(evt.currentTarget).css('cursor', 'pointer');
+        },
+        removePointer: function(evt) {
+            this.$(evt.currentTarget).css('cursor', 'none');
+        },
+        showMoreResults: function() {
+            var self = this, collection;
+            app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
+            collection = this.context.get('collection');
+
+            self.fireSearchRequest(function(data) {
+                app.alert.dismiss('show_more_search_results');
+
+                // Add the records to context's collection
+                if(data && data.records && data.records.length) {
+                    self.updateCollection(data);
+                    app.view.View.prototype.render.call(self);
+                    self.renderSubnav();
+                } 
+            }, collection.next_offset);
         }
-
     });
-
 })(SUGAR.App);
