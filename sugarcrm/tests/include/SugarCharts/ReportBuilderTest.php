@@ -344,7 +344,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $actual_json = $rb->toJson();
         $actual = $this->objectToArray(json_decode($actual_json));
 
-        $this->assertSame($filter, $actual['filters_def']);
+        $this->assertSame($filter['Filter_1'], $actual['filters_def']['Filter_1'][0]);
     }
 
     /**
@@ -396,6 +396,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:member_of', $return);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testMultiLevelLink()
     {
         $rb = new ReportBuilder('Accounts');
@@ -404,6 +408,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Accounts:contacts:assigned_user_link', $return['assigned_user_link']);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testSetSetValidChartType()
     {
         $rb = new ReportBuilder('Accounts');
@@ -412,6 +420,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('funnelF', $rb->getChartType());
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testSetInvalidChartTypeEqualshBarF()
     {
         $rb = new ReportBuilder('Accounts');
@@ -420,6 +432,10 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('hBarF', $rb->getChartType());
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testLoadSavedReportReturnsFalseWithNonValidGuid()
     {
         $rb = new ReportBuilder('Accounts');
@@ -428,34 +444,124 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($return);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testLoadSavedReportReturnsFalseWhenSavedReportModuleDoesntMatchParentModule()
     {
-        $report = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum","force_label":"Type"}],"summary_columns":[{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"UnitTestReport","chart_type":"pieF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"user_name","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","input_name0":["seed_chris_id"]}}}}';
-        /* @var $saved_report SavedReport */
-        $saved_report = BeanFactory::getBean('Reports');
-        $saved_report->save_report(-1, 1, 'TestReport', 'Opportunities', 'summary', $report, 1, 1, 'pieF');
+        $saved_report = $this->createTestReport();
 
         $rb = new ReportBuilder('Accounts');
         $return = $rb->loadSavedReport($saved_report->id);
 
         $this->assertFalse($return);
 
-        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $saved_report->id . "')");
+        $this->removeTestReport($saved_report->id);
     }
 
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
     public function testLoadSavedReportReturnsTrue()
     {
-        $report = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum","force_label":"Type"}],"summary_columns":[{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"UnitTestReport","chart_type":"pieF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"user_name","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","input_name0":["seed_chris_id"]}}}}';
-        /* @var $saved_report SavedReport */
-        $saved_report = BeanFactory::getBean('Reports');
-        $saved_report->save_report(-1, 1, 'TestReport', 'Opportunities', 'summary', $report, 1, 1, 'pieF');
+        $saved_report = $this->createTestReport();
 
         $rb = new ReportBuilder('Opportunities');
         $return = $rb->loadSavedReport($saved_report->id);
 
         $this->assertTrue($return);
 
-        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $saved_report->id . "')");
+        $this->removeTestReport($saved_report->id);
+    }
+
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
+    public function testLoadSavedReportWithAdditionalFiltersContainsDefaultFilter()
+    {
+        $saved_report = $this->createTestReport();
+
+        $filter = array("Filter_1" => array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'billing_postalcode',
+                'table_key' => 'self',
+                'qualifier_name' => 'not_empty',
+                'input_name0' => null
+            )
+        ));
+
+        $og_filter = array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'user_name',
+                'table_key' => 'Opportunities:assigned_user_link',
+                'qualifier_name' => 'reports_to',
+                'input_name0' => array('seed_chris_id')
+            )
+        );
+
+        $rb = new ReportBuilder('Opportunities');
+        $rb->loadSavedReport($saved_report->id);
+        $rb->addFilter($filter);
+
+        $filters = $rb->getFilters();
+
+        $this->assertSame($og_filter, $filters['Filter_1'][0]);
+
+        $this->removeTestReport($saved_report->id);
+    }
+
+    /**
+     * @group ReportBuilder
+     * @gruop SugarCharts
+     */
+    public function testLoadSavedReportWithAdditionalFiltersContainsNewFilter()
+    {
+        $saved_report = $this->createTestReport();
+
+        $filter = array("Filter_1" => array(
+            'operator' => 'AND',
+            0 => array(
+                'name' => 'billing_postalcode',
+                'table_key' => 'self',
+                'qualifier_name' => 'not_empty',
+                'input_name0' => null
+            )
+        ));
+
+        $rb = new ReportBuilder('Opportunities');
+        $rb->loadSavedReport($saved_report->id);
+        $rb->addFilter($filter);
+
+        $filters = $rb->getFilters();
+
+        $this->assertSame($filter['Filter_1'], $filters['Filter_1'][1]);
+
+        $this->removeTestReport($saved_report->id);
+    }
+
+    /**
+     * Create A Test Report
+     *
+     * @return SavedReport|SugarBean
+     */
+    protected function createTestReport()
+    {
+        $report = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum","force_label":"Type"}],"summary_columns":[{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"UnitTestReport","chart_type":"pieF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"user_name","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","input_name0":["seed_chris_id"]}}}}';
+        /* @var $saved_report SavedReport */
+        $saved_report = BeanFactory::getBean('Reports');
+        $saved_report->save_report(-1, 1, 'TestReport', 'Opportunities', 'summary', $report, 1, 1, 'pieF');
+
+        return $saved_report;
+    }
+
+    protected function removeTestReport($report_id)
+    {
+        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $report_id . "')");
     }
 
     protected function objectToArray($d)

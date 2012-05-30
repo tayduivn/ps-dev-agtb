@@ -1,10 +1,4 @@
-<div class="thumbnail">
-    <h1>{{meta.panels.0.label}}</h1>
-
-    <div class="jst"></div>
-    {{#if meta.options.show_footer}}
-    <div class="block-footer">
-        Hello World
-    </div>
-    {{/if}}
+<div class="block">
+    <h4>{{meta.panels.0.label}}:</h4>
+    <div id="people" class="jst"></div>
 </div>
