@@ -43,6 +43,12 @@ describe("App", function() {
         });
     });
 
+    it("should initialize addtional components", function() {
+        var components = {login:{target:'#footer'}};
+        SugarTest.app.loadAdditionalComponents(components);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined();
+    });
+
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -74,7 +80,6 @@ describe("App", function() {
                 expect(cbSpy).toHaveBeenCalled();
             });
         });
-
         it('should call sync after login', function() {
             var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
 
@@ -103,15 +108,14 @@ describe("App", function() {
         var model = new Backbone.Model(),
             action = "edit",
             options = {},
-            context = SugarTest.app.context.getContext(),
+            context = {},
             routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        context.set("model", model);
-        SugarTest.app.navigate(context, model, action, options);
+        SugarTest.app.navigate(context, action, model, options);
 
-        expect(routerSpy).toHaveBeenCalledWith("Contacts/1234/edit");
+        expect(routerSpy).toHaveBeenCalled();
 
         routerSpy.restore();
     });

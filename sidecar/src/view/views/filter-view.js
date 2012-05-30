@@ -18,7 +18,6 @@
             return previousTerms[module];
         }
     }
-
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.FilterView
@@ -41,18 +40,17 @@
         
         filterList: function(evt) {
             var self = this,
-                term, elapsed, timeleft, previousTerm, timerId;
+                term, elapsed, timeleft, previousTerm, timerId, throttled;
                 
             previousTerm = getPreviousTerm(this.module);
             term = self.$(evt.currentTarget).val();
             setPreviousTerm(term, this.module);
 
             if(term && term.length > 2) {
-                if(timerId) { clearTimeout(timerId); }
-                timerId = setTimeout(function() { 
+                app.utils.throttle(function() {
                     self.fireSearchRequest(term);
-                }, requiredElapsed);
-
+                }, app.config.requiredElapsed);
+                
             // If user removing characters and down to 2 chars reset table to all data
             } else if(previousTerm && term.length && term.length === 2 && term.length < previousTerm.length) {
                 this.context.get('collection').fetch();

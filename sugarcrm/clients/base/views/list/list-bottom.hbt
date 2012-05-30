@@ -1,7 +1,7 @@
                 {{#notEq collection.next_offset "-1"}}
                     <div class="block-footer">
                             {{#each meta.buttons}}
-                                {{field ../context ../this ../model}}
+                                {{field ../this ../model}}
                             {{/each}}
                     </div>
                 {{/notEq}}
@@ -17,7 +17,7 @@
                 </ul>
             <ul class="nav nav-pills pull-right actions hide">{{#each meta.listNav}}
                 <li>
-                    {{field ../context ../this ../model}}
+                    {{field ../this ../model}}
                 </li>
                 {{/each}}
                 {{#if context.attributes.collection.page}}

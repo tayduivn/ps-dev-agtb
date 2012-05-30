@@ -1,0 +1,14 @@
+<h1>Preview</h1>
+{{#each meta.panels}}
+<div class="tab-pane active">
+    <div class="block" id="">
+        <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
+        <h4><span class="label label-note">Note</span> {{fieldWithName ../this "name" ../model "default"}}</h4>
+        <br>
+
+        {{#each fields}}
+        {{field ../../this ../../model}}
+        {{/each}}
+    </div>
+</div>
+{{/each}}
