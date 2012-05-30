@@ -20,7 +20,7 @@
             });
             listView.context.set({view:listView});
 
-            listView.setPartialsTemplates({
+            listView.setTemplateOption("partials", {
                 'list.item': app.template.get("list.menu.item")
             });
 

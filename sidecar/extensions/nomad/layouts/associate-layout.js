@@ -19,7 +19,7 @@
             var associateView = this.getComponent('associate');
 
             if(associateView){
-                associateView.setPartialsTemplates({'list.item': app.template.get("list.associate.item")});
+                associateView.setTemplateOption("partials", {'list.item': app.template.get("list.associate.item")});
             }
 
             if (searchListView) {
