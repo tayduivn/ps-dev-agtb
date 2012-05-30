@@ -211,7 +211,8 @@ class One2MBeanRelationship extends One2MRelationship
             if (!empty($params['enforce_teams']))
             {
                 $relatedSeed = BeanFactory::getBean($this->getRHSModule());
-                $from .= ", $relatedSeed->table_name";
+                if ($this->def['rhs_table'] != $relatedSeed->table_name)
+                    $from .= ", $relatedSeed->table_name";
                 $relatedSeed->add_team_security_where_clause($from);
             }
             //END SUGARCRM flav=pro ONLY
