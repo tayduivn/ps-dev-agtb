@@ -21,7 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * Portal visibility
+ * Portal visibility class replaces the team security restrictions for portal users
+ * For non-portal users this class will not modify the query in any way.
  */
 class SupportPortalVisibility extends SugarVisibility
 {
@@ -33,7 +34,8 @@ class SupportPortalVisibility extends SugarVisibility
      * @param $queryType string Either 'from' or 'where' to match the two types we understand right now.
      * @return string What to append to the query
      */
-    protected function addVisibilityPortal(&$query, $queryType) {
+    protected function addVisibilityPortal(&$query, $queryType) 
+    {
         if ( empty($_SESSION['type']) || $_SESSION['type'] != 'support_portal' ) {
             return;
         }
@@ -75,7 +77,12 @@ class SupportPortalVisibility extends SugarVisibility
                 // Bugs: Any bug that either has the portal_viewable flag set to true, or is related to the account list
                 if ( $queryType == 'from' ) {
                     $this->bean->load_relationship('accounts');
-                    $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv','join_type'=>' LEFT JOIN '))." AND accounts_pv.id IN $accountIn ";
+                    $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv',
+                //BEGIN SUGARCRM flav=ent ONLY
+                                                                      // It switches to a LEFT JOIN here because of the portal_viewable flag
+                                                                      'join_type'=>' LEFT JOIN ',
+                //END SUGARCRM flav=ent ONLY
+                                                                    ))." AND accounts_pv.id IN $accountIn ";
                 //BEGIN SUGARCRM flav=ent ONLY
                 } else if ( $queryType == 'where' ) {
                     $queryPart = " accounts_pv.id IS NOT NULL OR $table_alias.portal_viewable = 1 ";
@@ -157,6 +164,12 @@ class SupportPortalVisibility extends SugarVisibility
                     } else if ( $queryType == 'where' ) {
                         $queryPart = $wherePart;
                     }
+                } else {
+                    // This module is not a default portal module, nor can I figure out how the portal visibility for this module works, so I am here to make sure they don't see anything.
+                    if ( $queryType == 'where' ) {
+                        $queryPart = ' 1=0 ';
+                    }
+                    
                 }
                 break;
         }
