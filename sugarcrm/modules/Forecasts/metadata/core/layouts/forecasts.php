@@ -11,9 +11,6 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         2 => array(
             'view' => 'tree',
-            'context' => array(
-                'module' => 'Users'
-            )
         ),
         3 => array(
             'view' => 'chart',

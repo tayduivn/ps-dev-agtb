@@ -8,21 +8,23 @@
      */
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
-        initialize: function(options) {
-            app.view.Layout.prototype.initialize.call(this, options);
-
-            this.context = _.extend(this.context, {
-                register: app.events.register
-            });
-            console.log("context:");
-            console.log(this.context);
-        },
+//        initialize: function(options) {
+//
+//            app.view.Layout.prototype.initialize.call(this, options);
+//
+//            this.context = _.extend(this.context, {
+//                register: app.events.register
+//            });
+//            console.log("context:");
+//            console.log(this.context);
+//        },
 
         /**
          * Add a view (or layout) to this layout.
          * @param {View.Layout/View.View} comp Component to add
          */
         _placeComponent: function(comp) {
+            debugger;
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }

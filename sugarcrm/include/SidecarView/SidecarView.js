@@ -25,14 +25,14 @@
                                     primary: true,
                                     events: {
                                         click: "function(){ var self = this; " +
-                                            "$('#content').hide(); " +
+                                            "$('.content').hide(); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.login(args, null, {error:function(){ $('#content').show();" +
+                                            "this.app.login(args, null, {error:function(){ $('.content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
                                             "app.events.on('app:sync:complete', function() { " +
-                                            "$('#content').show();" +
+                                            "$('.content').show();" +
                                             "}); " +
                                             "app.sync(" +
                                             "function(){console.log(\"sync success firing\");}); }" +
