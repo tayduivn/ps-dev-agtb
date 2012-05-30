@@ -142,6 +142,18 @@ class MetadataApi extends SugarApi {
         foreach ($this->modules as $modName) {
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
         }
+        // remove the disabled modules from the module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+
+        if (isset($tabs[1])) {
+            foreach($data['moduleList'] as $moduleKey => $moduleName){
+                if (in_array($moduleName,$tabs[1])) {
+                    unset($data['moduleList'][$moduleKey]);
+                }
+            }
+        }
 
         $data['sugarFields'] = $mm->getSugarFields();
         $data['viewTemplates'] = $mm->getViewTemplates();

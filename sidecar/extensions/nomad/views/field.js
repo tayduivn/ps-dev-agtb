@@ -1,11 +1,16 @@
 (function(app) {
 
     app.view.Field = app.view.Field.extend({
+
+        events: {
+            "focusout input, textarea, select": 'resetErrorDispay'
+        },
+
         /**
          * Handles how validation errors are appended to the fields dom element
          * @param {Object} errors hash of validation errors
          */
-        handleValidationError: function(errors) {
+        handleValidationError: function (errors) {
             var template,
                 errMessages = [];
 
@@ -19,8 +24,18 @@
             //get template and output the result
             template = app.template.get('field.messages');
             this.$('.controls').append(template(errMessages));
-            
-            app.alert.show('field_validation_error', {level:'error', messages:'Validation error!'});
+            app.alert.show('field_validation_error', {level:'error', messages:'Validation error!', autoClose: true});
+        },
+
+        /**
+         * Resets displaying field validation error style & messages.
+         */
+        resetErrorDispay: function () {
+            var fieldContainer = this.$('.control-group');
+            if (fieldContainer.hasClass('error')) {
+                this.$('.control-group').removeClass('error');
+                this.$('.controls').children().not(this.fieldTag).remove();
+            }
         }
     });
 

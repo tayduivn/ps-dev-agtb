@@ -20,7 +20,7 @@
                 }
             };
 
-            if (alert.autoClose) {
+            if (alert.autoClose === true) {
                 setTimeout(function() {
                     alert.$el.remove();
                 }, app.config.alertAutoCloseDelay || 9000);
