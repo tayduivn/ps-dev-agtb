@@ -22,11 +22,18 @@
         before: function(route, args) {
             app.logger.trace("BEFORE: " + route);
             // Check if a user is un-athenticated and redirect him to login
-            // skip this check for "login" route and all white-listed routes (app.config.unsecureRoutes)
-//            if ((route != "login") && !app.api.isAuthenticated()) {
-//                app.router.login();
-//                return false;
-//            }
+            // skip this check for all white-listed routes (app.config.unsecureRoutes)]
+            if (_.indexOf(app.config.unsecureRoutes, route) === -1 && !app.api.isAuthenticated()) {
+                app.router.login();
+                return false;
+            }
+            // Check if the metadata has been synced and stop the history while syncing
+            // skip this check for all white-listed routes (app.config.unsecureRoutes)]
+            if (_.indexOf(app.config.unsecureRoutes, route) === -1 && !app.isSynced) {
+                Backbone.history.stop();
+                app.sync();
+                return false;
+            }
             return true;
         },
 
@@ -60,7 +67,6 @@
         routes: {
             "": "index",
             "logout": "logout",
-            "signup": "signup", // TODO: This route is useless. See comment above
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -103,23 +109,6 @@
             callback.route = name;
             callback = _.wrap(callback, this._routeHandler);
             Backbone.Router.prototype.route.call(this, route, name, callback);
-        },
-
-        /**
-         * See `Backbone.Router.navigate` documentation for details.
-         *
-         * Sidecar overrides this method to redirect the app to the login route if the app is not authenticated.
-         * @param {String} fragment URL fragment.
-         * @param options(optional) Route options.
-         */
-        navigate: function(fragment, options) {
-            if (!(app.api.isAuthenticated())) {
-                Backbone.Router.prototype.navigate.call(this, fragment);
-                this.login();
-                Backbone.history.stop();
-            } else {
-                Backbone.Router.prototype.navigate.call(this, fragment, options);
-            }
         },
 
         /**
@@ -256,20 +245,9 @@
             app.logger.debug("Loging out");
             var self = this;
             app.logout({success: function(data) {
-                self.navigate("#");
+                app.router.navigate("#");
+                app.router.login();
             }});
-        },
-
-        /**
-         * Handles `signup` route.
-         */
-        signup: function() {
-            app.logger.debug("Route changed to signup");
-            app.controller.loadView({
-                module: "Signup",
-                layout: "signup",
-                create: true
-            });
         },
 
         /**

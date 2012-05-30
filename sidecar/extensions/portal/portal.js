@@ -39,8 +39,7 @@
                                             "app.events.on('app:sync:complete', function() { " +
                                             "app.alert.dismiss('login'); $('#content').show();" +
                                             "}); " +
-                                            "app.sync(" +
-                                            "function(){console.log(\"sync success firing\");}); }" +
+                                            "}" +
                                             "});" +
                                             "}" +
                                             "}"
@@ -767,6 +766,25 @@
         };
         return oLoadView.call(this, params);
     };
+
+    var _rrh = {
+        /**
+         * Handles `signup` route.
+         */
+        signup: function() {
+            app.logger.debug("Route changed to signup!");
+            app.controller.loadView({
+                module: "Signup",
+                layout: "signup",
+                create: true
+            });
+        }
+    };
+
+    app.events.on("app:init", function() {
+        // Register portal specific routes
+        app.router.route("signup", "signup", _rrh.signup);
+    });
 
 })(SUGAR.App);
 

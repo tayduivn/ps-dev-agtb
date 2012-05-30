@@ -61,6 +61,7 @@ describe("User", function() {
     });
     
     it("should login user", function() {
+        var sync = sinon.stub(SUGAR.App, 'sync', function() { });
         var loginSuccessEventSpy = sinon.spy(),
             userReset = sinon.spy(app.user, '_reset');
 

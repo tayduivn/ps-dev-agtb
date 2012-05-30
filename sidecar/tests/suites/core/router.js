@@ -122,6 +122,12 @@ describe("Router", function() {
         expect(mock.verify()).toBeTruthy();
     });
 
+    it("should reject the route if the user is not authenticated", function() {
+        app.start();
+        var beforeRouting = app.routing.before("index");
+        expect(beforeRouting).toBeFalsy();
+    });
+
     // TODO: This test has been disabled, as the paramters don't work properly. Need to add supporting routes
     xit("should add params to a route if given in options ", function(){
         var route,

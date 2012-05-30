@@ -230,12 +230,7 @@ SUGAR.App = (function() {
         start: function() {
             _app.events.registerAjaxEvents();
             _app.trigger("app:start", this);
-
-            if (!_app.api.isAuthenticated()) {
-                _app.router.login();
-            } else {
-                this.sync();
-            }
+            _app.router.start();
         },
 
         /**
@@ -293,6 +288,7 @@ SUGAR.App = (function() {
                     self.trigger("app:sync:error", err);
                     if (_.isFunction(error)) error(err);
                 } else {
+                    self.isSynced = true;
                     self.trigger("app:sync:complete");
                     if (_.isFunction(success)) success();
                 }
@@ -313,7 +309,7 @@ SUGAR.App = (function() {
             model = model || context.get("model");
             id = model.id;
             module = context.get("module") || model.module;
-
+            
             route = this.router.buildRoute(module, id, action, params);
             this.router.navigate(route, {trigger: true});
         },
