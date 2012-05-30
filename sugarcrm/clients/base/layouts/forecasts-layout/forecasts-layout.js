@@ -24,7 +24,6 @@
          * @param {View.Layout/View.View} comp Component to add
          */
         _placeComponent: function(comp) {
-            debugger;
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }
