@@ -36,7 +36,7 @@
             if(this.rendered) return;
             app.view.View.prototype.render.call(this);
 
-            this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
+            this.primary_user = SUGAR.App.data.createBean('Users', { id: app.user.get('id')});
             this.primary_user.on('change', this.postUserFetch, this);
             this.primary_user.fetch({ fields: ['full_name', 'id', 'first_name', 'last_name'] });
 
@@ -138,8 +138,9 @@
         {
             jsData = data.inst.get_json();
 
+            console.log("Tree Node " + jsData[0].metadata.model + " selected -- Event triggering temporarily disabled");
             // TEMPORARY triggering on app.events
-            this.dispatch.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
+            //this.dispatch.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
         }
     });
 
