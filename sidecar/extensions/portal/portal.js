@@ -743,6 +743,31 @@
         }
     });
 
+    var oLoadView = app.controller.loadView;
+    app.controller.loadView = function(params) {
+        if (typeof(app.config) == undefined || (app.config  && app.config.appStatus == 'offline')) {
+            var self = this;
+            var callback = function(data){
+                var params = {
+                                module: "Login",
+                                layout: "login",
+                                create: true
+                            };
+                oLoadView.call(self, params)
+                SUGAR.App.alert.show('appOffline', {
+                    level:"error",
+                    title:'Error',
+                    messages:'Sorry the application is not available at this time. Please contact the site administrator.',
+                    autoclose:false
+                });
+            };
+
+            app.logout({success: callback, error:callback});
+            return;
+        };
+        return oLoadView.call(this, params);
+    };
+
 })(SUGAR.App);
 
 
