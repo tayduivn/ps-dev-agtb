@@ -12,6 +12,7 @@
          * Subnav will be visible for those layouts
          */
         showForLayouts: ["detail", "edit"],
+        showStaticForLayouts: ["search"],
 
         /**
          * Listens to the app:view:change event and show or hide the subnav
@@ -26,6 +27,8 @@
                     self.$el.find('span').each(function() { $(this).empty(); });
                     self.show();
                     self.bindDataChange();
+                } else if ($.inArray(viewName, self.showStaticForLayouts) !== -1) {
+                    self.$el.find('span').each(function() { $(this).empty(); });
                 } else {
                     // If view not in showForLayouts white list, we unbind previously bound change events.
                     // This makes sense, and, further, is required for static subnav view to work properly.
@@ -40,6 +43,32 @@
         render: function() {
             if (!app.api.isAuthenticated()) return;
             app.view.View.prototype.render.call(this);
+            return this;
+        },
+        /**
+         * Provides a way to display static text in subnav. No listeners are attached
+         * to model changes so the subnav title stays "sticky". Used for search results.
+         */
+        renderStatic: function(t) {
+            var self = this, StaticSubnav, ctx, subnav;
+
+            if (!app.api.isAuthenticated()) return;
+            app.view.View.prototype.render.call(self);
+            ctx = { title: t };
+            StaticSubnav = Backbone.View.extend({
+                template: '<div class="btn-toolbar pull-left"><h1>{{title}}</h1></div>',
+                initialize: function() {
+                    this.render();
+                },
+                render: function() {
+                    var tpl = Handlebars.compile(this.template);
+                    this.$el.html(tpl(ctx));
+                }
+            });
+            subnav = new StaticSubnav();
+            this.$el.html(subnav.el);
+            this.$el.show();
+            this.instance = subnav;
             return this;
         },
         hide: function() {
@@ -63,7 +92,6 @@
                 app.controller.context.attributes.model.off("change");
             }
         }
-        
 
     });
 

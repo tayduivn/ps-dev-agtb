@@ -1,4 +1,0 @@
-                    <div class="dataTables_filter">
-                        <label class="hide">Search:</label> <input class="span4" placeholder="Refine list ..."
-                                                                   type="text" aria-controls="DataTables_Table_0">
-                    </div>

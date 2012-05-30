@@ -1,6 +1,11 @@
-(function(app) {
-
-    var _meta = {
+({
+/**
+ * View that displays a model pulled from the activities stream.
+ * @class View.Views.PreviewView
+ * @alias SUGAR.App.view.views.PreviewView
+ * @extends View.View
+ */
+    _meta: {
         "panels": [
             {
                 "label": "Preview",
@@ -53,41 +58,32 @@
                 ]
             }
         ]
-    };
-    /**
-     * View that displays a model pulled from the activities stream.
-     * @class View.Views.PreviewView
-     * @alias SUGAR.App.view.views.PreviewView
-     * @extends View.View
-     */
-    app.view.views.PreviewView = app.view.View.extend({
-        events: {
-            'click .closeSubdetail': 'closePreview'
-        },
-        initialize: function(options) {
-            this.options.meta = _meta;
-            app.view.View.prototype.initialize.call(this, options);
-        },
-        render: function() {
-            // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
-            this.layout.layout.off("search:preview", null, this);
-            this.layout.layout.on("search:preview", this.togglePreview, this);
+    },
+    events: {
+        'click .closeSubdetail': 'closePreview'
+    },
+    initialize: function(options) {
+        this.options.meta = this._meta;
+        app.view.View.prototype.initialize.call(this, options);
+    },
+    render: function() {
+        // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
+        this.layout.layout.off("search:preview", null, this);
+        this.layout.layout.on("search:preview", this.togglePreview, this);
 
-            this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
-            // TODO: This can get removed once Julien's styleguide pull req is in
-            $(this.$el).css("width", "inherit");
-        },
-        togglePreview: function(model) {
-            if(model) {
-                this.model.set(model);
-                app.view.View.prototype.render.call(this);
-            }
-        },
-        closePreview: function() {
-            this.model.clear();
-            this.$el.empty();
-            $("li.search").removeClass("on");
+        this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
+    },
+    togglePreview: function(model) {
+        if(model) {
+            this.model.set(model);
+            app.view.View.prototype.render.call(this);
         }
-    });
+    },
+    closePreview: function() {
+        this.model.clear();
+        this.$el.empty();
+        $("li.search").removeClass("on");
+    }
 
-})(SUGAR.App);
+})
+

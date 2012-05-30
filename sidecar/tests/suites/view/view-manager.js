@@ -120,15 +120,14 @@ describe("View Manager", function() {
             expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit.meta);
         });
 
-        // TODO: Maybe we should remove this test .. it's fragile as it depends on, ahem, 
-        // pre-defined views and will break if that view is removed!
-        it('pre-defined view class', function () {
+        xit('pre-defined view class', function () {
             var view = app.view.createView({
-                name: "edit",
+                name: "list",
                 module: "Contacts",
                 context: context
             });
-            expect(view instanceof app.view.views.EditView).toBeTruthy();
+
+            expect(view instanceof app.view.View).toBeTruthy();
         });
 
         it("custom view class when the view has a custom controller", function () {
