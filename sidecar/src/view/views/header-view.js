@@ -1,5 +1,7 @@
 (function(app) {
 
+    var maxNumSearch = app.config.maxSearchQueryResult;
+
     /**
      * View that displays header for current app
      * @class View.Views.HeaderView
@@ -10,44 +12,7 @@
         events: {
             'click #moduleList li a': 'onModuleTabClicked',
             'click #createList li a': 'onCreateClicked',
-            'click .cube': 'onHomeClicked',
-            'click .navbar-search a': 'onSearchClicked',
-            'keyup .search-query': 'onSearchKeyup',
-        },
-        onSearchKeyup: function(evt) {
-            var keycode = evt.keyCode || evt.which;
-            if(keycode === 13) {
-                evt.preventDefault();
-                this.doSearch();
-            }
-        },
-        onSearchClicked: function(evt) {
-            evt.preventDefault();
-            this.doSearch();
-        },
-        doSearch: function() {
-            var term = $('.search-query').val();
-            // TODO...
-        },
-        onModuleTabClicked: function(evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            var moduleHref = this.$(evt.currentTarget).attr('href');
-            this.$('#moduleList li').removeClass('active');
-            this.$(evt.currentTarget).parent().addClass('active');
-            app.router.navigate(moduleHref, {trigger: true});
-        },
-        onHomeClicked: function(evt) {
-            // Just removes active on modules for now.
-            // TODO: Maybe we should highlight the "cube"?
-            this.$('#moduleList li').removeClass('active');
-        },
-        onCreateClicked: function(evt) {
-            var moduleHref, hashModule;
-            moduleHref = evt.currentTarget.hash;
-            hashModule = moduleHref.split('/')[0];
-            this.$('#moduleList li').removeClass('active');
-            this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+            'click .cube': 'onHomeClicked'
         },
 
         /**
@@ -64,10 +29,56 @@
          * Renders Header view
          */
         render: function() {
+            var self = this, menuTemplate, moduleList;
             if (!app.api.isAuthenticated()) return;
-            this.setModuleInfo();
-            this.setCreateTasksList();
-            app.view.View.prototype.render.call(this);
+
+            self.setModuleInfo();
+            self.setCreateTasksList();
+            app.view.View.prototype.render.call(self);
+
+            // Search ahead drop down menu stuff
+            menuTemplate = app.template.getView('dropdown-menu');
+            this.$('.search-query').searchahead({
+                request:  self.fireSearchRequest,
+                compiler: menuTemplate,
+                buttonElement: '.navbar-search a.btn'
+            });
+
+        },
+        fireSearchRequest: function (term) {
+            // Callback for the searchahead plugin .. note that
+            // 'this' points to the plugin (not the header view!)
+            var plugin = this, markup, commaModuleList;
+            commaModuleList = app.metadata.getDelimitedModuleList(',');
+            
+            app.api.search(term, 'name, _module, id', commaModuleList, maxNumSearch, {
+                success:function(data) {
+                    plugin.provide(data);
+                }
+            });
+        },
+        onModuleTabClicked: function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            var moduleHref = this.$(evt.currentTarget).attr('href');
+            this.$('#moduleList li').removeClass('active');
+            this.$(evt.currentTarget).parent().addClass('active');
+            if (app.additionalComponents.staticSubnav) {
+                app.additionalComponents.staticSubnav.empty();
+            }
+            app.router.navigate(moduleHref, {trigger: true});
+        },
+        onHomeClicked: function(evt) {
+            // Just removes active on modules for now.
+            // TODO: Maybe we should highlight the "cube"?
+            this.$('#moduleList li').removeClass('active');
+        },
+        onCreateClicked: function(evt) {
+            var moduleHref, hashModule;
+            moduleHref = evt.currentTarget.hash;
+            hashModule = moduleHref.split('/')[0];
+            this.$('#moduleList li').removeClass('active');
+            this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
         },
         hide: function() {
             this.$el.hide();

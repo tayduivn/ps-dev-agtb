@@ -14,7 +14,7 @@
                         {{#each ../context.attributes.collection.models}}
                         <tr name="{{module}}_{{attributes.id}}">
                             {{#each ../fields}}
-                            <td>{{field ../../../context ../../../this ../this}}</td>
+                            <td>{{field ../../../this ../this}}</td>
                             {{/each}}
                         </tr>
                         {{/each}}
