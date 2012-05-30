@@ -12,7 +12,8 @@
         events: {
             'click #moduleList li a': 'onModuleTabClicked',
             'click #createList li a': 'onCreateClicked',
-            'click .cube': 'onHomeClicked'
+            'click .cube': 'onHomeClicked',
+            'click .typeahead a': 'clearSearch'
         },
 
         /**
@@ -45,9 +46,12 @@
             });
 
         },
+
+        /** 
+         * Callback for the searchahead plugin .. note that
+         * 'this' points to the plugin (not the header view!)
+         */
         fireSearchRequest: function (term) {
-            // Callback for the searchahead plugin .. note that
-            // 'this' points to the plugin (not the header view!)
             var plugin = this, markup, mlist, params;
             mlist = app.metadata.getDelimitedModuleList(',');
             params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: maxNumSearch};
@@ -57,15 +61,16 @@
                 }
             });
         },
+
+        /**
+         * When user clicks tab navigation in header
+         */
         onModuleTabClicked: function(evt) {
             evt.preventDefault();
             evt.stopPropagation();
             var moduleHref = this.$(evt.currentTarget).attr('href');
             this.$('#moduleList li').removeClass('active');
             this.$(evt.currentTarget).parent().addClass('active');
-            if (app.additionalComponents.staticSubnav) {
-                app.additionalComponents.staticSubnav.empty();
-            }
             app.router.navigate(moduleHref, {trigger: true});
         },
         onHomeClicked: function(evt) {
@@ -86,6 +91,9 @@
         show: function() {
             this.$el.show();
         },
+        /**
+         * Creates the task create drop down list 
+         */
         setCreateTasksList: function() {
             var self = this, singularModules;
             self.createListLabels = [];
@@ -120,6 +128,13 @@
             if (app.config && app.config.displayModules) {
                 this.moduleList = _.intersection(this.moduleList, app.config.displayModules)
             };
+        },
+
+        /**
+         * Clears out search upon user following search result link in menu
+         */
+        clearSearch: function(evt) {
+            this.$('.search-query').val('');
         }
 
     });
