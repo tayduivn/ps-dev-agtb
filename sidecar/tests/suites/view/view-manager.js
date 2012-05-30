@@ -127,7 +127,7 @@ describe("View Manager", function() {
                 context: context
             });
 
-            expect(view instanceof app.view.views.ListView).toBeTruthy();
+            expect(view instanceof app.view.View).toBeTruthy();
         });
 
         it("custom view class when the view has a custom controller", function () {
