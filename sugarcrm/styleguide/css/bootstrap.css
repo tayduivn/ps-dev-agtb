@@ -6009,11 +6009,9 @@ table tfoot td {
   -moz-transition: all .2s linear;
   transition: all .2s linear;
 }
-
-#folded .subdetail {
-	width: inherit;
+#folded > div {
+  width: inherit;
 }
-
 #folded .tab-pane#overview {
   background: #ffffff;
   border-left: none;
@@ -6429,7 +6427,8 @@ table.datatable tr td .actions a:hover {
 .card2 {
   margin: -10px 0 20px;
 }
-.card2 .row-fluid, .card2 span .row-fluid {
+.card2 .row-fluid,
+.card2 span .row-fluid {
   position: relative;
   padding: 10px 0 0;
   border-bottom: 1px solid #e8e8e8;
