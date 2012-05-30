@@ -3,8 +3,8 @@
 <div class="form-horizontal" id="createRecord" style="display:inline;">
     <fieldset>
         <div>
-            <a href="javascript:void(0)" class="btn btn-primary" id="saveRecord">Cancel</a>
-            <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+            <a href="javascript:void(0)" class="btn btn-primary menu-save" id="saveRecord">Save</a>
+            <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Cancel</a>
         </div>
     </fieldset>
 </div>

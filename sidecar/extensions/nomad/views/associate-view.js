@@ -10,7 +10,7 @@
             // This view behaves like the list view
             this.meta = app.metadata.getView(this.module, "list");
             this.fallbackFieldTemplate = "list";
-            
+
             this.parentModule = this.context.get("toModule");
             this.parentId = this.context.get("toId");
             this.link = this.context.get("viaLink");
@@ -24,23 +24,24 @@
             app.logger.debug("Multiselect: " + this.multiselect);
         },
 
-        onSaveClicked: function() {
+        save: function() {
+            var source = this;
 
-            // Loop through all selected items in the list
-            // For each such item do the following:
+            this.$('.selecterd-flag:checked').each(function() {
+                var cid = $(this).closest('article').attr('id').replace(source.module, '');
+                source.saveBean(source.collection.get(cid));
 
-            // Grab them from this.collection
-            //var selectedIndex = 0; //
-            //var selectedBean = this.collection.at(selectedIndex);
-            // Create a related bean from it
-            //selectedBean = app.data.createRelatedBean(this.parentBean, selectedBean, this.link);
-            // Save it
-            //selectedBean.save(null, {
-            //    relate: true,
-            //    success: function() {/* navigate back */}
-            //});
+            });
         },
+        saveBean: function(bean) {
 
+            var relateBean = app.data.createRelatedBean(this.parentBean, bean, this.link);
+            relateBean.save(null, {
+                relate: true,
+                success: function() {
+                }
+            });
+        },
         onCancelClicked: function() {
 
         }

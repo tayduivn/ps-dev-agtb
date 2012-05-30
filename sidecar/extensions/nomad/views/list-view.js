@@ -177,7 +177,6 @@
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
         },
         onClickMenuItem:function(e){
-            e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);
