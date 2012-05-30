@@ -1,5 +1,5 @@
 <div class="row-fluid control-group">
-    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span2">{{getLabel label model.module}}</div>
     <div class="span10">
         <input type="text" name="{{name}}" class="input-xlarge wide tleft" value="{{value}}">
         <p class="help-block"></p>

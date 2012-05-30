@@ -1,0 +1,17 @@
+<div class="control-group">
+    <label class="control-label">{{getLabel label model.module}}</label>
+    {{#nothing}}
+    <div class="controls">
+        {{#eachOptions options}}
+        <input type="radio" name="{{../name}}" value="{{this}}" {{#eq this ../value}}SELECTED{{/eq}}>{{this}}</label>
+        {{/eachOptions}}
+    </div>
+    {{/nothing}}
+    <div class="controls">
+        <div class="btn-group" data-toggle="buttons-radio">
+            {{#eachOptions options}}
+            <button class="btn btn-primary {{#eq this ../value}}active{{/eq}}">{{this}}</button>
+            {{/eachOptions}}
+        </div>
+    </div>
+</div>

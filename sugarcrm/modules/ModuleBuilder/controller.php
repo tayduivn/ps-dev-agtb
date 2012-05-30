@@ -767,11 +767,13 @@ class ModuleBuilderController extends SugarController
 
     function action_saveLayout ()
     {
+        $parserview = $_REQUEST['view'];
         //BEGIN SUGARCRM flav=ent ONLY
         if (isset($_REQUEST['PORTAL']))
         {
             $client = 'portal';
             $this->view = 'portallayoutview' ;
+            $parserview = $client . strtolower($parserview);
         }
         else
         {
@@ -783,7 +785,7 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
 
-        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+        $parser = ParserFactory::getParser ( $parserview,
                                              $_REQUEST['view_module'],
                                              isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
                                              null,
@@ -801,11 +803,13 @@ class ModuleBuilderController extends SugarController
 
     function action_saveAndPublishLayout ()
     {
+        $parserview = $_REQUEST['view'];
         //BEGIN SUGARCRM flav=ent ONLY
         if (isset($_REQUEST['PORTAL']))
         {
             $client = 'portal';
             $this->view = 'portallayoutview' ;
+            $parserview = $client . strtolower($parserview);
         }
         else
         {
@@ -815,7 +819,7 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+        $parser = ParserFactory::getParser ( $parserview,
                                              $_REQUEST['view_module'],
                                              isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
                                              null,

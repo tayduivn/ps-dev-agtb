@@ -6,10 +6,8 @@
      */
     app.view.views.AlertView = app.view.View.extend({
 
-
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
-            this.$el.removeClass("alert");//hot fix styles
         },
         /**
          * Displays an alert message and returns alert instance. 
@@ -39,6 +37,9 @@
             };
             try {
                 AlertView = Backbone.View.extend({
+                    events : {
+                        'click .close' : 'close'
+                    },
                     template: "<div class=\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{/if}}\">" +
                         "<a class=\"close\" data-dismiss=\"alert\" href=\"#\">x</a>{{#if title}}<strong>{{title}}</strong>{{/if}}" +
                         "{{#each messages}}<p>{{this}}</p>{{/each}}</div>",
