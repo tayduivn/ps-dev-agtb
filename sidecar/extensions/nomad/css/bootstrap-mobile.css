@@ -3277,8 +3277,10 @@ h1 {
 #content > div > div {
   display: inline;
 }
+#scroll > .pad > span .control-group,
 #detailListing #listing > ul > li,
-#listing-Accounts .items article {
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 /* activity and twitter */
