@@ -1,5 +1,5 @@
 <div class="row-fluid control-group">
-    <div class="span2">{{getLabel label model.module}}</div>
+    <div class="span2">{{label}}</div>
     <div class="span4">
         <input type="password" name="{{name}}" value="{{value}}" class="input-large">
         <p class="help-block"></p>

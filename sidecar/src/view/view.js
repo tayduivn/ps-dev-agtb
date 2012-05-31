@@ -16,9 +16,6 @@
         initialize: function(options) {
             app.view.Component.prototype.initialize.call(this, options);
 
-            // TODO: Do we need this?
-            //_.bindAll(this);
-
             /**
              * Name of the view (required).
              * @cfg {String}
@@ -62,6 +59,23 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
+
+            var defaultValue = {};
+            defaultValue[this.module] = this.module;
+
+            /**
+             * Singular i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.moduleSingular = app.lang.getAppListStrings("moduleListSingular", defaultValue)[this.module];
+
+            /**
+             * Pluralized i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.modulePlural = app.lang.getAppListStrings("moduleList", defaultValue)[this.module];
 
             this.$el.data("comp", "view_" + this.name);
         },
