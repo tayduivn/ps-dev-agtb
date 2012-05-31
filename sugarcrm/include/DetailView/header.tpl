@@ -67,6 +67,10 @@ SUGAR.util.doWhen(function(){
         {{sugar_button module="$module" id="Audit" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
     {{/if}}
 {{/if}}
+{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
+{{sugar_button module="$module" id="PDFVIEW" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
+{{sugar_button module="$module" id="PDFEMAIL" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
+{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 
 <form action="index.php" method="post" name="DetailView" id="formDetailView">
     <input type="hidden" name="module" value="{$module}">

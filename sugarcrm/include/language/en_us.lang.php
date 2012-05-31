@@ -3364,6 +3364,10 @@ $app_strings = array (
     'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_PDF_VIEW' => 'Download PDF',
+    'LBL_PDF_EMAIL' => 'Email PDF',
+    //END SUGARCRM flav=pro ONLY
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

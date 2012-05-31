@@ -420,7 +420,82 @@ function smarty_function_sugar_button($params, &$smarty)
 				return '';
 
 			//END SUGARCRM flav=pro || flav=sales ONLY
-
+			//BEGIN SUGARCRM flav=pro ONLY
+			case "PDFVIEW":
+                $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView"}';
+                break;
+            case "REALPDFVIEW":
+                $pdfManager = BeanFactory::newBean('PdfManager');
+                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
+                
+                $output = '';
+                if (!empty($pdfManagerList)) {
+                    if(SugarThemeRegistry::current()->name != "Classic") {
+                        $output = '
+                        <li>
+                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />
+                            <ul class="subnav-sub" id="">';
+                            foreach($pdfManagerList as $pdfTemplate){
+                                $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
+                            }
+                        $output .= '    </ul>
+                        </li>';
+                    } else {
+                        $output = '
+                            <script language="javascript">
+                                function display_pdf_list(el) {
+                                    var menu = "';
+                                foreach($pdfManagerList as $pdfTemplate){   
+                                    $output .= '<a style=\"width: 150px\" class=\"menuItem\" onmouseover=\"hiliteItem(this,\'yes\');\" " +
+                                    "onmouseout=\"unhiliteItem(this);\" " +
+                                    "onclick=\"\" href=\'#\'>' . $pdfTemplate->name . '</a>"' ;
+                                }
+                                $output .= '
+                                SUGAR.util.showHelpTips(el,menu);
+                                }
+                            </script>
+                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button" onclick="display_pdf_list(this);" />';               
+                        }
+                    }
+                break;
+            case "PDFEMAIL":
+                $output='{sugar_button module="$module" id="REALPDFEMAIL" view="$view" form_id="formDetailView"}';
+                break;
+            case "REALPDFEMAIL":
+				$pdfManager = BeanFactory::newBean('PdfManager');
+                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
+                
+                $output = '';
+                if (!empty($pdfManagerList)) {
+                    if(SugarThemeRegistry::current()->name != "Classic") {
+                        $output = '
+                        <li>
+                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />
+                            <ul class="subnav-sub" id="">';
+                            foreach($pdfManagerList as $pdfTemplate){
+                                $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
+                            }
+                        $output .= '    </ul>
+                        </li>';
+                    } else {
+                        $output = '
+                            <script language="javascript">
+                                function display_pdf_email_list(el) {
+                                    var menu = "';
+                                foreach($pdfManagerList as $pdfTemplate){   
+                                    $output .= '<a style=\"width: 150px\" class=\"menuItem\" onmouseover=\"hiliteItem(this,\'yes\');\" " +
+                                    "onmouseout=\"unhiliteItem(this);\" " +
+                                    "onclick=\"\" href=\'#\'>' . $pdfTemplate->name . '</a>"' ;
+                                }
+                                $output .= '
+                                SUGAR.util.showHelpTips(el,menu);
+                                }
+                            </script>
+                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button" onclick="display_pdf_email_list(this);" />';                    
+                    }
+                }
+                break;
+				//END SUGARCRM flav=pro ONLY
    	  } //switch
       if(isset($params['appendTo'])) {
           $smarty->append($params['appendTo'], $output);
