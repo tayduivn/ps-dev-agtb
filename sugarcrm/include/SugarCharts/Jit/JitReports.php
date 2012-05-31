@@ -202,7 +202,7 @@ class JitReports extends Jit {
 	 *			string $style	optional additional styles for the div
      * @return	string returns the html code through smarty
      */					
-	function display($name, $xmlFile, $width='320', $height='480', $reportChartDivStyle, $resize=false){
+	function display($name, $xmlFile, $width='320', $height='480', $resize=false){
 		if(empty($name)) {
 			$name = "unsavedReport";	
 		}
