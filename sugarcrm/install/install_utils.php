@@ -1001,19 +1001,6 @@ function handleWebConfig()
                     $xmldoc->endElement();
                 }
                 $xmldoc->endElement();
-                $xmldoc->startElement('outboundRules');
-                    $xmldoc->startElement('rule');
-                        $xmldoc->writeAttribute('name', 'Remove ETag');
-                        $xmldoc->startElement('match');
-                            $xmldoc->writeAttribute('serverVariable', 'RESPONSE_ETag');
-                            $xmldoc->writeAttribute('pattern', '.+');
-                        $xmldoc->endElement();
-                        $xmldoc->startElement('action');
-                            $xmldoc->writeAttribute('type', 'Rewrite');
-                            $xmldoc->writeAttribute('value', '');
-                        $xmldoc->endElement();
-                    $xmldoc->endElement();
-                $xmldoc->endElement();
             $xmldoc->endElement();
             $xmldoc->startElement('caching');
                 $xmldoc->startElement('profiles');

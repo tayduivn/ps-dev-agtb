@@ -615,7 +615,11 @@ class SugarBean
     //BEGIN SUGARCRM flav=pro ONLY
     public function isFavoritesEnabled()
     {
-        return !empty($GLOBALS['dictionary'][$this->getObjectName()]['favorites']);
+    	if(isset($GLOBALS['dictionary'][$this->getObjectName()]['favorites']))
+    	{
+    		return $GLOBALS['dictionary'][$this->getObjectName()]['favorites'];
+    	}
+        return false;
     }
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=following ONLY
