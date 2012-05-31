@@ -3277,7 +3277,10 @@ h1 {
 #content > div > div {
   display: inline;
 }
-#listing-Accounts .items article {
+#scroll > .pad > span .control-group,
+#detailListing #listing > ul > li,
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 /* activity and twitter */
@@ -4221,13 +4224,15 @@ h3.nomad {
 .control-group.error * .icon-exclamation-sign {
   line-height: 26px;
 }
-.control-group.error * small {
-  font-size: smaller;
-}
 .control-group .btn.fright {
   min-width: 20px;
   padding-left: 4px;
   padding-right: 4px;
+}
+.control-group small {
+  clear: both;
+  display: block;
+  font-size: smaller;
 }
 /* Log In
 ----------*/

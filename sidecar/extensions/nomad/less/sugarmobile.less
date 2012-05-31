@@ -80,7 +80,10 @@ h1 {font-size: 26px !important;}
   display:inline;
 }
 
-#listing-Accounts .items article {
+#scroll > .pad > span .control-group,
+#detailListing #listing > ul > li,
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 
@@ -969,9 +972,6 @@ color: @gray;
   .icon-exclamation-sign {
     line-height:26px;
   }
-  small {
-    font-size:smaller;
-  }
 }
 
 .control-group {
@@ -979,6 +979,11 @@ color: @gray;
     min-width: 20px;
     padding-left: 4px;
     padding-right: 4px;
+  }
+  small {
+    clear: both;
+    display: block;
+    font-size:smaller;
   }
 }
 

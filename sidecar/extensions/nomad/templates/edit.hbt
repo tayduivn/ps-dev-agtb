@@ -1,14 +1,15 @@
-<h1 class="nomad">Create {{model.module}}</h1>
+<h1 class="nomad">
+    {{#if context.attributes.create}}Create{{else}}Edit{{/if}}
+    {{model.module}}
+</h1>
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">
         <fieldset class="pad">
-
             {{#meta.panels}}
                 {{#each fields}}
                     {{field     ../../this}}
                 {{/each}}
             {{/meta.panels}}
-
         </fieldset>
     </div>
 </div>
