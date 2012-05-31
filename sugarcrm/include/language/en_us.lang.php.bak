@@ -4193,10 +4193,4 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
-    //BEGIN SUGARCRM flav=pro ONLY
-	$app_list_strings ['pdfmanager_yes_no_list'] = array (
-		'yes' => 'Yes' ,
-		'no' => 'No',
-	);
-    //END SUGARCRM flav=pro ONLY
 ?>

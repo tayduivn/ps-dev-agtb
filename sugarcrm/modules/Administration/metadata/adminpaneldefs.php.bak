@@ -136,10 +136,6 @@ $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LB
 $admin_option_defs['Administration']['sugarpdf']= array('icon_AdminPDF','LBL_SUGARPDF_SETTINGS','LBL_SUGARPDF_SETTINGS_DESC','./index.php?module=Configurator&action=SugarpdfSettings');
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
-$admin_option_defs['Administration']['pdfmanager']= array('icon_PdfManager','LBL_PDFMANAGER_SETTINGS','LBL_PDFMANAGER_SETTINGS_DESC','./index.php?module=PdfManager&action=index');
-//END SUGARCRM flav=pro ONLY
-
 //BEGIN SUGARCRM flav=ent && flav!=dce ONLY
 $admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ViewOfflineClients');
 //END SUGARCRM flav=ent && flav!=dce ONLY

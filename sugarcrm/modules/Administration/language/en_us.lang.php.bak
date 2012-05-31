@@ -1227,6 +1227,7 @@ $mod_strings = array (
     'LBL_FTS_PAGE_DESC' => 'To enable full text searching, select the search engine that will be used and enter the host and port of the search engine. To complete the setup, connect to the engine and perform a full system index.',
     'LBL_FTS_CONNECTION_INVALID' => 'The Full Text Search Settings you have entered are invalid and may slow down system performance.  Please change or clear your settings.',
 //BEGIN SUGARCRM flav=pro ONLY
+	//Pdf Manager
     'LBL_PDFMANAGER_SETTINGS' => 'PDF Manager',
     'LBL_PDFMANAGER_SETTINGS_DESC' => 'Manage templates for generated PDF files',
 //END SUGARCRM flav=pro ONLY
