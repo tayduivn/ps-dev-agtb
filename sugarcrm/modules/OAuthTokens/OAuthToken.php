@@ -131,9 +131,8 @@ class OAuthToken extends SugarBean
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
         if(!empty($ltoken->consumer)) {
-            $ltoken->consumer_obj = BeanFactory::newBean('OAuthKeys');
-            $ltoken->consumer_obj->retrieve_by_string_fields(array('id'=>$ltoken->consumer,'oauth_type'=>$oauth_type));
-            if(empty($ltoken->consumer_obj->id)) {
+            $ltoken->consumer_obj = BeanFactory::getBean('OAuthKeys',$ltoken->consumer);
+            if(empty($ltoken->consumer_obj->id) || $ltoken->consumer_obj->oauth_type != $oauth_type ) {
                 return null;
             }
         }

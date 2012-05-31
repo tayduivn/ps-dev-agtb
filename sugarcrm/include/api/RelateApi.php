@@ -42,9 +42,8 @@ class RelateApi extends ListApi {
     
     public function listRelated($api, $args) {
         // Load up the bean
-        $record = BeanFactory::getBean($args['module']);
-        $record->retrieve($args['record']);
-        if ( ! ACLController::checkAccess($args['module'],'view',$record->isOwner($GLOBALS['current_user']->id)) ) {
+        $record = BeanFactory::getBean($args['module'],$args['record']);
+        if ( ! $record->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
         // Load up the relationship
@@ -55,8 +54,8 @@ class RelateApi extends ListApi {
         }
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
-        if ( ! ACLController::checkAccess($linkSeed->module_dir,'view',false) ) {
+        $linkSeed = BeanFactory::newBean($linkModuleName);
+        if ( ! $linkSeed->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName);
         }
 
