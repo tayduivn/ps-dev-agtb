@@ -421,7 +421,7 @@ function smarty_function_sugar_button($params, &$smarty)
 
 			//END SUGARCRM flav=pro || flav=sales ONLY
 			//BEGIN SUGARCRM flav=pro ONLY
-			case "PDFVIEW":
+            case "PDFVIEW":
                 $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView"}';
                 break;
             case "REALPDFVIEW":
@@ -433,7 +433,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
                         <li>
-                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />
+                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />
                             <ul class="subnav-sub" id="">';
                             foreach($pdfManagerList as $pdfTemplate){
                                 $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
@@ -454,7 +454,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
-                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button" onclick="display_pdf_list(this);" />';               
+                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button" onclick="display_pdf_list(this);" />';               
                         }
                     }
                 break;
@@ -470,7 +470,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
                         <li>
-                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />
+                            <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />
                             <ul class="subnav-sub" id="">';
                             foreach($pdfManagerList as $pdfTemplate){
                                 $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
@@ -491,7 +491,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
-                            <input id="PDFVIEW_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button" onclick="display_pdf_email_list(this);" />';                    
+                            <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button" onclick="display_pdf_email_list(this);" />';                    
                     }
                 }
                 break;
