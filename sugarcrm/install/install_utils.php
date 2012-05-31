@@ -772,6 +772,16 @@ function handleSugarConfig() {
     if(!empty($_SESSION['fts_type']))
         $sugar_config['full_text_engine']               = array($_SESSION['fts_type'] => array('host'=> $_SESSION['fts_host'], 'port' => $_SESSION['fts_port']));
 
+    // for silent install
+    if(!empty($_SESSION['setup_fts_type']))
+    {
+        $sugar_config['full_text_engine']               = array($_SESSION['setup_fts_type'] => array('host'=> $_SESSION['setup_fts_host'], 'port' => $_SESSION['setup_fts_port']));
+        if (isset($_SESSION['setup_fts_hide_config']))
+        {
+            $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
+        }
+    }
+
 	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
 		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
     $sugar_config['logger']	=
