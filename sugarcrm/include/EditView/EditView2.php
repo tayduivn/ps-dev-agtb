@@ -381,11 +381,6 @@ class EditView
         {
             global $current_user;
 
-            if (!empty($this->focus->assigned_user_id))
-            {
-                $this->focus->assigned_user_name = get_assigned_user_name($this->focus->assigned_user_id);
-            }
-
             //BEGIN SUGARCRM flav=pro ONLY
             if (empty($this->focus->team_id)) {
                 $this->focus->team_id = $current_user->default_team;

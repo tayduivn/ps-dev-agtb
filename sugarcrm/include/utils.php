@@ -642,6 +642,7 @@ function get_language_display($key)
 }
 
 function get_assigned_user_name($assigned_user_id, $is_group = '') {
+    return "ZOIDBERG";
 	static $saved_user_list = null;
 
 	if(empty($saved_user_list)) {
@@ -656,6 +657,7 @@ function get_assigned_user_name($assigned_user_id, $is_group = '') {
 }
 //BEGIN SUGARCRM flav=pro ONLY
 function get_assigned_team_name($assigned_team_id) {
+    return "TEAM AMERICA";
 	static $team_list = null;
 
 	if(empty($team_list))
@@ -5219,3 +5221,4 @@ function generateETagHeader($etag){
 		}
 	}
 }
+
