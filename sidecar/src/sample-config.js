@@ -138,9 +138,22 @@
             subnav: {
                 target: '#subnav'
             }
-        }
-
-
+        },
+        /**
+         * Array of modules to display in the nav bar
+         ** <pre><code>
+         *         displayModules: [
+         *            'Bugs',
+         *            'Cases
+         *        ]
+         * </pre></code>
+         * @cfg {Array}
+         */
+        displayModules : [
+            'Bugs',
+            'Cases',
+            'KBDocuments'
+        ]
     }, false);
 
 })(SUGAR.App);
