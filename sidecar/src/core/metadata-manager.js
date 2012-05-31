@@ -74,7 +74,14 @@
             name: "text",
             text: "textarea",
             decimal: "float",
-            currency: "text"
+            currency: "text",
+            // viewdefs use "link" type to denote the fact the field is actually a url instead of using type "url" from vardefs
+            // in the main product there are identical templates for both url and link
+            // note that if someone puts a "real" link field (relationship link) on a view, it'll break the mapping
+            // this should be fixed on the server because "link" type on a view was meant to be something like
+            // a display type, not widget type. In other words, it tells the app to make the url a hyperlink
+            // instead of displaying it as a text string.
+            link: "url"
         },
 
         /**
@@ -98,11 +105,6 @@
                                     field = { name: field };
                                 }
 
-                                // Assign type
-                                field.type = field.type || fieldDef.type;
-                                // Patch type
-                                field.type = self.fieldTypeMap[field.type] || field.type;
-
                                 // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
                                 // TODO: This should be done on the server-side on my opinion
 
@@ -110,6 +112,11 @@
                                     _.extend(field, field.displayParams);
                                     delete field.displayParams;
                                 }
+
+                                // Assign type
+                                field.type = field.type || fieldDef.type;
+                                // Patch type
+                                field.type = self.fieldTypeMap[field.type] || field.type;
 
                                 panel.fields[fieldIndex] = field;
                             }
@@ -341,7 +348,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-
+                    app.error.handleHTTPError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

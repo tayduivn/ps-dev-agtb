@@ -69,7 +69,7 @@
             ":module/layout/:view": "layout",
             ":module/create": "create",
             ":module/:id/:action": "record",
-            ":module/:id": "record",
+            ":module/:id": "record"
         },
 
         /**
