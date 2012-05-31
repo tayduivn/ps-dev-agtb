@@ -442,19 +442,20 @@ function smarty_function_sugar_button($params, &$smarty)
                         </li>';
                     } else {
                         $output = '
-                            <script language="javascript">
+                          <li>
+                            <script type="text/javascript">
                                 function display_pdf_list(el) {
-                                    var menu = "';
+                                    var menu = \'';
                                 foreach($pdfManagerList as $pdfTemplate){   
-                                    $output .= '<a style=\"width: 150px\" class=\"menuItem\" onmouseover=\"hiliteItem(this,\'yes\');\" " +
-                                    "onmouseout=\"unhiliteItem(this);\" " +
-                                    "onclick=\"\" href=\'#\'>' . $pdfTemplate->name . '</a>"' ;
+                                    $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="#">' . $pdfTemplate->name . '</a>' ;
                                 }
-                                $output .= '
+                                $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
-                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button" onclick="display_pdf_list(this);" />';               
+                            <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_VIEW') . '</a>
+                          </li>
+                          ';               
                         }
                     }
                 break;
@@ -479,19 +480,20 @@ function smarty_function_sugar_button($params, &$smarty)
                         </li>';
                     } else {
                         $output = '
+                          <li>                        
                             <script language="javascript">
                                 function display_pdf_email_list(el) {
-                                    var menu = "';
+                                    var menu = \'';
                                 foreach($pdfManagerList as $pdfTemplate){   
-                                    $output .= '<a style=\"width: 150px\" class=\"menuItem\" onmouseover=\"hiliteItem(this,\'yes\');\" " +
-                                    "onmouseout=\"unhiliteItem(this);\" " +
-                                    "onclick=\"\" href=\'#\'>' . $pdfTemplate->name . '</a>"' ;
+                                    $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="#">' . $pdfTemplate->name . '</a>' ;
                                 }
-                                $output .= '
+                                $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
-                            <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button" onclick="display_pdf_email_list(this);" />';                    
+                            <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_EMAIL') . '</a>
+                          </li>
+                          ';                   
                     }
                 }
                 break;
