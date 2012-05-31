@@ -64,12 +64,12 @@
 <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
 
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/bootstrap-tooltip.js"></script>
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/bootstrap-popover.js"></script>
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/bootstrap-dropdown.js"></script>
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/bootstrap-modal.js"></script>
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/bootstrap-alert.js"></script>
-<script src="../sidecar/extensions/portal/lib/twitterbootstrap/bootstrap/js/application.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/bootstrap-tooltip.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/bootstrap-popover.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/bootstrap-dropdown.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/bootstrap-modal.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/bootstrap-alert.js"></script>
+<script src="../sidecar/extensions/portal/lib/twitterbootstrap/js/application.js"></script>
 
 <script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
 <script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>

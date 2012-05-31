@@ -30,20 +30,115 @@ class ForecastModuleApi extends ModuleApi {
     {
         $parentApi = parent::registerApiRest();
         //Extend with test method
-        $parentApi['test'] = array(
-            'reqType' => 'GET',
-            'path' => array('forecast','test'),
-            'pathVars' => array('',''),
-            'method' => 'test',
-            'shortHelp' => 'A test',
-            'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#test',
+        $parentApi= array (
+            'test' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','test'),
+                'pathVars' => array('',''),
+                'method' => 'test',
+                'shortHelp' => 'A test',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#test',
+            ),
+            'filters' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','filters'),
+                'pathVars' => array('',''),
+                'method' => 'filters',
+                'shortHelp' => 'forecast filters',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#filters',
+            ),
+            'chartOptions' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','chartOptions'),
+                'pathVars' => array('',''),
+                'method' => 'chartOptions',
+                'shortHelp' => 'forecasting chart options',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#chartOptions',
+            ),
+            'teams' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','teams'),
+                'pathVars' => array('',''),
+                'method' => 'ping',
+                'shortHelp' => 'A ping',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#ping',
+            ),
+            'worksheet' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','filters'),
+                'pathVars' => array('',''),
+                'method' => 'ping',
+                'shortHelp' => 'A ping',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#ping',
+            ),
         );
         return $parentApi;
     }
 
+    public function ping($api, $args) {
+        // Just a normal ping request
+        return "I'm a duck.";
+    }
+
     public function test($api, $args) {
         // Just a normal ping request
-        return 'Hello World';
+        return array(
+            array(
+                'to' => 'joo',
+                'message'=>'you are awesome!',
+            ),
+            array(
+                'to' => 'gabe',
+                'message'=>'no, you are awesome!'
+            ),
+        );
+    }
+
+    public function filters($api, $args) {
+        // placeholder for filters
+        // todo: really make this work
+        return array(
+            'timeperiods' => array(
+                'tp0' => 'timeperiod 0',
+                'tp1' => 'timeperiod 1',
+                'tp2' => 'timeperiod 2',
+                'tp3' => 'timeperiod 3',
+            ),
+            'stages' => array(
+                's0' => 'closed',
+                's1' => 'proposed',
+                's2' => 'quoted',
+                's3' => 'qualified',
+            ),
+            'probabilities' => array(
+                'p0' => '25%',
+                'p1' => '50%',
+                'p2' => '75%',
+                'p3' => '100%',
+            ),
+        );
+    }
+
+    public function chartOptions($api, $args) {
+        // placeholder for filters
+        // todo: really make this work
+        return array(
+            'x' => array(
+                'x0' => 'Team Members',
+                'x1' => 'Account',
+                'x2' => 'Channel',
+                'x3' => 'Line Items',
+                'x4' => 'Month',
+            ),
+            'y' => array(
+                'y0' => 'Revenue',
+                'y1' => 'Number of Units',
+            ),
+            'groupBy' => array(
+                'y0' => 'Sales Stage',
+                'y1' => 'Revenue Type',
+            ),
+        );
     }
 
 }
