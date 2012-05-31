@@ -130,6 +130,7 @@ $dictionary['PdfManager'] = array(
     'studio' => false,
     'rows' => '4',
     'cols' => '20',
+    'dependency' => 'not(equal($base_module, "Reports"))',
   ),
   'header_image' => 
   array (
@@ -155,6 +156,7 @@ $dictionary['PdfManager'] = array(
     'border' => '',
     'width' => '120',
     'height' => '',
+    'dependency' => 'equal($base_module, "Reports")',    
   ),
   'author' => 
   array (
