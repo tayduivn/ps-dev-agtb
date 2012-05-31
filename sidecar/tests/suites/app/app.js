@@ -107,14 +107,15 @@ describe("App", function() {
         var model = new Backbone.Model(),
             action = "edit",
             options = {},
-            context = {},
+            context = SugarTest.app.context.getContext(),
             routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        SugarTest.app.navigate(context, action, model, options);
+        context.set("model", model);
+        SugarTest.app.navigate(context, model, action, options);
 
-        expect(routerSpy).toHaveBeenCalled();
+        expect(routerSpy).toHaveBeenCalledWith("Contacts/1234/edit");
 
         routerSpy.restore();
     });
