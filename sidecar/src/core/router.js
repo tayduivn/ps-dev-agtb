@@ -64,7 +64,6 @@
         routes: {
             "": "index",
             "logout": "logout",
-            "search/:query": "search",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -260,21 +259,6 @@
                 modelId: id,
                 action: action,
                 layout: action
-            });
-        },
-
-        /**
-         * Handles `search` route. This will only be used when user clicks 'Show all search results'.
-         * @param query Search term entered.
-         */
-        search: function(query) {
-            app.logger.debug("Route changed: " + 'search' + "/" + query);
-            app.logger.debug("Query alone: " + query);
-            app.controller.loadView({
-                module: "Search",
-                layout: "search",
-                query: query,
-                action: 'searchall'
             });
         }
     });
