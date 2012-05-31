@@ -84,13 +84,6 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
                     'sorting' => true,
                     'width' =>  17
                 ),
-                4 =>
-                array(
-                    'type' => 'actionslink',
-                    'label' => '',
-                    'width' => 9,
-                    'sorting' => false
-                ),
             ),
         ),
     ),

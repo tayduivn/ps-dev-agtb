@@ -24,6 +24,10 @@
             app.events.on("app:sync:complete", function() {
                 app.router.start();
             });
+
+            app.events.on("app:login:success", function() {
+                app.sync();
+            });
         },
 
         /**

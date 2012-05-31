@@ -67,7 +67,6 @@ describe("App", function() {
 
             SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
             SugarTest.app.on("app:sync:complete", cbSpy);
-
             SugarTest.app.sync();
             SugarTest.wait();
 
@@ -76,13 +75,12 @@ describe("App", function() {
             });
         });
 
-        it('should start and call sync if authenticated', function() {
-            var syncSpy = sinon.spy(SUGAR.App, 'sync');
-            
-            SugarTest.app.start();
-            expect(syncSpy.called).toBeTruthy();
+        it('should call sync after login', function() {
+            var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
 
-            SUGAR.App.sync.restore();
+            SugarTest.app.trigger("app:login:success");
+            expect(cbSpy).toHaveBeenCalled();
+            SugarTest.app.sync.restore();
         });
 
         it("should fire a sync:error event when one of the sync jobs have failed", function() {

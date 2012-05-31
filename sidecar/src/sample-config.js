@@ -61,7 +61,13 @@
         * # of fields to display on the detail view
         * @cfg {Number}
         */
-        fieldsToDisplay: 5,        
+        fieldsToDisplay: 5,
+
+        /**
+         * A list of routes that don't require authentication (in addition to `login`).
+         * @cfg {Array}
+         */
+        unsecureRoutes: ["signup"],
 
         /**
          * Platform name.
@@ -82,6 +88,8 @@
         metadataTypes: [],
         
         /**
+         * The field and direction to order by.
+         *
          * For list views, the default ordering. 
          * <pre><code>
          *         orderByDefaults: {
@@ -92,7 +100,7 @@
          *        }
          * </pre></code>
          * 
-         * @cfg {Object} The field and direction to order by
+         * @cfg {Object}
          */
         orderByDefaults: {
             'Cases': {
@@ -118,7 +126,7 @@
          *            }
          *        }
          * </pre></code>
-         * @cfg {Array}
+         * @cfg {Object}
          */
         additionalComponents: {
             header: {
@@ -130,9 +138,22 @@
             subnav: {
                 target: '#subnav'
             }
-        }
-
-
+        },
+        /**
+         * Array of modules to display in the nav bar
+         ** <pre><code>
+         *         displayModules: [
+         *            'Bugs',
+         *            'Cases
+         *        ]
+         * </pre></code>
+         * @cfg {Array}
+         */
+        displayModules : [
+            'Bugs',
+            'Cases',
+            'KBDocuments'
+        ]
     }, false);
 
 })(SUGAR.App);
