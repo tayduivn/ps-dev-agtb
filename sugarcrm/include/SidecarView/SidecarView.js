@@ -70,7 +70,7 @@
         },
         'sugarFields': {
             "text": {
-                "views": {
+                "templates": {
                     "detailView": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                     "editView": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                             "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -89,7 +89,7 @@
                     "}}"
             },
             "password": {
-                "views": {
+                "templates": {
                     "editView":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                             "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
                             "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
@@ -101,7 +101,7 @@
                 }
             },
             "button": {
-                "views": {
+                "templates": {
                     "default":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                             "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
                             "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"

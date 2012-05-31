@@ -23,6 +23,9 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         6 => array(
             'view' => 'grid',
+            'context' => array(
+                'module' => 'Opportunities'
+            )
         )
     )
 );
