@@ -65,7 +65,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
     $timedate = TimeDate::getInstance();
 
     //BEGIN SUGARCRM flav=ent ONLY
-    $opportunityLine = new OpportunityLine();
+    $product = new Product();
     //END SUGARCRM flav=ent ONLY
 
     while($records-- > 0)
@@ -116,32 +116,32 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         {
             //Get a random product_line_data entry
             $key = array_rand($products);
-            $product = $products[$key];
+            $prod = $products[$key];
 
             //Get a random user entry
             $key = array_rand($users);
             $user = $users[$key];
 
-            $opportunityLine->id = null;
-            $opportunityLine->product_id = $product->id;
-            $opportunityLine->opportunity_id = $opp->id;
-            $opportunityLine->best_case = $opp->amount;
-            $opportunityLine->likely_case = $opp->amount * .85;
-            $opportunityLine->worst_case = $opp->amount * .7;
-            $opportunityLine->created_by = $opp->assigned_user_id;
-            $opportunityLine->modified_user_id = $opp->assigned_user_id;
-            $opportunityLine->date_entered = $timedate->asDb($timedate->getNow());
-            $opportunityLine->date_modified = $opportunityLine->date_entered;
-            $opportunityLine->description = $product->name;
-            $opportunityLine->expert_id = $user['id'];
-            $opportunityLine->save();
+            $product->id = null;
+            $product->product_id = $prod->id;
+            $product->opportunity_id = $opp->id;
+            $product->best_case = $opp->amount;
+            $product->likely_case = $opp->amount * .85;
+            $product->worst_case = $opp->amount * .7;
+            $product->created_by = $opp->assigned_user_id;
+            $product->modified_user_id = $opp->assigned_user_id;
+            $product->date_entered = $timedate->asDb($timedate->getNow());
+            $product->date_modified = $prod->date_entered;
+            $product->description = $prod->name;
+            $product->expert_id = $user['id'];
+            $product->save();
         }
         //END SUGARCRM flav=ent ONLY
 
-        $opportunity_ids[] = $opp->id;
+        $product_ids[] = $product->id;
     }
 
-    return $opportunity_ids;
+    return $product_ids;
 }
 
 }

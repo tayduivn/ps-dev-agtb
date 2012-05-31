@@ -32,7 +32,6 @@ $config['blackList']['com'] = array(
 'sugarcrm/modules/KBDocuments'=>1,
 'sugarcrm/modules/KBTags'=>1,
 'sugarcrm/modules/Manufacturers'=>1,
-'sugarcrm/modules/OpportunityLines'=>1,
 'sugarcrm/modules/ProductBundleNotes'=>1,
 'sugarcrm/modules/ProductBundles'=>1,
 'sugarcrm/modules/ProductCategories'=>1,

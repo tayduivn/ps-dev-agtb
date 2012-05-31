@@ -97,7 +97,6 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/DCEInstances'=>1,
 'sugarcrm/modules/DCEReports'=>1,
 'sugarcrm/modules/DCETemplates'=>1,
-'sugarcrm/modules/OpportunityLines'=>1,
 'sugarcrm/modules/Charts/Dashlets/DCEActionsByTypesDashlet'=>1,
 
 'sugarcrm/themes/default/images/dce_settings.gif'=>1,
