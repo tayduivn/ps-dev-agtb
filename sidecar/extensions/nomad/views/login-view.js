@@ -50,9 +50,9 @@
             }
         },
         
-        render: function() {
+        _render: function() {
             this.model.set("url", "http://", { silent: true });
-            app.view.View.prototype.render.call(this, arguments);
+            app.view.View.prototype._render.call(this, arguments);
 
             if (!app.isNative) {
                 this.getField("url").remove();

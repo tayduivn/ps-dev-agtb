@@ -9,13 +9,13 @@
             app.view.View.prototype.initialize.call(this, options);
             this.backupModel();
         },
-        _render: function () {
+        _renderSelf: function () {
             _.each(this.meta.panels, function (panel, panelIndex) {
                 _.each(panel.fields, function (field, fieldIndex) {
                     if (field.name.indexOf("email") == 0) field.type = "email_temp";
                 });
             });
-            app.view.View.prototype._render.call(this);
+            app.view.View.prototype._renderSelf.call(this);
         },
         saveRecord: function () {
             app.alert.show('save_process', {level: 'general', messages: 'Saving...', autoClose: true});
