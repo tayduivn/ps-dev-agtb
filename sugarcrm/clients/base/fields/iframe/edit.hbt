@@ -1,5 +1,5 @@
 <div class="row-fluid control-group">
-    <div class="span2">{{getLabel label model.module}}</div>
+    <div class="span2">{{label}}</div>
     <div class="span10">
         <input type="text" name="{{name}}" value="{{#if value}}{{value}}{{else}}http://{{/if}}"
                class="input-xlarge wide tleft">

@@ -1,5 +1,5 @@
 <div class="row-fluid control-group">
-    <div class="span2">{{getLabel label model.module}}</div>
+    <div class="span2">{{label}}</div>
     <div class="span4">
         <select name="{{name}}" class="relateEdit" {{#if multi}} multiple {{/if}}>
             <option value="{{this.value}}" selected>{{this.value}}</option>
