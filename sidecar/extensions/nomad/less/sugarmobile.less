@@ -947,7 +947,7 @@ color: @gray;
   float:left;
 }
 #createRecord.form-horizontal .controls {
-  margin-left: 26%;
+  margin-left: 27%;
 }
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
@@ -967,10 +967,17 @@ color: @gray;
   width: 32px;
 }
 
-.control-group.error * {
-  color:red !important;
+.control-group.error {
+  * {
+    color:red !important;
+  }
   .icon-exclamation-sign {
     line-height:26px;
+  }
+  small {
+    display:block;
+    clear:both;
+    font-size:smaller;
   }
 }
 
@@ -980,12 +987,8 @@ color: @gray;
     padding-left: 4px;
     padding-right: 4px;
   }
-  small {
-    clear: both;
-    display: block;
-    font-size:smaller;
-  }
 }
+
 
 /* Log In
 ----------*/

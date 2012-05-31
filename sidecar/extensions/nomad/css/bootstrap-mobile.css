@@ -4199,7 +4199,7 @@ h3.nomad {
   float: left;
 }
 #createRecord.form-horizontal .controls {
-  margin-left: 26%;
+  margin-left: 27%;
 }
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
@@ -4221,18 +4221,18 @@ h3.nomad {
 .control-group.error * {
   color: red !important;
 }
-.control-group.error * .icon-exclamation-sign {
+.control-group.error .icon-exclamation-sign {
   line-height: 26px;
+}
+.control-group.error small {
+  display: block;
+  clear: both;
+  font-size: smaller;
 }
 .control-group .btn.fright {
   min-width: 20px;
   padding-left: 4px;
   padding-right: 4px;
-}
-.control-group small {
-  clear: both;
-  display: block;
-  font-size: smaller;
 }
 /* Log In
 ----------*/
