@@ -298,7 +298,7 @@ SUGAR.App = (function() {
         /**
          * Navigates to a new route.
          * @method
-         * @param {Core.Context} context(optional) Context object to extract the module from. Context
+         * @param {Core.Context} context(optional) Context object to extract the module from.
          * must be proper context object and, at minimum, have a get method.
          * @param {Data.Bean} model(optional) Model object to route with.
          * @param {String} action(optional) Action name.
