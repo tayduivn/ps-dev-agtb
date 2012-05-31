@@ -38,10 +38,11 @@ class OAuthKey extends Basic
 	/**
 	 * Get record by consumer key
 	 * @param string $key
+     * @param string $oauth_type Either "oauth1" or "oauth2", defaults to "oauth1"
 	 */
-	public function getByKey($key)
+	public function getByKey($key,$oauth_type="oauth1")
 	{
-	    $this->retrieve_by_string_fields(array("c_key" => $key));
+	    $this->retrieve_by_string_fields(array("c_key" => $key,"oauth_type"=>$oauth_type));
 	    if(empty($this->id)) return false;
 	    // need this to decrypt the key
         $this->check_date_relationships_load();
@@ -51,14 +52,15 @@ class OAuthKey extends Basic
 	/**
 	 * Fetch customer key by id
 	 * @param string $key
+     * @param string $oauth_type Either "oauth1" or "oauth2", defaults to "oauth1"
 	 */
-	public static function fetchKey($key)
+	public static function fetchKey($key,$oauth_type="oauth1")
 	{
-	    if(isset(self::$keys_cache[$key])) {
+	    if(isset(self::$keys_cache[$key])&&self::$keys_cache[$key]->oauth_type==$oauth_type) {
 	        return self::$keys_cache[$key];
 	    }
 	    $k = new self();
-	    if($k->getByKey($key)) {
+	    if($k->getByKey($key,$oauth_type)) {
 	        self::$keys_cache[$key] = $k;
 	        return $k;
 	    }

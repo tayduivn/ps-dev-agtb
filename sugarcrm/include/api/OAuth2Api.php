@@ -50,11 +50,7 @@ class OAuth2Api extends SugarApi {
     public function token($api, $args) {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
 
-        try {
-            $oauth2Server->grantAccessToken($args);
-        } catch (Exception $e) {
-            throw new SugarApiExceptionInvalidLogin($e->getMessage());
-        }
+        $oauth2Server->grantAccessToken($args);
         
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         return '';

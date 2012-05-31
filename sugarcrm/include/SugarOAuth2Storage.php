@@ -79,7 +79,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         
         if ($portalApiUser != null) {
             $this->portalApiUser = $portalApiUser;
-            return $this->$portalApiUser;
+            return $this->portalApiUser;
         } else {
             return null;
         }
@@ -141,35 +141,34 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             $clientBean = $this->oauthKeyRecord;
         } else {
             $clientSeed = BeanFactory::newBean('OAuthKeys');
-            
-            $clientBean = $clientSeed->retrieve_by_string_fields(array(
-                                                                     'c_key'=>$client_id,
-                                                                     'oauth_type'=>'oauth2'));
+            $clientBean = $clientSeed->fetchKey($client_id,'oauth2');
+
             $this->oauthKeyRecord = $clientBean;
         }
 
         // Auto-create beans for the built-in clients, if they don't already exist
         if ( $clientBean == null ) {
-            $clientBean = BeanFactory::newBean('OAuthKeys');
-            $clientBean->oauth_type = 'oauth2';
-            $clientBean->c_secret = '';
+            $newKey = BeanFactory::newBean('OAuthKeys');
+            $newKey->oauth_type = 'oauth2';
+            $newKey->c_secret = '';
             if ( $client_id == 'sugar' ) {
-                $clientBean->client_type = 'user';
-                $clientBean->c_key = 'sugar';
-                $clientBean->name = 'Standard OAuth Username & Password Key';
-                $clientBean->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable username and password logins';
+                $newKey->client_type = 'user';
+                $newKey->c_key = 'sugar';
+                $newKey->name = 'Standard OAuth Username & Password Key';
+                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable username and password logins';
             } else if ( $client_id == 'support_portal' ) {
-                $clientBean->client_type = 'support_portal';
-                $clientBean->c_key = 'support_portal';
-                $clientBean->name = 'OAuth Support Portal Key';
-                $clientBean->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
+                $newKey->client_type = 'support_portal';
+                $newKey->c_key = 'support_portal';
+                $newKey->name = 'OAuth Support Portal Key';
+                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
             }
             
-            if ( !empty($clientBean->client_type) ) {
-                $clientBean->save();
+            if ( !empty($newKey->client_type) ) {
+                $newKey->save();
+                $clientBean = $newKey;
+                $this->oauthKeyRecord = $clientBean;
             }
             
-            $this->oauthKeyRecord = $clientBean;
         }
 
         if ( $clientBean != null ) {
@@ -469,11 +468,11 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getRefreshToken($refresh_token)
     {
-        $token = BeanFactory::getBean('OAuthTokens',$refresh_token);
-        $key = BeanFactory::getBean('OAuthKeys',$token->consumer);
+        $tokenSeed = BeanFactory::newBean('OAuthTokens');
+        $token = $tokenSeed->load($refresh_token,'oauth2');
 
-        if ( $key->client_type == 'support_portal' ) {
-            $portalApiUser = $this->findPortalApiUser($key->c_key);
+        if ( $token->consumer_obj->client_type == 'support_portal' ) {
+            $portalApiUser = $this->findPortalApiUser($token->consumer_obj->c_key);
             if ( $portalApiUser == null ) {
                 return false;
             }
@@ -495,13 +494,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             }
         }
 
-        if ( $token === FALSE || $key === FALSE || $authBean === null ) {
+        if ( $token === FALSE || $token->consumer_obj === FALSE || $authBean === null ) {
             return null;
         } else {
             return array(
                 'refresh_token'=>$token->id,
-                'client_id'=>$key->c_key,
-                'expires'=>$token->token_ts,
+                'client_id'=>$token->consumer_obj->c_key,
+                'expires'=>$token->expire_ts,
             );
         }
     }
@@ -549,7 +548,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         $token->consumer = $keyInfo['record_id'];
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
-        $token->token_ts = $expires;
+        $token->expire_ts = $expires;
         
         $token->save();
         

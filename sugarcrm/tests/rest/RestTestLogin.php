@@ -167,6 +167,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         );
         
         $reply2 = $this->_restCall('oauth2/token',json_encode($args));
+        // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
         $this->assertNotEmpty($reply2['reply']['access_token']);
         $this->assertNotEmpty($reply2['reply']['refresh_token']);
         $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
@@ -210,6 +211,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
+        // if ( empty($reply['reply']['access_token']) ) { print_r($reply); }
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
@@ -227,6 +229,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         );
         
         $reply2 = $this->_restCall('oauth2/token',json_encode($args));
+        // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
         $this->assertNotEmpty($reply2['reply']['access_token']);
         $this->assertNotEmpty($reply2['reply']['refresh_token']);
         $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
