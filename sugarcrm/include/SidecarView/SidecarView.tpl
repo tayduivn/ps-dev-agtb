@@ -40,21 +40,19 @@
 <script src='../sidecar/src/view/view.js'></script>
 <script src='../sidecar/src/view/field.js'></script>
 <script src='../sidecar/src/view/layout.js'></script>
-<script src='../sidecar/src/view/views/list-view.js'></script>
-<script src='../sidecar/src/view/views/detail-view.js'></script>
-<script src='../sidecar/src/view/views/activity-view.js'></script>
+
 <script src='../sidecar/src/view/views/header-view.js'></script>
 <script src='../sidecar/src/view/views/test-view.js'></script>
 <script src='../sidecar/src/view/views/alert-view.js'></script>
 <script src='../sidecar/src/view/layouts/columns-layout.js'></script>
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
-<script src='clients/base/layouts/forecasts-layout/forecasts-layout.js'></script>
-<script src='clients/base/views/grid/grid-view.js'></script>
-<script src='clients/base/views/tree/tree-view.js'></script>
-<script src='clients/base/views/filter/filter-view.js'></script>
-<script src='clients/base/views/progress/progress-view.js'></script>
-<script src='clients/base/views/chart/chart-view.js'></script>
+<script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
+<script src='clients/base/views/grid/grid.js'></script>
+<script src='clients/base/views/tree/tree.js'></script>
+<script src='clients/base/views/filter/filter.js'></script>
+<script src='clients/base/views/progress/progress.js'></script>
+<script src='clients/base/views/chart/chart.js'></script>
 
 <script src='include/SidecarView/SidecarView.js'></script>
 

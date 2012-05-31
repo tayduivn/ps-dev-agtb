@@ -10,9 +10,9 @@
             app.view.View.prototype.initialize.call(this, options);
         },
         /**
-         * Displays an alert message and returns alert instance. 
+         * Displays an alert message and returns alert instance.
          * @param {Object} options
-         * @return {Backbone.View} Alert instance 
+         * @return {Backbone.View} Alert instance
          * @method
          */
         show: function(options) {

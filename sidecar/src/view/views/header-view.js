@@ -91,6 +91,10 @@
             this.createListLabels = [];
             this.currentModule = this.context.get('module');
             this.moduleList = _.toArray(app.metadata.getModuleList());
+
+            if (app.config && app.config.displayModules) {
+                this.moduleList = _.intersection(this.moduleList, app.config.displayModules)
+            };
         }
 
     });
