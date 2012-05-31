@@ -229,14 +229,7 @@
          */
         getDelimitedModuleList: function(delimiter) {
             if(!delimiter) return null;
-
-            var delimitedModuleList = '', 
-                mlist = this.getModuleList();
-
-            _.each(mlist, function(m) {
-                delimitedModuleList += m + delimiter;
-            });
-            return delimitedModuleList.slice(0, delimitedModuleList.length-1);//remove last comma
+            return _.toArray(this.getModuleList()).join(delimiter);
         },
 
         /**

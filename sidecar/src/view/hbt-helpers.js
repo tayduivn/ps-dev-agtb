@@ -227,7 +227,7 @@
      * @return {String} The singular name as string for the given module.
      */
     Handlebars.registerHelper("getSingularModuleName", function(module, lowerCased){
-        var singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular"),
+        var singularModules = app.lang.getAppListStrings("moduleListSingular"),
             singular = '';
         if(singularModules && singularModules[module]) {
             singular = (singularModules[module]) ? singularModules[module] : '';
