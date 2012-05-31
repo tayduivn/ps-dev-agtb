@@ -306,7 +306,7 @@ SUGAR.App = (function() {
          */
         navigate: function(context, model, action, params) {
             var route, id, module;
-            context = (context && context.get) ? context : _app.controller.context;
+            context = context || _app.controller.context;
             model = model || context.get("model");
             id = model.id;
             module = context.get("module") || model.module;
