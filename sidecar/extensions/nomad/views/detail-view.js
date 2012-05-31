@@ -22,7 +22,7 @@
          * Overrides default views method to pass custom data object as the context.
          * @protected
          */
-        _render: function () {
+        _renderSelf: function () {
             //iterate over all fields and get the needed ones
             var view = this;
             var headerField, image, fields = [], phones = [];
