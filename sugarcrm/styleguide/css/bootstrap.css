@@ -2756,6 +2756,7 @@ input[type="submit"].btn.btn-mini {
   width: 100%;
   z-index: 1060;
   text-align: center;
+  display: none;
 }
 .alert-top .alert {
   text-align: left;
