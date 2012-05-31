@@ -9,11 +9,9 @@
                 app.nomad.callPhone(this.getPhones());
             },
             "click #record-action .message": function () {
-                debugger;
                 app.nomad.sendEmail(this.getEmails());
             },
             "click #record-action .comment": function () {
-                debugger;
                 app.nomad.sendSms(this.getPhones());
             }
         },
@@ -26,10 +24,6 @@
          */
         _render: function () {
             //iterate over all fields and get the needed ones
-            //TODO: if it can be the case, when there is no 'name' field,
-            //we need to iterate firstly to try to find 'name' field,
-            //if it not exists - get first non-image and non-link field as header
-            //and only after that get other four fields to output
             var view = this;
             var headerField, image, fields = [], phones = [];
             _.each(this.meta.panels, function (panel, panelIndex) {

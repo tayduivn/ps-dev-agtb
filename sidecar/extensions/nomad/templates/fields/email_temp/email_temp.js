@@ -1,6 +1,6 @@
 (function(app) {
 
-    app.view.fields.EmailField = app.view.Field.extend({
+    app.view.fields.Email_tempField = app.view.Field.extend({
         events: {
             "click .btn": function () {
                 app.nomad.sendEmail([this.value]);
