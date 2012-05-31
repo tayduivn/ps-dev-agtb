@@ -55,9 +55,7 @@
             });
 
             //find link fields
-            var linkFields = _.filter(this.model.fields, function (field, key) {
-                if (field.type == 'link') return true;
-            });
+            var linkFields = this.getLinks();
 
             //save founded fields
             this.headerField = headerField;
@@ -69,6 +67,43 @@
             this.phoneFields = phones;
             this.urlFields = urls;
 
+        },
+
+        getLinks: function () {
+            var view = this,
+                modules = app.metadata.getModuleList(),
+                fields = this.model.fields,
+                relationships = this.model.relationships;
+
+            //find link fields
+            var linkFields = _.filter(fields, function (field, key) {
+                if (field.type == 'link') {
+
+                    //check "relationship" property of the field definition
+                    //it should be present in model.relationships collection (hash)
+                    var result = false;
+                    var rel = field.relationship;
+
+                    _.each(relationships, function (relDef, relKey) {
+                        if (relKey == rel) {
+                            console.log('---field module: ' + field.module);
+
+                            //if relationship is present, check fields definition:
+                            //field.module value must be present in the collection
+                            //returned by app.metadata.getModuleList()
+                            _.each(modules, function (module, moduleKey) {
+                                if (module == relDef.lhs_module || module == relDef.rhs_module) {
+                                    //do final check: app.data.canHaveMany(model.module, fieldName) must return true
+                                    if (app.data.canHaveMany(view.model.module, field.name)) result = true;
+                                }
+                            });
+                        }
+                    });
+                    if (result) return true;
+
+                }
+            });
+            return linkFields;
         },
 
         /**
@@ -103,7 +138,7 @@
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
                 if (value) data.push({
-                    name: field.name,
+                    name: field.label,
                     value: value
                 });
             });
@@ -120,7 +155,7 @@
             var value, data = {};
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
-                if (value) data[field.name] = value;
+                if (value) data[field.label] = value;
             });
             return data;
         },
