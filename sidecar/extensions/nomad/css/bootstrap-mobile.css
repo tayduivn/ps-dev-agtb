@@ -3277,6 +3277,7 @@ h1 {
 #content > div > div {
   display: inline;
 }
+#detailListing #listing > ul > li,
 #listing-Accounts .items article {
   -webkit-transform: translatez(0);
 }
