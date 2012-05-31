@@ -24,6 +24,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'Zend/Oauth/Provider.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 
+/**
+ * OAuth token
+ */
 class OAuthToken extends SugarBean
 {
 	public $module_dir = 'OAuthTokens';
@@ -70,6 +73,7 @@ class OAuthToken extends SugarBean
 	/**
 	 * Associate the token with the consumer key
 	 * @param OAuthKey $consumer
+	 * @return OAuthToken
 	 */
 	public function setConsumer($consumer)
 	{
@@ -81,6 +85,7 @@ class OAuthToken extends SugarBean
 	/**
 	 * Set callback URL for request token
 	 * @param string $url
+	 * @return OAuthToken
 	 */
     public function setCallbackURL($url)
     {
@@ -130,8 +135,7 @@ class OAuthToken extends SugarBean
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
         if(!empty($ltoken->consumer)) {
-            $ltoken->consumer_obj = new OAuthKey();
-            $ltoken->consumer_obj->retrieve($ltoken->consumer);
+            $ltoken->consumer_obj = BeanFactory::getBean("OAuthKeys", $ltoken->consumer);
             if(empty($ltoken->consumer_obj->id)) {
                 return null;
             }

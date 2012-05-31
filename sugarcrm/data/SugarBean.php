@@ -5457,16 +5457,16 @@ function save_relationship_changes($is_update, $exclude=array())
     *
     * @return STRING
     */
-    function getOwnerField()
+    function getOwnerField($returnFieldName = false)
     {
         if (isset($this->field_defs['assigned_user_id']))
         {
-            return $this->assigned_user_id;
+            return $returnFieldName? 'assigned_user_id': $this->assigned_user_id;
         }
 
         if (isset($this->field_defs['created_by']))
         {
-            return $this->created_by;
+            return $returnFieldName? 'created_by': $this->created_by;
         }
 
         return '';
