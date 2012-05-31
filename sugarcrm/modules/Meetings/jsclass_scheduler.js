@@ -131,6 +131,7 @@ SugarWidgetSchedulerSearch.prototype.init = function() {
 	this.form_id = 'scheduler_search';
 	GLOBAL_REGISTRY['widget_element_map'] = new Object();
 	GLOBAL_REGISTRY['widget_element_map'][this.form_id] = this;
+    GLOBAL_REGISTRY.scheduler_search_obj = this;
 }
 
 SugarWidgetSchedulerSearch.prototype.load = function(parentNode) {
@@ -269,6 +270,13 @@ SugarWidgetSchedulerSearch.hideCreateForm = function(module){
 	document.forms['createInviteeForm'].reset();
 }
 
+SugarWidgetSchedulerSearch.resetSearchForm = function() {
+    if(GLOBAL_REGISTRY.scheduler_search_obj && document.forms[GLOBAL_REGISTRY.scheduler_search_obj.form_id]) {
+        //if search form is initiated, it clears the input fields.
+        document.forms[GLOBAL_REGISTRY.scheduler_search_obj.form_id].reset();
+    }
+}
+
 SugarWidgetSchedulerSearch.createInvitee = function(form){
 	if(!(check_form('createInviteeForm'))){
 		return false;
@@ -296,7 +304,10 @@ SugarWidgetSchedulerSearch.createInvitee = function(form){
 
 			GLOBAL_REGISTRY.focus.users_arr[GLOBAL_REGISTRY.focus.users_arr.length] = rObj;
 			GLOBAL_REGISTRY.scheduler_attendees_obj.display();
+
 			SugarWidgetSchedulerSearch.hideCreateForm();
+            //Bug#51357: Reset the search input fields after invitee is added.
+            SugarWidgetSchedulerSearch.resetSearchForm();
 
 			document.getElementById('create-invitee-btn').removeAttribute('disabled');
 			document.getElementById('cancel-create-invitee-btn').removeAttribute('disabled');
@@ -483,6 +494,8 @@ SugarWidgetSchedulerAttendees.prototype.init = function() {
 
 		curdate = new Date(curdate.getFullYear(),curdate.getMonth(),curdate.getDate(),curdate.getHours(),curdate.getMinutes()+minute_interval);
 	}
+    //Bug#51357: Reset the search input fields after attandee popup is initiated.
+    SugarWidgetSchedulerSearch.resetSearchForm();
 }
 
 SugarWidgetSchedulerAttendees.prototype.load = function (parentNode) {

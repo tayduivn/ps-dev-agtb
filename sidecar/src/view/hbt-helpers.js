@@ -78,7 +78,7 @@
 
     /**
      * @method eachOptions
-     * @param {Core.Context} context
+     * @param {String} context options key
      * @param {Function} block
      * @return {String}
      */
@@ -104,6 +104,7 @@
     });
 
     /**
+     * Builds a route.
      * @method buildRoute
      * @param {Core.Context} context
      * @param {Data.Bean} model
@@ -114,8 +115,7 @@
     Handlebars.registerHelper('buildRoute', function(context, model, action, params) {
         model = model || context.get("model");
 
-        var id = model.id,
-            route;
+        var id = model.id;
 
         params = params || {};
 
@@ -123,8 +123,7 @@
             id = '';
         }
 
-        route = app.router.buildRoute(context.get("module"), id, action, params);
-        return new Handlebars.SafeString(route);
+        return new Handlebars.SafeString(app.router.buildRoute(context.get("module"), id, action, params));
     });
 
     /**
@@ -141,10 +140,11 @@
 
 
     /**
-     * @method contains
-     * @param val
-     * @param {Object/Array} array
-     * @return {String} block Block inside the condition=
+     * Executes a given block if a given array has a value.
+     * @method has
+     * @param {String/Object} val value
+     * @param {Object/Array} array or hash object
+     * @return {String} Result of the `block` execution if the `array` contains `val` or the result of the inverse block.
      */
     Handlebars.registerHelper('has', function(val, array, block) {
         if (!block) return "";
@@ -155,48 +155,35 @@
             array = [array];
         }
 
-        if (_.find(array, function(item) {
-            return item === val;
-        })) {
-            return block(this);
-        }
-
-        return block.inverse(this);
+        return _.include(array, val) ? block(this) : block.inverse(this);
     });
 
     /**
+     * Executes a given block if a given values are equal.
      * @method eq
      * @param val1
      * @param val2
-     * @return {String} block Block inside the condition
+     * @return {String} Result of the `block` execution if the given values are equal or the result of the inverse block.
      */
     Handlebars.registerHelper('eq', function(val1, val2, block) {
         if (!block) return "";
-
-        if (val1 == val2) {
-            return block(this);
-        }
-
-        return block.inverse(this);
+        return val1 == val2 ? block(this) : block.inverse(this);
     });
 
     /**
-     * @method notEq // inverse of eq
+     * Opposite of `eq` helper.
+     * @method notEq
      * @param val1
      * @param val2
-     * @return {String} block Block inside the condition
+     * @return {String} Result of the `block` execution if the given values are not equal or the result of the inverse block.
      */
     Handlebars.registerHelper('notEq', function(val1, val2, block) {
         if (!block) return "";
-
-        if (val1 != val2) {
-            return block(this);
-        }
-
-        return block.inverse(this);
+        return val1 != val2 ? block(this) : block.inverse(this);
     });
 
     /**
+     * Logs a value.
      * @method log
      * @param value
      */
@@ -216,8 +203,9 @@
      * @param {String} module(optional) Module name.
      * @return {String} The string for the given label key.
      */
-    Handlebars.registerHelper("getLabel", function(key, module){
-       return app.lang.get(key, module);
+    Handlebars.registerHelper("getLabel", function(key, module) {
+        module = _.isString(module) ? module : null;
+        return app.lang.get(key, module);
     });
 
 })(SUGAR.App);

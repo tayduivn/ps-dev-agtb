@@ -20,20 +20,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Cases']['portal']['view']['detail'] = array(
-    'buttons' =>
-    array(
-        array(
-            'name' => 'edit_button',
-            'type' => 'button',
-            'label' => 'Edit',
-            'value' => 'edit',
-            'route' =>
-            array(
-                'action' => 'edit',
-            ),
-            'primary' => true,
-        ),
-    ),
     'templateMeta' => array('maxColumns' => '2',
         'widths' => array(
             array('label' => '10', 'field' => '30'),

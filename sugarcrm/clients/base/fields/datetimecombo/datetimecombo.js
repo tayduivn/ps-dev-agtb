@@ -69,9 +69,11 @@
             {key: "pm", value: "pm"}
         ]
     },
-    bindDomChange: function(model, fieldName) {
-        var self = this
+    bindDomChange: function() {
+        var self = this;
         var date = this.$el.find('input');
+        var model = this.model;
+        var fieldName = this.name;
 
         var hour = this.$el.find('.date_time_hours');
         var minute = this.$el.find('.date_time_minutes');

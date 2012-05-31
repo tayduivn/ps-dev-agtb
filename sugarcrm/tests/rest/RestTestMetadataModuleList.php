@@ -43,15 +43,37 @@ class RestTestMetadataModuleList extends RestTestBase {
         $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads, Notes
-        $enabledPortal = array('Bugs','Cases','KBDocuments','Leads','Notes');
+        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
+        $enabledPortal = array('Cases','Leads');
         $restModules = $restReply['reply']['moduleList'];
+
+        unset($restModules['_hash']);
+        foreach ( $enabledPortal as $module ) {
+            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
+        }
+        $this->assertEquals(4,count($restModules),'There are extra modules in the portal module list');
+        // add module
+        require_once('modules/MySettings/TabController.php');
+        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
+        $tabs = new TabController();
+        $tabs->set_system_tabs($newModuleList);
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
+
+        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no portal module list');
+        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
+        $enabledPortal = array('Cases','Leads', 'Bugs');
+        $restModules = $restReply['reply']['moduleList'];
+
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
         }
         $this->assertEquals(5,count($restModules),'There are extra modules in the portal module list');
-        
+
+        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
+        $tabs = new TabController();
+        $tabs->set_system_tabs($newModuleList);
+
         // Now add an extra file and make sure it gets picked up
         if (is_dir($dir = dirname($this->oppTestPath)) === false) {
             sugar_mkdir($dir, null, true);

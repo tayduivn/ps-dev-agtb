@@ -1,1 +1,1 @@
-<input type="text" tabindex="3" id="url" placeholder="https://">
+<input type="url" tabindex="3" id="url" value="{{value}}">

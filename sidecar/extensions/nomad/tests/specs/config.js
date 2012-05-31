@@ -1,7 +1,7 @@
 describe("Mobile Application configuration", function() {
 
     it("should have all properties defined", function() {
-        var config = SUGAR.App.config;
+        var config = SugarTest.app.config;
 
         expect(config.appId).toEqual("nomad");
         expect(config.env).toBeDefined();

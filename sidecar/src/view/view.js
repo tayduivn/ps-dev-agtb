@@ -31,12 +31,11 @@
              * @member {View.View}
              */
             this.id = options.id || this.getID();
-
             /**
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = app.template.getView(this.name, this.module) ||
+            this.template = options.template || app.template.getView(this.name, this.module) ||
                             app.template.getView(this.name);
 
             /**
@@ -68,16 +67,39 @@
         },
 
         /**
+         * Sets template option.
+         *
+         * If the given option already exists it is augmented by the value of the given `option` parameter.
+         * See Handlebars.js documentation for details.
+         * @param {String} key Option key.
+         * @param {Object} option Option value.
+         */
+        setTemplateOption: function(key, option) {
+            this.options = this.options || {};
+            this.options.templateOptions = this.options.templateOptions || {};
+            this.options.templateOptions[key] = _.extend({}, this.options.templateOptions[key], option);
+        },
+
+        /**
          * Renders a view for the given context.
          *
          * This method uses this view's {@link View.View#template} property to render itself.
          * @param ctx Template context.
+         * @param options(optional) Template options.
+         * <pre><code>
+         * {
+         *    helpers: helpers,
+         *    partials: partials,
+         *    data: data
+         * }
+         * </code></pre>
+         * See Handlebars.js documentation for details.
          * @protected
          */
-        _renderWithContext: function(ctx) {
+        _renderWithContext: function(ctx, options) {
             if (this.template) {
                 try {
-                    this.$el.html(this.template(ctx));
+                    this.$el.html(this.template(ctx, options));
                     // See the following resources
                     // https://github.com/documentcloud/backbone/issues/310
                     // http://tbranyen.com/post/missing-jquery-events-while-rendering
@@ -93,7 +115,8 @@
         /**
          * Renders the view onto the page.
          *
-         * This method uses this view as the context for the view's Handlebars {@link View.View#template}.
+         * This method uses this view as the context for the view's Handlebars {@link View.View#template}
+         * and view's `options.templateOptions` property as template options.
          * You can override this method if you have custom rendering logic and don't use Handlebars templating
          * or if you need to pass different context object for the template.
          *
@@ -121,7 +144,7 @@
          * @protected
          */
         _render: function() {
-            this._renderWithContext(this);
+            this._renderWithContext(this, this.options.templateOptions);
         },
 
         /**
@@ -147,6 +170,7 @@
          * @return {Object} Reference to this view.
          */
         render: function() {
+            if (this.disposed === true) throw new Error("Unable to render view because it's disposed: " + this);
             if (app.acl.hasAccess(this.name, this.module)) {
                 this._render();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
@@ -218,11 +242,37 @@
         },
 
         /**
+         * Returns a field by name.
+         * @param {String} name Field name.
+         * @return {View.Field} Instance of the field widget.
+         */
+        getField: function(name) {
+            return _.find(this.fields, function(field) {
+                return field.name == name;
+            });
+        },
+
+        /**
          * Returns the html id of this view's el. Will create one if one doesn't exist.
          * @return {String} id of this view.
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+        /**
+         * Disposes a view.
+         *
+         * This method disposes view fields and calls
+         * {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            _.each(this.fields, function(field) {
+                field.dispose();
+            });
+            this.fields = {};
+            app.view.Component.prototype._dispose.call(this);
         },
 
         /**

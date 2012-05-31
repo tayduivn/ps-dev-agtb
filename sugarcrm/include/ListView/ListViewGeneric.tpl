@@ -44,6 +44,11 @@
         $('.selectActionsDisabled').children().each(function(index) {
             $(this).attr('onclick','').unbind('click');
         });
+        
+        var selectedTopValue = $("#selectCountTop").attr("value");
+        if(typeof(selectedTopValue) != "undefined" && selectedTopValue != "0"){
+        	sugarListView.prototype.toggleSelected();
+        }
 	});
 {/literal}	
 </script>

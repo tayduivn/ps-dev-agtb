@@ -125,10 +125,6 @@ padding-right:0;
 padding-left:0;
 }
 
-#detailListing {
-  height:auto;
-}
-
 #detailListing #listing {
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
@@ -137,7 +133,7 @@ padding-left:0;
 
 #detailListing #listing > i {
   display:inline-block;
-  height:210px;
+  height:205px;
 }
 
 #detailListing ul.actions {
@@ -146,7 +142,7 @@ padding-left:0;
   li {
     list-style: none;
     padding:0 0 0 10px;
-    line-height:42px;
+    line-height:41px;
     border-top: 1px solid darken(@grayLighter, 5%);
     min-height: 42px;
     .more {
@@ -469,16 +465,20 @@ html {
 
 
 #scroll {
+  /*
   margin: 5px 0 10px;
-  height: 80%;
+  */
+  height: 100%;
   position: absolute;
   left: 0;
-  top: 46px;
+  top: 0px;
   width: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling:touch;
-  padding-bottom: 146px;
   display: block;
+  .pad {
+    padding-top:49px;
+  }
 }
 
 .listing {
@@ -647,6 +647,21 @@ overflow:visible;
   z-index: 2002;
 }
 
+.blankspacer {
+  width:50px;
+  height:46px;
+  top: 0px;
+  position: absolute;
+  z-index: 2002;
+  #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+  &.right {
+    right: 0px;
+  }
+  &.left {
+    left: 0px;
+  }
+}
+
 .navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
@@ -659,14 +674,13 @@ overflow:visible;
   position: absolute;
   top: 0;
   right: 0;
-  height: 34px;
+  height: 32px;
   width: 44px;
   @shadow: inset 1px 0 0 lighten(@black, 20%), -1px 0 0 @black;
   .box-shadow(@shadow);
   text-align: center;
-  padding-top: 10px;
+  padding-top: 14px;
 }
-
 
 #detailListing .listing {
 /*
@@ -919,7 +933,7 @@ color: @gray;
   font-size: 12px;
   }
 }
-#createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
+#createRecord input:not([type=checkbox]), #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
   width: 75% !important;
   padding: 0;
   height: 26px;
