@@ -47,9 +47,17 @@ describe('template', function() {
 
     it('should load multiple templates in a single call', function() {
         var data = {
-            viewTemplates: {
-                hello: "Hello {{name}}!",
-                foo: "Bar"
+            sugarViews: {
+                hello: {
+                    templates: {
+                        hello: "Hello {{name}}!"
+                    }
+                },
+                foo: {
+                    templates: {
+                        foo: "Bar"
+                    }
+                }
             }
         };
         app.template.set(data);

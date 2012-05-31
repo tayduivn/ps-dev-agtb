@@ -17,6 +17,7 @@
         initialize: function (options) {
             // Mobile shows only the first two fields
             options.meta.panels[0].fields.length = 2;
+
             // Default list item partial
             options.templateOptions = {
                 partials: {
@@ -31,9 +32,6 @@
             app.view.View.prototype.render.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
-        },
-        setPartialsTemplates:function(templates){
-            this.options.templateOptions["partials"] = _.extend({}, this.options.templateOptions["partials"], templates);
         },
         search: function (text) {
             this.collection.fetch();
@@ -179,7 +177,6 @@
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
         },
         onClickMenuItem:function(e){
-            e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);

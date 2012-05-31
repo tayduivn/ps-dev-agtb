@@ -350,38 +350,61 @@ class MetaDataManager {
      */
     public function getSugarFields()
     {
+        return $this->getSugarClientFiles('field');
+    }
+
+    /**
+     * Gets client views
+     *
+     * @return array
+     */
+    public function getSugarViews()
+    {
+        return $this->getSugarClientFiles('view');
+    }
+
+    /**
+     * Gets client files of type $type (view, layout, field)
+     *
+     * @param string $type The type of files to get
+     * @return array
+     */
+    public function getSugarClientFiles($type)
+    {
         $result = array();
+
+        $typePath = $type . 's';
 
         //Each platform can have it's own set of sugar fields
         foreach ( $this->platforms as $platform ) {
-            $baseFieldDirectory = "clients/{$platform}/fields/";
-            $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
-            if ( is_dir('custom/'.$baseFieldDirectory) ) {
-                $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
+            $baseFileDirectory = "clients/$platform/$typePath/";
+            $builtinSugarFiles = glob($baseFileDirectory."*",GLOB_ONLYDIR);
+            if ( is_dir('custom/'.$baseFileDirectory) ) {
+                $customSugarFiles = glob('custom/'.$baseFileDirectory."*",GLOB_ONLYDIR);
             } else {
-                $customSugarFields = array();
+                $customSugarFiles = array();
             }
-            $allSugarFieldDirs = $builtinSugarFields+$customSugarFields;
-            $allSugarFields = array();
-            foreach ( $allSugarFieldDirs as $fieldDir ) {
+            $allSugarFileDirs = $builtinSugarFiles+$customSugarFiles;
+            $allSugarFiles = array();
+            foreach ( $allSugarFileDirs as $fileDir ) {
                 // To prevent doing the work twice, let's sort this out by basename
-                $field = basename($fieldDir);
-                $allSugarFields[$field] = $field;
+                $dirname = basename($fileDir);
+                $allSugarFiles[$dirname] = $dirname;
             }
         }
 
 
 
-        foreach ( $allSugarFields as $fieldName) {
-            $fieldData = array('views' => array());
+        foreach ( $allSugarFiles as $dirname) {
+            $fileData = array('views' => array());
             // Check each platform in order of precendence to find the "best" controller
             foreach ( $this->platforms as $platform ) {
-                $controller = "clients/{$platform}/fields/{$fieldName}/{$fieldName}.js";
+                $controller = "clients/$platform/$typePath/$dirname/$dirname.js";
                 if ( file_exists('custom/'.$controller) ) {
                     $controller = 'custom/'.$controller;
                 }
                 if ( file_exists($controller) ) {
-                    $fieldData['controller'] = file_get_contents($controller);
+                    $fileData['controller'] = file_get_contents($controller);
                     // We found a controller, let's get out of here!
                     break;
                 }
@@ -391,11 +414,11 @@ class MetaDataManager {
             $backwardsPlatforms = array_reverse($this->platforms);
             $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "clients/{$platform}/fields/{$fieldName}/";
+                $templateDirs[] = "clients/$platform/$typePath/$dirname/";
             }
-            $fieldData['views'] = $this->fetchTemplates($templateDirs);
-            
-            $result[$fieldName] = $fieldData;
+            $fileData['templates'] = $this->fetchTemplates($templateDirs);
+
+            $result[$dirname] = $fileData;
         }
 
         $result['_hash'] = md5(serialize($result));
@@ -413,21 +436,22 @@ class MetaDataManager {
         $templates = array();
 
         foreach ( $searchDirs as $searchDir ) {
+            $searchDir = rtrim($searchDir, '/') . '/'; // Clean up ending path separators
             if ( is_dir($searchDir) ) {
-                $stdTemplates = glob($searchDir."/*".$extension);
+                $stdTemplates = glob($searchDir."*".$extension);
                 if ( is_array($stdTemplates) ) {
                     foreach ( $stdTemplates as $templateFile ) {
-                        $templateName = substr(basename($templateFile),0,-strlen($extension));
+                        $templateName = basename($templateFile, $extension);
                         $templates[$templateName] = file_get_contents($templateFile);
                     }
                 }                    
             }
             // Do the custom directory last so it will override anything in the core product
             if ( is_dir('custom/'.$searchDir) ) {
-                $cstmTemplates = glob('custom/'.$searchDir."/*".$extension);
+                $cstmTemplates = glob('custom/'.$searchDir."*".$extension);
                 if ( is_array($cstmTemplates) ) {
                     foreach ( $cstmTemplates as $templateFile ) {
-                        $templateName = substr(basename($templateFile),0,-strlen($extension));
+                        $templateName = basename($templateFile, $extension);
                         $templates[$templateName] = file_get_contents($templateFile);
                     }
                 }

@@ -1,9 +1,51 @@
 (function(app) {
 
     /**
-     * Base class for layouts.
+     * The Layout Object is a definition of views and their placement on a certain 'page'.
      *
      * Use {@link View.ViewManager} to create instances of layouts.
+     *
+     * ###A Quick Guide for Creating a Layout Definition###
+     *
+     * Creating Layouts is easy, all it takes is adding the appropriate metadata file. Let's create a
+     * layout called **`SampleLayout`**.
+     *
+     * ####The Layout File and Directory Structure####
+     * Layouts are located in the **`modules/MODULE/metadata/layouts`** folder. Add a file
+     * called **`SampleLayout.php`** in the folder and it should be picked up in the next
+     * metadata sync call.
+     *
+     * ####The Metadata####
+     * <pre><code>
+     * $viewdefs['MODULE']['PLATFORM (portal / mobile / base)']['layout']['samplelayout'] = array(
+     *     'type' => 'columns',
+     *     'components' => array(
+     *         0 => array(
+     *             'layout' => array(
+     *             'type' => 'column',
+     *             'components' => array(
+     *                 array(
+     *                     'view' => 'list',
+     *                 ),
+     *                 array(
+     *                     'view' => 'list',
+     *                     'context' => array(
+     *                         'module' => 'Leads',
+     *                     ),
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     * ),
+     * );
+     * </code></pre>
+     *
+     * As you can see we are defining a column style layout with two subcomponents: A normal list view
+     * of the MODULE, and also a list view of Leads.
+     *
+     * ####Accessing the New Layout####
+     * The last step is to add a route in the Router to display the new layout. // TODO: Custom routes?
+     *
      *
      * @class View.Layout
      * @alias SUGAR.App.view.Layout
