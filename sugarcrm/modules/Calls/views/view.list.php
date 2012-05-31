@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,40 +21,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// $Id: SugarWidgetSubPanelCloseButton.php 40493 2008-10-13 21:10:05Z jmertic $
-
-
-//TODO Rename this to close button field
-class SugarWidgetSubPanelCloseButton extends SugarWidgetField
+class CallsViewList extends ViewList
 {
-	function displayList(&$layout_def)
-	{
-		global $app_strings;
-        global $subpanel_item_count;
-		$return_module = $_REQUEST['module'];
-		$return_id = $_REQUEST['record'];
-		$module_name = $layout_def['module'];
-		$record_id = $layout_def['fields']['ID'];
-        $unique_id = $layout_def['subpanel_id']."_close_".$subpanel_item_count; //bug 51512
+    public function listViewProcess()
+    {
+        $this->processSearchForm();
+        $this->lv->searchColumns = $this->searchForm->searchColumns;
 
-		// calls and meetings are held.
-		$new_status = 'Held';
-		
-		switch($module_name)
-		{
-			case 'Tasks':
-				$new_status = 'Completed';
-				break;
-		}
-        
-		if ($layout_def['EditView']) {
-		    $html = "<a id=\"$unique_id\" onclick='SUGAR.util.closeActivityPanel.show(\"$module_name\",\"$record_id\",\"$new_status\",\"subpanel\",\"{$layout_def['subpanel_id']}\");' >".$app_strings['LNK_CLOSE']."</a>";
-		    return $html;
-		} else {
-		    return '';
-		}
-
-	}
+        if (!$this->headers) {
+            return;
+        }
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->ss->assign("SEARCH",true);
+            // add recurring_source field to filter to be able acl check to use it on row level
+            $this->lv->mergeDisplayColumns = true;
+            $filterFields = array('recurring_source' => 1);
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params, 0, -1, $filterFields);
+            $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            echo $this->lv->display();
+        }
+    }
 }
-
-?>
