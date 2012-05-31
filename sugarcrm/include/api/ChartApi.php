@@ -41,8 +41,16 @@ class ChartApi extends SugarApi
                 'pathVars' => array('module', '', 'chart_type'),
                 'method' => 'chartData',
                 'shortHelp' => 'Return Chart Data for a given module',
-                'longHelp' => 'include/api/help/getChartModule.html',
+                'longHelp' => 'include/api/help/getModuleChart.html',
             ),
+            'savedreport' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'chart', '?', '?'),
+                'pathVars' => array('module', '', 'chart_type', 'id'),
+                'method' => 'chartData',
+                'shortHelp' => 'Return Chart Data for a given module',
+                'longHelp' => 'include/api/help/getModuleChart.html',
+            )
         );
     }
 
@@ -72,6 +80,11 @@ class ChartApi extends SugarApi
         $app_list_strings = return_app_list_strings_language('en_us');
         require_once("include/SugarCharts/ReportBuilder.php");
         $ReportBuilder = new ReportBuilder($args['module']);
+
+        if(isset($args['id'])) {
+            // try and load a new id
+            $ReportBuilder->loadSavedReport($args['id']);
+        }
 
         // handle any group by's
         if (isset($args['group_by'])) {
