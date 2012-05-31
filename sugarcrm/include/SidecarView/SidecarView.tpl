@@ -52,6 +52,7 @@
 <script src='clients/base/layouts/forecasts-layout/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid-view.js'></script>
 <script src='clients/base/views/tree/tree-view.js'></script>
+<script src='clients/base/views/filter/filter-model.js'></script>
 <script src='clients/base/views/filter/filter-view.js'></script>
 <script src='clients/base/views/progress/progress-view.js'></script>
 <script src='clients/base/views/chart/chart-view.js'></script>
