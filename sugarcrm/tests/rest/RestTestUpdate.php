@@ -103,7 +103,7 @@ class RestTestUpdate extends RestTestBase
 
         $this->assertEquals("UNIT TEST - AFTER",
                             $contact2->name,
-                            "Did not set the account name.");
+                            "Did not set the contact name.");
 
         $this->assertEquals($restReply['reply']['name'],
                             $contact2->name,
