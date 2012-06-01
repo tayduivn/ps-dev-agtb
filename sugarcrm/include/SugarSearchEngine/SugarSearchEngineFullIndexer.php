@@ -327,6 +327,12 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $queuTableName = self::QUEUE_TABLE;
         $bean = BeanFactory::getBean($module, null);
         $selectFields = array('id','team_id','team_set_id');
+        $ownerField = $bean->getOwnerField(true);
+        if (!empty($ownerField))
+        {
+            $selectFields[] = $ownerField;
+        }
+
         foreach($fieldDefinitions as $key => $value)
         {
             if(isset($value['name']))
