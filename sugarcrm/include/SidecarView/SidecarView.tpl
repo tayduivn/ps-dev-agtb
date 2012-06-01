@@ -132,7 +132,7 @@
     var syncResult, view, layout, html;
     var App = SUGAR.App.init({
         el: "#core",
-        contentEl: ".content",
+        contentEl: ".content"
     });
 
 
