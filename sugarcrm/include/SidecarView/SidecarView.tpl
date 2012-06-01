@@ -50,6 +50,7 @@
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
+<script src='clients/base/models/filter/filter.js'></script>
 <script src='clients/base/views/filter/filter.js'></script>
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
