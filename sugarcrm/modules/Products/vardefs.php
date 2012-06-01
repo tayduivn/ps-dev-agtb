@@ -84,6 +84,15 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'reportable'=>false,
     'comment' => 'If product created via Quote, this is quote ID'
   ),
+  'opportunity_id' =>
+  array (
+    'name' => 'opportunity_id',
+    'type' => 'id',
+    'vname' => 'LBL_OPPORTUNITY_ID',
+    'required'=>false,
+    'reportable'=>false,
+    'comment' => 'If product created via Opportunity, this is quote ID'
+  ),
   'currency_symbol' =>
 	array (
 		'name' => 'currency_symbol',
@@ -445,9 +454,43 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
       'name' => 'quotes',
       'type' => 'link',
       'relationship' => 'quote_products',
-      'vname' => 'LBL_QUOTES',
+      'vname' => 'LBL_QUOTE',
       'source'=>'non-db',
     ),
+  'opportunities' =>
+  array (
+      'name' => 'opportunities',
+      'type' => 'link',
+      'relationship' => 'products_opportunities',
+      'vname' => 'LBL_OPPORTUNITY',
+      'source'=>'non-db',
+    ),
+//BEGIN SUGARCRM flav=ent ONLY
+    'best_case' =>
+    array (
+        'name' => 'best_case',
+        'vname' => 'LBL_BEST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+    'likely_case' =>
+    array (
+        'name' => 'likely_case',
+        'vname' => 'LBL_LIKELY_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+    'worst_case' =>
+    array (
+        'name' => 'worst_case',
+        'vname' => 'LBL_WORST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+//END SUGARCRM flav=ent ONLY
   'related_products' =>
   array (
   	'name' => 'related_products',

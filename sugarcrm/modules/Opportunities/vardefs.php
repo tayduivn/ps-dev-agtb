@@ -140,7 +140,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   	'options' => 'numeric_range_search_dom',
     'enable_range_search' => true,
     'calculated' => true,
-    'formula' => 'rollupSum($opportunity_lines, "total_price")',
+    'formula' => 'rollupSum($products, "list_price")',
   ),
   'amount_usdollar' =>
   array (
@@ -445,12 +445,12 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   ),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
-  'opportunity_lines' =>
+  'products' =>
    array(
-        'name' => 'opportunity_lines',
+        'name' => 'products',
         'type' => 'link',
-        'vname' => 'LBL_OPPORTUNITY_LINES',
-        'relationship' => 'opportunity_lines_opportunities',
+        'vname' => 'LBL_PRODUCTS',
+        'relationship' => 'products_opportunities',
         'source' => 'non-db',
    ),
 //END SUGARCRM flav=ent ONLY
@@ -531,9 +531,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    //END SUGARCRM flav=pro ONLY
 
    //BEGIN SUGARCRM flav=ent ONLY
-   'opportunity_lines' =>
+   'products_opportunities' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
-   'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'opportunity_id',
+   'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav=ent ONLY
 )

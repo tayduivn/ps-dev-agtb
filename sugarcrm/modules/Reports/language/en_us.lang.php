@@ -239,7 +239,6 @@ $mod_strings = array (
 
   //BEGIN SUGARCRM flav=pro ONLY
   'LBL_PUBLISHED_FORECAST_REPORTS' => 'Published Forecast Reports',
-  'LBL_PUBLISHED_OPPORTUNITY_LINE_REPORTS' => 'Published Opportunity Line Reports',
   'LBL_PUBLISHED_QUOTA_REPORTS' => 'Published Quota Reports',
   //END SUGARCRM flav=pro ONLY
 
