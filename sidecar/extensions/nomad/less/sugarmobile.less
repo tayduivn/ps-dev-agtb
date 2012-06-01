@@ -782,19 +782,46 @@ text-shadow: 0 -1px 0 @black;
   margin-right:16px;
 }
 
-.bizcard h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: @white;
-  margin: 0;
-  padding: 0;
-  line-height: 20px;
-}
-.bizcard img {
-  float:left;
-}
-
-.bizcard .fade {
+.bizcard {
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: @white;
+    margin: 0;
+    padding: 0;
+    line-height: 20px;
+  }
+  img {
+    float:left;
+  }
+  .card {
+    margin: 0 16px;
+    line-height: 1.2em;
+    height: 80px;
+    max-height: 80px;
+    padding-bottom: 70px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    h3 {
+      font-size:1.75em;
+      line-height:22px;
+      span > span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right:10px;
+      }
+    }
+    label {
+      color: #999;
+      line-height: 1;
+      margin-bottom: 0;
+    }
+    .value {
+      display: block;
+    }
+  }
+  .fade {
     #gradient > .vertical( @transparent, @black);
     background-color:transparent !important; /*override lesscss logic for non compliant browsers*/
     display: inline-block;
@@ -802,59 +829,29 @@ text-shadow: 0 -1px 0 @black;
     width: 100%;
     margin-left: -16px;
     position: absolute;
-    bottom: 53px;
+    bottom: 52px;
     left: 0;
-}
-
-.bizcard .card {
-  margin: 0 0 0 16px;
-  line-height:1.2em;
-  height: 132px;
-  max-height: 132px;
-  padding-bottom:20px;
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-  h3 {
-    font-size:1.75em;
-    line-height:22px;
-    span > span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right:10px;
-    }
   }
-  label {
-    color: #999;
-    line-height: 1;
-    margin-bottom: 0;
+  .more {
+    position:absolute;
+    top:50px;
+    right:10px;
+    color:lighten(@black,40%);
   }
-  .value {
-    display: block;
+  #accountDescription{
+     margin: 10px 0 0;
+  }  
+  #record-action {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
+     height: 52px;
+    @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
+    .box-shadow(@shadow);  
   }
-}
-
-.bizcard .more {
-  float:right;
-  padding-top:35px;
-  padding-right:10px;
-  color:lighten(@black,40%);
-}
-
-.bizcard #accountDescription{
-  margin: 10px 0 0;
-}
-
-#record-action {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
-   height: 52px;
-  @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
-  .box-shadow(@shadow);  
 }
 
 .tabs article {
