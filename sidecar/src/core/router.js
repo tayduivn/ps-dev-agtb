@@ -162,6 +162,42 @@
             return route;
         },
 
+        /**
+         * Builds a route.
+         *
+         * This is a convenience function.
+         *
+         * @param {Object/String} moduleOrContext The name of the module or a context object to extract the module from.
+         * @param {String} id The model's ID.
+         * @param {String} link Link name.
+         * @param {String} action(optional) Action name.
+         * @return {String} route The built route.
+         */
+        buildLinkRoute: function(moduleOrContext, id, link, action) {
+            var route;
+
+            if (moduleOrContext) {
+                // If module is a context object, then extract module from it
+                route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
+
+                if (id) {
+                    route += "/" + id;
+                }
+
+                if (link) {
+                    route += "/link/" + link;
+                }
+
+                if (action) {
+                    route += "/" + action;
+                }
+            } else {
+                route = action;
+            }
+
+            return route;
+        },
+
         // ----------------------------------------------------
         // Route handlers
         // ----------------------------------------------------

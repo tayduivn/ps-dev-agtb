@@ -38,8 +38,10 @@
          * @method
          */
         register: function(event, context) {
-            context.on(event, function(args) {
-                this.trigger(event, args);
+            context.on(event, function(a) {
+                var args = [].slice.call(arguments,0);
+                args.unshift(event);
+                this.trigger.apply(this, args);
             }, this);
         },
 
