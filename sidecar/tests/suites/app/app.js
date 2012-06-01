@@ -43,12 +43,6 @@ describe("App", function() {
         });
     });
 
-    it("should initialize addtional components", function() {
-        var components = {login:{target:'#footer'}};
-        SugarTest.app.loadAdditionalComponents(components);
-        expect(SugarTest.app.additionalComponents.login.name).toEqual('login');
-    });
-
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -73,7 +67,6 @@ describe("App", function() {
 
             SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
             SugarTest.app.on("app:sync:complete", cbSpy);
-
             SugarTest.app.sync();
             SugarTest.wait();
 
@@ -82,13 +75,12 @@ describe("App", function() {
             });
         });
 
-        it('should start and call sync if authenticated', function() {
-            var syncSpy = sinon.spy(SUGAR.App, 'sync');
-            
-            SugarTest.app.start();
-            expect(syncSpy.called).toBeTruthy();
+        it('should call sync after login', function() {
+            var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
 
-            SUGAR.App.sync.restore();
+            SugarTest.app.trigger("app:login:success");
+            expect(cbSpy).toHaveBeenCalled();
+            SugarTest.app.sync.restore();
         });
 
         it("should fire a sync:error event when one of the sync jobs have failed", function() {
@@ -111,14 +103,15 @@ describe("App", function() {
         var model = new Backbone.Model(),
             action = "edit",
             options = {},
-            context = {},
+            context = SugarTest.app.context.getContext(),
             routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        SugarTest.app.navigate(context, action, model, options);
+        context.set("model", model);
+        SugarTest.app.navigate(context, model, action, options);
 
-        expect(routerSpy).toHaveBeenCalled();
+        expect(routerSpy).toHaveBeenCalledWith("Contacts/1234/edit");
 
         routerSpy.restore();
     });

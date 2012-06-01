@@ -2,6 +2,7 @@
 
     app.view.views.ListView = app.view.View.extend({
         MAX_PAGE_SIZE: 20,
+
         events: {
             'click  .show-more-top-btn': 'showMoreTopRecords',
             'click  .show-more-bottom-btn': 'showMoreBottomRecords',
@@ -9,11 +10,20 @@
             'swipeLeft article': 'onSwipeLeftItem',
             'swipeRight article': 'onSwipeRightItem',
             'click .remove-item-btn': 'onRemoveItem',
-            'click .edit-item-btn': 'onEditItem'
+            'click .edit-item-btn': 'onEditItem',
+            'click .menu-item':'onClickMenuItem'
         },
+
         initialize: function (options) {
             // Mobile shows only the first two fields
             options.meta.panels[0].fields.length = 2;
+
+            // Default list item partial
+            options.templateOptions = {
+                partials: {
+                    'list.item': app.template.get("list.item")
+                }
+            };
             app.view.View.prototype.initialize.call(this, options);
 
             this.activeArticle = null;
@@ -29,7 +39,8 @@
         addOne: function (model, collection, options) {
             app.logger.debug('ADD ONE!');
             var fieldId = app.view.getFieldId();
-            var item = Handlebars.helpers.listItem(model, this, this.meta.panels[0].fields);
+
+            var item = Handlebars.helpers.include('list.item', model, this, this.meta.panels[0].fields);
 
             if (options.addTop && this.$('.items').children().length) {
                 this.$('.items').children().first().before(item.toString());
@@ -55,13 +66,8 @@
         },
         showMoreTopRecords: function () {
             this.showLoadingMsg('.show-more-top-btn',true);
+
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult, 0);
-
-            if (offset === 0) {
-                this.$('.show-more-top-btn').hide();
-            }
-
-            this.$('.show-more-bottom-btn').show();
 
             this.collection.fetch({add: true,
                 silent: true,
@@ -69,6 +75,12 @@
                 max_num: app.config.maxQueryResult,
                 fields: this.collection.fields,
                 success: _.bind(function (collection, items) {
+                    if (offset === 0) {
+                        this.$('.show-more-top-btn').hide();
+                    }
+
+                    this.$('.show-more-bottom-btn').show();
+
                     var models = [];
 
                     _.each(items, function (item) {
@@ -163,6 +175,11 @@
             e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
+        },
+        onClickMenuItem:function(e){
+            var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
+            var item = this.collection.get(cid);
+            this.trigger('menu:item:clicked',item);
         }
     });
 

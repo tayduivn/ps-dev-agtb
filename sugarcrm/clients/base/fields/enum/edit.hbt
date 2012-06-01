@@ -1,5 +1,5 @@
 <div class="row-fluid control-group">
-    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span2">{{label}}</div>
     <div class="span4">
         <select name="{{name}}" {{#if def.multi}} multiple {{/if}}>
             {{#eachOptions def.options}}

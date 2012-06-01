@@ -282,7 +282,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 	$newPaneldefs[$newPaneldefIndex]['width'] = "10%";
                 }
 
+                // Set the default flag to make it a default field
                 $newPaneldefs[$newPaneldefIndex]['default'] = ($i == 0);
+
+                // Handle enabling the field (either first column or second column
+                if ($i < 2 && empty($newPaneldefs[$newPaneldefIndex]['enabled'])) {
+                    $newPaneldefs[$newPaneldefIndex]['enabled'] = true;
+                }
+
                 $newPaneldefIndex++;
             }
         }

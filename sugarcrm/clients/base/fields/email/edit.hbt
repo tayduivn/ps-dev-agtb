@@ -1,6 +1,6 @@
 
 <div class="row-fluid">
-    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span2">{{label}}</div>
     <div class="span10">
 
         <div class="existing">

@@ -79,7 +79,7 @@ class RelateRecordApi extends ModuleApi {
      * @return array Two elements: The link name, and the SugarBean of the far end
      */
     protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
-        if ( ! ACLController::checkAccess($primaryBean->module_dir,$securityTypeLocal,$primaryBean->isOwner($GLOBALS['current_user']->id)) ) {
+        if ( ! $primaryBean->ACLAccess($securityTypeLocal) ) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeLocal.' records for module: '.$args['module']);
         }
         // Load up the relationship
@@ -95,7 +95,7 @@ class RelateRecordApi extends ModuleApi {
         // FIXME: No create ACL yet
         if ( $securityTypeRemote == 'create' ) { $securityTypeRemote = 'edit'; }
 
-        if ( ! ACLController::checkAccess($linkModuleName,$securityTypeRemote,$linkSeed->isOwner($GLOBALS['current_user']->id)) ) {
+        if ( ! $linkSeed->ACLAccess($securityTypeRemote) ) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeRemote.' records for module: '.$linkModuleName);
         }
 

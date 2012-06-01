@@ -141,11 +141,11 @@
 
         /**
          * Compiles view and field templates from metadata payload and puts them into local storage.
-         *
          * This method compiles both view and field templates. The metadata must contain the following sections:
          *
          * <pre>
          * {
+         *    // This should now be deprecated
          *    "viewTemplates": {
          *       "detail": HB template source,
          *       "list": HB template source,
@@ -154,7 +154,7 @@
          *
          *    "sugarFields": {
          *        "text": {
-         *            "views": {
+         *            "templates": {
          *               "default": HB template source,
          *               "detail": HB template source,
          *               "edit": ...,
@@ -166,6 +166,14 @@
          *        },
          *        // etc.
          *    }
+         *
+         *    "sugarViews": {
+         *      "text": {
+         *          "templates" {
+         *              "view": HB template source...
+         *              "view2": HB template source..
+         *          }.
+         *    }
          * }
          * </pre>
          *
@@ -173,19 +181,29 @@
          * @param {Boolean} force(optional) Flag indicating if the cache is ignored and the templates are to be recompiled.
          */
         set: function(metadata, force) {
-            if (metadata.viewTemplates) {
-                _.each(metadata.viewTemplates, function(src, name) {
+            if (metadata.sugarViews) {
+                _.each(metadata.sugarViews, function(view, name) {
                     if (name != "_hash") {
-                        // This are common templates: pass null for module
-                        this.setView(name, null, src, force);
+                        _.each(view.templates, function(src, view) {
+                            this.setView(name, null, src, force);
+                        }, this);
                     }
                 }, this);
             }
 
+//            if (metadata.viewTemplates) {
+//                _.each(metadata.viewTemplates, function(src, name) {
+//                    if (name != "_hash") {
+//                        // This are common templates: pass null for module
+//                        this.setView(name, null, src, force);
+//                    }
+//                }, this);
+//            }
+
             if (metadata.sugarFields) {
                 _.each(metadata.sugarFields, function(field, type) {
                     if (type != "_hash") {
-                        _.each(field.views, function(src, view) {
+                        _.each(field.templates, function(src, view) {
                             this.setField(type, view, src, force);
                         }, this);
                     }

@@ -24,7 +24,15 @@ describe("listView", function() {
         };
 
         context.set({collection: collection});
-        var view = new app.view.views.ListView(options);
+        var view = app.view.createView({
+            context: context,
+            layout: "",
+            module: "Cases",
+            name: "list",
+            meta: fixtures.metadata.modules.Cases.views.list.meta
+
+        });
+        console.log(view);
 
         view.$el.html('<div id="test" data-fieldname="bob"></div>');
 

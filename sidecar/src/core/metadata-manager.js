@@ -3,6 +3,7 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
+    var _viewPrefix = "v:";
     var _langPrefix = "lang:";
 
     // Metadata that has been loaded from offline storage (memory cache)
@@ -10,6 +11,8 @@
     var _metadata = {};
     // Field definitions
     var _fields = {};
+    // View definitions
+    var _views = {};
     // String packs
     var _lang = {};
     // Other
@@ -270,6 +273,16 @@
                 });
             }
 
+            if (data.sugarViews) {
+                _.each(data.sugarViews, function(entry, type) {
+                    _views[type] = entry;
+                    _set(_viewPrefix + type, entry);
+                    if (entry.controller) {
+                        app.view.declareComponent("view", type, null, entry.controller);
+                    }
+                });
+            }
+
             _setMeta(_app, "moduleList", "", data);
 
             _setMeta(_lang, "appListStrings", _langPrefix, data);
@@ -281,6 +294,11 @@
             _setMeta(_app, "_hash", "", data);
 
             app.template.set(data, true);
+
+            // Cache the metadata
+            if (app.config.env == "dev") {
+                this.data = data;
+            }
         },
 
         /**
@@ -313,7 +331,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-
+                    app.error.handleHTTPError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

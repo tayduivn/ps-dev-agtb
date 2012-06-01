@@ -129,12 +129,8 @@ class RestService extends ServiceBase {
                 }
             }
 
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
         } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError($e->getMessage(),0,$e);
-            $this->handleException($apiException);
+            $this->handleException($e);
         }
     }
 
@@ -155,8 +151,15 @@ class RestService extends ServiceBase {
         return $outputVars;
     }
 
-    protected function handleException(SugarApiException $exception) {
-        header("HTTP/1.1 {$exception->errorCode}");
+    protected function handleException(Exception $exception) {
+        if ( is_a($exception,"SugarApiException") ) {
+            $httpError = $exception->errorCode;
+        } else if ( is_a($exception,"OAuth2ServerException") ) {
+            $httpError = $exception->getHttpCode();
+        } else {
+            $httpError = 500;
+        }
+        header("HTTP/1.1 {$httpError}");
 
         $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
         

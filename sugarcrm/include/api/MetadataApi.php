@@ -59,7 +59,7 @@ class MetadataApi extends SugarApi {
 
     public function getAllMetadata($api, $args) {
         // Default the type filter to everything
-        $this->typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList');
+        $this->typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'sugarViews');
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['typeFilter']);
@@ -142,8 +142,21 @@ class MetadataApi extends SugarApi {
         foreach ($this->modules as $modName) {
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
         }
+        // remove the disabled modules from the module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
 
-        $data['sugarFields'] = $mm->getSugarFields();
+        if (isset($tabs[1])) {
+            foreach($data['moduleList'] as $moduleKey => $moduleName){
+                if (in_array($moduleName,$tabs[1])) {
+                    unset($data['moduleList'][$moduleKey]);
+                }
+            }
+        }
+
+        $data['sugarFields'] = $mm->getSugarClientFiles('field');
+        $data['sugarViews']  = $mm->getSugarClientFiles('view');
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
         $data['appListStrings'] = $mm->getAppListStrings();
@@ -151,7 +164,7 @@ class MetadataApi extends SugarApi {
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
-        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
+        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList', 'sugarViews');
         $perModuleChunks = array('modules','modStrings','acl');
 
 

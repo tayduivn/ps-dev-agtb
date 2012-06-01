@@ -100,7 +100,7 @@
      * @param {Backbone.Model} model model this field is bound to.
      * @param {String} fieldName field name.
      */
-    bindDomChange: function(model, fieldName) {
+    bindDomChange: function() {
         // empty because we are handling this with the events and callbacks above
     },
 

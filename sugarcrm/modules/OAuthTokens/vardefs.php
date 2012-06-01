@@ -65,6 +65,15 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
             'comment' => 'Token timestamp',
             'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
       ),
+      'expire_ts' =>
+      array (
+            'name' => 'expire_ts',
+            'type' => 'long',
+            'required' => true,
+            'default' => -1,
+            'comment' => 'Token expiration, defaults to -1 for no expiration date',
+            'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
+      ),
       'verify' =>
       array (
             'name' => 'verify',

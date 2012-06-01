@@ -7,15 +7,15 @@
             </div>
             <div class="modal-body">
                 {{#each meta.panels}}
-                {{#each fields}}
+                {{#fields}}
                 <div class="control-group">
                     {{field ../../this}}
                 </div>
-                {{/each}}
+                {{/fields}}
                 {{/each}}
             </div>
             <div class="modal-footer">
-                {{fieldOfType "loginButton" "Login"}}
+                <a href="javascript:void(0)" id="login_btn" tabindex="4" class="btn">{{loginButtonLabel}}</a>
             </div>
             </div>
         </div>

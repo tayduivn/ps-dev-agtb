@@ -13,6 +13,7 @@ describe("Application configuration", function() {
         expect(config.serverUrl).toBeDefined();
         expect(config.debugSugarApi).toBeDefined();
         expect(config.metadataTypes).toBeDefined();
+        expect(config.unsecureRoutes).toBeDefined();
     });
 
 });

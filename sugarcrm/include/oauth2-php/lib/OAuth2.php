@@ -694,7 +694,7 @@ class OAuth2 {
 				}
 				
 				if ($stored["expires"] < time()) {
-					throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, 'Refresh token has expired');
+					throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, 'Refresh token has expired: '.$stored['expires'].' vs '.time());
 				}
 				
 				// store the refresh token locally so we can delete it when a new refresh token is generated
