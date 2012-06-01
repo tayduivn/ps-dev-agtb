@@ -305,7 +305,6 @@
         },
 
         /**
-<<<<<<< HEAD
          * Binds data changes to the model to trigger an initial view to render
          */
         bindDataChange: function() {
@@ -361,7 +360,6 @@
         },
 
        /**
-=======
          * Disposes a view.
          *
          * This method disposes view fields and calls
@@ -377,7 +375,6 @@
         },
 
         /**
->>>>>>> toffee
          * Gets a string representation of this view.
          * @return {String} String representation of this view.
          */
