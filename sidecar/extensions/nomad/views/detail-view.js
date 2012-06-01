@@ -69,12 +69,15 @@
 
         getPhones: function () {
             var view = this;
-            var phone, phonesArray = [];
+            var number, numbersArray = [];
             _.each(this.phoneFields, function (phoneField, index) {
-                phone = view.model.get(phoneField.name);
-                if (phone) phonesArray.push(phone);
+                number = view.model.get(phoneField.name);
+                if (number) numbersArray.push({
+                    name: phoneField.name,
+                    number: number
+                });
             });
-            return phonesArray;
+            return numbersArray;
         },
 
         getEmails: function () {
