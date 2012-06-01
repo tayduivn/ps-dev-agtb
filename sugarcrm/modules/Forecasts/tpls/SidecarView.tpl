@@ -55,7 +55,7 @@
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
 
-<script src='include/SidecarView/SidecarView.js'></script>
+<script src='modules/Forecasts/tpls/SidecarView.js'></script>
 
 <script src="../sidecar/lib/sinon/sinon.js"></script>
 
