@@ -432,17 +432,23 @@ function smarty_function_sugar_button($params, &$smarty)
                 if (!empty($pdfManagerList)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
-                        <li>
-                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />
-                            <ul class="subnav-sub" id="">';
+                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
+                            $pdfItems = array();
                             foreach($pdfManagerList as $pdfTemplate){
-                                $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
+                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a>', 
+                                                        'items' => array(),
+                                                    );
                             }
-                        $output .= '    </ul>
-                        </li>';
+                            require_once('include/Smarty/plugins/function.sugar_menu.php');
+                            $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
+                                                                            'items'                 => $pdfItems,
+                                                                            'htmlOptions'           => array( 'class' => 'subnav-sub',),
+                                                                            'itemOptions'           => array(),
+                                                                            'submenuHtmlOptions'    => array(),
+                                                                        )
+                                                                    , $smarty);
                     } else {
                         $output = '
-                          <li>
                             <script type="text/javascript">
                                 function display_pdf_list(el) {
                                     var menu = \'';
@@ -454,7 +460,6 @@ function smarty_function_sugar_button($params, &$smarty)
                                 }
                             </script>
                             <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_VIEW') . '</a>
-                          </li>
                           ';               
                         }
                     }
@@ -470,17 +475,24 @@ function smarty_function_sugar_button($params, &$smarty)
                 if (!empty($pdfManagerList)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
-                        <li>
-                            <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />
-                            <ul class="subnav-sub" id="">';
+                            <input id="pdfview_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
+                            $pdfItems = array();
                             foreach($pdfManagerList as $pdfTemplate){
-                                $output .= '<li><a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a></li>';
+                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a>', 
+                                                        'items' => array(),
+                                                    );
                             }
-                        $output .= '    </ul>
-                        </li>';
+                            require_once('include/Smarty/plugins/function.sugar_menu.php');
+                            $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
+                                                                            'items'                 => $pdfItems,
+                                                                            'htmlOptions'           => array( 'class' => 'subnav-sub',),
+                                                                            'itemOptions'           => array(),
+                                                                            'submenuHtmlOptions'    => array(),
+                                                                        )
+                                                                    , $smarty);
+                        
                     } else {
                         $output = '
-                          <li>                        
                             <script language="javascript">
                                 function display_pdf_email_list(el) {
                                     var menu = \'';
@@ -492,7 +504,6 @@ function smarty_function_sugar_button($params, &$smarty)
                                 }
                             </script>
                             <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_EMAIL') . '</a>
-                          </li>
                           ';                   
                     }
                 }
