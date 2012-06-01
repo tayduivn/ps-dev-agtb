@@ -70,8 +70,8 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$meeting->name = 'Test Meeting Recurring';
 		
 		$meeting->recurring_source = 'Outlook';
-        // can edit
-		$this->assertTrue($meeting->ACLAccess('edit'));
+        // can't edit
+		$this->assertFalse($meeting->ACLAccess('edit'));
 		
 		$meeting->recurring_source = '';
 		// can edit

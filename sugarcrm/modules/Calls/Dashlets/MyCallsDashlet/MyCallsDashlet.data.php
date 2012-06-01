@@ -48,7 +48,7 @@ $dashletData['MyCallsDashlet']['columns'] = array('set_complete' => array('width
                                                                           'label' => 'LBL_LIST_CLOSE',
                                                                           'default' => true,
                                                                           'sortable' => false,
-                                                                          'related_fields' => array('status')),
+                                                                          'related_fields' => array('status','recurring_source')),
                                                   'name' => array('width'   => '40', 
                                                                   'label'   => 'LBL_SUBJECT',
                                                                   'link'    => true,
