@@ -39,8 +39,7 @@
                                             "app.events.on('app:sync:complete', function() { " +
                                             "app.alert.dismiss('login'); $('#content').show();" +
                                             "}); " +
-                                            "app.sync(" +
-                                            "function(){console.log(\"sync success firing\");}); }" +
+                                            "}" +
                                             "});" +
                                             "}" +
                                             "}"
@@ -102,8 +101,8 @@
                     }
                 }
             },
-            "Signup" : {
-                "fields" : {
+            "Signup": {
+                "fields": {
                     "first_name": {
                         "name": "first_name",
                         "type": "varchar",
@@ -259,9 +258,9 @@
                 }
             }
         },
-        'sugarFields': {
+        'fields': {
             "text": {
-                "views": {
+                "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
@@ -273,7 +272,7 @@
                 }
             },
             "password": {
-                "views": {
+                "templates": {
                     "loginView": "<div class=\"control-group\">" +
                         "<label class=\"hide\">{{label}}</label>" +
                         "<div class=\"controls\">\n" +
@@ -283,19 +282,19 @@
                 }
             },
             "button": {
-                "views": {
+                "templates": {
                     "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
                         "{{else}}javascript:void(0){{/if}}\" class=\"btn {{def.class}} {{#if def.primary}}btn-primary{{/if}}\">" +
                         "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
                 }
             },
             "hr": {
-                "views": {
+                "templates": {
                     "default": "<hr>\n"
                 }
             },
             "enum": {
-                "views": {
+                "templates": {
                     "signupView": "<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
                         "<select data-placeholder=\"{{label}}\" name=\"{{name}}\">{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
@@ -311,7 +310,7 @@
                     "}"
             },
             "email": {
-                "views": {
+                "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
@@ -336,7 +335,7 @@
                     "}"
             },
             "phone": {
-                "views": {
+                "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
@@ -345,6 +344,86 @@
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
+                }
+            }
+        },
+        'views': {
+            "alert": {
+                controller: "\\\"\/**\n * View that displays errors.\n * @class View.Views.AlertView\n * @extends View.View\n *\/\n\n({\n    initialize: function(options) {\n        app.view.View.prototype.initialize.call(this, options);\n    },\n    \/**\n     * Displays an alert message and returns alert instance.\n     * @param {Object} options\n     * @return {Backbone.View} Alert instance\n     * @method\n     *\/\n    show: function(options) {\n        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;\n        if (!options) {\n            return false;\n        }\n\n        level = options.level ? options.level : \\'info\\';\n        title = options.title ? options.title : null;\n        msg = (_.isString(options.messages)) ? [options.messages] : options.messages;\n        autoClose = options.autoClose ? options.autoClose : false;\n\n        \/\/ \\\"process\\\" is the loading indicator .. I didn\\'t name it ;=)\n        alertClass = (level === \\\"process\\\" || level === \\\"success\\\" || level === \\\"warning\\\" || level === \\\"info\\\" || level === \\\"error\\\") ? \\\"alert-\\\" + level : \\\"\\\";\n\n        ctx = {\n            alertClass: alertClass,\n            title: title,\n            messages: msg,\n            autoClose: autoClose\n        };\n        try {\n            AlertView = Backbone.View.extend({\n                events: {\n                    \\'click .close\\': \\'close\\'\n                },\n                template: \\\"<div class=\\\\\\\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{\/if}}\\\\\\\">\\\" +\n                    \\\"<a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>{{#if title}}<strong>{{title}}<\/strong>{{\/if}}\\\" +\n                    \\\"{{#each messages}}<p>{{this}}<\/p>{{\/each}}<\/div>\\\",\n                loadingTemplate: \\\"<div class=\\\\\\\"alert {{alertClass}}\\\\\\\">\\\" +\n                    \\\"<strong>{{title}}<\/strong>\u2026<\/div><a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>\\\",\n                initialize: function() {\n                    this.render();\n                },\n                close: function() {\n                    this.$el.remove();\n                },\n                render: function() {\n                    var tpl = (level === \\'process\\') ?\n                        Handlebars.compile(this.loadingTemplate) :\n                        Handlebars.compile(this.template);\n\n                    this.$el.html(tpl(ctx));\n                }\n            });\n            thisAlert = new AlertView();\n            this.$el.prepend(thisAlert.el);\n\n            if (autoClose) {\n                setTimeout(function() {\n                    $(\\'.timeten\\').fadeOut().remove();\n                }, 9000);\n            }\n            return thisAlert;\n\n        } catch (e) {\n            app.logger.error(\\\"Failed to render \\'\\\" + this.name + \\\"\\' view.\\\\n\\\" + e.message);\n            return null;\n            \/\/ TODO: trigger app event to render an error message\n        }\n    }\n})\n\\\""
+            },
+            "loginView": {
+                templates: {
+                    "loginView": "<form name='{{name}}'>" +
+                        "<div class=\"container welcome\">\n" +
+                        "<div class=\"row\">\n" +
+                        "<div class=\"span4 offset4 thumbnail\">\n" +
+                        "<div class=\"modal-header tcenter\">\n" +
+                        "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                        "</div>\n" +
+                        "{{#each meta.panels}}" +
+                        "<div class=\"modal-body tcenter\">\n" +
+                        "{{#each fields}}\n" +
+                        "<div>{{field ../../this ../../model}}</div>" +
+                        "{{/each}}" +
+                        "</div>          \n" +
+                        "{{/each}}" +
+                        "<div class=\"modal-footer\">\n" +
+                        "{{#each meta.buttons}}" +
+                        "{{field ../this ../model}}" +
+                        "{{/each}}" +
+                        "</div>\n" +
+                        "</div>                             \n" +
+                        "</div>\n" +
+                        "</div>         \n" +
+                        "</form>"
+                }
+            },
+            "header": {
+                templates: {
+                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../currentModule}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+                }
+            },
+            "signupView": {
+                templates: {
+                    "signupView": "<form name='{{name}}'>" +
+                        "<div class=\"container welcome\">\n" +
+                        "<div class=\"row\">\n" +
+                        "<div class=\"span4 offset4 thumbnail\">\n" +
+                        "<div class=\"modal-header tcenter\">\n" +
+                        "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                        "</div>\n" +
+                        "{{#each meta.panels}}" +
+                        "<div class=\"modal-body tcenter\">\n" +
+                        "{{#each fields}}\n" +
+                        "{{field ../../this ../../model}}" +
+                        "{{/each}}" +
+                        "</div>          \n" +
+                        "{{/each}}" +
+                        "<div class=\"modal-footer\">\n" +
+                        "{{#each meta.buttons}}" +
+                        "{{field ../this ../model}}" +
+                        "{{/each}}" +
+                        "</div>\n" +
+                        "</div>                             \n" +
+                        "</div>\n" +
+                        "</div>         \n" +
+                        "</form>"
+                }
+            },
+            "subnav": {
+                "templates": {
+                    "subnav": "<div class=\"subnav\">" +
+                        "<div class=\"btn-toolbar pull-left\">" +
+                        "<h1>{{fieldWithName this \"name\"}}</h1>" +
+                        "</div>" +
+                        "<div class=\"btn-toolbar pull-right\">" +
+                        "<div class=\"btn-group\">" +
+                        "{{#each meta.buttons}}" +
+                        "{{field ../this ../model}}  " +
+                        "{{/each}}" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
                 }
             }
         },
@@ -705,18 +784,33 @@
             ERROR_FIELD_REQUIRED: "Error. This field is required."
         }
     };
+
+    // Add custom events here for now
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
 
-        // Example of a custom route: URL hash, route name, route handler
-        app.router.route("foo", "foo", function() {
-            app.logger.debug("Navigating to foo!!!");
+        // Load dashboard route.
+        app.router.route("dashboard", "dashboard", function() {
+
+            app.controller.loadView({
+                layout: "dashboard",
+                module: app.config.defaultModule
+            });
+        });
+
+        // Load the search results route.
+        app.router.route("search/:query", "search", function(query) {
+            app.controller.loadView({
+                module: "Search",
+                layout: "search",
+                query: query
+            });
         });
 
     });
 
-    app.view.Field=app.view.Field.extend({
+    app.view.Field = app.view.Field.extend({
         /**
          * Handles how validation errors are appended to the fields dom element
          *
@@ -734,7 +828,7 @@
             // For each error add to error help block
             this.$('.controls').addClass('input-append');
             _.each(errors, function(errorContext, errorName) {
-                self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));
+                self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
             });
 
             // Remove previous exclamation then add back.
@@ -743,7 +837,48 @@
         }
     });
 
+    var oLoadView = app.controller.loadView;
+    app.controller.loadView = function(params) {
+        if (typeof(app.config) == undefined || (app.config  && app.config.appStatus == 'offline')) {
+            var self = this;
+            var callback = function(data){
+                var params = {
+                                module: "Login",
+                                layout: "login",
+                                create: true
+                            };
+                oLoadView.call(self, params)
+                SUGAR.App.alert.show('appOffline', {
+                    level:"error",
+                    title:'Error',
+                    messages:'Sorry the application is not available at this time. Please contact the site administrator.',
+                    autoclose:false
+                });
+            };
+
+            app.logout({success: callback, error:callback});
+            return;
+        };
+        return oLoadView.call(this, params);
+    };
+
+    var _rrh = {
+        /**
+         * Handles `signup` route.
+         */
+        signup: function() {
+            app.logger.debug("Route changed to signup!");
+            app.controller.loadView({
+                module: "Signup",
+                layout: "signup",
+                create: true
+            });
+        }
+    };
+
+    app.events.on("app:init", function() {
+        // Register portal specific routes
+        app.router.route("signup", "signup", _rrh.signup);
+    });
+
 })(SUGAR.App);
-
-
-

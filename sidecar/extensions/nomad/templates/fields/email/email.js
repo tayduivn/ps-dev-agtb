@@ -3,7 +3,7 @@
     app.view.fields.EmailField = app.view.Field.extend({
         events: {
             "click .btn": function () {
-                //var email = this.value;
+                app.nomad.sendEmail([this.value]);
             }
         },
 

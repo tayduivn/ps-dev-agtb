@@ -97,6 +97,14 @@
          */
         callPhone: function(phones) {
             // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Displays phone chooser UI.
+         * @param {Array} phones
+         */
+        sendSms: function(phones) {
+            // TODO: Implement HTML action sheet view
         }
 
     });

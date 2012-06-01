@@ -99,8 +99,8 @@ class ImportViewLast extends ImportView
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
         $this->ss->assign("errorFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorFileName()));
-        $this->ss->assign("errorrecordsFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
-        $this->ss->assign("dupeFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
+        $this->ss->assign("errorrecordsFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
+        $this->ss->assign("dupeFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
 
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )

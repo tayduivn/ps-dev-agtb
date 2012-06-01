@@ -24,6 +24,10 @@
             app.events.on("app:sync:complete", function() {
                 app.router.start();
             });
+
+            app.events.on("app:login:success", function() {
+                app.sync();
+            });
         },
 
         /**
@@ -86,11 +90,11 @@
             app.additionalComponents = {};
             _.each(components, function(component, name) {
                 if (component.target) {
-                    app.additionalComponents[name] = app.view.createView({
+                    (app.additionalComponents[name] = app.view.createView({
                         name: name,
                         context: this.context,
                         el: this.$(component.target)
-                    }).render();
+                    })).render();
                 }
             });
         }

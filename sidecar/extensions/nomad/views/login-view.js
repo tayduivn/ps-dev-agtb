@@ -40,9 +40,6 @@
                         success: function() {
                             app.logger.debug("logged in successfully!");
                             app.user.set("serverUrl", app.api.serverUrl);
-                            app.sync(function() {
-                                app.logger.debug("sync success firing");
-                            });
                         },
                         error: function(error) {
                             app.logger.debug("login failed: " + error);
@@ -52,10 +49,11 @@
                 }
             }
         },
-        
-        render: function() {
+
+        _render: function() {
+            this.loginButtonLabel = app.utils.capitalize(app.lang.getAppString("LOGIN").toLowerCase());
             this.model.set("url", "http://", { silent: true });
-            app.view.View.prototype.render.call(this, arguments);
+            app.view.View.prototype._render.call(this, arguments);
 
             if (!app.isNative) {
                 this.getField("url").remove();

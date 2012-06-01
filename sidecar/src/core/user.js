@@ -98,7 +98,9 @@
             // or the new user that is about to be set has different ID (multiple users per domain are not supported)
             if (!user || (user.id != _usr.id)) {
                 _usr.clear({silent:true});
-                app.cache.cut(_key);
+                if (app.cache.has(_key)) {
+                    app.cache.cut(_key);
+                }
             }
 
             if (user) {

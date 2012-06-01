@@ -43,6 +43,12 @@ describe("App", function() {
         });
     });
 
+    it("should initialize addtional components", function() {
+        var components = {login:{target:'#footer'}};
+        SugarTest.app.controller.loadAdditionalComponents(components);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined();
+    });
+
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -67,7 +73,6 @@ describe("App", function() {
 
             SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
             SugarTest.app.on("app:sync:complete", cbSpy);
-
             SugarTest.app.sync();
             SugarTest.wait();
 
@@ -75,14 +80,11 @@ describe("App", function() {
                 expect(cbSpy).toHaveBeenCalled();
             });
         });
-
-        it('should start and call sync if authenticated', function() {
-            var syncSpy = sinon.spy(SUGAR.App, 'sync');
-            
-            SugarTest.app.start();
-            expect(syncSpy.called).toBeTruthy();
-
-            SUGAR.App.sync.restore();
+        it('should call sync after login', function() {
+            var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
+            SugarTest.app.trigger("app:login:success");
+            expect(cbSpy).toHaveBeenCalled();
+            SugarTest.app.sync.restore();
         });
 
         it("should fire a sync:error event when one of the sync jobs have failed", function() {

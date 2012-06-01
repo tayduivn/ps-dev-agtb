@@ -80,7 +80,10 @@ h1 {font-size: 26px !important;}
   display:inline;
 }
 
-#listing-Accounts .items article {
+#scroll > .pad > span .control-group,
+#detailListing #listing > ul > li,
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 
@@ -102,13 +105,6 @@ article {
   padding-left: 44px;
 }
 
-article div {
-  display: table-cell;
-  vertical-align: middle;
-  height: 52px;
-  overflow: hidden;
-  
-}
 article [class^="icon-star"] {
 position: absolute;
 top: 24px;
@@ -125,10 +121,6 @@ padding-right:0;
 padding-left:0;
 }
 
-#detailListing {
-  height:auto;
-}
-
 #detailListing #listing {
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
@@ -137,7 +129,7 @@ padding-left:0;
 
 #detailListing #listing > i {
   display:inline-block;
-  height:210px;
+  height:205px;
 }
 
 #detailListing ul.actions {
@@ -494,6 +486,20 @@ html {
   -webkit-overflow-scrolling: touch;
   .items {
     margin-top:93px;
+    article {
+      &>div {
+	display: inline-block;
+	height: 52px;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	overflow: hidden;
+	&>a {
+	  display:inline-block;
+	  margin-top:8px;
+	}
+      }
+    }
   }
 }
 
@@ -652,13 +658,18 @@ overflow:visible;
 }
 
 .blankspacer {
-  width:30px;
-  height:30px;
-  top: 5px;
-  right: 5px;
-  background:@black;
+  width:50px;
+  height:46px;
+  top: 0px;
   position: absolute;
   z-index: 2002;
+  #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+  &.right {
+    right: 0px;
+  }
+  &.left {
+    left: 0px;
+  }
 }
 
 .navbar #back .icon-chevron-left {
@@ -673,14 +684,13 @@ overflow:visible;
   position: absolute;
   top: 0;
   right: 0;
-  height: 34px;
+  height: 32px;
   width: 44px;
   @shadow: inset 1px 0 0 lighten(@black, 20%), -1px 0 0 @black;
   .box-shadow(@shadow);
   text-align: center;
   padding-top: 14px;
 }
-
 
 #detailListing .listing {
 /*
@@ -771,6 +781,7 @@ text-shadow: 0 -1px 0 @black;
   @shadow: 0 0 8px rgba(0,0,0,.9);
   .box-shadow(@shadow);
   margin-left:10px;
+  margin-right:16px;
 }
 
 .bizcard h3 {
@@ -786,11 +797,16 @@ text-shadow: 0 -1px 0 @black;
 }
 .bizcard .card {
   margin: 0 0 0 16px;
-  float:left;
   line-height:1.2em;
   h3 {
     font-size:1.75em;
     line-height:22px;
+    span > span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right:10px;
+    }
   }
   label {
     color: #999;
@@ -943,8 +959,14 @@ color: @gray;
   display: block;
   float:left;
 }
+
+#record-action .span1_5th {
+  float:left;
+  width:20%;
+}
+
 #createRecord.form-horizontal .controls {
-  margin-left: 26%;
+  margin-left: 27%;
 }
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
@@ -964,12 +986,16 @@ color: @gray;
   width: 32px;
 }
 
-.control-group.error * {
-  color:red !important;
+.control-group.error {
+  * {
+    color:red !important;
+  }
   .icon-exclamation-sign {
     line-height:26px;
   }
   small {
+    display:block;
+    clear:both;
     font-size:smaller;
   }
 }
@@ -981,6 +1007,7 @@ color: @gray;
     padding-right: 4px;
   }
 }
+
 
 /* Log In
 ----------*/

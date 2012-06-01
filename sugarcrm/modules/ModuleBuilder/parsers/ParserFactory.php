@@ -105,12 +105,33 @@ class ParserFactory
             case MB_PORTALDETAILVIEW:
             case MB_PORTALEDITVIEW:
             //END SUGARCRM flav=ent ONLY
+                if (empty($client))
+                {
+                    $client = MB_WIRELESS;
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    if ($lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW)
+                    {
+                        $client = MB_PORTAL;
+                    }
+                    //END SUGARCRM flav=ent ONLY
+                }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
                 return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_WIRELESSLISTVIEW:
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
             //END SUGARCRM flav=ent ONLY
+                // Handle client settings if we can
+                if (empty($client))
+                {
+                    $client = MB_WIRELESS;
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    if ($lView == MB_PORTALLISTVIEW)
+                    {
+                        $client = MB_PORTAL;
+                    }
+                    //END SUGARCRM flav=ent ONLY
+                }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
             //END SUGARCRM flav=pro || flav=sales ONLY

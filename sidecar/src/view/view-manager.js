@@ -99,7 +99,6 @@
         _createComponent: function(type, name, params) {
             var layoutType = type === "layout" ? params.type : null;
             var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
-
             var component = new Klass(params);
             component.bindDataChange();
 
@@ -312,7 +311,7 @@
          */
         declareComponent: function(type, name, module, controller, layoutType) {
             var ucType                  = app.utils.capitalize(type),
-                className               = app.utils.capitalize(name) + ucType,
+                className               = app.utils.capitalizeHyphenated(name) + ucType,
                 customClassName         = (module || "") + className,
                 layoutClassName         = layoutType ? (app.utils.capitalize(layoutType) + ucType) : null,
                 customLayoutClassName   = layoutType ? ((module || "") + app.utils.capitalize(layoutType) + ucType) : null,
@@ -330,4 +329,3 @@
     app.augment("view", _viewManager, false);
 
 })(SUGAR.App);
-
