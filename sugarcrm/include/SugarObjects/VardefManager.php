@@ -108,7 +108,7 @@ class VardefManager{
                 }
             }
         }
-
+       
         if(!empty($templates[$template])){
             if(empty($GLOBALS['dictionary'][$object]['fields']))$GLOBALS['dictionary'][$object]['fields'] = array();
             if(empty($GLOBALS['dictionary'][$object]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array();
@@ -117,7 +117,9 @@ class VardefManager{
             if(!empty($templates[$template]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array_merge($templates[$template]['relationships'], $GLOBALS['dictionary'][$object]['relationships']);
             if(!empty($templates[$template]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array_merge($templates[$template]['indices'], $GLOBALS['dictionary'][$object]['indices']);
             //BEGIN SUGARCRM flav=pro ONLY
-            if(!empty($templates[$template]['favorites']))$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];
+            if(isset($templates[$template]['favorites']) && !isset($GLOBALS['dictionary'][$object]['favorites'])){
+            	$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];	
+            }
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=following ONLY
             if(!empty($templates[$template]['followable']))$GLOBALS['dictionary'][$object]['followable'] = $templates[$template]['favorites'];
@@ -125,7 +127,6 @@ class VardefManager{
             // maintain a record of this objects inheritance from the SugarObject templates...
             $GLOBALS['dictionary'][$object]['templates'][ $template ] = $template ;
         }
-
     }
 
 

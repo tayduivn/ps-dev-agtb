@@ -36,6 +36,7 @@ if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 }
 
 //BEGIN SUGARCRM flav!=com ONLY
+if(SugarThemeRegistry::current()->name != 'Classic')
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user']))
 //END SUGARCRM flav=sales ONLY
