@@ -162,10 +162,6 @@ if ($isLink){
     	$new_pwd='4';
     	if ($current_user->is_admin){
     		$email_errors=$mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
-    		if ($mail->Mailer == 'smtp')
-    			$email_errors.="\n-".$mod_strings['ERR_SMTP_URL_SMTP_PORT'];
-    		if ($mail->SMTPAuth)
-    		 	$email_errors.="\n-".$mod_strings['ERR_SMTP_USERNAME_SMTP_PASSWORD'];
     		$email_errors.="\n-".$mod_strings['ERR_RECIPIENT_EMAIL'];
     		$email_errors.="\n-".$mod_strings['ERR_SERVER_STATUS'];
     		echo $email_errors;
