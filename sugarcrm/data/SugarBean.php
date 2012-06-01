@@ -2429,7 +2429,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
         if($custom_join)
         {
-            $query_select .= $custom_join['select'];
+            $query_select .= " ".$custom_join['select'];
             $query_from .= ' '.$custom_join['join'];
         }
 
@@ -2456,7 +2456,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         //END SUGARCRM flav=pro ONLY
 
-        $query = "SELECT $query_select FROM $query_from";
+        $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
         {
