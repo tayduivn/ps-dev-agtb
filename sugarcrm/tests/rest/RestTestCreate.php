@@ -54,9 +54,14 @@ class RestTestCreate extends RestTestBase {
         
         $account = new Account();
         $account->retrieve($this->account_id);
-        $this->assertEquals($restReply['reply']['name'],
+
+        $this->assertEquals("UNIT TEST - AFTER",
                             $account->name,
                             "Did not set the account name.");
+
+        $this->assertEquals($restReply['reply']['name'],
+                            $account->name,
+                            "Rest Reply and Bean Do Not Match.");
     }
 
 }
