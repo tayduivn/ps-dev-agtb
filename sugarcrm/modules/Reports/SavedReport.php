@@ -223,11 +223,7 @@ class SavedReport extends SugarBean
 
 	function fill_in_additional_list_fields()
 	{
-    // Fill in the assigned_user_name
-    $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-    //$this->team_name = get_assigned_team_name($this->team_id);
-
-		$this->get_scheduled_query();
+	    $this->fill_in_additional_detail_fields();
 	}
 
 	function fill_in_additional_detail_fields()
@@ -235,11 +231,7 @@ class SavedReport extends SugarBean
 		if ($this->report_type == "Matrix") {
 			$this->report_type = "summary";
 		} // if
-    // Fill in the assigned_user_name
-    $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-	//BEGIN SUGARCRM flav=pro ONLY
-    $this->team_name = get_assigned_team_name($this->team_id);
-	//END SUGARCRM flav=pro ONLY
+		parent::fill_in_additional_detail_fields();
 		$this->get_scheduled_query();
 	}
 

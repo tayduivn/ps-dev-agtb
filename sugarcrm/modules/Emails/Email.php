@@ -2318,11 +2318,7 @@ class Email extends SugarBean {
 
 	function fill_in_additional_detail_fields() {
 		global $app_list_strings,$mod_strings;
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id, '');
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
+		parent::fill_in_additional_detail_fields();
 		//if ($this->parent_type == 'Contacts') {
 			$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans ";
 			$query .= "WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";
@@ -2364,9 +2360,6 @@ class Email extends SugarBean {
 				$GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
 			}
 		//}
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
-
 		$this->link_action = 'DetailView';
 
 		if(!empty($this->type)) {
@@ -2389,8 +2382,6 @@ class Email extends SugarBean {
 		if ( empty($this->name ) &&  empty($_REQUEST['record'])) {
 			$this->name = $mod_strings['LBL_NO_SUBJECT'];
 		}
-
-		$this->fill_in_additional_parent_fields();
 	}
 
 

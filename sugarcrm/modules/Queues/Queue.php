@@ -602,16 +602,17 @@ class Queue extends SugarBean {
 	/**
 	 * Override's SugarBean's
 	 */
-	function fill_in_additional_list_fields() {
+	function fill_in_additional_list_fields()
+	{
 		$this->fill_in_additional_detail_fields();
 	}
 
 	/**
 	 * Override's SugarBean's
 	 */
-	function fill_in_additional_detail_fields() {
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
+	function fill_in_additional_detail_fields()
+	{
+	    parent::fill_in_additional_detail_fields();
 		$this->queuedItems = $this->getNumberOfQueuedItems();
 	}
 

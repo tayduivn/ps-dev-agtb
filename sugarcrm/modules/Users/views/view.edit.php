@@ -166,8 +166,7 @@ var $useForSubpanel = true;
                 $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
             }
             if( !empty($this->bean->reports_to_id) ) {
-                $reportsToUser = get_assigned_user_name($this->bean->reports_to_id);
-                $reportsToUserField = "<input type='text' name='reports_to_name' id='reports_to_name' value='{$reportsToUser}' disabled>\n";
+                $reportsToUserField = "<input type='text' name='reports_to_name' id='reports_to_name' value='{$this->bean->reports_to_name}' disabled>\n";
                 $reportsToUserField .= "<input type='hidden' name='reports_to_id' id='reports_to_id' value='{$this->bean->reports_to_id}'>";
                 $this->ss->assign('REPORTS_TO_READONLY', $reportsToUserField);
             }
