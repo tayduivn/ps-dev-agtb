@@ -38,6 +38,6 @@ class ViewSidecar extends SugarView
     function display()
     {
         $this->ss->assign("module", $this->module);
-        $this->ss->display("include/SidecarView/SidecarView.tpl");
+        $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
     }
 }
