@@ -132,8 +132,11 @@
     var syncResult, view, layout, html;
     var App = SUGAR.App.init({
         el: "#core",
-        contentEl: ".content"
+        contentEl: ".content",
     });
+
+
+    App.viewModule = "{/literal}{$module}{literal}";
 
     // should already be logged in to sugar, don't need to log in to sidecar.
     App.api.isAuthenticated = function() {
