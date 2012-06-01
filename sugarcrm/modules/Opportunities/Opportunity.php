@@ -85,7 +85,6 @@ class Opportunity extends SugarBean {
 	var $module_dir = "Opportunities";
 //BEGIN SUGARCRM flav=pro ONLY
 	var $rel_quote_table = "quotes_opportunities";
-    var $committed;
     var $best_case;
     var $worst_case;
     var $likely_case;
