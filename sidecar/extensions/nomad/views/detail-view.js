@@ -6,26 +6,13 @@
                 app.router.goBack();
             },
             "click #record-action .phone": function () {
-                var view = this;
-                var phone, phonesArray = [];
-                _.each(this.phoneFields, function (phoneField, index) {
-                    phone = view.model.get(phoneField.name);
-                    if (phone) phonesArray.push(phone);
-                });
-
-                //TODO: call 'call' function with phonesArray
+                app.nomad.callPhone(this.getPhones());
             },
             "click #record-action .message": function () {
-                var view = this;
-                var email, emailsArray = [];
-                _.each(this.model.get('email'), function (email, index) {
-                    if (email.email_address) emailsArray.push(email.email_address);
-                });
-
-                //TODO: call 'message' function with emailsArray
+                app.nomad.sendEmail(this.getEmails());
             },
             "click #record-action .comment": function () {
-                //TODO: call 'comment' function
+                app.nomad.sendSms(this.getPhones());
             }
         },
 
@@ -35,12 +22,8 @@
          * Overrides default views method to pass custom data object as the context.
          * @protected
          */
-         _render: function () {
+        _renderSelf: function () {
             //iterate over all fields and get the needed ones
-            //TODO: if it can be the case, when there is no 'name' field,
-            //we need to iterate firstly to try to find 'name' field,
-            //if it not exists - get first non-image and non-link field as header
-            //and only after that get other four fields to output
             var view = this;
             var headerField, image, fields = [], phones = [];
             _.each(this.meta.panels, function (panel, panelIndex) {
@@ -82,6 +65,25 @@
 
             //pass custom data object as the context
             this._renderWithContext(dataObj);
+        },
+
+        getPhones: function () {
+            var view = this;
+            var phone, phonesArray = [];
+            _.each(this.phoneFields, function (phoneField, index) {
+                phone = view.model.get(phoneField.name);
+                if (phone) phonesArray.push(phone);
+            });
+            return phonesArray;
+        },
+
+        getEmails: function () {
+            var view = this;
+            var email, emailsArray = [];
+            _.each(this.model.get('email'), function (email, index) {
+                if (email.email_address) emailsArray.push(email.email_address);
+            });
+            return emailsArray;
         }
     });
 

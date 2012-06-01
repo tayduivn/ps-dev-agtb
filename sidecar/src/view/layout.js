@@ -175,8 +175,7 @@
         /**
          * Renders all the components.
          */
-        render: function() {
-            if (this.disposed === true) throw new Error("Unable to render layout because it's disposed: " + this);
+        _render: function() {
             if (this._components && this._components.length > 0) {
                 //default layout will pass render container divs and pass down to all its views.
                 _.each(this._components, function(component) {

@@ -136,4 +136,50 @@ class SearchFormReports extends SearchForm
         $this->xtpl->assign('LBL_DELETE_CONFIRM',translate('LBL_DELETE_CONFIRM', 'SavedSearch'));
         return parent::displayAdvanced($header, $return, $listViewDefs, $lv);
     }
+
+public static function retrieveReportsSearchDefs()
+     {
+         $searchdefs = array();
+         $searchFields = array();
+
+         if(file_exists('custom/modules/Reports/metadata/metafiles.php'))
+         {
+             require('custom/modules/Reports/metadata/metafiles.php');
+         }
+         elseif(file_exists('modules/Reports/metadata/metafiles.php'))
+         {
+             require('modules/Reports/metadata/metafiles.php');
+         }
+
+         if (file_exists('custom/modules/Reports/metadata/searchdefs.php'))
+         {
+             require('custom/modules/Reports/metadata/searchdefs.php');
+         }
+         elseif (!empty($metafiles['Reports']['searchdefs']))
+         {
+             require($metafiles['Reports']['searchdefs']);
+         }
+         elseif (file_exists('modules/Reports/metadata/searchdefs.php'))
+         {
+             require('modules/Reports/metadata/searchdefs.php');
+         }
+
+
+         if(!empty($metafiles['Reports']['searchfields']))
+         {
+             require($metafiles['Reports']['searchfields']);
+         }
+         elseif(file_exists('modules/Reports/metadata/SearchFields.php'))
+         {
+             require('modules/Reports/metadata/SearchFields.php');
+         }
+         if(file_exists('custom/modules/Reports/metadata/SearchFields.php'))
+         {
+             require('custom/modules/Reports/metadata/SearchFields.php');
+         }
+
+         return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
+     }
+
+
 }
