@@ -1225,7 +1225,7 @@ function validate_form(formname, startsWith){
 		for(var wp = 0; wp < inputsWithErrors.length; wp++) {
 			var elementCoor = findElementPos(inputsWithErrors[wp]);
 			if(!(elementCoor.x >= nwX && elementCoor.y >= nwY &&
-				elementCoor.x <= seX && elementCoor.y <= seY)) { // if input is not within viewport
+                elementCoor.x <= seX+nwX && elementCoor.y <= seY+nwY)) { // if input is not within viewport, modify for SI bug 52497
 					inView = false;
 					scrollToTop = elementCoor.y - 75;
 					scrollToLeft = elementCoor.x - 75;
