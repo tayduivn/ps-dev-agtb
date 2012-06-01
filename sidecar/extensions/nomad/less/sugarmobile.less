@@ -760,7 +760,7 @@ text-shadow: 0 -1px 0 @black;
   z-index: 1000;
   min-height: 70px;
   overflow: auto;
-  padding: 16px 0 66px 0;
+  padding: 16px 0 0;
   color: @white;
   text-shadow: 0 -1px 0 @black;
   #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
@@ -793,9 +793,27 @@ text-shadow: 0 -1px 0 @black;
 .bizcard img {
   float:left;
 }
+
+.bizcard .fade {
+    #gradient > .vertical( @transparent, @black);
+    background-color:transparent !important; /*override lesscss logic for non compliant browsers*/
+    display: inline-block;
+    height: 20px;
+    width: 100%;
+    margin-left: -16px;
+    position: absolute;
+    bottom: 53px;
+    left: 0;
+}
+
 .bizcard .card {
   margin: 0 0 0 16px;
   line-height:1.2em;
+  height: 132px;
+  max-height: 132px;
+  padding-bottom:20px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
   h3 {
     font-size:1.75em;
     line-height:22px;
