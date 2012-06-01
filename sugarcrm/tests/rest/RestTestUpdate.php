@@ -59,7 +59,9 @@ class RestTestUpdate extends RestTestBase
         $account2 = new Account();
         $account2->retrieve($this->account->id);
 
-        $this->assertEquals("UNIT TEST - AFTER", $account2->name, "Did not update the account name.");
+        $this->assertEquals($restReply['reply']['name'],
+            $account2->name,
+            "Did not set the account name.");
     }
 
 
@@ -94,6 +96,9 @@ class RestTestUpdate extends RestTestBase
         $restReply = $this->_restCall("Contacts/{$this->contact->id}");
 
         $this->assertEquals($restReply['reply']['email'], $emails,"Returned emails don't match");
-        $this->assertEquals("UNIT TEST - AFTER", $contact2->name, "Did not update the contact email.");
+
+        $this->assertEquals($restReply['reply']['name'],
+            $contact2->name,
+            "Did not set the account name.");
     }
 }
