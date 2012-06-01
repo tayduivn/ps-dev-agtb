@@ -39,15 +39,15 @@ describe('Metadata Manager', function() {
     });
 
     it('should get a varchar sugarfield', function() {
-        expect(app.metadata.getField('varchar')).toBe(meta.sugarFields.text);
+        expect(app.metadata.getField('varchar')).toBe(meta.fields.text);
     });
 
     it('should get a specific sugarfield', function() {
-        expect(app.metadata.getField('phone')).toBe(meta.sugarFields.phone);
+        expect(app.metadata.getField('phone')).toBe(meta.fields.phone);
     });
 
     it('should get a undefined sugarfield as text', function() {
-        expect(app.metadata.getField('doesntexist')).toBe(meta.sugarFields.text);
+        expect(app.metadata.getField('doesntexist')).toBe(meta.fields.text);
     });
 
     it('should get strings', function() {
