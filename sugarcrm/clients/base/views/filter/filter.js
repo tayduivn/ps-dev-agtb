@@ -1,4 +1,4 @@
-(function(app, $) {
+(function(app) {
 
     /**
      * View that displays a list of models pulled from the context's collection.
@@ -21,7 +21,6 @@
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
             this.model = new app.Model.Filters();
-            this.model.on('change', this.onChange, this);
         },
 
         render : function (){
@@ -30,41 +29,33 @@
             if(this.rendered) return;
 
             app.view.View.prototype.render.call(this);
-            this.model.fetch();
+            this.model.fetch({
+                success: function() {
+                    self.buildDropdown();
+                }
+            });
+
 
             this.rendered = true;
         },
 
-        onChange: function() {
-            var field = app.view.createField({
+        buildDropdown: function() {
+            var chosen = app.view.createField({
                 def: {
+                    name: 'timeperiods',
                     type: 'enum'
                 },
-                view: this,
-                model: this.model.timeperiods
-            });
+                view: this
+            }),
+                filter = this.$el.html(chosen.getPlaceholder().toString());
 
-            var placeholder = field.getPlaceholder();
-            var dropdown = this.buildForecastPeriodDropdown();
-            var filter = this.$el.html(placeholder.toString());
-            field.setElement(filter.find("span[sfuuid='" + field.sfId + "']"));
-            field.options.viewName = "edit";
-            field.render();
-        },
-
-        buildForecastPeriodDropdown: function() {
-            var periods = this.model.get('timeperiods'),
-                result = [];
-            $.each(periods, function(index, value) {
-                result.push('<option value="');
-                result.push(index);
-                result.push('">');
-                result.push(value);
-                result.push('</option> ');
-            });
-            return result.join('');
+            chosen.options.viewName = 'edit';
+            chosen.label = 'Forecast Period';
+            chosen.def.options = this.model.timeperiods.toJSON();
+            chosen.setElement(filter.find("span[sfuuid='" + chosen.sfId + "']"));
+            chosen.render();
         }
 
     });
 
-})(SUGAR.App, jQuery);
+})(SUGAR.App);

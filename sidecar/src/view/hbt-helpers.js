@@ -84,7 +84,9 @@
      */
     Handlebars.registerHelper('eachOptions', function(context, block) {
         // Retrieve app list strings
-        var options = app.lang.getAppListStrings(context),
+        // TODO: remove once app list strings has been implemented
+//        var options = app.lang.getAppListStrings(context),
+        var options = app.lang.getAppListStrings(context, context),
             ret = "",
             iterator;
 
