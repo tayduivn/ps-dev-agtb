@@ -66,6 +66,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
             'vname' => 'LBL_KBDOC_BODY',
             'type' => 'html',
             'default'=> '',
+            'studio'=>'false',
             'source' => 'non-db',
         ),
 'active_date' =>
