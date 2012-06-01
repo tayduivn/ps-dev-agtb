@@ -1,26 +1,31 @@
 <?php
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
@@ -2218,9 +2223,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    /**
-     * @group hierarchies
-     */
     public function testRecursiveQueryMultiHierarchy()
     {
         $this->_db->preInstall();
@@ -2254,15 +2256,15 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // idStarting, Up/Down, Forecast_Tree Type, expected result count
         $resultsDataArray = array( array('sales_test_1',    false, 'sales_test',9)
-        ,array('sales_test_13',   false, 'sales_test',4)
-        ,array('sales_test_131',  true,  'sales_test',3)
-        ,array('sales_test_13',   true,  'sales_test',2)
-        ,array('sales_test_1',    true,  'sales_test',1)
-        ,array('prod_test_1',     false, 'prod_test',10)
-        ,array('prod_test_13',    false, 'prod_test', 5)
-        ,array('prod_test_1321',  true,  'prod_test', 4)
-        ,array('prod_test_133',   true,  'prod_test', 3)
-        ,array('prod_test_1',     true,  'prod_test', 1)
+                                  ,array('sales_test_13',   false, 'sales_test',4)
+                                  ,array('sales_test_131',  true,  'sales_test',3)
+                                  ,array('sales_test_13',   true,  'sales_test',2)
+                                  ,array('sales_test_1',    true,  'sales_test',1)
+                                  ,array('prod_test_1',     false, 'prod_test',10)
+                                  ,array('prod_test_13',    false, 'prod_test', 5)
+                                  ,array('prod_test_1321',  true,  'prod_test', 4)
+                                  ,array('prod_test_133',   true,  'prod_test', 3)
+                                  ,array('prod_test_1',     true,  'prod_test', 1)
         );
 
         // Loop through each test
@@ -2271,12 +2273,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             // Get where clause
             //$whereArray = array('hierarchy_type',$resultsRow[2]);
             //$whereClause = $this->_db->getColumnWhereClause($tableName, $whereArray);
-            $whereClause = "hierarchy_type=\'$resultsRow[2]\'";
+            $whereClause = "hierarchy_type='$resultsRow[2]'";
 
             // Get hierarchical result set
             $key = 'id';
             $parent_key = 'parent_id';
-            $fields = 'id, parent_id, _level';
+            $fields = 'id, parent_id, level';
             $lineage = $resultsRow[1];
             $startWith = "id ='$resultsRow[0]'";
             $level = null;
@@ -2301,6 +2303,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+
     public function testGetIndicesContainsPrimary()
     {
         $indices = $this->_db->get_indices('accounts');
@@ -2318,21 +2321,4 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($found, 'Primary Key Not Found On Module');
     }
-
-    /*
-     * testDBGuidGeneration
-     * Tests that the first 1000 DB generated GUIDs are unique
-     */
-    public function testDBGuidGeneration()
-    {
-        $guids = array();
-        $sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
-        for($i = 0; $i < 1000; $i++)
-        {
-            $newguid = $this->_db->getOne($sql);
-            $this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
-            $guids []= $newguid;
-        }
-    }
-
 }
