@@ -3999,6 +3999,7 @@ h3.nomad {
   -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
   margin-left: 10px;
+  margin-right: 16px;
 }
 .bizcard h3 {
   font-size: 16px;
@@ -4013,12 +4014,17 @@ h3.nomad {
 }
 .bizcard .card {
   margin: 0 0 0 16px;
-  float: left;
   line-height: 1.2em;
 }
 .bizcard .card h3 {
   font-size: 1.75em;
   line-height: 22px;
+}
+.bizcard .card h3 span > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
 }
 .bizcard .card label {
   color: #999;
