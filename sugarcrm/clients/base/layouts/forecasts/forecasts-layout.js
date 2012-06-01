@@ -1,5 +1,24 @@
 (function(app) {
 
+//    var Filter = Backbone.Model.extend();
+//
+//    var Filters = Backbone.Collection.extend({
+//        model: Filter,
+//        module: "Forecasts/filters"
+//    });
+//
+//    var Forecasts = Backbone.Model.extend({
+//        initialize: function() {
+////            debugger;
+//            this.filters = new Filters();
+//            this.filters.fetch();
+//
+////            this.forecastLine = new ForecastLine();
+////            this.chart = new Chart();
+//        }
+//    });
+
+
     /**
      * Layout that places views in columns with each view in a column
      * @class View.Layouts.ColumnsLayout

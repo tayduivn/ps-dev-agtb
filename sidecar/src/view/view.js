@@ -67,6 +67,20 @@
         },
 
         /**
+         * Sets template option.
+         *
+         * If the given option already exists it is augmented by the value of the given `option` parameter.
+         * See Handlebars.js documentation for details.
+         * @param {String} key Option key.
+         * @param {Object} option Option value.
+         */
+        setTemplateOption: function(key, option) {
+            this.options = this.options || {};
+            this.options.templateOptions = this.options.templateOptions || {};
+            this.options.templateOptions[key] = _.extend({}, this.options.templateOptions[key], option);
+        },
+
+        /**
          * Renders a view for the given context.
          *
          * This method uses this view's {@link View.View#template} property to render itself.
