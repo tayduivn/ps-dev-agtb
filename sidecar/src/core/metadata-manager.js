@@ -225,6 +225,7 @@
 
         /**
          * Gets module list as delimited string
+         * @param {String} The delimiter to use.
          * @return {Object}
          */
         getDelimitedModuleList: function(delimiter) {

@@ -5,7 +5,7 @@
                             {{#each fields}}
                             <th class="{{#if sorting}}sorting{{#eq ../../../context.attributes.collection.orderBy.field name}}{{{../../../../this.orderBy.direction}}}{{/eq}} orderBy{{name}}{{/if}}"
                                 role="columnheader" data-fieldname="{{name}}">
-                                {{getLabel label ../../context.attributes.module}}
+                                {{str label ../../context.attributes.module}}
                             </th>
                             {{/each}}
                         </tr>

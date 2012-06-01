@@ -36,10 +36,10 @@
         var self = this, collection;
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(data) {
-
             // Add the records to context's collection
             if(data && data.records && data.records.length) {
                 self.updateCollection(data);
+                
                 app.view.View.prototype.render.call(self);
                 self.renderSubnav();
             } else {

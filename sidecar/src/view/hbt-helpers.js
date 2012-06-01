@@ -196,6 +196,7 @@
         app.logger.debug("***********************");
     });
 
+    // Deprecated
     // TODO: Remove this helper once everybody migrates to "str"
     Handlebars.registerHelper("getLabel", function(key, module) {
         return Handlebars.helpers.str.apply(this, arguments);
@@ -215,27 +216,4 @@
         return app.lang.get(key, module);
     });
 
-    Handlebars.registerHelper("getLabel", function(key, module){
-       return app.lang.get(key, module);
-    });
-
-    /**
-     * Retrieves a singular module name as string.
-     * @method getSingularModuleName
-     * @param {String} module Module name.
-     * @param {Boolean} lowerCased(optional) If provided, will be lower cased.
-     * @return {String} The singular name as string for the given module.
-     */
-    Handlebars.registerHelper("getSingularModuleName", function(module, lowerCased){
-        var singularModules = app.lang.getAppListStrings("moduleListSingular"),
-            singular = '';
-        if(singularModules && singularModules[module]) {
-            singular = (singularModules[module]) ? singularModules[module] : '';
-            singular = lowerCased ? singular.toLowerCase() : singular;
-        } else {
-            app.logger.error("Could not get singular module name for: "+module);
-        }
-        return singular;
-    });
-    
 })(SUGAR.App);

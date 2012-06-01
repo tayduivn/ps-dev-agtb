@@ -3,7 +3,7 @@
                     <ul class="nav nav-tabs results">
                         {{#each context.attributes.collection.models}}
                         <li class="search">
-                            <a data-toggle="tab"><span class="label label-{{getSingularModuleName attributes._module true}}">{{getLabel "LBL_MODULE_NAME" attributes._module}}</span></a>
+                            <a data-toggle="tab"><span class="label label-log">{{str "LBL_MODULE_NAME" attributes._module}}</span></a>
                             <p><a href="#{{attributes._module}}/{{id}}">{{fieldWithName ../this "name" this}}</a></p>
                             <div class="actions">
                                <a><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>

@@ -120,7 +120,7 @@ describe("View Manager", function() {
             expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit.meta);
         });
 
-        xit('pre-defined view class', function () {
+        it('pre-defined view class', function () {
             var view = app.view.createView({
                 name: "list",
                 module: "Contacts",

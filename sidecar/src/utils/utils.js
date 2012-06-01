@@ -78,18 +78,6 @@
         },
 
         /**
-         * Throttles a function call by specified number of millis 
-         * @param {Function} Function to call after designated millis
-         * @param {String} millis
-         */
-        throttle: function(callback, millis) {
-            var timerId = null;
-            timerId = setTimeout(function() { 
-                callback();
-            }, millis);
-        },
-
-        /**
          * Unformats number strings
          * @param {String} numberString
          * @param {String} numberGroupSeperator

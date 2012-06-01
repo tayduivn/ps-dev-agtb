@@ -56,6 +56,7 @@
             app.view.View.prototype.render.call(self);
             ctx = { title: t };
             StaticSubnav = Backbone.View.extend({
+                className: "subnav",
                 template: '<div class="btn-toolbar pull-left"><h1>{{title}}</h1></div>',
                 initialize: function() {
                     this.render();

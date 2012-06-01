@@ -27,7 +27,7 @@
         self.setPreviousTerm(term, this.module);
 
         if(term && term.length > 2) {
-            app.utils.throttle(function() {
+            _.delay(function() {
                 self.fireSearchRequest(term);
             }, app.config.requiredElapsed);
             
