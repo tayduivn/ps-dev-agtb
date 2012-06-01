@@ -2313,7 +2313,7 @@ SUGAR.reports = function() {
 		
 			field_type = field.type;
 		
-			if ( typeof(field.custom_type) != 'undefined') {
+			if ( typeof(field.custom_type) != 'undefined' && typeof(filter_defs[field.custom_type]) != 'undefined') {
 				field_type = field.custom_type;
 			}
 		
