@@ -3697,17 +3697,13 @@ html {
 .listing .items {
   margin-top: 93px;
 }
-.listing .items article > div {
-  display: inline-block;
-  height: 52px;
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  overflow: hidden;
-}
 .listing .items article > div > a {
   display: inline-block;
   margin-top: 8px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .listing article.deleted {
   opacity: 0;
