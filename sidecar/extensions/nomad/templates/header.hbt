@@ -2,12 +2,9 @@
 <a href="#" class="launch create-entity" id="create"><i class="icon-plus icon-md"></i></a>
 <div class="navbar-inner">
   <div class="nav-collapse">
-    <ul class="nav" id="moduleList">
-    </ul>
+    <ul class="nav" id="moduleList"></ul>
     <ul class="nav" id="createList">
-        <li id="quickTitle"><a href="#">Quick Create</a></li>
-        <li class="divider-horizontal"></li>
-     </ul>
+    </ul>
   </div><!-- /.nav-collapse -->
 </div><!-- /navbar-inner -->
 
