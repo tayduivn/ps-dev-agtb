@@ -43,6 +43,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
+        if (empty($this->_config['timeout']))
+        {
+            $this->_config['timeout'] = 15;
+        }
         $this->_client = new Elastica_Client($this->_config);
     }
 
