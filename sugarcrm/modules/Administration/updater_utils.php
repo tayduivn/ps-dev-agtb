@@ -33,16 +33,10 @@ require_once('include/utils/encryption_utils.php');
 
 function getSystemInfo($send_usage_info=true){
 	global $sugar_config;
-	global $db, $authLevel, $administration, $timedate;
+	global $db, $administration, $timedate;
 	$info=array();
 	$info = getBaseSystemInfo($send_usage_info);
     if($send_usage_info){
-		if($authLevel > 0){
-			if(isset($_SERVER['SERVER_ADDR']))
-				$info['ip_address'] = $_SERVER['SERVER_ADDR'];
-			else
-				$info['ip_address'] = '127.0.0.1';
-		}
 		$info['application_key']=$sugar_config['unique_key'];
 		$info['php_version']=phpversion();
 		if(isset($_SERVER['SERVER_SOFTWARE'])) {
@@ -77,9 +71,6 @@ function getSystemInfo($send_usage_info=true){
 			$info['admin_users'] = $result;
 		}
 
-		if(empty($authLevel)){
-			$authLevel = 0;
-		}
 
 		$result=$db->getOne("select count(*) count from users", false, 'fetching all users count');
 		if($result !== false) {
@@ -123,7 +114,6 @@ function getSystemInfo($send_usage_info=true){
 		include('distro.php');
 		if(!empty($distro_name))$info['distro_name'] = $distro_name;
 	}
-	$info['auth_level'] = $authLevel;
 	//BEGIN SUGARCRM flav=pro ONLY
 	$result = $db->getOne("SELECT count(*) as record_count FROM session_history WHERE is_violation =1 AND date_entered >= $lastMonth");
 	if($result){
@@ -147,7 +137,6 @@ function getSystemInfo($send_usage_info=true){
 }
 
 function getBaseSystemInfo($send_usage_info=true){
-    global $authLevel;
     include('sugar_version.php');
     $info=array();
 
@@ -156,7 +145,7 @@ function getBaseSystemInfo($send_usage_info=true){
     }
     $info['sugar_version']=$sugar_version;
     $info['sugar_flavor']=$sugar_flavor;
-    $info['auth_level'] = $authLevel;
+    $info['auth_level'] = 0;
 
 	  //BEGIN SUGARCRM lic=sub ONLY
 
@@ -741,7 +730,7 @@ function loadLicense($firstLogin=false){
 }
 
 function loginLicense(){
-	global $current_user, $license, $authLevel;
+	global $current_user, $license;
 	loadLicense(true);
 
   //BEGIN SUGARCRM lic=sub ONLY
@@ -761,7 +750,6 @@ function loginLicense(){
 	}
 
   //END SUGARCRM lic=sub ONLY
-	$authLevel = 0;
 
 	if (shouldCheckSugar()) {
 
