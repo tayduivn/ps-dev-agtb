@@ -102,7 +102,6 @@
         this.setCreateTasksList();
         app.view.View.prototype.render.call(this);
         return this;
->>>>>>> Moved header and subnav view tests in to extensions/portal/tests; return this from view renders
     },
     hide: function() {
         this.$el.hide();

@@ -1,18 +1,20 @@
-describe("resultsView", function() {
-    var app, stubContextGet, context, view;
+describe("Results View", function() {
+    var app, stubContextGet, context, ResultsView, view;
 
     beforeEach(function() {
+        var controller;
+        //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
+        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/results', 'results', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
-        app            = SugarTest.app;
+        app = SugarTest.app;
         context        = app.context.getContext();
-        context.get    = function() {};
         stubContextGet = sinon.stub(context, 'get');
-        view           = new app.view.views.ResultsView({context: context});
+        ResultsView = app.view.declareComponent('view', 'Results', null, controller);
+        view = new ResultsView({context: context});
     });
     afterEach(function() {
         context.get.restore();
     });
-        
     it("should initialize with custom meta", function() {
         expect(view.meta).toBeDefined();
     });
