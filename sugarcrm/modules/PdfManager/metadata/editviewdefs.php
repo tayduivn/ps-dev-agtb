@@ -46,21 +46,23 @@ array (
         ),
         1 => 
         array (
-          0 => 'description',
+          0 => array(   'name' => 'description',
+                        'displayParams' => array('rows' => 1)
+                    ),
         ),
         2 => 
         array (
           0 => 
           array (
             'name' => 'base_module',
-            'studio' => 'visible',
             'label' => 'LBL_BASE_MODULE',
+            'popupHelp' => 'LBL_BASE_MODULE_POPUP_HELP',
           ),
           1 => 
           array (
             'name' => 'published',
-            'studio' => 'visible',
             'label' => 'LBL_PUBLISHED',
+            'popupHelp' => 'LBL_PUBLISHED_POPUP_HELP',
           ),
         ),
         3 => 
@@ -68,8 +70,8 @@ array (
           0 => 
           array (
             'name' => 'field',
-            'studio' => 'visible',
             'label' => 'LBL_FIELD',
+            'popupHelp' => 'LBL_FIELD_POPUP_HELP',
           ),
           1 => '',
         ),
@@ -78,8 +80,8 @@ array (
           0 => 
           array (
             'name' => 'body_html',
-            'studio' => 'visible',
             'label' => 'LBL_BODY_HTML',
+            'popupHelp' => 'LBL_BODY_HTML_POPUP_HELP',
           ),
         ),
         5 => 
@@ -87,7 +89,6 @@ array (
           0 => 
           array (
             'name' => 'header_image',
-            'studio' => 'visible',
             'label' => 'LBL_HEADER_IMAGE',
           ),
         ),
@@ -118,6 +119,7 @@ array (
           array (
             'name' => 'keywords',
             'label' => 'LBL_KEYWORDS',
+            'popupHelp' => 'LBL_KEYWORDS_POPUP_HELP'
           ),
         ),
       ),

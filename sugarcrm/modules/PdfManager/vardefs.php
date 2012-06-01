@@ -28,8 +28,6 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$dictionary['PdfManager']['fields']['description']['rows'] = '1';
-$dictionary['PdfManager']['fields']['description']['len'] = 255;
 $dictionary['PdfManager'] = array(
 	'table'=>'pdfmanager',
     'favorites' => false,
@@ -63,7 +61,7 @@ $dictionary['PdfManager'] = array(
   ),
   'published' => 
   array (
-    'required' => true,
+    'required' => false,
     'name' => 'published',
     'vname' => 'LBL_PUBLISHED',
     'type' => 'enum',
@@ -87,7 +85,7 @@ $dictionary['PdfManager'] = array(
   ),
   'field' => 
   array (
-    'required' => true,
+    'required' => false,
     'name' => 'field',
     'vname' => 'LBL_FIELD',
     'type' => 'enum',

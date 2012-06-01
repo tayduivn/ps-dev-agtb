@@ -68,4 +68,9 @@ $mod_strings = array (
   'LBL_SUBJECT' => 'Subject',
   'LBL_KEYWORDS' => 'Keyword(s)',
   'LBL_AUTHOR' => 'Author',
+  'LBL_PUBLISHED_POPUP_HELP' => 'Published templates are available to users in the selected module.',
+  'LBL_BASE_MODULE_POPUP_HELP' => 'Select a module for which this template will be available.',
+  'LBL_FIELD_POPUP_HELP' => 'Select a field to insert the variable for the field value.',
+  'LBL_BODY_HTML_POPUP_HELP' => 'Create the PDF template using the editor tools.  To insert fields, use Field.',
+  'LBL_KEYWORDS_POPUP_HELP' => 'Associate Keywords with the document, generally in the form "keyword1 keyword2..."',
 );
