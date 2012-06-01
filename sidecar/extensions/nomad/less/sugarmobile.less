@@ -80,7 +80,10 @@ h1 {font-size: 26px !important;}
   display:inline;
 }
 
-#listing-Accounts .items article {
+#scroll > .pad > span .control-group,
+#detailListing #listing > ul > li,
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 
@@ -771,6 +774,7 @@ text-shadow: 0 -1px 0 @black;
   @shadow: 0 0 8px rgba(0,0,0,.9);
   .box-shadow(@shadow);
   margin-left:10px;
+  margin-right:16px;
 }
 
 .bizcard h3 {
@@ -786,11 +790,16 @@ text-shadow: 0 -1px 0 @black;
 }
 .bizcard .card {
   margin: 0 0 0 16px;
-  float:left;
   line-height:1.2em;
   h3 {
     font-size:1.75em;
     line-height:22px;
+    span > span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right:10px;
+    }
   }
   label {
     color: #999;
@@ -943,8 +952,14 @@ color: @gray;
   display: block;
   float:left;
 }
+
+#record-action .span1_5th {
+  float:left;
+  width:20%;
+}
+
 #createRecord.form-horizontal .controls {
-  margin-left: 26%;
+  margin-left: 27%;
 }
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
@@ -964,6 +979,20 @@ color: @gray;
   width: 32px;
 }
 
+.control-group.error {
+  * {
+    color:red !important;
+  }
+  .icon-exclamation-sign {
+    line-height:26px;
+  }
+  small {
+    display:block;
+    clear:both;
+    font-size:smaller;
+  }
+}
+
 .control-group {
   .btn.fright {
     min-width: 20px;
@@ -971,6 +1000,7 @@ color: @gray;
     padding-right: 4px;
   }
 }
+
 
 /* Log In
 ----------*/
@@ -1033,6 +1063,11 @@ float: none !important;}
 
 .login .btn.btn-sugar {width: 140px!important;}
 
+.login .control-group.error input {
+  background:@white url(../img/exclamation.png) 97% 50% no-repeat;
+  color:@red;
+}
+
 .alert {
  z-index: 2002;
  position: absolute;
@@ -1049,6 +1084,18 @@ float: none !important;}
  margin: 0;
  font-size: 12px;
  background: @black;
+}
+
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width:100%;
+  overflow: hidden;
+  .alert {
+    position:relative;
+  }
 }
 
 /* Alert overrider */

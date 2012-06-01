@@ -1144,7 +1144,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 mode:2,
                 mapping: Dom.get(targetId).value
             };
-            win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
+            win.load(ModuleBuilder.paramsToUrl(win.params), "POST", function()
             {
                 SUGAR.util.evalScript(win.body.innerHTML);
                 //firefox will ignore the left panel size, so we need to manually force the windows height and width

@@ -54,6 +54,49 @@ SUGAR.expressions.getFunctionList = function()
 	return funcList;
 };
 
+    /**
+     * Returns a list of functions that are recommended for users (instead of the complete list)
+     */
+SUGAR.expressions.getDisplayFunctionList = function() {
+    var functionsArray = SUGAR.expressions.getFunctionList();
+    var usedClasses = { };
+    var ret = [];
+    for (var i in functionsArray)
+    {
+        var fName = functionsArray[i][0];
+        //Internal Sugar functions that most users will not find useful
+        switch (fName) {
+        case "isValidTime":
+        case "isAlpha":
+        case "doBothExist":
+        case "isValidPhone":
+        case "isRequiredCollection":
+        case "isNumeric":
+        case "isValidDBName":
+        case "isAlphaNumeric":
+        case "stddev":
+        case "charAt":
+        case "formatName":
+        case "sugarField":
+            continue;
+            break;
+        }
+        //For now, hide date functions in the formula builder as they are unstable.
+        if (functionsArray[i][1] == "time")
+            continue;
+        if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
+            continue;
+        if (functionsArray[i][1] == "number")
+            ret.push([functionsArray[i][0], "_number"]);
+        else
+            ret.push(functionsArray[i]);
+
+        usedClasses[SUGAR.FunctionMap[fName].prototype.className] = true;
+    }
+
+    return ret;
+}
+
 /**
  * Pulls the current expression from the input field, replaces variables and validates through the parser.
  */
@@ -390,43 +433,10 @@ SUGAR.expressions.GridToolTip = {
 	SUGAR.expressions.fieldGrid = fieldsGrid;
 
     //Setup the function list
-	var functionsArray = SUGAR.expressions.getFunctionList();
-	var usedClasses = { };
-	if (!SUGAR.expressions.funcGridData) {
-		SUGAR.expressions.funcGridData = [];
-		for (var i in functionsArray)
-		{
-			var fName = functionsArray[i][0];
-			//Internal Sugar functions that most users will not find useful
-			switch (fName) {
-			case "isValidTime":
-			case "isAlpha":
-			case "doBothExist":
-			case "isValidPhone":
-			case "isRequiredCollection":
-			case "isNumeric":
-			case "isValidDBName":
-			case "isAlphaNumeric":
-			case "stddev":
-			case "charAt":
-			case "formatName":
-			case "sugarField":
-				continue;
-				break;
-			}
-			//For now, hide date functions in the formula builder as they are unstable.
-			if (functionsArray[i][1] == "time")
-				continue;
-			if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
-				continue;
-			if (functionsArray[i][1] == "number")
-				SUGAR.expressions.funcGridData.push([functionsArray[i][0], "_number"]);
-			else
-				SUGAR.expressions.funcGridData.push(functionsArray[i]);
-			
-			usedClasses[SUGAR.FunctionMap[fName].prototype.className] = true;
-		}
-	}
+    if (!SUGAR.expressions.funcGridData) {
+        SUGAR.expressions.funcGridData = SUGAR.expressions.getDisplayFunctionList();
+    }
+
 	var funcDS = new YAHOO.util.LocalDataSource(SUGAR.expressions.funcGridData, 
 	{
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
@@ -810,6 +820,7 @@ SUGAR.expressions.GridToolTip = {
         return ret;
     };
 
+    var displayFunctions = SUGAR.expressions.getDisplayFunctionList();
     /**
      * Return an array of all the function names from the current module of a given type
      * Optionally it can take a search string to filter the fields by name
@@ -827,13 +838,14 @@ SUGAR.expressions.GridToolTip = {
         var ret = [],
             fMap = SUGAR.FunctionMap,
         	see = SUGAR.expressions.Expression;
-        for(var i in fMap)
+        for(var i = 0; i < displayFunctions.length; i++)
         {
             try{
-                if ((!search || i.toLowerCase().indexOf(search) > -1)
-                    && see.prototype.isProperType(fMap[i].prototype, type)
+                if ((!search || displayFunctions[i][0].toLowerCase().indexOf(search) > -1)
+                    && fMap[displayFunctions[i][0]]
+                    && see.prototype.isProperType(fMap[displayFunctions[i][0]].prototype, type)
                 ){
-                    ret.push(i);
+                    ret.push(displayFunctions[i][0]);
                 }
             }catch(e){
                 console.log(i);

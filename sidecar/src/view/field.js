@@ -138,11 +138,11 @@
             }
 
             /**
-             * Label key (used for i18n).
+             * i18n-ed field label.
              * @property {String}
              * @member View.Field
              */
-            this.label = this.def.label || this.def.vname || this.name;
+            this.label = app.lang.get(this.def.label || this.def.vname || this.name, this.module);
 
             /**
              * Compiled template.

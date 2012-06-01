@@ -196,17 +196,25 @@
         app.logger.debug("***********************");
     });
 
+    // TODO: Remove this helper once everybody migrates to "str"
+    Handlebars.registerHelper("getLabel", function(key, module) {
+        return Handlebars.helpers.str.apply(this, arguments);
+    });
+
     /**
-     * Retrieves a label string.
-     * @method getLabel
+     * Retrives a string by key.
+     *
+     * The helper queries {@link Core.LanguageHelper} module to retrieve an i18n-ed string.
+     * @method str
      * @param {String} key Key of the label.
      * @param {String} module(optional) Module name.
      * @return {String} The string for the given label key.
      */
-    Handlebars.registerHelper("getLabel", function(key, module) {
+    Handlebars.registerHelper("str", function(key, module) {
         module = _.isString(module) ? module : null;
         return app.lang.get(key, module);
     });
+
 
     /**
      * Allows browser debugger to be launched from within a handlebar template using {{debugger}}

@@ -111,7 +111,7 @@ class SugarRestService extends SugarWebService{
 
 		$responseServer = new $response($this->implementation);
 		$this->server->faultServer = $responseServer;
-		$this->responseServer->faultServer = $responseServer;
+		$responseServer->faultServer = $responseServer;
 		$responseServer->generateResponse($this->server->serve());
 		$GLOBALS['log']->info('End: SugarRestService->serve');
 	} // fn

@@ -1,5 +1,5 @@
 <div class="control-group">
-    <label class="control-label">{{getLabel label model.module}}</label>
+    <label class="control-label">{{label}}</label>
     <div class="controls">
         <textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}">{{value}}</textarea>
     </div>
