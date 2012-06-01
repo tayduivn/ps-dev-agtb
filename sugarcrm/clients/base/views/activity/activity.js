@@ -16,7 +16,8 @@
 
         this.$el.find("span[name=id]").each(function() {
             $(this).hide().parent().parent().parent().attr("data-id", $(this).text());
-        })
+        });
+        return this;
     },
     bindDataChange: function() {
         if (this.collection) {
