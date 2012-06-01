@@ -439,6 +439,9 @@ function post_install() {
 
            _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
            rename($sugar_config['cache_dir'].'upload', 'upload');
+           //Bug#53276: Since cache/upload folder moved to upload folder,
+           //           the unzip_dir must be replaced with the updated path.
+           $_SESSION['unzip_dir'] = realpath('upload').substr($_SESSION['unzip_dir'], strrpos($_SESSION['unzip_dir'], 'upload') + 6);
 
            if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
            {
