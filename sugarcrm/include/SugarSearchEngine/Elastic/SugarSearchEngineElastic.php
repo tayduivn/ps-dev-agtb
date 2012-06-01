@@ -347,6 +347,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return false;
         }
 
+        // for group searches, do not append wildcard
+        if (preg_match('/\(.*\)/', $queryString))
+        {
+            return false;
+        }
+
         // when using double quotes, do not append wildcard
         if( strpos($queryString, '"') !==  false) {
             return false;
