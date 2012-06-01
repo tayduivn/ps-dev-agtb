@@ -58,10 +58,6 @@ $app_list_strings = array (
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
 
-  //BEGIN SUGARCRM flav=ent ONLY
-    'OpportunityLines' => 'Opportunity Lines',
-  //END SUGARCRM flav=ent ONLY
-
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',

@@ -28,14 +28,16 @@
 
 class ViewSidecar extends SugarView
 {
- 	function ViewSidecar() {
-		$this->options['show_footer'] = false;
- 		parent::SugarView();
- 	}
+    function ViewSidecar()
+    {
+        $this->options['show_footer'] = false;
+        parent::SugarView();
+    }
 
 
- 	function display()
- 	{
+    function display()
+    {
+        $this->ss->assign("module", $this->module);
         $this->ss->display("include/SidecarView/SidecarView.tpl");
- 	}
+    }
 }

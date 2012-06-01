@@ -50,10 +50,6 @@ $moduleList[] = 'Prospects';
 $moduleList[] = 'ProspectLists';
 //END SUGARCRM flav!=sales ONLY
 
-//BEGIN SUGARCRM flav=ent ONLY
-$moduleList[] = 'OpportunityLines';
-//END SUGARCRM flav=ent ONLY
-
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
@@ -119,10 +115,6 @@ $beanList['Accounts']       = 'Account';
 $beanList['DynamicFields']  = 'DynamicField';
 $beanList['EditCustomFields']   = 'FieldsMetaData';
 $beanList['Opportunities']  = 'Opportunity';
-
-//BEGIN SUGARCRM flav=ent ONLY
-$beanList['OpportunityLines'] = 'OpportunityLine';
-//END SUGARCRM flav=ent ONLY
 
 $beanList['EmailTemplates']     = 'EmailTemplate';
 $beanList['Notes']          = 'Note';
@@ -284,9 +276,6 @@ $beanFiles['SchedulersJob']  = 'modules/SchedulersJobs/SchedulersJob.php';
 $beanFiles['Contact']       = 'modules/Contacts/Contact.php';
 $beanFiles['Account']       = 'modules/Accounts/Account.php';
 $beanFiles['Opportunity']   = 'modules/Opportunities/Opportunity.php';
-//BEGIN SUGARCRM flav=ent ONLY
-$beanFiles['OpportunityLine']   = 'modules/OpportunityLines/OpportunityLine.php';
-//END SUGARCRM flav=ent ONLY
 $beanFiles['EmailTemplate']         = 'modules/EmailTemplates/EmailTemplate.php';
 $beanFiles['Note']          = 'modules/Notes/Note.php';
 $beanFiles['Call']          = 'modules/Calls/Call.php';
@@ -416,9 +405,6 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-    'OpportunityLine',
-    //END SUGARCRM flav=ent ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
     ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses','EmailText',
@@ -513,10 +499,6 @@ $report_include_modules['Contracts']='Contract';
 $report_include_modules['Trackers']         = 'Tracker';
 
 //END SUGARCRM flav!=sales ONLY
-
-//BEGIN SUGARCRM flav=ent ONLY
-$report_include_modules['OpportunityLines'] = 'OpportunityLine';
-//BEGIN SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $report_include_modules['TimePeriods'] = 'TimePeriod';
