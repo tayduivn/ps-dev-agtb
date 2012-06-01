@@ -449,8 +449,6 @@ function post_install() {
            _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
            rename($sugar_config['cache_dir'].'upload', 'upload');
 
-           $_SESSION['unzip_dir'] = realpath('upload').substr($_SESSION['unzip_dir'], strrpos($_SESSION['unzip_dir'], 'upload') + 6);
-
            if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
            {
               rename('upload_backup/index.html', 'upload/index.html');
