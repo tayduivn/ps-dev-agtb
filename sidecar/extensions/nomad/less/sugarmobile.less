@@ -105,13 +105,6 @@ article {
   padding-left: 44px;
 }
 
-article div {
-  display: table-cell;
-  vertical-align: middle;
-  height: 52px;
-  overflow: hidden;
-  
-}
 article [class^="icon-star"] {
 position: absolute;
 top: 24px;
@@ -493,6 +486,20 @@ html {
   -webkit-overflow-scrolling: touch;
   .items {
     margin-top:93px;
+    article {
+      &>div {
+	display: inline-block;
+	height: 52px;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	overflow: hidden;
+	&>a {
+	  display:inline-block;
+	  margin-top:8px;
+	}
+      }
+    }
   }
 }
 
