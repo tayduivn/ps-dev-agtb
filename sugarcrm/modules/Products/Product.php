@@ -670,10 +670,11 @@ class Product extends SugarBean {
 
 		return $array_assign;
 	}
-
-
-
-
 }
 
-?>
+
+function get_expert_array()
+{
+    require_once("include/utils.php");
+    return get_user_array();
+}
