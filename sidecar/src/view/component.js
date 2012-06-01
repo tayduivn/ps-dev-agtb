@@ -1,5 +1,7 @@
 /**
  * Represents base view class for layouts, views, and fields.
+ *
+ * This is an abstract class.
  * @class View.Component
  * @alias SUGAR.app.view.Component
  */
@@ -58,6 +60,31 @@
              * @property {Data.BeanCollection}
              */
             this.collection = options.collection || this.context.get("collection");
+        },
+
+        /**
+         * Renders a component.
+         *
+         * Override this method to provide custom logic.
+         * The default implementation does nothing.
+         * See Backbone.View documentation for details.
+         * @protected
+         */
+        _render: function() {
+            // Do nothing. Override.
+        },
+
+        /**
+         * Renders a component.
+         *
+         * IMPORTANT: Do not override this method.
+         * Instead, override {@link View.Component#_render} to provide render logic.
+         * @return {View.Component} Instance of this component.
+         */
+        render: function() {
+            if (this.disposed === true) throw new Error("Unable to render component because it's disposed: " + this);
+            this._render();
+            return this;
         },
 
         /**

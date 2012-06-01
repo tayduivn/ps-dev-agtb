@@ -162,9 +162,7 @@ $module_map = array(
     'timeperiods'   => 'TimePeriods',
     'quotas'        => 'Quotas',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-    'opportunity_lines' => 'OpportunityLines',
-//END SUGARCRM flav=ent ONLY
+
 );
 
 $my_report_titles = array(

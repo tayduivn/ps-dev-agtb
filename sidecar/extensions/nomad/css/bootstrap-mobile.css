@@ -3277,7 +3277,10 @@ h1 {
 #content > div > div {
   display: inline;
 }
-#listing-Accounts .items article {
+#scroll > .pad > span .control-group,
+#detailListing #listing > ul > li,
+#listing-Accounts > article.nav,
+.items article {
   -webkit-transform: translatez(0);
 }
 /* activity and twitter */
@@ -3996,6 +3999,7 @@ h3.nomad {
   -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
   margin-left: 10px;
+  margin-right: 16px;
 }
 .bizcard h3 {
   font-size: 16px;
@@ -4010,12 +4014,17 @@ h3.nomad {
 }
 .bizcard .card {
   margin: 0 0 0 16px;
-  float: left;
   line-height: 1.2em;
 }
 .bizcard .card h3 {
   font-size: 1.75em;
   line-height: 22px;
+}
+.bizcard .card h3 span > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
 }
 .bizcard .card label {
   color: #999;
@@ -4195,8 +4204,12 @@ h3.nomad {
   display: block;
   float: left;
 }
+#record-action .span1_5th {
+  float: left;
+  width: 20%;
+}
 #createRecord.form-horizontal .controls {
-  margin-left: 26%;
+  margin-left: 27%;
 }
 #createRecord.form-horizontal .control-group:first-child {
   border-top: none;
@@ -4214,6 +4227,17 @@ h3.nomad {
 #createRecord .avatar {
   height: 32px;
   width: 32px;
+}
+.control-group.error * {
+  color: red !important;
+}
+.control-group.error .icon-exclamation-sign {
+  line-height: 26px;
+}
+.control-group.error small {
+  display: block;
+  clear: both;
+  font-size: smaller;
 }
 .control-group .btn.fright {
   min-width: 20px;
@@ -4293,6 +4317,10 @@ h3.nomad {
 .login .btn.btn-sugar {
   width: 140px!important;
 }
+.login .control-group.error input {
+  background: #ffffff url(../img/exclamation.png) 97% 50% no-repeat;
+  color: #e61718;
+}
 .alert {
   z-index: 2002;
   position: absolute;
@@ -4312,6 +4340,17 @@ h3.nomad {
   margin: 0;
   font-size: 12px;
   background: #000000;
+}
+.alerts {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+}
+.alerts .alert {
+  position: relative;
 }
 /* Alert overrider */
 .alert-warning {

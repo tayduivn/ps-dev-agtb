@@ -16,9 +16,6 @@
         initialize: function(options) {
             app.view.Component.prototype.initialize.call(this, options);
 
-            // TODO: Do we need this?
-            //_.bindAll(this);
-
             /**
              * Name of the view (required).
              * @cfg {String}
@@ -62,6 +59,23 @@
              * @property {View.Layout}
              */
             this.layout = this.options.layout;
+
+            var defaultValue = {};
+            defaultValue[this.module] = this.module;
+
+            /**
+             * Singular i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.moduleSingular = app.lang.getAppListStrings("moduleListSingular", defaultValue)[this.module];
+
+            /**
+             * Pluralized i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.modulePlural = app.lang.getAppListStrings("moduleList", defaultValue)[this.module];
 
             this.$el.data("comp", "view_" + this.name);
         },
@@ -113,7 +127,9 @@
         },
 
         /**
-         * Renders the view onto the page.
+         * Renders a view onto the page.
+         *
+         * The method renders this view with field placeholders.
          *
          * This method uses this view as the context for the view's Handlebars {@link View.View#template}
          * and view's `options.templateOptions` property as template options.
@@ -123,7 +139,7 @@
          * Example:
          * <pre><code>
          * app.view.views.CustomView = app.view.View.extend({
-         *    _render: function() {
+         *    _renderSelf: function() {
          *      var customCtx = {
          *         // Your custom context for this view template
          *      };
@@ -133,7 +149,7 @@
          *
          * // Or totally different logic that doesn't use this.template
          * app.view.views.AnotherCustomView = app.view.View.extend({
-         *    _render: function() {
+         *    _renderSelf: function() {
          *       // Never do this :)
          *       return "&lt;div&gt;Hello, world!&lt;/div&gt;";
          *    }
@@ -143,7 +159,7 @@
          * </code></pre>
          * @protected
          */
-        _render: function() {
+        _renderSelf: function() {
             this._renderWithContext(this, this.options.templateOptions);
         },
 
@@ -165,14 +181,25 @@
         },
 
         /**
-         * Renders the view onto the page.
-         * See Backbone.View documentation for details.
+         * Renders a view onto the page.
+         *
+         * The method first renders this view with field placeholders {@link View.View#_renderSelf}
+         * and then for each field invokes {@link View.View#_renderField}.
+         *
+         * You can override this method if you don't need field rendering.
+         * Example:
+         * <pre><code>
+         * app.view.views.CustomView = app.view.View.extend({
+         *    _render: function() {
+         *        // Your custom rendering logic
+         *    }
+         * });
+         * </code></pre>
          * @return {Object} Reference to this view.
          */
-        render: function() {
-            if (this.disposed === true) throw new Error("Unable to render view because it's disposed: " + this);
+        _render: function() {
             if (app.acl.hasAccess(this.name, this.module)) {
-                this._render();
+                this._renderSelf();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
                     this._renderField(field);

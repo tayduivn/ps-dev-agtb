@@ -3,7 +3,7 @@
     app.view.fields.PhoneField = app.view.Field.extend({
         events: {
             "click .call": function () {
-                //var phoneNumber = this.value;
+                app.nomad.callPhone([this.value]);
             }
         },
 

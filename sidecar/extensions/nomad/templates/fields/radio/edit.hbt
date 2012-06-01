@@ -1,5 +1,5 @@
 <div class="control-group">
-    <label class="control-label">{{getLabel label model.module}}</label>
+    <label class="control-label">{{label}}</label>
     {{#nothing}}
     <div class="controls">
         {{#eachOptions options}}

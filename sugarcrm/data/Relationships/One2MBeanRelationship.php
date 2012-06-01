@@ -217,12 +217,12 @@ class One2MBeanRelationship extends One2MRelationship
                     $where .= " AND $add_where";
             }
 
-            $from = $rhsTable;
+            $from = $this->def['rhs_table'];
             //BEGIN SUGARCRM flav=pro ONLY
             if (!empty($params['enforce_teams']))
             {
                 $relatedSeed = BeanFactory::getBean($this->getRHSModule());
-                if ($rhsTable != $relatedSeed->table_name)
+                if ($this->def['rhs_table'] != $relatedSeed->table_name)
                     $from .= ", $relatedSeed->table_name";
                 $relatedSeed->add_team_security_where_clause($from);
             }
@@ -230,7 +230,7 @@ class One2MBeanRelationship extends One2MRelationship
 
             if (empty($params['return_as_array'])) {
                 //Limit is not compatible with return_as_array
-                $query = "SELECT $rhsTable.id FROM $from $where";
+                $query = "SELECT id FROM $from $where";
                 if (!empty($params['limit']) && $params['limit'] > 0) {
                     $offset = isset($params['offset']) ? $params['offset'] : 0;
                     $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);
@@ -240,8 +240,8 @@ class One2MBeanRelationship extends One2MRelationship
             else
             {
                 return array(
-                    'select' => "SELECT $rhsTable.id",
-                    'from' => "FROM $rhsTable",
+                    'select' => "SELECT {$this->def['rhs_table']}.id",
+                    'from' => "FROM {$this->def['rhs_table']}",
                     'where' => $where,
                 );
             }
