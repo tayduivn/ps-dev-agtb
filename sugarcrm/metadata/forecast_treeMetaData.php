@@ -45,7 +45,7 @@ $dictionary['forecast_tree'] = array(
 			'fields'		=> array('id')
 		),
 		array(
-			'name'			=> 'idx_user_id',
+			'name'			=> 'forecast_tree_idx_user_id',
 			'type'			=> 'index',
 			'fields'		=> array('user_id')
 		),
