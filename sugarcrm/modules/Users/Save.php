@@ -70,9 +70,7 @@ $focus->incrementETag("mainMenuETag");
 if(empty($focus->user_name))
 {
     $newUser = true;
-    //BEGIN SUGARCRM flav=int ONLY
     //C.L. Bug 48898 - Clear the user_array register value that may be cached to resolve the get_assigned_user_name function calls when create new user
-    //END SUGARCRM flav=int ONLY
     clear_register_value('user_array',$focus->object_name);
 } else {
     $newUser = false;

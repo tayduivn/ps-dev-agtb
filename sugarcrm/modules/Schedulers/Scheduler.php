@@ -982,12 +982,6 @@ class Scheduler extends SugarBean {
 	/**
 	 * function overrides the one in SugarBean.php
 	 */
-	function fill_in_additional_detail_fields() {
-    }
-
-	/**
-	 * function overrides the one in SugarBean.php
-	 */
 	function get_list_view_data()
 	{
 		global $mod_strings;

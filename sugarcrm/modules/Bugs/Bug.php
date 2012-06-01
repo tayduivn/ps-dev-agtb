@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// Bug is used to store customer information.
+// Bug report bean
 class Bug extends SugarBean {
         var $field_name_map = array();
 	// Stored fields
@@ -110,9 +110,6 @@ class Bug extends SugarBean {
 
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
-		// Fill in the assigned_user_name
-//		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-
 		$custom_join = $this->custom_fields->getJOIN();
 
                 $query = "SELECT ";
@@ -213,32 +210,10 @@ class Bug extends SugarBean {
 
                 return $query;
         }
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-		// Fill in the assigned_user_name
-		//$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-//		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-
-//	   $this->set_fixed_in_release();
-	}
 
 	function fill_in_additional_detail_fields()
 	{
-
-	    /*
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-        $this->team_name=$this->assigned_name;
-		//END SUGARCRM flav=pro ONLY
-        */
         parent::fill_in_additional_detail_fields();
-		//$this->created_by_name = get_assigned_user_name($this->created_by);
-		//$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 		$this->set_release();
 		$this->set_fixed_in_release();
 	}

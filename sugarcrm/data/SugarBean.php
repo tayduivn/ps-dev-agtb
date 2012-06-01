@@ -4432,18 +4432,18 @@ function save_relationship_changes($is_update, $exclude=array())
     function fill_in_additional_detail_fields()
     {
         global $locale;
-        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->assigned_user_id)){
+        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->assigned_user_id) && empty($this->assigned_user_name) && !empty($this->fetched_row['au_last_name'])){
              $this->assigned_user_name = $locale->getLocaleFormattedName($this->fetched_row['au_first_name'],$this->fetched_row['au_last_name']);
         }
- 		if(!empty($this->field_defs['created_by_name']) && !empty($this->created_by)) {
+ 		if(!empty($this->field_defs['created_by_name']) && !empty($this->created_by) && !empty($this->fetched_row['cbu_last_name'])) {
  		    $this->created_by_name = $locale->getLocaleFormattedName($this->fetched_row['cbu_first_name'],$this->fetched_row['cbu_last_name']);
  		}
- 		if(!empty($this->field_defs['modified_by_name']) && !empty($this->modified_user_id)) {
+ 		if(!empty($this->field_defs['modified_by_name']) && !empty($this->modified_user_id) && !empty($this->fetched_row['mbu_last_name'])) {
  		    $this->modified_by_name = $locale->getLocaleFormattedName($this->fetched_row['mbu_first_name'],$this->fetched_row['mbu_last_name']);
  		}
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name)) {
+        if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name) && !empty($this->fetched_row['tn_name'])) {
             if(!empty($GLOBALS['current_user']) && $GLOBALS['current_user']->showLastNameFirst()) {
 		        $this->team_name = trim($this->fetched_row['tn_name_2'] . ' ' . $this->fetched_row['tn_name']);
 		    } else {

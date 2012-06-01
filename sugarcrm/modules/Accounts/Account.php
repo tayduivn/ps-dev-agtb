@@ -241,18 +241,6 @@ class Account extends Company {
 		*/
 	}
 
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-
-//BEGIN SUGARCRM flav=pro ONLY
-        if (!empty($this->team_id) && empty($this->team_name)) {
-		    $this->assigned_name = get_assigned_team_name($this->team_id);
-            $this->team_name=$this->assigned_name;
-        }
-//END SUGARCRM flav=pro ONLY
-	}
-
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
@@ -292,7 +280,6 @@ class Account extends Company {
 		global $system_config,$current_user;
 		$temp_array = $this->get_list_view_array();
 		$temp_array["ENCODED_NAME"]=$this->name;
-//		$temp_array["ENCODED_NAME"]=htmlspecialchars($this->name, ENT_QUOTES);
 		if(!empty($this->billing_address_state))
 		{
 			$temp_array["CITY"] = $this->billing_address_city . ', '. $this->billing_address_state;
