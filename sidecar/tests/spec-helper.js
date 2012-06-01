@@ -14,6 +14,9 @@ var SugarTest = {};
         get: function(key) {
             return test.storage[key];
         },
+        has: function(key) {
+            return test.storage[key] ? true : false;
+        },
         cut: function(key) {
             delete test.storage[key];
         },
