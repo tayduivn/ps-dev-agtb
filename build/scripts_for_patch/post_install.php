@@ -434,13 +434,21 @@ function post_install() {
            if(file_exists('upload'))
            {
                _logThis("Renaming existing upload directory to upload_backup");
-               rename('upload', 'upload_backup');
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
+                   $ext = '';
+                   while(file_exists('upload/upgrades_backup'.$ext)) {
+                       $ext = empty($ext) ? 1 : $ext + 1;
+                   }
+                   rename('upload', 'upload_backup'.$ext);
+               } else {
+                   rename('upload', 'upload_backup');
+               }
            }
 
            _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
            rename($sugar_config['cache_dir'].'upload', 'upload');
-           //Bug#53276: Since cache/upload folder moved to upload folder,
-           //           the unzip_dir must be replaced with the updated path.
+
            $_SESSION['unzip_dir'] = realpath('upload').substr($_SESSION['unzip_dir'], strrpos($_SESSION['unzip_dir'], 'upload') + 6);
 
            if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
@@ -455,8 +463,21 @@ function post_install() {
            }
 
            mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
+           //Bug#53276: If upgrade patches exists, the move back to the its original path
            if(file_exists('upload/upgrades/temp')) {
-              rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
+                   $ext = '';
+                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
+                           $ext = empty($ext) ? 1 : $ext + 1;
+                       }
+                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
+                   }
+               } else {
+                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
+               }
+               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
            }
        }
     }
