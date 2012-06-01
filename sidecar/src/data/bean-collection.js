@@ -44,7 +44,7 @@
              * @member Data.BeanCollection
              * @property {Array}
              */
-            this.fields = options.fields || null;
+            this.fields = options.fields || this.fields || null;
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
@@ -76,7 +76,7 @@
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
-            options.fields = options.fields || this.fields;
+            options.fields = options.fields || this.fields || null;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;

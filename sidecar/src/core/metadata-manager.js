@@ -107,6 +107,7 @@
 
                                 // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
                                 // TODO: This should be done on the server-side on my opinion
+
                                 if (_.isObject(field.displayParams)) {
                                     _.extend(field, field.displayParams);
                                     delete field.displayParams;
@@ -220,6 +221,16 @@
          */
         getModuleList: function() {
             return _getMeta(_app, "moduleList", "", true) || {};
+        },
+
+        /**
+         * Gets module list as delimited string
+         * @param {String} The delimiter to use.
+         * @return {Object}
+         */
+        getDelimitedModuleList: function(delimiter) {
+            if(!delimiter) return null;
+            return _.toArray(this.getModuleList()).join(delimiter);
         },
 
         /**

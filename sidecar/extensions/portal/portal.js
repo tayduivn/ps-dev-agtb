@@ -799,6 +799,15 @@
             });
         });
 
+        // Load the search results route.
+        app.router.route("search/:query", "search", function(query) {
+            app.controller.loadView({
+                module: "Search",
+                layout: "search",
+                query: query
+            });
+        });
+
     });
 
     app.view.Field = app.view.Field.extend({
