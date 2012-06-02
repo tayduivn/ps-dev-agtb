@@ -142,6 +142,9 @@ class ProjectTask extends SugarBean {
    {
        parent::fill_in_additional_detail_fields();
        $this->project_name = $this->_get_project_name($this->project_id);
+      //BEGIN SUGARCRM flav=pro ONLY
+       $this->resource_name = $this->getResourceName();
+      //END SUGARCRM flav=pro ONLY
    }
 
 	/*
@@ -149,11 +152,7 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_list_fields()
    {
-      //BEGIN SUGARCRM flav=pro ONLY
-      $this->resource_name = $this->getResourceName();
-      //END SUGARCRM flav=pro ONLY
       $this->fill_in_additional_detail_fields();
-      $this->project_name = $this->_get_project_name($this->project_id);
    }
 
 	/*
