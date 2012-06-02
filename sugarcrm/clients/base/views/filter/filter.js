@@ -31,29 +31,31 @@
             app.view.View.prototype.render.call(this);
             this.model.fetch({
                 success: function() {
-                    self.buildDropdown();
+                    self.buildDropdowns();
                 }
             });
-
 
             this.rendered = true;
         },
 
-        buildDropdown: function() {
-            var chosen = app.view.createField({
-                def: {
-                    name: 'timeperiods',
-                    type: 'enum'
-                },
-                view: this
-            }),
-                filter = this.$el.html(chosen.getPlaceholder().toString());
+        buildDropdowns: function() {
+            var self = this;
+            _.each(this.model.attributes, function(data, key) {
+                var chosen = app.view.createField({
+                        def: {
+                            name: key,
+                            type: 'enum'
+                        },
+                        view: self
+                    }),
+                    filter = self.$el.append(chosen.getPlaceholder().toString());
 
-            chosen.options.viewName = 'edit';
-            chosen.label = 'Forecast Period';
-            chosen.def.options = this.model.timeperiods.toJSON();
-            chosen.setElement(filter.find("span[sfuuid='" + chosen.sfId + "']"));
-            chosen.render();
+                chosen.options.viewName = 'edit';
+                chosen.label = self.model[key].get('label');
+                chosen.def.options = self.model[key].get('options');
+                chosen.setElement(filter.find('span[sfuuid="' + chosen.sfId + '"]'));
+                chosen.render();
+            });
         }
 
     });

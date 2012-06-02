@@ -99,22 +99,31 @@ class ForecastModuleApi extends ModuleApi {
         // todo: really make this work
         return array(
             'timeperiods' => array(
-                'tp0' => 'timeperiod 0',
-                'tp1' => 'timeperiod 1',
-                'tp2' => 'timeperiod 2',
-                'tp3' => 'timeperiod 3',
+                'label' => 'Forecast Period',
+                'options' => array(
+                    'tp0' => 'timeperiod 0',
+                    'tp1' => 'timeperiod 1',
+                    'tp2' => 'timeperiod 2',
+                    'tp3' => 'timeperiod 3',
+                ),
             ),
             'stages' => array(
-                's0' => 'closed',
-                's1' => 'proposed',
-                's2' => 'quoted',
-                's3' => 'qualified',
+                'label' => 'Stages',
+                'options' => array(
+                    's0' => 'closed',
+                    's1' => 'proposed',
+                    's2' => 'quoted',
+                    's3' => 'qualified',
+                ),
             ),
             'probabilities' => array(
-                'p0' => '25%',
-                'p1' => '50%',
-                'p2' => '75%',
-                'p3' => '100%',
+                'label' => 'Probabilities',
+                'options' => array(
+                    'p0' => '25%',
+                    'p1' => '50%',
+                    'p2' => '75%',
+                    'p3' => '100%',
+                )
             ),
         );
     }
