@@ -1,14 +1,11 @@
 <?php
 $viewdefs['Cases']['portal']['layout']['detail'] = array(
     'type' => 'columns',
-    'components' =>
-    array(
+    'components' => array(
         0 => array(
-            'layout' =>
-            array(
+            'layout' => array(
                 'type' => 'leftside',
-                'components' =>
-                array(
+                'components' => array(
                     0 => array(
                         'view' => 'detail',
                     ),
@@ -28,11 +25,9 @@ $viewdefs['Cases']['portal']['layout']['detail'] = array(
             ),
         ),
         1 => array(
-            'layout' =>
-            array(
+            'layout' => array(
                 'type' => 'rightside',
-                'components' =>
-                array(
+                'components' => array(
                     0 => array(
                         'view' => 'subdetail',
                         'context' => array(
