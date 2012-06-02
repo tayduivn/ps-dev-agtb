@@ -1045,7 +1045,7 @@ EOHTML;
         $ss->assign("COMPANY_LOGO_URL",getJSPath($companyLogoURL)."&logo_md5=".$ss->get_template_vars("COMPANY_LOGO_MD5"));
 
         // Bug 38594 - Add in Trademark wording
-        //$copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
+        $copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displayed regardless, so no need
         //to display an empty image here.
@@ -1053,7 +1053,7 @@ EOHTML;
             $copyright .= $attribLinkImg;
         }
         // End Required Image
-        //$ss->assign('COPYRIGHT',$copyright);
+        $ss->assign('COPYRIGHT',$copyright);
         //BEGIN SUGARCRM flav=sales || flav=pro ONLY
         if(isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id))
         {
