@@ -939,7 +939,7 @@ fixtures.metadata = {
             }
         }
     },
-    'sugarViews': {
+    'views': {
         "_hash": "x2",
         "detail": {
             "templates": {

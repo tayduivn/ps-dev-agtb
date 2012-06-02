@@ -167,7 +167,7 @@
          *        // etc.
          *    }
          *
-         *    "sugarViews": {
+         *    "views": {
          *      "text": {
          *          "templates" {
          *              "view": HB template source...
