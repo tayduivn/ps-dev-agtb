@@ -1,4 +1,4 @@
-(function(app, $) {
+(function(app) {
 
     /**
      * View that displays a list of models pulled from the context's collection.
@@ -21,7 +21,6 @@
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
             this.model = new app.Model.Filters();
-            this.model.on('change', this.onChange, this);
         },
 
         render : function (){
@@ -30,41 +29,35 @@
             if(this.rendered) return;
 
             app.view.View.prototype.render.call(this);
-            this.model.fetch();
+            this.model.fetch({
+                success: function() {
+                    self.buildDropdowns();
+                }
+            });
 
             this.rendered = true;
         },
 
-        onChange: function() {
-            var field = app.view.createField({
-                def: {
-                    type: 'enum'
-                },
-                view: this,
-                model: this.model.timeperiods
-            });
+        buildDropdowns: function() {
+            var self = this;
+            _.each(this.model.attributes, function(data, key) {
+                var chosen = app.view.createField({
+                        def: {
+                            name: key,
+                            type: 'enum'
+                        },
+                        view: self
+                    }),
+                    filter = self.$el.append(chosen.getPlaceholder().toString());
 
-            var placeholder = field.getPlaceholder();
-            var dropdown = this.buildForecastPeriodDropdown();
-            var filter = this.$el.html(placeholder.toString());
-            field.setElement(filter.find("span[sfuuid='" + field.sfId + "']"));
-            field.options.viewName = "edit";
-            field.render();
-        },
-
-        buildForecastPeriodDropdown: function() {
-            var periods = this.model.get('timeperiods'),
-                result = [];
-            $.each(periods, function(index, value) {
-                result.push('<option value="');
-                result.push(index);
-                result.push('">');
-                result.push(value);
-                result.push('</option> ');
+                chosen.options.viewName = 'edit';
+                chosen.label = self.model[key].get('label');
+                chosen.def.options = self.model[key].get('options');
+                chosen.setElement(filter.find('span[sfuuid="' + chosen.sfId + '"]'));
+                chosen.render();
             });
-            return result.join('');
         }
 
     });
 
-})(SUGAR.App, jQuery);
+})(SUGAR.App);
