@@ -8,9 +8,7 @@
             <div class="modal-body">
                 {{#each meta.panels}}
                 {{#fields}}
-                <div class="control-group">
                     {{field ../../this}}
-                </div>
                 {{/fields}}
                 {{/each}}
             </div>
