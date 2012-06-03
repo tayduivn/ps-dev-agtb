@@ -109,6 +109,9 @@ $subpanel_layout = array(
 			'usage'=>'query_only',
 	
 		),	
+		'recurring_source'=>array(
+			'usage'=>'query_only',	
+		),
 		//BEGIN SUGARCRM flav!=com ONLY
 		'join_url'=>array(
 			'usage'=>'query_only'
