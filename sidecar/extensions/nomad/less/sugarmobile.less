@@ -488,15 +488,13 @@ html {
     margin-top:93px;
     article {
       &>div {
-	display: inline-block;
-	height: 52px;
-	width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
-	overflow: hidden;
 	&>a {
 	  display:inline-block;
 	  margin-top:8px;
+	  width: 100%;
+	  overflow: hidden;
+	  white-space: nowrap;
+	  text-overflow: ellipsis;
 	}
       }
     }
@@ -762,7 +760,7 @@ text-shadow: 0 -1px 0 @black;
   z-index: 1000;
   min-height: 70px;
   overflow: auto;
-  padding: 16px 0 66px 0;
+  padding: 16px 0 0;
   color: @white;
   text-shadow: 0 -1px 0 @black;
   #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
@@ -784,61 +782,76 @@ text-shadow: 0 -1px 0 @black;
   margin-right:16px;
 }
 
-.bizcard h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: @white;
-  margin: 0;
-  padding: 0;
-  line-height: 20px;
-}
-.bizcard img {
-  float:left;
-}
-.bizcard .card {
-  margin: 0 0 0 16px;
-  line-height:1.2em;
+.bizcard {
   h3 {
-    font-size:1.75em;
-    line-height:22px;
-    span > span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right:10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: @white;
+    margin: 0;
+    padding: 0;
+    line-height: 20px;
+  }
+  img {
+    float:left;
+  }
+  .card {
+    margin: 0 16px;
+    line-height: 1.2em;
+    height: 80px;
+    max-height: 80px;
+    padding-bottom: 70px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    h3 {
+      font-size:1.75em;
+      line-height:22px;
+      span > span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right:10px;
+      }
+    }
+    label {
+      color: #999;
+      line-height: 1;
+      margin-bottom: 0;
+    }
+    .value {
+      display: block;
     }
   }
-  label {
-    color: #999;
-    line-height: 1;
-    margin-bottom: 0;
+  .fade {
+    #gradient > .vertical( @transparent, @black);
+    background-color:transparent !important; /*override lesscss logic for non compliant browsers*/
+    display: inline-block;
+    height: 20px;
+    width: 100%;
+    margin-left: -16px;
+    position: absolute;
+    bottom: 52px;
+    left: 0;
   }
-  .value {
-    display: block;
+  .more {
+    position:absolute;
+    top:50px;
+    right:10px;
+    color:lighten(@black,40%);
   }
-}
-
-.bizcard .more {
-  float:right;
-  padding-top:35px;
-  padding-right:10px;
-  color:lighten(@black,40%);
-}
-
-.bizcard #accountDescription{
-  margin: 10px 0 0;
-}
-
-#record-action {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
-   height: 52px;
-  @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
-  .box-shadow(@shadow);  
+  #accountDescription{
+     margin: 10px 0 0;
+  }  
+  #record-action {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
+     height: 52px;
+    @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
+    .box-shadow(@shadow);  
+  }
 }
 
 .tabs article {
