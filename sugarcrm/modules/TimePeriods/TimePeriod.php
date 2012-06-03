@@ -145,7 +145,8 @@ class TimePeriod extends SugarBean {
 
 		return $query;
 	}
-	
+
+
 	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
 	//domains, This method builds the domain array.
 	static function get_fiscal_year_dom() {
@@ -169,6 +170,30 @@ class TimePeriod extends SugarBean {
 		}
 		return $fiscal_years;
 	}
+
+
+    /**
+     * getCurrentName
+     *
+     * Returns the current timeperiod name if a timeperiod entry is found
+     *
+     */
+    static function getCurrentName($timedate=null)
+    {
+        global $app_strings;
+        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiods = array();
+        if(!empty($timeperiod))
+        {
+            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        }
+        return $timeperiods;
+    }
 
     /**
      * getLastCurrentNextIds
@@ -238,6 +263,7 @@ class TimePeriod extends SugarBean {
                 }
             }
             global $app_strings;
+            $timeperiods['current'] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
             $timeperiods['last_current_next'] = $app_strings['LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS']; //'Last,Current,Next';
         }
         return $timeperiods;

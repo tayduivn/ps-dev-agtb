@@ -108,9 +108,9 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
 
-
         //BEGIN SUGARCRM flav=ent ONLY
-        $line_item_count = mt_rand(0,2);
+        $count = mt_rand(1, 3);
+        $line_item_count = $count;
 
         while($line_item_count-- >= 0)
         {
@@ -125,9 +125,9 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->id = null;
             $product->product_id = $prod->id;
             $product->opportunity_id = $opp->id;
-            $product->best_case = $opp->amount;
-            $product->likely_case = $opp->amount * .85;
-            $product->worst_case = $opp->amount * .7;
+            $product->best_case = $opp->amount / $count;
+            $product->likely_case = ($opp->amount / $count) * .8;
+            $product->worst_case = ($opp->amount / $count) * .5;
             $product->created_by = $opp->assigned_user_id;
             $product->modified_user_id = $opp->assigned_user_id;
             $product->date_entered = $timedate->asDb($timedate->getNow());

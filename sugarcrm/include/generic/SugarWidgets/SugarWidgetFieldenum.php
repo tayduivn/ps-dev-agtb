@@ -39,10 +39,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 	}
 
 	public function queryFilteris($layout_def) {
-		$input_name0 = $layout_def['input_name0'];
-		if (is_array($layout_def['input_name0'])) {
-			$input_name0 = $layout_def['input_name0'][0];
-		}
+        $input_name0 = $this->getInputValue($layout_def);
 
         if ($input_name0 == 'last_current_next')
         {
@@ -53,11 +50,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 	}
 
 	public function queryFilteris_not($layout_def) {
-		$input_name0 = $layout_def['input_name0'];
-		if (is_array($layout_def['input_name0'])) {
-			$input_name0 = $layout_def['input_name0'][0];
-		}
-
+        $input_name0 = $this->getInputValue($layout_def);
         if ($input_name0 == 'last_current_next')
         {
             return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";

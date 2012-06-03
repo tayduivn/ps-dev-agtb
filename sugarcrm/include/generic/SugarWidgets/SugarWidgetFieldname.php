@@ -172,15 +172,11 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 	function queryFilterIs($layout_def)
 	{
-
 		$layout_def['name'] = 'id';
 		$layout_def['type'] = 'id';
-		$input_name0 = $layout_def['input_name0'];
 
-		if ( is_array($layout_def['input_name0']))
-		{
-			$input_name0 = $layout_def['input_name0'][0];
-		}
+        $input_name0 = $this->getInputValue($layout_def);
+
 		if ($input_name0 == 'Current User') {
 			global $current_user;
 			$input_name0 = $current_user->id;
@@ -195,12 +191,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 		$layout_def['name'] = 'id';
 		$layout_def['type'] = 'id';
-		$input_name0 = $layout_def['input_name0'];
-
-		if ( is_array($layout_def['input_name0']))
-		{
-			$input_name0 = $layout_def['input_name0'][0];
-		}
+        $input_name0 = $this->getInputValue($layout_def);
 		if ($input_name0 == 'Current User') {
 			global $current_user;
 			$input_name0 = $current_user->id;
@@ -270,12 +261,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
    	{
         $layout_def['name'] = 'id';
         $layout_def['type'] = 'id';
-        $input_name0 = $layout_def['input_name0'];
-
-        if (is_array($layout_def['input_name0']))
-        {
-            $input_name0 = $layout_def['input_name0'][0];
-        }
+        $input_name0 = $this->getInputValue($layout_def);
 
         if ($input_name0 == 'Current User')
         {

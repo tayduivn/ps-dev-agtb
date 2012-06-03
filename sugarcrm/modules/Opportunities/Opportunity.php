@@ -515,12 +515,12 @@ $query .= 			"LEFT JOIN users
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * deleteOpportunityLines
+     * deleteProductLines
      *
      */
-    public function deleteOpportunityLines()
+    public function deleteProductLines()
     {
-        $query = "DELETE FROM opportunity_lines WHERE opportunity_id = '{$this->id}'";
+        $query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
         $this->db->query($query);
     }
     //END SUGARCRM flav=ent ONLY

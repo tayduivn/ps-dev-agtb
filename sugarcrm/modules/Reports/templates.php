@@ -455,6 +455,7 @@ var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'Is'};
 qualifiers[qualifiers.length] = {name:'one_of',value:'One Of'};
 filter_defs['enum'] = qualifiers;
+filter_defs['timeperiod'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'Is'};
@@ -488,7 +489,7 @@ function addFilterInput(cell,default0,default1)
 	{
 		addFilterInputRelate(row,field.module,default0);
 	} 
-	else if (field.type == 'enum')
+	else if (field.type == 'enum' || field.type == 'timeperiod')
 	{
 		if (qualifier_name == 'one_of')
 		{
@@ -1061,7 +1062,7 @@ function template_form(&$field)
 	{
 		template_form_datetimecombo($field);
 	}
-	else if ($field['type'] == 'enum')
+	else if ($field['type'] == 'enum' || $field['type'] == 'timeperiod')
 	{
 		template_form_enum($field);
 	}

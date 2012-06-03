@@ -90,8 +90,3 @@ class OpportunityLine extends SugarBean
     }
 }
 
-function get_expert_array()
-{
-    require_once("include/utils.php");
-    return get_user_array();
-}

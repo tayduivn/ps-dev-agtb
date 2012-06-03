@@ -162,7 +162,7 @@ $mod_strings = array (
   //END SUGARCRM flav=pro ONLY
 
   //BEGIN SUGARCRM flav=ent ONLY
-  'LBL_OPPORTUNITY_LINES_SUBPANEL_TITLE' => 'Opportunity Line Items',
+  'LBL_PRODUCT_LINES_SUBPANEL_TITLE' => 'Product Line Items',
   //END SUGARCRM flav=ent ONLY
 );
 

@@ -242,7 +242,7 @@ option_arr_<?php echo $module_name; ?>[option_arr_<?php echo $module_name; ?>.le
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].options=option_arr_<?php echo $module_name; ?>;
 
 <?php
-				} else if(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function']))
+				} else if(isset($field_def['type']) && ($field_def['type'] == 'enum' || $field_def['type'] == 'timeperiod') && isset($field_def['function']))
 				{
 ?>
 					var option_arr_<?php echo $module_name; ?> = new Array();
@@ -460,7 +460,6 @@ qualifiers_name = qualifiers_name.concat(qualifiers);
 qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
 filter_defs['name'] = qualifiers_name;
-filter_defs['timeperiod'] = qualifiers_name;
 filter_defs['fullname'] = qualifiers_name;
 
 
@@ -555,6 +554,7 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 filter_defs['enum'] = qualifiers;
 filter_defs['radioenum'] = qualifiers;
 filter_defs['parent_type'] = qualifiers;
+filter_defs['timeperiod'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

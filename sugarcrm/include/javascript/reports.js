@@ -3084,7 +3084,7 @@ SUGAR.reports = function() {
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
 			} 
-			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type') {
+			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type' || field_type == 'timeperiod') {
 				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		

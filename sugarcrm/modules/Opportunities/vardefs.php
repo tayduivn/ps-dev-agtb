@@ -131,7 +131,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_AMOUNT',
     //'function'=>array('vname'=>'getCurrencyType'),
     'type' => 'currency',
-//    'disable_num_format' => true,
+    //'disable_num_format' => true,
     'dbType' => 'double',
     'comment' => 'Unconverted amount of the opportunity',
     'importable' => 'required',
@@ -139,8 +139,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'required' => true,
   	'options' => 'numeric_range_search_dom',
     'enable_range_search' => true,
-    'calculated' => true,
-    'formula' => 'rollupSum($products, "list_price")',
+    //'calculated' => true,
+    //'formula' => 'rollupSum($products, "list_price")',
   ),
   'amount_usdollar' =>
   array (

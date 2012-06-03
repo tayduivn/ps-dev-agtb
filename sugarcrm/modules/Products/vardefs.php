@@ -580,7 +580,7 @@ array (
   array(
     'name' => 'opportunities',
     'type' => 'link',
-    'relationship' => 'opportunity_lines_opportunities',
+    'relationship' => 'products_opportunities',
     'source'=>'non-db',
     'link_type'=>'one',
     'module'=>'Opportunities',

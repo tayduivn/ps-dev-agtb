@@ -317,4 +317,14 @@ class SugarWidgetReportField extends SugarWidgetField
      return "($column IS NOT NULL AND $column <> ".$this->reporter->db->emptyValue($layout_def['type']).")";
  }
 
+ protected function getInputValue($layout_def)
+ {
+     $input_name0 = $layout_def['input_name0'];
+     if (is_array($layout_def['input_name0']))
+     {
+         $input_name0 = $layout_def['input_name0'][0];
+     }
+     return $input_name0;
+ }
+
 }

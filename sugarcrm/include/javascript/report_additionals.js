@@ -624,7 +624,7 @@ function addFilterInput(cell,filter) {
 			addFilterInputSelectSingle(row,users_array,filter);
 		}
 	}
-	else if (field_type == 'enum' || field_type == 'multienum') {
+	else if (field_type == 'enum' || field_type == 'multienum' || field_type == 'timeperiod') {
 		if (qualifier_name == 'one_of') {
 			addFilterInputSelectMultiple(row,field.options,filter);
 		}
