@@ -33,13 +33,14 @@
         /**
          * Registers an event with the event proxy.
          *
-         * @param {String} event The name of the event. A good practice is to namespace your events with a colon. For example: `"app:start"`
+         * @param {String} event The name of the event.
+         * A good practice is to namespace your events with a colon. For example: `"app:start"`
          * @param context
          * @method
          */
         register: function(event, context) {
-            context.on(event, function(a) {
-                var args = [].slice.call(arguments,0);
+            context.on(event, function() {
+                var args = [].slice.call(arguments, 0);
                 args.unshift(event);
                 this.trigger.apply(this, args);
             }, this);
