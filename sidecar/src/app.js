@@ -173,19 +173,6 @@ SUGAR.App = (function() {
 
             _app.events.register(
                 /**
-                 * Fires when route changes a new view has been loaded.
-                 *
-                 * <pre><code>
-                 * obj.on("app:view:change", callback);
-                 * </pre></code>
-                 * @event
-                 */
-                "app:view:change",
-                this
-            );
-
-            _app.events.register(
-                /**
                  * @event
                  * Fires when login succeeds.
                  */
