@@ -58,7 +58,7 @@ class SugarParsers_Filter_Empty extends SugarParsers_Filter_AbstractFilter
     /**
      * Becuase this is for empty we always return null
      *
-     * @return null
+     * @return Mixed|null
      */
     public function getValue()
     {

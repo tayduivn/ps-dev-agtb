@@ -67,14 +67,14 @@ class SugarParsers_Filter
      */
     public function parseJson($json)
     {
-        $obj = json_decode($json);
+        $obj = json_decode($json, true);
         $this->parse($obj);
     }
 
     /**
      * Parse A decoded JsonString or an Array
      *
-     * @param mixed $obj
+     * @param object|array $obj
      */
     public function parse($obj)
     {
@@ -278,7 +278,7 @@ class SugarParsers_Filter
     /**
      * Convert a stdClass into an array
      *
-     * @param $d
+     * @param object|array $d
      * @return array
      */
     protected function objectToArray($d)

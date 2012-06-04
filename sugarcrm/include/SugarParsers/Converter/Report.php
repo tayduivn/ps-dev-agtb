@@ -70,7 +70,7 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
      * Convert the filter into a Report Engine Friendly Array
      *
      * @param mixed $value
-     * @return array
+     * @return array|mixed
      */
     public function convert($value)
     {
