@@ -17,28 +17,26 @@
      * @param {Object} options
      */
     initialize: function(options){
+        var self = this;
         app.view.View.prototype.initialize.call(this, options);
-        this.model = new app.Model.Filters();
+
+        self.model = self.layout.getModel('filters');
+        self.model.on('change', function() {
+            self.buildDropdowns();
+        });
     },
 
     render : function (){
-        var self = this;
         // only let this render once.  since if there is more than one view on a layout it renders twice
-        if(this.rendered) return;
-
-        app.view.View.prototype.render.call(this);
-        this.model.fetch({
-            success: function() {
-                self.buildDropdowns();
-            }
-        });
-
-        this.rendered = true;
+        if(!this.rendered) {
+            app.view.View.prototype.render.call(this);
+            this.rendered = true;
+        }
     },
 
     buildDropdowns: function() {
         var self = this;
-        _.each(this.model.attributes, function(data, key) {
+        _.each(self.model.attributes, function(data, key) {
             var chosen = app.view.createField({
                     def: {
                         name: key,

@@ -1,24 +1,4 @@
 (function(app) {
-
-//    var Filter = Backbone.Model.extend();
-//
-//    var Filters = Backbone.Collection.extend({
-//        model: Filter,
-//        module: "Forecasts/filters"
-//    });
-//
-//    var Forecasts = Backbone.Model.extend({
-//        initialize: function() {
-////            debugger;
-//            this.filters = new Filters();
-//            this.filters.fetch();
-//
-////            this.forecastLine = new ForecastLine();
-////            this.chart = new Chart();
-//        }
-//    });
-
-
     /**
      * Layout that places views in columns with each view in a column
      * @class View.Layouts.ColumnsLayout
@@ -27,12 +7,32 @@
      */
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
+        _models: {},
+
         initialize: function(options) {
+            this.initializeAllModels();
+
             app.view.Layout.prototype.initialize.call(this, options);
 
             this.context = _.extend(this.context, {
                 register: app.events.register
             });
+
+            this.fetchAllModels();
+        },
+
+        fetchAllModels: function() {
+            _.each(this._models, function(model, key) {
+                model.fetch();
+            });
+        },
+
+        getModel: function(name) {
+            return this._models[name];
+        },
+
+        initializeAllModels: function() {
+            this._models.filters = new app.Model.Filters();
         },
 
         /**
