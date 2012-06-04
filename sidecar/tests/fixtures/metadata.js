@@ -939,7 +939,7 @@ fixtures.metadata = {
             }
         }
     },
-    'sugarViews': {
+    'views': {
         "_hash": "x2",
         "detail": {
             "templates": {
@@ -1224,6 +1224,30 @@ fixtures.metadata = {
                 "create": "yes",
                 "_hash": "3435464127eb7ab69d413cc6"
       }
-
-  }
+  },
+    'layouts': {
+        "list": {
+            "type": "simple",
+            "components": [
+                {view: "list"}
+            ]
+        }
+    },
+    'views': {
+        "list": {
+            "meta": {
+                "panels": [
+                    {
+                        "label": "LBL_PANEL_1",
+                        "fields": [
+                            {name: "first_name", label: "First Name"},
+                            {name: "last_name", label: "Last Name"},
+                            {name: "email1", label: "Email"},
+                            {name: "phone_work", label: "Phone"}
+                        ]
+                    }
+                ]
+            }
+        }
+    }
 };

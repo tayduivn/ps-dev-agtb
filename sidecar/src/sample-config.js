@@ -139,6 +139,7 @@
                 target: '#subnav'
             }
         },
+
         /**
          * Array of modules to display in the nav bar
          ** <pre><code>
