@@ -3740,6 +3740,7 @@ html {
   padding-top: 0;
   padding-bottom: 0;
   min-height: 42px;
+  line-height: 42px;
 }
 .listing article.nav.show-more-top-btn {
   top: 93px;
