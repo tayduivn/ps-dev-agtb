@@ -110,30 +110,48 @@ class BeanFactory {
     }
     /**
      * @static
-     * This function deregisters a bean with the bean factory so that it can be refreshed
-     * Can deregiser all modules by not passing anything into the function
+     * This function unregisters a bean with the bean factory so that it can be refreshed
+     * Can unregiser all modules by not passing anything into the function
      * @param String $module
-     * @param bool|String $id
-     * @return bool true if the bean deregistered successfully.
+     * @param String $id
+     * @return bool true if the bean unregistered successfully.
      */
 
-    public static function deregisterBean( $module=false, $id=false ) {
+    public static function unregisterBean( $module, $id ) {
         global $beanList;
+
+        if( empty( $module ) || empty( $id ) ) return false;
+
         if ( empty( $beanList[$module] ) )  return false;
 
-        if( $module === FALSE ) {
-            unset(self::$loadedBeans);
-            return true;
-        }
+        if( isset( self::$loadedBeans[$module][$id] ) ) {
+            self::$total--;
 
-        if( $id === FALSE ) {
-            unset( self::$loadedBeans[$module] );
-            return true;
-        }
-        else {
+            foreach( self::$loadOrder AS $index => $info ) {
+                if( $info['module'] == $module && $info['id'] == $id ) {
+                    unset( self::$loadOrder[$index] );
+                }
+            }
+
             unset( self::$loadedBeans[$module][$id] );
+            unset( self::$touched[$module][$id] );
             return true;
         }
+        return false;
+    }
+
+    /**
+     * @static
+     * This function clears the entire bean cache
+     * @return bool true if the bean unregistered successfully.
+     */
+    public static function clearBeanCache() {
+        self::$loadedBeans = array();
+        self::$total = 0;
+        self::$loadOrder = array();
+        self::$touched = array();
+        self::$hits = 0;
+        return true;
     }
 
     /**
