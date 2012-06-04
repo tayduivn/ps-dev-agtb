@@ -3295,8 +3295,12 @@ function save_relationship_changes($is_update, $exclude=array())
                 $ret_array['select'] .= ", $this->table_name.$field $alias";
                 $selectedFields["$this->table_name.$field"] = true;
             } else if(  (!isset($data['source']) || $data['source'] == 'custom_fields') && (!empty($alias) || !empty($filter) )) {
-                $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
-                $selectedFields["$this->table_name.$field"] = true;
+                $select_array = array_map('trim', explode(',', $ret_array['select']));
+                // do not add if the custom column already exists in the select
+                if (!in_array($this->table_name."_cstm.".$field, $select_array)) {
+                    $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
+                    $selectedFields["$this->table_name.$field"] = true;
+                }
             }
 
 
