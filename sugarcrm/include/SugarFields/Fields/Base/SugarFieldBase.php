@@ -78,7 +78,7 @@ class SugarFieldBase {
         return $rawField;
     }
 
-    public function apiFormatField($data, $bean, $args, $fieldName, $properties) {
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
         $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
     }
 
