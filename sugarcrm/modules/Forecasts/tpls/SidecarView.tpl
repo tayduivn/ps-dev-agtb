@@ -41,17 +41,14 @@
 <script src='../sidecar/src/view/field.js'></script>
 <script src='../sidecar/src/view/layout.js'></script>
 
-<script src='../sidecar/src/view/views/header-view.js'></script>
-<script src='../sidecar/src/view/views/test-view.js'></script>
-<script src='../sidecar/src/view/views/alert-view.js'></script>
 <script src='../sidecar/src/view/layouts/columns-layout.js'></script>
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
-<script src='clients/base/models/filter/filter.js'></script>
-<script src='clients/base/views/filter/filter.js'></script>
+<script src='clients/base/models/forecastsFilter/forecastsFilter.js'></script>
+<script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
 
@@ -103,7 +100,7 @@
                 <div class="span2" id="drawer">
                     <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
                     <div class="bordered">
-                        <div class="view-filter"></div>
+                        <div class="view-forecastsFilter"></div>
                         <div class="view-chartOptions"></div>
                         <div class="view-tree"></div>
                     </div>
