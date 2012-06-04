@@ -7,13 +7,16 @@
      */
     app.view.layouts.FluidLayout = app.view.Layout.extend({
         /**
-         * Places a view's element on the page. This shoudl be overriden by any custom layout types.
+         * Places a view's element on the page. This should be overriden by any custom layout types.
+         * In layout defs, the child component should have a `span` definition corresponding to the bootstrap scaffold.
          * @param {View.View} comp
          * @protected
          * @method
          */
         _placeComponent: function(comp, def) {
-            var size = def.size || 4;
+            var compdef = def.layout || def.view,
+                size = compdef.span || 4;
+            
             if (!this.$el.children()[0]) {
                 this.$el.addClass("container-fluid").append('<div class="row-fluid"></div>');
             }

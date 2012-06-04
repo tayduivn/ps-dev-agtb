@@ -4,17 +4,21 @@ $viewdefs['Cases']['portal']['layout']['detail'] = array(
     'components' =>
     array(
         0 => array(
-            'view' => 'subnav'
+            'view' => 'subnav',
         ),
         1 => array(
             'layout' =>
             array(
-                'type' => 'columns',
-                'components' => array(
+                'type' => 'fluid',
+                'components' =>
+                array(
                     0 => array(
-                        'layout' => array(
-                            'type' => 'leftside',
-                            'components' => array(
+                        'layout' =>
+                        array(
+                            'type' => 'simple',
+                            'span' => 7,
+                            'components' =>
+                            array(
                                 0 => array(
                                     'view' => 'detail',
                                 ),
@@ -34,15 +38,14 @@ $viewdefs['Cases']['portal']['layout']['detail'] = array(
                         ),
                     ),
                     1 => array(
-                        'layout' => array(
-                            'type' => 'rightside',
+                        'layout' =>
+                        array(
+                            'type' => 'simple',
+                            'span' => 5,
                             'components' =>
                             array(
                                 0 => array(
                                     'view' => 'subdetail',
-                                    'context' => array(
-                                        'link' => 'notes',
-                                    ),
                                 ),
                             ),
                         ),

@@ -5,18 +5,18 @@ $viewdefs['Bugs']['portal']['layout']['edit'] = array(
     array(
         0 => array(
             'view' => 'subnav',
-            'meta' => 'edit'
         ),
         1 => array(
             'layout' =>
             array(
-                'type' => 'columns',
+                'type' => 'fluid',
                 'components' =>
                 array(
                     0 => array(
                         'layout' =>
                         array(
-                            'type' => 'leftside',
+                            'type' => 'simple',
+                            'span' => 7,
                             'components' =>
                             array(
                                 0 => array(
