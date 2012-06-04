@@ -1,7 +1,7 @@
 {{#each meta.panels}}
 <div class="tab-pane active">
     <div class="block">
-        <a data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+        <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
         <h4><span class="label label-note">Note</span> {{fieldWithName ../this "name" ../model "default"}}</h4>
         <br>
 

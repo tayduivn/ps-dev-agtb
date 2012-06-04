@@ -44,7 +44,7 @@ describe("Error module", function() {
         sinon.spy(app.error, "handleValidationError");
 
         bean.set({name: "This is a test"});
-        bean.save();
+        bean.save(null, { fieldsToValidate: { name: fixtures.metadata.modules.Cases.fields.name }});
 
         expect(app.error.handleValidationError.called).toBeTruthy();
 

@@ -4,7 +4,7 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
     'components' =>
     array(
         0 => array(
-            'view' => 'filter',
+            'view' => 'forecastsFilter',
         ),
         1 => array(
             'view' => 'chartOptions',

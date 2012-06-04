@@ -234,8 +234,15 @@ class ModuleApi extends SugarApi {
             throw new SugarApiExceptionNotAuthorized('No access to create new records for module: '.$args['module']);
         }
         $id = $this->updateBean($bean, $api, $args);
-        
-        return array('id'=>$id);
+
+        // get the bean with the new data
+        $args['record'] = $id;
+
+        $bean = $this->loadBean($api, $args, 'view');
+
+        $data = $this->formatBean($api, $args, $bean);
+
+        return $data;
     }
 
     public function updateRecord($api, $args) {
@@ -244,8 +251,13 @@ class ModuleApi extends SugarApi {
         $bean = $this->loadBean($api, $args, 'save');
 
         $id = $this->updateBean($bean, $api, $args);
-        
-        return array('id'=>$id);
+
+        // get the bean back with the new data
+        $bean = $this->loadBean($api, $args, 'view');
+
+        $data = $this->formatBean($api, $args, $bean);
+
+        return $data;
     }
 
     public function retrieveRecord($api, $args) {

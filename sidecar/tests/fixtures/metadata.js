@@ -625,7 +625,7 @@ fixtures.metadata = {
             }
         }
     },
-    'sugarFields': {
+    'fields': {
         "_hash": "x1",
         "text": {
             "templates": {
