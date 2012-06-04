@@ -80,9 +80,11 @@ $('#zenbox_tab').click(function(){
       tabPosition: "Left"
     });
   }
+  */
  {/literal}
 
 {if !$DISABLE_FEEDBACK_WIDGET}{literal}
+/*
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
 	$('#zenbox_tab').css('text-indent','0px').attr('title','').html("Feedback");
@@ -101,8 +103,9 @@ $('#zenbox_tab').ready(function(){
 	}
 		
 });
-{/literal}{/if}{/if}
 */
+{/literal}{/if}{/if}
+
 </script>
 {literal}
 
