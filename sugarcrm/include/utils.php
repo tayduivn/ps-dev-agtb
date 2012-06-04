@@ -1185,7 +1185,7 @@ function return_module_language($language, $module, $refresh=false)
         $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
         // Check for cached value
         $cache_entry = sugar_cache_retrieve($cache_key);
-        if(!empty($cache_entry))
+        if(!empty($cache_entry) && is_array($cache_entry))
         {
             return $cache_entry;
         }
@@ -1899,6 +1899,8 @@ function translate($string, $mod='', $selectedValue=''){
 		    $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
 		}
 		$mod_strings = return_module_language($current_language, $mod);
+        if ($mod == "")
+        echo "Language is <pre>" . $mod_strings . "</pre>";
 
 	}else{
 		global $mod_strings;
@@ -1907,14 +1909,14 @@ function translate($string, $mod='', $selectedValue=''){
 	$returnValue = '';
 	global $app_strings, $app_list_strings;
 
-	if(isset($mod_strings[$string]))
-	$returnValue = $mod_strings[$string];
-	else if(isset($app_strings[$string]))
-	$returnValue = $app_strings[$string];
-	else if(isset($app_list_strings[$string]))
-	$returnValue = $app_list_strings[$string];
-	else if(isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string]))
-	$returnValue = $app_list_strings['moduleList'][$string];
+    if (isset($mod_strings[$string]))
+        $returnValue = $mod_strings[$string];
+    else if (isset($app_strings[$string]))
+        $returnValue = $app_strings[$string];
+    else if (isset($app_list_strings[$string]))
+        $returnValue = $app_list_strings[$string];
+    else if (isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string]))
+        $returnValue = $app_list_strings['moduleList'][$string];
 
 
 	//$test_end = microtime();
