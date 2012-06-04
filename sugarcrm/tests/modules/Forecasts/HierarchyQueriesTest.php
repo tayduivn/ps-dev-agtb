@@ -153,7 +153,7 @@ public function tearDown()
 public function testForecastTree()
 {
     global $current_user;
-    $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, id, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
+    $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
     $result = $GLOBALS['db']->query($sql);
     while($row = $GLOBALS['db']->fetchByAssoc($result))
     {
