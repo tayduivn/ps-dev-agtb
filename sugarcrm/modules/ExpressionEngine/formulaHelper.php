@@ -171,6 +171,14 @@ class FormulaHelper
             $def = $linksFields[$name];
             if ($val[1] == "relate") {
                 $relatedModule = $def['module'];
+                //MB will sometimes produce extra link fields that we need to ignore
+                //We also should not display the EmailAddress Module
+                if ($relatedModule == "EmailAddresses" ||
+                    (!empty($def['side']) && (substr($name, -4) == "_ida" || substr($name, -4) == "_idb"))
+                ){
+                    continue;
+                }
+
                 $label = $def['translated_label'];
                 $links[$name] = array(
                     "label" => "$relatedModule ($label)",
