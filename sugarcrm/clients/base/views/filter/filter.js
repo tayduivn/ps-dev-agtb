@@ -41,6 +41,7 @@
         }
     },
     fireSearchRequest: function(term) {
+        var self = this;
         self.setPreviousTerm(term, this.module);
         this.layout.trigger("list:search:fire", term);
     },
