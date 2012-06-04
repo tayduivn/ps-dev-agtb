@@ -97,33 +97,21 @@ class ForecastModuleApi extends ModuleApi {
     public function filters($api, $args) {
         // placeholder for filters
         // todo: really make this work
+        global $app_list_strings, $current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
+
         return array(
             'timeperiods' => array(
                 'label' => 'Forecast Period',
-                'options' => array(
-                    'tp0' => 'timeperiod 0',
-                    'tp1' => 'timeperiod 1',
-                    'tp2' => 'timeperiod 2',
-                    'tp3' => 'timeperiod 3',
-                ),
+                'options' => TimePeriod::get_timeperiods_dom(),
             ),
             'stages' => array(
                 'label' => 'Stages',
-                'options' => array(
-                    's0' => 'closed',
-                    's1' => 'proposed',
-                    's2' => 'quoted',
-                    's3' => 'qualified',
-                ),
+                'options' => $app_list_strings['sales_stage_dom'],
             ),
             'probabilities' => array(
                 'label' => 'Probabilities',
-                'options' => array(
-                    'p0' => '25%',
-                    'p1' => '50%',
-                    'p2' => '75%',
-                    'p3' => '100%',
-                )
+                'options' => $app_list_strings['sales_probability_dom'],
             ),
         );
     }
