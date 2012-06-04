@@ -108,7 +108,33 @@ class BeanFactory {
 
         return $objectList[$module];
     }
+    /**
+     * @static
+     * This function deregisters a bean with the bean factory so that it can be refreshed
+     * Can deregiser all modules by not passing anything into the function
+     * @param String $module
+     * @param bool|String $id
+     * @return bool true if the bean deregistered successfully.
+     */
 
+    public static function deregisterBean( $module=false, $id=false ) {
+        global $beanList;
+        if ( empty( $beanList[$module] ) )  return false;
+
+        if( $module === FALSE ) {
+            unset(self::$loadedBeans);
+            return true;
+        }
+
+        if( $id === FALSE ) {
+            unset( self::$loadedBeans[$module] );
+            return true;
+        }
+        else {
+            unset( self::$loadedBeans[$module][$id] );
+            return true;
+        }
+    }
 
     /**
      * @static
