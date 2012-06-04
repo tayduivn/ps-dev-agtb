@@ -201,10 +201,10 @@ class JitReports extends Jit {
 	 *			string $xmlFile	location of the XML file
 	 *			string $style	optional additional styles for the div
      * @return	string returns the html code through smarty
-     */					
-	function display($name, $xmlFile, $width='320', $height='480', $reportChartDivStyle=null, $resize=false){
+     */
+	function display($name, $xmlFile, $width='320', $height='480', $resize=false){
 		if(empty($name)) {
-			$name = "unsavedReport";	
+			$name = "unsavedReport";
 		}
 		
 		parent::display($name, $xmlFile, $width, $height, $resize=false);			

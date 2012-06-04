@@ -585,11 +585,11 @@ function createOppDataByUserQuery($user_id, $timeperiod_id)
     }
 
     $query = "SELECT o.id id,
-               SUM(" . $db->convert("ol.best_case", "IFNULL", array(0)) . ") as best_case,
-               SUM(" . $db->convert("ol.likely_case", "IFNULL", array(0)) . ") as likely_case,
-               SUM(" . $db->convert("ol.worst_case", "IFNULL", array(0)) . ") as worst_case";
+               SUM(" . $db->convert("p.best_case", "IFNULL", array(0)) . ") as best_case,
+               SUM(" . $db->convert("p.likely_case", "IFNULL", array(0)) . ") as likely_case,
+               SUM(" . $db->convert("p.worst_case", "IFNULL", array(0)) . ") as worst_case";
     $query .= " FROM timeperiods t, opportunities o";
-    $query .= " LEFT JOIN opportunity_lines ol on olbol.opportunity_line_id = ol.id";
+    $query .= " LEFT JOIN products p on o.id = p.opportunity_id";
     $query .= " WHERE o.assigned_user_id = '$user_id'
                     AND t.id = '$timeperiod_id'
                     AND o.date_closed <= t.end_date

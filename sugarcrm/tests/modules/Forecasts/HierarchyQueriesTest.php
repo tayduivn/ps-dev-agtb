@@ -76,7 +76,8 @@ public function setUp()
     $this->opp1->worst_case = '1100';
     $this->opp1->save();
 
-    $line_1 = SugarTestOppLineItemUtilities::createLine();
+    $line_1 = SugarTestProductUtilities::createProduct();
+    $line_1->opportunity_id = $this->opp1->id;
     $line_1->team_set_id = $current_user->id;
     $line_1->team_id = $current_user->id;
     $line_1->save();
@@ -89,7 +90,8 @@ public function setUp()
     $this->opp2->worst_case = '1100';
     $this->opp2->save();
 
-    $line_2 = SugarTestOppLineItemUtilities::createLine();
+    $line_2 = SugarTestProductUtilities::createProduct();
+    $line_2->opportunity_id = $this->opp2->id;
     $line_2->team_set_id = $this->employee1->id;
     $line_2->team_id = $this->employee1->id;
     $line_2->save();
@@ -102,7 +104,8 @@ public function setUp()
     $this->opp3->worst_case = '1100';
     $this->opp3->save();
 
-    $line_3 = SugarTestOppLineItemUtilities::createLine();
+    $line_3 = SugarTestProductUtilities::createProduct();
+    $line_3->opportunity_id = $this->opp3->id;
     $line_3->team_set_id = $this->employee2->id;
     $line_3->team_id = $this->employee2->id;
     $line_3->save();
@@ -115,7 +118,8 @@ public function setUp()
     $this->opp4->worst_case = '1100';
     $this->opp4->save();
 
-    $line_4 = SugarTestOppLineItemUtilities::createLine();
+    $line_4 = SugarTestProductUtilities::createProduct();
+    $line_4->opportunity_id = $this->opp4->id;
     $line_4->team_set_id = $this->employee3->id;
     $line_4->team_id = $this->employee3->id;
     $line_4->save();
@@ -128,7 +132,8 @@ public function setUp()
     $this->opp5->worst_case = '1100';
     $this->opp5->save();
 
-    $line_5 = SugarTestOppLineItemUtilities::createLine();
+    $line_5 = SugarTestProductUtilities::createProduct();
+    $line_5->opportunity_id = $this->opp5->id;
     $line_5->team_set_id = $this->employee4->id;
     $line_5->team_id = $this->employee4->id;
     $line_5->save();
@@ -138,7 +143,7 @@ public function tearDown()
 {
     $GLOBALS['db']->dropTableName('_hierarchy_return_set');
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    SugarTestOppLineItemUtilities::removeAllCreatedLines();
+    SugarTestProductUtilities::removeAllCreatedProducts();
     SugarTestOpportunityUtilities::removeAllCreatedOpps();
 }
 
@@ -209,12 +214,12 @@ public function testForecastTree()
     ,opportunities.worst_case
     ,IFNULL(l1.id,'') l1_id
     ,l1.user_name l1_user_name,IFNULL(l2.id,'') l2_id
-    ,l2.product_id l2_product_id,l2.quantity l2_quantity,l2.price l2_price ,IFNULL( l2.currency_id,'') l2_price_currency
+    ,l2.id l2_product_id,l2.quantity l2_quantity
 
     FROM opportunities
     LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
 
-    LEFT JOIN  opportunity_lines l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
+    LEFT JOIN  products l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
 
      AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
                                         tst INNER JOIN team_memberships team_memberships ON tst.team_id =
@@ -237,7 +242,7 @@ public function testForecastTree()
     $this->assertEquals(4, $opportunities);
 }
 
-
+/*
 public function testForecastTreeWithSubSelectOnTempTable()
 {
     //Here is the alternate method where we use a sub-select against the temporary table created
@@ -253,12 +258,12 @@ public function testForecastTreeWithSubSelectOnTempTable()
     ,opportunities.worst_case
     ,IFNULL(l1.id,'') l1_id
     ,l1.user_name l1_user_name,IFNULL(l2.id,'') l2_id
-    ,l2.product_id l2_product_id,l2.quantity l2_quantity,l2.price l2_price ,IFNULL( l2.currency_id,'') l2_price_currency
+    ,l2.product_id l2_product_id,l2.quantity l2_quantity
 
     FROM opportunities
     LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
 
-    LEFT JOIN  opportunity_lines l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
+    LEFT JOIN  products l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
 
      AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
                                         tst INNER JOIN team_memberships team_memberships ON tst.team_id =
@@ -280,5 +285,5 @@ public function testForecastTreeWithSubSelectOnTempTable()
 
     $this->assertEquals(4, $opportunities);
 }
-
+*/
 }
