@@ -79,7 +79,7 @@
          * @private
          */
         _routeHandler: function(handler) {
-            var args = _.toArray(arguments).splice(1),
+            var args = Array.prototype.slice.call(arguments, 1),
                 route = handler.route;
 
             if (app.routing.before(route, args)) {

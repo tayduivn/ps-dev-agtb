@@ -46,15 +46,7 @@
 
                 q.push({relateBean: app.data.createRelatedBean(source.parentBean, source.collection.get(cid), source.link)});
             });
-        },
-        createBean: function(bean) {
-
-        },
-        onCancelClicked: function() {
-
         }
-
-
     });
 
 })(SUGAR.App);

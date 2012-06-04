@@ -34,9 +34,9 @@
                     var link = params.link;
                     this._renderRightList(app.template.get('right.menu.relationships'),
                         {
-                            createURL:app.router.buildLinkRoute(module,id,link,"create"),
-                            associateURL:app.router.buildLinkRoute(module,id,link,"associate"),
-                            module:module
+                            createURL: app.nomad.buildLinkRoute(module,id,link,"create"),
+                            associateURL: app.nomad.buildLinkRoute(module,id,link,"associate"),
+                            module: module
                         });
 
                 } else {

@@ -3297,12 +3297,6 @@ article {
 .fav article {
   padding-left: 44px;
 }
-article div {
-  display: table-cell;
-  vertical-align: middle;
-  height: 52px;
-  overflow: hidden;
-}
 article [class^="icon-star"] {
   position: absolute;
   top: 24px;
@@ -3703,6 +3697,14 @@ html {
 .listing .items {
   margin-top: 93px;
 }
+.listing .items article > div > a {
+  display: inline-block;
+  margin-top: 8px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .listing article.deleted {
   opacity: 0;
 }
@@ -3968,7 +3970,7 @@ h3.nomad {
   z-index: 1000;
   min-height: 70px;
   overflow: auto;
-  padding: 16px 0 66px 0;
+  padding: 16px 0 0;
   color: #ffffff;
   text-shadow: 0 -1px 0 #000000;
   background-color: #1a1a1a;
@@ -4013,8 +4015,13 @@ h3.nomad {
   float: left;
 }
 .bizcard .card {
-  margin: 0 0 0 16px;
+  margin: 0 16px;
   line-height: 1.2em;
+  height: 80px;
+  max-height: 80px;
+  padding-bottom: 70px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 .bizcard .card h3 {
   font-size: 1.75em;
@@ -4034,16 +4041,37 @@ h3.nomad {
 .bizcard .card .value {
   display: block;
 }
+.bizcard .fade {
+  background-color: rgba(0, 0, 0, 0.4);
+  background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), #000000);
+  background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0), #000000);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0)), to(#000000));
+  background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), #000000);
+  background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), #000000);
+  background-image: linear-gradient(top, rgba(0, 0, 0, 0), #000000);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgba(0, 0, 0, 0)', endColorstr='#000000', GradientType=0);
+  background-color: transparent !important;
+  /*override lesscss logic for non compliant browsers*/
+
+  display: inline-block;
+  height: 20px;
+  width: 100%;
+  margin-left: -16px;
+  position: absolute;
+  bottom: 52px;
+  left: 0;
+}
 .bizcard .more {
-  float: right;
-  padding-top: 35px;
-  padding-right: 10px;
+  position: absolute;
+  top: 50px;
+  right: 10px;
   color: #666666;
 }
 .bizcard #accountDescription {
   margin: 10px 0 0;
 }
-#record-action {
+.bizcard #record-action {
   text-align: center;
   position: absolute;
   left: 0;

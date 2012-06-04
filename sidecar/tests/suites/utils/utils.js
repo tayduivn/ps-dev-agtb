@@ -1,6 +1,46 @@
 describe("utils", function() {
 
     var utils = SUGAR.App.utils;
+
+    describe("strings", function() {
+        it("should capititalize a string", function() {
+            var result = utils.capitalize('abc');
+            expect(result).toEqual("Abc");
+            result = utils.capitalize('a');
+            expect(result).toEqual("A");
+            result = utils.capitalize('aBC');
+            expect(result).not.toEqual("Abc");
+            expect(result).toEqual("ABC");//preserves subsequent chars
+        });
+        it("should return empty string from capititalize for falsy input", function() {
+            var result = utils.capitalize(undefined);
+            expect(result).toEqual("");
+            result = utils.capitalize(null);
+            expect(result).toEqual("");
+            result = utils.capitalize();
+            expect(result).toEqual("");
+        });
+
+        it("should capititalize hyphenated strings", function() {
+            var result = utils.capitalizeHyphenated('abc-def');
+            expect(result).toEqual("AbcDef");
+            result = utils.capitalizeHyphenated('a');
+            expect(result).toEqual("A");
+            result = utils.capitalizeHyphenated('aBC-dEF');
+            expect(result).not.toEqual("AbcDef");
+            expect(result).toEqual("ABCDEF");//preserves subsequent chars
+        });
+
+        it("should return empty string from capitalizeHyphenated for falsy input", function() {
+            var result = utils.capitalizeHyphenated(undefined);
+            expect(result).toEqual("");
+            result = utils.capitalizeHyphenated(null);
+            expect(result).toEqual("");
+            result = utils.capitalizeHyphenated();
+            expect(result).toEqual("");
+        });
+    });
+
     describe("number formatter", function() {
         it("should round up numbers", function() {
             var value = 2.3899,

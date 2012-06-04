@@ -495,7 +495,7 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
         //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($_SESSION['fts_type']))
+        if(!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type']))
         {
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
             $indexer = new SugarSearchEngineFullIndexer();

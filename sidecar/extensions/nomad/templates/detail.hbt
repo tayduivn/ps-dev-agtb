@@ -14,6 +14,7 @@
             {{/with}}
         {{/each}}
     </div>
+    <span class="fade"></span>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid">
         <a class="span4 phone" href="javascript:void(0)"><i class="icon-phone"></i></a>

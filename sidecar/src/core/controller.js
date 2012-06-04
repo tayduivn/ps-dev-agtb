@@ -66,7 +66,7 @@
             // Render the layout with empty data
             this.layout.render();
 
-            app.trigger("app:view:change", params.layout,params);
+            app.trigger("app:view:change", params.layout, params);
 
             // Render the layout to the main element
             app.$contentEl.html(this.layout.$el);
@@ -90,11 +90,11 @@
             app.additionalComponents = {};
             _.each(components, function(component, name) {
                 if (component.target) {
-                    app.additionalComponents[name] = app.view.createView({
+                    (app.additionalComponents[name] = app.view.createView({
                         name: name,
                         context: this.context,
                         el: this.$(component.target)
-                    }).render();
+                    })).render();
                 }
             });
         }

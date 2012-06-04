@@ -1,10 +1,11 @@
-describe("listView", function() {
+describe("tableView", function() {
     var app;
 
     beforeEach(function() {
+        SugarTest.seedMetadata(true);
         app = SugarTest.app;
     });
-
+        
     it("should set order by", function() {
         var event, x;
         var context = app.context.getContext();
@@ -24,15 +25,7 @@ describe("listView", function() {
         };
 
         context.set({collection: collection});
-        var view = app.view.createView({
-            context: context,
-            layout: "",
-            module: "Cases",
-            name: "list",
-            meta: fixtures.metadata.modules.Cases.views.list.meta
-
-        });
-        console.log(view);
+        var view = new app.view.views.TableView(options); 
 
         view.$el.html('<div id="test" data-fieldname="bob"></div>');
 

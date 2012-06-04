@@ -18,6 +18,26 @@
             return s ? (s.charAt(0).toUpperCase() + (s.length > 1 ? s.substr(1) : "")) : "";
         },
 
+
+        /**
+         * Capitalizes a hyphenated string. So my-string becomes MyString.
+         * @param {String} s The string to capitalize.
+         * @return {String} Capitalized string or an empty string if `s` is undefined or null.
+         */
+        capitalizeHyphenated: function(s) {
+            var self = this, words, capitalized = '';
+
+            if(!s || s.lastIndexOf('-') === -1) {
+                capitalized = self.capitalize(s);
+            } else {
+                words = s.split('-');
+                _.each(words, function(word) {
+                    capitalized += self.capitalize(word);
+                });
+            }
+            return capitalized;
+        },
+
         /**
          * Formats Numbers
          *

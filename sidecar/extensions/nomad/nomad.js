@@ -81,6 +81,21 @@
             app.logger.debug('App started');
         },
 
+        buildLinkRoute: function(moduleOrContext, id, link, relatedId, action) {
+            var route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
+            route += "/" + id + "/link/" + link;
+
+            if (relatedId && action) {
+                route += "/" + relatedId + "/" + action;
+            }
+            else if (relatedId) {
+                route += "/" + relatedId;
+            }
+
+            return route;
+        },
+
+
         /**
          * Displays email chooser UI.
          * @param {Array} emails

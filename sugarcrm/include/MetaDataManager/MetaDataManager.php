@@ -364,6 +364,60 @@ class MetaDataManager {
     }
 
     /**
+     * Gets client layouts, similar to module specific layouts except used on a
+     * global level by the clients consuming this data
+     *
+     * @return array
+     */
+    public function getSugarLayouts()
+    {
+        $result = array();
+
+        // Gets the listing of directories to scan, by nested dir name, with full paths
+        $dirs = $this->getSugarClientFileDirs('layouts', true);
+        foreach ($dirs as $dir) {
+            // Get the client for this particular file (could be mixed)
+            preg_match('#clients/(.*)/layouts/#', $dir, $m);
+            $platform = $m[1];
+
+            // Grab our PHP files
+            $files = glob($dir . '*.php');
+            foreach ($files as $file) {
+                $filename = basename($file, '.php');
+                require_once $file;
+
+                // Only get the viewdefs if they exist for this platform and file
+                if (isset($viewdefs[$platform]['layout'][$filename])) {
+                    $result[$filename] = $viewdefs[$platform]['layout'][$filename];
+                }
+            }
+        }
+
+        $result['_hash'] = md5(serialize($result));
+        return $result;
+    }
+
+    public function getSugarClientFileDirs($path, $full = false) {
+        $dirs = array();
+
+        foreach ( $this->platforms as $platform ) {
+            $basedir  = "clients/$platform/$path/";
+            $custdir  = "custom/$basedir";
+            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
+            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
+            $alldirs  = array_merge($basedirs, $custdirs);
+
+            foreach ($alldirs as $dir) {
+                // To prevent doing the work twice, let's sort this out by basename
+                $dirname = basename($dir);
+                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
+            }
+        }
+
+        return $dirs;
+    }
+
+    /**
      * Gets client files of type $type (view, layout, field)
      *
      * @param string $type The type of files to get
@@ -375,25 +429,7 @@ class MetaDataManager {
 
         $typePath = $type . 's';
 
-        //Each platform can have it's own set of sugar fields
-        foreach ( $this->platforms as $platform ) {
-            $baseFileDirectory = "clients/$platform/$typePath/";
-            $builtinSugarFiles = glob($baseFileDirectory."*",GLOB_ONLYDIR);
-            if ( is_dir('custom/'.$baseFileDirectory) ) {
-                $customSugarFiles = glob('custom/'.$baseFileDirectory."*",GLOB_ONLYDIR);
-            } else {
-                $customSugarFiles = array();
-            }
-            $allSugarFileDirs = $builtinSugarFiles+$customSugarFiles;
-            $allSugarFiles = array();
-            foreach ( $allSugarFileDirs as $fileDir ) {
-                // To prevent doing the work twice, let's sort this out by basename
-                $dirname = basename($fileDir);
-                $allSugarFiles[$dirname] = $dirname;
-            }
-        }
-
-
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath);
 
         foreach ( $allSugarFiles as $dirname) {
             $fileData = array('views' => array());
