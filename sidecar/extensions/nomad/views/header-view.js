@@ -15,6 +15,7 @@
             }, this);
         },
         render: function(layout, params) {
+
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
@@ -28,7 +29,7 @@
                         userId: app.user.get('id')
                     });
 
-                if (layout === "list" && params.link) {
+                if (layout === "relationships") {
                     var module = params.parentModule;
                     var id = params.parentModelId;
                     var link = params.link;
@@ -36,7 +37,7 @@
                         {
                             createURL: app.nomad.buildLinkRoute(module,id,link,"create"),
                             associateURL: app.nomad.buildLinkRoute(module,id,link,"associate"),
-                            module: module
+                            module: params.link
                         });
 
                 } else {
@@ -52,7 +53,6 @@
         onModuleTabClicked: function() {
             $(document.body).removeClass('onL');
         },
-
         onHomeClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onL');

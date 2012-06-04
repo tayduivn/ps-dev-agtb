@@ -1,5 +1,6 @@
 <h1 class="nomad">
     {{#if context.attributes.create}}Create{{else}}Edit{{/if}}
+    {{#if context.attributes.link}}related{{/if}}
     {{model.module}}
 </h1>
 <div class="form-horizontal" id="createRecord">

@@ -20,7 +20,7 @@
                 parentModule: module,
                 parentModelId: id,
                 link: link,
-                layout: "list"
+                layout: "relationships"
             });
         },
 
