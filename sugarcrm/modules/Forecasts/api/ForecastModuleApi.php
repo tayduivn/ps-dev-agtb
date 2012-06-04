@@ -71,6 +71,14 @@ class ForecastModuleApi extends ModuleApi {
                 'shortHelp' => 'A ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#ping',
             ),
+            'reportees' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'reportees', '?'),
+                'pathVars' => array('','','userId'),
+                'method' => 'getReportees',
+                'shortHelp' => 'Gets reportees to a user by id',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#reportees',
+            )
         );
         return $parentApi;
     }
@@ -138,4 +146,50 @@ class ForecastModuleApi extends ModuleApi {
         );
     }
 
+    /***
+     * Returns a hierarchy of users reporting to the current user
+     *
+     * @param $api
+     * @param $args
+     * @return string
+     */
+    public function getReportees($api, $args) {
+        $retJSON = array();
+
+        // Grab current user from user ID passed in URL
+        $user = BeanFactory::getBean('Users',$args['userId']);
+        $user->load_relationship('reportees');
+        $children = $user->reportees->getBeans();
+
+        // push curret user node onto tree
+        $tmp = array(
+            "data" => $user->full_name,
+            "metadata" => array(
+                // any other metadata needed from the Bean to the JS model should go here
+                "id" => $user->id
+            ),
+            "state" => "open",
+            "children" => array()
+        );
+        array_push( $retJSON, $tmp );
+
+        // handle any reportees to the current user
+        if(!empty($children))
+        {
+            foreach($children as $childBean)
+            {
+                $tmp = array(
+                    "data" => $childBean->full_name,
+                    "metadata" => array(
+                        // any other metadata needed from the Bean to the JS model should go here
+                        "id" => $childBean->id
+                    ),
+                    "state" => "closed"
+                );
+                array_push( $retJSON[0]["children"], $tmp );
+            }
+        }
+
+        return $retJSON;
+    }
 }
