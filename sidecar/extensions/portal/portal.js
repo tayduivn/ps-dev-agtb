@@ -810,6 +810,44 @@
 
     });
 
+    var oRoutingBefore = app.routing.before;
+    app.routing.before = function(route, args) {
+        var dm, oCheck;
+
+        // Perform any original before checks .. if these fail return false
+        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        function alertUser(msg) {
+            // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
+            msg = msg || "At minimum, you need to have the 'Home' module enabled to use this application.";
+
+            app.alert.show("no-sidecar-access", {
+                level: "error",
+                title: "Error",
+                messages: [msg]
+            });
+        }
+
+        // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
+        if(route === 'index') {
+            dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
+            if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
+                app.router.list(dm);
+            } else if(app.acl.hasAccess('read', 'Home')) {
+                app.router.index();
+            } else {
+                alertUser();
+                return false;
+            }
+        // If route is NOT index check if module loaded and user has access to it.
+        } else if (!app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            app.logger.error("Module not loaded or user does not have access. ", route);
+            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            return false;
+        } 
+        return true;
+    };
+
     app.view.Field = app.view.Field.extend({
         /**
          * Handles how validation errors are appended to the fields dom element

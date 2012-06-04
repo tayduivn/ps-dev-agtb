@@ -173,26 +173,9 @@
          */
         index: function() {
             app.logger.debug("Route changed to index");
-            var dm = app.config.defaultModule;
-
-            // Check if default module and if user has access tot his module. If not, take user to Home.
-            if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
-                this.list(dm);
-            } else if(app.acl.hasAccess('read', 'Home')) {
-                    this.layout("Home", "home");
-            } else {
-                // TODO: Remove this comment ;=)
-                // I've reported an issue with Dee that if, in SugarCRM admin, you assign user a role that essentially
-                // disables deafult module (e.g. Cases), or disable Home, in getMetadata the server returns:
-                // "ERROR: No valid authentication for user." .. either server can handle but return 'not authorized', or
-                // we can handle here.
-                app.alert.show("no-sidecar-access", {
-                    level: "error",
-                    title: "Error",
-                    // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
-                    messages: ["At minimum, you need to have the 'Home' module enabled to use this application."]
-                });
-            }
+            if (app.acl.hasAccess('read', 'Home')) {
+                this.layout("Home", "home");
+            } 
         },
 
         /**
