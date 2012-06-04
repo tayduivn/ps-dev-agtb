@@ -789,6 +789,14 @@
             });
         });
 
+        // Load the profile
+        app.router.route("profile", "profile", function() {
+            app.controller.loadView({
+                module: "Profile",
+                layout: "profile"
+            });
+        });
+
     });
 
     app.view.Field = app.view.Field.extend({
