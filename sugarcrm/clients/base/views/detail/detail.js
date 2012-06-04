@@ -23,6 +23,7 @@
             });
             this.$el.find(".more").removeClass("hide");
         }
+        return this;
     },
     showMore: function() {
         var fieldsArray = this.$el.find("form[name=detail]").find("span[sfuuid]") || [];
