@@ -3536,6 +3536,20 @@ a:hover [class^="icon-"] {
   width: 18px;
   margin-bottom: -20%;
 }
+.icon-sms-black {
+  background: url('../img/sms_black.png') no-repeat 50% 0;
+  background-size: 90%;
+  height: 20px;
+  width: 16px;
+  margin-bottom: -20%;
+}
+.icon-sms-white {
+  background: url('../img/sms_white.png') no-repeat 50% 0;
+  background-size: 90%;
+  height: 20px;
+  width: 16px;
+  margin-bottom: -20%;
+}
 .icon-account-black {
   background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
   height: 20px;
