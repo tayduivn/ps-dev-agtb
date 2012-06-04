@@ -43,6 +43,12 @@ describe("App", function() {
         });
     });
 
+    it("should initialize addtional components", function() {
+        var components = {login:{target:'#footer'}};
+        SugarTest.app.controller.loadAdditionalComponents(components);
+        expect(SugarTest.app.additionalComponents.login).toBeDefined();
+    });
+
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -74,10 +80,8 @@ describe("App", function() {
                 expect(cbSpy).toHaveBeenCalled();
             });
         });
-
         it('should call sync after login', function() {
             var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
-
             SugarTest.app.trigger("app:login:success");
             expect(cbSpy).toHaveBeenCalled();
             SugarTest.app.sync.restore();

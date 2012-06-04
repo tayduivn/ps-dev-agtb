@@ -24,6 +24,7 @@
                 module = model.module;
 
             model.save(null, {
+                fieldsToValidate: this.getFields(),
                 success: function (model, resp) {
                     app.alert.dismiss('save_process');
                     app.alert.show('save_success', {level: 'success', messages: 'Saved successfully.', autoClose: true});

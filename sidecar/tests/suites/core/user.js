@@ -30,7 +30,7 @@ describe("User", function() {
         user._reset();
         expect(user.get('id')).toBeUndefined();
         expect(user.get('full_name')).toBeUndefined();
-        expect(app.cache.get('app:user')).toBeUndefined();
+        expect(app.cache.has('app:user')).toBeFalsy();
     });
 
     it("should do simple get and set", function() {

@@ -1,63 +1,72 @@
-(function(app) {
+/**
+ * View that displays a list of models pulled from the context's collection.
+ * @class View.Views.FilterView
+ * @alias SUGAR.App.layout.FilterView
+ * @extends View.View
+ */
+({
+    previousTerms: {},
+    events: {
+        'keyup .dataTables_filter input': 'filterList'
+    },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+    },
+    render: function() {
+        var self = this;
+        app.view.View.prototype.render.call(self);
+        self.layout.off("list:search:toggle", null, this);
+        self.layout.on("list:search:toggle", self.toggleSearch, this);
+    },
+    filterList: function(evt) {
+        var self = this,
+            term, elapsed, timeleft, previousTerm, timerId, throttled;
+            
+        previousTerm = self.getPreviousTerm(this.module);
+        term = self.$(evt.currentTarget).val();
+        self.setPreviousTerm(term, this.module);
 
-    /**
-     * View that displays a list of models pulled from the context's collection.
-     * @class View.Views.FilterView
-     * @alias SUGAR.App.layout.FilterView
-     * @extends View.View
-     */
-    app.view.views.FilterView = app.view.View.extend({
+        if(term && term.length > 2) {
+            _.delay(function() {
+                self.fireSearchRequest(term);
+            }, app.config.requiredElapsed);
+            
+        // If user removing characters and down to 2 chars reset table to all data
+        } else if(previousTerm && term.length && term.length === 2 && term.length < previousTerm.length) {
+            this.context.get('collection').fetch();
 
-        model: null,
-
-        render: false,
-
-        /**
-         * Initialize the View
-         *
-         * @constructor
-         * @param {Object} options
-         */
-        initialize: function(options){
-            app.view.View.prototype.initialize.call(this, options);
-            this.model = new app.Model.Filters();
-        },
-
-        render : function (){
-            var self = this;
-            // only let this render once.  since if there is more than one view on a layout it renders twice
-            if(this.rendered) return;
-
-            app.view.View.prototype.render.call(this);
-            this.model.fetch({
-                success: function() {
-                    self.buildDropdowns();
-                }
-            });
-
-            this.rendered = true;
-        },
-
-        buildDropdowns: function() {
-            var self = this;
-            _.each(this.model.attributes, function(data, key) {
-                var chosen = app.view.createField({
-                        def: {
-                            name: key,
-                            type: 'enum'
-                        },
-                        view: self
-                    }),
-                    filter = self.$el.append(chosen.getPlaceholder().toString());
-
-                chosen.options.viewName = 'edit';
-                chosen.label = self.model[key].get('label');
-                chosen.def.options = self.model[key].get('options');
-                chosen.setElement(filter.find('span[sfuuid="' + chosen.sfId + '"]'));
-                chosen.render();
-            });
+        // Edge case - just in case user might highlight the input and hit 'Back' to delete. 
+        } else if(!term && evt.which === 8) {
+            this.context.get('collection').fetch();
         }
-
-    });
-
-})(SUGAR.App);
+    },
+    fireSearchRequest: function(term) {
+        self.setPreviousTerm(term, this.module);
+        this.layout.trigger("list:search:fire", term);
+    },
+    setPreviousTerm: function(term, module) {
+        if(app.cache.has('previousTerms')) {
+            this.previousTerms = app.cache.get('previousTerms');
+        }
+        if(module) {
+            this.previousTerms[module] = term;
+        }
+        app.cache.set("previousTerms", this.previousTerms);
+    },
+    getPreviousTerm: function(module) {
+        if(app.cache.has('previousTerms')) {
+            this.previousTerms = app.cache.get('previousTerms');
+            return this.previousTerms[module];
+        }
+    },
+    toggleSearch: function() {
+        var previousTerm = this.getPreviousTerm(this.module);
+        this.$('.dataTables_filter').toggle();
+        if(previousTerm) {
+            this.$('.dataTables_filter input').val(previousTerm).focus();
+        } else {
+            this.$('.dataTables_filter input').focus();
+        }
+        return false;
+    }
+})

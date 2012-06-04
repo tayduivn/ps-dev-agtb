@@ -143,17 +143,19 @@
         /**
          * Overloads standard bean save so we can run validation outside of the standard validation loop.
          *
-         * This method checks if this bean is valid. Pass `fieldsToValidate` option in the options hash,
-         * to validate a limited set of fields. See {@link Data.Bean#isValid} method for details.
+         * This method checks if this bean is valid if `options` hash contains `fieldsToValidate` parameter.
          *
          * @param {Object} attributes(optional) model attributes
          * @param {Object} options(optional) standard save options as described by Backbone docs and
          * optional `fieldsToValidate` parameter.
          */
         save: function(attributes, options) {
-            // we only validate on save
-            return this.isValid(options ? options.fieldsToValidate : null) ?
-                Backbone.Model.prototype.save.call(this, attributes, options) : false;
+            var isValid = true;
+            if (options && options.fieldsToValidate) {
+                isValid = this.isValid(options.fieldsToValidate);
+            }
+
+            return isValid ? Backbone.Model.prototype.save.call(this, attributes, options) : false;
         },
 
         /**

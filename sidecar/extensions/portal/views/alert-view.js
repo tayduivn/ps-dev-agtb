@@ -49,6 +49,7 @@
                         this.render();
                     },
                     close: function() {
+                        this.$el.parent().hide();
                         this.$el.remove();
                     },
                     render: function() {
@@ -60,7 +61,7 @@
                     }
                 });
                 thisAlert = new AlertView();
-                this.$el.prepend(thisAlert.el);
+                this.$el.prepend(thisAlert.el).show();
 
                 if(autoClose) {
                     setTimeout(function(){$('.timeten').fadeOut().remove();},9000);

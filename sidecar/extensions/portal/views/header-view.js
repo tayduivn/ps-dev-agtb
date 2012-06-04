@@ -1,5 +1,7 @@
 (function(app) {
 
+    var maxNumSearch = app.config.maxSearchQueryResult;
+
     /**
      * View that displays header for current app
      * @class View.Views.HeaderView
@@ -10,8 +12,59 @@
         events: {
             'click #moduleList li a': 'onModuleTabClicked',
             'click #createList li a': 'onCreateClicked',
-            'click .cube': 'onHomeClicked'
+            'click .cube': 'onHomeClicked',
+            'click .typeahead a': 'clearSearch'
         },
+
+        /**
+         * Renders Header view
+         */
+        initialize: function(options) {
+            var self = this;
+            app.events.on("app:sync:complete", function() {
+                self.render();
+            });
+            app.view.View.prototype.initialize.call(this, options);
+        },
+        /**
+         * Renders Header view
+         */
+        render: function() {
+            var self = this, menuTemplate, moduleList;
+            if (!app.api.isAuthenticated()) return;
+
+            self.setModuleInfo();
+            self.setCreateTasksList();
+            app.view.View.prototype.render.call(self);
+
+            // Search ahead drop down menu stuff
+            menuTemplate = app.template.getView('dropdown-menu');
+            this.$('.search-query').searchahead({
+                request:  self.fireSearchRequest,
+                compiler: menuTemplate,
+                buttonElement: '.navbar-search a.btn'
+            });
+
+        },
+
+        /** 
+         * Callback for the searchahead plugin .. note that
+         * 'this' points to the plugin (not the header view!)
+         */
+        fireSearchRequest: function (term) {
+            var plugin = this, markup, mlist, params;
+            mlist = app.metadata.getDelimitedModuleList(',');
+            params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: maxNumSearch};
+            app.api.search(params, {
+                success:function(data) {
+                    plugin.provide(data);
+                }
+            });
+        },
+
+        /**
+         * When user clicks tab navigation in header
+         */
         onModuleTabClicked: function(evt) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -32,35 +85,15 @@
             this.$('#moduleList li').removeClass('active');
             this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
         },
-
-        /**
-         * Initialize the View
-         *
-         * @constructor
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            var self = this;
-            app.events.on("app:sync:complete", function() {
-                self.render();
-            });
-            app.view.View.prototype.initialize.call(this, options);
-        },
-        /**
-         * Renders Header view
-         */
-        render: function() {
-            if (!app.api.isAuthenticated()) return;
-            this.setModuleInfo();
-            this.setCreateTasksList();
-            app.view.View.prototype.render.call(this);
-        },
         hide: function() {
             this.$el.hide();
         },
         show: function() {
             this.$el.show();
         },
+        /**
+         * Creates the task create drop down list 
+         */
         setCreateTasksList: function() {
             var self = this, singularModules;
             self.createListLabels = [];
@@ -95,6 +128,13 @@
             if (app.config && app.config.displayModules) {
                 this.moduleList = _.intersection(this.moduleList, app.config.displayModules)
             };
+        },
+
+        /**
+         * Clears out search upon user following search result link in menu
+         */
+        clearSearch: function(evt) {
+            this.$('.search-query').val('');
         }
 
     });

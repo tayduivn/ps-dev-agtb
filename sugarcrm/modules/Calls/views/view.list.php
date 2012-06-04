@@ -21,9 +21,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.quickedit.php');
-
-class CallsViewQuickEdit extends ViewQuickEdit
+class CallsViewList extends ViewList
 {
-	protected $headerTpl = 'modules/Calls/tpls/header.tpl';
+    public function listViewProcess()
+    {
+        $this->processSearchForm();
+        $this->lv->searchColumns = $this->searchForm->searchColumns;
+
+        if (!$this->headers) {
+            return;
+        }
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->ss->assign("SEARCH",true);
+            // add recurring_source field to filter to be able acl check to use it on row level
+            $this->lv->mergeDisplayColumns = true;
+            $filterFields = array('recurring_source' => 1);
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params, 0, -1, $filterFields);
+            $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            echo $this->lv->display();
+        }
+    }
 }

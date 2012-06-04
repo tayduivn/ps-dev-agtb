@@ -28,7 +28,12 @@
         var self = this;
         app.events.on("app:view:activity:subdetail", function(model) {
             if (model) {
-                self.model.set(model);
+                // Fixes bug noticed when going from one module tab to another.
+                if(!self.model) {
+                    self.model = model;
+                } else {
+                    self.model.set(model);
+                }
             }
         });
 
