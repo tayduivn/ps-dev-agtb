@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['layout']['list'] = array(
+$viewdefs['base']['layout']['list'] = array(
     'type' => 'rows',
     'components' =>
     array(
@@ -11,11 +11,11 @@ $viewdefs['Cases']['portal']['layout']['list'] = array(
         array(
             'view' => 'filter',
         ),
-        2 => 
+        2 =>
         array(
             'view' => 'table',
         ),
-        3 => 
+        3 =>
         array(
             'view' => 'list-bottom',
         ),
