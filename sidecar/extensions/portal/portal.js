@@ -812,7 +812,7 @@
 
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
-        var dm, oCheck;
+        var dm;
 
         // Perform any original before checks .. if these fail return false
         if (!oRoutingBefore.call(this, route, args)) return false;
