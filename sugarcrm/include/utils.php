@@ -642,8 +642,16 @@ function get_language_display($key)
 }
 
 function get_assigned_user_name($assigned_user_id, $is_group = '') {
-    return "ZOIDBERG";
-	static $saved_user_list = null;
+    if(!empty($GLOBALS['sugar_config']['disable_user_cache'])) {
+        $user = BeanFactory::getBean("Users", $assigned_user_id);
+        if(!empty($user->id)) {
+            return $user->full_name;
+        } else {
+            return '';
+        }
+    }
+
+    static $saved_user_list = null;
 
 	if(empty($saved_user_list)) {
 		$saved_user_list = get_user_array(false, '', '', false, null, $is_group);
@@ -657,8 +665,11 @@ function get_assigned_user_name($assigned_user_id, $is_group = '') {
 }
 //BEGIN SUGARCRM flav=pro ONLY
 function get_assigned_team_name($assigned_team_id) {
-    return "TEAM AMERICA";
-	static $team_list = null;
+    if(!empty($GLOBALS['sugar_config']['disable_user_cache'])) {
+        return Team::getTeamName($assigned_team_id);
+    }
+
+    static $team_list = null;
 
 	if(empty($team_list))
 	$team_list =get_team_array(false,"");
