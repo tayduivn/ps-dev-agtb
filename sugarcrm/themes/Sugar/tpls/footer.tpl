@@ -48,7 +48,7 @@
     {foreach from=$DYNAMICDCACTIONS item=action}
         {$action.script} {$action.image} 
     {/foreach}
-        <div id="zenbox_tab" href="#" style="display: block; background-image: url(&quot;//assets.zendesk.com/external/zenbox/images/tab_support.png&quot;); background-color: black; border-color: black; text-indent: 0px;" title="" class="ZenboxTabLeft" classname="ZenboxTabLeft">Support</div>
+
      </div>
 <script>
  	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
@@ -61,7 +61,7 @@
   @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);
 </style>
 <script type="text/javascript">
-
+/*
 $('#zenbox_tab').click(function(){
 
     window.open(
@@ -70,7 +70,7 @@ $('#zenbox_tab').click(function(){
     );
 
 });
-/*
+
   if (typeof(Zenbox) !== "undefined") {
     Zenbox.init({
       dropboxID:   "20047068",
