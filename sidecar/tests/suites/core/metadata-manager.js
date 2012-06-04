@@ -27,11 +27,19 @@ describe('Metadata Manager', function() {
     });
 
     it('should get definition for a specific view', function() {
-        expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit.meta);
+        expect(app.metadata.getView("Contacts", "edit")).toEqual(meta.modules.Contacts.views.edit.meta);
+    });
+
+    it('should get base view definitions', function() {
+        expect(app.metadata.getView("Test", "list")).toEqual(meta.views.list);
     });
 
     it('should get layout definitions', function() {
-        expect(app.metadata.getLayout("Contacts")).toBe(meta.modules.Contacts.layouts);
+        expect(app.metadata.getLayout("Contacts")).toEqual(meta.modules.Contacts.layouts);
+    });
+
+    it('should get default layout defs', function() {
+        expect(app.metadata.getLayout("Test", "list")).toEqual(meta.layouts.list);
     });
 
     it('should get a specific layout', function() {
@@ -39,15 +47,15 @@ describe('Metadata Manager', function() {
     });
 
     it('should get a varchar sugarfield', function() {
-        expect(app.metadata.getField('varchar')).toBe(meta.sugarFields.text);
+        expect(app.metadata.getField('varchar')).toBe(meta.fields.text);
     });
 
     it('should get a specific sugarfield', function() {
-        expect(app.metadata.getField('phone')).toBe(meta.sugarFields.phone);
+        expect(app.metadata.getField('phone')).toBe(meta.fields.phone);
     });
 
     it('should get a undefined sugarfield as text', function() {
-        expect(app.metadata.getField('doesntexist')).toBe(meta.sugarFields.text);
+        expect(app.metadata.getField('doesntexist')).toBe(meta.fields.text);
     });
 
     it('should get strings', function() {

@@ -27,7 +27,8 @@ describe("View.Layout", function(){
         expect(layout.getComponent("foo")).toBeUndefined();
     });
 
-    it("should dispose itself", function() {
+    // Please refer to: https://www.pivotaltracker.com/story/show/30426995
+    xit("should dispose itself", function() {
         var model = app.data.createBean("Contacts");
         var collection = app.data.createBeanCollection("Contacts");
         var context = app.context.getContext({

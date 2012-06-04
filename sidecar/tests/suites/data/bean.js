@@ -55,5 +55,29 @@ describe("Bean", function() {
         expect(opportunity.getRelatedCollection("contacts")).toEqual(contacts);
     });
 
+    it("should skip validation upon save if fieldsToValidate param is not specified", function() {
+        var moduleName = "Contacts", bean;
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        bean = dm.createBean(moduleName);
+
+        var mock = sinon.mock(bean);
+        mock.expects("isValid").never();
+
+        bean.save();
+        mock.verify();
+    });
+
+    it("should not skip validation upon save if fieldsToValidate param is specified", function() {
+        var moduleName = "Contacts", bean;
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        bean = dm.createBean(moduleName);
+
+        var mock = sinon.mock(bean);
+        mock.expects("isValid").once();
+
+        bean.save(null, { fieldsToValidate: bean.fields });
+        mock.verify();
+    });
+
 
 });

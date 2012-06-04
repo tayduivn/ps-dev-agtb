@@ -11,6 +11,7 @@
         },
         onClickMenuCancel:function(e){
             e.preventDefault();
+            app.router.goBack();
         }
     });
 
