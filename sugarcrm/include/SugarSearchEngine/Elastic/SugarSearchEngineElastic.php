@@ -123,9 +123,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //All fields have already been formatted to db values at this point so no further processing necessary
             if( !empty($bean->$fieldName) )
             {
-                // elasticsearch does not handle multiple types in a query very well
+                // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
-                $keyValues[$fieldName] = strval($bean->$fieldName);
+                // 2. for some reason, bean fields are encoded, decode them first
+                $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
             }
         }
 
