@@ -68,18 +68,21 @@ describe("User", function() {
         app.events.on("app:login:success", loginSuccessEventSpy);
         
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/login.*/,
+        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/oauth2\/token.*/,
             [200, {  "Content-Type": "application/json"},
-                JSON.stringify({current_user:'jimbo'})]);
+                JSON.stringify({"access_token": "55000555"})]);
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/me.*/,
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify({"current_user":"scooby"})]);
+        SugarTest.server.respond();
 
-        app.login({username:'scooby',password:'pass'}, null, {
+        app.login({username:'scooby', password:'pass'}, null, {
             success: function() {},
             error: function() {}
         });
         SugarTest.server.respond();
-
+        expect(userReset.calledWith('scooby')).toBeTruthy();
         expect(userReset).toHaveBeenCalled();
-        expect(userReset.calledWith('jimbo')).toBeTruthy();
         expect(loginSuccessEventSpy).toHaveBeenCalled();
         app.sync.restore();
     });

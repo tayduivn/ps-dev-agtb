@@ -125,7 +125,7 @@ describe("App", function() {
             callbacks   = {success: successFn};
 
         mock.expects("login").once().withArgs(
-            'foo', credentials, callbacks );
+            'foo', credentials);
         app.login('foo', credentials, callbacks );
         expect(mock.verify()).toBeTruthy();
     });
