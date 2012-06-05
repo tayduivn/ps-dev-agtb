@@ -1017,6 +1017,9 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info("Users language is = " . $current_language);
 		$app_strings = return_application_language($current_language);
 		$app_list_strings = return_app_list_strings_language($current_language);
+		$GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
+	    // Reset ACLs in case after_load_user hook changed ACL setups
+	    SugarACL::resetACLs();
 		$GLOBALS['log']->info('End: SoapHelperWebServices->login_success');
 	} // fn
 
