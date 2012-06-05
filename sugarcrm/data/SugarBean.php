@@ -5385,13 +5385,15 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     public function defaultACLs()
     {
+        $defaultACLs = array();
         if($this->bean_implements('ACL')) {
 // FIXME: make configurable
-            return array(
-            	'SugarACLStatic',
-            );
+            $defaultACLs[] = 'SugarACLStatic';
         }
-        return array();
+        // The support portal needs to be able to override the normal ACL controller decisions
+        // And apply itself to modules that don't typically have ACL's
+        $defaultACLs[] = 'SugarACLSupportPortal';
+        return $defaultACLs;
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
