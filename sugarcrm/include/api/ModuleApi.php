@@ -110,7 +110,12 @@ class ModuleApi extends SugarApi {
         }
 
         $bean->save();
-        return $bean->id;
+
+        // update the bean
+        $id = $bean->id;
+        $bean->retrieve($id);
+
+        return $bean;
     }
 
     public function createRecord($api, $args) {
@@ -122,12 +127,11 @@ class ModuleApi extends SugarApi {
         if (!$bean->ACLAccess('save')) {
             throw new SugarApiExceptionNotAuthorized('No access to create new records for module: '.$args['module']);
         }
-        $id = $this->updateBean($bean, $api, $args);
+
+        $bean = $this->updateBean($bean, $api, $args);
 
         // get the bean with the new data
-        $args['record'] = $id;
-
-        $bean->retrieve($id);
+        $args['record'] = $bean->id;
 
         $data = $this->formatBean($api, $args, $bean);
 
@@ -139,10 +143,7 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'save');
 
-        $id = $this->updateBean($bean, $api, $args);
-
-        // get the bean back with the new data
-        $bean->retrieve($id);
+        $bean = $this->updateBean($bean, $api, $args);
 
         $data = $this->formatBean($api, $args, $bean);
 
