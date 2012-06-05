@@ -32,7 +32,10 @@
 
         // only let this render once.  since if there is more than one view on a layout it renders twice
         if (this.rendered) return;
+
         app.view.View.prototype.render.call(this);
+
+        var self = this;
 
         $(".jst").jstree({
             "plugins":["themes", "json_data", "ui", "crrm"],
@@ -46,21 +49,19 @@
                     "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id'),
                 }
             }
-        }).on("select_node.jstree", this.treeNodeSelect);
+        }).on("select_node.jstree", function(event, data){
+                jsData = data.inst.get_json();
+                var selectedUser = {
+                    'id' : jsData[0].metadata.id,
+                    'full_name' : jsData[0].metadata.full_name,
+                    'first_name' : jsData[0].metadata.first_name,
+                    'last_name' : jsData[0].metadata.last_name
+                };
+                console.log("Tree Node " + selectedUser.full_name + " selected");
+                // update context with selected user
+                self.layout.context.setSelectedUser(selectedUser);
+            });
 
         this.rendered = true;
-    },
-
-    /**
-     * Event Handler for when a jsTree node is selected
-     * @param event
-     * @param data
-     */
-    treeNodeSelect:function (event, data) {
-        jsData = data.inst.get_json();
-
-        console.log("Tree Node " + jsData[0].metadata.id + " selected -- Event triggering temporarily disabled");
-        // TEMPORARY triggering on app.events
-        //this.dispatch.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
     }
 })
