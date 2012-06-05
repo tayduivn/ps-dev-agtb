@@ -31,7 +31,7 @@ require_once('modules/Products/Product.php');
 require_once('modules/TimePeriods/TimePeriod.php');
 require_once('modules/Users/User.php');
 
-class PopulateSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class PopulateOppSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
 private $createdOpportunities;

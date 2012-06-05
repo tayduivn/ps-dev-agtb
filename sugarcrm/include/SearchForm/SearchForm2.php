@@ -419,7 +419,7 @@ require_once('include/EditView/EditView2.php');
 	       				$function_name = $this->fieldDefs[$fvName]['function'];
 	       			}
 
-                    if(!empty($this->fieldDefs[$fvName]['function']['include']))
+                    if(!empty($this->fieldDefs[$fvName]['function']['include'])  && file_exists($this->fieldDefs[$fvName]['function']['include']))
                     {
                         require_once($this->fieldDefs[$fvName]['function']['include']);
                     }
