@@ -124,9 +124,6 @@ class ModuleApi extends SugarApi {
         }
         $id = $this->updateBean($bean, $api, $args);
 
-        // deregister the Bean since it was registered above
-        BeanFactory::unregisterBean($args['module'], $id);
-
         // get the bean with the new data
         $args['record'] = $id;
 
