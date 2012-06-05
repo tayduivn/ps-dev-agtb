@@ -1,22 +1,22 @@
 <?php
-$viewdefs['Bugs']['portal']['layout']['detail'] = array(
+$viewdefs['Bugs']['portal']['layout']['edit'] = array(
     'type' => 'simple',
     'components' =>
     array(
         0 => array(
             'view' => 'subnav',
-            'meta' => 'detail'
         ),
         1 => array(
             'layout' =>
             array(
-                'type' => 'columns',
+                'type' => 'fluid',
                 'components' =>
                 array(
                     0 => array(
                         'layout' =>
                         array(
-                            'type' => 'leftside',
+                            'type' => 'simple',
+                            'span' => 7,
                             'components' =>
                             array(
                                 0 => array(
@@ -40,14 +40,12 @@ $viewdefs['Bugs']['portal']['layout']['detail'] = array(
                     1 => array(
                         'layout' =>
                         array(
-                            'type' => 'rightside',
+                            'type' => 'simple',
+                            'span' => 5,
                             'components' =>
                             array(
                                 0 => array(
                                     'view' => 'subdetail',
-                                    'context' => array(
-                                        'link' => 'notes',
-                                    ),
                                 ),
                             ),
                         ),
