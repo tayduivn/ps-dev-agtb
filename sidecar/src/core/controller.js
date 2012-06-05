@@ -66,6 +66,8 @@
             // Render the layout with empty data
             this.layout.render();
 
+            app.trigger("app:view:change", params.layout, params);
+
             // Render the layout to the main element
             app.$contentEl.html(this.layout.$el);
 
