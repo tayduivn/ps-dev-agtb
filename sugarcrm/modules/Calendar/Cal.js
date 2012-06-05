@@ -967,6 +967,7 @@
 		if(typeof SugarWidgetSchedulerSearch.hideCreateForm != 'undefined')
 			SugarWidgetSchedulerSearch.hideCreateForm();
 			
+		$("#scheduler .schedulerInvitees").css("display", "");
 		$("#create-invitees-title").css("display", "");
 		$("#create-invitees-buttons").css("display", "");
 			
@@ -1298,7 +1299,8 @@
 							CAL.get("btn-save").focus();
 								
 							setTimeout(function(){
-								if (!res.edit) {
+								if (!res.edit) {									
+									$("#scheduler .schedulerInvitees").css("display", "none");
 									$("#create-invitees-buttons").css("display", "none");
 									$("#create-invitees-title").css("display", "none");
 								}
