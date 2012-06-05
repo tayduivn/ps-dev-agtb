@@ -3347,7 +3347,7 @@ article [id^="listing-action"] i.grip {
   font-style: normal;
   height: 100%;
   color: #a8a6a4;
-  margin-top: -61px;
+  margin-top: -53px;
   margin-right: -32px;
 }
 article [id^="listing-action"] i.grip.on {
@@ -3504,6 +3504,13 @@ a:hover [class^="icon-"] {
 }
 #record-action .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
+  background-size: 80%;
+  height: 22px;
+  width: 26px;
+  margin-top: 13px;
+}
+#record-action .icon-sms-white {
+  background: url('../img/sms_white.png') no-repeat 50% 50%;
   background-size: 80%;
   height: 22px;
   width: 26px;
