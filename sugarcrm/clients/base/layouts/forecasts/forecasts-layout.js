@@ -33,6 +33,7 @@
 
         initializeAllModels: function() {
             this._models.filters = new app.Model.Filters();
+            this._models.chartoptions = new app.Model.ChartOptions();
         },
 
         /**

@@ -1,7 +1,7 @@
 /**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.FilterView
- * @alias SUGAR.App.layout.FilterView
+ *
+ * @class View.Views.ChartOptionsView
+ * @alias SUGAR.App.layout.ChartOptionsView
  * @extends View.View
  */
 ({
@@ -20,7 +20,7 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        model = self.layout.getModel('filters');
+        model = self.layout.getModel('chartoptions');
         model.on('change', function() {
             self.buildDropdowns(this);
         });
@@ -46,7 +46,7 @@
                 }),
                 $chosenPlaceholder = $(chosen.getPlaceholder().toString());
 
-            self.$el.append($chosenPlaceholder);
+            self.$el.find('#chartType').before($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
             chosen.label = model[key].get('label');
