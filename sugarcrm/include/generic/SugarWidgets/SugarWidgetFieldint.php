@@ -54,6 +54,16 @@ class SugarWidgetFieldInt extends SugarWidgetReportField
  	             return $this->_get_column_select($layout_def)." BETWEEN ".$GLOBALS['db']->quote($layout_def['input_name0']). " AND " . $GLOBALS['db']->quote($layout_def['input_name1']) . "\n";
  }
 
+    public function queryFilterGreater_Equal(&$layout_def)
+    {
+        return $this->_get_column_select($layout_def) . " >= " . $GLOBALS['db']->quote($layout_def['input_name0']) . "\n";
+    }
+
+    public function queryFilterLess_Equal(&$layout_def)
+    {
+        return $this->_get_column_select($layout_def) . " <= " . $GLOBALS['db']->quote($layout_def['input_name0']) . "\n";
+    }
+
  function queryFilterStarts_With(&$layout_def)
  {
  	return $this->queryFilterEquals($layout_def);
@@ -78,5 +88,3 @@ class SugarWidgetFieldInt extends SugarWidgetReportField
  } 
 
 }
-
-?>

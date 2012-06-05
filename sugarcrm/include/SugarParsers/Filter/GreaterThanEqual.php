@@ -24,28 +24,28 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
 /**
  * This is for when a string will contain part of this string.
  *
- * Ex: > <number>
+ * Ex: >= <number>
  */
-class SugarParsers_Filter_GreaterThan extends SugarParsers_Filter_AbstractFilter
+class SugarParsers_Filter_GreaterThanEqual extends SugarParsers_Filter_AbstractFilter
 {
     /**
      * Which Variables trigger this class
      *
      * @var array
      */
-    protected $variables = array('$gt', '$greater');
+    protected $variables = array('$gte');
 
     /**
      * Standard Operator
      *
      * @var string
      */
-    protected $operator = ">";
+    protected $operator = ">=";
 
     /**
      * Text Operator
      *
      * @var string
      */
-    protected $operator_text = 'greater';
+    protected $operator_text = 'greater_equal';
 }

@@ -584,6 +584,8 @@ $mod_strings = array (
 
 //BEGIN SUGARCRM flav=pro ONLY
     'LBL_REPORTS_TO' => 'Reports To',
+    'LBL_LESS_THAN_EQUAL' => 'Less Than Equal To',
+    'LBL_GREATER_THAN_EQUAL' => 'Greater Than Equal To',
 //END SUGARCRM flav=pro ONLY
 );
 ?>
