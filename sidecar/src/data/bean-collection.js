@@ -45,6 +45,18 @@
              * @property {Array}
              */
             this.fields = options.fields || this.fields || null;
+            /**
+             * Flag indicating if a collection contains items assigned to the current user.
+             * @member Data.BeanCollection
+             * @property {Boolean}
+             */
+            this.myItems = options.myItems || this.myItems;
+            /**
+             * Flag indicating if a collection contains current user's favorite items.
+             * @member Data.BeanCollection
+             * @property {Boolean}
+             */
+            this.favorites = options.favorites || this.favorites;
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
@@ -77,6 +89,8 @@
             options = options || {};
             options.page = options.page || 1;
             options.fields = options.fields || this.fields || null;
+            options.myItems = options.myItems || this.myItems;
+            options.favorites = options.favorites || this.favorites;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
