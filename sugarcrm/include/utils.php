@@ -2620,20 +2620,20 @@ function get_emails_by_assign_or_link($params)
     $return_array['from'] = "FROM emails ";
     $return_array['join'] = " INNER JOIN (".
         // directly assigned emails
-        	"select eb.email_id FROM emails_beans eb where eb.bean_module = '{$bean->module_dir}' AND eb.bean_id = '{$bean->id}' AND eb.deleted=0 ".
+        	"select eb.email_id, 'direct' source FROM emails_beans eb where eb.bean_module = '{$bean->module_dir}' AND eb.bean_id = '{$bean->id}' AND eb.deleted=0 ".
             " UNION ".
         // Assigned to contacts
-        	"select DISTINCT eb.email_id FROM emails_beans eb
+        	"select DISTINCT eb.email_id, 'contact' source FROM emails_beans eb
                 $rel_join AND link_bean.id = eb.bean_id
         		where eb.bean_module = '$rel_module' AND eb.deleted=0".
         	" UNION ".
         // Related by directly by email
-            "select DISTINCT eear.email_id from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            "select DISTINCT eear.email_id, 'relate' source  from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
             	ON eabr.bean_id ='{$bean->id}' AND eabr.bean_module = '{$bean->module_dir}' AND
     			eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0".
             " UNION ".
         // Related by email to linked contact
-            "select DISTINCT eear.email_id FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            "select DISTINCT eear.email_id, 'relate_contact' source FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
             	ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
             	$rel_join AND link_bean.id = eabr.bean_id
             	where eear.deleted=0".
@@ -2645,7 +2645,7 @@ function get_emails_by_assign_or_link($params)
 
         if($bean->object_name == "Case" && !empty($bean->case_number)) {
             $where = str_replace("%1", $bean->case_number, 	$bean->getEmailSubjectMacro());
-    	    $return_array["where"] .= "\n AND emails.name LIKE '%$where%'";
+    	    $return_array["where"] .= "\n AND (email_ids.source = 'direct' OR emails.name LIKE '%$where%')";
         }
 
         return $return_array;
