@@ -22,16 +22,21 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarSecurity/SugarSecurity.php');
+require_once('tests/rest/RestTestBase.php');
 
-class SugarSecurityUnitTest extends SugarSecurity {
-    function loginUserPass($username, $password, $passwordType = 'PLAIN' ) { return true; }
-    function loginOAuth2Token($token) { return true; }
-    function loginSingleSignOnToken($token) { return true; }
-    function loadFromSession() { return true; }
-    function canAccessModule(SugarBean $bean,$accessType='view') { return true; }
-    function canAccessField(SugarBean $bean,$fieldName,$accessType) { return true; }
-    function hasExtraSecurity(SugarBean $bean,$action='list') { return false; }
-    // Soylent test is people!
-    function isSugarUser() { return true; }
+class RestTestCurrentUser extends RestTestBase {
+    public function tearDown()
+    {
+        if ( isset($this->account_id) ) {
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
+        }
+        parent::tearDown();
+    }
+
+    public function testRetrieve() {
+        $restReply = $this->_restCall("me");
+        $this->assertNotEmpty($restReply['reply']['current_user']['id']);
+    }
+
 }

@@ -20,10 +20,19 @@
                 parentModule: module,
                 parentModelId: id,
                 link: link,
-                layout: "list"
+                layout: "relationships"
             });
         },
-
+        pickerList: function(module, id, action) {
+            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/link/picker/" + action);
+            app.controller.loadView({
+                module: module,
+                modelId: id,
+                layout: "pickerlist",
+                action: action,
+                create: true
+            });
+        },
         create: function(module, id, link) {
             app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
             app.controller.loadView({
@@ -62,6 +71,7 @@
         app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
         app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
         app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
+        app.router.route(":module/:id/link/picker/:action","relationships:picker" ,_rrh.pickerList);
 
         app.api.serverUrl = app.isNative ? app.user.get("serverUrl") : app.config.serverUrl;
 

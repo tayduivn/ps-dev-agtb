@@ -28,11 +28,7 @@ require_once('modules/SugarFavorites/SugarFavorites.php');
 class RestTestList extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-
+        parent::setUp();
         $this->accounts = array();
         $this->opps = array();
         $this->contacts = array();

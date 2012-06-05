@@ -26,14 +26,6 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadataModuleList extends RestTestBase {
     public $oppTestPath = 'modules/Opportunities/metadata/portal/views/list.php';
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-    
     public function tearDown()
     {
         $unitTestFiles = array($this->oppTestPath,
@@ -44,7 +36,7 @@ class RestTestMetadataModuleList extends RestTestBase {
                 @unlink($this->oppTestPath);
             }
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testMetadataGetModuleListPortal() {

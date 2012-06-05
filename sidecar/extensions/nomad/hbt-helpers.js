@@ -23,4 +23,11 @@
             fields: fields
         }));
     });
+
+    Handlebars.registerHelper('buildLinkRoute', function(context, model, link, action) {
+        model = model || context.get("model");
+        var id = model.id;
+
+        return new Handlebars.SafeString(app.nomad.buildLinkRoute(context.get("module"), id, link, action));
+    });
 })(SUGAR.App);

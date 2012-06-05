@@ -126,17 +126,18 @@ class OAuthToken extends SugarBean
     /**
      * Load token by ID
      * @param string $token
+     * @param string $oauth_type Either "oauth1" or "oauth2", defaults to "oauth1"
 	 * @return OAuthToken
      */
-    static function load($token)
+    static function load($token,$oauth_type="oauth1")
 	{
 	    $ltoken = new self();
 	    $ltoken->retrieve($token);
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
         if(!empty($ltoken->consumer)) {
-            $ltoken->consumer_obj = BeanFactory::getBean("OAuthKeys", $ltoken->consumer);
-            if(empty($ltoken->consumer_obj->id)) {
+            $ltoken->consumer_obj = BeanFactory::getBean('OAuthKeys',$ltoken->consumer);
+            if(empty($ltoken->consumer_obj->id) || $ltoken->consumer_obj->oauth_type != $oauth_type ) {
                 return null;
             }
         }
@@ -284,6 +285,8 @@ function displayDateFromTs($focus, $field, $value, $view='ListView')
 {
     $field = strtoupper($field);
     if(!isset($focus[$field])) return '';
+    // No date, don't return anything
+    if($focus[$field]==-1) return '';
     global $timedate;
     return $timedate->asUser($timedate->fromTimestamp($focus[$field]));
 }

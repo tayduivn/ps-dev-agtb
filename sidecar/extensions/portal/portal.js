@@ -53,7 +53,8 @@
                                     class: 'pull-left',
                                     events: {
                                         click: "function(){ " +
-                                            "app.router.signup();" +
+                                            "app.router.navigate('#signup');" +
+                                            "app.router.start();" +
                                             "}"
                                     }
                                 }
@@ -199,7 +200,7 @@
                                     primary: false,
                                     events: {
                                         click: "function(){" +
-                                            "app.router.login();" +
+                                            "app.router.goBack();" +
                                             "}"
                                     }
                                 }
