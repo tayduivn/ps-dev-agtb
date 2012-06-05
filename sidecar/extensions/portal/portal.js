@@ -790,7 +790,7 @@
         });
 
         // Load the profile
-        app.router.route("profile", "profile", function() {
+        app.router.route("Profile", "profile", function() {
             app.controller.loadView({
                 module: "Profile",
                 layout: "profile"

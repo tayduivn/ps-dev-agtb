@@ -2,6 +2,7 @@
     events: {
         //same as edit-view::saveModel()
         'click [name=save_button]': 'saveModel'
+        //'click [name=edit_button]': 'onEditClicked'
     },
     /**
      * Listens to the app:view:change event and show or hide the subnav
@@ -24,6 +25,11 @@
             },
             fieldsToValidate: this.getFields(this.model.module)
         });
+    },
+    onEditClicked: function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        alert("TODO: In subnav.js .. goto corresponding edit view...");
     },
     bindDataChange: function() {
         if (this.context.get('subnavModel')) {

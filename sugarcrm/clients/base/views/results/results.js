@@ -59,6 +59,9 @@
      * Renders subnav based on search message appropriate for query term.
      */
     renderSubnav: function(overrideMessage) {
+
+console.log('subnavModel: ', this.context.get('subnavModel'));
+
         if (this.context.get('subnavModel')) {
             this.context.get('subnavModel').set({
                 'title': overrideMessage || 'Show search results for "'+this.lastQuery+'"'

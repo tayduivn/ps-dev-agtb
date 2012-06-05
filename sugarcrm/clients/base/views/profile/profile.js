@@ -6,7 +6,13 @@
  * @alias SUGAR.App.layout.ProfileView
  * @extends View.View
  */
-    events: {},
+    events: {
+        'click [name=edit_button]': 'onEditContactClicked'
+    },
+    initialize: function(options) {
+        this.options.meta = this._meta;
+        app.view.View.prototype.initialize.call(this, options);
+    },
     render: function() {
         var self = this, data, attributes;
 
@@ -40,6 +46,7 @@
     /**
      * Renders subnav based on search message appropriate for query term.
      */
+    /*
     renderSubnav: function(data) {
         var self = this, fullName = '';
         if (app.additionalComponents.subnav) {
@@ -50,6 +57,31 @@
             }
         }
     },
+    */
+    renderSubnav: function(data) {
+        var self=this, fullName = '';
+        if (self.context.get('subnavModel')) {
+            fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
+            self.context.get('subnavModel').set({
+                'title': fullName,
+                'meta': {
+                    "buttons": [
+                        {
+                            "name": "edit_button",
+                            "type": "button",
+                            "label": "Edit",
+                            "value": "edit",
+                            'route': {
+                                'action': "edit"
+                            },
+                            "class": "btn btn-success edit-contact"
+                        }
+                    ]
+                }
+            });
+        }
+    },
+    
     onEditContactClicked: function(evt) {
         evt.stopPropagation();
         evt.preventDefault();
