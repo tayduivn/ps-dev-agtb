@@ -104,6 +104,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $probability = array("10", "70", "40", "60");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
+        $opp->forecast = $opp->probability >= 70 ? 1 : 0;
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
@@ -130,6 +131,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->worst_case = ($opp->amount / $count) * .5;
             $product->created_by = $opp->assigned_user_id;
             $product->modified_user_id = $opp->assigned_user_id;
+            $proudct->forecast = $opp->probability >= 70 ? 1 : 0;
             $product->date_entered = $timedate->asDb($timedate->getNow());
             $product->date_modified = $prod->date_entered;
             $product->description = $prod->name;
