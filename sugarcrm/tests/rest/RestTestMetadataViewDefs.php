@@ -30,14 +30,6 @@ class RestTestMetadataViewDefs extends RestTestBase {
         'cases'     => 'modules/Cases/metadata/portal/views/ghostrider.php'
     );
 
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-
     public function tearDown()
     {
         foreach($this->testMetaDataFiles as $file ) {
@@ -46,7 +38,8 @@ class RestTestMetadataViewDefs extends RestTestBase {
                 @unlink($file);
             }
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        parent::tearDown();
     }
 
     public function testDefaultPortalLayoutMetaData() {

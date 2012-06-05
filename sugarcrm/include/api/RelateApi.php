@@ -42,9 +42,8 @@ class RelateApi extends ListApi {
     
     public function listRelated($api, $args) {
         // Load up the bean
-        $record = BeanFactory::getBean($args['module']);
-        $record->retrieve($args['record']);
-        if ( ! $api->security->canAccessModule($record,'view') ) {
+        $record = BeanFactory::getBean($args['module'],$args['record']);
+        if ( ! $record->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
         // Load up the relationship
@@ -55,8 +54,8 @@ class RelateApi extends ListApi {
         }
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
-        if ( ! $api->security->canAccessModule($linkSeed,'view') ) {
+        $linkSeed = BeanFactory::newBean($linkModuleName);
+        if ( ! $linkSeed->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName);
         }
 
@@ -67,10 +66,6 @@ class RelateApi extends ListApi {
         $listQueryParts = $linkSeed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
         
         $listQueryParts['from'] .= $linkQueryParts['join'];
-
-        if ( $api->security->hasExtraSecurity($record,'relateList',$linkSeed) ) {
-            $api->security->addExtraSecurityRelateList($record,$listQueryParts);
-        }
 
         return $this->performQuery($api, $args, $linkSeed, $listQueryParts, $options['limit'], $options['offset']);
     }

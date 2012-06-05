@@ -9,10 +9,20 @@
     }
 
 fixtures.api = {
-    "rest/v10/login": {
+    "/rest/v10/oauth2/token": {
         "POST" : {
             "status": 200,
-            "response":{"token": "55000555"}
+            "response":{"access_token": "55000555"}
+            }
+    },
+    "/rest/v10/me": {
+        "GET" : {
+            "status": 200,
+            "response":{
+                "current_user":{
+                'id':'1234'
+            }
+            }
             }
     },
     "rest/v10/contact": {

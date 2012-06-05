@@ -27,12 +27,9 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestRelate extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
 
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
         $this->accounts = array();
         $this->contacts = array();
         $this->opps = array();
@@ -65,7 +62,8 @@ class RestTestRelate extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        
+        parent::tearDown();
     }
 
     public function testRelateList() {
@@ -150,7 +148,7 @@ class RestTestRelate extends RestTestBase {
         $this->assertEquals($this->contacts[47]->last_name,$firstRecord['last_name'],"The search failed for record: ".$this->contacts[47]->last_name);
 
         // Sorting descending
-        $restReply4 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?orderBy=last_name:DESC");
+        $restReply4 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:DESC");
         
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['last_name'],
@@ -158,7 +156,7 @@ class RestTestRelate extends RestTestBase {
                               'Second record is not lower than the first, decending order failed.');
 
         // Sorting ascending
-        $restReply5 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?orderBy=first_name:ASC");
+        $restReply5 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=first_name:ASC");
         
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['first_name'],
@@ -167,7 +165,7 @@ class RestTestRelate extends RestTestBase {
 
 
         // Fetching the role field from the opportunity contact relationship
-        $restReply6 = $this->_restCall("Opportunities/".$this->opps[29]->id."/link/contacts?orderBy=first_name:DESC");
+        $restReply6 = $this->_restCall("Opportunities/".$this->opps[29]->id."/link/contacts?order_by=first_name:DESC");
         
         
         $this->assertNotEmpty($restReply6['reply']['records'][0]['opportunity_role'],"The role field on the Opportunity -> Contact relationship was not populated.");

@@ -35,8 +35,9 @@ $viewdefs[$module_name]['DetailView'] = array(
                         ),
 
 'panels' =>array (
-    array('name', 'description'),
-    array('c_key'),
+    array('name', 'oauth_type'),
+    array('c_key', 'client_type'),
+    array('description'),
 
   array (
 	array (
