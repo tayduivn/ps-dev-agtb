@@ -55,9 +55,7 @@
             });
 
             //find link fields
-            var linkFields = _.filter(this.model.fields, function (field, key) {
-                if (field.type == 'link') return true;
-            });
+            var linkFields = app.nomad.getLinks(this.model);
 
             //save founded fields
             this.headerField = headerField;
@@ -103,7 +101,7 @@
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
                 if (value) data.push({
-                    name: field.name,
+                    name: field.label,
                     value: value
                 });
             });
@@ -120,7 +118,7 @@
             var value, data = {};
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
-                if (value) data[field.name] = value;
+                if (value) data[field.label] = value;
             });
             return data;
         },
