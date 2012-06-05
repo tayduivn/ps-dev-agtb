@@ -43,7 +43,7 @@
 <div id="arrow" title="Show" class="up"></div>
 <div id="footer">
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
-        title="&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/> <a href="http://www.sugacrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
+        title="&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/> <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
     <div id="partner">
     {foreach from=$DYNAMICDCACTIONS item=action}
         {$action.script} {$action.image} 
