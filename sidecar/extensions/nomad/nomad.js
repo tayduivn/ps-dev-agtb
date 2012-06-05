@@ -71,10 +71,12 @@
 
     app.augment("nomad", {
 
-        deviceReady: function() {
+        deviceReady: function(authToken) {
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready");
+            app.logger.debug("Device is ready, auth-token: " + authToken);
 
+            app.AUTH_ACCESS_TOKEN = authToken;
+            app.config.authStore = app.isNative ? 'keychain': 'cache';
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
