@@ -113,7 +113,9 @@
             app.logger.debug("Navigating back...");
             window.history.back();
         },
-
+        go: function(steps) {
+            window.history.go(steps);
+        },
         /**
          * Starts Backbone history which in turn starts routing the hashtag.
          *

@@ -38,7 +38,7 @@
             }, 4);
 
             q.drain = function() {
-                app.router.goBack();
+                app.router.go(-2);
             };
 
             this.$('.selecterd-flag:checked').each(function() {

@@ -3,7 +3,11 @@
         <div class="span12 listing" id="listing"><i></i>
             <div>
                 {{#each items}}
-                    {{> list.item}}
+                <article class="picker-list-row">
+                    <a href="#{{buildLinkRoute ../context ../model this.name ../action}}">
+                        {{this.name}}
+                    </a>
+                </article>
                 {{/each}}
             </div>
         </div>

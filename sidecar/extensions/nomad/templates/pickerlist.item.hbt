@@ -1,5 +1,0 @@
-<article>
-    <a href="#">
-        {{this.name}}
-    </a>
-</article>

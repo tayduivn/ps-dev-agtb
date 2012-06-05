@@ -13,11 +13,12 @@
             this.options.meta = _meta;
             app.view.Layout.prototype.initialize.call(this, options);
             var pickerList = this.getComponent('pickerlist');
-            pickerList.setTemplateOption("partials", {'list.item': app.template.get("pickerlist.item")});
-            //pickerList.setTemplateOption("data", {items:[{name:"zzz"},{name:"yyy"},{name:"mmm"}]});
-            pickerList.setData({items:[{name:"zzz"},{name:"yyy"},{name:"mmm"}],
+
+            pickerList.setData({items:app.nomad.getLinks(this.model),
                 modelId:this.context.get('modelId'),
-                module:this.context.get('module')
+                module:this.context.get('module'),
+                context:this.context,
+                action:this.context.get('action')
             });
         }
     });
