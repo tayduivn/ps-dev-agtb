@@ -1451,6 +1451,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:left;
 }
 
+#footer .copyright {
+	color: #ccc;
+	text-decoration: none;
+	font-size: 11px;	
+	padding-top: 10px;
+	float: left;
+}
+
 #themePicker, #langPicker 
 {
     text-align: center;
