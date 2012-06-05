@@ -31,14 +31,6 @@ class ForecastModuleApi extends ModuleApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'test' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','test'),
-                'pathVars' => array('',''),
-                'method' => 'test',
-                'shortHelp' => 'A test',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#test',
-            ),
             'filters' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts','filters'),
@@ -88,20 +80,6 @@ class ForecastModuleApi extends ModuleApi {
         return "I'm a duck.";
     }
 
-    public function test($api, $args) {
-        // Just a normal ping request
-        return array(
-            array(
-                'to' => 'joo',
-                'message'=>'you are awesome!',
-            ),
-            array(
-                'to' => 'gabe',
-                'message'=>'no, you are awesome!'
-            ),
-        );
-    }
-
     public function filters($api, $args) {
         // placeholder for filters
         // todo: really make this work
@@ -110,15 +88,15 @@ class ForecastModuleApi extends ModuleApi {
 
         return array(
             'timeperiods' => array(
-                'label' => 'Forecast Period',
+                'label' => 'Forecast Period:',
                 'options' => TimePeriod::get_timeperiods_dom(),
             ),
             'stages' => array(
-                'label' => 'Stages',
+                'label' => 'Sales Stage:',
                 'options' => $app_list_strings['sales_stage_dom'],
             ),
             'probabilities' => array(
-                'label' => 'Probabilities',
+                'label' => 'Probability (>=):',
                 'options' => $app_list_strings['sales_probability_dom'],
             ),
         );
@@ -128,20 +106,29 @@ class ForecastModuleApi extends ModuleApi {
         // placeholder for filters
         // todo: really make this work
         return array(
-            'x' => array(
-                'x0' => 'Team Members',
-                'x1' => 'Account',
-                'x2' => 'Channel',
-                'x3' => 'Line Items',
-                'x4' => 'Month',
+            'horizontal' => array(
+                'label' => 'Horizontal (x):',
+                'options' => array(
+                    'x0' => 'Team Members',
+                    'x1' => 'Account',
+                    'x2' => 'Channel',
+                    'x3' => 'Line Items',
+                    'x4' => 'Month',
+                ),
             ),
-            'y' => array(
-                'y0' => 'Revenue',
-                'y1' => 'Number of Units',
+            'vertical' => array(
+                'label' => 'Vertical (y):',
+                'options' => array(
+                    'y0' => 'Revenue',
+                    'y1' => 'Number of Units',
+                ),
             ),
-            'groupBy' => array(
-                'y0' => 'Sales Stage',
-                'y1' => 'Revenue Type',
+            'groupby' => array(
+                'label' => 'Group By:',
+                'options' => array(
+                    'y0' => 'Sales Stage',
+                    'y1' => 'Revenue Type',
+                ),
             ),
         );
     }
