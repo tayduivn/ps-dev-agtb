@@ -6,21 +6,23 @@
                 app.router.goBack();
             },
             "click #record-action .phone": function () {
-                app.nomad.callPhone(this.getFieldsDataArray(this.phoneFields));
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.callPhone(phones);
             },
             "click #record-action .email": function () {
                 app.nomad.sendEmail(this.getEmails());
             },
             "click #record-action .message": function () {
-                app.nomad.sendSms(this.getFieldsDataArray(this.phoneFields));
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.sendSms(phones);
             },
             "click #record-action .link": function () {
                 var urls = this.getFieldsDataArray(this.urlFields);
-                //debugger;
+                app.nomad.openUrl(urls);
             },
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
-                //debugger;
+                app.nomad.openOpenAddress(addressObj);
             }
         },
 
