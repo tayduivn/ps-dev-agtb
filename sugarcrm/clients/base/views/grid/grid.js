@@ -23,12 +23,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        var self = this;
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("selectedUser:change", function(selectedUserId){
-            // filter grid
-            self.filterGridById(selectedUserId);
-        });
+        this.layout.context.on("change:selectedUser", this.filterGridById, this);
     },
 
     /**
@@ -60,24 +56,10 @@
     /**
      * Event Handler for filtering the grid by an ID value
      *
-     * @param params event data
+     * @param params is always a context
      */
     filterGridById:function (params) {
-        var id;
-        // This part of the function needs to be able to handle
-        // any configuration of data that comes in from params that might possibly need
-        // to be able to filter the grid table.
-        if (params.hasOwnProperty('selected') && params.selected.hasOwnProperty('id')) {
-            // This configuration works for the jsTree treeview:node_select event
-            id = params.selected.id;
-        } else if (params.hasOwnProperty('id')) {
-            id = params.id;
-        }else {
-            // no structure, just sending the id straight in
-            id = params;
-        }
-
-        this.gTable.fnFilter(id);
+        this.gTable.fnFilter(params.attributes.selectedUser.id);
     },
 
     /**

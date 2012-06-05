@@ -8,10 +8,6 @@
 
     rendered:false,
 
-    primary_user:'',
-
-    reportees:'',
-
     /**
      * Initialize the View
      *
@@ -51,15 +47,18 @@
             }
         }).on("select_node.jstree", function(event, data){
                 jsData = data.inst.get_json();
+
                 var selectedUser = {
                     'id' : jsData[0].metadata.id,
                     'full_name' : jsData[0].metadata.full_name,
                     'first_name' : jsData[0].metadata.first_name,
                     'last_name' : jsData[0].metadata.last_name
                 };
+
                 console.log("Tree Node " + selectedUser.full_name + " selected");
+
                 // update context with selected user
-                self.layout.context.setSelectedUser(selectedUser);
+                self.context.set( "selectedUser" , selectedUser);
             });
 
         this.rendered = true;
