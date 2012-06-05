@@ -482,6 +482,35 @@ class TemplateHandler {
        return '';
     }
 
+    /**
+     * prepare Calculation Fields for creation formula
+     *
+     * @param array $fieldDefs The fields defs for the current module.
+     * @param string $module current module.
+     */
+    protected function prepareCalculationFields($fieldDefs, $module)
+    {
+        $fields = array();
+        foreach ($fieldDefs as $field => $def)
+        {
+            if (isset($def['calculated']) && $def['calculated'] && !empty($def['formula']))
+            {
+                $triggerFields = Parser::getFieldsFromExpression($def['formula'], $fields);
+                foreach ($triggerFields as $field_c)
+                {
+                    if(isset($fieldDefs[$field_c]))
+                    {
+                        $fieldDefs[$field]['formula'] = str_replace($field_c, $fieldDefs[$field_c]['id'], $fieldDefs[$field]['formula']);
+                    }
+                }
+                $temp_field = $fieldDefs[$field];
+                $fieldDefs[$module.$field] = $temp_field;
+                unset($fieldDefs[$field]);
+            }
+        }
+        return $fieldDefs;
+    }
+	
 	//BEGIN SUGARCRM flav=pro ONLY
     /**
      * createDependencyJavascript
@@ -497,6 +526,10 @@ class TemplateHandler {
         $js = "<script type=text/javascript>SUGAR.util.doWhen('!SUGAR.util.ajaxCallInProgress() && (typeof DCMenu != \"undefined\") && DCMenu.module', function(){\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
+        if ($view == 'ConvertLead')
+        {
+            $fieldDefs = $this->prepareCalculationFields($fieldDefs, $module);
+        }
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
 
         $dependencies = array_merge(
