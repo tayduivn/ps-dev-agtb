@@ -151,6 +151,22 @@
          */
         sendSms: function(phones) {
             // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Displays url chooser UI.
+         * @param {Array} phones
+         */
+        openUrl: function(urls) {
+            // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Opens the map with specific address.
+         * @param {Array} phones
+         */
+        openOpenAddress: function(addressObj) {
+            // TODO: Implement HTML action sheet view
         }
 
     });
