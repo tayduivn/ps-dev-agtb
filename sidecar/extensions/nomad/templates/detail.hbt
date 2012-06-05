@@ -14,11 +14,14 @@
             {{/with}}
         {{/each}}
     </div>
+    <span class="fade"></span>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid">
-        <a class="span4 phone" href="javascript:void(0)"><i class="icon-phone"></i></a>
-        <a class="span4 message" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
-        <a class="span4 comment" href="javascript:void(0)"><i class="icon-comment icon-md"></i></a>
+        <a class="span1_5th phone" href="javascript:void(0)"><i class="icon-phone"></i></a>
+        <a class="span1_5th email" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
+        <a class="span1_5th message" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
+        <a class="span1_5th link" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
+        <a class="span1_5th map" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
     </div>
 </div>
 <div class="container-fluid" id="detailListing">

@@ -1,4 +1,4 @@
-(function(app){
+(function(app) {
     //Pull the precompile header and footer from the node precompile implementation for handlebars
     var _header = "(function() {\n  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};\n",
         _footer = '})();',
@@ -99,7 +99,7 @@
             var prefix = "f." + type + ".";
             var key = prefix + view;
             return [key, this.get(prefix + view) ||
-                         (_.isUndefined(fallbackTemplate) ? null : this.get(prefix + fallbackTemplate))];
+                (_.isUndefined(fallbackTemplate) ? null : this.get(prefix + fallbackTemplate))];
         },
 
         /**
@@ -167,7 +167,7 @@
          *        // etc.
          *    }
          *
-         *    "sugarViews": {
+         *    "views": {
          *      "text": {
          *          "templates" {
          *              "view": HB template source...
@@ -181,8 +181,8 @@
          * @param {Boolean} force(optional) Flag indicating if the cache is ignored and the templates are to be recompiled.
          */
         set: function(metadata, force) {
-            if (metadata.sugarViews) {
-                _.each(metadata.sugarViews, function(view, name) {
+            if (metadata.views) {
+                _.each(metadata.views, function(view, name) {
                     if (name != "_hash") {
                         _.each(view.templates, function(src, view) {
                             this.setView(name, null, src, force);
@@ -191,17 +191,8 @@
                 }, this);
             }
 
-//            if (metadata.viewTemplates) {
-//                _.each(metadata.viewTemplates, function(src, name) {
-//                    if (name != "_hash") {
-//                        // This are common templates: pass null for module
-//                        this.setView(name, null, src, force);
-//                    }
-//                }, this);
-//            }
-
-            if (metadata.sugarFields) {
-                _.each(metadata.sugarFields, function(field, type) {
+            if (metadata.fields) {
+                _.each(metadata.fields, function(field, type) {
                     if (type != "_hash") {
                         _.each(field.templates, function(src, view) {
                             this.setField(type, view, src, force);
@@ -209,6 +200,16 @@
                     }
                 }, this);
             }
+
+//            if (metadata.layouts) {
+//                _.each(metadata.layouts, function(field, type) {
+//                    if (type != "_hash") {
+//                        _.each(field.templates, function(src, view) {
+//                            this.setField(type, view, src, force);
+//                        }, this);
+//                    }
+//                }, this);
+//            }
         },
 
         /**
@@ -216,10 +217,11 @@
          *
          * @property {Function}
          */
-        empty: function() { return ""; }
+        empty: function() {
+            return "";
+        }
     };
 
     app.augment("template", _templateManager);
 
 })(SUGAR.App);
-

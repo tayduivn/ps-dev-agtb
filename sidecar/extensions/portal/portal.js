@@ -53,7 +53,8 @@
                                     class: 'pull-left',
                                     events: {
                                         click: "function(){ " +
-                                            "app.router.signup();" +
+                                            "app.router.navigate('#signup');" +
+                                            "app.router.start();" +
                                             "}"
                                     }
                                 }
@@ -199,7 +200,7 @@
                                     primary: false,
                                     events: {
                                         click: "function(){" +
-                                            "app.router.login();" +
+                                            "app.router.goBack();" +
                                             "}"
                                     }
                                 }
@@ -258,7 +259,7 @@
                 }
             }
         },
-        'sugarFields': {
+        'fields': {
             "text": {
                 "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
@@ -347,7 +348,7 @@
                 }
             }
         },
-        'sugarViews': {
+        'views': {
             "alert": {
                 controller: "\\\"\/**\n * View that displays errors.\n * @class View.Views.AlertView\n * @extends View.View\n *\/\n\n({\n    initialize: function(options) {\n        app.view.View.prototype.initialize.call(this, options);\n    },\n    \/**\n     * Displays an alert message and returns alert instance.\n     * @param {Object} options\n     * @return {Backbone.View} Alert instance\n     * @method\n     *\/\n    show: function(options) {\n        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;\n        if (!options) {\n            return false;\n        }\n\n        level = options.level ? options.level : \\'info\\';\n        title = options.title ? options.title : null;\n        msg = (_.isString(options.messages)) ? [options.messages] : options.messages;\n        autoClose = options.autoClose ? options.autoClose : false;\n\n        \/\/ \\\"process\\\" is the loading indicator .. I didn\\'t name it ;=)\n        alertClass = (level === \\\"process\\\" || level === \\\"success\\\" || level === \\\"warning\\\" || level === \\\"info\\\" || level === \\\"error\\\") ? \\\"alert-\\\" + level : \\\"\\\";\n\n        ctx = {\n            alertClass: alertClass,\n            title: title,\n            messages: msg,\n            autoClose: autoClose\n        };\n        try {\n            AlertView = Backbone.View.extend({\n                events: {\n                    \\'click .close\\': \\'close\\'\n                },\n                template: \\\"<div class=\\\\\\\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{\/if}}\\\\\\\">\\\" +\n                    \\\"<a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>{{#if title}}<strong>{{title}}<\/strong>{{\/if}}\\\" +\n                    \\\"{{#each messages}}<p>{{this}}<\/p>{{\/each}}<\/div>\\\",\n                loadingTemplate: \\\"<div class=\\\\\\\"alert {{alertClass}}\\\\\\\">\\\" +\n                    \\\"<strong>{{title}}<\/strong>\u2026<\/div><a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>\\\",\n                initialize: function() {\n                    this.render();\n                },\n                close: function() {\n                    this.$el.remove();\n                },\n                render: function() {\n                    var tpl = (level === \\'process\\') ?\n                        Handlebars.compile(this.loadingTemplate) :\n                        Handlebars.compile(this.template);\n\n                    this.$el.html(tpl(ctx));\n                }\n            });\n            thisAlert = new AlertView();\n            this.$el.prepend(thisAlert.el);\n\n            if (autoClose) {\n                setTimeout(function() {\n                    $(\\'.timeten\\').fadeOut().remove();\n                }, 9000);\n            }\n            return thisAlert;\n\n        } catch (e) {\n            app.logger.error(\\\"Failed to render \\'\\\" + this.name + \\\"\\' view.\\\\n\\\" + e.message);\n            return null;\n            \/\/ TODO: trigger app event to render an error message\n        }\n    }\n})\n\\\""
             },
@@ -474,19 +475,7 @@
                 "</div>                             \n" +
                 "</div>\n" +
                 "</div>         \n" +
-                "</form>",
-            "subnav": "<div class=\"subnav\">" +
-                "<div class=\"btn-toolbar pull-left\">" +
-                "<h1>{{fieldWithName this \"name\"}}</h1>" +
-                "</div>" +
-                "<div class=\"btn-toolbar pull-right\">" +
-                "<div class=\"btn-group\">" +
-                "{{#each meta.buttons}}" +
-                "{{field ../this ../model}}  " +
-                "{{/each}}" +
-                "</div>" +
-                "</div>" +
-                "</div>"
+                "</form>"
         },
         "appListStrings": {
             "state_dom": {
@@ -791,11 +780,19 @@
         app.data.declareModels();
 
         // Load dashboard route.
-        app.router.route("dashboard", "dashboard", function() {
-
+        app.router.route("", "dashboard", function() {
             app.controller.loadView({
                 layout: "dashboard",
                 module: app.config.defaultModule
+            });
+        });
+
+        // Load the search results route.
+        app.router.route("search/:query", "search", function(query) {
+            app.controller.loadView({
+                module: "Search",
+                layout: "search",
+                query: query
             });
         });
 

@@ -392,6 +392,14 @@
                 if (model.orderBy && model.orderBy.field) {
                     options.params.order_by = model.orderBy.field + ":" + model.orderBy.direction;
                 }
+
+                if (model.myItems === true) {
+                    options.params.my_items = "1";
+                }
+
+                if (model.favorites === true) {
+                    options.params.favorites = "1";
+                }
             }
 
             var success = function(data) {

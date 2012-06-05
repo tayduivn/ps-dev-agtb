@@ -28,14 +28,19 @@
         var self = this;
         app.events.on("app:view:activity:subdetail", function(model) {
             if (model) {
-                self.model.set(model);
+                // Fixes bug noticed when going from one module tab to another.
+                if(!self.model) {
+                    self.model = model;
+                } else {
+                    self.model.set(model);
+                }
             }
         });
 
         this.fallbackFieldTemplate = "detail";
     },
     render: function() {
-        this.$el.parent().parent().addClass("tab-content").attr("id", "folded");
+        this.$el.parent().addClass("tab-content").attr("id", "folded");
         //avoid to have an empty detail view
     },
     bindDataChange: function() {

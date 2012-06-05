@@ -38,8 +38,6 @@ $includeFiles = array(
     'src/view/view.js',
     'src/view/field.js',
     'src/view/layout.js',
-    'src/view/views/list-view.js',
-    'src/view/views/detail-view.js',
     'src/view/views/header-view.js',
     'src/view/layouts/columns-layout.js',
     'src/view/layouts/fluid-layout.js',

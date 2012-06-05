@@ -25,6 +25,7 @@ require_once('data/BeanFactory.php');
 class ListApi extends SugarApi {
     public function registerApiRest() {
         return array(
+/*
             'listModules' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>'),
@@ -49,6 +50,7 @@ class ListApi extends SugarApi {
                 'shortHelp' => 'Searches records in this module',
                 'longHelp' => 'include/api/help/postListSearch.html',
             ),
+*/
         );
     }
 
@@ -187,10 +189,14 @@ class ListApi extends SugarApi {
         }
         
         $options = $this->parseArguments($api, $args, $seed);
-        
-        $listQueryParts = $seed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
 
-        return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
+        if ( !empty($args['q']) ) {
+            return $this->performSearch($api, $args, $seed, $args['q'], $options);
+        } else {
+            $listQueryParts = $seed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
+            
+            return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
+        }
     }
 
 
@@ -260,5 +266,14 @@ class ListApi extends SugarApi {
         $response["records"] = array_values($records);
 
         return $response;
+    }
+
+    protected function performSearch(ServiceBase $api, $args, SugarBean $seed, $searchTerm, $options) {
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        //Default db search will be handled by the spot view, everything else by fts.
+        if($searchEngine instanceOf SugarSearchEngine) {
+        }
+        
     }
 }

@@ -47,7 +47,7 @@ describe('template', function() {
 
     it('should load multiple templates in a single call', function() {
         var data = {
-            sugarViews: {
+            views: {
                 hello: {
                     templates: {
                         hello: "Hello {{name}}!"

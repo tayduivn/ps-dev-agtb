@@ -173,19 +173,6 @@ SUGAR.App = (function() {
 
             _app.events.register(
                 /**
-                 * Fires when route changes a new view has been loaded.
-                 *
-                 * <pre><code>
-                 * obj.on("app:view:change", callback);
-                 * </pre></code>
-                 * @event
-                 */
-                "app:view:change",
-                this
-            );
-
-            _app.events.register(
-                /**
                  * @event
                  * Fires when login succeeds.
                  */
@@ -202,6 +189,19 @@ SUGAR.App = (function() {
                 this
             );
 
+            _app.events.register(
+                /**
+                 * Fires when route changes a new view has been loaded.
+                 *
+                 * <pre><code>
+                 * obj.on("app:view:change", callback);
+                 * </pre></code>
+                 * @event
+                 */
+                "app:view:change",
+                this
+            );
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
@@ -213,7 +213,8 @@ SUGAR.App = (function() {
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
-                keyValueStore: _app.cache,
+
+                keyValueStore: _app[_app.config.authStore || "cache"],
                 clientID: _app.config.clientID
             });
 

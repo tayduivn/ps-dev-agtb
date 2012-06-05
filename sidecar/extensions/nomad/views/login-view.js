@@ -6,47 +6,58 @@
         className: "login",
         
         events: {
-            "click #login_btn": function() {
-                var loginBtn = this.$('#login_btn');
-                if (loginBtn.is('[disabled=disabled]')) return false;
-                
-                var url = this.model.get("url");
-
-                var args = {
-                    password: this.model.get("password"),
-                    username: this.model.get("username")
-                };
-
-                var validatedFields = this.model.fields;
-                if(!app.isNative) {
-                    // don't validate the URL field
-                    validatedFields = {
-                        username: this.model.fields.username,
-                        password: this.model.fields.password
-                    }
+            "click #login_btn": "login",
+            "keypress input[type='text']": function (e) {
+                if(e.which == 13) this.$("input[type='password']").eq(0).focus();
+            },
+            "keypress input[type='password']": function (e) {
+                if(e.which == 13) {
+                    e.srcElement.blur();
+                    this.login();
                 }
-                
-                if (this.model.isValid(validatedFields)) {
-                    app.alert.dismiss('field_validation_error');
-                    loginBtn.attr('disabled', 'disabled').text('Loading...');
+            }
+        },
 
-                    app.logger.debug(args.username + ":" + args.password);
-                    if (app.isNative) {
-                        app.api.serverUrl = app.view.views.LoginView.normalizeUrl(url);
-                        app.logger.debug("REST URL: " + app.api.serverUrl);
-                    }
+        login: function () {
+            var loginBtn = this.$('#login_btn');
+            if (loginBtn.is('[disabled=disabled]')) return false;
 
-                    app.login(args, null, {
-                        success: function() {
-                            app.logger.debug("logged in successfully!");
-                            app.user.set("serverUrl", app.api.serverUrl);
-                        },
-                        error: function(error) {
-                            app.logger.debug("login failed: " + error);
-                            loginBtn.removeAttr('disabled').text('Login');
-                        }
-                    });
+            var url = this.model.get("url");
+
+            var args = {
+                password: this.model.get("password"),
+                username: this.model.get("username")
+            };
+
+            var validatedFields = this.model.fields;
+            if(!app.isNative) {
+                // don't validate the URL field
+                validatedFields = {
+                    username: this.model.fields.username,
+                    password: this.model.fields.password
                 }
+            }
+
+            if (this.model.isValid(validatedFields)) {
+                app.alert.dismiss('field_validation_error');
+                loginBtn.attr('disabled', 'disabled').text('Loading...');
+
+                app.logger.debug(args.username + ":" + args.password);
+                if (app.isNative) {
+                    app.api.serverUrl = app.view.views.LoginView.normalizeUrl(url);
+                    app.logger.debug("REST URL: " + app.api.serverUrl);
+                }
+
+                app.login(args, null, {
+                    success: function() {
+                        app.logger.debug("logged in successfully!");
+                        app.user.set("serverUrl", app.api.serverUrl);
+                    },
+                    error: function(error) {
+                        app.logger.debug("login failed: " + error);
+                        loginBtn.removeAttr('disabled').text('Login');
+                    }
+                });
             }
         },
 

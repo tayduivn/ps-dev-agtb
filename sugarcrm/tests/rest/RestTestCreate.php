@@ -44,16 +44,32 @@ class RestTestCreate extends RestTestBase {
                                       json_encode(array('name'=>'UNIT TEST - AFTER')),
                                       'POST');
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
+        $this->assertTrue( isset( $restReply['reply']['id'] ),
+                          "An account was not created (or if it was, the ID was not returned)" );
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertTrue( isset( $restReply['reply']['team_name'] ),
+                          "The team name as not set." );
+        //END SUGARCRM flav=pro ONLY
 
         $this->account_id = $restReply['reply']['id'];
         
         $account = new Account();
         $account->retrieve($this->account_id);
+
         $this->assertEquals("UNIT TEST - AFTER",
                             $account->name,
                             "Did not set the account name.");
+
+        $this->assertEquals($restReply['reply']['name'],
+                            $account->name,
+                            "Rest Reply and Bean Do Not Match.");
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertEquals($restReply['reply']['team_name'],
+            $account->team_name,
+            "Rest Reply and Bean Team Names Do Not Match.");
+        //END SUGARCRM flav=pro ONLY
     }
 
 }

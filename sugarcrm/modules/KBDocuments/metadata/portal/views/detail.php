@@ -41,14 +41,7 @@ $viewdefs['KBDocuments']['portal']['view']['detail'] = array(
             'label' => 'Details',
             'fields' => array(
                 'kbdocument_name',
-                'active_date',
-                array(
-                    'field' => 'description',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'nl2br' => true
-                    )
-                )
+                'body'
             )
         )
     ),

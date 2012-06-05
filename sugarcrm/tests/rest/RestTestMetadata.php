@@ -31,7 +31,7 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
     
-        $this->assertTrue(isset($restReply['reply']['sugarFields']),'SugarFields are missing.');
+        $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 

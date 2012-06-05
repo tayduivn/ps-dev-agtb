@@ -78,4 +78,51 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $invalidBean = BeanFactory::getBean($module, $uniqueID);
         $this->assertFalse($invalidBean);
     }
+
+    public function testUnregisterBean() {
+        $module = "Accounts";
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+
+        $account = BeanFactory::newBean($module);
+        $account->name = 'Unit Test';
+        $account->save();
+        $account_id = $account->id;
+
+        $this->createdBeans[] = $account;
+        $GLOBALS['db']->query("UPDATE accounts SET name = 'Unit Test - After' WHERE id='{$account_id}'");
+
+        $account_bean = BeanFactory::getBean($module, $account_id);
+
+        $this->assertNotEquals($account_bean->name, 'Unit Test - After', "Accounts match, they should not with the bean cache.");
+
+        BeanFactory::unregisterBean($module, $account_id);
+
+        $account_bean = BeanFactory::getBean($module, $account_id);
+
+        $this->assertEquals($account_bean->name, 'Unit Test - After', "Accounts do not match, unregisterBean did not work");
+
+    }
+
+    public function testClearBeanCache() {
+        $module = "Accounts";
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+
+        $account = BeanFactory::newBean($module);
+        $account->name = 'Unit Test';
+        $account->save();
+        $account_id = $account->id;
+        $this->createdBeans[] = $account;
+
+        BeanFactory::clearBeanCache();
+
+        $this->assertTrue(BeanFactory::$hits==0, "Hits have not reset");
+
+        BeanFactory::getBean( $module, $account_id );
+
+        BeanFactory::getBean( $module, $account_id );
+
+        $this->assertTrue(BeanFactory::$hits == 1, "Did not hit the cache");
+    }
 }

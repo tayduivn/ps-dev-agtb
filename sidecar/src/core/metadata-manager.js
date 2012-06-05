@@ -3,8 +3,11 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
+    var _layoutPrefix = "l:";
     var _viewPrefix = "v:";
     var _langPrefix = "lang:";
+
+    // TODO: Maybe just have this all in _metadata?
 
     // Metadata that has been loaded from offline storage (memory cache)
     // Module specific metadata
@@ -13,6 +16,8 @@
     var _fields = {};
     // View definitions
     var _views = {};
+    // Layout definitions
+    var _layouts = {};
     // String packs
     var _lang = {};
     // Other
@@ -107,6 +112,7 @@
 
                                 // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
                                 // TODO: This should be done on the server-side on my opinion
+
                                 if (_.isObject(field.displayParams)) {
                                     _.extend(field, field.displayParams);
                                     delete field.displayParams;
@@ -193,6 +199,12 @@
             var metadata = this.getModule(module, "views");
             if (metadata && metadata[view]) {
                 metadata = metadata[view].meta;
+            } else if (_views[view]) {
+                metadata = _views[view];
+            }
+
+            if (!metadata) {
+                app.logger.error("No view found for " + view);
             }
 
             return metadata;
@@ -207,8 +219,15 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
 
+            // Check to see if there is a module layout
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
+            } else if (_layouts[layout]) { // Look for a module non-specific layout
+                metadata = _layouts[layout];
+            }
+
+            if (!metadata) {
+                app.logger.error("No layout found for " + layout);
             }
 
             return metadata;
@@ -220,6 +239,16 @@
          */
         getModuleList: function() {
             return _getMeta(_app, "moduleList", "", true) || {};
+        },
+
+        /**
+         * Gets module list as delimited string
+         * @param {String} The delimiter to use.
+         * @return {Object}
+         */
+        getDelimitedModuleList: function(delimiter) {
+            if(!delimiter) return null;
+            return _.toArray(this.getModuleList()).join(delimiter);
         },
 
         /**
@@ -263,8 +292,8 @@
                 _set("modules", modules.join(","));
             }
 
-            if (data.sugarFields) {
-                _.each(data.sugarFields, function(entry, type) {
+            if (data.fields) {
+                _.each(data.fields, function(entry, type) {
                     _fields[type] = entry;
                     _set(_fieldPrefix + type, entry);
                     if (entry.controller) {
@@ -273,12 +302,22 @@
                 });
             }
 
-            if (data.sugarViews) {
-                _.each(data.sugarViews, function(entry, type) {
+            if (data.views) {
+                _.each(data.views, function(entry, type) {
                     _views[type] = entry;
                     _set(_viewPrefix + type, entry);
                     if (entry.controller) {
                         app.view.declareComponent("view", type, null, entry.controller);
+                    }
+                });
+            }
+
+            if (data.layouts) {
+                _.each(data.layouts, function(layout, type) {
+                    _layouts[type] = layout;
+                    _set(_layoutPrefix + type, layout);
+                    if (layout.controller) {
+                        app.view.declareComponent("layout", type, null, layout.controller);
                     }
                 });
             }
