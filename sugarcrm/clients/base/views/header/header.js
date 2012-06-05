@@ -82,6 +82,27 @@
         this.$('#moduleList li').removeClass('active');
         this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
     },
+
+    /**
+     * Renders Header view
+     */
+    initialize: function(options) {
+        var self = this;
+        app.events.on("app:sync:complete", function() {
+            self.render();
+        });
+        app.view.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * Renders Header view
+     */
+    render: function() {
+        if (!app.api.isAuthenticated()) return;
+        this.setModuleInfo();
+        this.setCreateTasksList();
+        app.view.View.prototype.render.call(this);
+        return this;
+    },
     hide: function() {
         this.$el.hide();
     },
@@ -131,4 +152,3 @@
     }
 
 })
-

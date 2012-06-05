@@ -71,10 +71,12 @@
 
     app.augment("nomad", {
 
-        deviceReady: function() {
+        deviceReady: function(authToken) {
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready");
+            app.logger.debug("Device is ready, auth-token: " + authToken);
 
+            app.AUTH_ACCESS_TOKEN = authToken;
+            app.config.authStore = app.isNative ? 'keychain': 'cache';
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
@@ -95,6 +97,25 @@
             return route;
         },
 
+        /**
+         * Filters out link fields that support multiple relationships and belong to any module managed by the app.
+         * @param {Data.Bean} model Instance of the model to
+         * @return {Array} Array of filtered link names.
+         */
+        getLinks: function (model) {
+            var modules = app.metadata.getModuleList();
+            return _.filter(model.fields, function (field) {
+                var relationship;
+                return ((field.type == "link") &&
+                   (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    app.data.canHaveMany(model.module, field.name) &&
+                   (_.any(modules, function(module) {
+                        return (module == relationship.lhs_module) ||
+                               (module == relationship.rhs_module);
+                   })));
+            });
+
+        },
 
         /**
          * Displays email chooser UI.
@@ -119,6 +140,22 @@
          * @param {Array} phones
          */
         sendSms: function(phones) {
+            // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Displays url chooser UI.
+         * @param {Array} phones
+         */
+        openUrl: function(urls) {
+            // TODO: Implement HTML action sheet view
+        },
+
+        /**
+         * Opens the map with specific address.
+         * @param {Array} phones
+         */
+        openOpenAddress: function(addressObj) {
             // TODO: Implement HTML action sheet view
         }
 

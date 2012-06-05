@@ -209,23 +209,6 @@
                 //TODO trigger app event to notify user about no access or render a "no access" template
             }
 
-            // temp variables used to check metadata values for listeners
-            // check docs for getParentViewModule for info on parentViewModule var
-            var parentViewModule = this.getParentViewModule(this.options),
-                tmpModule = (parentViewModule == null ) ? this.options.module : parentViewModule,
-                tmpLayout = app.metadata.getCurrentLayout(),
-                tmpView   = this.options.name;
-
-            // if we have all three pieces of data, check and see if there are listeners in the metadata
-            if( tmpModule && tmpLayout && tmpView )  {
-                this.listeners = app.metadata.getListeners( tmpModule , tmpLayout, tmpView );
-
-                // if there were listeners outlined in metadata, parse through them and add event listeners
-                if( this.listeners != null )  {
-                    this.parseEventListeners();
-                }
-            }
-
             return this;
         },
 
@@ -313,53 +296,7 @@
             }
         },
 
-        /**
-         * Parses through this.listeners and applies event listeners and handlers as specified in metadata
-         */
-        parseEventListeners: function() {
-            // check again that listeners are not null before proceeding
-            if( this.listeners != null )  {
-                var listeners = this.listeners;
-                for( var i in listeners )  {
-                    // TEMPORARY triggering on app.events
-                    app.events.on( i , this[listeners[i]] , this);
-                }
-            }
-        },
-
-        /**
-         * Returns the parent view's Module name
-         *
-         * In nested layouts where views have a separate context from it's parent layout,
-         * the this.options.module will refer to the immediate view's associated module.
-         * Since we're storing metadata and views and listeners using the parent module name as the key,
-         * we need to make sure we can get that ultimate parent module name
-         *
-         * @param opts {Object} an object of this.options
-         * @return {*} null or {String} name of the parent's Module
-         */
-        getParentViewModule: function(opts) {
-            var parentViewModule = null;
-            /**
-             * currently this.options can go down to this.options.context.parent with .parent always being null
-             * in repeated tests I have not been able to get this.options.context.parent.parent to have it's own data
-             */
-            if( opts.hasOwnProperty("context") && opts.context.hasOwnProperty("parent") && opts.context.parent != null
-                && opts.context.parent.hasOwnProperty("parent") && opts.context.parent.parent == null )
-            {
-                parentViewModule = opts.context.parent.attributes.module;
-            }
-            else if( opts.hasOwnProperty("context") && opts.context.hasOwnProperty("parent") && opts.context.parent != null
-                && opts.context.parent.hasOwnProperty("parent") && opts.context.parent.parent != null )
-            {
-                // this is here just in case parent.parent ever has it's own parent.options,
-                // in which case we'll just recurse through it here
-                this.getParentViewModule(opts.context.parent.parent.options);
-            }
-            return parentViewModule;
-        },
-
-       /**
+        /*
          * Disposes a view.
          *
          * This method disposes view fields and calls

@@ -58,7 +58,23 @@ class RestService extends ServiceBase {
 
             if ( count($_GET) > 0 ) {
                 // This has some get arguments, let's parse those in
+                // We need to pre-parse this for JSON-encoded arguments because the XSS stuff will mangle them, and to keep symmetrywith POST style data
                 $getVars = $_GET;
+                if ( !empty($route['jsonParams']) ) {
+                    foreach ( $route['jsonParams'] as $fieldName ) {
+                        if ( isset($_GET[$fieldName]) && $_GET[$fieldName]{0} == '{' ) {
+                            // This may be JSON data
+                            $rawValue = $GLOBALS['RAW_REQUEST'][$fieldName];
+                            $jsonData = json_decode($rawValue,true,32);
+                            if ( $jsonData == null ) {
+                                // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
+                                continue;
+                            }
+                            // Need to dig through this array and make sure all of the elements in here are safe
+                            $getVars[$fieldName] = securexss($jsonData);
+                        }
+                    }
+                }
             } else {
                 $getVars = array();
             }
@@ -87,6 +103,7 @@ class RestService extends ServiceBase {
                         // FIXME: Handle improperly encoded JSON
                         $postVars = array();
                     }
+                    $postVars = securexss($postVars);
                 } else {
                     // No posted variables
                     $postVars = array();
@@ -119,7 +136,8 @@ class RestService extends ServiceBase {
                 } else {
                     $encoding = false;
                 }
-                header('Content-Type: application/json');
+                $encoding = false;
+                // header('Content-Type: application/json');
                 if ( $encoding !== false ) {
                     header('Content-Encoding: '.$encoding);
                     $gzData = gzencode(json_encode($output));
