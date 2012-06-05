@@ -3,5 +3,6 @@
     <div class="controls">
         <input type="tel" class="span4" value="{{value}}">
         <a class="btn fright call" href="javascript:void(0)"><i class="icon-phone-black"></i></a>
+        <a class="btn fright sms" href="javascript:void(0)"><i class="icon-sms-black"></i></a>
     </div>
 </div>
