@@ -161,8 +161,8 @@
     /**
      * Executes a given block if a given values are equal.
      * @method eq
-     * @param val1
-     * @param val2
+     * @param {String} val1 first value to compare
+     * @param {String} val2 second value to compare.
      * @return {String} Result of the `block` execution if the given values are equal or the result of the inverse block.
      */
     Handlebars.registerHelper('eq', function(val1, val2, block) {
@@ -173,15 +173,40 @@
     /**
      * Opposite of `eq` helper.
      * @method notEq
-     * @param val1
-     * @param val2
+     * @param {String} val1 first value to compare
+     * @param {String} val2 second value to compare.
      * @return {String} Result of the `block` execution if the given values are not equal or the result of the inverse block.
      */
     Handlebars.registerHelper('notEq', function(val1, val2, block) {
         if (!block) return "";
-        return val1 != val2 ? block(this) : block.inverse(this);
+        return val1 !== val2 ? block(this) : block.inverse(this);
     });
 
+    /**
+     * Same as notEq helper but second value is a {String} regex expression. Unfortunately, we have to do this because the 
+     * Handlebar's parser gets confused by regex literals like /foo/ 
+     * @method notEqRegex
+     * @param {String} val1 first value to compare
+     * @param {String} val2 {String} representing a RegExp constructor argument. So if RegExp('foo.*') is the desired regex,
+     * val2 would contain "foo.*". No support for modifiers.
+     * @return {String} Result of the `block` execution if the given values are not equal or the result of the inverse block.
+     */
+    Handlebars.registerHelper('notEqRegex', function(val1, val2, block) {
+        var re;
+        if (!block) return "";
+        try {
+            re = new RegExp(val2);
+            if(!re.test(val1)) {
+                return block(this);
+            } else {
+                return block.inverse(this);
+            }
+        } catch(e) {
+            // If error, consider this a non match
+            return block.inverse(this);
+        }
+    });
+    
     /**
      * Logs a value.
      * @method log

@@ -2,7 +2,6 @@
     events: {
         //same as edit-view::saveModel()
         'click [name=save_button]': 'saveModel'
-        //'click [name=edit_button]': 'onEditClicked'
     },
     /**
      * Listens to the app:view:change event and show or hide the subnav

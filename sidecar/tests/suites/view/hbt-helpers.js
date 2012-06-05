@@ -185,6 +185,21 @@ describe("Handlebars Helpers", function() {
         });
     });
 
+    describe("notEqRegex", function() {
+        it("should return inverse of regex evaluation", function() {
+            var val1 = "foo-is-not-greedy",
+                nonGreedy = "^foo$", 
+                greedy = "foo", 
+                returnTrue = "Success!",
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
+
+            expect(Handlebars.helpers.notEqRegex(val1, nonGreedy, returnCb)).toEqual(returnTrue);
+            expect(Handlebars.helpers.notEqRegex(val1, greedy, returnCb)).toEqual(returnFalse);
+        });
+    });
+    
     describe("getLabel", function() {
         it("should get a label", function() {
             var lang = SugarTest.app.lang;
