@@ -44,7 +44,7 @@ class RelateApi extends ListApi {
         // Load up the bean
         $record = BeanFactory::getBean($args['module'], $args['record']);
 
-        if ( ! $api->security->canAccessModule($record,'view') ) {
+        if ( ! $record->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
         // Load up the relationship
@@ -72,10 +72,6 @@ class RelateApi extends ListApi {
         if(!empty($linkQueryParts['where'])) {
             $listQueryParts['where'] = str_ireplace('where', ' AND ', $listQueryParts['where']);
             $listQueryParts['where'] = $linkQueryParts['where'] . $listQueryParts['where'];
-        }
-
-        if ( $api->security->hasExtraSecurity($record,'relateList',$linkSeed) ) {
-            $api->security->addExtraSecurityRelateList($record,$listQueryParts);
         }
 
         return $this->performQuery($api, $args, $linkSeed, $listQueryParts, $options['limit'], $options['offset']);
