@@ -42,8 +42,8 @@ class RelateApi extends ListApi {
     
     public function listRelated($api, $args) {
         // Load up the bean
-        $record = BeanFactory::getBean($args['module']);
-        $record->retrieve($args['record']);
+        $record = BeanFactory::getBean($args['module'], $args['record']);
+
         if ( ! $api->security->canAccessModule($record,'view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
@@ -67,6 +67,12 @@ class RelateApi extends ListApi {
         $listQueryParts = $linkSeed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
         
         $listQueryParts['from'] .= $linkQueryParts['join'];
+
+        // we need the linkQuery where to get the id from the parent record so we return the right records
+        if(!empty($linkQueryParts['where'])) {
+            $listQueryParts['where'] = str_ireplace('where', ' AND ', $listQueryParts['where']);
+            $listQueryParts['where'] = $linkQueryParts['where'] . $listQueryParts['where'];
+        }
 
         if ( $api->security->hasExtraSecurity($record,'relateList',$linkSeed) ) {
             $api->security->addExtraSecurityRelateList($record,$listQueryParts);
