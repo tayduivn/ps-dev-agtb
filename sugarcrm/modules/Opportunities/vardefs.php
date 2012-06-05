@@ -292,6 +292,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_PRIMARY_QUOTE_ID',
     'comment' => 'The primary quote this opportunity is associated with'
   ),
+  'forecast' =>
+  array (
+    'name' => 'forecast',
+    'vname' => 'LBL_FORECAST',
+    'type' => 'bool',
+    'default' => '-1',
+    'comment' => 'Boolean indicating whether or not record should be included in forecast'
+  ),
   //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (

@@ -125,6 +125,7 @@ $mod_strings = array (
     'LBL_LIKELY_CASE' => 'Likely case',
     'LBL_WORST_CASE' => 'Worst case',
     'LBL_EXPERT_ID' => 'Product Expert',
+    'LBL_FORECAST' => 'Include in Forecast',
 //END SUGARCRM flav=ent ONLY
    'LBL_CONTACT' => 'Contact',
    'LBL_DISCOUNT_TOTAL' => 'Discount Total',   

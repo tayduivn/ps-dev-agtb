@@ -159,6 +159,7 @@ $mod_strings = array (
   'LBL_BEST_CASE' => 'Best case',
   'LBL_LIKELY_CASE' => 'Likely case',
   'LBL_WORST_CASE' => 'Worst case',
+  'LBL_FORECAST' => 'Include in Forecast',
   //END SUGARCRM flav=pro ONLY
 
   //BEGIN SUGARCRM flav=ent ONLY
