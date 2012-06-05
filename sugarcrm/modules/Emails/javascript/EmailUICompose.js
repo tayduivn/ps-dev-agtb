@@ -775,6 +775,7 @@ SE.composeLayout = {
     bccHidden : true,
     outboundAccountErrors : null,
     loadedTinyInstances : {}, //Tracks which tinyMCE editors have initalized with html content.
+    subjectMaxlen : 255,
 
     showAddressDetails : function(e) {
     	var linkElement = document.getElementById("More"+e.id);
