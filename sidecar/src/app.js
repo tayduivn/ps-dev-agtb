@@ -189,6 +189,19 @@ SUGAR.App = (function() {
                 this
             );
 
+            _app.events.register(
+                /**
+                 * Fires when route changes a new view has been loaded.
+                 *
+                 * <pre><code>
+                 * obj.on("app:view:change", callback);
+                 * </pre></code>
+                 * @event
+                 */
+                "app:view:change",
+                this
+            );
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
