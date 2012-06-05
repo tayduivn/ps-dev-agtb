@@ -134,9 +134,6 @@
             },
             alert: {
                 target: '#alert'
-            },
-            subnav: {
-                target: '#subnav'
             }
         },
 
