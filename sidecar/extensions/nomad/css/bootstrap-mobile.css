@@ -3504,7 +3504,7 @@ a:hover [class^="icon-"] {
 }
 #record-action .icon-phone {
   background: url('../img/sprite.png') no-repeat 1% 0;
-  background-size: 80%;
+  background-size: 660%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
@@ -3544,14 +3544,14 @@ a:hover [class^="icon-"] {
   margin-bottom: -20%;
 }
 .icon-sms-black {
-  background: url('../img/sms_black.png') no-repeat 50% 0;
+  background: url('../img/sprite.png') no-repeat 50% 0;
   background-size: 90%;
   height: 20px;
   width: 16px;
   margin-bottom: -20%;
 }
 .icon-sms-white {
-  background: url('../img/sms_white.png') no-repeat 50% 0;
+  background: url('../img/sprite.png') no-repeat 50% 0;
   background-size: 90%;
   height: 20px;
   width: 16px;
