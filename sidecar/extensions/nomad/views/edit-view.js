@@ -24,6 +24,7 @@
                 module = model.module;
 
             model.save(null, {
+                relate: !!this.context.get('link'),
                 fieldsToValidate: this.getFields(),
                 success: function (model, resp) {
                     app.alert.dismiss('save_process');
