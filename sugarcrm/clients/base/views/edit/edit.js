@@ -26,15 +26,22 @@
         });
     },
     bindDataChange: function() {
-        if (this.model) {
+        if (this.model.id) {
             this.model.on("change", function() {
                 if (this.context.get('subnavModel')) {
                     this.context.get('subnavModel').set({
-                        'title': this.model.get('name'),
+                        'title': app.lang.get('LBL_EDIT_BUTTON', this.module),
                         'meta': this.meta
                     });
                 }
             }, this);
+        } else {
+            if (this.context.get('subnavModel')) {
+                this.context.get('subnavModel').set({
+                    'title': app.lang.get('LBL_NEW_FORM_TITLE', this.module),
+                    'meta': this.meta
+                });
+            }
         }
     }
 })
