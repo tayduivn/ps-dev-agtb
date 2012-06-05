@@ -18,14 +18,6 @@
                 register: app.events.register,
                 // keep a record of the currently selected user on context
                 selectedUser: {},
-                setSelectedUser: function(selUser) {
-                    this.selectedUser = selUser;
-
-                    // Any other events/processing that needs to happen
-
-                    this.trigger("selectedUser:change",selUser);
-                }
-
             });
 
             this.fetchAllModels();
