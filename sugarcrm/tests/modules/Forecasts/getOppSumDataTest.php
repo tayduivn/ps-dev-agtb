@@ -29,7 +29,7 @@
 
 require_once 'modules/Forecasts/ForecastUtils.php';
 
-class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
+class GetOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $manager;
     private $sales_rep;
@@ -49,7 +49,7 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        SugarTestOppLineItemUtilities::removeAllCreatedLines();
+        SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
     }
 
@@ -61,7 +61,7 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_1->probability = '10';
         $opp_1->save();
 
-        $line_1 = SugarTestOppLineItemUtilities::createLine();
+        $product_1 = SugarTestProductUtilities::createProduct();
 
         $result = getOppSummationData($this->sales_rep->id, '', 'Direct');
 
@@ -85,17 +85,15 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
 
         //case #3: get summation data by sales rep. Opp_line b/l/w cases are not NULL
         
-        $line_1->best_case = '1300';
-        $line_1->likely_case = '1200';
-        $line_1->worst_case = '1100';
-        $line_1->save();
+        $product_1->opportunity_id = $opp_1->id;
+        $product_1->save();
 
         $result = getOppSummationData($this->sales_rep->id, '', 'Direct');
 
         $this->assertTrue($result['direct'][$this->sales_rep->id][0]['opp_id'] == $opp_1->id);
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['best_case'] == $line_1->best_case);
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['likely_case'] == $line_1->likely_case);
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['worst_case'] == $line_1->worst_case);
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['best_case'] == $product_1->best_case);
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['likely_case'] == $product_1->likely_case);
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['worst_case'] == $product_1->worst_case);
 
         //case #4: get rollup summation data by manager
         $opp_2 = SugarTestOpportunityUtilities::createOpportunity();
@@ -103,17 +101,19 @@ class getOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_2->probability = '10';
         $opp_2->save();
 
-        $line_2 = SugarTestOppLineItemUtilities::createLine();
+        $product_2 = SugarTestProductUtilities::createProduct();
+        $product_2->opportunity_id = $opp_2->id;
+        $product_2->save();
 
         $result = getOppSummationData($this->manager->id, '', 'Rollup');
 
         $this->assertTrue($result['rollup'][0]['user_id'] == $this->manager->id);
-        $this->assertTrue($result['rollup'][0]['best_case'] == '1000');
-        $this->assertTrue($result['rollup'][0]['likely_case'] == '1000');
-        $this->assertTrue($result['rollup'][0]['worst_case'] == '1000');
+        $this->assertTrue($result['rollup'][0]['best_case'] == $product_2->best_case);
+        $this->assertTrue($result['rollup'][0]['likely_case'] == $product_2->likely_case);
+        $this->assertTrue($result['rollup'][0]['worst_case'] == $product_2->worst_case);
         $this->assertTrue($result['rollup'][1]['user_id'] == $this->sales_rep->id);
-        $this->assertTrue($result['rollup'][1]['best_case'] == $line_1->best_case);
-        $this->assertTrue($result['rollup'][1]['likely_case'] == $line_1->likely_case);
-        $this->assertTrue($result['rollup'][1]['worst_case'] == $line_1->worst_case);
+        $this->assertTrue($result['rollup'][1]['best_case'] == $product_1->best_case);
+        $this->assertTrue($result['rollup'][1]['likely_case'] == $product_1->likely_case);
+        $this->assertTrue($result['rollup'][1]['worst_case'] == $product_1->worst_case);
     }
 }

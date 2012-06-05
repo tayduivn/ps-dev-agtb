@@ -27,7 +27,17 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Reports/templates/templates_chart.php');
+
+require_once('include/SugarCharts/ChartDisplay.php');
+
+class ChartDisplayMock47148 extends ChartDisplay
+{
+    public function get_row_remap($row)
+    {
+        return parent::get_row_remap($row);
+    }
+}
+
 /**
  * Bug47148Test.php
  * Reporter has a big problem with big numbers
@@ -77,7 +87,10 @@ class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
             'group_defs' => array()
         );
 
-        $actual = get_row_remap($row, $report);
+        $cdm = new ChartDisplayMock47148();
+        $cdm->setReporter($report);
+
+        $actual = $cdm->get_row_remap($row);
         $actual = $actual['numerical_value'] * 1000; // recovery of division by 1000 from get_row_remap function
         $actual = sprintf('%0.0f', $actual); // getting float as string
 

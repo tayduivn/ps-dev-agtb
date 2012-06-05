@@ -24,7 +24,7 @@
 
 require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
-class PopulateSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class PopulateTimePeriodsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
 private $createdTimePeriods;
