@@ -153,7 +153,10 @@ class ForecastModuleApi extends ModuleApi {
             "data" => $user->full_name,
             "metadata" => array(
                 // any other metadata needed from the Bean to the JS model should go here
-                "id" => $user->id
+                "id" => $user->id,
+                "full_name" => (empty($user->last_name)) ? $user->first_name : $user->first_name . ' ' . $user->last_name,
+                "first_name" => $user->first_name,
+                "last_name" => $user->last_name
             ),
             "state" => "open",
             "children" => array()
@@ -169,7 +172,10 @@ class ForecastModuleApi extends ModuleApi {
                     "data" => $childBean->full_name,
                     "metadata" => array(
                         // any other metadata needed from the Bean to the JS model should go here
-                        "id" => $childBean->id
+                        "id" => $childBean->id,
+                        "full_name" => (empty($childBean->last_name)) ? $childBean->first_name : $childBean->first_name . ' ' . $childBean->last_name,
+                        "first_name" => $childBean->first_name,
+                        "last_name" => $childBean->last_name
                     ),
                     "state" => "closed"
                 );

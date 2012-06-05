@@ -15,7 +15,17 @@
             app.view.Layout.prototype.initialize.call(this, options);
 
             this.context = _.extend(this.context, {
-                register: app.events.register
+                register: app.events.register,
+                // keep a record of the currently selected user on context
+                selectedUser: {},
+                setSelectedUser: function(selUser) {
+                    this.selectedUser = selUser;
+
+                    // Any other events/processing that needs to happen
+
+                    this.trigger("selectedUser:change",selUser);
+                }
+
             });
 
             this.fetchAllModels();

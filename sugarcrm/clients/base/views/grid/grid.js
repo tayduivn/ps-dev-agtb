@@ -22,6 +22,13 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
+
+        var self = this;
+        // listening for updates to context for selectedUser:change
+        this.layout.context.on("selectedUser:change", function(selectedUserId){
+            // filter grid
+            self.filterGridById(selectedUserId);
+        });
     },
 
     /**
@@ -65,7 +72,11 @@
             id = params.selected.id;
         } else if (params.hasOwnProperty('id')) {
             id = params.id;
+        }else {
+            // no structure, just sending the id straight in
+            id = params;
         }
+
         this.gTable.fnFilter(id);
     },
 
