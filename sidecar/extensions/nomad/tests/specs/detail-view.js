@@ -18,7 +18,7 @@ describe ("Detail View", function () {
             context: context
         });
 
-        var links = view.getLinks();
+        var links = SUGAR.App.nomad.getLinks(view.model);
 
         expect(links.length).toEqual(2);
     });

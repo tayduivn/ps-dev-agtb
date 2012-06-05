@@ -97,6 +97,46 @@
             return route;
         },
 
+        /**
+         * Filters links fields according to
+         * @param model
+         * @return {*}
+         */
+        getLinks: function (model) {
+            var modules = app.metadata.getModuleList(),
+                fields = model.fields,
+                relationships = model.relationships;
+
+            //find link fields
+            var linkFields = _.filter(fields, function (field, key) {
+
+                //check "relationship" property of the field definition
+                //it should be present in model.relationships collection (hash)
+                if (field.type == 'link') {
+
+                    var result = false;
+                    var rel = field.relationship;
+                    _.each(relationships, function (relDef, relKey) {
+
+                        //if relationship is present, check its definition:
+                        //either lhs_module value or rhs_module value must be present in the collection
+                        //returned by app.metadata.getModuleList()
+                        if (relKey == rel) {
+                            console.log('---field module: ' + field.module);
+
+                            _.each(modules, function (module, moduleKey) {
+                                if (module == relDef.lhs_module || module == relDef.rhs_module) {
+                                    //do final check: app.data.canHaveMany(model.module, fieldName) must return true
+                                    if (app.data.canHaveMany(model.module, field.name)) result = true;
+                                }
+                            });
+                        }
+                    });
+                    if (result) return true;
+                }
+            });
+            return linkFields;
+        },
 
         /**
          * Displays email chooser UI.
