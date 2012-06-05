@@ -98,44 +98,23 @@
         },
 
         /**
-         * Filters links fields according to
-         * @param model
-         * @return {*}
+         * Filters out link fields that support multiple relationships and belong to any module managed by the app.
+         * @param {Data.Bean} model Instance of the model to
+         * @return {Array} Array of filtered link names.
          */
         getLinks: function (model) {
-            var modules = app.metadata.getModuleList(),
-                fields = model.fields,
-                relationships = model.relationships;
-
-            //find link fields
-            var linkFields = _.filter(fields, function (field, key) {
-
-                //check "relationship" property of the field definition
-                //it should be present in model.relationships collection (hash)
-                if (field.type == 'link') {
-
-                    var result = false;
-                    var rel = field.relationship;
-                    _.each(relationships, function (relDef, relKey) {
-
-                        //if relationship is present, check its definition:
-                        //either lhs_module value or rhs_module value must be present in the collection
-                        //returned by app.metadata.getModuleList()
-                        if (relKey == rel) {
-                            console.log('---field module: ' + field.module);
-
-                            _.each(modules, function (module, moduleKey) {
-                                if (module == relDef.lhs_module || module == relDef.rhs_module) {
-                                    //do final check: app.data.canHaveMany(model.module, fieldName) must return true
-                                    if (app.data.canHaveMany(model.module, field.name)) result = true;
-                                }
-                            });
-                        }
-                    });
-                    if (result) return true;
-                }
+            var modules = app.metadata.getModuleList();
+            return _.filter(model.fields, function (field) {
+                var relationship;
+                return ((field.type == "link") &&
+                   app.data.canHaveMany(model.module, field.name) &&
+                   (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                   (_.any(modules, function(module) {
+                        return (module == relationship.lhs_module) ||
+                               (module == relationship.rhs_module);
+                   })));
             });
-            return linkFields;
+
         },
 
         /**
