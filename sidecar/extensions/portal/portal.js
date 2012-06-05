@@ -474,19 +474,7 @@
                 "</div>                             \n" +
                 "</div>\n" +
                 "</div>         \n" +
-                "</form>",
-            "subnav": "<div class=\"subnav\">" +
-                "<div class=\"btn-toolbar pull-left\">" +
-                "<h1>{{fieldWithName this \"name\"}}</h1>" +
-                "</div>" +
-                "<div class=\"btn-toolbar pull-right\">" +
-                "<div class=\"btn-group\">" +
-                "{{#each meta.buttons}}" +
-                "{{field ../this ../model}}  " +
-                "{{/each}}" +
-                "</div>" +
-                "</div>" +
-                "</div>"
+                "</form>"
         },
         "appListStrings": {
             "state_dom": {
@@ -791,8 +779,7 @@
         app.data.declareModels();
 
         // Load dashboard route.
-        app.router.route("dashboard", "dashboard", function() {
-
+        app.router.route("", "dashboard", function() {
             app.controller.loadView({
                 layout: "dashboard",
                 module: app.config.defaultModule

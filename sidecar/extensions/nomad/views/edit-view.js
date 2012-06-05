@@ -25,6 +25,7 @@
 
             model.save(null, {
                 relate: !!this.context.get('link'),
+                fieldsToValidate: this.getFields(),
                 success: function (model, resp) {
                     app.alert.dismiss('save_process');
                     app.alert.show('save_success', {level: 'success', messages: 'Saved successfully.', autoClose: true});

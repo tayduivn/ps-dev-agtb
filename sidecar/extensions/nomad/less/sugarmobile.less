@@ -161,7 +161,7 @@ article [id^="listing-action"] i.grip {
   font-style: normal;
   height: 100%;
   color: darken(@grayLight, 15%);
-  margin-top:-61px;
+  margin-top:-53px;
   margin-right:-32px;
   &.on {
     position:absolute;
@@ -314,6 +314,14 @@ a:hover [class^="icon-"]{
   margin-top:13px;
 }
 
+#record-action .icon-sms-white {
+  background: url('../img/sms_white.png') no-repeat 50% 50%;
+  background-size: 80%;
+  height: 22px;
+  width: 26px;
+  margin-top:13px;
+}
+
 #record-action > a:not(:last-child) {
   @shadow: inset -1px 0 0 @black, 1px 0 0 lighten(@black, 20%);
   .box-shadow(@shadow);
@@ -337,6 +345,7 @@ height:52px;
   width: 18px;
   margin-bottom: -20%;
 }
+
 .icon-phone-black {
   background: url('../img/phone-black.png') no-repeat 50% 0;
   background-size: 70%;
@@ -345,6 +354,21 @@ height:52px;
   margin-bottom: -20%;
 }
 
+.icon-sms-black {
+  background: url('../img/sms_black.png') no-repeat 50% 0;
+  background-size: 90%;
+  height: 20px;
+  width: 16px;
+  margin-bottom: -20%;
+}
+
+.icon-sms-white {
+  background: url('../img/sms_white.png') no-repeat 50% 0;
+  background-size: 90%;
+  height: 20px;
+  width: 16px;
+  margin-bottom: -20%;
+}
 
 .icon-account-black {
   background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
@@ -514,6 +538,7 @@ html {
     padding-top:0;
     padding-bottom:0;
     min-height:42px;
+    line-height:42px;
     &.show-more-top-btn {
       top:93px;
     }

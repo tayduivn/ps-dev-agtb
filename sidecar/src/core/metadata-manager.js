@@ -199,6 +199,12 @@
             var metadata = this.getModule(module, "views");
             if (metadata && metadata[view]) {
                 metadata = metadata[view].meta;
+            } else if (_views[view]) {
+                metadata = _views[view];
+            }
+
+            if (!metadata) {
+                app.logger.error("No view found for " + view);
             }
 
             return metadata;
@@ -213,8 +219,15 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
 
+            // Check to see if there is a module layout
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
+            } else if (_layouts[layout]) { // Look for a module non-specific layout
+                metadata = _layouts[layout];
+            }
+
+            if (!metadata) {
+                app.logger.error("No layout found for " + layout);
             }
 
             return metadata;

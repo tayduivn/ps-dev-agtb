@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Notes']['portal']['layout']['list'] = array(
+$viewdefs['KBDocuments']['portal']['layout']['list'] = array(
     'type' => 'simple',
     'components' =>
     array(

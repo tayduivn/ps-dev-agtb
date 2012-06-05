@@ -1,7 +1,7 @@
 <h1 class="nomad">
     {{#if context.attributes.create}}Create{{else}}Edit{{/if}}
     {{#if context.attributes.link}}related{{/if}}
-    {{model.module}}
+    {{moduleSingular}}
 </h1>
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">

@@ -1,11 +1,15 @@
-describe("tableView", function() {
-    var app;
-
+describe("Table View", function() {
+    var app, TableView;
+        
     beforeEach(function() {
+        var controller;
+        //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
+        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/table', 'table', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
+        TableView = app.view.declareComponent('view', 'Table', null, controller);
     });
-        
+    
     it("should set order by", function() {
         var event, x;
         var context = app.context.getContext();

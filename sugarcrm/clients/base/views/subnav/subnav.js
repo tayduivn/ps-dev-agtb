@@ -1,97 +1,33 @@
 ({
-
-/**
- * View that displays the subnav bar
- * @class View.Views.SubnavView
- * @alias SUGAR.App.layout.SubnavView
- * @extends View.View
- */
-
-    /**
-     * Subnav will be visible for those layouts
-     */
-    showForLayouts: ["detail", "edit"],
-    showStaticForLayouts: ["search"],
-
+    events: {
+        //same as edit-view::saveModel()
+        'click [name=save_button]': 'saveModel'
+    },
     /**
      * Listens to the app:view:change event and show or hide the subnav
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.context.set('subnavModel', new Backbone.Model());
+        this.subnavModel = this.context.get('subnavModel');
+    },
+    //same as edit-view::saveModel()
+    saveModel: function() {
         var self = this;
 
-        app.events.on("app:view:change", function(viewName) {
-
-            if ($.inArray(viewName, self.showForLayouts) !== -1) {
-                self.$el.find('span').each(function() { $(this).empty(); });
-                self.show();
-                self.bindDataChange();
-            } else if ($.inArray(viewName, self.showStaticForLayouts) !== -1) {
-                // Caller will calls renderStatic so don't show or bindDataChange
-                self.$el.find('span').each(function() { $(this).empty(); });
-            } else {
-                // If view not in showForLayouts white list, we unbind previously bound change events.
-                // This makes sense, and, further, is required for static subnav view to work properly.
-                self.hide();
-                self.unbind();
-            }
-        });
-    },
-    /**
-     * Renders Subnav view
-     */
-    render: function() {
-        if (!app.api.isAuthenticated()) return;
-        app.view.View.prototype.render.call(this);
-        return this;
-    },
-    /**
-     * Provides a way to display static text in subnav. No listeners are attached
-     * to model changes so the subnav title stays "sticky" (e.g. see search results)
-     */
-    renderStatic: function(t) {
-        var self = this, StaticSubnav, ctx, subnav;
-
-        if (!app.api.isAuthenticated()) return;
-        app.view.View.prototype.render.call(self);
-        ctx = { title: t };
-        StaticSubnav = Backbone.View.extend({
-            template: '<div class="btn-toolbar pull-left"><h1>{{title}}</h1></div>',
-            initialize: function() {
-                this.render();
+        // TODO we need to dismiss this in global error handler
+        app.alert.show('save_edit_view', {level: 'process', title: 'Saving'});
+        this.model.save(null, {
+            success: function() {
+                app.alert.dismiss('save_edit_view');
+                self.app.navigate(self.context, self.model, 'detail');
             },
-            render: function() {
-                var tpl = Handlebars.compile(this.template);
-                this.$el.html(tpl(ctx));
-            }
+            fieldsToValidate: this.getFields(this.model.module)
         });
-        subnav = new StaticSubnav();
-        this.$el.html(subnav.el);
-        this.$el.show();
-        this.instance = subnav;
-        return this;
-    },
-    hide: function() {
-        this.$el.hide();
-    },
-    show: function() {
-        this.$el.show();
     },
     bindDataChange: function() {
-        var self = this;
-        if (app.controller.context.attributes.model) {
-            app.controller.context.attributes.model.on("change", function() {
-                self.render();
-                }, this
-            );
-        }
-    },
-    unbind: function() {
-        var self = this;
-        if (app.controller.context.attributes.model) {
-            app.controller.context.attributes.model.off("change");
+        if (this.context.get('subnavModel')) {
+            this.context.get('subnavModel').on("change", this.render, this);
         }
     }
-
 })
-
