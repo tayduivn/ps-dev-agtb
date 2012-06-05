@@ -127,7 +127,7 @@ class ModuleApi extends SugarApi {
         // get the bean with the new data
         $args['record'] = $id;
 
-        $bean = $this->loadBean($api, $args, 'view');
+        $bean->retrieve($id);
 
         $data = $this->formatBean($api, $args, $bean);
 
@@ -142,7 +142,7 @@ class ModuleApi extends SugarApi {
         $id = $this->updateBean($bean, $api, $args);
 
         // get the bean back with the new data
-        $bean = $this->loadBean($api, $args, 'view');
+        $bean->retrieve($id);
 
         $data = $this->formatBean($api, $args, $bean);
 

@@ -47,6 +47,10 @@ class RestTestCreate extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['id']),
                           "An account was not created (or if it was, the ID was not returned)");
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertTrue(isset($restReply['reply']['team_name']), "A team name was not set.");
+        //END SUGARCRM flav=pro ONLY
+
         $this->account_id = $restReply['reply']['id'];
         
         $account = new Account();
@@ -59,6 +63,18 @@ class RestTestCreate extends RestTestBase {
         $this->assertEquals($restReply['reply']['name'],
                             $account->name,
                             "Rest Reply and Bean Do Not Match.");
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertEquals($restReply['reply']['team_name'],
+                            'Global',
+                            "Rest Reply Does Not Match Team Name Global.");
+
+        $this->assertEquals($restReply['reply']['team_name'],
+                            $account->team_name,
+                            "Rest Reply and Bean Do Not Match Team Name.");
+        //END SUGARCRM flav=pro ONLY
+
+
     }
 
 }
