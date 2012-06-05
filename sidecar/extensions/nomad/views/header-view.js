@@ -15,7 +15,6 @@
             }, this);
         },
         render: function(layout, params) {
-
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
@@ -40,10 +39,17 @@
                             module: params.link
                         });
 
-                } else {
-                    this._renderRightList(app.template.get('right.menu'),_.keys(app.metadata.getModuleList()));
+                } else if (layout === "detail") {
+                    this._renderRightList(app.template.get('right.menu.relationships'),
+                        {
+                            createURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/create",
+                            associateURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/associate",
+                            module: ""
+                        });
                 }
-
+                else {
+                    this._renderRightList(app.template.get('right.menu'), _.keys(app.metadata.getModuleList()));
+                }
             }
             return this;
         },

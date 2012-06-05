@@ -1,0 +1,17 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 listing" id="listing"><i></i>
+            <div>
+                {{#each items}}
+                    {{> list.item}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+<fieldset>
+    <div>
+        <span class="blankspacer left"></span>
+        <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Back</a>
+    </div>
+</fieldset>
