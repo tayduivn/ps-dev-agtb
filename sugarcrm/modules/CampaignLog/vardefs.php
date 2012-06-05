@@ -118,7 +118,6 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
 			'vname' => 'LBL_DELETED',
 			'type' => 'bool',
 			'reportable'=>false,
-            'default' => '0',
 			'comment' => 'Record deletion indicator'
 		),
 		'recipient_name' => array(
