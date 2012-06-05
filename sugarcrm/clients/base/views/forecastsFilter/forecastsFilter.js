@@ -6,8 +6,6 @@
  */
 ({
 
-    model: null,
-
     render: false,
 
     /**
@@ -17,12 +15,14 @@
      * @param {Object} options
      */
     initialize: function(options){
-        var self = this;
+        var self = this,
+            model;
+
         app.view.View.prototype.initialize.call(this, options);
 
-        self.model = self.layout.getModel('filters');
-        self.model.on('change', function() {
-            self.buildDropdowns();
+        model = self.layout.getModel('filters');
+        model.on('change', function() {
+            self.buildDropdowns(this);
         });
     },
 
@@ -34,9 +34,9 @@
         }
     },
 
-    buildDropdowns: function() {
+    buildDropdowns: function(model) {
         var self = this;
-        _.each(self.model.attributes, function(data, key) {
+        _.each(model.attributes, function(data, key) {
             var chosen = app.view.createField({
                     def: {
                         name: key,
@@ -47,8 +47,8 @@
                 filter = self.$el.append(chosen.getPlaceholder().toString());
 
             chosen.options.viewName = 'edit';
-            chosen.label = self.model[key].get('label');
-            chosen.def.options = self.model[key].get('options');
+            chosen.label = model[key].get('label');
+            chosen.def.options = model[key].get('options');
             chosen.setElement(filter.find('span[sfuuid="' + chosen.sfId + '"]'));
             chosen.render();
         });
