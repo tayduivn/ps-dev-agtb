@@ -47,7 +47,7 @@ class Bug29016Test extends Sugar_PHPUnit_Framework_TestCase
     {
        $this->user = SugarTestUserUtilities::createAnonymousUser();
        $this->user->full_name = $this->user->first_name . " ". $this->user->last_name;
-       $GLOBALS['current_user'] = $this->user; 
+       $GLOBALS['current_user'] = $this->user;
         $this->task = new ProjectTask();
         $this->task->resource_id = $this->user->id;
         $this->rid = create_guid();
@@ -70,8 +70,8 @@ class Bug29016Test extends Sugar_PHPUnit_Framework_TestCase
     public function testResourceName()
     {
         $this->task->fill_in_additional_detail_fields();
-        $this->assertEquals($this->task->getResourceName(), $this->user->full_name);
-        $this->assertEquals($this->task->resource_name, $this->user->full_name);
+        $this->assertEquals($this->user->full_name, $this->task->getResourceName());
+        $this->assertEquals($this->user->full_name, $this->task->resource_name);
     }
 
 }
