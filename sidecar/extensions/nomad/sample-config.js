@@ -10,6 +10,7 @@
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
+        clientID: "sugar",
         restVersion: '10',
         useHttps: false,
         alertAutoCloseDelay: 10000,
