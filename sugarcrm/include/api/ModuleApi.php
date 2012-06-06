@@ -110,7 +110,22 @@ class ModuleApi extends SugarApi {
         }
 
         $bean->save();
-        return $bean->id;
+
+        /*
+         * Refresh the bean with the latest data.
+         * This is necessary due to BeanFactory caching.
+         * Calling retrieve causes a cache refresh to occur.
+         */
+
+        $id = $bean->id;
+
+        $bean->retrieve($id);
+
+        /*
+         * Even though the bean is refreshed above, return only the id
+         * This allows loadBean to be run to handle formatting and ACL
+         */
+        return $id;
     }
 
     public function createRecord($api, $args) {
@@ -122,9 +137,9 @@ class ModuleApi extends SugarApi {
         if (!$bean->ACLAccess('save')) {
             throw new SugarApiExceptionNotAuthorized('No access to create new records for module: '.$args['module']);
         }
+
         $id = $this->updateBean($bean, $api, $args);
 
-        // get the bean with the new data
         $args['record'] = $id;
 
         $bean = $this->loadBean($api, $args, 'view');
@@ -141,7 +156,6 @@ class ModuleApi extends SugarApi {
 
         $id = $this->updateBean($bean, $api, $args);
 
-        // get the bean back with the new data
         $bean = $this->loadBean($api, $args, 'view');
 
         $data = $this->formatBean($api, $args, $bean);
