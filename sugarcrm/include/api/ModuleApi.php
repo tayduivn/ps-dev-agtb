@@ -123,7 +123,7 @@ class ModuleApi extends SugarApi {
 
         /*
          * Even though the bean is refreshed above, return only the id
-         * This allows loadBean can be run to handle formatting and ACL
+         * This allows loadBean to be run to handle formatting and ACL
          */
         return $id;
     }
