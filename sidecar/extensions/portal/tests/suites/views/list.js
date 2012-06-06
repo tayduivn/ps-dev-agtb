@@ -1,13 +1,13 @@
-describe("Table View", function() {
-    var app, TableView;
+describe("List View", function() {
+    var app, ListView;
         
     beforeEach(function() {
         var controller;
         //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
-        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/table', 'table', 'js', function(d){ return d;});
+        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/list', 'list', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        TableView = app.view.declareComponent('view', 'Table', null, controller);
+        ListView = app.view.declareComponent('view', 'List', null, controller);
     });
     
     it("should set order by", function() {
@@ -29,7 +29,7 @@ describe("Table View", function() {
         };
 
         context.set({collection: collection});
-        var view = new app.view.views.TableView(options); 
+        var view = new app.view.views.ListView(options); 
 
         view.$el.html('<div id="test" data-fieldname="bob"></div>');
 
