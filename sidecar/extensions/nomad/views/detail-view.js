@@ -6,14 +6,69 @@
                 app.router.goBack();
             },
             "click #record-action .phone": function () {
-                app.nomad.callPhone(this.getPhones());
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.callPhone(phones);
             },
-            "click #record-action .message": function () {
+            "click #record-action .email": function () {
                 app.nomad.sendEmail(this.getEmails());
             },
-            "click #record-action .comment": function () {
-                app.nomad.sendSms(this.getPhones());
+            "click #record-action .message": function () {
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.sendSms(phones);
+            },
+            "click #record-action .link": function () {
+                var urls = this.getFieldsDataArray(this.urlFields);
+                app.nomad.openUrl(urls);
+            },
+            "click #record-action .map": function () {
+                var addressObj = this.getFieldsDataHash(this.addressFields);
+                app.nomad.openOpenAddress(addressObj);
             }
+        },
+
+        initialize: function (options) {
+            app.view.View.prototype.initialize.call(this, options);
+
+            //iterate over all fields and get the needed ones
+            var view = this;
+            var headerField, image, fields = [], phones = [], urls = [], addressFields = [];
+            _.each(this.meta.panels, function (panel, panelIndex) {
+                _.each(panel.fields, function (field, fieldIndex) {
+
+                    if (field.name == "name" && !headerField) {         //find header field (first 'name' type)
+                        headerField = field;
+                    } else if (field.type == "image" && !image) {       //find first image
+                        image = field;
+                    } else if (field.type == "phone") {                 //find all phones
+                        phones.push(field);
+                    } else if (field.type == "url") {                   //find all urls
+                        urls.push(field);
+                    } else if (field.type == "email") {                 //if email - do nothing
+
+                    } else if (field.name.indexOf("address") > -1) {    //find address fields
+                        addressFields.push(field);
+                    } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
+                        field.type = "email_temp";
+                    } else if (fields.length < 4) {                     //find four other fields to output
+                        fields.push(field);
+                    }
+
+                });
+            });
+
+            //find link fields
+            var linkFields = app.nomad.getLinks(this.model);
+
+            //save founded fields
+            this.headerField = headerField;
+            this.imageField = image;
+            this.linkFields = linkFields;
+            this.otherFields = fields;
+
+            this.addressFields = addressFields;
+            this.phoneFields = phones;
+            this.urlFields = urls;
+
         },
 
         /**
@@ -23,60 +78,57 @@
          * @protected
          */
         _renderSelf: function () {
-            //iterate over all fields and get the needed ones
-            var view = this;
-            var headerField, image, fields = [], phones = [];
-            _.each(this.meta.panels, function (panel, panelIndex) {
-                _.each(panel.fields, function (field, fieldIndex) {
-
-                    if (!headerField && field.name == "name") {         //find header field (first 'name' type)
-                        headerField = field;
-                    } else if (field.type == "phone") {                 //find all phones
-                        phones.push(field);
-                    } else if (field.type == "email") {                 //if email - do nothing
-
-                    } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
-                        field.type = "email_temp";
-                    } else if (!image && field.type == "image") {       //find first image
-                        image = field;
-                    } else if (fields.length < 4) {                     //find four other fields to output
-                        fields.push(field);
-                    }
-
-                });
-            });
-
-            this.phoneFields = phones;
-
-            //find link fields
-            var linkFields = _.filter(this.model.fields, function (field, key) {
-                if (field.type == 'link') return true;
-            });
 
             //create custom data object
-            var self = this,
-                dataObj = {
-                    viewObj: self,
-                    headerField: headerField,
-                    image: image,
-                    fields: fields,
-                    links: linkFields
+            var data = {
+                    viewObj: this,
+                    headerField: this.headerField,
+                    image: this.imageField,
+                    fields: this.otherFields,
+                    links: this.linkFields
                 };
 
             //pass custom data object as the context
-            this._renderWithContext(dataObj);
+            this._renderWithContext(data);
         },
 
-        getPhones: function () {
+        /**
+         * Returns array of fields data (from model), specified by array of fields metadata.
+         * @param fields
+         * @return {Array}
+         */
+        getFieldsDataArray: function (fields) {
             var view = this;
-            var phone, phonesArray = [];
-            _.each(this.phoneFields, function (phoneField, index) {
-                phone = view.model.get(phoneField.name);
-                if (phone) phonesArray.push(phone);
+            var value, data = [];
+            _.each(fields, function (field, index) {
+                value = view.model.get(field.name);
+                if (value) data.push({
+                    name: field.label,
+                    value: value
+                });
             });
-            return phonesArray;
+            return data;
         },
 
+        /**
+         * Returns hash of fields data (from model), specified by array of fields metadata.
+         * @param fields
+         * @return {Object}
+         */
+        getFieldsDataHash: function (fields) {
+            var view = this;
+            var value, data = {};
+            _.each(fields, function (field, index) {
+                value = view.model.get(field.name);
+                if (value) data[field.label] = value;
+            });
+            return data;
+        },
+
+        /**
+         * Returns array of emails from model.
+         * @return {Array}
+         */
         getEmails: function () {
             var view = this;
             var email, emailsArray = [];

@@ -356,7 +356,8 @@ class M2MRelationship extends SugarRelationship
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($params['enforce_teams']))
         {
-            $from .= ", $relatedSeed->table_name";
+            if ($rel_table != $relatedSeed->table_name)
+                $from .= ", $relatedSeed->table_name";
             $relatedSeed->add_team_security_where_clause($from);
         }
         //END SUGARCRM flav=pro ONLY

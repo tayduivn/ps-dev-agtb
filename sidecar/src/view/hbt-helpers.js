@@ -196,6 +196,7 @@
         app.logger.debug("***********************");
     });
 
+    // Deprecated
     // TODO: Remove this helper once everybody migrates to "str"
     Handlebars.registerHelper("getLabel", function(key, module) {
         return Handlebars.helpers.str.apply(this, arguments);
@@ -214,6 +215,5 @@
         module = _.isString(module) ? module : null;
         return app.lang.get(key, module);
     });
-
 
 })(SUGAR.App);

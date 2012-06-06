@@ -63,13 +63,13 @@
             //A context needs to have a primary layout to render to the page
             this.context.set("layout", this.layout);
 
+            // Render the layout to the main element
+            app.$contentEl.html(this.layout.$el);
+
             // Render the layout with empty data
             this.layout.render();
 
-            app.trigger("app:view:change", params.layout);
-
-            // Render the layout to the main element
-            app.$contentEl.html(this.layout.$el);
+            app.trigger("app:view:change", params.layout, params);
 
             // Fetch the data, the layout will be rendered when fetch completes
             this.context.loadData();
@@ -90,11 +90,11 @@
             app.additionalComponents = {};
             _.each(components, function(component, name) {
                 if (component.target) {
-                    app.additionalComponents[name] = app.view.createView({
+                    (app.additionalComponents[name] = app.view.createView({
                         name: name,
                         context: this.context,
                         el: this.$(component.target)
-                    }).render();
+                    })).render();
                 }
             });
         }

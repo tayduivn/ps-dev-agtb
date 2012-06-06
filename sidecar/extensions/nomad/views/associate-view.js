@@ -27,26 +27,26 @@
         save: function() {
             var source = this;
 
+            var q = async.queue(function (task, callback) {
+                task.relateBean.save(null, {
+                    relate: true,
+                    fieldsToValidate:{}, //TODO: remove it
+                    success: function() {
+                        callback();
+                    }
+                });
+            }, 4);
+
+            q.drain = function() {
+                app.router.go(-2);
+            };
+
             this.$('.selecterd-flag:checked').each(function() {
                 var cid = $(this).closest('article').attr('id').replace(source.module, '');
-                source.saveBean(source.collection.get(cid));
 
+                q.push({relateBean: app.data.createRelatedBean(source.parentBean, source.collection.get(cid), source.link)});
             });
-        },
-        saveBean: function(bean) {
-
-            var relateBean = app.data.createRelatedBean(this.parentBean, bean, this.link);
-            relateBean.save(null, {
-                relate: true,
-                success: function() {
-                }
-            });
-        },
-        onCancelClicked: function() {
-
         }
-
-
     });
 
 })(SUGAR.App);

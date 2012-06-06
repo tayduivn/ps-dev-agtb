@@ -61,7 +61,7 @@ var compileTemplate = function(path, callback) {
 
             try {
                 var compiled = start.replace("{tpl-name}", tplName) +
-                    handlebars.precompile(data) + end;
+                    handlebars.precompile(data,{data:true}) + end;
 
                 fs.writeFile(filepath, compiled, function(err) {
                     if (err) throw err;

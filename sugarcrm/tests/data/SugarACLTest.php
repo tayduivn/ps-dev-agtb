@@ -61,7 +61,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = $config;
 
-        $acls = SugarACL::loadACLs('test', array('bean' => $this->bean));
+        $acls = SugarACL::loadACLs($this->bean);
 
         $this->assertEquals($count, count($acls));
 

@@ -202,11 +202,10 @@ eoq;
 		if(!empty($_REQUEST['uid'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
 		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
 			if(empty($order_by))$order_by = '';
-			$ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $this->searchFields, $this->where_clauses);
-			if(!isset($ret_array['join'])) {
-				$ret_array['join'] = '';
-			}
-			$query = $this->sugarbean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+
+            // TODO: define filter array here to optimize the query
+            // by not joining the unneeded tables
+            $query = $this->sugarbean->create_new_list_query($order_by, $this->where_clauses, array(), array(), 0, '', false, $this, true, true);
 			$result = $db->query($query,true);
 			$new_arr = array();
 			while($val = $db->fetchByAssoc($result,false))

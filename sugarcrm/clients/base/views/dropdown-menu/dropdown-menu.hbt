@@ -1,0 +1,10 @@
+                        {{#each data.records}}
+                            <li>
+                                <span>{{_module}},</span><a href="#{{_module}}/{{id}}"><strong>{{name}}</strong></a>
+                            </li>
+                        {{/each}}
+                        {{#notEq data.next_offset "-1"}}
+                            <li>
+                                <a href="#search/{{term}}"><strong>Show all search results</a>
+                            </li>
+                        {{/notEq}}

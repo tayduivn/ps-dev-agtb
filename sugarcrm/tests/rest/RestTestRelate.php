@@ -166,10 +166,24 @@ class RestTestRelate extends RestTestBase {
 
         // Fetching the role field from the opportunity contact relationship
         $restReply6 = $this->_restCall("Opportunities/".$this->opps[29]->id."/link/contacts?order_by=first_name:DESC");
-        
-        
         $this->assertNotEmpty($restReply6['reply']['records'][0]['opportunity_role'],"The role field on the Opportunity -> Contact relationship was not populated.");
 
+        // verify accounts don't return the same contacts
+        $restReply7 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:ASC");
+
+        $restReply8 = $this->_restCall("Accounts/".$this->accounts[3]->id."/link/contacts?order_by=last_name:ASC");
+
+        $account3 = $restReply8['reply']['records'];
+
+        $account4 = $restReply7['reply']['records'];
+
+        // due to account #4 having the most we will loop thru that checking to see if the names are equal or not
+        // we can assume the GUID's will never match
+        foreach($account4 AS $account) {
+            foreach($account3 AS $acc) {
+                $this->assertNotEquals($account['last_name'],$acc['last_name'], 'GUIDs Match something is wrong');
+            }
+        }
     }
 
 }
