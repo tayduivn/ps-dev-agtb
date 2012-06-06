@@ -191,7 +191,7 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 
 						if ($field_name != 'default' && $field_name != 'default_value') {
 						    array_push($js_defs_array,
-								"\"$field_name\":\"$field_value\"");
+								"\"$field_name\":".json_encode($field_value));
 						}
 					}
 				}

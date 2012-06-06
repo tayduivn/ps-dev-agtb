@@ -83,6 +83,7 @@ array (
             '<input type="hidden" name="isSave">'
 
         ),
+        'headerTpl' => 'modules/Calls/tpls/detailHeader.tpl',
       ),
       'maxColumns' => '2',
       'widths' => 

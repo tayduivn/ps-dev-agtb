@@ -531,4 +531,4 @@ VardefManager::createVardef('KBDocuments','KBDocument', array(
 'team_security',
 //END SUGARCRM flav=pro ONLY
 ));
-?>
+

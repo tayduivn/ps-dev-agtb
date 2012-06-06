@@ -25,21 +25,13 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestRetrieve extends RestTestBase {
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-    
     public function tearDown()
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testRetrieve() {

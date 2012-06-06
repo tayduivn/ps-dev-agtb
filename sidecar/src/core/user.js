@@ -109,10 +109,7 @@
         }
     };
 
-    app.events.on("app:login:success", function(data) {
-        // Server always wins. We update the user with fresh data from the server
-        _user._reset(data ? data.current_user : null);
-    }).on("app:logout", function(clear) {
+    app.events.on("app:logout", function(clear) {
         if (clear) {
             _user._reset();
         }

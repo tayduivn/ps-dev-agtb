@@ -79,8 +79,8 @@ class RelateRecordApi extends ModuleApi {
      * @return array Two elements: The link name, and the SugarBean of the far end
      */
     protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
-        if ( ! $api->security->canAccessModule($primaryBean,$securityTypeLocal) ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view primaryBeans for module: '.$args['module']);
+        if ( ! $primaryBean->ACLAccess($securityTypeLocal) ) {
+            throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeLocal.' records for module: '.$args['module']);
         }
         // Load up the relationship
         $linkName = $args['link_name'];
@@ -91,8 +91,12 @@ class RelateRecordApi extends ModuleApi {
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $primaryBean->$linkName->getRelatedModuleName();
         $linkSeed = BeanFactory::getBean($linkModuleName);
-        if ( ! $api->security->canAccessModule($linkSeed,$securityTypeRemote) ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view primaryBeans for module: '.$linkModuleName);
+
+        // FIXME: No create ACL yet
+        if ( $securityTypeRemote == 'create' ) { $securityTypeRemote = 'edit'; }
+
+        if ( ! $linkSeed->ACLAccess($securityTypeRemote) ) {
+            throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeRemote.' records for module: '.$linkModuleName);
         }
 
         return array($linkName, $linkSeed);
@@ -186,7 +190,7 @@ class RelateRecordApi extends ModuleApi {
         $relatedBean->retrieve($args['remote_id']);
         
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
-        
+
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
@@ -205,6 +209,9 @@ class RelateRecordApi extends ModuleApi {
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
         
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+
+        //Clean up any hanging related records.
+        SugarRelationship::resaveRelatedBeans();
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
     }
