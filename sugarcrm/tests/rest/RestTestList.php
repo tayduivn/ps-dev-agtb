@@ -303,7 +303,7 @@ class RestTestList extends RestTestBase {
 
 
         // Test searching for a lot of records
-        $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
+        $restReply = $this->_restCall("search?q=%&max_num=5");
 
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
