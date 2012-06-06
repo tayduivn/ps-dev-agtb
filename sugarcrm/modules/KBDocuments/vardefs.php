@@ -59,7 +59,16 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
 	'db_concat_fields'=> array(0=>'kbdocument_name'),
     'importable' => 'false',
 	),
-	
+    'body' =>
+        array(
+            'name' => 'body',
+            'rname' => 'body',
+            'vname' => 'LBL_KBDOC_BODY',
+            'type' => 'html',
+            'default'=> '',
+            'studio'=>'false',
+            'source' => 'non-db',
+        ),
 'active_date' =>
   array (
     'name' => 'active_date',
@@ -107,7 +116,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'default'=> 0,
     'reportable'=>false,
   ),
-  
+
   'is_external_article' =>
   array (
     'name' => 'is_external_article',
@@ -522,4 +531,4 @@ VardefManager::createVardef('KBDocuments','KBDocument', array(
 'team_security',
 //END SUGARCRM flav=pro ONLY
 ));
-?>
+

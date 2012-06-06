@@ -127,7 +127,7 @@ describe("View Manager", function() {
                 context: context
             });
 
-            expect(view instanceof app.view.views.ListView).toBeTruthy();
+            expect(view instanceof app.view.View).toBeTruthy();
         });
 
         it("custom view class when the view has a custom controller", function () {
@@ -172,7 +172,6 @@ describe("View Manager", function() {
             expect(view instanceof app.view.views.ToolbarView).toBeTruthy();
         });
 
-
     });
 
     describe("should be able to create instances of Layout class which is", function() {
@@ -184,6 +183,28 @@ describe("View Manager", function() {
                 context: context
             });
             expect(layout instanceof app.view.Layout).toBeTruthy();
+            expect(layout._components.length).toEqual(1);
+            expect(layout._components[0].layout).toEqual(layout);
+        });
+
+        it('layout that has a child layout', function () {
+            var parent = app.view.createLayout({
+                name : "parent",
+                context: context
+            });
+
+            var child = app.view.createLayout({
+                name : "child",
+                context: context
+            });
+
+            parent.addComponent(child);
+            expect(parent._components.length).toEqual(1);
+            expect(child.layout).toEqual(parent);
+
+            parent.removeComponent(child);
+            expect(child.layout).toBeNull();
+            expect(parent._components.length).toEqual(0);
         });
 
         it("layout with a custom controller", function () {

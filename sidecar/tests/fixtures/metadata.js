@@ -603,10 +603,10 @@ fixtures.metadata = {
             }
         }
     },
-    'sugarFields': {
+    'fields': {
         "_hash": "x1",
         "text": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -625,7 +625,7 @@ fixtures.metadata = {
                 "}"
         },
         "float": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -644,7 +644,7 @@ fixtures.metadata = {
                 "}"
         },
         "datetime": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -672,7 +672,7 @@ fixtures.metadata = {
                 "}"
         },
         "datetimecombo": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
@@ -724,8 +724,10 @@ fixtures.metadata = {
                 "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}]," +
                 "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]" +
                 "}," +
-                "bindDomChange: function (model, fieldName) {\n" +
+                "bindDomChange: function () {\n" +
                 "var self = this\n" +
+                "var model = this.model;\n" +
+                "var fieldName = this.name;\n" +
                 "var date = this.$el.find('input');\n" +
 
                 "var hour = this.$el.find('.date_time_hours');\n" +
@@ -743,7 +745,7 @@ fixtures.metadata = {
                 "}"
         },
         "integer": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -762,7 +764,7 @@ fixtures.metadata = {
                 "}"
         },
         "enum": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
@@ -782,14 +784,14 @@ fixtures.metadata = {
                 "\n}\n"
         },
         radioenum: {
-            views: {
+            templates: {
                 detail: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n",
                 edit: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
                     "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{#eq this ../value}}checked{{/eq}}>{{this}}</label>{{/eachOptions}}"
             }
         },
         "checkbox": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
@@ -807,12 +809,12 @@ fixtures.metadata = {
                 "}"
         },
         "addresscombo": {
-            "views": {
+            "templates": {
                 "default": "<span>Address Combo!</span>"
             }
         },
         "address": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3>" +
                     "{{value.street}}<br>" +
                     "{{value.city}}<br>" +
@@ -840,8 +842,10 @@ fixtures.metadata = {
                 "};\n" +
                 "return value;\n" +
                 "},\n" +
-                "bindDomChange: function (model, fieldName) {\n" +
+                "bindDomChange: function () {\n" +
                 "var self = this;\n" +
+                "var model = this.model;\n" +
+                "var fieldName = this.name;\n" +
                 "var street = this.$el.find('.address_street');\n" +
                 "var city = this.$el.find('.address_city');\n" +
                 "var country = this.$el.find('.address_country');\n" +
@@ -874,7 +878,7 @@ fixtures.metadata = {
                 "}"
         },
         "password": {
-            "views": {
+            "templates": {
                 "edit": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
                     "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
@@ -884,21 +888,21 @@ fixtures.metadata = {
             }
         },
         "button": {
-            "views": {
+            "templates": {
                 "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if def.primary}}btn-primary{{/if}}\">" +
                     "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "navElement": {
-            "views": {
+            "templates": {
                 "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">" +
                     "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "iframe": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{def.height}}\" width=\"{{def.width}}\"</iframe>{{/if}}\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
@@ -912,7 +916,7 @@ fixtures.metadata = {
                 "}"
         },
         "phone": {
-            "views": {
+            "templates": {
                 "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
                 "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                     "<input type=\"tel\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -921,13 +925,13 @@ fixtures.metadata = {
             }
         },
         "textarea": {
-            "views": {
+            "templates": {
                 "detail": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n",
                 "edit": "<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"
             }
         },
         "sugarField_actionsLink": {
-            "views": {
+            "templates": {
                 "default": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
                     "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
                     "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
@@ -935,78 +939,117 @@ fixtures.metadata = {
             }
         }
     },
-    'viewTemplates': {
+    'views': {
         "_hash": "x2",
-        "detail": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
-            "<form name='{{name}}' class='well'>" +
-            "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
-            "{{/each}}" +
-            "{{#each meta.panels}}" +
-            '<div class="{{../name}} panel">' +
-            "<h4>{{label}}</h4>" +
-            "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
-            "{{/each}}" +
-            "</div>" +
-            "{{/each}}</form>",
-        "edit": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
-            "<form name='{{name}}' class='well'>" +
-            "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
-            "{{/each}}" +
-            "{{#each meta.panels}}" +
-            '<div class="{{../name}} panel">' +
-            "<h4>{{label}}</h4>" +
-            "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
-            "{{/each}}" +
-            "</div>" +
-            "{{/each}}</form>",
-        "login": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a>&nbsp</h3>" +
-            "<form name='{{name}}' class='well'>" +
-            "{{#each meta.panels}}" +
-            '<div class="{{../name}} panel">' +
-            "<h4>{{label}}</h4>" +
-            "{{#each fields}}" +
-            "<div>{{field ../../context ../../this ../../model}}</div>" +
-            "{{/each}}" +
-            "</div>" +
-            "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
-            "{{/each}}" + "</form>",
-        "subpanel": "",
-        "list": '<div class="span12 container-fluid subhead">' +
-            '<h3>{{context.attributes.module}}</h3>' +
-            "{{#each meta.panels}}" +
-            '<div class="{{../name}}">' +
-            '<table class="table table-striped"><thead><tr>' +
-            '{{#each fields}}' +
-            '<th width="{{def.width}}%">{{label}}</th>' +
-            '{{/each}}' +
-            '</tr></thead><tbody>' +
-            '{{#each ../context.attributes.collection.models}}' +
-            '<tr name="{{module}}_{{attributes.id}}">' +
-            '{{#each ../fields}}' +
-            // SugarField requires the current context, field name, and the current bean in the context
-            // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{field ../../../context ../../../this ../this}}</td>' +
-            '{{/each}}' +
-            '</tr>' +
-            '{{/each}}' +
-            '</tbody></table>' +
-            '{{/each}}' +
-            "{{#each meta.buttons}}" +
-            "{{field ../context ../this ../model}}" +
-            "{{/each}}" +
-            "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
-            '<li>' +
-            "{{field ../context ../this ../model}}" +
-            '</li>' +
-            "{{/each}}" +
-            '{{#if context.attributes.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.attributes.collection.page}}</small></div></li>{{/if}}' +
-            '</ul>' +
-            "</div>"
+        "detail": {
+            "templates": {
+                "detail": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
+                    "<form name='{{name}}' class='well'>" +
+                    "{{#each meta.buttons}}" +
+                    "{{field ../this ../model}}" +
+                    "{{/each}}" +
+                    "{{#each meta.panels}}" +
+                    '<div class="{{../name}} panel">' +
+                    "<h4>{{label}}</h4>" +
+                    "{{#each fields}}" +
+                    "<div>{{field ../../this ../../model}}</div>" +
+                    "{{/each}}" +
+                    "</div>" +
+                    "{{/each}}</form>"
+            }
+        },
+        "edit": {
+            "templates": {
+                "edit": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a> {{name}}</h3>" +
+                    "<form name='{{name}}' class='well'>" +
+                    "{{#each meta.buttons}}" +
+                    "{{field ../this ../model}}" +
+                    "{{/each}}" +
+                    "{{#each meta.panels}}" +
+                    '<div class="{{../name}} panel">' +
+                    "<h4>{{label}}</h4>" +
+                    "{{#each fields}}" +
+                    "<div>{{field ../../this ../../model}}</div>" +
+                    "{{/each}}" +
+                    "</div>" +
+                    "{{/each}}</form>"
+            }
+        },
+        "list": {
+            "meta": {
+                "panels": [
+                    {
+                        "label": "LBL_PANEL_1",
+                        "fields": [
+                            {name: "first_name", label: "First Name"},
+                            {name: "last_name", label: "Last Name"},
+                            {name: "email1", label: "Email"},
+                            {name: "phone_work", label: "Phone"}
+                        ]
+                    }
+                ]
+            },
+            "templates": {
+                "list": ""
+            },
+            "controller": "({setOrderBy: function() {}})"
+        },
+        "login": {
+            "templates": {
+                "login": "<h3 class=\"view_title\"><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a>&nbsp</h3>" +
+                    "<form name='{{name}}' class='well'>" +
+                    "{{#each meta.panels}}" +
+                    '<div class="{{../name}} panel">' +
+                    "<h4>{{label}}</h4>" +
+                    "{{#each fields}}" +
+                    "<div>{{field ../../this ../../model}}</div>" +
+                    "{{/each}}" +
+                    "</div>" +
+                    "{{/each}}" + "{{#each meta.buttons}}" +
+                    "{{field ../this ../model}}" +
+                    "{{/each}}" + "</form>"
+            }
+        },
+        "subpanel": {
+            "templates": {
+                "subpanel": ""
+            }
+        },
+        "list": {
+            "templates": {
+                "list": '<div class="span12 container-fluid subhead">' +
+                    '<h3>{{context.attributes.module}}</h3>' +
+                    "{{#each meta.panels}}" +
+                    '<div class="{{../name}}">' +
+                    '<table class="table table-striped"><thead><tr>' +
+                    '{{#each fields}}' +
+                    '<th width="{{def.width}}%">{{label}}</th>' +
+                    '{{/each}}' +
+                    '</tr></thead><tbody>' +
+                    '{{#each ../context.attributes.collection.models}}' +
+                    '<tr name="{{module}}_{{attributes.id}}">' +
+                    '{{#each ../fields}}' +
+                    // SugarField requires the current context, field name, and the current bean in the context
+                    // since we are pulling from the collection rather than the default bean in the context
+                    '<td class="dblclick">{{field ../../../this ../this}}</td>' +
+                    '{{/each}}' +
+                    '</tr>' +
+                    '{{/each}}' +
+                    '</tbody></table>' +
+                    '{{/each}}' +
+                    "{{#each meta.buttons}}" +
+                    "{{field ../this ../model}}" +
+                    "{{/each}}" +
+                    "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
+                    '<li>' +
+                    "{{field ../this ../model}}" +
+                    '</li>' +
+                    "{{/each}}" +
+                    '{{#if context.attributes.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.attributes.collection.page}}</small></div></li>{{/if}}' +
+                    '</ul>' +
+                    "</div>"
+            }
+        }
     },
     "modStrings": {
         "_hash": "x3",
@@ -1194,6 +1237,13 @@ fixtures.metadata = {
                 "create": "yes",
                 "_hash": "3435464127eb7ab69d413cc6"
       }
-
-  }
+  },
+    'layouts': {
+        "list": {
+            "type": "simple",
+            "components": [
+                {view: "list"}
+            ]
+        }
+    },
 };

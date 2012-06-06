@@ -1,17 +1,56 @@
 (function($) {
+
+/*
+var handler = function(e) {
+    e.preventDefault();
+    alert('handler');
+};
+
+$('article').onpress(handler);
+*/
+
+
+
+$('body').onpress('label.checkbox',function(e){
+    $(this).find('input[type=checkbox]').trigger('click');
+    e.preventDefault();
+});
+
+
+    $('body').onpress('.xxx',function(e){
+        e.preventDefault();
+        //$(this).remove();
+        $('.listing').append(article_tpl);
+    });
+
+
+    var article_tpl = '\
+	      <article>\                <i class="icon-star-empty"></i>\                <div>\                  <a href="perkin_kleiners.html">Perkin Kleiners</a><br>\                  Cupertino, CA\                </div>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="perkin_kleiners.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\              <article style="padding-left:0;">\                  <a href="">x d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsx d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd as ax d  ew e wr ff  fsd </a>\                <span id="listing-action-item1"> \                  <i class="grip">|||</i> \                  <span class="hide actions">\                    <a href="weyland.html" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a> \                    <a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>\                  </span> \                </span>\              </article>\
+    ';
+
+    $('body').onpress('article .grip',function (e) {
+	e.preventDefault();
+
+	if($(this).hasClass('on')===false){
+	    $(this).closest('article').trigger('swipeLeft');
+	}else{
+	    $(this).closest('article').trigger('swipeRight');
+	}
+    });
+
 	// swipe for top nav
 	$('#logo').bind('touchmove', function (e) {
 		e.preventDefault();} 
 	);
-	$('#logo, h1.nomad').swipeRight(function () {
+	$('#logo').swipeRight(function () {
 		closeBottomMenu();
-		$('html').find('body').addClass('onL');
+		$('html').find('body').addClass('onL',function(){
+			$('.nav-collapse').show();
+		});
 	});
 	$('#logo').swipeLeft(function () {
-		$('html').find('body').removeClassClass('onL');
-	});
-	$('.cube').swipeLeft(function () {
-	      $('html').find('body').toggleClass('onL');
+		$('html').find('body').removeClass('onL');
+		$('.nav-collapse').hide();
 	      return false;
 	});
 	$('#create').bind('touchmove', function (e) {
@@ -39,7 +78,6 @@
 	$('#search').swipeDown(function () {
 		$('body').find('#searchForm').toggleClass('hide');
 	});
-
 	$('.thrhld').on('click',function () {
 		if($(this).parent().hasClass('teaser')) {
 			$(this).parent().removeClass('teaser');
@@ -56,7 +94,7 @@
 	});
 
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.cube').live('click', function () {
+    $('body').onpress('.cube', function () {
 	if($('body').hasClass('onL')){
 	    $('#logo').trigger('swipeLeft');
 	}else{
@@ -66,7 +104,7 @@
     });
 
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.launch').live('click', function () {
+    $('body').onpress('.launch', function () {
 	if($('body').hasClass('onR')===true){
 	    $('#create').trigger('swipeRight');
 	} else {
@@ -84,13 +122,7 @@
 	$(this).find('.grip').removeClass('on');
 	$(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
     });	
-    $('article .grip').live('click', function () {
-	if($(this).hasClass('on')===false){
-	    $(this).closest('article').trigger('swipeLeft');
-	}else{
-	    $(this).closest('article').trigger('swipeRight');
-	}
-    });
+
     // search toggle
     $('.navbar').find('#search').on('click', function () {
     	$('body').find('#searchForm').toggleClass('hide');
@@ -192,13 +224,16 @@
         }, 3000);
     }
 
-    $(".icon-star-empty, .icon-star").live('click tap',function(){
+
+    $('body').onpress('.icon-star-empty, .icon-star',function(){
 	var rn=Math.floor(Math.random()*100);
 	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
 	setTimeout(function(ia){
             $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
         }, 3000);
     });
+
+
       $("a[title=Remove]").live('click tap',function(){
   	var rn=Math.floor(Math.random()*100);
   	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-success" style="display:block;"><strong>Success!</strong> You removed an item!</div>');

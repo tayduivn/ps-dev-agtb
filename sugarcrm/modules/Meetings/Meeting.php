@@ -499,7 +499,11 @@ class Meeting extends SugarBean {
 			if(empty($action))
 			     $action = "index";
             $setCompleteUrl = "<a id='{$this->id}' onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
-			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
+			if ($this->ACLAccess('edit')) {
+                $meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
+            } else {
+                $meeting_fields['SET_COMPLETE'] = '';
+            }			
 		}
 		global $timedate;
 		$today = $timedate->nowDb();

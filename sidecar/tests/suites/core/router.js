@@ -1,9 +1,14 @@
 describe("Router", function() {
-    var app, router;
+    var app, router, defaultModule;
 
     beforeEach(function() {
         app = SugarTest.app;
         router = app.router;
+        defaultModule = app.config.defaultModule;
+    });
+
+    afterEach(function() {
+        app.config.defaultModule = defaultModule;
     });
 
     it("should call the controller to load a view for the default route", function() {
@@ -37,14 +42,27 @@ describe("Router", function() {
         expect(route).toEqual("Contacts/create");
     });
 
-    it("should handle index route", function() {
+    it("should handle index route with default module", function() {
+        app.config.defaultModule = "Cases";
         var mock = sinon.mock(app.controller);
         mock.expects("loadView").once().withArgs({
-            module:'Contacts',
-            layout:'list'
+            module: 'Cases',
+            layout: 'list'
         });
 
-        router.index('Contacts');
+        router.index();
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should handle index route with unspecified default module", function() {
+        app.config.defaultModule = null;
+        var mock = sinon.mock(app.controller);
+        mock.expects("loadView").once().withArgs({
+            module: 'Home',
+            layout: 'home'
+        });
+
+        router.index();
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -102,6 +120,49 @@ describe("Router", function() {
 
         router.logout();
         expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should reject a secure route if the user is not authenticated", function() {
+        sinon.stub(app.api, "isAuthenticated", function() { return false; });
+        var beforeRouting = app.routing.before("index");
+        expect(beforeRouting).toBeFalsy();
+    });
+
+    it("should reject a secure route if the app is not synced", function() {
+        app.isSynced = false;
+        var beforeRouting = app.routing.before("index");
+        expect(beforeRouting).toBeFalsy();
+    });
+
+    it("should always accept an unsecure route", function() {
+        var beforeRouting = app.routing.before("signup");
+        expect(beforeRouting).toBeTruthy();
+    });
+
+    it("should call a route handler and routing.after if routing.before returns true", function() {
+        sinon.stub(app.routing, "before", function() { return true; });
+        var spy = sinon.spy(app.routing, "after");
+        var spy2 = sinon.spy(app.router, "index");
+
+        app.router._routeHandler(app.router.index);
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+        app.routing.before.restore();
+        app.routing.after.restore();
+        app.router.index.restore();
+    });
+
+    it("should not call a route handler and routing.after if routing.before returns false", function() {
+        sinon.stub(app.routing, "before", function() { return false; });
+        var spy = sinon.spy(app.routing, "after");
+        var spy2 = sinon.spy(app.router, "index");
+
+        app.router._routeHandler(app.router.index);
+        expect(spy).not.toHaveBeenCalled();
+        expect(spy2).not.toHaveBeenCalled();
+        app.routing.before.restore();
+        app.routing.after.restore();
+        app.router.index.restore();
     });
 
     // TODO: This test has been disabled, as the paramters don't work properly. Need to add supporting routes

@@ -56,19 +56,14 @@ var timeclosure_{{$idname}} = function(){ldelim}
 	var callback = "{{$displayParams.updateCallback}}";
 	
 	{literal}
-	function initTime(){
-		if(typeof(Time) != "undefined"){
-			var combo = new Time(timeField, idname, timeFormat, tabIndex);
-			//Render the remaining widget fields
-			var text = combo.html(callback);
-			document.getElementById(idname + "_time").innerHTML = text;	
-		}
-		else{
-			setTimeout(initTime, 500);
-		}
-	}
+	
+	SUGAR.util.doWhen(typeof(Time) != "undefined", function(){
+		var combo = new Time(timeField, idname, timeFormat, tabIndex);
+		//Render the remaining widget fields
+		var text = combo.html(callback);
+		document.getElementById(idname + "_time").innerHTML = text;	
+	});
 	{/literal}
-	initTime();
 {rdelim}
 timeclosure_{{$idname}}();
 </script>

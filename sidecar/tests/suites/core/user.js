@@ -30,7 +30,7 @@ describe("User", function() {
         user._reset();
         expect(user.get('id')).toBeUndefined();
         expect(user.get('full_name')).toBeUndefined();
-        expect(app.cache.get('app:user')).toBeUndefined();
+        expect(app.cache.has('app:user')).toBeFalsy();
     });
 
     it("should do simple get and set", function() {
@@ -61,25 +61,30 @@ describe("User", function() {
     });
     
     it("should login user", function() {
+        sinon.stub(app, 'sync', function() { });
         var loginSuccessEventSpy = sinon.spy(),
             userReset = sinon.spy(app.user, '_reset');
 
         app.events.on("app:login:success", loginSuccessEventSpy);
         
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/login.*/,
+        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/oauth2\/token.*/,
             [200, {  "Content-Type": "application/json"},
-                JSON.stringify({current_user:'jimbo'})]);
+                JSON.stringify({"access_token": "55000555"})]);
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/me.*/,
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify({"current_user":"scooby"})]);
+        SugarTest.server.respond();
 
-        app.login({username:'scooby',password:'pass'}, null, {
+        app.login({username:'scooby', password:'pass'}, null, {
             success: function() {},
             error: function() {}
         });
         SugarTest.server.respond();
-
+        expect(userReset.calledWith('scooby')).toBeTruthy();
         expect(userReset).toHaveBeenCalled();
-        expect(userReset.calledWith('jimbo')).toBeTruthy();
         expect(loginSuccessEventSpy).toHaveBeenCalled();
+        app.sync.restore();
     });
 
     it("should reset itself with new data", function() {

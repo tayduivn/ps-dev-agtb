@@ -1,38 +1,48 @@
-<h1 class="nomad">Details</h1>
+<h1 class="nomad">{{viewObj.moduleSingular}}</h1>
 <div class="bizcard">
+    {{#nothing}}TODO: research how to get image data{{/nothing}}
+    <img src="{{! getFieldValue model image}}" class="avatar" alt="{{! getFieldValue model image}}">
     <div class="card">
-
-        {{#with meta.panels.[0]}}
-            <h3>
-            {{#with fields.[0]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-            </h3>
-
-            {{#with fields.[1]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[2]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[3]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
-
-            {{#with fields.[4]}}
-            {{field     ../../context    ../../this   ../../model}}
-            {{/with}}
+        <h3>
+        {{#with headerField}}
+        {{field  ../viewObj}}
         {{/with}}
-
+        </h3>
+        {{#each fields}}
+            {{#with this}}
+            {{field  ../../viewObj}}
+            {{/with}}
+        {{/each}}
     </div>
-    <a href="#{{model.module}}/{{model.id}}/edit"><i class="icon-chevron-right more"></i></a>
+    <span class="fade"></span>
+    <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid">
+        <a class="span1_5th phone" href="javascript:void(0)"><i class="icon-phone"></i></a>
+        <a class="span1_5th email" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
+        <a class="span1_5th message" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
+        <a class="span1_5th link" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
+        <a class="span1_5th map" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
+    </div>
+</div>
+<div class="container-fluid" id="detailListing">
+    <div class="row-fluid">
+        <div class="span12 listing" id="listing"><i></i>
+            <ul class="actions">
+                {{#each links}}
+                    <li>
+                        <a href="#{{../viewObj.model.module}}/{{../viewObj.model.id}}/link/{{this.name}}">
+                            {{str this.name}}
+                        <i class="icon-chevron-right more"></i>
+                        </a>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
 </div>
 <fieldset>
     <div>
+        <span class="blankspacer left"></span>
         <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
     </div>
 </fieldset>

@@ -1,13 +1,15 @@
 {{#each meta.panels}}
 <div class="tab-pane active">
-    <div class="block" id="">
+    <div class="block">
         <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
-        <h4><span class="label label-note">Note</span> {{fieldWithName ../context ../this ../model "name" "default"}}</h4>
+        <h4><span class="label label-note">Note</span> {{fieldWithName ../this "name" ../model "default"}}</h4>
         <br>
 
+        <div class="card2">
         {{#each fields}}
-        {{field ../../context ../../this ../../model}}
+        {{field ../../this ../../model}}
         {{/each}}
+        </div>
     </div>
 </div>
 {{/each}}

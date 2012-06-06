@@ -41,4 +41,14 @@ $listViewDefs[$module_name] = array(
 		'width' => '40',
 		'label' => 'LBL_CONSKEY',
         'default' => true),
+    'OAUTH_TYPE' => array(
+        'width' => '20',
+        'label' => 'LBL_OAUTH_TYPE',
+        'default' => true,
+    ),
+    'CLIENT_TYPE' => array(
+        'width' => '20',
+        'label' => 'LBL_CLIENT_TYPE',
+        'default' => true,
+    ),
 );

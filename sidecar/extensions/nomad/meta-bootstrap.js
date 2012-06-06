@@ -1,20 +1,23 @@
 (function(app) {
-    var base_metadata = {
+    app.baseMetadata = {
         _hash: '',
         "modules": {
             "Login": {
                 "fields": {
                     "username": {
                         "name": "username",
-                        "type": "varchar"
+                        "type": "varchar",
+                        required: true
                     },
                     "password": {
                         "name": "password",
-                        "type": "password"
+                        "type": "password",
+                        required: true
                     },
                     "url": {
                         "name": "url",
-                        "type": "url"
+                        "type": "url",
+                        required: true
                     }
                 },
                 "views": {
@@ -47,10 +50,5 @@
             }
         }
     };
-
-    app.events.on("app:init", function() {
-        app.metadata.set(base_metadata);
-        app.data.declareModels(base_metadata);
-    });
 
 })(SUGAR.App);

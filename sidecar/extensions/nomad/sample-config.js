@@ -7,9 +7,16 @@
         logLevel: app.logger.levels.DEBUG,
         logWriter: app.logger.ConsoleWriter,
         logFormatter: app.logger.SimpleFormatter,
-        serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
+        authStore: 'cache',
+        serverUrl: '../../../sugarcrm/rest/v10',
+        //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
+        clientID: "sugar",
+        restVersion: '10',
+        useHttps: false,
+        alertAutoCloseDelay: 10000,
         maxQueryResult: 20,
         platform: "mobile",
+        defaultModule: "Accounts",
         metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
         additionalComponents: {
             "header": {
@@ -20,6 +27,10 @@
             }
         },
         orderByDefaults: {
+            'Accounts': {
+                field: 'name',
+                direction: 'asc'
+            },
             'Cases': {
                 field: 'case_number',
                 direction: 'asc'

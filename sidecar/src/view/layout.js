@@ -1,17 +1,56 @@
 (function(app) {
 
     /**
-     * Base class for layouts.
+     * The Layout Object is a definition of views and their placement on a certain 'page'.
      *
      * Use {@link View.ViewManager} to create instances of layouts.
+     *
+     * ###A Quick Guide for Creating a Layout Definition###
+     *
+     * Creating Layouts is easy, all it takes is adding the appropriate metadata file. Let's create a
+     * layout called **`SampleLayout`**.
+     *
+     * ####The Layout File and Directory Structure####
+     * Layouts are located in the **`modules/MODULE/metadata/layouts`** folder. Add a file
+     * called **`SampleLayout.php`** in the folder and it should be picked up in the next
+     * metadata sync call.
+     *
+     * ####The Metadata####
+     * <pre><code>
+     * $viewdefs['MODULE']['PLATFORM (portal / mobile / base)']['layout']['samplelayout'] = array(
+     *     'type' => 'columns',
+     *     'components' => array(
+     *         0 => array(
+     *             'layout' => array(
+     *             'type' => 'column',
+     *             'components' => array(
+     *                 array(
+     *                     'view' => 'list',
+     *                 ),
+     *                 array(
+     *                     'view' => 'list',
+     *                     'context' => array(
+     *                         'module' => 'Leads',
+     *                     ),
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     * );
+     * </code></pre>
+     *
+     * As you can see we are defining a column style layout with two subcomponents: A normal list view
+     * of the MODULE, and also a list view of Leads.
+     *
+     * ####Accessing the New Layout####
+     * The last step is to add a route in the Router to display the new layout. // TODO: Custom routes?
+     *
      *
      * @class View.Layout
      * @alias SUGAR.App.view.Layout
      * @extends View.Component
      */
     app.view.Layout = app.view.Component.extend({
-
-        className: "layout",
 
         /**
          * TODO docs (describe constructor options, see Component class for an example).
@@ -27,21 +66,15 @@
 
             this._components = []; // list of components
 
-            if (!this.meta) {
-                app.logger.warn("Layout metadata is missing, module: " + this.module);
-                return;
-            }
+            if (!this.meta) return;
 
             /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createLayout} method.
-             *
-             * By default the layout is rendered as `div` element with CSS class `"layout <layoutType>"`.
-             * @cfg {String} className
+             * Reference to the parent layout instance.
+             * @property {View.Layout}
              */
-            this.$el.addClass(options.className || (this.meta.type ? this.meta.type : ""));
+            this.layout = this.options.layout;
+
+            this.$el.data("comp", "layout_" + this.meta.type);
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
@@ -50,18 +83,15 @@
                 if (def.context) {
                     context = this.context.getChildContext(def.context);
                     context.prepare();
-                    if (def.context.link) {
-                        module = context.get('collection').module;
-                    } else {
-                        module = def.context.module || this.module;
-                    }
+                    module = context.get("module");
                 }
 
                 if (def.view) {
                     var view = app.view.createView({
                         context: context,
                         name: def.view,
-                        module: module
+                        module: module,
+                        layout: this
                     });
                     context.set({view:view});
                     this.addComponent(view, def);
@@ -72,14 +102,16 @@
                         this.addComponent(app.view.createLayout({
                             context: context,
                             name: def.layout,
-                            module: module
+                            module: module,
+                            layout: this
                         }), def);
                     } else if (_.isObject(def.layout)) {
                         //Inline definition of a sublayout
                         this.addComponent(app.view.createLayout({
                             context: context,
                             module: module,
-                            meta: def.layout
+                            meta: def.layout,
+                            layout: this
                         }), def);
                     }
                 }
@@ -95,6 +127,7 @@
          * @param {Object} def Metadata definition
          */
         addComponent: function(component, def) {
+            if (!component.layout) component.layout = this;
             this._components.push(component);
             this._placeComponent(component, def);
         },
@@ -122,18 +155,44 @@
             var i = _.isNumber(component) ? component : this._components.indexOf(component);
 
             if (i > -1) {
-                this._components.splice(i, 1);
+                var removed = this._components.splice(i, 1);
+                removed[0].layout = null;
             }
+        },
+
+        /**
+         * Gets a component by name.
+         * @param {String} name Component name.
+         * @return {View.View/View.Layout} Component with the given name.
+         */
+        getComponent: function (name) {
+            return _.find(this._components, function(component) {
+                return component.name === name;
+            });
         },
 
         /**
          * Renders all the components.
          */
-        render: function() {
-            //default layout will pass render container divs and pass down to all its views.
-            _.each(this._components, function(component) {
-                component.render();
-            }, this);
+        _render: function() {
+            if (this._components && this._components.length > 0) {
+                //default layout will pass render container divs and pass down to all its views.
+                _.each(this._components, function(component) {
+                    component.render();
+                }, this);
+            }
+            else {
+                // This should never happen :)
+                app.logger.warn("Can't render anything because the layout has no components: " + this.toString() + "\n" +
+                    "Either supply metadata or override Layout.render method");
+                // TODO: Revisit this. At least the message should be localized
+                app.alert.show("no-layout", {
+                    level: "error",
+                    title: "Error",
+                    messages: ["Oops! We are not able to render anything. Please try again later or contact the support"]
+                });
+            }
+            return this;
         },
 
         /**
@@ -167,6 +226,30 @@
                 _.extend(fields, component.getFields(module));
             });
             return fields;
+        },
+
+        /**
+         * Disposes a layout.
+         *
+         * Disposes each of this layout's components and calls
+         * {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            _.each(this._components, function(component) {
+                component.dispose();
+            });
+            this._components = [];
+            app.view.Component.prototype._dispose.call(this);
+        },
+
+        /**
+         * Gets a string representation of this layout.
+         * @return {String} String representation of this layout.
+         */
+        toString: function() {
+            return "layout-" + (this.options.type || this.options.name) + "-" +
+                app.view.Component.prototype.toString.call(this);
         }
 
     });

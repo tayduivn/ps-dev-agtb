@@ -222,6 +222,9 @@ class KBDocument extends SugarBean {
 
 			$this->last_rev_create_date = $timedate->to_display_date_time($row['rev_date']);
 		}
+
+        $this->name = $this->kbdocument_name;
+        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
 	}
 
 	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {

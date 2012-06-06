@@ -1451,6 +1451,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:left;
 }
 
+#footer .copyright {
+	color: #ccc;
+	text-decoration: none;
+	font-size: 11px;	
+	padding-top: 10px;
+	float: left;
+}
+
 #themePicker, #langPicker 
 {
     text-align: center;
@@ -6510,7 +6518,11 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
     /*css hack for IE7*/
     *overflow:visible;
 }
-
+ul.clickMenu li ul.subnav.upper, ul.clickMenu ul.subnav-sub.upper, ul.SugarActionMenuIESub.upper {
+    box-shadow: #999 5px 0px 10px;
+    -moz-box-shadow: #999 5px 0px 10px;
+    -webkit-box-shadow: #999 5px 0px 10px;
+}
 ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
 	margin: 0; 
 	padding: 0px;

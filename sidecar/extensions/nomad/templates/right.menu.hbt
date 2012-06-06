@@ -1,3 +1,5 @@
+<li id="quickTitle"><a href="#">Quick Create</a></li>
+<li class="divider-horizontal"></li>
 {{#each this}}
 <li><a href="#{{this}}/create">Create  {{this}}</a></li>
 {{/each}}

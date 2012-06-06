@@ -454,7 +454,11 @@ class Call extends SugarBean {
 			    $action = "index";
 
             $setCompleteUrl = "<a id='{$this->id}' onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
-			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title='".translate('LBL_LIST_CLOSE','Calls')."' border='0'", null,null,'.gif', translate('LBL_LIST_CLOSE','Calls')) . "</a>";
+			if ($this->ACLAccess('edit')) {
+                $call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
+            } else {
+                $call_fields['SET_COMPLETE'] = '';
+            }
 		}
 		global $timedate;
 		$today = $timedate->nowDb();

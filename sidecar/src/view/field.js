@@ -120,12 +120,8 @@
              */
             this.type = this.options.def.type;
 
-            // this is experimental to try to see if we can have custom events on sugarfields themselves.
-            // the following line doesn't work, need to _.extend it or something.
-            // this.events = this.meta.events;
-
-            // Set module field definition (vardef)
             if (this.model && this.model.fields) {
+                // Set module field definition (vardef)
                 var clonedVarDef = _.clone(this.model.fields[this.name]);
                 /**
                  * Field metadata definition (vardef + viewdef).
@@ -136,18 +132,17 @@
                  */
                 // Beware of shallow clone! We assume here that vardef object has only primitive types
                 this.def = clonedVarDef ? _.extend(clonedVarDef, options.def) : options.def;
-                this.model.on("error:validation:" + this.name, this.handleValidationError, this);
             }
             else {
                 this.def = this.options.def;
             }
 
             /**
-             * Label key (used for i18n).
+             * i18n-ed field label.
              * @property {String}
              * @member View.Field
              */
-            this.label = this.def.label || this.def.vname || this.name;
+            this.label = app.lang.get(this.def.label || this.def.vname || this.name, this.module);
 
             /**
              * Compiled template.
@@ -155,6 +150,12 @@
              * @member View.Field
              */
             this.template = app.template.empty;
+
+            // Bind validation error event
+            // Note we bind it regardless of which view we on (only need for edit type views)
+            if (this.model) {
+                this.model.on("error:validation:" + this.name, this.handleValidationError, this);
+            }
         },
 
         /**
@@ -184,16 +185,16 @@
         },
 
         /**
-         * Override default Backbone.Events to also use custom handlers
-         * TODO: Convert string function names to references to the callback function
-         * The events hash is similar to the backbone events. We store the eventHandlers as
-         * part of the SugarField with the `"callback_"` prefix.
+         * Override default Backbone.Events to also use custom handlers.
+         *
+         * The events hash is similar to Backbone.View events hash. The framework stores the event handlers as
+         * part of the field instance with the `"callback_"` prefix.
          * <pre><code>
          * events: {
          *     handler: "function() {}";
          * }
          * </code></pre>
-         * Is stored as:
+         * The above handler is stored as (`"this"` points to the instance of the `Field` class):
          * <pre><code>
          * this.callback_handler
          * </code></pre>
@@ -222,7 +223,9 @@
                             events[handlerName] = "callback_" + handlerName;
                         }
                     } catch (e) {
-                        app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
+                        app.logger.error("Failed to set up event callback '" + handlerName +
+                            "' in " + this + "; error: " + e +
+                            "\n---\n" + eventHandler);
                         delete events[handlerName];
                     }
                 }
@@ -233,13 +236,16 @@
         },
 
         /**
-         * Renders the SugarField widget
-         * @method
-         * @return {Object} this Reference to the SugarField
+         * Renders a field widget.
+         *
+         * This method checks ACLs to choose the correct template.
+         * Once the template is rendered, DOM changes are bound to the model.
+         * @return {Object} The instance of this field.
          */
         render: function() {
-            this._loadTemplate();
+            if (this.disposed === true) throw new Error("Unable to render field because it's disposed: " + this);
 
+            this._loadTemplate();
             if (this.model instanceof Backbone.Model) {
                 /**
                  * Model property value.
@@ -250,30 +256,32 @@
             }
 
             this.$el.html(this.template(this));
-
-            this.bindDomChange(this.model, this.name);
-
+            this.unbindDom();
+            this.bindDomChange();
             return this;
         },
 
         /**
-         * Binds DOM changes to set field value on model.
-         * @param {Backbone.Model} model model this field is bound to.
-         * @param {String} fieldName field name.
+         * Binds DOM changes to a model.
+         *
+         * The default implementation of this method binds value changes of {@link View.Field#fieldTag} element
+         * to model's `Backbone.Model#set` method. Override this method if you need custom binding.
          */
-        bindDomChange: function(model, fieldName) {
-            if (!(model instanceof Backbone.Model)) return;
+        bindDomChange: function() {
+            if (!(this.model instanceof Backbone.Model)) return;
 
             var self = this;
             var el = this.$el.find(this.fieldTag);
-            // Bind input to the model
-            el.on("change", function(ev) {
-                model.set(fieldName, self.unformat(el.val()));
+            el.on("change", function() {
+                self.model.set(self.name, self.unformat(el.val()));
             });
         },
 
         /**
-         * Binds render to model changes.
+         * Binds model changes to this field.
+         *
+         * The default implementation makes sure this field gets re-rendered
+         * whenever the corresponding model attribute changes.
          */
         bindDataChange: function() {
             if (this.model) {
@@ -282,48 +290,84 @@
         },
 
         /**
-         * Formats values for display.
+         * Formats a value for display.
          *
-         * This function is meant to be overridden by a sugarFieldType.js controller class.
-         * @param {Mixed} value
-         * @return {Mixed}
+         * The default implementation returns `value` without modifying it.
+         * Override this method to provide custom formatting in field controller (`[type].js` file).
+         * @param {Mixed} value The value to format.
+         * @return {Mixed} Formatted value.
          */
         format: function(value) {
             return value;
         },
 
         /**
-         * Unformats values for display.
+         * Unformats a value for storing in a model.
          *
-         * This function is meant to be overridden by a sugarFieldType.js controller class
-         * @param {Mixed} value
-         * @return {Mixed}
+         * The default implementation returns `value` without modifying it.
+         * Override this method to provide custom unformatting in field controller (`[type].js` file).
+         * @param {Mixed} value The value to unformat.
+         * @return {Mixed} Unformatted value.
          */
         unformat: function(value) {
             return value;
         },
 
         /**
-         * Unbinds model event callbacks
-         * @method
-         */
-        unBind: function() {
-            //this will only work if all events we listen to, we set the scope to this
-            if (this.model && this.model.offByScope) {
-                this.model.offByScope(this);
-            }
-
-            delete this.model;
-        },
-
-        /**
-         * Handles how validation errors are displayed on fields
+         * Handles validation errors.
          *
-         * This method should be implemented in the extension dir per platform
+         * The default implementation does nothing.
+         * Override this method to provide custom display logic.
+         * <pre><code>
+         * app.view.Field = app.view.Field.extend({
+         *     handleValidationError: function(errors) {
+         *       // Your custom logic goes here
+         *     }
+         * });
+         * </code></pre>
          *
          * @param {Object} errors hash of validation errors
          */
         handleValidationError: function(errors) {
+            // Override this method
+        },
+
+        /**
+         * Gets HTML placeholder for a field.
+         * @return {String} HTML placeholder for the field as Handlebars safe string.
+         */
+        getPlaceholder: function() {
+            return new Handlebars.SafeString('<span sfuuid="' + this.sfId + '"></span>');
+        },
+
+        /**
+         * Unbinds DOM changes from field's element.
+         *
+         * This method performs the opposite of what {@link View.Field#bindDomChange} method does.
+         * Override this method if you need custom logic.
+         */
+        unbindDom: function() {
+            this.$el.find(this.fieldTag).off();
+        },
+
+        /**
+         * Disposes a field.
+         *
+         * Calls {@link View.Field#unbindDom} and {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            this.unbindDom();
+            app.view.Component.prototype._dispose.call(this);
+        },
+
+        /**
+         * Gets a string representation of this field.
+         * @return {String} String representation of this field.
+         */
+        toString: function() {
+            return "field-" + this.name + "-" + this.sfId + "-" +
+                app.view.Component.prototype.toString.call(this);
         }
 
     });

@@ -6,13 +6,13 @@
         // Check out Mango/sugarcrm/clients/base/fields/int/int.js
 
         unformat: function(value) {
-            // TODO: Implement
+            value = this.app.utils.formatNumber(value, 0, 0, "", ".");
             return value;
         },
 
         format: function(value) {
-            // TODO: Implement
-            return value;
+            value = this.app.utils.formatNumber(value, 0, 0, this.def.number_group_seperator, ".");
+            return !isNaN(value) ? value : "";
         }
 
     });

@@ -27,7 +27,6 @@ require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
 
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
-    private $_server = "";
     private $_config = array();
     private $_client = null;
     private $_indexName = "";
@@ -40,10 +39,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function __construct($params = array())
     {
         $this->_config = $params;
-        $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
+        $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
+        if (empty($this->_config['timeout']))
+        {
+            $this->_config['timeout'] = 15;
+        }
         $this->_client = new Elastica_Client($this->_config);
     }
 
@@ -85,6 +88,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return self::DEFAULT_INDEX_TYPE;
     }
 
+    protected function getOwnerField($bean)
+    {
+        // when running full indexing, $bean may be a stdClass and not a SugarBean
+        if ($bean instanceof SugarBean)
+        {
+            return $bean->getOwnerField();
+        }
+        else if (isset($bean->assigned_user_id))
+        {
+            return $bean->assigned_user_id;
+        }
+        else if (isset($bean->created_by))
+        {
+            return $bean->created_by;
+        }
+        return null;
+    }
+
     /**
      *
      * @param SugarBean $bean
@@ -102,15 +123,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //All fields have already been formatted to db values at this point so no further processing necessary
             if( !empty($bean->$fieldName) )
             {
-                // elasticsearch does not handle multiple types in a query very well
+                // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
-                $keyValues[$fieldName] = strval($bean->$fieldName);
+                // 2. for some reason, bean fields are encoded, decode them first
+                $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
             }
         }
 
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+
+        // to index owner
+        $ownerField = $this->getOwnerField($bean);
+        if ($ownerField)
+        {
+            $keyValues['doc_owner'] = strval($ownerField);
+        }
 
         if( empty($keyValues) )
             return null;
@@ -319,12 +348,129 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return false;
         }
 
+        // for group searches, do not append wildcard
+        if (preg_match('/\(.*\)/', $queryString))
+        {
+            return false;
+        }
+
         // when using double quotes, do not append wildcard
         if( strpos($queryString, '"') !==  false) {
             return false;
         }
 
         return true;
+    }
+
+    /*
+     * A sample team filter looks like this:
+       {"or": [
+         {"term":{"team_set_id":"1"}},
+         {"term":{"team_set_id":"46ca01386366bc910d074fb2f8200f03"}},
+         {"term":{"team_set_id":"East"}},
+         {"term":{"team_set_id":"West"}}]
+       }
+    */
+    protected function constructTeamFilter()
+    {
+        $teamFilter = new Elastica_Filter_Or();
+
+        $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
+
+        //TODO: Determine why term filters aren't working with the hyphen present.
+        //Term filters dont' work for terms with '-' present so we need to clean
+        $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
+
+        foreach ($teamIDS as $teamID)
+        {
+            $termFilter = new Elastica_Filter_Term();
+            $termFilter->setTerm('team_set_id',$teamID);
+            $teamFilter->addFilter($termFilter);
+        }
+
+        return $teamFilter;
+    }
+
+    protected function getTypeTermFilter($module)
+    {
+        $typeTermFilter = new Elastica_Filter_Term();
+        $typeTermFilter->setTerm('_type', $module);
+
+        return $typeTermFilter;
+    }
+
+    protected function getOwnerTermFilter()
+    {
+        $ownerTermFilter = new Elastica_Filter_Term();
+        $ownerTermFilter->setTerm('doc_owner', $GLOBALS['current_user']->id);
+
+        return $ownerTermFilter;
+    }
+
+    protected function constructModuleLevelFilter($module)
+    {
+        $requireOwner = ACLController::requireOwner($module, 'list');
+
+        $class = $GLOBALS['beanList'][$module];
+        $seed = new $class();
+        $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
+
+        if ($hasAdminAccess)
+        {
+            // user has admin access for this module, skip team filter
+            if ($requireOwner)
+            {
+                // need to be document owner to view
+                $moduleFilter = new Elastica_Filter_And();
+
+                // type term filter
+                $typeTermFilter = $this->getTypeTermFilter($module);
+                $moduleFilter->addFilter($typeTermFilter);
+
+                // owner term filter
+                $ownerTermFilter = $this->getOwnerTermFilter();
+                $moduleFilter->addFilter($ownerTermFilter);
+            }
+            else
+            {
+                // do not need to be document owner to view
+                // a single type term filter is all we need
+                $moduleFilter = $this->getTypeTermFilter($module);
+            }
+        }
+        else
+        {
+            // user does not have admin access, need team filter
+            $moduleFilter = new Elastica_Filter_And();
+
+            // team filter
+            $teamFilter = $this->constructTeamFilter();
+            $moduleFilter->addFilter($teamFilter);
+
+            // type term filter
+            $typeTermFilter = $this->getTypeTermFilter($module);
+            $moduleFilter->addFilter($typeTermFilter);
+
+            if ($requireOwner)
+            {
+                // need to be document owner to view, owner term filter
+                $ownerTermFilter = $this->getOwnerTermFilter();
+                $moduleFilter->addFilter($ownerTermFilter);
+            }
+        }
+        return $moduleFilter;
+    }
+
+    protected function constructMainFilter($finalTypes)
+    {
+        $mainFilter = new Elastica_Filter_Or();
+        foreach ($finalTypes as $module)
+        {
+            $moduleFilter = $this->constructModuleLevelFilter($module);
+            $mainFilter->addFilter($moduleFilter);
+        }
+
+        return $mainFilter;
     }
 
     /**
@@ -358,21 +504,43 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $fields = $this->getSearchFields($options);
             $queryObj->setFields($fields);
 
+            $s = new Elastica_Search($this->_client);
+            //Only search across our index.
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $s->addIndex($index);
+
+            $finalTypes = array();
+            if(!empty($options['moduleFilter']))
+            {
+                if( is_admin($GLOBALS['current_user']) ) {
+                    $finalTypes = $options['moduleFilter'];
+                }
+                else
+                {
+                    foreach ($options['moduleFilter'] as $moduleName)
+                    {
+                        $class = $GLOBALS['beanList'][$moduleName];
+                        $seed = new $class();
+                        // only add the module to the list if it can be viewed
+                        if ($seed->ACLAccess('ListView'))
+                        {
+                            $finalTypes[] = $moduleName;
+                        }
+                    }
+                }
+                if (!empty($finalTypes))
+                {
+                    $s->addTypes($finalTypes);
+                }
+            }
+
             if( !is_admin($GLOBALS['current_user']) )
             {
-                $teamFilter = new Elastica_Filter_Or();
-                $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
-                //TODO: Determine why term filters aren't working with the hyphen present.
-                //Term filters dont' work for terms with '-' present so we need to clean
-                $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
-                foreach ($teamIDS as $teamID)
-                {
-                    $termFilter = new Elastica_Filter_Term();
-                    $termFilter->setTerm('team_set_id',$teamID);
-                    $teamFilter->addFilter($termFilter);
-                }
+                // main filter
+                $mainFilter = $this->constructMainFilter($finalTypes);
+
                 $query = new Elastica_Query($queryObj);
-                $query->setFilter($teamFilter);
+                $query->setFilter($mainFilter);
             }
             else
             {
@@ -391,21 +559,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $typeFacet = new Elastica_Facet_Terms('_type');
                 $typeFacet->setField('_type');
                 // need to add filter for facet too
-                if (isset($teamFilter))
+                if (isset($mainFilter))
                 {
-                    $typeFacet->setFilter($teamFilter);
+                    $typeFacet->setFilter($mainFilter);
                 }
                 $query->addFacet($typeFacet);
             }
-
-            $s = new Elastica_Search($this->_client);
-            //Only search across our index.
-            $index = new Elastica_Index($this->_client, $this->_indexName);
-            $s->addIndex($index);
-
-            //Search across specific types (modules)
-            if(!empty($options['moduleFilter']))
-                $s->addTypes($options['moduleFilter']);
 
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);

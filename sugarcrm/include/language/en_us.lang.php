@@ -377,7 +377,7 @@ $app_list_strings = array (
         'Prof.' => 'Prof.',
       ),
   //time is in seconds; the greater the time the longer it takes;
-  'reminder_max_time' => 86400,
+  'reminder_max_time' => 90000,
   'reminder_time_options' => array( 60=> '1 minute prior',
                                   300=> '5 minutes prior',
                                   600=> '10 minutes prior',
@@ -2469,6 +2469,7 @@ $app_strings = array (
 //BEGIN SUGARCRM flav=dce ONLY
     'LBL_BROWSER_TITLE' => 'Sugar DCE',
 //END SUGARCRM flav=dce ONLY
+    'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
 //BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
 //END SUGARCRM flav!=dce ONLY
@@ -3680,6 +3681,60 @@ $app_list_strings['kbdocument_status_dom'] = array (
         'ZIMBABWE' => 'ZIMBABWE',
     );
 
+$app_list_strings['state_dom'] = array(
+    'AL' => 'Alabama',
+    'AK' => 'Alaska',
+    'AZ' => 'Arizona',
+    'AR' => 'Arkansas',
+    'CA' => 'California',
+    'CO' => 'Colorado',
+    'CT' => 'Connecticut',
+    'DE' => 'Delaware',
+    'DC' => 'District Of Columbia',
+    'FL' => 'Florida',
+    'GA' => 'Georgia',
+    'HI' => 'Hawaii',
+    'ID' => 'Idaho',
+    'IL' => 'Illinois',
+    'IN' => 'Indiana',
+    'IA' => 'Iowa',
+    'KS' => 'Kansas',
+    'KY' => 'Kentucky',
+    'LA' => 'Louisiana',
+    'ME' => 'Maine',
+    'MD' => 'Maryland',
+    'MA' => 'Massachusetts',
+    'MI' => 'Michigan',
+    'MN' => 'Minnesota',
+    'MS' => 'Mississippi',
+    'MO' => 'Missouri',
+    'MT' => 'Montana',
+    'NE' => 'Nebraska',
+    'NV' => 'Nevada',
+    'NH' => 'New Hampshire',
+    'NJ' => 'New Jersey',
+    'NM' => 'New Mexico',
+    'NY' => 'New York',
+    'NC' => 'North Carolina',
+    'ND' => 'North Dakota',
+    'OH' => 'Ohio',
+    'OK' => 'Oklahoma',
+    'OR' => 'Oregon',
+    'PA' => 'Pennsylvania',
+    'RI' => 'Rhode Island',
+    'SC' => 'South Carolina',
+    'SD' => 'South Dakota',
+    'TN' => 'Tennessee',
+    'TX' => 'Texas',
+    'UT' => 'Utah',
+    'VT' => 'Vermont',
+    'VA' => 'Virginia ',
+    'WA' => 'Washington',
+    'WV' => 'West Virginia',
+    'WI' => 'Wisconsin',
+    'WY' => 'Wyoming'
+);
+
   $app_list_strings['charset_dom'] = array(
     'BIG-5'     => 'BIG-5 (Taiwan and Hong Kong)',
     /*'CP866'     => 'CP866', // ms-dos Cyrillic */
@@ -4112,6 +4167,17 @@ $app_list_strings['eapm_list_documents']= array(
         2 => 'Access',
         3 => 'Invalid',
     );
+$app_list_strings['oauth_type_dom'] = array(
+    'oauth1' => 'OAuth 1.0',
+    'oauth2' => 'OAuth 2.0',
+);
+$app_list_strings['oauth_client_type_dom'] = array(
+    'user' => 'Sugar User',
+    'mobile' => 'Mobile Client',
+    'plugin' => 'Plug-in',
+    'support_portal' => 'Support Portal',
+    'other' => 'other',
+);
 
 $app_list_strings ['emailTemplates_type_list'] = array (
     '' => '' ,

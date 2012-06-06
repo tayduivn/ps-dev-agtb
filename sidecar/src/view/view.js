@@ -8,8 +8,6 @@
      */
     app.view.View = app.view.Component.extend({
 
-        className: "view",
-
         /**
          * TODO: add docs (describe options parameter, see Component class for an example).
          * @constructor
@@ -17,9 +15,6 @@
          */
         initialize: function(options) {
             app.view.Component.prototype.initialize.call(this, options);
-
-            // TODO: Do we need this?
-            //_.bindAll(this);
 
             /**
              * Name of the view (required).
@@ -33,12 +28,11 @@
              * @member {View.View}
              */
             this.id = options.id || this.getID();
-
             /**
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = app.template.getView(this.name, this.module) ||
+            this.template = options.template || app.template.getView(this.name, this.module) ||
                             app.template.getView(this.name);
 
             /**
@@ -50,17 +44,6 @@
             this.fields = {};
 
             /**
-             * CSS class.
-             *
-             * CSS class which is specified as the `className` parameter
-             * in `params` hash for {@link View.ViewManager#createView} method.
-             *
-             * By default the view is rendered as `div` element with CSS class `"view <viewName>"`.
-             * @cfg {String} className
-             */
-            this.$el.addClass(options.className || this.name || "");
-
-            /**
              * A template to use for view fields if a field does not have a template defined for its parent view.
              * Defaults to `"default"`.
              *
@@ -70,6 +53,45 @@
              * @property {String}
              */
             this.fallbackFieldTemplate = "default";
+
+            /**
+             * Reference to the parent layout instance.
+             * @property {View.Layout}
+             */
+            this.layout = this.options.layout;
+
+            var defaultValue = {};
+            defaultValue[this.module] = this.module;
+
+            /**
+             * Singular i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.moduleSingular = app.lang.getAppListStrings("moduleListSingular", defaultValue)[this.module];
+
+            /**
+             * Pluralized i18n-ed module name.
+             * @property {String}
+             * @member View.View
+             */
+            this.modulePlural = app.lang.getAppListStrings("moduleList", defaultValue)[this.module];
+
+            this.$el.data("comp", "view_" + this.name);
+        },
+
+        /**
+         * Sets template option.
+         *
+         * If the given option already exists it is augmented by the value of the given `option` parameter.
+         * See Handlebars.js documentation for details.
+         * @param {String} key Option key.
+         * @param {Object} option Option value.
+         */
+        setTemplateOption: function(key, option) {
+            this.options = this.options || {};
+            this.options.templateOptions = this.options.templateOptions || {};
+            this.options.templateOptions[key] = _.extend({}, this.options.templateOptions[key], option);
         },
 
         /**
@@ -77,30 +99,47 @@
          *
          * This method uses this view's {@link View.View#template} property to render itself.
          * @param ctx Template context.
+         * @param options(optional) Template options.
+         * <pre><code>
+         * {
+         *    helpers: helpers,
+         *    partials: partials,
+         *    data: data
+         * }
+         * </code></pre>
+         * See Handlebars.js documentation for details.
          * @protected
          */
-        _renderWithContext: function(ctx) {
+        _renderWithContext: function(ctx, options) {
             if (this.template) {
                 try {
-                    this.$el.html(this.template(ctx));
+                    this.$el.html(this.template(ctx, options));
+                    // See the following resources
+                    // https://github.com/documentcloud/backbone/issues/310
+                    // http://tbranyen.com/post/missing-jquery-events-while-rendering
+                    // http://stackoverflow.com/questions/5125958/backbone-js-views-delegateevents-do-not-get-bound-sometimes
+                    this.delegateEvents();
                 } catch (e) {
-                    app.logger.error("Failed to render '" + this.name + "' view.\n" + e);
+                    app.logger.error("Failed to render " + this + "\n" + e);
                     // TODO: trigger app event to render an error message
                 }
             }
         },
 
         /**
-         * Renders the view onto the page.
+         * Renders a view onto the page.
          *
-         * This method uses this view as the context for the view's Handlebars {@link View.View#template}.
+         * The method renders this view with field placeholders.
+         *
+         * This method uses this view as the context for the view's Handlebars {@link View.View#template}
+         * and view's `options.templateOptions` property as template options.
          * You can override this method if you have custom rendering logic and don't use Handlebars templating
          * or if you need to pass different context object for the template.
          *
          * Example:
          * <pre><code>
          * app.view.views.CustomView = app.view.View.extend({
-         *    _render: function() {
+         *    _renderSelf: function() {
          *      var customCtx = {
          *         // Your custom context for this view template
          *      };
@@ -110,7 +149,7 @@
          *
          * // Or totally different logic that doesn't use this.template
          * app.view.views.AnotherCustomView = app.view.View.extend({
-         *    _render: function() {
+         *    _renderSelf: function() {
          *       // Never do this :)
          *       return "&lt;div&gt;Hello, world!&lt;/div&gt;";
          *    }
@@ -120,8 +159,8 @@
          * </code></pre>
          * @protected
          */
-        _render: function() {
-            this._renderWithContext(this);
+        _renderSelf: function() {
+            this._renderWithContext(this, this.options.templateOptions);
         },
 
         /**
@@ -136,19 +175,31 @@
             try {
                 field.render();
             } catch (e) {
-                app.logger.error("Failed to render field '" + field.name + "' on '" + this.name + "' view.\n" + e);
+                app.logger.error("Failed to render " + field + " on " + this + "\n" + e);
                 // TODO: trigger app event to render an error message
             }
         },
 
         /**
-         * Renders the view onto the page.
-         * See Backbone.View documentation for details.
+         * Renders a view onto the page.
+         *
+         * The method first renders this view with field placeholders {@link View.View#_renderSelf}
+         * and then for each field invokes {@link View.View#_renderField}.
+         *
+         * You can override this method if you don't need field rendering.
+         * Example:
+         * <pre><code>
+         * app.view.views.CustomView = app.view.View.extend({
+         *    _render: function() {
+         *        // Your custom rendering logic
+         *    }
+         * });
+         * </code></pre>
          * @return {Object} Reference to this view.
          */
-        render: function() {
+        _render: function() {
             if (app.acl.hasAccess(this.name, this.module)) {
-                this._render();
+                this._renderSelf();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
                     this._renderField(field);
@@ -218,11 +269,45 @@
         },
 
         /**
+         * Returns a field by name.
+         * @param {String} name Field name.
+         * @return {View.Field} Instance of the field widget.
+         */
+        getField: function(name) {
+            return _.find(this.fields, function(field) {
+                return field.name == name;
+            });
+        },
+
+        /**
          * Returns the html id of this view's el. Will create one if one doesn't exist.
          * @return {String} id of this view.
          */
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
+        },
+
+        /**
+         * Disposes a view.
+         *
+         * This method disposes view fields and calls
+         * {@link View.Component#_dispose} method of the base class.
+         * @protected
+         */
+        _dispose: function() {
+            _.each(this.fields, function(field) {
+                field.dispose();
+            });
+            this.fields = {};
+            app.view.Component.prototype._dispose.call(this);
+        },
+
+        /**
+         * Gets a string representation of this view.
+         * @return {String} String representation of this view.
+         */
+        toString: function() {
+            return "view-" + this.name + "-" + app.view.Component.prototype.toString.call(this);
         }
 
     });

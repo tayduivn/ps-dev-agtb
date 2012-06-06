@@ -125,6 +125,19 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
+        {
+            //END SUGARCRM flav=pro ONLY
+            $lhs->$lhsLinkName->addBean($rhs);
+            $rhs->$rhsLinkName->addBean($lhs);
+
+            $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
+            $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
+            //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
 
@@ -225,6 +238,21 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            if ($lhs->$lhsLinkName instanceof Link2)
+            {
+                $lhs->$lhsLinkName->load();
+                $this->callBeforeDelete($lhs, $rhs, $lhsLinkName);
+            }
+
+            if ($rhs->$rhsLinkName instanceof Link2)
+            {
+                $rhs->$rhsLinkName->load();
+                $this->callBeforeDelete($rhs, $lhs, $rhsLinkName);
+            }
+        }
+
         $dataToRemove = array(
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id
@@ -300,15 +328,17 @@ class M2MRelationship extends SugarRelationship
         if ($this->linkIsLHS($link)) {
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
+            $relatedSeed = BeanFactory::getBean($this->getRHSModule());
             if (!empty($params['where']))
-                $whereTable = (empty($params['right_join_table_alias']) ? BeanFactory::getBean($this->getRHSModule())->table_name : $params['right_join_table_alias']);
+                $whereTable = (empty($params['right_join_table_alias']) ? $relatedSeed->table_name : $params['right_join_table_alias']);
         }
         else
         {
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
+            $relatedSeed = BeanFactory::getBean($this->getLHSModule());
             if (!empty($params['where']))
-                $whereTable = (empty($params['left_join_table_alias']) ? BeanFactory::getBean($this->getLHSModule())->table_name : $params['left_join_table_alias']);
+                $whereTable = (empty($params['left_join_table_alias']) ? $relatedSeed->table_name : $params['left_join_table_alias']);
         }
         $rel_table = $this->getRelationshipTable();
 
@@ -323,6 +353,14 @@ class M2MRelationship extends SugarRelationship
 
         $deleted = !empty($params['deleted']) ? 1 : 0;
         $from = $rel_table;
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!empty($params['enforce_teams']))
+        {
+            if ($rel_table != $relatedSeed->table_name)
+                $from .= ", $relatedSeed->table_name";
+            $relatedSeed->add_team_security_where_clause($from);
+        }
+        //END SUGARCRM flav=pro ONLY
         if (!empty($params['where']))
             $from .= ", $whereTable";
 

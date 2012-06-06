@@ -22,11 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/SugarApi/ServiceBase.php');
 require_once('include/api/SugarApi/ServiceDictionaryRest.php');
-require_once('include/SugarSecurity/SugarSecurityFactory.php');
+require_once('include/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
 
-    // Until we get rid of the old /service/core stuff, we need the session id around
     public $sessionId;
     public $user;
 
@@ -58,7 +57,23 @@ class RestService extends ServiceBase {
 
             if ( count($_GET) > 0 ) {
                 // This has some get arguments, let's parse those in
+                // We need to pre-parse this for JSON-encoded arguments because the XSS stuff will mangle them, and to keep symmetrywith POST style data
                 $getVars = $_GET;
+                if ( !empty($route['jsonParams']) ) {
+                    foreach ( $route['jsonParams'] as $fieldName ) {
+                        if ( isset($_GET[$fieldName]) && $_GET[$fieldName]{0} == '{' ) {
+                            // This may be JSON data
+                            $rawValue = $GLOBALS['RAW_REQUEST'][$fieldName];
+                            $jsonData = json_decode($rawValue,true,32);
+                            if ( $jsonData == null ) {
+                                // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
+                                continue;
+                            }
+                            // Need to dig through this array and make sure all of the elements in here are safe
+                            $getVars[$fieldName] = securexss($jsonData);
+                        }
+                    }
+                }
             } else {
                 $getVars = array();
             }
@@ -87,6 +102,7 @@ class RestService extends ServiceBase {
                         // FIXME: Handle improperly encoded JSON
                         $postVars = array();
                     }
+                    $postVars = securexss($postVars);
                 } else {
                     // No posted variables
                     $postVars = array();
@@ -119,7 +135,8 @@ class RestService extends ServiceBase {
                 } else {
                     $encoding = false;
                 }
-                header('Content-Type: application/json');
+                $encoding = false;
+                // header('Content-Type: application/json');
                 if ( $encoding !== false ) {
                     header('Content-Encoding: '.$encoding);
                     $gzData = gzencode(json_encode($output));
@@ -130,12 +147,8 @@ class RestService extends ServiceBase {
                 }
             }
 
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
         } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
-            $this->handleException($apiException);
+            $this->handleException($e);
         }
     }
 
@@ -156,8 +169,17 @@ class RestService extends ServiceBase {
         return $outputVars;
     }
 
-    protected function handleException(SugarApiException $exception) {
-        header("HTTP/1.1 {$exception->errorCode}");
+    protected function handleException(Exception $exception) {
+        if ( is_a($exception,"SugarApiException") ) {
+            $httpError = $exception->errorCode;
+        } else if ( is_a($exception,"OAuth2ServerException") ) {
+            $httpError = $exception->getHttpCode();
+        } else {
+            $httpError = 500;
+        }
+        header("HTTP/1.1 {$httpError}");
+
+        $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
         
         // TODO: Translate error messages
         echo("ERROR: ".$exception->getMessage());
@@ -178,20 +200,23 @@ class RestService extends ServiceBase {
     protected function authenticateUser() {
         $valid = false;
         
-        
-
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->verifyAccessToken($this->sessionId);
         } else if ( isset($_REQUEST[session_name()]) ) {
             // They just have a regular web session
             $this->sessionId = $_REQUEST[session_name()];
+            // The OAuth server starts a session to validate the token, we have to start it manually, like a sucker.
+            session_start();
         }
         
-        if ( !empty($this->sessionId) ) {            
-            $this->security = SugarSecurityFactory::loadClassFromSession($this->sessionId);
-            if ( $this->security != null ) {
+        if ( !empty($this->sessionId) ) {
+            if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
+                $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
             }
         }
 
@@ -199,6 +224,12 @@ class RestService extends ServiceBase {
         if ( $valid === false ) {
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarApplication::trackLogin();
+        //END SUGARCRM flav=pro ONLY
+
+        LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];
     }

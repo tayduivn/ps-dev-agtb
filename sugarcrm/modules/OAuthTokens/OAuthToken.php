@@ -24,6 +24,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'Zend/Oauth/Provider.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 
+/**
+ * OAuth token
+ */
 class OAuthToken extends SugarBean
 {
 	public $module_dir = 'OAuthTokens';
@@ -70,6 +73,7 @@ class OAuthToken extends SugarBean
 	/**
 	 * Associate the token with the consumer key
 	 * @param OAuthKey $consumer
+	 * @return OAuthToken
 	 */
 	public function setConsumer($consumer)
 	{
@@ -81,6 +85,7 @@ class OAuthToken extends SugarBean
 	/**
 	 * Set callback URL for request token
 	 * @param string $url
+	 * @return OAuthToken
 	 */
     public function setCallbackURL($url)
     {
@@ -121,18 +126,18 @@ class OAuthToken extends SugarBean
     /**
      * Load token by ID
      * @param string $token
+     * @param string $oauth_type Either "oauth1" or "oauth2", defaults to "oauth1"
 	 * @return OAuthToken
      */
-    static function load($token)
+    static function load($token,$oauth_type="oauth1")
 	{
 	    $ltoken = new self();
 	    $ltoken->retrieve($token);
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
         if(!empty($ltoken->consumer)) {
-            $ltoken->consumer_obj = new OAuthKey();
-            $ltoken->consumer_obj->retrieve($ltoken->consumer);
-            if(empty($ltoken->consumer_obj->id)) {
+            $ltoken->consumer_obj = BeanFactory::getBean('OAuthKeys',$ltoken->consumer);
+            if(empty($ltoken->consumer_obj->id) || $ltoken->consumer_obj->oauth_type != $oauth_type ) {
                 return null;
             }
         }
@@ -280,6 +285,8 @@ function displayDateFromTs($focus, $field, $value, $view='ListView')
 {
     $field = strtoupper($field);
     if(!isset($focus[$field])) return '';
+    // No date, don't return anything
+    if($focus[$field]==-1) return '';
     global $timedate;
     return $timedate->asUser($timedate->fromTimestamp($focus[$field]));
 }

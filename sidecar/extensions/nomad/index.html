@@ -22,6 +22,51 @@
     <script language="javascript" src="../../lib/stash/stash.js"></script>
     <script language="javascript" src="../../lib/async/async.js"></script>
 
+    <!-- Pre-compiled templates -->
+    <!-- Fields -->
+    <script src='compiled/login-text.js'></script>
+    <script src='compiled/login-password.js'></script>
+    <script src='compiled/login-url.js'></script>
+    <script src='compiled/list-text.js'></script>
+    <script src='compiled/list-int.js'></script>
+    <script src='compiled/list-name.js'></script>
+    <script src='compiled/detail-text.js'></script>
+    <script src='compiled/detail-url.js'></script>
+    <script src='compiled/edit-bool.js'></script>
+    <script src='compiled/edit-date.js'></script>
+    <script src='compiled/edit-datetimecombo.js'></script>
+    <script src='compiled/edit-enum.js'></script>
+    <script src='compiled/edit-email.js'></script>
+    <script src='compiled/edit-email_temp.js'></script>
+    <script src='compiled/edit-float.js'></script>
+    <script src='compiled/edit-int.js'></script>
+    <script src='compiled/edit-phone.js'></script>
+    <script src='compiled/edit-radio.js'></script>
+    <script src='compiled/edit-relate.js'></script>
+    <script src='compiled/edit-text.js'></script>
+    <script src='compiled/edit-textarea.js'></script>
+    <script src='compiled/edit-url.js'></script>
+    <script src='compiled/field.messages.js'></script>
+
+    <!-- Views -->
+    <script src='compiled/header.js'></script>
+    <script src='compiled/left.menu.js'></script>
+    <script src='compiled/right.menu.js'></script>
+    <script src='compiled/right.menu.relationships.js'></script>
+    <script src='compiled/login.js'></script>
+    <script src='compiled/list.item.js'></script>
+    <script src='compiled/list.js'></script>
+    <script src='compiled/detail.js'></script>
+    <script src='compiled/edit.js'></script>
+    <script src='compiled/panel.alert.js'></script>
+    <script src='compiled/searchlist.js'></script>
+    <script src='compiled/list.menu.item.js'></script>
+    <script src='compiled/list.menu.header.js'></script>
+    <script src='compiled/list.associate.item.js'></script>
+    <script src='compiled/list.associate.header.js'></script>
+    <script src='compiled/list.relationships.header.js'></script>
+    <script src='compiled/pickerlist.js'></script>
+
     <!-- Sidecar scripts -->
     <script src='../../lib/sugarapi/sugarapi.js'></script>
     <script src='../../src/app.js'></script>
@@ -36,6 +81,7 @@
     <script src='../../src/core/language.js'></script>
     <script src='../../src/core/metadata-manager.js'></script>
     <script src='../../src/core/acl.js'></script>
+    <script src='../../src/core/user.js'></script>
     <script src='../../src/utils/logger.js'></script>
 
     <script src='../../src/data/bean.js'></script>
@@ -53,55 +99,34 @@
 
     <!-- Nomad extension scripts -->
     <script src='config.js'></script>
+    <script src='views/field.js'></script>
     <script src='hbt-helpers.js'></script>
-    <!--<script src='layouts/list-layout.js'></script>-->
-    <!--<script src='layouts/detail-layout.js'></script>-->
-    <!--<script src='layouts/edit-layout.js'></script>-->
+    <script src='layouts/associate-layout.js'></script>
+    <script src='layouts/list-layout.js'></script>
+    <script src='layouts/relate-layout.js'></script>
+    <script src='layouts/relationships-layout.js'></script>
+    <script src='layouts/pickerlist-layout.js'></script>
     <script src='views/header-view.js'></script>
     <script src='views/alert-view.js'></script>
     <script src='views/login-view.js'></script>
     <script src='views/list-view.js'></script>
+    <script src='views/searchlist-view.js'></script>
+    <script src='views/searchassociate-view.js'></script>
+    <script src='views/searchrelationships-view.js'></script>
     <script src='views/detail-view.js'></script>
     <script src='views/edit-view.js'></script>
-
-    <!-- Pre-compiled templates -->
-    <!-- Fields -->
-    <script src='compiled/login-text.js'></script>
-    <script src='compiled/login-password.js'></script>
-    <script src='compiled/login-url.js'></script>
-    <script src='compiled/list-text.js'></script>
-    <script src='compiled/list-int.js'></script>
-    <script src='compiled/list-name.js'></script>
-    <!--
-    <script src='compiled/detail-enum.js'></script>
-    <script src='compiled/detail-int.js'></script>
-    <script src='compiled/detail-name.js'></script>
-    -->
-    <script src='compiled/detail-text.js'></script>
-    <script src='compiled/edit-enum.js'></script>
-    <script src='compiled/edit-int.js'></script>
-    <script src='compiled/edit-name.js'></script>
-    <script src='compiled/edit-text.js'></script>
-    <script src='compiled/edit-textarea.js'></script>
-    <script src='compiled/left.menu.js'></script>
-    <script src='compiled/right.menu.js'></script>
-
-    <!-- Buttons -->
-    <script src='compiled/login-loginButton.js'></script>
-
-    <!-- Views -->
-    <script src='compiled/header.js'></script>
-    <script src='compiled/alert.js'></script>
-    <script src='compiled/login.js'></script>
-    <script src='compiled/list.item.js'></script>
-    <script src='compiled/list.js'></script>
-    <script src='compiled/detail.js'></script>
-    <script src='compiled/edit.js'></script>
+    <script src='views/associate-view.js'></script>
+    <script src='views/pickerlist-view.js'></script>
 
     <!-- Controllers for fields -->
     <script src='templates/fields/int/int.js'></script>
+    <script src='templates/fields/float/float.js'></script>
     <script src='templates/fields/enum/enum.js'></script>
+    <script src='templates/fields/email/email.js'></script>
+    <script src='templates/fields/email_temp/email_temp.js'></script>
+    <script src='templates/fields/phone/phone.js'></script>
     <script src='templates/fields/textarea/textarea.js'></script>
+    <script src='templates/fields/relate/relate.js'></script>
 
     <script src='nomad.js'></script>
     <script src='meta-bootstrap.js'></script>
@@ -125,7 +150,7 @@
 <div id="nomad">
     <div id="header" class="navbar navbar-fixed-top hide"></div>
     <div id="content"></div>
-    <div id="alert" style="display: none;"></div>
+    <div id="alert"></div>
 </div>
 </body>
 

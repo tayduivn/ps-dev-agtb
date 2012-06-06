@@ -1,4 +1,54 @@
 (function(app) {
+
+    /**
+     * Manages routing behavior.
+     *
+     *
+     * The default implementation provides `before` and `after` callbacks that are executed
+     * before and after a route gets triggered.
+     *
+     * @class Core.Routing
+     * @singleton
+     * @alias SUGAR.App.routing
+     */
+    app.augment("routing", {
+
+        /**
+         * Checks if a user is authenticated before triggering a route.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         * @return {Boolean} Flag indicating if the route should be triggered (`true`).
+         */
+        before: function(route, args) {
+            // skip this check for all white-listed routes (app.config.unsecureRoutes)]
+            if (_.indexOf(app.config.unsecureRoutes, route) >= 0) return true;
+
+            // Check if a user is un-athenticated and redirect him to login
+            if (!app.api.isAuthenticated()) {
+                app.router.login();
+                return false;
+            }
+            else if (!app.isSynced) {
+                Backbone.history.stop();
+                app.sync();
+                return false;
+            }
+            return true;
+        },
+
+        /**
+         * Gets called after a route gets triggered.
+         *
+         * The default implementation does nothing.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         */
+        after: function(route, args) {
+            // Do nothing
+        }
+
+    });
+
     /**
      * Router manages the watching of the address hash and routes to the correct handler.
      * @class Core.Router
@@ -6,6 +56,7 @@
      * @alias SUGAR.App.router
      */
     var Router = Backbone.Router.extend({
+
         /**
          * Routes hash map.
          * @property {Object}
@@ -13,7 +64,7 @@
         routes: {
             "": "index",
             "logout": "logout",
-            ":module": "index",
+            ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
             ":module/:id/:action": "record",
@@ -21,20 +72,36 @@
         },
 
         /**
-         * See `Backbone.Router.navigate` documentation for details.
+         * Calls {@link Core.Routing#before} before invoking a route handler
+         * and {@link Core.Routing#after} after the handler is invoked.
          *
-         * Sidecar overrides this method to redirect the app to the login route if the app is not authenticated.
-         * @param {String} fragment URL fragment.
-         * @param options(optional) Route options.
+         * @param {Function} handler Route callback handler.
+         * @private
          */
-        navigate: function(fragment, options) {
-            if (!(app.api.isAuthenticated())) {
-                Backbone.Router.prototype.navigate.call(this, fragment);
-                this.login();
-                Backbone.history.stop();
-            } else {
-                Backbone.Router.prototype.navigate.call(this, fragment, options);
+        _routeHandler: function(handler) {
+            var args = Array.prototype.slice.call(arguments, 1),
+                route = handler.route;
+
+            if (app.routing.before(route, args)) {
+                handler.apply(this, args);
+                app.routing.after(route, args);
             }
+        },
+
+        /**
+         * Registeres a handler for a named route.
+         *
+         * This method wraps the handler into {@link Core.Router#_routeHandler} method.
+         *
+         * @param {String} route Route expression.
+         * @param {String} name Route name.
+         * @param {Function/String} callback Route handler.
+         */
+        route: function(route, name, callback) {
+            if (!callback) callback = this[name];
+            callback.route = name;
+            callback = _.wrap(callback, this._routeHandler);
+            Backbone.Router.prototype.route.call(this, route, name, callback);
         },
 
         /**
@@ -46,7 +113,9 @@
             app.logger.debug("Navigating back...");
             window.history.back();
         },
-
+        go: function(steps) {
+            window.history.go(steps);
+        },
         /**
          * Starts Backbone history which in turn starts routing the hashtag.
          *
@@ -95,16 +164,33 @@
             return route;
         },
 
-        // Routes
+        // ----------------------------------------------------
+        // Route handlers
+        // ----------------------------------------------------
 
         /**
          * Handles `index` route.
+         *
+         * Loads `home` layout for `Home` module or `list` route with default module defined in app.config
+         */
+        index: function() {
+            app.logger.debug("Route changed to index");
+            if (app.config.defaultModule) {
+                this.list(app.config.defaultModule);
+            }
+            else {
+                this.layout("Home", "home");
+            }
+        },
+
+        /**
+         * Handles `list` route.
          * @param module Module name.
          */
-        index: function(module) {
-            app.logger.debug("Route changed to index of " + module);
+        list: function(module) {
+            app.logger.debug("Route changed to list of " + module);
             app.controller.loadView({
-                module: module || "Cases", //TODO: This should probably not be Casess
+                module: module,
                 layout: "list"
             });
         },
@@ -154,15 +240,9 @@
             app.logger.debug("Loging out");
             var self = this;
             app.logout({success: function(data) {
-                self.navigate("#");
+                app.router.navigate("#");
+                app.router.login();
             }});
-        },
-        signup: function() {
-            app.controller.loadView({
-                module: "Signup",
-                layout: "signup",
-                create: true
-            });
         },
 
         /**

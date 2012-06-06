@@ -43,7 +43,7 @@
 <div id="arrow" title="Show" class="up"></div>
 <div id="footer">
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
-        title="&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
+        title="{$STATISTICS}" border="0"/> <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
     <div id="partner">
     {foreach from=$DYNAMICDCACTIONS item=action}
         {$action.script} {$action.image} 
@@ -61,6 +61,16 @@
   @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);
 </style>
 <script type="text/javascript">
+/*
+$('#zenbox_tab').click(function(){
+
+    window.open(
+            'http://support.sugarcrm.com/',
+            '_blank' // <- This is what makes it open in a new window.
+    );
+
+});
+
   if (typeof(Zenbox) !== "undefined") {
     Zenbox.init({
       dropboxID:   "20047068",
@@ -70,9 +80,11 @@
       tabPosition: "Left"
     });
   }
+  */
  {/literal}
 
 {if !$DISABLE_FEEDBACK_WIDGET}{literal}
+/*
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
 	$('#zenbox_tab').css('text-indent','0px').attr('title','').html("Feedback");
@@ -91,7 +103,9 @@ $('#zenbox_tab').ready(function(){
 	}
 		
 });
+*/
 {/literal}{/if}{/if}
+
 </script>
 {literal}
 

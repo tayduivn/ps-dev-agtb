@@ -729,10 +729,12 @@ class ModuleBuilderController extends SugarController
 
     function action_saveLayout()
     {
+        $parserview = $_REQUEST['view'];
         //BEGIN SUGARCRM flav=ent ONLY
         if (isset($_REQUEST['PORTAL'])) {
             $client = 'portal';
-            $this->view = 'portallayoutview';
+            $this->view = 'portallayoutview' ;
+            $parserview = $client . strtolower($parserview);
         }
         else {
             //END SUGARCRM flav=ent ONLY
@@ -743,12 +745,14 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
 
-        $parser = ParserFactory::getParser($_REQUEST['view'],
-            $_REQUEST['view_module'],
-            isset($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
-            null,
-            $client);
-        $parser->writeWorkingFile();
+
+        $parser = ParserFactory::getParser ( $parserview,
+                                             $_REQUEST['view_module'],
+                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client) ;
+        $parser->writeWorkingFile () ;
+
 
         if (!empty($_REQUEST ['sync_detail_and_edit']) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower($parser->_view) == MB_EDITVIEW) {
@@ -761,10 +765,12 @@ class ModuleBuilderController extends SugarController
 
     function action_saveAndPublishLayout()
     {
+        $parserview = $_REQUEST['view'];
         //BEGIN SUGARCRM flav=ent ONLY
         if (isset($_REQUEST['PORTAL'])) {
             $client = 'portal';
-            $this->view = 'portallayoutview';
+            $this->view = 'portallayoutview' ;
+            $parserview = $client . strtolower($parserview);
         }
         else {
             //END SUGARCRM flav=ent ONLY
@@ -773,19 +779,19 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser($_REQUEST['view'],
-            $_REQUEST['view_module'],
-            isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
-            null,
-            $client);
-        $parser->handleSave();
+        $parser = ParserFactory::getParser ( $parserview,
+                                             $_REQUEST['view_module'],
+                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client);
+        $parser->handleSave () ;
 
-        if (!empty($_REQUEST ['sync_detail_and_edit']) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
-            if (strtolower($parser->_view) == MB_EDITVIEW) {
-                $parser2 = ParserFactory::getParser(MB_DETAILVIEW, $_REQUEST ['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
-                $parser2->setUseTabs($parser->getUseTabs());
-                $parser2->handleSave();
-            }
+        if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->setUseTabs($parser->getUseTabs());
+                $parser2->handleSave () ;
+	        }
         }
     }
 

@@ -25,7 +25,7 @@ require_once('include/api/SugarApi/SugarApi.php');
 
 abstract class ServiceBase {
     abstract public function execute();
-    abstract protected function handleException(SugarApiException $exception);
+    abstract protected function handleException(Exception $exception);
     
     protected function loadServiceDictionary($dictionaryName) {
         require_once("include/api/SugarApi/{$dictionaryName}.php");

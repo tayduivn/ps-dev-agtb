@@ -45,6 +45,10 @@
         },
 
         clear: function(options) {
+            _.each(this.children, function(child) {
+                child.clear(options);
+            });
+
             this.children = [];
             this.parent = null;
             Backbone.Model.prototype.clear.call(this, options);
@@ -121,6 +125,7 @@
                 this._prepare(modelId, create)
             );
 
+            return this;
         },
 
         /**
@@ -181,6 +186,14 @@
             } else {
                 model = app.data.createRelatedBean(parentModel, null, link);
                 collection = app.data.createRelatedCollection(parentModel, link);
+            }
+
+            if (!this.has("parentModule")) {
+                this.set({ "parentModule": parentModel.module }, { silent: true });
+            }
+
+            if (!this.has("module")) {
+                this.set({ "module": model.module }, { silent: true });
             }
 
             return {

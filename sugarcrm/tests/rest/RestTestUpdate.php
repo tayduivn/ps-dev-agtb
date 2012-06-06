@@ -24,16 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestUpdate extends RestTestBase
-{
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name, $this->_user->user_name);
-    }
-
+class RestTestUpdate extends RestTestBase {
     public function tearDown()
     {
         if (isset($this->account->id)) {
@@ -44,7 +35,7 @@ class RestTestUpdate extends RestTestBase
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
             $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testUpdate()
@@ -59,7 +50,13 @@ class RestTestUpdate extends RestTestBase
         $account2 = new Account();
         $account2->retrieve($this->account->id);
 
-        $this->assertEquals("UNIT TEST - AFTER", $account2->name, "Did not update the account name.");
+        $this->assertEquals("UNIT TEST - AFTER",
+                            $account2->name,
+                            "Did not set the account name.");
+
+        $this->assertEquals($restReply['reply']['name'],
+                            $account2->name,
+                            "Rest Reply and Bean Do Not Match.");
     }
 
 
@@ -94,6 +91,13 @@ class RestTestUpdate extends RestTestBase
         $restReply = $this->_restCall("Contacts/{$this->contact->id}");
 
         $this->assertEquals($restReply['reply']['email'], $emails,"Returned emails don't match");
-        $this->assertEquals("UNIT TEST - AFTER", $contact2->name, "Did not update the contact email.");
+
+        $this->assertEquals("UNIT TEST - AFTER",
+                            $contact2->name,
+                            "Did not set the contact name.");
+
+        $this->assertEquals($restReply['reply']['name'],
+                            $contact2->name,
+                            "Rest Reply and Bean Do Not Match.");
     }
 }
