@@ -28,7 +28,7 @@
                         userId: app.user.get('id')
                     });
 
-                if (layout === "list" && params.link) {
+                if (layout === "relationships") {
                     var module = params.parentModule;
                     var id = params.parentModelId;
                     var link = params.link;
@@ -36,13 +36,20 @@
                         {
                             createURL: app.nomad.buildLinkRoute(module,id,link,"create"),
                             associateURL: app.nomad.buildLinkRoute(module,id,link,"associate"),
-                            module: module
+                            module: params.link
                         });
 
-                } else {
-                    this._renderRightList(app.template.get('right.menu'),_.keys(app.metadata.getModuleList()));
+                } else if (layout === "detail") {
+                    this._renderRightList(app.template.get('right.menu.relationships'),
+                        {
+                            createURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/create",
+                            associateURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/associate",
+                            module: ""
+                        });
                 }
-
+                else {
+                    this._renderRightList(app.template.get('right.menu'), _.keys(app.metadata.getModuleList()));
+                }
             }
             return this;
         },
@@ -52,7 +59,6 @@
         onModuleTabClicked: function() {
             $(document.body).removeClass('onL');
         },
-
         onHomeClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onL');

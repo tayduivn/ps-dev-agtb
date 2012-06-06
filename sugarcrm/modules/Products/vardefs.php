@@ -457,14 +457,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
       'vname' => 'LBL_QUOTE',
       'source'=>'non-db',
     ),
-  'opportunities' =>
-  array (
-      'name' => 'opportunities',
-      'type' => 'link',
-      'relationship' => 'products_opportunities',
-      'vname' => 'LBL_OPPORTUNITY',
-      'source'=>'non-db',
-    ),
 //BEGIN SUGARCRM flav=ent ONLY
     'best_case' =>
     array (
@@ -580,7 +572,7 @@ array (
   array(
     'name' => 'opportunities',
     'type' => 'link',
-    'relationship' => 'products_opportunities',
+    'relationship' => 'opportunities_products',
     'source'=>'non-db',
     'link_type'=>'one',
     'module'=>'Opportunities',

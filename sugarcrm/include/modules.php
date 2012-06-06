@@ -505,6 +505,7 @@ $report_include_modules['TimePeriods'] = 'TimePeriod';
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
 $report_include_modules['TrackerQueries']   = 'TrackerQuery';
+$report_include_modules['Worksheet']    = 'Worksheet';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=dce ONLY
 $report_include_modules['DCEReports']   = 'DCEReport';

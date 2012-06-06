@@ -450,6 +450,7 @@ qualifiers[qualifiers.length] = {name:'greater',value:'Greater Than'};
 qualifiers[qualifiers.length] = {name:'between',value:'Is Between'};
 qualifiers[qualifiers.length] = {name:'not_equals',value:'Does Not Equal'};
 filter_defs['int'] = qualifiers;
+filter_defs['long'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'Is'};

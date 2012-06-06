@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -67,7 +67,7 @@ function tearDown()
 function testPopulateSeedData()
 {
     global $app_list_strings;
-    $total = 200;
+    $total = 50;
     $account = new Account();
     $product = new Product();
     $user = new User();
@@ -85,7 +85,7 @@ function testPopulateSeedData()
         $users[$row['id']] = $row['id'];
     }
     $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $products, $users);
-    $this->assertEquals(200, count($this->createdOpportunities));
+    $this->assertEquals(50, count($this->createdOpportunities));
 
 }
 

@@ -433,15 +433,22 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname'=>'LBL_CURRENCIES',
   ),
  //BEGIN SUGARCRM flav=pro ONLY
-  'contracts' => array (
-	'name' => 'contracts',
-	'type' => 'link',
-	'vname' => 'LBL_CONTRACTS',
-	'relationship' => 'contracts_opportunities',
-	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
-	'source' => 'non-db',
-
-  ),
+    'contracts' => array (
+        'name' => 'contracts',
+        'type' => 'link',
+        'vname' => 'LBL_CONTRACTS',
+        'relationship' => 'contracts_opportunities',
+        //'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
+        'source' => 'non-db',
+    ),
+    'worksheet' =>
+     array(
+        'name' => 'worksheet',
+        'type' => 'link',
+        'vname' => 'LBL_WORKSHEET',
+        'relationship' => 'opportunities_worksheet',
+        'source' => 'non-db',
+     ),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
   'products' =>
@@ -449,7 +456,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'products',
         'type' => 'link',
         'vname' => 'LBL_PRODUCTS',
-        'relationship' => 'products_opportunities',
+        'relationship' => 'opportunities_products',
         'source' => 'non-db',
    ),
 //END SUGARCRM flav=ent ONLY
@@ -527,10 +534,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'timeperiod_id',
    'relationship_type'=>'one-to-many'),
+
+   'opportunities_worksheet' =>
+   array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+   'rhs_module'=> 'Worksheet', 'rhs_table'=> 'worksheet', 'rhs_key' => 'related_id',
+   'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav=pro ONLY
 
    //BEGIN SUGARCRM flav=ent ONLY
-   'products_opportunities' =>
+   'opportunities_products' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
    'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),

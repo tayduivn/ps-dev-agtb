@@ -65,6 +65,15 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
             'comment' => 'Token timestamp',
             'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
       ),
+      'expire_ts' =>
+      array (
+            'name' => 'expire_ts',
+            'type' => 'long',
+            'required' => true,
+            'default' => -1,
+            'comment' => 'Token expiration, defaults to -1 for no expiration date',
+            'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
+      ),
       'verify' =>
       array (
             'name' => 'verify',
@@ -122,6 +131,31 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
 		    'module'=>'OAuthKeys',
 		    'duplicate_merge'=>'disabled'
 	  ),
+      'contact_id'=>
+      array(
+          'name'=>'contact_id',
+          'vname'=>'LBL_CONTACTS',
+          'type'=>'id',
+          'required'=>false,
+          'reportable'=>false,
+          'comment' => 'Contact ID this oauth token is associated with (via portal)'
+      ),
+      'contact_name'=>
+      array(
+          'name'=>'contact_name',
+          'rname'=>'name',
+          'id_name'=>'contact_id',
+          'vname'=>'LBL_CONTACTS',
+          'table'=>'contacts',
+          'type'=>'relate',
+          'link'=>'contact',
+          'join_name'=>'contacts',
+          'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
+          'isnull'=>'true',
+          'module'=>'Contacts',
+          'source'=>'non-db',
+      ),
+          
 	 'assigned_user_id' =>
 		array (
 			'name' => 'assigned_user_id',
@@ -168,6 +202,15 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
         'id_name' => 'assigned_user_id',
         'table' => 'users',
   ),
+  'contact' =>
+  array (
+    'name' => 'contact',
+    'type' => 'link',
+    'relationship' => 'contact_oauthtokens',
+    'vname' => 'LBL_CONTACTS',
+    'source'=>'non-db',
+  ),
+
   ),
     'indices' => array (
        'id'=>array('name' =>'oauthtokenpk', 'type' =>'primary', 'fields'=>array('id', 'deleted')),
@@ -182,6 +225,14 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
 	  'oauthtokens_assigned_user' =>
            array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
            'rhs_module'=> 'OAuthTokens' , 'rhs_table'=> 'oauth_tokens', 'rhs_key' => 'assigned_user_id',
-           'relationship_type'=>'one-to-many')
+                 'relationship_type'=>'one-to-many'),
+        'contacts_oauthtokens' => array('lhs_module' => 'Contacts',
+                                 'lhs_table' => 'contacts',
+                                 'lhs_key' => 'id',
+                                 'rhs_module' => 'OAuthTokens',
+                                 'rhs_table' => 'oauth_tokens',
+                                 'rhs_key' => 'contact_id',
+                                 'relationship_type' => 'one-to-many'),
+
            )
 );

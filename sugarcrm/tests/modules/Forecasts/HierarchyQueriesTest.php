@@ -242,7 +242,7 @@ public function testForecastTree()
     $this->assertEquals(4, $opportunities);
 }
 
-/*
+
 public function testForecastTreeWithSubSelectOnTempTable()
 {
     //Here is the alternate method where we use a sub-select against the temporary table created
@@ -285,5 +285,5 @@ public function testForecastTreeWithSubSelectOnTempTable()
 
     $this->assertEquals(4, $opportunities);
 }
-*/
+
 }

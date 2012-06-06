@@ -54,6 +54,21 @@ class SugarACL
         return $bean;
     }
 
+
+    /**
+     * Reset ACL cache
+     * To be used when
+     * @param string $module If empty, all ACL module caches are reset
+     */
+    public static function resetACLs($module = null)
+    {
+        if($module) {
+            unset(self::$acls[$module]);
+        } else {
+            self::$acls[$module] = array();
+        }
+    }
+
     /**
      * Load ACLs for module
      * @param string $module
@@ -74,18 +89,7 @@ class SugarACL
                 return array();
             }
 
-            if(isset($GLOBALS['dictionary'][$bean->object_name]['acls'])) {
-                $acl_list = $GLOBALS['dictionary'][$bean->object_name]['acls'];
-            } else {
-                $acl_list = array();
-            }
-
-            foreach($bean->defaultACLs() as $defacl) {
-                if(isset($acl_list[$defacl])) {
-                    continue;
-                }
-                $acl_list[$defacl] = true;
-            }
+            $acl_list = $bean->defaultACLs();
 
             foreach($acl_list as $klass => $args) {
                 if($args === false) continue;

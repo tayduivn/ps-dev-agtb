@@ -161,6 +161,7 @@ $module_map = array(
 	'contracts'		=> 'Contracts',
     'timeperiods'   => 'TimePeriods',
     'quotas'        => 'Quotas',
+    'worksheet'     => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
 
 );

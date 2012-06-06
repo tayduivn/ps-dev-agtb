@@ -98,9 +98,6 @@ require_once 'SugarTestProjectTaskUtilities.php';
 require_once 'SugarTestUserUtilities.php';
 require_once 'SugarTestLangPackCreator.php';
 require_once 'SugarTestThemeUtilities.php';
-//BEGIN SUGARCRM flav=pro ONLY
-require_once 'SugarTestTeamUtilities.php';
-//END SUGARCRM flav=pro ONLY
 require_once 'SugarTestContactUtilities.php';
 require_once 'SugarTestEmailUtilities.php';
 require_once 'SugarTestCampaignUtilities.php';
@@ -114,12 +111,14 @@ require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
 require_once 'SugarTestTaskUtilities.php';
 //BEGIN SUGARCRM flav=pro ONLY
+require_once 'SugarTestTeamUtilities.php';
 require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductCategoryUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
 require_once 'SugarTestOpportunityUtilities.php';
+require_once 'SugarTestWorksheetUtilities.php';
 //END SUGARCRM flav=pro ONLY
 
 $GLOBALS['db']->commit();

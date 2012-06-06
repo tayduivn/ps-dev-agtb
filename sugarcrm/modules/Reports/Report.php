@@ -1552,7 +1552,9 @@ return str_replace(' > ','_',
                 return $field;
             }
             $field_type = $this->focus->field_name_map[$field_data[1]]['type'];
-            if ($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
+            if(!in_array($field_type, array('currency','floast')))
+            {
+            //if ($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
                 // add IFNULL to the field and then re-add alias back
                 return $this->db->convert($field_name, "IFNULL", array("''")) . " " . substr($field, $has_space + 1) . "\n";
             }

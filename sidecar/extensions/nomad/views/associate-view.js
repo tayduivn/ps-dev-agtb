@@ -38,7 +38,7 @@
             }, 4);
 
             q.drain = function() {
-                app.router.goBack();
+                app.router.go(-2);
             };
 
             this.$('.selecterd-flag:checked').each(function() {
@@ -46,15 +46,7 @@
 
                 q.push({relateBean: app.data.createRelatedBean(source.parentBean, source.collection.get(cid), source.link)});
             });
-        },
-        createBean: function(bean) {
-
-        },
-        onCancelClicked: function() {
-
         }
-
-
     });
 
 })(SUGAR.App);

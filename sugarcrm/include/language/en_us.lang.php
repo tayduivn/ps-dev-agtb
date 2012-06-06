@@ -102,6 +102,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
+    'Worksheet' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -4177,6 +4178,17 @@ $app_list_strings['eapm_list_documents']= array(
         2 => 'Access',
         3 => 'Invalid',
     );
+$app_list_strings['oauth_type_dom'] = array(
+    'oauth1' => 'OAuth 1.0',
+    'oauth2' => 'OAuth 2.0',
+);
+$app_list_strings['oauth_client_type_dom'] = array(
+    'user' => 'Sugar User',
+    'mobile' => 'Mobile Client',
+    'plugin' => 'Plug-in',
+    'support_portal' => 'Support Portal',
+    'other' => 'other',
+);
 
 $app_list_strings ['emailTemplates_type_list'] = array (
     '' => '' ,

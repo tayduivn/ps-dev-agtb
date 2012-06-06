@@ -46,13 +46,12 @@ class ReportsViewBuildreportmoduletree extends SugarView
         $module = SugarModule::get($_REQUEST['report_module'])->loadBean();
         $bean_name = $module->object_name;
         $linked_fields = $module->get_linked_fields();
-        
+
         foreach($linked_fields as $linked_field)
         {
             $module->load_relationship($linked_field['name']);
             $field = $linked_field['name'];
-            if(empty($module->$field) || (isset($linked_field['reportable']) &&
-               $linked_field['reportable'] == false))
+            if(empty($module->$field) || (isset($linked_field['reportable']) && $linked_field['reportable'] == false))
             {
                 continue;
             }	

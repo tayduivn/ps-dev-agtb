@@ -45,4 +45,6 @@ $mod_strings = array (
   'LNK_NEW_RECORD' => 'Create OAuth Key',
   'LNK_LIST' => 'View OAuth Keys',
   'LBL_TOKENS' => 'Tokens',
+  'LBL_OAUTH_TYPE' => 'OAuth Version',
+  'LBL_CLIENT_TYPE' => 'Client Type',
 );

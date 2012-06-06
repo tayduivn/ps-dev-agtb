@@ -27,20 +27,16 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestLabels extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
     }
     
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testLabels() {
         $restReply = $this->_restCall('metadata?typeFilter=modStrings,appStrings');
-        
         $this->assertNotEmpty($restReply['reply']['appStrings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
         
         $this->assertNotEmpty($restReply['reply']['modStrings']['Contacts']['LBL_ACCOUNT_NAME']);

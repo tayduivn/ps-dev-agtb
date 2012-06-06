@@ -213,7 +213,7 @@ SugarWidgetSchedulerSearch.prototype.display = function() {
 	html = '';
 	html += '<div id="create-invitees" style="margin-bottom: 10px;">';
 	html += '<div id="empty-search-message" style="display: none;">' + GLOBAL_REGISTRY['meeting_strings']['LBL_EMPTY_SEARCH_RESULT'] + '</div>';
-	html += '<h3>' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_INVITEE'] + '</h3>';
+	html += '<h3 id="create-invitees-title">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_INVITEE'] + '</h3>';
 	html += '<div id="create-invitees-buttons">';
 	html += '<button type="button" id="create_invitee_as_contact" onclick="SugarWidgetSchedulerSearch.showCreateForm(\'Contacts\');">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_CONTACT'] + '</button> ';
 	html += '<button type="button" id="create_invitee_as_lead" onclick="SugarWidgetSchedulerSearch.showCreateForm(\'Leads\');">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_LEAD'] + '</button> ';

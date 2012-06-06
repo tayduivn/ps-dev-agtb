@@ -27,10 +27,8 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestMetadataModuleViewLayout extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
+
         $this->oldFiles = array();
     }
     
@@ -45,8 +43,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
                 file_put_contents($filename,$filecontents);
             }
         }
-        
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        parent::tearDown();
     }
 
     public function testMetadataSugarFields() {
