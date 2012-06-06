@@ -2,8 +2,8 @@
 
 /**
  * View that displays a list of models pulled from the context's collection.
- * @class View.Views.TableView
- * @alias SUGAR.App.layout.TableView
+ * @class View.Views.ListView
+ * @alias SUGAR.App.layout.ListView
  * @extends View.View
  */
     events: {
