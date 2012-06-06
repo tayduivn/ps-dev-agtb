@@ -42,6 +42,7 @@ class ViewRollupWizard extends SugarView
 
     function display() {
         $rfields = array();
+        $rmodules = array();
         $links = FormulaHelper::getLinksForModule($this->tmodule, $this->package);
 
         //We need just a flat list of the modules for the module select dropdown

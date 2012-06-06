@@ -74,6 +74,7 @@ array (
             '<input type="hidden" name="isSaveFromDetailView">',
             '<input type="hidden" name="isSave">',
         ),
+        'headerTpl' => 'modules/Meetings/tpls/detailHeader.tpl',
       ),
       'maxColumns' => '2',
       'widths' => 

@@ -210,7 +210,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     {
         var vals = mapping[i];
         if (i === "") i = "--blank--";
-        i = i.replace(" ", "_");
+        i = i.replace(/ /g, "_");
         var l = $("#ddd_" + i + "_list");
         for(var j = 0; j < vals.length; j++)
         {
@@ -292,7 +292,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     for (var i in parentOptions)
     {
         if (i == "") i = "--blank--";
-        i = i.replace(" ", "_");
+        i = i.replace(/ /g, "_");
         $( "#ddd_" + i + "_list" ).sugardddlist({
             connectWith: ".ddd_table",
             scope: "ddd_table",
@@ -357,7 +357,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         }
         for (var i in parentOptions)
         {
-            var k = i == "" ? blank : i.replace(" ", "_");
+            var k = i == "" ? blank : i.replace(/ /g, "_");
             mapping[i] = getlistValues($( "#ddd_" + k + "_list" ));
         }
         return {
