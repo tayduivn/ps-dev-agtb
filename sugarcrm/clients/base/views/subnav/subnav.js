@@ -25,11 +25,6 @@
             fieldsToValidate: this.getFields(this.model.module)
         });
     },
-    onEditClicked: function(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        alert("TODO: In subnav.js .. goto corresponding edit view...");
-    },
     bindDataChange: function() {
         if (this.context.get('subnavModel')) {
             this.context.get('subnavModel').on("change", this.render, this);
