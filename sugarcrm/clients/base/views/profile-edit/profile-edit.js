@@ -61,15 +61,13 @@
     },
     saveModel: function() {
         var self = this;
-        alert("TODO: Create an api.contact in sugarapi.js");
         app.alert.show('save_profile_edit_view', {level: 'process', title: 'Saving'});
-
 // TODO: ---- Create an api.contact since this isn't going to behave like the rest 
 // of our modules/records .. will still need to utilize bean isValid, etc.
         this.model.save(null, {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
-                alert("TODO here...");
+                alert("TODO - left off here...");
                 //self.app.router.navigate('profile', {trigger:true});
             },
             fieldsToValidate: this.getFields(this.model.module)
