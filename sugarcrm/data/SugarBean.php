@@ -5436,7 +5436,7 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     public function defaultACLs()
     {
-        $data = isset($GLOBALS['dictionary'][$bean->object_name]['acls'])?$GLOBALS['dictionary'][$bean->object_name]['acls']:array();
+        $data = isset($GLOBALS['dictionary'][$this->object_name]['acls'])?$GLOBALS['dictionary'][$this->object_name]['acls']:array();
         if(!isset($data['SugarACLStatic']) && $this->bean_implements('ACL')) {
              $data['SugarACLStatic'] = true;
         }
