@@ -584,7 +584,6 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
   ),
-//END SUGARCRM flav=pro ONLY
  ),
  'indices' => array (
        array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id')),
