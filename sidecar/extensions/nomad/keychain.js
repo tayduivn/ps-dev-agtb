@@ -14,7 +14,7 @@
          * Initializes the keychain.
          */
         init: function() {
-            this.keychainPlugin = new Keychain();
+            this.keychainPlugin = window.plugins.keychain;
         },
         /**
          * Returns the auth token of the current user.
