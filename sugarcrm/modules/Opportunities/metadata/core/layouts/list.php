@@ -17,13 +17,6 @@ $viewdefs['Opportunities']['core']['layout']['list'] = array(
                                 )
                             )
                         )
-                    ),
-                    array(
-                        "size" => 10,
-                        "view" => "grid",
-                        'listeners' => array(
-                            'treeview:node_select' => 'filterGridById'
-                        )
                     )
                 )
             )

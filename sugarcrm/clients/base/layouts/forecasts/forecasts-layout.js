@@ -17,7 +17,7 @@
             this.context = _.extend(this.context, {
                 register: app.events.register,
                 // keep a record of the currently selected user on context
-                selectedUser: {},
+                selectedUser: {}
             });
 
             this.fetchAllModels();
@@ -36,6 +36,7 @@
         initializeAllModels: function() {
             this._models.filters = new app.Model.Filters();
             this._models.chartoptions = new app.Model.ChartOptions();
+            this._models.grid = new app.Model.Grid();
         },
 
         /**
@@ -46,6 +47,7 @@
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }
+
             //add the layout to the div
             $(".view-"+comp.name).append(comp.$el);
             console.log(comp);

@@ -11,6 +11,8 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
 
+    _collection:{},
+
     /**
      * Initialize the View
      *
@@ -18,10 +20,12 @@
      * @param {Object} options
      */
     initialize:function (options) {
+        var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
-
         app.view.View.prototype.initialize.call(this, options);
+
+        this._collection = self.layout.getModel('grid');
 
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.filterGridById, this);

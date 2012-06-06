@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody>
-        {{#each ../context.attributes.collection.models}}
+        {{#each ../_collection.models}}
             <tr>
             {{#each ../fields}}
                 <td>{{field ../../../this ../this}}</td>

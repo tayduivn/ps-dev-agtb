@@ -33,7 +33,6 @@
 <script src='../sidecar/src/data/data-manager.js'></script>
 <script src='../sidecar/src/data/validation.js'></script>
 
-<script src='../sidecar/src/view/alert.js'></script>
 <script src='../sidecar/src/view/hbt-helpers.js'></script>
 <script src='../sidecar/src/view/view-manager.js'></script>
 <script src='../sidecar/src/view/component.js'></script>
@@ -41,11 +40,11 @@
 <script src='../sidecar/src/view/field.js'></script>
 <script src='../sidecar/src/view/layout.js'></script>
 
-<script src='../sidecar/src/view/layouts/columns-layout.js'></script>
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid.js'></script>
+<script src='clients/base/models/grid/grid.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
 <script src='clients/base/models/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
@@ -75,11 +74,8 @@
     }
 </style>
 {/literal}
-<div class="content"></div>
 <div class="subnav">
-    <div class="btn-toolbar pull-left">
-        <h1>Forecast: Sabra Khan</h1>
-    </div>
+    <div class="btn-toolbar pull-left"></div>
     <div class="btn-toolbar pull-right">
         <div class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
@@ -126,6 +122,7 @@
         </div>
     </div>
 </div>
+<div class="content"></div>
 
 {literal}
 <script language="javascript">
