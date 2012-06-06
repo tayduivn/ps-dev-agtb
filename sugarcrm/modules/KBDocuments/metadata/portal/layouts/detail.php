@@ -1,16 +1,29 @@
 <?php
 $viewdefs['KBDocuments']['portal']['layout']['detail'] = array(
-    'type' => 'columns',
+    'type' => 'simple',
     'components' =>
     array(
         0 => array(
+            'view' => 'subnav',
+        ),
+        1 => array(
             'layout' =>
             array(
-                'type' => 'leftside',
+                'type' => 'fluid',
                 'components' =>
                 array(
                     0 => array(
-                        'view' => 'detail',
+                        'layout' =>
+                        array(
+                            'type' => 'simple',
+                            'span' => 7,
+                            'components' =>
+                            array(
+                                0 => array(
+                                    'view' => 'detail',
+                                ),
+                            ),
+                        ),
                     ),
                 ),
             ),

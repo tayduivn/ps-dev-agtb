@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Bugs']['portal']['layout']['edit'] = array(
+$viewdefs['Bugs']['portal']['layout']['detail'] = array(
     'type' => 'simple',
     'components' =>
     array(
