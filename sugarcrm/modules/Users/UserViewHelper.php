@@ -456,7 +456,7 @@ class UserViewHelper {
         }
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url'].'/vcal_server.php/type=vfb&email=%NAME%@%SERVER%');
-        $this->ss->assign("CALENDAR_ICAL_URL", $sugar_config['site_url'].'/ical_server.php?type=ics&key=<mysecretkey>&user_name=&lt;myusername&gt;');
+        $this->ss->assign("CALENDAR_ICAL_URL", $sugar_config['site_url'].'/ical_server.php?type=ics&key=%MYSECRETKEY%&user_name=%MYUSERNAME%');
         //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav!=dce ONLY
         //BEGIN SUGARCRM flav=ent ONLY
