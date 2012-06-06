@@ -112,8 +112,8 @@ class WorkFlowGlue {
             }
         }
 
-        // Adding an isset check for fetched_row since new records don't have it
-        return " ( isset(\$focus->".$shell_object->field.") && isset(\$focus->fetched_row['".$shell_object->field."']) && \$focus->fetched_row['".$shell_object->field."'] != \$focus->".$shell_object->field.") ";
+        // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
+        return " ( isset(\$focus->".$shell_object->field.") && \$focus->fetched_row['".$shell_object->field."'] != \$focus->".$shell_object->field.") ";
     }
 
 	function glue_normal_compare_change(& $shell_object){
