@@ -3296,7 +3296,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 $selectedFields["$this->table_name.$field"] = true;
             } else if(  (!isset($data['source']) || $data['source'] == 'custom_fields') && (!empty($alias) || !empty($filter) )) {
                 //add this column only if it has NOT already been added to select statement string
-                if(strpos($ret_array['select'],"$this->table_name"."_cstm".".$field")<0)
+                $colPos = strpos($ret_array['select'],"$this->table_name"."_cstm".".$field");
+                if(!$colPos || $colPos<0)
                 {
                     $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
                 }
