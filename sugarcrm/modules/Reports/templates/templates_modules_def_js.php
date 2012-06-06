@@ -390,7 +390,7 @@ for(module_name in module_defs)
 		      module_defs[module_name].group_by_field_defs[ field_def.name] = field_def;
         }
 
-		if(field_type == 'int' || field_type == 'float' || field_type=='currency' || field_type=='decimal')
+		if(field_type == 'int' || field_type == 'float' || field_type=='currency' || field_type=='decimal' || field_type == 'long')
 		{
 			// create a new "column" for each summary type
 			for(stype in summary_types)
@@ -541,6 +541,7 @@ qualifiers[qualifiers.length] = {name:'between',value:'<?php echo $mod_strings['
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['int'] = qualifiers;
+filter_defs['long'] = qualifiers;
 filter_defs['float'] = qualifiers;
 filter_defs['decimal'] = qualifiers;
 filter_defs['currency'] = qualifiers;

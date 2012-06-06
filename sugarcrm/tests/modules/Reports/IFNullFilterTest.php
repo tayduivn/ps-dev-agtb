@@ -69,7 +69,7 @@ class IFNULLFilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * testIfNullFilters
-     * 
+     *
      */
     public function testIfNullFilters()
     {

@@ -395,13 +395,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
   ),
-  'draft' =>
-  array (
-    'name' => 'draft',
-    'vname' => 'LBL_DRAFT',
-    'type' => 'bool',
-    'reportable'=>false,
-  ),
  'timeperiod_name'=>
    array(
 		'name'=>'timeperiod_name',
@@ -466,7 +459,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   	),
   'created_by_link' =>
   array (
-        'name' => 'created_by_link',
+    'name' => 'created_by_link',
     'type' => 'link',
     'relationship' => 'forecasts_created_by',
     'vname' => 'LBL_CREATED_BY_USER',
@@ -535,7 +528,6 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'name' => 'related_id',
     'vname' => 'LBL_WK_RELATED_ID',
     'type' => 'id',
-    'reportable'=>false,
     'comment' => 'User ID or Opportunity ID for this worksheet',
   ),
   //forecast type for related_id, null if related_id represents an opportunity.
@@ -583,10 +575,20 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'len' => 36,
     'comment' => 'User ID that last modified record',
   ),
-
+  'deleted' =>
+  array (
+    'name' => 'deleted',
+    'vname' => 'LBL_DELETED',
+    'type' => 'bool',
+    'default' => '0',
+    'reportable'=>false,
+    'comment' => 'Record deletion indicator'
+  ),
+//END SUGARCRM flav=pro ONLY
  ),
  'indices' => array (
-       array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id'))
+       array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'deleted')),
  )
 
 );

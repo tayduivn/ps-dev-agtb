@@ -47,15 +47,15 @@ class OpportunitiesSeedData {
  * @return array Array of Opportunities created
  */
 public static function populateSeedData($records, $app_list_strings, $accounts
-//BEGIN SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
     ,$products, $users
-//END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=ent ONLY
 )
 {
     if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-//BEGIN SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
        || empty($products) || empty($users)
-//END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=ent ONLY
 
     )
     {
@@ -131,7 +131,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->worst_case = ($opp->amount / $count) * .5;
             $product->created_by = $opp->assigned_user_id;
             $product->modified_user_id = $opp->assigned_user_id;
-            $proudct->forecast = $opp->probability >= 70 ? 1 : 0;
+            $product->forecast = $opp->probability >= 70 ? 1 : 0;
             $product->date_entered = $timedate->asDb($timedate->getNow());
             $product->date_modified = $prod->date_entered;
             $product->description = $prod->name;
