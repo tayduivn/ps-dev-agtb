@@ -36,7 +36,7 @@
         <tr>
             <td colspan='2' nowrap>
             {$mod.LBL_PORTAL_ENABLE}:
-                <input type="checkbox" name="enabled" {if $enabled == "true"} checked{/if} class='portalField' id="enabled" value="false"/>
+                <input type="checkbox" name="on" {if $on == "true"} checked{/if} class='portalField' id="on" value="false"/>
             </td>
         </tr>
 
@@ -55,15 +55,6 @@
             </td>
             <td colspan='1' nowrap>
                 <input class='portalProperty portalField' id='logoURL' name='logoURL' value='{$logoURL}' size=60>
-            </td>
-        </tr>
-        <tr>
-            <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_REST_URL}:<span class="required">*</span>
-            </td>
-            <td colspan='1' nowrap>
-
-                <input class='portalProperty portalField' id='serverUrl' name='serverUrl' value='{$serverUrl}' size=60>
             </td>
         </tr>
         <tr>

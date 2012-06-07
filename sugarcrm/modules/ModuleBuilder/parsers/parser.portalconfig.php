@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('enabled', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'detailFieldCount');
+        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'detailFieldCount');
         $portalConfig = array(
             'platform' => 'portal',
             'env' => 'dev',
@@ -66,15 +66,19 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         foreach ($portalFields as $field) {
             if (isset($_REQUEST[$field])) {
                 $portalConfig[$field] = $_REQUEST[$field];
-                $GLOBALS ['system_config']->saveSetting('portal', $field, $_REQUEST[$field]);
             }
         }
         $configString = json_encode($portalConfig, true);
+
+        foreach ($portalConfig as $fieldKey => $fieldValue) {
+            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
+        }
+
         $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
         //TODO: comment this back in and put this file in the right place
         //sugar_file_put_contents('dtamconfig.js', $portalJSConfig);
 
-        if (isset($portalConfig['enabled']) && $portalConfig['enabled'] == 'true') {
+        if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
             $u = $this->getPortalUser();
             $role = $this->getPortalACLRole();
 

@@ -52,15 +52,15 @@ class ViewPortalConfig extends SugarView
 
 	function display() 
 	{
-        $portalFields = array('enabled'=>'false', 'appName'=>'Support Portal', 'logoURL'=>
-        '', 'serverUrl'=>'http://yourcompany.sugarondemand.com/rest/v10/', 'maxQueryResult'=>'20', 'detailFieldCount'=>'5');
+        $portalFields = array('on'=>'false', 'appName'=>'Support Portal', 'logoURL'=>
+        '', 'maxQueryResult'=>'20', 'detailFieldCount'=>'5');
         $admin = new Administration();
        	$admin->retrieveSettings();
 
         $smarty = new Sugar_Smarty();
         foreach ($portalFields as $fieldName=>$fieldDefault) {
             if (isset($admin->settings['portal_'.$fieldName])) {
-                $smarty->assign($fieldName, $admin->settings['portal_'.$fieldName]);
+                $smarty->assign($fieldName, json_decode(html_entity_decode($admin->settings['portal_'.$fieldName])));
             } else {
                 $smarty->assign($fieldName,$fieldDefault);
             }
