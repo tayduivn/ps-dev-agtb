@@ -136,7 +136,7 @@ class RestService extends ServiceBase {
                     $encoding = false;
                 }
                 $encoding = false;
-                // header('Content-Type: application/json');
+                header('Content-Type: application/json');
                 if ( $encoding !== false ) {
                     header('Content-Encoding: '.$encoding);
                     $gzData = gzencode(json_encode($output));
@@ -229,6 +229,19 @@ class RestService extends ServiceBase {
         SugarApplication::trackLogin();
         //END SUGARCRM flav=pro ONLY
 
+        // Need to setup the session for portal users
+        if( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+            // Add the necessary visibility and acl classes to the default bean list
+            require_once('modules/ACL/SugarACLSupportPortal.php');
+            $default_acls = SugarBean::getDefaultACL();
+            $default_acls['SugarACLSupportPortal'] = array();
+            SugarBean::setDefaultACL($default_acls);
+
+            $default_visibility = SugarBean::getDefaultVisibility();
+            $default_visibility['SupportPortalVisibility'] = array();
+            SugarBean::setDefaultVisibility($default_visibility);
+        }
+        
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];

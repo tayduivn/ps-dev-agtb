@@ -110,7 +110,7 @@ class SugarACLSupportPortal extends SugarACLStrategy
             $is_owner = $context['owner_override'];
         } else {
             if($bean) {
-                $is_owner = $bean->isOwner();
+                $is_owner = $bean->isOwner($GLOBALS['current_user']);
             }
         }
 
@@ -148,7 +148,7 @@ class SugarACLSupportPortal extends SugarACLStrategy
         if(!empty($context['owner_override'])) {
             $is_owner = $context['owner_override'];
         } else {
-            $is_owner = $bean->isOwner();
+            $is_owner = $bean->isOwner($GLOBALS['current_user']);
         }
 
         if(isset(self::$action_translate[$action])) {

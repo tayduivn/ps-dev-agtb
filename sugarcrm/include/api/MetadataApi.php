@@ -141,6 +141,16 @@ class MetadataApi extends SugarApi {
         $data['acl'] = array();
         foreach ($this->modules as $modName) {
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
+            // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
+            if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
+                $data['acl'][$modName]['admin'] = 'no';
+                $data['acl'][$modName]['developer'] = 'no';
+                $data['acl'][$modName]['edit'] = 'no';
+                $data['acl'][$modName]['delete'] = 'no';
+                $data['acl'][$modName]['import'] = 'no';
+                $data['acl'][$modName]['export'] = 'no';
+                $data['acl'][$modName]['massupdate'] = 'no';
+            }
         }
         // remove the disabled modules from the module list
         require_once("modules/MySettings/TabController.php");

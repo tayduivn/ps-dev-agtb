@@ -418,7 +418,7 @@ class SugarBean
      */
     public static function getDefaultACL()
     {
-        return self::$default_acl;
+        return self::$default_acls;
     }
 
     /**
@@ -427,7 +427,7 @@ class SugarBean
      */
     public static function setDefaultACL($data)
     {
-        self::$default_acl = $data;
+        self::$default_acls = $data;
     }
 
     /**
