@@ -61,10 +61,10 @@
             }
         },
 
-        _render: function() {
+        render: function() {
             this.loginButtonLabel = app.utils.capitalize(app.lang.getAppString("LOGIN").toLowerCase());
             this.model.set("url", "http://", { silent: true });
-            app.view.View.prototype._render.call(this, arguments);
+            app.view.View.prototype.render.call(this);
 
             if (!app.isNative) {
                 this.getField("url").remove();

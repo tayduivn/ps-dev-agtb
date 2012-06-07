@@ -83,7 +83,7 @@
          */
         render: function() {
             if (this.disposed === true) throw new Error("Unable to render component because it's disposed: " + this);
-            this._render();
+            this._render.apply(this, arguments);
             return this;
         },
 
