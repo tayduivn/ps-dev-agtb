@@ -282,8 +282,8 @@
 				'.jstree a > ins { height:16px; width:16px; } ' + 
 				'.jstree a > .jstree-icon { margin-right:3px; } ' + 
 				'.jstree-rtl a > .jstree-icon { margin-left:3px; margin-right:0; } ' + 
-				'li.jstree-open > ul { display:block; } ' + 
-				'li.jstree-closed > ul { display:none; } ';
+				'li.jstree-open > ul { display:block; } ';
+				//'li.jstree-closed > ul { display:none; } ';
 		// Correct IE 6 (does not support the > CSS selector)
 		if(/msie/.test(u) && parseInt(v, 10) == 6) { 
 			is_ie6 = true;
@@ -297,8 +297,8 @@
 				'.jstree li { height:18px; margin-left:0; margin-right:0; } ' + 
 				'.jstree li li { margin-left:18px; } ' + 
 				'.jstree-rtl li li { margin-left:0px; margin-right:18px; } ' + 
-				'li.jstree-open ul { display:block; } ' + 
-				'li.jstree-closed ul { display:none !important; } ' + 
+				'li.jstree-open ul { display:block; } ' +
+				//'li.jstree-closed ul { display:none !important; } ' +
 				'.jstree li a { display:inline; border-width:0 !important; padding:0px 2px !important; } ' + 
 				'.jstree li a ins { height:16px; width:16px; margin-right:3px; } ' + 
 				'.jstree-rtl li a ins { margin-right:0px; margin-left:3px; } ';
