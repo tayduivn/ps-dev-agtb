@@ -998,6 +998,19 @@ fixtures.metadata = {
             }
         },
         "list": {
+            "meta": {
+                "panels": [
+                    {
+                        "label": "LBL_PANEL_1",
+                        "fields": [
+                            {name: "first_name", label: "First Name"},
+                            {name: "last_name", label: "Last Name"},
+                            {name: "email1", label: "Email"},
+                            {name: "phone_work", label: "Phone"}
+                        ]
+                    }
+                ]
+            },
             "templates": {
                 "list": ""
             },
@@ -1255,21 +1268,4 @@ fixtures.metadata = {
             ]
         }
     },
-    'views': {
-        "list": {
-            "meta": {
-                "panels": [
-                    {
-                        "label": "LBL_PANEL_1",
-                        "fields": [
-                            {name: "first_name", label: "First Name"},
-                            {name: "last_name", label: "Last Name"},
-                            {name: "email1", label: "Email"},
-                            {name: "phone_work", label: "Phone"}
-                        ]
-                    }
-                ]
-            }
-        }
-    }
 };

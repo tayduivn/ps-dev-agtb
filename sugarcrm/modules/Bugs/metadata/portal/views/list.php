@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['table'] = array(
+$viewdefs['Bugs']['portal']['view']['list'] = array(
     'panels' =>
     array(
         0 =>
@@ -45,5 +45,6 @@ $viewdefs['Bugs']['portal']['view']['table'] = array(
         ),
     ),
 );
+
 
 

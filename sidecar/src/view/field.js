@@ -242,9 +242,7 @@
          * Once the template is rendered, DOM changes are bound to the model.
          * @return {Object} The instance of this field.
          */
-        render: function() {
-            if (this.disposed === true) throw new Error("Unable to render field because it's disposed: " + this);
-
+        _render: function() {
             this._loadTemplate();
             if (this.model instanceof Backbone.Model) {
                 /**

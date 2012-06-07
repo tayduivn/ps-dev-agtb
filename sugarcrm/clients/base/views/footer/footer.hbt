@@ -1,0 +1,38 @@
+<footer>
+    <div class="row-fluid">
+        <div class="span3"><a href="" class="logo">SugarCRM</a></div>
+        <div class="span9">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a title="Activity View Tour" class="btn" id="tour"><i class="icon-road"></i>
+                        Tour</a>
+                </div>
+                <div class="btn-group">
+                    <a id="print" class="btn"><i class="icon-print"></i> Print</a>
+                    <a id="top" class="btn"><i class="icon-arrow-up"></i> Top</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Tour Guide -->
+<div class="modal hide" id="systemTour">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">?</a>
+    <h3>Tour the Portal</h3>
+  </div>
+  <div class="modal-body">
+    <p>The primary actions to get things done in the portal.</p>
+  </div>
+  <div class='pointsolight'>
+  <div id="tourCube" class="tourSee"><span>Dashboard</span></div>
+  <div id="tourCreate" class="tourSee"><span>Quick create</span></div>
+  <div id="tourUser" class="tourSee"><span>User admin</span></div>
+  <div id="tourModules" class="tourSee"><span>Modules</span></div>
+  <div id="tourUSearch" class="tourSee"><span>Universal search</span></div>
+  <div id="tourSort" class="tourSee"><span>Sort columns</span></div>
+  <div id="tourRefine" class="tourSee"><span>Filter<br>items</span></div>
+  <div id="tourAdd" class="tourSee"><span>Add<br>item</span></div>
+  </div>
+</div>

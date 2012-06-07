@@ -898,7 +898,6 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/ForecastTreeSeedData.php');
     ForecastTreeSeedData::populateUserSeedData();
-    ForecastTreeSeedData::populateProductCategorySeedData();
 //END SUGARCRM flav=pro ONLY
 
 ?>
