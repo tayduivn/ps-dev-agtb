@@ -95,7 +95,7 @@ class EmailUI {
 
         //Get the quickSearch js needed for assigned user id on Search Tab
         require_once('include/QuickSearchDefaults.php');
-        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
+        $qsd = new QuickSearchDefaults();
         $qsd->setFormName('advancedSearchForm');
         $quicksearchAssignedUser = "if(typeof sqs_objects == 'undefined'){var sqs_objects = new Array;}";
         $quicksearchAssignedUser .= "sqs_objects['advancedSearchForm_assigned_user_name']=" . json_encode($qsd->getQSUser()) . ";";
@@ -1408,7 +1408,7 @@ eoq;
 			$from = (isset($email->from_name) && !empty($email->from_name)) ? $email->from_name : $email->from_addr;
 
 			if(isset($_REQUEST['sugarEmail']) && !empty($_REQUEST['sugarEmail']))
-               	$from = (isset($email->to_addrs_names) && !empty($email->to_addrs_names)) ? $email->to_addrs_names : $email->to_addrs;
+                $from = (isset($email->from_name) && !empty($email->from_name)) ? $email->from_name : $email->from_addr_name;
 
 
 			$name = explode(" ", trim($from));
@@ -1535,7 +1535,7 @@ EOQ;
 		require_once("include/EditView/EditView2.php");
         require_once("include/TemplateHandler/TemplateHandler.php");
 		require_once('include/QuickSearchDefaults.php');
-		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+		$qsd = new QuickSearchDefaults();
 		$qsd->setFormName($formName);
 
         global $app_strings;
@@ -2633,6 +2633,22 @@ eoq;
 				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
+				// Archived Emails
+				$archived = new SugarFolder();
+				$archived->name = $mod_strings['LBL_LIST_TITLE_MY_ARCHIVES'];
+				$archived->has_child = 0;
+				$archived->parent_folder = $folder->id;
+				$archived->created_by = $user->id;
+				$archived->modified_by = $user->id;
+				$archived->is_dynamic = 1;
+				$archived->folder_type = "archived";
+				$archived->dynamic_query = '';
+				//BEGIN SUGARCRM flav=pro ONLY
+				$archived->team_id = $privateTeam;
+				$archived->team_set_id = $team_set_id;
+				//END SUGARCRM flav=pro ONLY
+				$archived->save();
+
 			// set flag to show that this was run
 			$user->setPreference("email2Preflight", true, 1, "Emails");
 		}
@@ -3056,10 +3072,7 @@ eoq;
 	function getCacheValue($ieId, $type, $file, $key) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
+		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3138,10 +3151,7 @@ eoq;
 	function writeCacheFile($key, $var, $ieId, $type, $file) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$the_file = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
+		$the_file = sugar_cached("/modules/Emails/{$ieId}/{$type}/{$file}");
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;
