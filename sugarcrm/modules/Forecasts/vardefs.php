@@ -367,7 +367,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'name' => 'user_id',
     'vname' => 'LBL_FORECAST_USER',
     'type' => 'id',
-    'reportable'=>false,
     'comment' => 'User to which this forecast pertains',
   ),
 'date_entered' =>
@@ -499,7 +498,6 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'name' => 'user_id',
     'vname' => 'LBL_WK_USER_ID',
     'type' => 'id',
-    'reportable'=>false,
     'comment' => 'User to which this worksheet pertains',
   ),
   //worsheet is for this timeperiod.

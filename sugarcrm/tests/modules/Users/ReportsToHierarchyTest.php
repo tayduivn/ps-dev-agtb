@@ -70,6 +70,7 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group hierarchies
+     * @outputBuffering disabled
      */
     public function testReportsToHierarchyFunction()
     {
