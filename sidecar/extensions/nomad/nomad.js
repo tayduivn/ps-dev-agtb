@@ -136,7 +136,7 @@
          * @param {String} body(optional)
          */
         sendEmail: function(emails, subject, body) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending email");
         },
 
         /**
@@ -144,7 +144,7 @@
          * @param {Array} phones
          */
         callPhone: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Calling phone");
         },
 
         /**
@@ -152,7 +152,7 @@
          * @param {Array} phones
          */
         sendSms: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending SMS");
         },
 
         /**
@@ -160,15 +160,15 @@
          * @param {Array} phones
          */
         openUrl: function(urls) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Opening URL");
         },
 
         /**
          * Opens the map with specific address.
          * @param {Array} phones
          */
-        openOpenAddress: function(addressObj) {
-            // TODO: Implement HTML action sheet view
+        openAddress: function(addressObj) {
+            app.logger.debug("Open address");
         }
 
     });
