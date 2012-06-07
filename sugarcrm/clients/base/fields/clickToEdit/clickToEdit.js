@@ -66,8 +66,8 @@
     /**
      * renders clickToEdit field
      */
-    render:function() {
-        this.app.view.Field.prototype.render.call(this);
+    _render:function() {
+        this.app.view.Field.prototype._render.call(this);
 
         var self = this;
 
