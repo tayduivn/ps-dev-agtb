@@ -22,7 +22,7 @@
                                 {
                                     name: "login_button",
                                     type: "button",
-                                    label: "Login",
+                                    label: "Log In",
                                     class: "login-submit",
                                     value: "login",
                                     primary: true,
@@ -48,7 +48,7 @@
                                 {
                                     name: "signup_button",
                                     type: "button",
-                                    label: "Signup",
+                                    label: "Sign Up",
                                     value: "signup",
                                     class: 'pull-left',
                                     events: {
@@ -155,7 +155,7 @@
                                 {
                                     name: "signup_button",
                                     type: "button",
-                                    label: "Sign up",
+                                    label: "Sign Up",
                                     value: "signup",
                                     primary: true,
                                     events: {
