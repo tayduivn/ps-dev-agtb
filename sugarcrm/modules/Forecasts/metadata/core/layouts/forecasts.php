@@ -26,6 +26,9 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
             'context' => array(
                 'module' => 'Opportunities'
             )
+        ),
+        7 => array(
+            'view' => 'forecastsSubnav',
         )
     )
 );
