@@ -38,7 +38,7 @@
 
         _dispose: function() {
             app.view.Field.prototype._dispose.call(this);
-            this.textareaView.dispose();
+            if (this.textareaView) this.textareaView.dispose();
         }
 
     });
