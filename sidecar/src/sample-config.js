@@ -29,19 +29,19 @@
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: app.logger.levels.DEBUG,
+        logLevel: 'DEBUG',
 
         /**
          * Logging writer.
          * @cfg [logWrtiter=Utils.Logger.ConsoleWriter]
          */
-        logWriter: app.logger.ConsoleWriter,
+        logWriter: 'ConsoleWriter',
 
         /**
          * Logging formatter.
          * @cfg [logFormatter=Utils.Logger.SimpleFormatter]
          */
-        logFormatter: app.logger.SimpleFormatter,
+        logFormatter: 'SimpleFormatter',
 
         /**
          * Sugar REST server URL.
@@ -132,8 +132,8 @@
             header: {
                 target: '#header'
             },
-            alert: {
-                target: '#alert'
+            footer: {
+                target: '#footer'
             }
         },
 

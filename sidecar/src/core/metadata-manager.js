@@ -354,8 +354,8 @@
          */
         sync: function(callback) {
             var self = this;
-
-            app.api.getMetadata(self.getHash(), app.config.metadataTypes, [], {
+            var metadataTypes = app.config.metadataTypes || [];
+            app.api.getMetadata(self.getHash(), metadataTypes, [], {
                 success: function(metadata, textStatus, jqXHR) {
                     if (jqXHR.status == 304) { // Our metadata is up to date so we do nothing.
                         app.logger.debug("Metadata is up to date");
