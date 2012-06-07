@@ -2,6 +2,8 @@
 
     app.view.fields.DateField = app.view.Field.extend({
 
+        // TODO: Implement i18n
+
         unformat: function(value) {
             return value;
         },

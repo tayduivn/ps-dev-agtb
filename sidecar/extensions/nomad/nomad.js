@@ -2,15 +2,16 @@
 
     var _rrh = {
 
-        associate: function(module, id, link) {
+        associate: function(module, id, link, depth) {
             var relatedModule = app.data.getRelatedModule(module, link);
-            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);            
+            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);
             app.controller.loadView({
                 module: relatedModule,
                 layout: "associate",
                 viaLink: link,
                 toModule: module,
-                toId: id
+                toId: id,
+                depth:depth
             });
         },
 
@@ -33,14 +34,15 @@
                 create: true
             });
         },
-        create: function(module, id, link) {
+        create: function(module, id, link, depth) {
             app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
             app.controller.loadView({
                 parentModule: module,
                 parentModelId: id,
                 link: link,
                 create: true,
-                layout: "edit"
+                layout: "edit",
+                depth:depth
             });
         },
 
@@ -69,9 +71,9 @@
         app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
         app.router.route(":module/:id/link/:link/:relatedId", "relationships:detail", _rrh.record);
         app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
-        app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
-        app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
-        app.router.route(":module/:id/link/picker/:action","relationships:picker" ,_rrh.pickerList);
+        app.router.route(":module/:id/link/:link/create?depth=:depth", "relationships:create", _rrh.create);
+        app.router.route(":module/:id/link/:link/associate?depth=:depth", "relationships:associate", _rrh.associate);
+        app.router.route(":module/:id/links/:action","relationships:picker" ,_rrh.pickerList);
 
         app.api.serverUrl = app.isNative ? app.user.get("serverUrl") : app.config.serverUrl;
 
@@ -117,14 +119,28 @@
             return _.filter(model.fields, function (field) {
                 var relationship;
                 return ((field.type == "link") &&
-                   (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
-                   (_.any(modules, function(module) {
+                    (_.any(modules, function(module) {
                         return (module == relationship.lhs_module) ||
                                (module == relationship.rhs_module);
-                   })));
+                    })));
             });
 
+        },
+
+        /**
+         * Shows loading notification.
+         */
+        showLoading: function () {
+            app.alert.show("data_loading", {level:'general', messages:'Loading...'});
+        },
+
+        /**
+         * Hides loading notification.
+         */
+        hideLoading: function () {
+            app.alert.dismiss("data_loading");
         },
 
         /**
@@ -134,7 +150,7 @@
          * @param {String} body(optional)
          */
         sendEmail: function(emails, subject, body) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending email");
         },
 
         /**
@@ -142,7 +158,7 @@
          * @param {Array} phones
          */
         callPhone: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Calling phone");
         },
 
         /**
@@ -150,7 +166,7 @@
          * @param {Array} phones
          */
         sendSms: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending SMS");
         },
 
         /**
@@ -158,15 +174,15 @@
          * @param {Array} phones
          */
         openUrl: function(urls) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Opening URL");
         },
 
         /**
          * Opens the map with specific address.
          * @param {Array} phones
          */
-        openOpenAddress: function(addressObj) {
-            // TODO: Implement HTML action sheet view
+        openAddress: function(addressObj) {
+            app.logger.debug("Open address");
         }
 
     });

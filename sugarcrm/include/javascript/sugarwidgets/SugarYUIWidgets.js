@@ -409,12 +409,12 @@ YAHOO.extend(sw.AsyncPanel, YAHOO.widget.Panel, {
 	loadingText : "Loading...",
 	failureText : "Error loading content.",
 
-	load : function(url, method, callback) {
+	load : function(url, method, callback, postdata) {
 		method = method ? method : "GET";
 		this.setBody(this.loadingText);
 		if (Connect.url) url = Connect.url + "&" +  url;
 		this.callback = callback;
-		Connect.asyncRequest(method, url, {success:this._updateContent, failure:this._loadFailed, scope:this});
+		Connect.asyncRequest(method, url, {success:this._updateContent, failure:this._loadFailed, scope:this}, postdata);
 	},
 
 	_updateContent : function (o) {

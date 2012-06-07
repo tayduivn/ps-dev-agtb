@@ -134,6 +134,9 @@
             },
             alert: {
                 target: '#alert'
+            },
+            footer: {
+                target: '#footer'
             }
         },
 

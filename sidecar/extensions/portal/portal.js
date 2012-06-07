@@ -22,7 +22,7 @@
                                 {
                                     name: "login_button",
                                     type: "button",
-                                    label: "Login",
+                                    label: "Log In",
                                     class: "login-submit",
                                     value: "login",
                                     primary: true,
@@ -48,7 +48,7 @@
                                 {
                                     name: "signup_button",
                                     type: "button",
-                                    label: "Signup",
+                                    label: "Sign Up",
                                     value: "signup",
                                     class: 'pull-left',
                                     events: {
@@ -75,7 +75,7 @@
                             "this.logoURL=app.config.logoURL" +
                             "}" +
                             "app.view.View.prototype.render.call(this);" +
-                            "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); }" +
+                            "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"footer\").hide(); }" +
                             "return this;" +
                             "}" +
                             "}"
@@ -155,7 +155,7 @@
                                 {
                                     name: "signup_button",
                                     type: "button",
-                                    label: "Sign up",
+                                    label: "Sign Up",
                                     value: "signup",
                                     primary: true,
                                     events: {
@@ -381,7 +381,49 @@
             },
             "header": {
                 templates: {
-                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../currentModule}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../currentModule}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#profile\">Profile</a></li>\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+                }
+            },
+            "footer": {
+                templates: {
+                    "footer": "<footer>\n" +
+                    "    <div class=\"row-fluid\">\n" +
+                    "        <div class=\"span3\"><a href=\"\" class=\"logo\">SugarCRM</a></div>\n" +
+                    "        <div class=\"span9\">\n" +
+                    "            <div class=\"btn-toolbar pull-right\">\n" +
+                    "                <div class=\"btn-group\">\n" +
+                    "                    <a title=\"Activity View Tour\" class=\"btn\" id=\"tour\"><i class=\"icon-road\"></i>\n" +
+                    "                        Tour</a>\n" +
+                    "                </div>\n" +
+                    "                <div class=\"btn-group\">\n" +
+                    "                    <a id=\"print\" class=\"btn\"><i class=\"icon-print\"></i> Print</a>\n" +
+                    "                    <a id=\"top\" class=\"btn\"><i class=\"icon-arrow-up\"></i> Top</a>\n" +
+                    "                </div>\n" +
+                    "            </div>\n" +
+                    "        </div>\n" +
+                    "    </div>\n" +
+                    "</footer>\n" +
+                    "\n" +
+                    "<!-- Tour Guide -->\n" +
+                    "<div class=\"modal hide\" id=\"systemTour\">\n" +
+                    "  <div class=\"modal-header\">\n" +
+                    "    <a class=\"close\" data-dismiss=\"modal\">?</a>\n" +
+                    "    <h3>Tour the Portal</h3>\n" +
+                    "  </div>\n" +
+                    "  <div class=\"modal-body\">\n" +
+                    "    <p>The primary actions to get things done in the portal.</p>\n" +
+                    "  </div>\n" +
+                    "  <div class='pointsolight'>\n" +
+                    "  <div id=\"tourCube\" class=\"tourSee\"><span>Dashboard</span></div>\n" +
+                    "  <div id=\"tourCreate\" class=\"tourSee\"><span>Quick create</span></div>\n" +
+                    "  <div id=\"tourUser\" class=\"tourSee\"><span>User admin</span></div>\n" +
+                    "  <div id=\"tourModules\" class=\"tourSee\"><span>Modules</span></div>\n" +
+                    "  <div id=\"tourUSearch\" class=\"tourSee\"><span>Universal search</span></div>\n" +
+                    "  <div id=\"tourSort\" class=\"tourSee\"><span>Sort columns</span></div>\n" +
+                    "  <div id=\"tourRefine\" class=\"tourSee\"><span>Filter<br>items</span></div>\n" +
+                    "  <div id=\"tourAdd\" class=\"tourSee\"><span>Add<br>item</span></div>\n" +
+                    "  </div>\n" +
+                    "</div>\n"
                 }
             },
             "signupView": {
@@ -427,55 +469,6 @@
                         "</div>"
                 }
             }
-        },
-        'viewTemplates': {
-            "loginView": "<form name='{{name}}'>" +
-                "<div class=\"container welcome\">\n" +
-                "<div class=\"row\">\n" +
-                "<div class=\"span4 offset4 thumbnail\">\n" +
-                "<div class=\"modal-header tcenter\">\n" +
-                "<h2 class=\"brand\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</h2>\n" +
-                "</div>\n" +
-                "{{#each meta.panels}}" +
-                "<div class=\"modal-body tcenter\">\n" +
-                "{{#each fields}}\n" +
-                "<div>{{field ../../this ../../model}}</div>" +
-                "{{/each}}" +
-                "</div>          \n" +
-                "{{/each}}" +
-                "<div class=\"modal-footer\">\n" +
-                "{{#each meta.buttons}}" +
-                "{{field ../this ../model}}" +
-                "{{/each}}" +
-                "</div>\n" +
-                "</div>                             \n" +
-                "</div>\n" +
-                "</div>         \n" +
-                "</form>",
-            "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../currentModule}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>",
-            "signupView": "<form name='{{name}}'>" +
-                "<div class=\"container welcome\">\n" +
-                "<div class=\"row\">\n" +
-                "<div class=\"span4 offset4 thumbnail\">\n" +
-                "<div class=\"modal-header tcenter\">\n" +
-                "<h2 class=\"brand\">SugarCRM</h2>\n" +
-                "</div>\n" +
-                "{{#each meta.panels}}" +
-                "<div class=\"modal-body tcenter\">\n" +
-                "{{#each fields}}\n" +
-                "{{field ../../this ../../model}}" +
-                "{{/each}}" +
-                "</div>          \n" +
-                "{{/each}}" +
-                "<div class=\"modal-footer\">\n" +
-                "{{#each meta.buttons}}" +
-                "{{field ../this ../model}}" +
-                "{{/each}}" +
-                "</div>\n" +
-                "</div>                             \n" +
-                "</div>\n" +
-                "</div>         \n" +
-                "</form>"
         },
         "appListStrings": {
             "state_dom": {
@@ -795,6 +788,21 @@
                 query: query
             });
         });
+
+        // Load the profile
+        app.router.route("profile", "profile", function() {
+            app.controller.loadView({
+                module: "Profile", // TODO: It's not really a module .. do we need this?
+                layout: "profile"
+            });
+        });
+        // Loadds profile edit
+        app.router.route("profile/edit", "profileedit", function() {
+            app.controller.loadView({
+                layout: "profileedit"
+            });
+        });
+
 
     });
 

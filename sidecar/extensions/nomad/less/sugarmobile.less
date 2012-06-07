@@ -75,9 +75,19 @@ h1 {font-size: 26px !important;}
 
 #nomad,
 #content,
-#content > div,
-#content > div > div {
+#content > div {
   display:inline;
+}
+
+#content > div > div {
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0px;
+}
+
+#content div > h1.nomad {
+    #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
 }
 
 #scroll > .pad > span .control-group,
@@ -235,6 +245,9 @@ article p:last-child {
   width: 44px;
   @shadow: inset -1px 0 0 @black, 1px 0 0 lighten(@black, 20%);
   .box-shadow(@shadow);
+    &:active {
+      background-color:#222;
+    }
   }
 .navbar .cube:hover {
   text-decoration: none;
@@ -341,7 +354,7 @@ height:52px;
 .icon-phone {
   background: url('../img/sprite.png') no-repeat 1% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
@@ -349,7 +362,7 @@ height:52px;
 .icon-phone-black {
   background: url('../img/sprite.png') no-repeat 18% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
@@ -357,7 +370,7 @@ height:52px;
 .icon-sms-black {
 background: url('../img/sprite.png') no-repeat 57% 0;
 background-size: 700%;
-height: 20px;
+height: 18px;
 width: 16px;
 margin-bottom: -20%;
 }
@@ -365,7 +378,7 @@ margin-bottom: -20%;
 .icon-sms-white {
 background: url('../img/sprite.png') no-repeat 40% 0;
 background-size: 700%;
-height: 20px;
+height: 18px;
 width: 16px;
 margin-bottom: -20%;
 }
@@ -498,6 +511,10 @@ html {
   display: block;
   .pad {
     padding-top:49px;
+    &>textarea {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
@@ -666,18 +683,18 @@ overflow:visible;
   text-shadow: 0 -1px 0 @black;
 }
 
-#backRecord {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2002;
+fieldset .btn-inverse {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2002;
 }
 
-#saveRecord {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2002;
+fieldset .btn-primary {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2002;
 }
 
 .blankspacer {
@@ -713,6 +730,9 @@ overflow:visible;
   .box-shadow(@shadow);
   text-align: center;
   padding-top: 14px;
+    &:active {
+      background-color:#222;
+    }
 }
 
 #detailListing .listing {
@@ -741,8 +761,8 @@ h3.nomad {
   color: @white;
   z-index: 2001;
   position: absolute;
-  width: 80%;
-  margin: 0 10%;
+  width: 74%;
+  margin: 0 0 0 13%;
   display: inline-block;
   text-align: center;
   font-size:16px !important;
@@ -996,6 +1016,10 @@ color: @gray;
   box-shadow: none;
   display: block;
   float:left;
+}
+
+#createRecord input[type=tel]{
+  width:60% !important;
 }
 
 #record-action .span1_5th {
@@ -1374,3 +1398,8 @@ float: none !important;}
     }
 }
 */
+
+
+
+
+
