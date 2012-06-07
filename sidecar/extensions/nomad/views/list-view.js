@@ -28,8 +28,8 @@
 
             this.activeArticle = null;
         },
-        render: function () {
-            app.view.View.prototype.render.call(this);
+        _renderSelf: function () {
+            app.view.View.prototype._renderSelf.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
 

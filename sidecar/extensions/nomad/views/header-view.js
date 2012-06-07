@@ -14,13 +14,14 @@
                     this.render(layout, params);
             }, this);
         },
-        render: function(layout, params) {
+
+        _renderSelf: function(layout, params) {
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
             else {
                 this.$el.removeClass("hide");
-                app.view.View.prototype.render.call(this);
+                app.view.View.prototype._renderSelf.call(this);
                 this._renderLeftList(app.template.get('left.menu'),
                     {
                         items: _.keys(app.metadata.getModuleList()),

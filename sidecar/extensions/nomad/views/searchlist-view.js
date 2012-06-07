@@ -18,10 +18,6 @@
             this.timerId = null;
         },
 
-        render: function() {
-            app.view.View.prototype.render.call(this);
-        },
-
         onKeyUp: function(e) {
             if (this.timerId) {
                 window.clearTimeout(this.timerId);

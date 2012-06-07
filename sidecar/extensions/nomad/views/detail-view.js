@@ -89,7 +89,7 @@
                 };
 
             //pass custom data object as the context
-            this._renderWithContext(data);
+            app.view.View.prototype._renderSelf.call(this, data);
         },
 
         /**
