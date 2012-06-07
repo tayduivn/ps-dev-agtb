@@ -14,9 +14,9 @@
     /**
      * Renders relate field
      */
-    render: function() {
+    _render: function() {
         var self = this;
-        var result = this.app.view.Field.prototype.render.call(this);
+        var result = this.app.view.Field.prototype._render.call(this);
         this.$(".relateEdit").chosen({
             no_results_text: "Searching for " // TODO Add labels support
         }).change(function(event) {
