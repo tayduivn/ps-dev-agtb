@@ -15,7 +15,7 @@
                 <i class="icon-search"></i>
                 <div class="form-search row-fluid">
                     <input type="text" class="search-query"
-                           placeholder="       Search all {{context.attributes.module}}">
+                           placeholder="Search all {{context.attributes.module}}">
                     <aside>
                         <div class="btn-group">
                             <a title="Starred" href="#" class="btn favorites-btn"><i class="icon-star"></i></a>
