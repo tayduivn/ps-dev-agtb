@@ -432,6 +432,7 @@ EOQ;
         //for action button at the top of each subpanel
         // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
         $buttons = array();
+        $widget_contents = '';
 		foreach($subpanel_def as $widget_data)
 		{
 

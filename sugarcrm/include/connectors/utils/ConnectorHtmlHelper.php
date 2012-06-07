@@ -143,7 +143,6 @@ class ConnectorHtmlHelper
                         . '" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
 
             }
-            $code .= "{overlib_includes}\n";
             $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>\n";
             $code .= "<script type='text/javascript'>\n";
             $code .= "function showConnectorMenu2() {literal} { {/literal}\n";
