@@ -134,6 +134,7 @@ class EditView
 
             $this->focus->fill_in_additional_detail_fields();
             $this->focus->assigned_user_id = $current_user->id;
+            $this->focus->assigned_user_name = $current_user->full_name;
         }
     }
 
