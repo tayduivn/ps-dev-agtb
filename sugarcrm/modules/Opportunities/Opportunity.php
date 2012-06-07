@@ -417,11 +417,18 @@ $query .= 			"LEFT JOIN users
             //Log an error message here
             $GLOBALS['log']->error();
         }
+
+        if(empty($this->best_case_worksheet) && empty($this->likely_case_worksheet))
+        {
+            $this->best_case_worksheet = $this->best_case;
+            $this->likely_case_worksheet = $this->likely_case;
+        }
         //END SUGARCRM flav=pro ONLY
 
 		require_once('modules/Opportunities/SaveOverload.php');
 
 		perform_save($this);
+
 		return parent::save($check_notify);
 
 	}

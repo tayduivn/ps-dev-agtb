@@ -48,6 +48,15 @@ class Worksheet extends SugarBean {
 
     function save($check_notify = false){
 
+        if (empty($this->related_forecast_type))
+        {
+            $opp = new Opportunity();
+            $opp->retrieve($this->related_id);
+            $opp->best_case_worksheet = $this->best_case;
+            $opp->likely_case_worksheet = $this->likely_case;
+            $opp->save();
+        }
+
         parent::save($check_notify);
     }
 
