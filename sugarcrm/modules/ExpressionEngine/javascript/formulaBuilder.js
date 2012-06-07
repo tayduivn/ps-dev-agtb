@@ -277,6 +277,22 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
      */
 SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
+    var expression = YAHOO.lang.trim(Dom.get('formulaInput').value);
+
+       /* Remove all blanks in expression that are not part of a string */
+    var res="";
+    var quote=0;
+    for (var i=0; i<expression.length; i++) {
+        var ch = expression.substr(i,1);
+        if (ch=='"') {
+            quote++;
+        }
+        if ((quote % 2) || ch != " ") {
+            res += ch;
+        }
+    }
+    Dom.get('formulaInput').value=res;
+
 	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
 		return false;
 	if (YAHOO.lang.isString(target))

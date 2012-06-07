@@ -190,6 +190,9 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	if($offset == '' || $offset == -1){
 		$offset = 0;
 	} // if
+	if($deleted){
+	    $deleted = -1;
+	}	
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
@@ -1158,6 +1161,12 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	//BEGIN SUGARCRM flav=pro ONLY
 	$seed->add_team_security_where_clause($sql);
 	//END SUGARCRM flav=pro ONLY
+
+    if (isset($seed->custom_fields))
+    {
+        $customJoin = $seed->custom_fields->getJOIN();
+        $sql .= $customJoin ? $customJoin['join'] : '';
+    }
 
 	// build WHERE clauses, if any
 	$where_clauses = array();

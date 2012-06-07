@@ -1729,9 +1729,9 @@ EOQ;
      * @return string
      */
 
-    public function getGuidSQL()
+	public function getGuidSQL()
     {
         $guidStart = create_guid_section(9);
-        return "'$guidStart-' || HEX(generate_unique())";
+      	return "'$guidStart-' || HEX(generate_unique())";
     }
 }

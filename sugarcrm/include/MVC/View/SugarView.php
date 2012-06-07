@@ -1475,9 +1475,9 @@ EOHTML;
         if (isset($this->action)){
             switch ($this->action) {
             case 'EditView':
-                if(!empty($this->bean->id)) {
-                    $params[] = $this->bean->get_summary_text();
-                    //$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
+                if(!empty($this->bean->id) && (!isset($_REQUEST['isDuplicate']) || $_REQUEST['isDuplicate'] === 'false')) {
+                    $params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$this->bean->get_summary_text()."</a>";
+                    $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
                 }
                 else
                     $params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];

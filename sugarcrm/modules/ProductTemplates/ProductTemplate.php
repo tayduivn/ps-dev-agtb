@@ -507,6 +507,10 @@ class ProductTemplate extends SugarBean {
 		
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
+
+        // Bug #52052: Calculated Fields don't get into POST (inputs are disabled)
+        // So if i.e. "discount_price" is Calculated Fields we have find out it's value first
+        $this->updateCalculatedFields();
 		
 		//US DOLLAR
 		if(isset($this->discount_price)){

@@ -34,6 +34,7 @@
  && $vardef.type != 'multienum' && $vardef.type != 'radioenum'
  && $vardef.type != 'html' && $vardef.type != 'relate'
  && $vardef.type != 'url' && $vardef.type != 'iframe' && $vardef.type != 'parent'  && $vardef.type != 'image'}
+ && empty($vardef.function) && (!isset($vardef.studio.calculated) || $vardef.studio.calculated != false)
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td style="line-height:1em"><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>

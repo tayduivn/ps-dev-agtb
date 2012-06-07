@@ -397,18 +397,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'precision' => '2',
 		'comment' => 'Variable pricing factor depending on pricing_formula'
 	),
-	'account_name'=>array(
-		'name'=>'account_name',
-		'rname'=>'name',
-		'id_name'=>'account_id',
-		'vname'=>'LBL_ACCOUNT_NAME',
-		'type'=>'relate',
-		'table'=>'accounts',
-		'isnull'=>'true',
-		'module'=>'Accounts',
-		'source'=>'non-db',
-	    'massupdate' => false,
-	),
+    /**
+     * Bug 46077 - Removed the account_name vardef to prevent empty account names
+     * from product searches clobbering account names in editview
+     */
 		'created_by_link' =>
 	array (
 		'name' => 'created_by_link',

@@ -1743,9 +1743,10 @@ EOQ;
      * I.e. generate a unique Sugar id in a sub select of an insert statement.
      * @return string
      */
-    public function getGuidSQL()
+
+	public function getGuidSQL()
     {
         $guidStart = create_guid_section(3);
-        return "'$guidStart-' || sys_guid()";
+      	return "'$guidStart-' || sys_guid()";
     }
 }

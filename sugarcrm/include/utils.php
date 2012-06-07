@@ -1137,7 +1137,8 @@ function return_application_language($language)
 	}
 
 	// If we are in debug mode for translating, turn on the prefix now!
-	if($sugar_config['translation_string_prefix']) {
+    if(!empty($sugar_config['translation_string_prefix']))
+    {
 		foreach($app_strings as $entry_key=>$entry_value) {
 			$app_strings[$entry_key] = $language.' '.$entry_value;
 		}
@@ -4128,12 +4129,13 @@ function getTrackerSubstring($name) {
 	}
 
 	if($strlen > $max_tracker_item_length) {
-		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length, "UTF-8") : substr($name, 0, $max_tracker_item_length);
+		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length-3, "UTF-8") : substr($name, 0, $max_tracker_item_length-3);
+		$chopped .= "...";
 	} else {
 		$chopped = $name;
 	}
 
-	return $chopped;
+	return to_html($chopped);
 }
 function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_custom_fields=false,$module='') {
 	$where_clauses= array();
@@ -4940,7 +4942,8 @@ function verify_image_file($path, $jpeg = false)
             if(file_put_contents($path, $image)) {
                 return true;
             }
-        } elseif ($filetype == "image/png") { // else if the filetype is png, create png
+        } elseif ($filetype == "image/png") {
+            // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
         	ob_start();
@@ -4975,7 +4978,7 @@ function verify_image_file($path, $jpeg = false)
 
 /**
  * Verify uploaded image
- * Verifies that image has proper extension, MIME type and doesn't contain hostile contant
+ * Verifies that image has proper extension, MIME type and doesn't contain hostile content
  * @param string $path  Image path
  * @param bool $jpeg_only  Accept only JPEGs?
  */
@@ -4993,7 +4996,7 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	$img_size = getimagesize($path);
 	$filetype = $img_size['mime'];
 	$ext = end(explode(".", $path));
-	if(substr_count('..', $path) > 0 || ($ext !== $path && !in_array(strtolower($ext), array_keys($supportedExtensions))) ||
+	if(substr_count('..', $path) > 0 || ($ext !== $path && !isset($supportedExtensions[strtolower($ext)])) ||
 	    !in_array($filetype, array_values($supportedExtensions))) {
 	        return false;
 	}
@@ -5219,4 +5222,31 @@ function generateETagHeader($etag){
 			die();
 		}
 	}
+}
+/**
+ * getReportNameTranslation
+ *
+ * Translates the report name if a translation exists, 
+ * otherwise just returns the name
+ *
+ * @param string $reportName
+ * @return string translated report name
+ */
+function getReportNameTranslation($reportName) {
+	global $current_language;
+	 
+	// Used for translating reports
+    $mod_strings = return_module_language($current_language, 'Reports');
+ 
+	// Search for the report name in the default language and get the key
+	$key = array_search($reportName, return_module_language("", "Reports"));
+	
+	// If the key was found, use it to get a translation, otherwise just use report name
+	if (!empty($key)) {
+		$title = $mod_strings[$key]; 
+	} else {
+		$title = $reportName;
+	}
+	
+	return $title;
 }

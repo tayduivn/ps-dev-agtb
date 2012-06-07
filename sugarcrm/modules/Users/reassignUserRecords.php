@@ -325,7 +325,8 @@ else if(!isset($_GET['execute'])){
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
 
-		if(!empty($team_id)){
+        //make sure team id is set, and the module is not EAPM, which does not have team/teamset fields
+		if(!empty($team_id) && $module!='EAPM'){
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
 		//END SUGARCRM flav=pro ONLY

@@ -3213,45 +3213,45 @@ SUGAR.reports = function() {
     		
 		},			
 		//END SUGARCRM flav!=sales ONLY
-		deleteFromFullTableList: function(rowId) {
-			var row = document.getElementById(rowId);
-			var key = row.cells[0].getElementsByTagName('input')[1].value;
-			if (key.split('>').length == 1)
-				return;
-			key = key.replace(/>/g,':');
-			//Upgraded content strings don't have dependents.
-			if (full_table_list[key].dependents) {
-				if (full_table_list[key].dependents.length == 1){
-					delete full_table_list[key];
-				}
-				else {
-					var dependents = full_table_list[key].dependents;
-					for (var i = 0; i < dependents.length; i++) {
-						if (dependents[i] == rowId) {
-							delete dependents[i];
-						}
-					}
-					var allUndefined = true;
-					for (var i = 0; i < dependents.length; i++) {
-						if (typeof(dependents[i]) != 'undefined') {
-							allUndefined = false;
-							break;
-						}
-					}
-					if ((typeof(full_table_list[key].dependents) == 'undefined' || allUndefined) && key !='self') {
-						delete full_table_list[key];
-					}
-					
-					/*
-					for (var i = 0; i < dependents.length; i++) {
-						if (dependents[i] == rowId) {
-							dependents.splice(i,1);
-							break;
-						}
-					}*/
-				}
-			}
-		},
+
+        /**
+         * Removing element from dependents of full_table_list
+         *
+         * @param stirng rowId element for removal
+         */
+        deleteFromFullTableList: function(rowId) {
+            for (var key in full_table_list)
+            {
+                if (typeof full_table_list[key] != 'object')
+                {
+                    continue;
+                }
+                if (typeof full_table_list[key].module != 'string')
+                {
+                    continue;
+                }
+
+                if (typeof full_table_list[key].dependents == 'undefined')
+                {
+                    full_table_list[key].dependents = [];
+                }
+
+                var dependents = full_table_list[key].dependents;
+                full_table_list[key].dependents = [];
+                for (var i = 0; i < dependents.length; i++)
+                {
+                    if (dependents[i] != rowId)
+                    {
+                        full_table_list[key].dependents.push(dependents[i]);
+                    }
+                }
+
+                if (full_table_list[key].dependents.length == 0 && key !='self')
+                {
+                    delete full_table_list[key];
+                }
+            }
+        },
 		cleanFullTableList: function() {
 			for (i in full_table_list) {
 				if (typeof(full_table_list[i].dependents) == 'undefined' && i !='self') {

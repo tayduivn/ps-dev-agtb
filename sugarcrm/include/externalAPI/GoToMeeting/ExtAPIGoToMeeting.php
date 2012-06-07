@@ -157,9 +157,10 @@ class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
             $bean->join_url = $xp->query('//multiRef[name="joinURL"]/value')->item(0)->nodeValue;
 
             $uniqueMeetingId = $xp->query('//multiRef[name="uniqueMeetingId"]/value')->item(0)->nodeValue;
-
-            $meetingId = $xp->query('//multiRef[@id="id5"]')->item(0)->nodeValue;
-
+                       
+            $meetingIdHref = $xp->query('//multiRef/meetingId')->item(0)->getAttribute('href');
+            $meetingId = $xp->query('//multiRef[@id="'.substr($meetingIdHref, 1).'"]')->item(0)->nodeValue;            
+            
             $bean->external_id = $meetingId.'-'.$uniqueMeetingId;
 
             $hostReply = $this->hostMeeting(array($meetingId,$uniqueMeetingId));

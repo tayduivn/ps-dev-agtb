@@ -290,7 +290,7 @@ abstract class DBManager
 	public function checkError($msg = '', $dieOnError = false)
 	{
 		if (empty($this->database)) {
-			$this->registerError("$msg: Database Is Not Connected", $dieOnError);
+			$this->registerError($msg, "Database Is Not Connected", $dieOnError);
 			return true;
 		}
 
@@ -2502,10 +2502,20 @@ protected function checkQuery($sql, $object_name = false)
         }
 
         $default = '';
-		if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
-			$default = " DEFAULT ".$this->quoted($fieldDef['default']);
-		elseif (!isset($fieldDef['default']) && $type == 'bool')
-			$default = " DEFAULT 0 ";
+
+        // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
+        if (!empty($fieldDef['no_default']))
+        {
+            // nothing to do
+        }
+        elseif (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
+        {
+            $default = " DEFAULT ".$this->quoted($fieldDef['default']);
+        }
+        elseif (!isset($default) && $type == 'bool')
+        {
+            $default = " DEFAULT 0 ";
+        }
 
 		$auto_increment = '';
 		if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
@@ -3866,6 +3876,5 @@ protected function checkQuery($sql, $object_name = false)
      * @abstract
      * @return string
      */
-
-    abstract public function getGuidSQL();
+	abstract public function getGuidSQL();
 }
