@@ -200,6 +200,20 @@ describe("Handlebars Helpers", function() {
         });
     });
     
+    describe("eqRegex", function() {
+        it("should return result of regex evaluation", function() {
+            var val1 = "foo-is-not-greedy",
+                nonGreedy = "^foo$", 
+                greedy = "foo", 
+                returnTrue = "Success!",
+                returnFalse = "Failure!",
+                returnCb = function() { return returnTrue; };
+                returnCb.inverse = function() { return returnFalse; };
+
+            expect(Handlebars.helpers.eqRegex(val1, nonGreedy, returnCb)).toEqual(returnFalse);
+            expect(Handlebars.helpers.eqRegex(val1, greedy, returnCb)).toEqual(returnTrue);
+        });
+    });
     describe("getLabel", function() {
         it("should get a label", function() {
             var lang = SugarTest.app.lang;
