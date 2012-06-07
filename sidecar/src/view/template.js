@@ -115,6 +115,18 @@
         },
 
         /**
+         * Retrieves compiled template for layout
+         * @param name
+         * @param module
+         * @return {Array}
+         * @private
+         */
+        _getLayout: function(name, module) {
+            var key = name + (module ? ("." + module) : "");
+            return [key, this.get(key)];
+        },
+
+        /**
          * Compiles and puts into local storage a view template.
          * @param {String} name View name.
          * @param {String} module Module name.
@@ -137,6 +149,18 @@
         setField: function(type, view, src, force) {
             // Don't fall back to default template (false flag)
             return this._compile(this._getField(type, view), src, force);
+        },
+
+        /**
+         * Compiles and stores layout templates
+         * @param {String} type Layout Type
+         * @param {String} layout Layout Name
+         * @param {String} src Raw template source
+         * @param {Boolean} force Flag indicating if the template must be re-compiled
+         * @return {Function} Compiled template
+         */
+        setLayout: function(type, layout, src, force) {
+            return this._compile(this._getLayout(type, layout), src, force);
         },
 
         /**
@@ -201,15 +225,15 @@
                 }, this);
             }
 
-//            if (metadata.layouts) {
-//                _.each(metadata.layouts, function(field, type) {
-//                    if (type != "_hash") {
-//                        _.each(field.templates, function(src, view) {
-//                            this.setField(type, view, src, force);
-//                        }, this);
-//                    }
-//                }, this);
-//            }
+            if (metadata.layouts) {
+                _.each(metadata.layouts, function(layout, type) {
+                    if (type != "_hash") {
+                        _.each(layout.templates, function(src, view) {
+                            this.setLayout(type, view, src, force);
+                        }, this);
+                    }
+                }, this);
+            }
         },
 
         /**
