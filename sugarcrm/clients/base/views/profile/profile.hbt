@@ -5,9 +5,9 @@
         </a>
         {{#each meta.panels}}
         {{#each fields}}
-        {{#notEqRegex this.name "primary_address.*"}}
+        {{#notMatch this.name "primary_address.*"}}
         {{field ../../../this ../../../model}}
-        {{/notEqRegex}}
+        {{/notMatch}}
         {{/each}}
         {{/each}}
         <span sfuuid="6"><div class="row-fluid">

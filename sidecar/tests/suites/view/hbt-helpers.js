@@ -185,7 +185,7 @@ describe("Handlebars Helpers", function() {
         });
     });
 
-    describe("notEqRegex", function() {
+    describe("notMatch", function() {
         it("should return inverse of regex evaluation", function() {
             var val1 = "foo-is-not-greedy",
                 nonGreedy = "^foo$", 
@@ -195,12 +195,12 @@ describe("Handlebars Helpers", function() {
                 returnCb = function() { return returnTrue; };
                 returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.notEqRegex(val1, nonGreedy, returnCb)).toEqual(returnTrue);
-            expect(Handlebars.helpers.notEqRegex(val1, greedy, returnCb)).toEqual(returnFalse);
+            expect(Handlebars.helpers.notMatch(val1, nonGreedy, returnCb)).toEqual(returnTrue);
+            expect(Handlebars.helpers.notMatch(val1, greedy, returnCb)).toEqual(returnFalse);
         });
     });
     
-    describe("eqRegex", function() {
+    describe("match", function() {
         it("should return result of regex evaluation", function() {
             var val1 = "foo-is-not-greedy",
                 nonGreedy = "^foo$", 
@@ -210,8 +210,8 @@ describe("Handlebars Helpers", function() {
                 returnCb = function() { return returnTrue; };
                 returnCb.inverse = function() { return returnFalse; };
 
-            expect(Handlebars.helpers.eqRegex(val1, nonGreedy, returnCb)).toEqual(returnFalse);
-            expect(Handlebars.helpers.eqRegex(val1, greedy, returnCb)).toEqual(returnTrue);
+            expect(Handlebars.helpers.match(val1, nonGreedy, returnCb)).toEqual(returnFalse);
+            expect(Handlebars.helpers.match(val1, greedy, returnCb)).toEqual(returnTrue);
         });
     });
     describe("getLabel", function() {

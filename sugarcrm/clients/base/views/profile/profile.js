@@ -16,18 +16,50 @@
     render: function() {
         var self = this, data, currentUserAttributes;
 
-        // TODO: Stubbing for now .. prolly will be passed in later ;=)
-        currentUserAttributes = {id: "1275a382-5f3b-37d6-3f3d-4fce979599ea"};
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        // TODO: Stubbing by fetching first contact and using that .. seems
+        // these change from build to build so hard coding didn't work :(
+        // Later, we'll have access to current user id so this will go away.
+        app.api.records("read", "Contacts", {}, null, {
+            success: function(data) {
+                if(data) {
 
+                    // ---------------------------------------------- //
+                    // ---------------------------------------------- //
+                    // This will more or less stay depending on if we will
+                    // already have the full user data cached or not. If not,
+                    // we'll use current user id to make this call.
+                    currentUserAttributes = {id: data.records[0].id}; // later w/be something like currentUser.id
+                    self.loadCurrentUser(currentUserAttributes, function(data) {
+
+console.log("loadCurrentUser hook .. data: ", data);
+
+                        if(data) {
+                            console.log("before updateModel...");
+                            self.updateModel(data);
+                            console.log("before view prototype render call...");
+                            app.view.View.prototype.render.call(self);
+                        } 
+                        console.log("before renderSubnav...");
+                        self.renderSubnav(data);
+                    });
+                    // ---------------------------------------------- //
+                    // ---------------------------------------------- //
+                } 
+            }
+        });
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+
+    },
+    loadCurrentUser: function(currentUserAttributes, cb) {
+        var self = this;
         app.alert.show('fetch_contact_record', {level:'process', title:'Loading'});
         app.api.records("read", "Contacts", currentUserAttributes, null, {
             success: function(data) {
                 app.alert.dismiss('fetch_contact_record');
-                if(data) {
-                    self.updateModel(data);
-                    app.view.View.prototype.render.call(self);
-                } 
-                self.renderSubnav(data);
+                cb(data);
             },
             error: function(xhr, error) {
                 app.alert.dismiss('fetch_contact_record');
