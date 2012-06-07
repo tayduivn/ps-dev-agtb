@@ -62,28 +62,5 @@
             });
 
         this.rendered = true;
-    },
-    findChildren:function (parent_id) {
-        var children = [];
-
-        _.each(this.reportees.models, function (reportee) {
-            if (reportee.get('reports_to_id') == parent_id) {
-                var child = {
-                    "data":reportee.get('full_name'),
-                    "metadata":{ model:reportee }
-                };
-
-                // check for children
-                var _reportee_children = this.findChildren(reportee.get('id'));
-
-                if (_reportee_children.length > 0) {
-                    child.children = _reportee_children;
-                }
-
-                children.push(child);
-            }
-        }, this);
-
-        return children;
-    },
+    }
 })
