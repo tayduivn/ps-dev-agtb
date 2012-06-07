@@ -113,7 +113,7 @@ class WorkFlowGlue {
         }
 
         // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
-        return " ( isset(\$focus->".$shell_object->field.") && \$focus->fetched_row['".$shell_object->field."'] != \$focus->".$shell_object->field.") ";
+        return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] != \$focus->".$shell_object->field.") ";
     }
 
 	function glue_normal_compare_change(& $shell_object){
