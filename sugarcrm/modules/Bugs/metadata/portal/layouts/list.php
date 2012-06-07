@@ -13,7 +13,7 @@ $viewdefs['Bugs']['portal']['layout']['list'] = array(
         ),
         2 => 
         array(
-            'view' => 'table',
+            'view' => 'list',
         ),
         3 => 
         array(

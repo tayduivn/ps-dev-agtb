@@ -32,6 +32,10 @@
             app.view.View.prototype.render.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
+
+            if (this.collection.next_offset === -1) {
+                this.$('.show-more-bottom-btn').hide();
+            }
         },
         search: function (text) {
             this.collection.fetch();
@@ -70,6 +74,7 @@
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult, 0);
 
             this.collection.fetch({add: true,
+                relate: !!this.context.get('link'),
                 silent: true,
                 offset: offset,
                 max_num: app.config.maxQueryResult,
@@ -110,7 +115,9 @@
         showMoreBottomRecords: function () {
             this.showLoadingMsg('.show-more-bottom-btn',true);
 
+            //relate: !!this.context.get('link'),
             this.collection.paginate({add: true,
+                relate: !!this.context.get('link'),
                 success: _.bind(function () {
                     if (this.collection.length > this.getMaxPageSize()) {
                         this.$('.show-more-top-btn').show();

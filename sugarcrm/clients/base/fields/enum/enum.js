@@ -1,9 +1,9 @@
 ({
     fieldTag: "select",
-    render: function() {
-        var result = this.app.view.Field.prototype.render.call(this);
-        $(this.fieldTag + "[name=" + this.name + "]").chosen();
-        return result;
+    _render: function() {
+        this.app.view.Field.prototype._render.call(this);
+        this.$(this.fieldTag).chosen();
+        return this;
     }
 
 })

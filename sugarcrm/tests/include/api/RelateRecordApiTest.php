@@ -48,6 +48,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $contact = BeanFactory::getBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
         $contact->save();
+        // Get the real data that is in the system, not the partial data we have saved
+        $contact->retrieve($contact->id);
         $this->createdBeans[] = $contact;
         $noteName = "Related Record Unit Test Note";
 
@@ -61,6 +63,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             "record" => $contact->id,
             "link_name" => "notes",
             "name" => $noteName,
+            "assigned_user_id" => $GLOBALS['current_user']->id,
         );
         $apiClass = new RelateRecordApi();
         $result = $apiClass->createRelatedRecord($api, $args);
@@ -70,6 +73,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($noteName, $result['related_record']['name']);
 
         $note = BeanFactory::getBean("Notes", $result['related_record']['id']);
+        // Get the real data that is in the system, not the partial data we have saved
+        $note->retrieve($note->id);
         $this->createdBeans[] = $note;
 
         $contact->load_relationship("notes");

@@ -2,6 +2,7 @@
     <label class="control-label">{{label}}</label>
     <div class="controls">
         <select name="{{name}}" {{#if def.multi}} multiple {{/if}}>
+            <option value="" selected></option>
             {{#eachOptions def.options}}
                 <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
             {{/eachOptions}}

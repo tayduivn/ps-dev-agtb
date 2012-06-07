@@ -4,6 +4,7 @@
         events: {
             'click input': 'onClick'
         },
+
         initialize: function(options) {
             app.view.Field.prototype.initialize.call(this, options);
 
@@ -45,12 +46,14 @@
             this.relateLayout.addComponent(listView);
 
         },
+
         hideMenu:function(){
             this.relateLayout.$el.remove();
 
             //$(app.controller.el).show();
             $(app.controller.layout.el).show();
         },
+
         onClick: function(e) {
             e.preventDefault();
             //$(app.controller.el).hide();
