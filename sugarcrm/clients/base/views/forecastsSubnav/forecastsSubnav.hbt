@@ -1,0 +1,17 @@
+<div class="btn-toolbar pull-left">
+    <h1>Forecast: {{fullName}} for {{timePeriod}}</h1>
+</div>
+<div class="btn-toolbar pull-right">
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+        <ul class="dropdown-menu menu">
+            <li><a href="#">Duplicate</a></li>
+            <li><a href="#">Save</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Note</a></li>
+            <li><a href="#">Email</a></li>
+            <li><a href="#">PDF</a></li>
+            <li><a href="#">CSV</a></li>
+        </ul>
+    </div>
+</div>

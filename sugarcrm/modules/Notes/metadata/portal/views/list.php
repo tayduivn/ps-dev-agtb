@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Notes']['portal']['view']['table'] = array(
+$viewdefs['Notes']['portal']['view']['list'] = array(
     'panels' =>
     array(
         0 =>

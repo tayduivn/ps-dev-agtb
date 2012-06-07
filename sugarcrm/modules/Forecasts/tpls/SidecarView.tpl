@@ -64,6 +64,7 @@
 <script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/models/chartOptions/chartOptions.js'></script>
 <script src='clients/base/views/chartOptions/chartOptions.js'></script>
+<script src='clients/base/views/forecastsSubnav/forecastsSubnav.js'></script>
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
 
@@ -72,23 +73,7 @@
 <script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
 
-<div class="subnav">
-    <div class="btn-toolbar pull-left"></div>
-    <div class="btn-toolbar pull-right">
-        <div class="dropdown">
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-            <ul class="dropdown-menu menu">
-                <li><a href="#">Duplicate</a></li>
-                <li><a href="#">Save</a></li>
-                <li class="divider"></li>
-                <li><a href="#">Note</a></li>
-                <li><a href="#">Email</a></li>
-                <li><a href="#">PDF</a></li>
-                <li><a href="#">CSV</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+<div class="view-forecastsSubnav subnav"></div>
 <div id="core-module">
     <div id="core" style="" >
         <div class="container-fluid">

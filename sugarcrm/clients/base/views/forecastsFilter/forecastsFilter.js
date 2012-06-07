@@ -6,36 +6,18 @@
  */
 ({
 
-    render: false,
-
-    /**
-     * Initialize the View
-     *
-     * @constructor
-     * @param {Object} options
-     */
-    initialize: function(options){
+    bindDataChange: function() {
         var self = this,
-            model;
+            model = self.layout.getModel('filters');
 
-        app.view.View.prototype.initialize.call(this, options);
-
-        model = self.layout.getModel('filters');
         model.on('change', function() {
             self.buildDropdowns(this);
         });
     },
 
-    render : function (){
-        // only let this render once.  since if there is more than one view on a layout it renders twice
-        if(!this.rendered) {
-            app.view.View.prototype.render.call(this);
-            this.rendered = true;
-        }
-    },
-
     buildDropdowns: function(model) {
         var self = this;
+        self.$el.empty();
         _.each(model.attributes, function(data, key) {
             var chosen = app.view.createField({
                     def: {
@@ -53,6 +35,10 @@
             chosen.def.options = model[key].get('options');
             chosen.setElement($chosenPlaceholder);
             chosen.render();
+
+            $chosenPlaceholder.find('select').chosen().on('change', function(event, data) {
+                model[key].set('value', data.selected);
+            });
         });
     }
 
