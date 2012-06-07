@@ -22,7 +22,7 @@
             },
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
-                app.nomad.openOpenAddress(addressObj);
+                app.nomad.openAddress(addressObj);
             }
         },
 
@@ -48,7 +48,7 @@
                     } else if (field.name.indexOf("address") > -1) {    //find address fields
                         addressFields.push(field);
                     } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
-                        field.type = "email_temp";
+                        field.type = "singleemail";
                     } else if (fields.length < 4) {                     //find four other fields to output
                         fields.push(field);
                     }

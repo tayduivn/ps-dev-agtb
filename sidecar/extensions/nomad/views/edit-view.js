@@ -12,7 +12,7 @@
         _renderSelf: function () {
             _.each(this.meta.panels, function (panel, panelIndex) {
                 _.each(panel.fields, function (field, fieldIndex) {
-                    if (field.name.indexOf("email") == 0) field.type = "email_temp";
+                    if (field.name.indexOf("email") == 0) field.type = "singleemail";
                 });
             });
             app.view.View.prototype._renderSelf.call(this);
