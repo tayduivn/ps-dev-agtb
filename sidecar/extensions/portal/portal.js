@@ -297,7 +297,7 @@
             "enum": {
                 "templates": {
                     "signupView": "<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
-                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\">{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\"><option value=\"\" selected></option>{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "default": ""
                 },
