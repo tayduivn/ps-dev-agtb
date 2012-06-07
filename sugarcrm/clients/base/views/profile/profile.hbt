@@ -10,7 +10,7 @@
         {{/notMatch}}
         {{/each}}
         {{/each}}
-        <span sfuuid="6"><div class="row-fluid">
+        <span><div class="row-fluid">
             {{! TODO: Use language agnostic labels here }}
             <div class="span2 address">Address</div>
                 <div class="span4">

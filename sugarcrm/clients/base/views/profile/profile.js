@@ -32,17 +32,11 @@
                     // we'll use current user id to make this call.
                     currentUserAttributes = {id: data.records[0].id}; // later w/be something like currentUser.id
                     self.loadCurrentUser(currentUserAttributes, function(data) {
-
-console.log("loadCurrentUser hook .. data: ", data);
-
                         if(data) {
-                            console.log("before updateModel...");
                             self.updateModel(data);
-                            console.log("before view prototype render call...");
                             app.view.View.prototype.render.call(self);
+                            self.renderSubnav(data);
                         } 
-                        console.log("before renderSubnav...");
-                        self.renderSubnav(data);
                     });
                     // ---------------------------------------------- //
                     // ---------------------------------------------- //
@@ -78,6 +72,7 @@ console.log("loadCurrentUser hook .. data: ", data);
     renderSubnav: function(data) {
         var self = this, fullName = '', subnavModel = null;
         if (self.context.get('subnavModel')) {
+
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
             self.context.get('subnavModel').set({
                 'title': fullName,
