@@ -3548,28 +3548,28 @@ a:hover [class^="icon-"] {
 .icon-phone {
   background: url('../img/sprite.png') no-repeat 1% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-phone-black {
   background: url('../img/sprite.png') no-repeat 18% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
   background-size: 700%;
-  height: 20px;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
 .icon-sms-white {
   background: url('../img/sprite.png') no-repeat 40% 0;
   background-size: 700%;
-  height: 20px;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
@@ -4273,6 +4273,9 @@ h3.nomad {
   box-shadow: none;
   display: block;
   float: left;
+}
+#createRecord input[type=tel] {
+  width: 60% !important;
 }
 #record-action .span1_5th {
   float: left;
