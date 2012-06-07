@@ -150,49 +150,69 @@ class ForecastModuleApi extends ModuleApi {
      * @return string
      */
     public function getReportees($api, $args) {
-        $retJSON = array();
+        $id = $args['userId'];
 
-        // Grab current user from user ID passed in URL
-        $user = BeanFactory::getBean('Users',$args['userId']);
-        $user->load_relationship('reportees');
-        $children = $user->reportees->getBeans();
-
-        // push curret user node onto tree
-        $tmp = array(
-            "data" => $user->full_name,
-            "metadata" => array(
-                // any other metadata needed from the Bean to the JS model should go here
-                "id" => $user->id,
-                "full_name" => (empty($user->last_name)) ? $user->first_name : $user->first_name . ' ' . $user->last_name,
-                "first_name" => $user->first_name,
-                "last_name" => $user->last_name
-            ),
-            "state" => "open",
-            "children" => array()
+        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
+            false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
         );
-        array_push( $retJSON, $tmp );
 
-        // handle any reportees to the current user
-        if(!empty($children))
+        $result = $GLOBALS['db']->query($sql);
+
+        // Final array to be returned
+        $treeData = '';
+
+        $flatUsers = array();
+        while($row = $GLOBALS['db']->fetchByAssoc($result))
         {
-            foreach($children as $childBean)
-            {
-                $tmp = array(
-                    "data" => $childBean->full_name,
-                    "metadata" => array(
-                        // any other metadata needed from the Bean to the JS model should go here
-                        "id" => $childBean->id,
-                        "full_name" => (empty($childBean->last_name)) ? $childBean->first_name : $childBean->first_name . ' ' . $childBean->last_name,
-                        "first_name" => $childBean->first_name,
-                        "last_name" => $childBean->last_name
-                    ),
-                    "state" => "closed"
-                );
-                array_push( $retJSON[0]["children"], $tmp );
+            if(empty($users[$row['_level']]))  {
+                $users[$row['_level']] = array();
             }
+
+            $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
+
+            $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
+
+            $user = array(
+                'data' => $fullName,
+                'children' => array(),
+                'metadata' => array(
+                    "id" => $row['id'],
+                    "full_name" => $fullName,
+                    "first_name" => $row['first_name'],
+                    "last_name" => $row['last_name'],
+                    "reports_to_id" => $row['reports_to_id']
+                ),
+                'state' => $openClosed
+            );
+
+            // Set the main user id as the root for treeData
+            if($user['metadata']['id'] == $id)
+                $treeData = $user;
+            else
+                $flatUsers[] = $user;
         }
 
-        return $retJSON;
+        $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers );
+
+        return $treeData;
+    }
+
+    /***
+     * Recursive function to get all children of a specific parent $id
+     * given a list of $users
+     * @param $id {int} ID value of the parent user
+     * @param $users {Array} of users
+     * @return array of child users
+     */
+    public function getChildren( $id, $users ) {
+        $retChildren = array();
+        foreach( $users as $user ) {
+            if( $user['metadata']['reports_to_id'] == $id ) {
+                $user['children'] = $this->getChildren( $user['metadata']['id'] , $users );
+                $retChildren[] = $user;
+            }
+        }
+        return $retChildren;
     }
 
     public function grid($api, $args) {
