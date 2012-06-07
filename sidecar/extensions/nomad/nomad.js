@@ -130,6 +130,20 @@
         },
 
         /**
+         * Shows loading notification.
+         */
+        showLoading: function () {
+            app.alert.show("data_loading", {level:'general', messages:'Loading...'});
+        },
+
+        /**
+         * Hides loading notification.
+         */
+        hideLoading: function () {
+            app.alert.dismiss("data_loading");
+        },
+
+        /**
          * Displays email chooser UI.
          * @param {Array} emails
          * @param {String} subject(optional)
