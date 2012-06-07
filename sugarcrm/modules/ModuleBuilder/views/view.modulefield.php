@@ -303,7 +303,12 @@ class ViewModulefield extends SugarView
         //BEGIN SUGARCRM flav=pro ONLY
         $ftsEngineType = getFTSEngineType();
         require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
-        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type']) && SugarSearchEngineMappingHelper::shouldShowModule($moduleName)) {
+        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type']) &&
+            //Show FTS for all modules under module builder and only check OOB modules for shoudlShowModule
+            ((!empty($_REQUEST['view_package']) && $_REQUEST['view_package'] != 'studio')
+                || SugarSearchEngineMappingHelper::shouldShowModule($moduleName)
+            )
+        ) {
             $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
             $fv->ss->assign('fts_options', $ftsBoostOptions);
             $fv->ss->assign('show_fts', true);

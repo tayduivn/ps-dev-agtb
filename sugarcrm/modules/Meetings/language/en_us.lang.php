@@ -166,8 +166,7 @@ $mod_strings = array (
     'LBL_REPEAT_COUNT' => 'Repeat Count',
     'LBL_REPEAT_PARENT_ID' => 'Repeat Parent ID',
     'LBL_RECURRING_SOURCE' => 'Recurring Source',
-
-    'LBL_SYNCED_RECURRING_MSG' => 'This meeting originated in another system and was sync\'ed to Sugar. Once the meeting has been edited in Sugar, it will not be able to be sync\'ed to another system.',	
-
+    
+    'LBL_SYNCED_RECURRING_MSG' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
 );
 ?>

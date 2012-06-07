@@ -35,6 +35,7 @@
     }, SUGAR.themes.actionMenu);
     {/literal}
 </script>
+{assign var='place' value="_FOOTER"} <!-- to be used for id for buttons with custom code in def files-->
 {{if empty($form.button_location) || $form.button_location == 'bottom'}}
 <div class="buttons">
 {{if !empty($form) && !empty($form.buttons)}}

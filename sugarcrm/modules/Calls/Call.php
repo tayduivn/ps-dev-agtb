@@ -134,6 +134,27 @@ class Call extends SugarBean {
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
 	}
 	
+	/**
+	 * Disable edit if call is recurring and source is not Sugar. It should be edited only from Outlook.
+	 * @param $view string
+	 * @param $is_owner bool
+	 */
+	function ACLAccess($view,$is_owner = 'not_set'){
+		// don't check if call is being synced from Outlook
+		if($this->syncing == false){
+			$view = strtolower($view);
+			switch($view){
+				case 'edit':
+				case 'save':
+				case 'editview':
+				case 'delete':
+					if(!empty($this->recurring_source) && $this->recurring_source != "Sugar"){
+						return false;
+					}
+			}
+		}
+		return parent::ACLAccess($view,$is_owner);
+	}
     // save date_end by calculating user input
     // this is for calendar
 	function save($check_notify = FALSE) {
@@ -440,7 +461,11 @@ class Call extends SugarBean {
 			    $action = "index";
 
             $setCompleteUrl = "<a id='{$this->id}' onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
-			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title='".translate('LBL_LIST_CLOSE','Calls')."' border='0'", null,null,'.gif', translate('LBL_LIST_CLOSE','Calls')) . "</a>";
+			if ($this->ACLAccess('edit')) {
+                $call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
+            } else {
+                $call_fields['SET_COMPLETE'] = '';
+            }
 		}
 		global $timedate;
 		$today = $timedate->nowDb();

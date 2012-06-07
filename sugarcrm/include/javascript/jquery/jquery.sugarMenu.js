@@ -196,16 +196,36 @@
 							});
 							if(jNode.hasClass("ddopen")){
                                 parent.sugarActionMenu('IEfix');
-
-								jNode.slideUp(slideUpSpeed);
-								jNode.removeClass("ddopen");
+                                //Bug#50983: Popup the dropdown list above the arrow if the bottom part is cut off .
+                                var _animation = {
+                                    'height' : 0
+                                };
+                                if(jNode.hasClass("upper")) {
+                                    _animation['top'] = (dropDownHandle.height() * -1);
+                                }
+								jNode.animate(_animation, slideUpSpeed, function() {
+                                    $(this).css({
+                                        'height' : '',
+                                        'top' : ''
+                                    }).hide().removeClass("upper ddopen");
+                                });
 							}
 							else{
                                 //To support IE fixed size rendering,
                                 //parse out dom elements out of the fixed element
                                 parent.sugarActionMenu('IEfix', jNode);
+                                var _dropdown_height = jNode.height(),
+                                    _animation = { 'height' : _dropdown_height },
+                                    _dropdown_bottom = dropDownHandle.offset().top + dropDownHandle.height() - $(document).scrollTop() + jNode.outerHeight(),
+                                    _win_height = $(window).height();
+                                if(dropDownHandle.offset().top > jNode.height() && _dropdown_bottom > $(window).height()) {
+                                    jNode.css('top', (dropDownHandle.height() * -1)).addClass("upper");
+                                    _animation['top'] = (jNode.height() + dropDownHandle.height()) * -1;
+                                }
 
-								jNode.slideDown(slideDownSpeed).show();
+								jNode.height(0).show().animate(_animation,slideDownSpeed, function() {
+                                    $(this).css('height', '');
+                                });
 								jNode.addClass("ddopen");
 							}
 							event.stopPropagation();

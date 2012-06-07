@@ -210,7 +210,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     {
         var vals = mapping[i];
         if (i === "") i = "--blank--";
-        i = i.replace(" ", "_");
+        i = i.replace(/ /g, "_");
         var l = $("#ddd_" + i + "_list");
         for(var j = 0; j < vals.length; j++)
         {
@@ -226,7 +226,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     //Create a custom sortable list that prevents duplicate drops
     var listContainsItem = function(list, val)
     {
-        var c = list.children("li[val=" + val + "].original").not("li.ui-sortable-helper, li:hidden");
+        var c = list.children('li[val="' + val + '"].original').not("li.ui-sortable-helper, li:hidden");
         return c.length != 0;
     }
 
@@ -292,7 +292,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     for (var i in parentOptions)
     {
         if (i == "") i = "--blank--";
-        i = i.replace(" ", "_");
+        i = i.replace(/ /g, "_");
         $( "#ddd_" + i + "_list" ).sugardddlist({
             connectWith: ".ddd_table",
             scope: "ddd_table",
@@ -301,7 +301,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             over: function(event, ui) {
                 $("ul.ddd_parent_option").removeClass("valid invalid");
                 if (listContainsItem($(this), $(ui.item).attr("val")))
-                   $(this).addClass("invalid");
+                    $(this).addClass("invalid");
                 else
                     $(this).addClass("valid");
             },
@@ -357,7 +357,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         }
         for (var i in parentOptions)
         {
-            var k = i == "" ? blank : i.replace(" ", "_");
+            var k = i == "" ? blank : i.replace(/ /g, "_");
             mapping[i] = getlistValues($( "#ddd_" + k + "_list" ));
         }
         return {

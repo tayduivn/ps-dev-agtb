@@ -1,4 +1,6 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,26 +20,25 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/views/view.ajax.php');
-require_once("/modules/ExpressionEngine/formulaHelper.php");
 
-class ViewGetRelatedField extends ViewAjax
+class MeetingsViewList extends ViewList
 {
-    var $vars = array("tmodule", "record_id", "field");
-
-    function __construct()
+    public function listViewProcess()
     {
-        parent::ViewAjax();
-        foreach($this->vars as $var)
-        {
-            if (empty($_REQUEST[$var]))
-                sugar_die("Required paramter $var not set in ViewRelFields");
-            $this->$var = $_REQUEST[$var];
+        $this->processSearchForm();
+        $this->lv->searchColumns = $this->searchForm->searchColumns;
+
+        if (!$this->headers) {
+            return;
         }
-
-    }
-
-    function display() {
-        echo json_encode(FormulaHelper::getFieldValue($this->tmodule, $this->record_id, $this->field));
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->ss->assign("SEARCH",true);
+            // add recurring_source field to filter to be able acl check to use it on row level
+            $this->lv->mergeDisplayColumns = true;
+            $filterFields = array('recurring_source' => 1);
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params, 0, -1, $filterFields);
+            $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            echo $this->lv->display();
+        }
     }
 }
