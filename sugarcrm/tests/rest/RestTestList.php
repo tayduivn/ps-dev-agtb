@@ -151,7 +151,16 @@ class RestTestList extends RestTestBase {
         // Get a list, no searching
         $restReply = $this->_restCall("Accounts?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
-        
+
+        // Get 2 pages, verify the data is different [check guids]
+        $restReply_page1 = $this->_restCall("Accounts?offset=0&max_num=5");
+        $restReply_page2 = $this->_restCall("Accounts?offset=5&max_num=5");
+        foreach($restReply_page1['reply']['records'] AS $page1_record) {
+            foreach($restReply_page2['reply']['records'] AS $page2_record) {
+                $this->assertNotEquals($page2_record['id'], $page1_record['id'], "ID's match, pagination may be broke");
+            }
+        }
+
     }
 
     public function testCaseSearch() {

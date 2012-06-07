@@ -42,7 +42,7 @@
             },
             "json_data" : {
                 "ajax" : {
-                    "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id'),
+                    "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id')
                 }
             }
         }).on("select_node.jstree", function(event, data){

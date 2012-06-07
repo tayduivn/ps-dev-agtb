@@ -33,7 +33,6 @@
 <script src='../sidecar/src/data/data-manager.js'></script>
 <script src='../sidecar/src/data/validation.js'></script>
 
-<script src='../sidecar/src/view/alert.js'></script>
 <script src='../sidecar/src/view/hbt-helpers.js'></script>
 <script src='../sidecar/src/view/view-manager.js'></script>
 <script src='../sidecar/src/view/component.js'></script>
@@ -41,11 +40,11 @@
 <script src='../sidecar/src/view/field.js'></script>
 <script src='../sidecar/src/view/layout.js'></script>
 
-<script src='../sidecar/src/view/layouts/columns-layout.js'></script>
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/base/views/grid/grid.js'></script>
+<script src='clients/base/models/grid/grid.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
 <script src='clients/base/models/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
@@ -76,7 +75,6 @@
     }
 </style>
 {/literal}
-<div class="content"></div>
 <div class="view-forecastsSubnav subnav"></div>
 <div id="core-module">
     <div id="core" style="" >
@@ -109,6 +107,7 @@
         </div>
     </div>
 </div>
+<div class="content"></div>
 
 {literal}
 <script language="javascript">

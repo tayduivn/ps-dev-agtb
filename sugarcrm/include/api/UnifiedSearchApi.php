@@ -119,8 +119,13 @@ class UnifiedSearchApi extends SugarApi {
             
             $orderBy = implode(',',$orderByArray);
         } else {
-            $orderBy = 'date_modified DESC';
+            /*
+             * Adding id to the default sort by.  When data has the same date_modified the sort could change with the
+             * offset showing the same record on multiple pages
+             */
+            $orderBy = 'date_modified DESC, id DESC';
             $orderByData['date_modified'] = false;
+            $orderByData['id'] = false;
         }
         $options['orderByArray'] = $orderByData;
         $options['orderBy'] = $orderBy;

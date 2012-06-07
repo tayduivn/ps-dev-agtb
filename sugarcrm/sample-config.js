@@ -101,8 +101,14 @@
             subnav: {
                 target: '#subnav'
             }
-        }
-
+        },
+        
+        /**
+         * Client ID for oAuth
+         * Defaults to sugar other values are support_portal
+         * @cfg {Array}
+         */
+        clientID: "sugar"
 
     }, false);
 

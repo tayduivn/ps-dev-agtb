@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('include/api/ModuleApi.php');
+require_once('include/api/ListApi.php');
 
 class ForecastModuleApi extends ModuleApi {
 
@@ -52,8 +53,8 @@ class ForecastModuleApi extends ModuleApi {
                 'path' => array('Forecasts','teams'),
                 'pathVars' => array('',''),
                 'method' => 'ping',
-                'shortHelp' => 'A ping',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#ping',
+                'shortHelp' => 'teams for tree view',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#teams',
             ),
             'worksheet' => array(
                 'reqType' => 'GET',
@@ -70,7 +71,15 @@ class ForecastModuleApi extends ModuleApi {
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#reportees',
-            )
+            ),
+            'grid' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','grid'),
+                'pathVars' => array('',''),
+                'method' => 'grid',
+                'shortHelp' => 'A grid',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#grid',
+            ),
         );
         return $parentApi;
     }
@@ -185,4 +194,13 @@ class ForecastModuleApi extends ModuleApi {
 
         return $retJSON;
     }
+
+    public function grid($api, $args) {
+        $listApi = new ListApi();
+        $args['module'] = "Opportunities";
+        $args['max_num'] = 100;
+        $gridData = $listApi->listModule($api, $args);
+        return $gridData['records'];
+    }
+
 }
