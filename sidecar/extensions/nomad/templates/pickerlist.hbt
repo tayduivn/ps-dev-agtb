@@ -1,3 +1,4 @@
+<h1 class="nomad">Choose link type</h1>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 listing" id="listing"><i></i>
@@ -15,7 +16,6 @@
 </div>
 <fieldset>
     <div>
-        <span class="blankspacer left">Choose link type</span>
         <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Back</a>
     </div>
 </fieldset>
