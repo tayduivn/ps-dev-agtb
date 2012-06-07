@@ -41,7 +41,8 @@
                 error: function () {
                     $(e.currentTarget).toggleClass('active');
                     app.nomad.hideLoading();
-                    app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                    // TODO: This will handled by error module
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
                 }
             });
         },
@@ -57,7 +58,7 @@
                 error: function () {
                     $(e.currentTarget).toggleClass('active');
                     app.nomad.hideLoading();
-                    app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
                 }
             });
         },
