@@ -15,7 +15,7 @@
             }, this);
         },
 
-        _renderSelf: function(layout, params) {
+        render: function(layout, params) {
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
