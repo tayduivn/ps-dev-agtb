@@ -40,10 +40,6 @@ class ForecastModuleApiTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-        global $beanList, $beanFiles, $current_user;
-        require('include/modules.php');
-
-        $GLOBALS['db']->preInstall();
 
         $this->currentUser = SugarTestUserUtilities::createAnonymousUser();
         $this->currentUser->user_name = 'employee0';
