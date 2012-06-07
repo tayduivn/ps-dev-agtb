@@ -3447,6 +3447,9 @@ article p:last-child {
   -moz-box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
   box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
 }
+.cube:active {
+  background-color: #222;
+}
 .navbar .cube:hover {
   text-decoration: none;
 }
@@ -3548,28 +3551,28 @@ a:hover [class^="icon-"] {
 .icon-phone {
   background: url('../img/sprite.png') no-repeat 1% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-phone-black {
   background: url('../img/sprite.png') no-repeat 18% -30%;
   background-size: 740%;
-  height: 20px;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
   background-size: 700%;
-  height: 20px;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
 .icon-sms-white {
   background: url('../img/sprite.png') no-repeat 40% 0;
   background-size: 700%;
-  height: 20px;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
@@ -3935,6 +3938,9 @@ fieldset .btn-primary {
   text-align: center;
   padding-top: 14px;
 }
+.navbar #create:active {
+  background-color: #222;
+}
 #detailListing .listing {
   /*
   top: 202px; 
@@ -3960,8 +3966,8 @@ h3.nomad {
   color: #ffffff;
   z-index: 2001;
   position: absolute;
-  width: 80%;
-  margin: 0 10%;
+  width: 74%;
+  margin: 0 0 0 13%;
   display: inline-block;
   text-align: center;
   font-size: 16px !important;
@@ -4273,6 +4279,9 @@ h3.nomad {
   box-shadow: none;
   display: block;
   float: left;
+}
+#createRecord input[type=tel] {
+  width: 60% !important;
 }
 #record-action .span1_5th {
   float: left;
