@@ -8,7 +8,8 @@
                     </form>
                     {{#each meta.panels}}
                     <ul class="nav nav-tabs results">
-                        {{#each ../collection.models}}
+                        {{#if ../collection.models}}
+                        {{#each ../../collection.models}}
                         <li class="activity" data-id="{{this.id}}">
                             <a data-toggle="tab"><span class="label label-note">Note</span></a>
                             <p>
@@ -23,6 +24,9 @@
                             </div>
                         </li>
                         {{/each}}
+                        {{else}}
+                            This record has no notes at this time. Please add a note by clicking on the add note link.
+                        {{/if}}
                     </ul>
                     {{/each}}
                     <div class="actions">
