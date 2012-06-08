@@ -40,9 +40,9 @@ class ForecastModuleApi extends ModuleApi {
                 'shortHelp' => 'forecast filters',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#filters',
             ),
-            'chartOptions' => array(
+            'chartoptions' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','chartOptions'),
+                'path' => array('Forecasts','chartoptions'),
                 'pathVars' => array('',''),
                 'method' => 'chartOptions',
                 'shortHelp' => 'forecasting chart options',

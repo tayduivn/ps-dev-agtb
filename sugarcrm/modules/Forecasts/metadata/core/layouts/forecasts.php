@@ -36,6 +36,15 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
                 'stages',
                 'probabilities'
             )
+        ),
+        1 => array(
+            'module' => 'Forecasts',
+            'name' => 'ChartOptions',
+            'models' => array(
+                'horizontal',
+                'vertical',
+                'groupby'
+            )
         )
     )
 );

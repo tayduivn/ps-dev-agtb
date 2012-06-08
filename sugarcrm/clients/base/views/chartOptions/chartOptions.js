@@ -6,36 +6,18 @@
  */
 ({
 
-    render: false,
-
-    /**
-     * Initialize the View
-     *
-     * @constructor
-     * @param {Object} options
-     */
-    initialize: function(options){
+    bindDataChange: function() {
         var self = this,
-            model;
+            model = self.layout.getModel('chartoptions');
 
-        app.view.View.prototype.initialize.call(this, options);
-
-        model = self.layout.getModel('chartoptions');
         model.on('change', function() {
             self.buildDropdowns(this);
         });
     },
 
-    render : function (){
-        // only let this render once.  since if there is more than one view on a layout it renders twice
-        if(!this.rendered) {
-            app.view.View.prototype.render.call(this);
-            this.rendered = true;
-        }
-    },
-
     buildDropdowns: function(model) {
         var self = this;
+        self.$el.find('.chartOptions').empty();
         _.each(model.attributes, function(data, key) {
             var chosen = app.view.createField({
                     def: {
@@ -46,13 +28,17 @@
                 }),
                 $chosenPlaceholder = $(chosen.getPlaceholder().toString());
 
-            self.$el.find('#chartType').before($chosenPlaceholder);
+            self.$el.find('.chartOptions').append($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
             chosen.label = model[key].get('label');
             chosen.def.options = model[key].get('options');
             chosen.setElement($chosenPlaceholder);
             chosen.render();
+
+            $chosenPlaceholder.on('change', 'select', function(event, data) {
+                model[key].set('value', data.selected);
+            });
         });
     }
 

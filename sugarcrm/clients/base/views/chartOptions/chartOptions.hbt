@@ -1,4 +1,5 @@
 <h4>Chart Options</h4>
+<div class="chartOptions"></div>
 <div class="control-group" id="chartType">
     <label class="control-label">Layout:</label>
     <div class="controls">

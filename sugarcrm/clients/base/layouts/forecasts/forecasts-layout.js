@@ -41,7 +41,6 @@
                 self.createModels(data);
             });
 
-            this._models.chartoptions = new app.Model.ChartOptions();
             this._models.grid = new app.Model.Grid();
         },
 
