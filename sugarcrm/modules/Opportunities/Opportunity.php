@@ -522,13 +522,29 @@ $query .= 			"LEFT JOIN users
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * deleteProductLines
+     * getProducts
+     *
+     * This is a convenience function to return the product lines entries associated with the opportunity
      *
      */
-    public function deleteProductLines()
+    public function getProducts()
+    {
+        return $this->get_linked_beans('products', new Product());
+    }
+
+    /**
+     * deleteProducts
+     *
+     */
+    public function deleteProducts()
     {
         $query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
         $this->db->query($query);
     }
     //END SUGARCRM flav=ent ONLY
+}
+
+
+function getTimePeriodsDropDown(){
+    return TimePeriod::get_timeperiods_dom();
 }

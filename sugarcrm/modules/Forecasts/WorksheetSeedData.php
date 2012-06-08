@@ -24,6 +24,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * WorksheetSeedData.php
  *
  * This is a class used for creating worksheet seed data.
+ * It first retrieves all non fiscal year timeperiods in the database.  Then for each timeperiod
+ * it finds the opportunities assigned to users in the system.  For each opportunity it creates
+ * a worksheet entry for the user as well as a rollup worksheet calculation for the user's manager.
+ *
+ * Usage: WorksheetSeedData::populateSeedData()
  *
  */
 
@@ -32,9 +37,13 @@ class WorksheetSeedData {
 /**
  * populateSeedData
  *
+ * This is a static function to create the seed data
+ * @return Array of created worksheet ids
+ *
  */
 public static function populateSeedData()
 {
+
 require_once('modules/Forecasts/Common.php');
 require_once('modules/TimePeriods/TimePeriod.php');
 
@@ -46,97 +55,91 @@ $created_ids = array();
 
 //Get the previous, current and next timeperiods
 $result = $GLOBALS['db']->query("SELECT id FROM timeperiods WHERE is_fiscal_year = 0");
+
 while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
 {
     $timeperiod_id = $row['id'];
 
     foreach($comm->all_users as $user_id => $reports_to)
     {
-            $opps = self::getRelatedOpportunities($user_id, $timeperiod_id);
+        $opps = self::getRelatedOpportunities($user_id, $timeperiod_id);
 
-            echo var_export($opps, true);
+        if(!empty($opps))
+        {
+            $comm->current_user = $user_id;
+            $comm->my_managers = array();
+            $comm->get_my_managers();
 
-            if (!empty($opps))
+            $best = 0;
+            $likely = 0;
+            $worst = 0;
+
+            foreach($opps as $opp_id)
             {
-                $comm->current_user = $user_id;
-                $comm->my_managers = array();
-                $comm->get_my_managers();
+                $opp = new Opportunity();
+                $opp->retrieve($opp_id);
 
-                $best = 0;
-                $likely = 0;
-                $worst = 0;
+                $best += $opp->best_case;
+                $likely += $opp->likely_case;
+                $worst += $opp->worst_case;
 
-                foreach($opps as $opp_id)
+                //This is a sales rep's worksheet entry
+                $worksheet = new Worksheet();
+                $worksheet->user_id = $user_id;
+                $worksheet->timeperiod_id = $timeperiod_id;
+                $worksheet->forecast_type = 'Direct';
+                $worksheet->related_id = $opp->id;
+                $worksheet->related_forecast_type = '';  //Opportunities do not have a related_forecast_type set
+                $worksheet->best_case = $opp->best_case + 500;
+                $worksheet->likely_case = $opp->likely_case + 500;
+                $worksheet->worst_case = $opp->worst_case + 500;
+                $worksheet->save();
+                $created_ids[] = $worksheet->id;
+
+                //BEGIN SUGARCRM flav=ent ONLY
+                $products = $opp->getProducts();
+                foreach($products as $prod)
                 {
-                    $opp = new Opportunity();
-                    $opp->retrieve($opp_id);
-
-                    $best += $opp->best_case;
-                    $likely += $opp->likely_case;
-                    $worst += $opp->worst_case;
-
-                    //This is a sales rep's worksheet entry
                     $worksheet = new Worksheet();
                     $worksheet->user_id = $user_id;
                     $worksheet->timeperiod_id = $timeperiod_id;
                     $worksheet->forecast_type = 'Direct';
-                    $worksheet->related_id = $opp->id;
-                    $worksheet->related_forecast_type = '';
-                    $worksheet->best_case = $opp->best_case + 500;
-                    $worksheet->likely_case = $opp->likely_case + 500;
-                    $worksheet->worst_case = $opp->worst_case + 500;
+                    $worksheet->related_id = $prod->id;
+                    $worksheet->related_forecast_type = 'Product';   //Set this to 'Product' to indicate a product line
+                    $worksheet->best_case = $prod->best_case + 500;
+                    $worksheet->likely_case = $prod->likely_case + 500;
+                    $worksheet->worst_case = $prod->worst_case + 500;
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;
-
-                    /*
-                    $increment = 1000;
-
-                    //This is the manager's rollup worksheet.  Comment this out here because in
-                    //6.6 we are not allowing a manager to adjust an opportunity
-
-                    foreach($comm->my_managers as $manager_id)
-                    {
-                        $worksheet = new Worksheet();
-                        $worksheet->user_id = $manager_id;
-                        $worksheet->timeperiod_id = $current_timeperiod_id;
-                        $worksheet->forecast_type = 'Rollup';
-                        $worksheet->related_id = $opp->id;
-                        $worksheet->related_forecast_type = '';
-                        $worksheet->best_case = $opp->best_case + $increment;
-                        $worksheet->likely_case = $opp->likely_case + $increment;
-                        $worksheet->worst_case = $opp->worst_case + $increment;
-                        $worksheet->save();
-                        $created_ids[] = $worksheet->id;
-                        $increment += 500;
-                    }
-                    */
                 }
-
-                //This is the rollup worksheet for the manager
-                $increment = 500;
-
-                foreach($comm->my_managers as $manager_id)
-                {
-                    $worksheet = new Worksheet();
-                    $worksheet->user_id = $manager_id;
-                    $worksheet->timeperiod_id = $timeperiod_id;
-                    $worksheet->forecast_type = 'Rollup';
-                    $worksheet->related_id = $user_id;
-                    $worksheet->related_forecast_type = 'Direct';
-                    $worksheet->best_case = $best + $increment;
-                    $worksheet->likely_case = $likely + $increment;
-                    $worksheet->worst_case = $worst + $increment;
-                    $worksheet->save();
-                    $created_ids[] = $worksheet->id;
-                    $increment += 100;
-                }
+                //END SUGARCRM flav=ent ONLY
             }
-    }
 
-    return $created_ids;
+            //This is the rollup worksheet for the manager
+            $increment = 500;
+
+            foreach($comm->my_managers as $manager_id)
+            {
+                $worksheet = new Worksheet();
+                $worksheet->user_id = $manager_id;
+                $worksheet->timeperiod_id = $timeperiod_id;
+                $worksheet->forecast_type = 'Rollup';
+                $worksheet->related_id = $user_id;
+                $worksheet->related_forecast_type = 'Direct';
+                $worksheet->best_case = $best + $increment;
+                $worksheet->likely_case = $likely + $increment;
+                $worksheet->worst_case = $worst + $increment;
+                $worksheet->save();
+                $created_ids[] = $worksheet->id;
+                $increment += 100;
+            }
+        }
+    }
 
 }
 
+return $created_ids;
+}
 
 /**
  * getRelatedOpportunities
@@ -160,6 +163,5 @@ public static function getRelatedOpportunities($user_id, $timeperiod_id)
     }
     return $opps;
 }
-
 
 }
