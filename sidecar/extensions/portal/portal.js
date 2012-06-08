@@ -32,7 +32,8 @@
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "this.app.login(args, null, {error:"+
+                                            "function(){ app.alert.dismiss('login'); $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
@@ -163,7 +164,7 @@
                                             "function(){ var self = this; " +
                                             "   if(this.model.isValid()) {" +
                                             "   $('#content').hide(); " +
-                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoclose:false}); " +
+                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
                                             "   var contactData={" +
                                             "       first_name:this.model.get(\"first_name\"), " +
                                             "       last_name:this.model.get(\"last_name\")," +

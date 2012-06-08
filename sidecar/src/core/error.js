@@ -1,4 +1,9 @@
 (function(app) {
+
+    function getGenericMessage(statusCode, error) {
+        return "Error in "+statusCode+" handler, but no xhr.responseText available. "+(error?'Error: '+error:'');
+    }
+
     /**
      * Error handling module.
      * @class Core.Error
@@ -33,47 +38,155 @@
             }
         },
 
+        // This attempts to call function fn (which may not exist), otherwise,
+        // falls back to handleStatusCodesFallback. Caller ensures xhr.responseText exists.
+        callCustomHandler: function(xhr, error, fn) {
+            if(fn) {
+                fn(xhr, error);
+            } else {
+                this.handleStatusCodesFallback(xhr.responseText);
+            }
+        },
+
         /**
-         * An object of status code error handlers.
+         * Attempts to match on regexStr and delegate to corresponding handler. Otherwise,
+         * resorts to calling handleStatusCodesFallback fallback.
+         */
+        callCustomIfMatchingError: function(xhr, error, regexStr, statusCode, fn) {
+            var re = new RegExp(regexStr); 
+            if(xhr && xhr.responseText) {
+                if(re.test(xhr.responseText)) {
+                    this.callCustomHandler(xhr, error, fn);
+                } 
+            } else {
+                this.handleStatusCodesFallback(getGenericMessage(statusCode, error));
+            }
+        },
+
+        /**
+         * An object of status code error handlers. If custom handler is defined by extending
+         * module, corresponding status code handler will attemp to use that, otherwise,
+         * handleStatusCodesFallback is used as a fallback just logging the error.
          * @property {Object}
          */
         statusCodes: {
-            400: function() {
+            
+            // oauth2 uses 400 as a sort of catch all; see:
+            // http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-5.2
+            400: function(xhr, error) {
+
+                /**
+                 * invalid_grant
+                 *
+                 * The provided authorization grant is invalid, expired, revoked, does 
+                 * not match the redirection URI used in the authorization request, or
+                 * was issued to another client.
+                 * 
+                 * This happens when logging in with improper user/pass.
+                 *
+                 * Provide a custom handleInvalidGrantError to override this. 
+                 */
+                this.callCustomIfMatchingError(xhr, error, ".*invalid_grant.*", '400', this.handleInvalidGrantError);
+            
+                /**
+                 * invalid_client
+                 *
+                 * Client authentication failed (e.g. unknown client, no client 
+                 * authentication included, multiple client authentications included, 
+                 * or unsupported authentication method). 
+                 *
+                 * Provide a custom handleInvalidClientError to override this. 
+                 */
+
+                this.callCustomIfMatchingError(xhr, error, ".*invalid_client.*", '400', this.handleInvalidClientError);
+            
+                /**
+                 * invalid_request
+                 *
+                 * The request is missing a required parameter, includes an unsupported 
+                 * parameter or parameter value, repeats a parameter, includes multiple
+                 * credentials, utilizes more than one mechanism for authenticating the 
+                 * client, or is otherwise malformed.
+                 *
+                 * Provide a custom handleInvalidRequestError to override this.
+                 */
+                this.callCustomIfMatchingError(xhr, error, ".*invalid_request.*", '400', this.handleInvalidRequestError);
+                
+// --------------------------------------------------------------------------- //
+// TODO: Figure out what we want to do for following .. logging for now
+// --------------------------------------------------------------------------- //
+                // The authenticated client is not authorized to use this authorization grant type.
+                this.callCustomIfMatchingError(xhr, error, ".*unauthorized_client.*", '400' /*, TODO - custom handler */);
+
+                // The authorization grant type is not supported by the authorization server.
+                this.callCustomIfMatchingError(xhr, error, ".*unsupported_grant_type.*", '400' /*, TODO - custom handler */);
+                
+                // The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
+                this.callCustomIfMatchingError(xhr, error, ".*invalid_scope.*", '400' /*, TODO - custom handler */);
+// --------------------------------------------------------------------------- //
+// --------------------------------------------------------------------------- //
+
             },
-            401: function() {
-                app.alert.dismissAll();
-                app.api.logout();
-                app.router.login();
+            /**
+             * Clients can provide a handleUnauthorizedError to override this.
+             */
+            401: function(xhr, error) {
+                if(xhr && xhr.responseText) {
+                    this.callCustomHandler(xhr, error, this.handleUnauthorizedError);
+                }  else {
+                    this.handleStatusCodesFallback(getGenericMessage('401', error));
+                }
             },
-            403: function() {
+            /**
+             * Clients can provide a handleForbiddenError to override this.
+             */
+            403: function(xhr, error) {
+                if(xhr && xhr.responseText) {
+                    this.callCustomHandler(xhr, error, this.handleForbiddenError);
+                }  else {
+                    this.handleStatusCodesFallback(getGenericMessage('403', error));
+                }
             },
-            404: function() {
+            404: function(xhr, error) {
+                // TODO: Redirect to 404/500 page
             },
-            405: function() {
+            /**
+             * Clients can provide a handleNotFoundError to override this.
+             */
+            405: function(xhr, error) {
+                if(xhr && xhr.responseText) {
+                    this.callCustomHandler(xhr, error, this.handleNotFoundError);
+                }  else {
+                    this.handleStatusCodesFallback(getGenericMessage('405', error));
+                }
             },
             422: function(xhr, error, model) {
                 this.handleValidationError(model, xhr.responseText);
             },
-            500: function() {
+            500: function(xhr, error) {
+                // TODO: Redirect to 404/500 page
             }
         },
 
         remoteLogging: false,
+
         /**
          * Returns error strings given a error key and context
          * @param errorKey
          * @param context
          */
         getErrorString: function(errorKey, context) {
-            var errorName2Keys = {
-              "maxLength":"ERROR_MAX_FIELD_LENGTH",
-               "minLength":"ERROR_MIN_FIELD_LENGTH",
-               "required":"ERROR_FIELD_REQUIRED",
+            var errorName2Keys, module, errorTemplate, compiledTemplate;
+            errorName2Keys = {
+                "maxLength":"ERROR_MAX_FIELD_LENGTH",
+                "minLength":"ERROR_MIN_FIELD_LENGTH",
+                "required":"ERROR_FIELD_REQUIRED",
                 "email":"ERROR_EMAIL"
             };
-            var module = context.module || '';
-            var errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);
-            var compiledTemplate = Handlebars.compile(errorTemplate);
+            module = context.module || '';
+            errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);
+            compiledTemplate = Handlebars.compile(errorTemplate);
+
             return compiledTemplate(context);
         },
 
@@ -113,10 +226,16 @@
          * @method
          */
         handleHTTPError: function(xhr, error, model) {
+            // If we have a handler defined for this status code
             if (xhr.status && this.statusCodes[xhr.status]) {
                 this.statusCodes[xhr.status].call(this, xhr, error, model);
+
+            // We probably need to think the following two conditions through a bit more ;=)
+            } else if(xhr.responseText) {
+                this.handleStatusCodesFallback(xhr.responseText);
             } else {
                 // TODO: Default catch all error code handler
+                this.handleStatusCodesFallback("Error in handleHTTPError. No responseText available.");
             }
         },
 
@@ -129,6 +248,24 @@
          */
         handleError: function(mesg, url, line) {
             app.logger.error(mesg + " at " + url + " on line " + line);
+        },
+        
+        /**
+         * This is the fallback error handler if custom status code specific handler
+         * not provided in application specific error handler. To define custom error
+         * handlers, you should include your script from index page and do something like:
+         * <pre><code>
+         * (function(app) {
+         *     app.error = _.extend(app.error);
+         *     // put your custom handlers here...
+         * })(SUGAR.App);
+         * </pre></code>
+         * 
+         * @param {String} mesg Error message
+         * @method
+         */
+        handleStatusCodesFallback: function(mesg) {
+            app.logger.error(mesg);
         },
 
         /**
@@ -168,6 +305,6 @@
         }
     };
 
-    app.augment("error", module);
-    app.events.on("app:init", module.initialize, module);
+    // Enable error handling immediately.
+    app.augment("error", module, module.initialize);
 })(SUGAR.App);
