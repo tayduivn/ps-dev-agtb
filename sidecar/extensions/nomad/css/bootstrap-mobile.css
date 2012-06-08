@@ -3818,6 +3818,7 @@ html {
   background-image: linear-gradient(top, #fcfcfc, #ebebeb);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ebebeb', GradientType=0);
+  border-bottom: 1px solid #dcdcdc;
   margin-right: 100px;
 }
 .topelbar a.btn {
