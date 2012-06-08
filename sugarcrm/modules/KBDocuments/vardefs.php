@@ -192,7 +192,8 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'type' => 'link',
     'relationship' => 'kbdocument_revisions',
     'source'=>'non-db',
-     'vname'=>'LBL_REVISIONS',
+    'vname'=>'LBL_REVISIONS',
+    'studio' => false
   ),
   'latest_revision' =>
   array (

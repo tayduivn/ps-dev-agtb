@@ -311,7 +311,14 @@ $mod_strings = array(
 	'LBL_TITLE_WELCOME'					=> 'Welcome to the Sugar Portal',
 	'LBL_WELCOME_1'						=> 'This is the installer for Sugar Portal. It will set the configuration variables that you need to start. The entire process should take about five minutes.',
 	//'LBL_WELCOME_2'						=> 'For installation help, please visit the SugarCRM <a href="http://www.sugarcrm.com/forums/" target="_blank">support forums</a>.',
-	'LBL_WELCOME_2'						=> 'For installation help, please visit the SugarCRM support <a href="http://www.sugarcrm.com/forums/" target="_blank">forums</a> and <a href="http://www.sugarcrm.com/docs/User_Guides/Sugar_Portal_Installation_and_User_Guide_5.1RC/toc.html" target="_blank">Sugar Portal Installation and User Guide</a>.',	
+	// BEGIN SUGARCRM flav=ent ONLY 
+	'LBL_WELCOME_2'						=> 'For installation help, please visit the SugarCRM support <a href="http://www.sugarcrm.com/forums/" target="_blank">forums</a> and <a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/02_Sugar_Enterprise/Sugar_Enterprise_6.5/Sugar_Enterprise_Portal_User_Guide_6.5.0" target="_blank">Sugar Portal Installation and User Guide</a>.',	
+	// END SUGARCRM flav=ent ONLY 
+	
+	// BEGIN SUGARCRM flav=ult ONLY 
+	'LBL_WELCOME_2'						=> 'For installation help, please visit the SugarCRM support <a href="http://www.sugarcrm.com/forums/" target="_blank">forums</a> and <a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate/Sugar_Ultimate_6.5/Sugar_Ultimate_Portal_User_Guide_6.5.0" target="_blank">Sugar Portal Installation and User Guide</a>.',	
+	// END SUGARCRM flav=ult ONLY 
+	
 	'LBL_WELCOME_CHOOSE_LANGUAGE'		=> 'Choose your language',
 	'LBL_WELCOME_SETUP_WIZARD'			=> 'Setup Wizard',
 	'LBL_WELCOME_TITLE_WELCOME'		=> 'Welcome to the SugarCRM ',

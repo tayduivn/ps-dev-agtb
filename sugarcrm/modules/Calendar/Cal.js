@@ -967,6 +967,10 @@
 		if(typeof SugarWidgetSchedulerSearch.hideCreateForm != 'undefined')
 			SugarWidgetSchedulerSearch.hideCreateForm();
 			
+		$("#scheduler .schedulerInvitees").css("display", "");
+		$("#create-invitees-title").css("display", "");
+		$("#create-invitees-buttons").css("display", "");
+			
 		if(CAL.enable_repeat){			
 			CAL.reset_repeat_form();
 		}			
@@ -1295,6 +1299,11 @@
 							CAL.get("btn-save").focus();
 								
 							setTimeout(function(){
+								if (!res.edit) {									
+									$("#scheduler .schedulerInvitees").css("display", "none");
+									$("#create-invitees-buttons").css("display", "none");
+									$("#create-invitees-title").css("display", "none");
+								}
 								enableQS(false);
 								disableOnUnloadEditView();
 							},500);	

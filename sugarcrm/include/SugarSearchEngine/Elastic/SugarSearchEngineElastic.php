@@ -43,6 +43,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
+        if (empty($this->_config['timeout']))
+        {
+            $this->_config['timeout'] = 15;
+        }
         $this->_client = new Elastica_Client($this->_config);
     }
 
@@ -119,9 +123,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //All fields have already been formatted to db values at this point so no further processing necessary
             if( !empty($bean->$fieldName) )
             {
-                // elasticsearch does not handle multiple types in a query very well
+                // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
-                $keyValues[$fieldName] = strval($bean->$fieldName);
+                // 2. for some reason, bean fields are encoded, decode them first
+                $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
             }
         }
 
@@ -339,6 +344,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         // for range searches, do not append wildcard
         if (preg_match('/\[.*TO.*\]/', $queryString) || preg_match('/{.*TO.*}/', $queryString))
+        {
+            return false;
+        }
+
+        // for group searches, do not append wildcard
+        if (preg_match('/\(.*\)/', $queryString))
         {
             return false;
         }
