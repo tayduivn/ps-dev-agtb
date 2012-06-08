@@ -14,7 +14,7 @@
         this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
     render: function() {
-        var self = this, data, currentUserAttributes;
+        var self = this, currentUserAttributes;
 
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
@@ -65,9 +65,7 @@
      * Updates model for this contact.
      */
     updateModel: function(data) {
-        var self = this, model;
-        model = self.context.get('model');
-        model.set(data, {silent: true});
+        this.model.set(data, {silent: true});
     },
     renderSubnav: function(data) {
         var self = this, fullName = '', subnavModel = null;

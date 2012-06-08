@@ -11,12 +11,11 @@
         'click [name=show_more_button_forward]': 'showNextRecords',
         'click .search': 'showSearch'
     },
-    render: function() {
-        var self = this;
+    _renderSelf: function() {
         if (app.acl.hasAccess('create', this.module)) {
             this.context.set('isCreateEnabled', true);
         }
-        app.view.View.prototype.render.call(self);
+        app.view.View.prototype._renderSelf.call(this);
     },        
     showMoreRecords: function() {
         var self = this, options;
@@ -32,12 +31,12 @@
             self.render();
             window.scrollTo(0, document.body.scrollHeight);
         };
-        app.controller.context.get('collection').paginate(options);
+        this.collection.paginate(options);
     },
     showPreviousRecords: function() {
         var self = this;
         app.alert.show('show_previous_records', {level:'process', title:'Loading'});
-        app.controller.context.get('collection').paginate({
+        this.collection.paginate({
             page: -1,
             success: function() {
                 app.alert.dismiss('show_previous_records');
@@ -49,7 +48,7 @@
     showNextRecords: function() {
         var self = this;
         app.alert.show('show_next_records', {level:'process', title:'Loading'});
-        app.controller.context.get('collection').paginate({
+        this.collection.paginate({
             success: function() {
                 app.alert.dismiss('show_next_records');
                 self.layout.trigger("list:paginate:success");
@@ -76,9 +75,9 @@
         // build search-specific options and return
         options = {
             params: { 
-                q: term,
+                q: term
             },
-            fields: collection.fields ? collection.fields : app.controller.context.get('collection')
+            fields: collection.fields ? collection.fields : this.collection
         };
         return options;
     },
@@ -88,8 +87,8 @@
     },
 
     bindDataChange: function() {
-        if(this.context.get('collection')) {
-            this.context.get('collection').on("reset", this.render, this);
+        if(this.collection) {
+            this.collection.on("reset", this.render, this);
         }
     }
 

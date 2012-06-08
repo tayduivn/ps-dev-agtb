@@ -18,20 +18,17 @@
          * Renders Header view
          */
         initialize: function(options) {
-            app.events.on("app:sync:complete", function() {
-                this.render();
-            }, this);
+        app.events.on("app:sync:complete", this.render, this);
             app.view.View.prototype.initialize.call(this, options);
         },
-        render: function() {
+        _renderSelf: function() {
             var self = this,
                 menuTemplate;
-
             if (!app.api.isAuthenticated()) return;
 
             self.setModuleInfo();
             self.setCreateTasksList();
-            app.view.View.prototype.render.call(self);
+            app.view.View.prototype._renderSelf.call(self);
 
             // Search ahead drop down menu stuff
             menuTemplate = app.template.getView('dropdown-menu');
@@ -40,9 +37,7 @@
                 compiler: menuTemplate,
                 buttonElement: '.navbar-search a.btn'
             });
-
         },
-
         /** 
          * Callback for the searchahead plugin .. note that
          * 'this' points to the plugin (not the header view!)
@@ -118,7 +113,6 @@
         setModuleInfo: function() {
             var self = this;
             this.createListLabels = [];
-            this.currentModule = this.context.get('module');
             this.moduleList = _.toArray(app.metadata.getModuleList());
 
             if (app.config && app.config.displayModules) {
