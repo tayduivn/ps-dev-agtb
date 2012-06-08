@@ -3840,11 +3840,8 @@ html {
   margin: 8px 0 0 14px;
   color: #c2c2c2;
 }
-.search-query[placeholder] {
-  text-indent: 30px !important;
-}
 .listing .search-query {
-  width: 100%;
+  width: 92%;
   height: 26px;
   -webkit-border-radius: 18px;
   -moz-border-radius: 18px;
@@ -4698,6 +4695,18 @@ h3.nomad {
     }
 }
 */
+/*
+.search-query[placeholder],
+
+
+.search-query {
+  text-indent: -2px !important;
+  padding-left: 34px !important;
+}
+*/
+.search-query {
+  padding-left: 32px !important;
+}
 .pull-right {
   float: right;
 }
