@@ -223,7 +223,7 @@
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
             } else if (_layouts[layout]) { // Look for a module non-specific layout
-                metadata = _layouts[layout];
+                metadata = _layouts[layout].meta;
             }
 
             if (!metadata) {
