@@ -67,4 +67,20 @@ describe('template', function() {
         expect(app.template.get("foo")()).toEqual("Bar");
     });
 
+    it('should set and get layout templates', function() {
+        var source = "<div>Layout Template</div>",
+            data = {
+                layouts: {
+                    test: {
+                        templates: {
+                            test: source
+                        }
+                    }
+                }
+            };
+
+        app.template.set(data);
+
+        expect(app.template.get("test")()).toEqual(source);
+    });
 });

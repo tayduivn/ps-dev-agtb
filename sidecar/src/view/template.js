@@ -229,7 +229,7 @@
                 _.each(metadata.layouts, function(layout, type) {
                     if (type != "_hash") {
                         _.each(layout.templates, function(src, view) {
-                            this.setLayout(type, view, src, force);
+                            this.setLayout(type, null, src, force);
                         }, this);
                     }
                 }, this);

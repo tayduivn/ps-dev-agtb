@@ -106,9 +106,9 @@
          * @method
          */
         init: function() {
-            _.bind(this.sync, this);
-            app.Bean.prototype.sync = this.sync;
-            app.BeanCollection.prototype.sync = this.sync;
+            var sync = _.bind(this.sync, this);
+            app.Bean.prototype.sync = sync;
+            app.BeanCollection.prototype.sync = sync;
 
             app.events.register(
                 /**
