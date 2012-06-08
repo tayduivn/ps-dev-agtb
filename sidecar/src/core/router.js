@@ -232,7 +232,7 @@
          * Handles `login` route.
          */
         login: function() {
-            app.logger.debug("Loging in");
+            app.logger.debug("Logging in");
             app.controller.loadView({
                 module: "Login",
                 layout: "login",
@@ -244,7 +244,7 @@
          * Handles `logout` route.
          */
         logout: function() {
-            app.logger.debug("Loging out");
+            app.logger.debug("Logging out");
             var self = this;
             app.logout({success: function(data) {
                 app.router.navigate("#");

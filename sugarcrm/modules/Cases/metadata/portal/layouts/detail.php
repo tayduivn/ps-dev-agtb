@@ -46,6 +46,9 @@ $viewdefs['Cases']['portal']['layout']['detail'] = array(
                             array(
                                 0 => array(
                                     'view' => 'subdetail',
+                                    'context' => array(
+                                        'link' => 'notes',
+                                    ),
                                 ),
                             ),
                         ),
