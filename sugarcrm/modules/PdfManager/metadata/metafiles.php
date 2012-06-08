@@ -27,13 +27,7 @@
  ********************************************************************************/
 
 //FILE SUGARCRM flav=pro ONLY
- 
-/*
- * Created on August 2 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
+
 $module_name = 'PdfManager';
  $metafiles[$module_name] = array(
 	'detailviewdefs'  => 	'modules/' . $module_name . '/metadata/detailviewdefs.php', 	
@@ -43,4 +37,4 @@ $module_name = 'PdfManager';
  	'popupdefs'	      =>    'modules/' . $module_name . '/metadata/popupdefs.php',
  	'searchfields'	  =>    'modules/' . $module_name . '/metadata/SearchFields.php',
  );
-?>
+

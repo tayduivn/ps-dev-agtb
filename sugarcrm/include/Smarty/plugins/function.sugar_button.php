@@ -422,9 +422,13 @@ function smarty_function_sugar_button($params, &$smarty)
 			//END SUGARCRM flav=pro || flav=sales ONLY
 			//BEGIN SUGARCRM flav=pro ONLY
             case "PDFVIEW":
-                $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView"}';
+                $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView" record=$fields.id.value}';
                 break;
             case "REALPDFVIEW":
+                if(empty($params['record'])) {
+                    $smarty->trigger_error("sugar_button: missing required param (record)");
+                }
+                $record = $params['record'];
                 $pdfManager = BeanFactory::newBean('PdfManager');
                 $pdfManagerList = $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
                 
@@ -435,7 +439,15 @@ function smarty_function_sugar_button($params, &$smarty)
                             <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
                             $pdfItems = array();
                             foreach($pdfManagerList as $pdfTemplate){
-                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?module=PdfManager&action=DetailView&record=' . $pdfTemplate->id. '">' . $pdfTemplate->name . '</a>', 
+                                $urlParams = array(
+                                    'module' => $module,                                    
+                                    'record' => $record,
+                                    'action' => 'sugarpdf',
+                                    'sugarpdf' => 'pdfmanager',
+                                    'pdf_template_id' => $pdfTemplate->id,
+                                    
+                                );
+                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>', 
                                                         'items' => array(),
                                                     );
                             }
@@ -453,7 +465,15 @@ function smarty_function_sugar_button($params, &$smarty)
                                 function display_pdf_list(el) {
                                     var menu = \'';
                                 foreach($pdfManagerList as $pdfTemplate){   
-                                    $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="#">' . $pdfTemplate->name . '</a>' ;
+                                    $urlParams = array(
+                                        'module' => $module,                                    
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => 'pdfmanager',
+                                        'pdf_template_id' => $pdfTemplate->id,
+                                        
+                                    );                                
+                                    $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
                                 $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);

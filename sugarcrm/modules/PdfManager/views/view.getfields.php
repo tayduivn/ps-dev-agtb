@@ -30,13 +30,47 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/MVC/View/views/view.list.php');
+require_once 'modules/ExpressionEngine/formulaHelper.php';
 
-class PdfManagerViewList extends ViewList
+class ViewGetFields extends SugarView
 {
- 	public function preDisplay()
- 	{
- 		parent::preDisplay();
- 		$this->lv->quickViewLinks = false;
- 	}
+    var $vars = array("baseModule", "baseLink");
+
+    function __construct()
+    {
+        parent::__construct();
+        
+        foreach($this->vars as $var)
+        {
+            if (!isset($_REQUEST[$var])) {
+                sugar_die("Required paramter $var not set");
+            }
+            $this->$var = $_REQUEST[$var];
+        }
+    }
+
+    function display() {
+    
+        $fieldsForSelectedModule = PdfManagerHelper::getFields($this->baseModule, true);
+        $selectedField = $fieldsForSelectedModule;
+        $fieldsForSubModule = array();
+
+        if (!empty($this->baseLink) && strpos($this->baseLink, 'pdfManagerRelateLink_') === 0) {
+        
+            $selectedField = $this->baseLink;
+            $linkName = substr($this->baseLink, strlen('pdfManagerRelateLink_'));
+            $focus = BeanFactory::newBean($this->baseModule);
+            $focus->id = create_guid();
+            $linksForSelectedModule = PdfManagerHelper::getLinksForModule($this->baseModule);
+            if (isset($linksForSelectedModule[$linkName]) && $focus->load_relationship($linkName)) {
+                $fieldsForSubModule = PdfManagerHelper::getFields($focus->$linkName->getRelatedModuleName());
+            }
+        }
+        
+        $this->ss->assign('fieldsForSelectedModule', $fieldsForSelectedModule);
+        $this->ss->assign('selectedField', $selectedField);
+        $this->ss->assign('fieldsForSubModule', $fieldsForSubModule);
+        
+        $this->ss->display('modules/PdfManager/tpls/getFields.tpl');
+    }
 }

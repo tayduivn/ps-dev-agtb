@@ -19,4 +19,4 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{$tiny_script}
+{html_options name="field" id="field" selected=$selectedField values=$fieldsForSelectedModule options=$fieldsForSelectedModule onChange="SUGAR.PdfManager.loadFields(YAHOO.util.Dom.get('base_module').value, this.value)"}{if $fieldsForSubModule} {html_options name="subField" id="subField" values=$fieldsForSubModule options=$fieldsForSubModule}{/if} <input type="button" class="button" name="pdfManagerInsertField" id="pdfManagerInsertField" value="{sugar_translate module="PdfManager" label="LBL_BTN_INSERT"}" onclick="SUGAR.PdfManager.insertField(YAHOO.util.Dom.get('field').value{if $fieldsForSubModule}+'.'+YAHOO.util.Dom.get('subField').value{/if});" />

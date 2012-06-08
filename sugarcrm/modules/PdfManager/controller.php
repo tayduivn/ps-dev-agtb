@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -30,13 +28,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/MVC/View/views/view.list.php');
+require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
+require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
+require_once ('modules/ExpressionEngine/formulaHelper.php');
 
-class PdfManagerViewList extends ViewList
+class PdfManagerController extends SugarController
 {
- 	public function preDisplay()
- 	{
- 		parent::preDisplay();
- 		$this->lv->quickViewLinks = false;
- 	}
+    
+    function action_getFields() {
+        $this->view = 'getFields';
+    }
+    
 }

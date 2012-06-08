@@ -25,7 +25,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 //FILE SUGARCRM flav=pro ONLY
+
 $mod_strings = array (
   'LBL_TEAM' => 'Teams',
   'LBL_TEAMS' => 'Teams',
@@ -73,4 +75,7 @@ $mod_strings = array (
   'LBL_FIELD_POPUP_HELP' => 'Select a field to insert the variable for the field value.',
   'LBL_BODY_HTML_POPUP_HELP' => 'Create the PDF template using the editor tools.  To insert fields, use Field.',
   'LBL_KEYWORDS_POPUP_HELP' => 'Associate Keywords with the document, generally in the form "keyword1 keyword2..."',
+  'LBL_BTN_INSERT' => 'Insert',
+  'LBL_FIELDS_LIST' => 'Fields',
+  'LBL_LINK_LIST' => 'Links',
 );

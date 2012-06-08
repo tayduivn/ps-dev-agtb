@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,12 +28,14 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
+require_once 'modules/PdfManager/PdfManagerHelper.php';
+
 class PdfManager extends Basic {
-	var $new_schema = true;
-	var $module_dir = 'PdfManager';
-	var $object_name = 'PdfManager';
-	var $table_name = 'pdfmanager';
-	var $importable = false;
+    var $new_schema = true;
+    var $module_dir = 'PdfManager';
+    var $object_name = 'PdfManager';
+    var $table_name = 'pdfmanager';
+    var $importable = false;
     var $id;
     var $name;
     var $date_entered;
@@ -65,33 +67,18 @@ class PdfManager extends Basic {
     var $subject;
     var $keywords;
     
-    function PdfManager_sugar(){	
-		parent::Basic();
-	}
-	
-	function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
+    function PdfManager_sugar(){    
+        parent::Basic();
+    }
+    
+    function bean_implements($interface){
+        switch($interface){
+            case 'ACL': return true;
+        }
+        return false;
     }
     
     public function isFavoritesEnabled(){
         return false;
     }
 }
-
-function getPdfManagerAvailableModules(){
-    require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
-    $studio_browser = new StudioBrowser();
-    $studio_browser->loadModules();
-    $studio_modules = array_keys($studio_browser->modules);
-    $available_modules = array();
-    $module_names = array_change_key_case ($GLOBALS['app_list_strings']['moduleList']);   
-    foreach ($studio_modules as $module_name) {
-        $available_modules[$module_name] = isset($module_names[strtolower($module_name)]) ? $module_names[strtolower($module_name)] : strtolower($module_name);
-    }
-    asort($available_modules);
-    return $available_modules;
-}
-?>

@@ -1,5 +1,3 @@
-<?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
@@ -30,13 +28,50 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/MVC/View/views/view.list.php');
 
-class PdfManagerViewList extends ViewList
-{
- 	public function preDisplay()
- 	{
- 		parent::preDisplay();
- 		$this->lv->quickViewLinks = false;
- 	}
+SUGAR.PdfManager = {}; 
+
+/**
+ * Returns a list of fields for a module
+ */ 
+SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
+    if (moduleName.length > 0 && moduleName.indexOf('Reports') == 0) {
+        return true;
+    }
+
+    if (linkName.length > 0 && linkName.indexOf('pdfManagerRelateLink_') == -1) {
+        return true;
+    }    
+    var url = "index.php?" + SUGAR.util.paramsToUrl({
+        module : "PdfManager",
+        action : "getFields",
+        to_pdf : "1",
+        sugar_body_only : "true",
+        baseModule : moduleName,
+        baseLink : linkName
+    });
+
+    var resp = http_fetch_sync(url);
+
+    var field = YAHOO.util.Dom.get('field');
+    
+    if (field != null) {
+        var inputTD = YAHOO.util.Dom.getAncestorByTagName(field, 'TD');
+        if (resp.responseText.length > 0 && inputTD != null) {
+            inputTD.innerHTML = resp.responseText;
+            SUGAR.forms.AssignmentHandler.register('field', 'EditView');
+        }
+    }
+}
+
+/**
+ * Push var to WYSIWYG
+ */
+SUGAR.PdfManager.insertField = function(fieldName) {
+    var cleanFieldName = fieldName.replace('pdfManagerRelateLink_', '');
+	var inst = tinyMCE.getInstanceById("body_html");
+	if (fieldName.length > 0 && inst) {
+		inst.getWin().focus();
+		inst.execCommand('mceInsertRawHTML', false, '{$fields.' + cleanFieldName + '.value}');
+	}
 }
