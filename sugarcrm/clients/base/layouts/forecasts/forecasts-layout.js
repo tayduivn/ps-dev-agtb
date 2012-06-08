@@ -35,10 +35,12 @@
 
         initializeAllModels: function() {
             var self = this,
-                modelMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.models;
+                componentsMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.components;
 
-            _.each(modelMetadata, function(data) {
-                self.createModels(data);
+            _.each(componentsMetadata, function(component) {
+                if (component.model) {
+                    self.createModels(component.model);
+                }
             });
 
             this._models.grid = new app.Model.Grid();

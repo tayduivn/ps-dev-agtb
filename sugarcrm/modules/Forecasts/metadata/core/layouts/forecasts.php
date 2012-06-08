@@ -4,9 +4,27 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
     'components' => array(
         0 => array(
             'view' => 'forecastsFilter',
+            'model' => array(
+                'module' => 'Forecasts',
+                'name' => 'Filters',
+                'models' => array(
+                    'timeperiods',
+                    'stages',
+                    'probabilities'
+                )
+            )
         ),
         1 => array(
             'view' => 'chartOptions',
+            'model' => array(
+                'module' => 'Forecasts',
+                'name' => 'ChartOptions',
+                'models' => array(
+                    'horizontal',
+                    'vertical',
+                    'groupby'
+                )
+            )
         ),
         2 => array(
             'view' => 'tree',
@@ -25,26 +43,6 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         7 => array(
             'view' => 'forecastsSubnav',
-        )
-    ),
-    'models' => array(
-        0 => array(
-            'module' => 'Forecasts',
-            'name' => 'Filters',
-            'models' => array(
-                'timeperiods',
-                'stages',
-                'probabilities'
-            )
-        ),
-        1 => array(
-            'module' => 'Forecasts',
-            'name' => 'ChartOptions',
-            'models' => array(
-                'horizontal',
-                'vertical',
-                'groupby'
-            )
         )
     )
 );
