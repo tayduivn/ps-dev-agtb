@@ -36,8 +36,7 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            var $chosen = $chosenPlaceholder.find('select').chosen();
-            $chosen.on('change', function(event, data) {
+            $chosenPlaceholder.on('change', 'select', function(event, data) {
                 model[key].set('value', data.selected);
             });
         });
