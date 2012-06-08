@@ -229,14 +229,19 @@ class TimePeriod extends SugarBean {
      */
     static function getCurrentId($timedate=null)
     {
-        global $app_strings;
-        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
-        //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-        return $timeperiod;
+        static $currentId;
+
+        if(!isset($currentId))
+        {
+            global $app_strings;
+            $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+            //get current timeperiod
+            $db = DBManagerFactory::getInstance();
+            $queryDate = $timedate->getNow();
+            $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        }
+        return $currentId;
     }
 
     /**

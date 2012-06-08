@@ -409,20 +409,16 @@ $query .= 			"LEFT JOIN users
             $date_close_db = $timedate->to_db_date($this->date_closed);
         }
 
-        $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' and end_date > '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
-        if(!empty($timeperiod))
-        {
-            $this->timeperiod_id = $timeperiod;
-        } else {
-            //Log an error message here
-            $GLOBALS['log']->error();
-        }
 
+        $this->timeperiod_id = TimePeriod::getCurrentId();
+
+        /*
         if(empty($this->best_case_worksheet) && empty($this->likely_case_worksheet))
         {
             $this->best_case_worksheet = $this->best_case;
             $this->likely_case_worksheet = $this->likely_case;
         }
+        */
         //END SUGARCRM flav=pro ONLY
 
 		require_once('modules/Opportunities/SaveOverload.php');

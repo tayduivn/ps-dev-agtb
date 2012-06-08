@@ -85,7 +85,13 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->worst_case = $worst_case[$key];
         $opp->likely_case = $likely_case[$key];
         $opp->best_case = $best_case[$key];
+        $opp->best_case_worksheet = $likely_case[$key];
+        $opp->likely_case_worksheet = $best_case[$key];
         //END SUGARCRM flav=pro ONLY
+
+        $forecast= array('-1', '0', '1');
+        $key = array_rand($forecast);
+        $opp->forecast = $forecast[$key];
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
         $opp->name = substr($account->name." - 1000 units", 0, 50);
@@ -104,7 +110,6 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $probability = array("10", "70", "40", "60");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
-        $opp->forecast = $opp->probability >= 70 ? 1 : 0;
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);

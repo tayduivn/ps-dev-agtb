@@ -49,6 +49,7 @@ function setUp()
 
 function tearDown()
 {
+    return;
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     $ids = "('" . implode("','", $this->createdOpportunities) . "')";
