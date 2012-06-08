@@ -2,6 +2,9 @@ var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
+    "config":{
+      "configfoo":"configBar"
+    },
     "modules": {
         "Cases": {
             '_hash': '12345678910',

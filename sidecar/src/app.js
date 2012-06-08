@@ -218,11 +218,22 @@ SUGAR.App = (function() {
                 clientID: _app.config.clientID
             });
 
+            this.loadConfig();
+
             if (!opts.silent) {
                 _app.trigger("app:init", this);
             }
 
             return _app;
+        },
+
+        /**
+         * Loads configuration from local storage and extends current settings
+         */
+        loadConfig: function() {
+            // extend our config with settings from local storage if we have it
+            _app.config = _app.config || {};
+            _app.config = _.extend(_app.config, _app.metadata.getConfig());
         },
 
         /**

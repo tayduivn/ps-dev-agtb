@@ -6,6 +6,7 @@
     var _layoutPrefix = "l:";
     var _viewPrefix = "v:";
     var _langPrefix = "lang:";
+    var _configPrefix = "c";
 
     // TODO: Maybe just have this all in _metadata?
 
@@ -270,6 +271,15 @@
         },
 
         /**
+         * Gets Config.
+         *
+         * @return Dictionary of Configs.
+         */
+        getConfig: function() {
+            return _getMeta(_app, "config", "") || {};
+        },
+
+        /**
          * Sets the metadata.
          *
          * By default this function is used by MetadataManager to translate server responses into metadata
@@ -320,6 +330,17 @@
                         app.view.declareComponent("layout", type, null, layout.controller);
                     }
                 });
+            }
+
+            if (data.config) {
+                _.each(data.config, function(value, key) {
+                    if (!app.config) {
+                        app.config = {};
+                    } else {
+                        app.config[key] = value;
+                    }
+                });
+                _setMeta(_app, "config", "", data);
             }
 
             _setMeta(_app, "moduleList", "", data);
