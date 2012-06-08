@@ -50,11 +50,20 @@ class MetadataApi extends SugarApi {
                 'shortHelp' => 'This method will return the hash of all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
             ),
+            'getPublicMetadata' =>  array(
+                'reqType' => 'GET',
+                'path' => array('metadata','public'),
+                'pathVars'=> array(''),
+                'method' => 'getPublicMetadata',
+                'shortHelp' => 'This method will return the metadata needed when not logged in',
+                'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noLoginRequired' => true,
+            ),
         );
     }
     
-    protected function getMetadataManager() {
-        return new MetaDataManager($this->user,$this->platforms);
+    protected function getMetadataManager( $public = false ) {
+        return new MetaDataManager($this->user,$this->platforms, $public);
     }
 
     public function getAllMetadata($api, $args) {
@@ -221,5 +230,88 @@ class MetadataApi extends SugarApi {
         return $data;
         
         
+    }
+
+    public function getPublicMetadata($api, $args) {
+        $data = array();
+
+        if($args['platform'] == 'portal') {
+            $configs = array();
+            $admin = new Administration();
+            $admin->retrieveSettings();
+            foreach($admin->settings AS $setting_name => $setting_value) {
+                if(stristr($setting_name, 'portal_')) {
+                    $key = str_replace('portal_', '', $setting_name);
+                    $configs[$key] = json_decode(html_entity_decode($setting_value));
+                }
+            }
+            $data['config'] = $configs;
+        }
+        // Default the type filter to everything
+        $this->typeFilter = array('fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl', 'views', 'layouts');
+
+        if ( !empty($args['typeFilter']) ) {
+            // Explode is fine here, we control the list of types
+            $types = explode(",", $args['typeFilter']);
+            if ($types != false) {
+                $this->typeFilter = $types;
+            }
+        }
+
+        $moduleFilter = array();
+        $onlyHash = false;
+
+        if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
+            $onlyHash = true;
+        }
+
+        if ( isset($args['platform']) ) {
+            $this->platforms = array(basename($args['platform']),'base');
+        } else {
+            $this->platforms = array('base');
+        }
+
+        $mm = $this->getMetadataManager( TRUE );
+
+        // Start collecting data
+        $data = array();
+
+        $data['fields']  = $mm->getSugarClientFiles('field');
+        $data['views']   = $mm->getSugarClientFiles('view');
+        $data['layouts'] = $mm->getSugarLayouts();
+        $data['viewTemplates'] = $mm->getViewTemplates();
+        $data['appStrings'] = $mm->getAppStrings();
+        $data['appListStrings'] = $mm->getAppListStrings();
+        $md5 = serialize($data);
+        $md5 = md5($md5);
+        $data["_hash"] = md5(serialize($data));
+
+        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings', 'views', 'layouts');
+
+
+        if ( $onlyHash ) {
+            // The client only wants hashes
+            $hashesOnly = array();
+            $hashesOnly['_hash'] = $data['_hash'];
+            foreach ( $baseChunks as $chunk ) {
+                if (in_array($chunk,$this->typeFilter) ) {
+                    $hashesOnly[$chunk]['_hash'] = $data['_hash'];
+                }
+            }
+
+            $data = $hashesOnly;
+
+        } else {
+            // The client is being bossy and wants some data as well.
+            foreach ( $baseChunks as $chunk ) {
+                if (!in_array($chunk,$this->typeFilter)
+                    || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
+                    unset($data[$chunk]);
+                }
+            }
+
+        }
+
+        return $data;
     }
 }

@@ -47,20 +47,28 @@ class MetaDataManager {
     protected $platform = 'base';
     protected $typeFilter = null;
     protected $user;
+    // you are always going to get noauth
+    protected $auth_dirs = array( 'public' );
 
     /**
      * The constructor for the class.
      *
      * @param User $user A User bean
      * @param array $platforms A list of clients
+     * @param bool $noauth is this a No Auth metadata grab
      */
-    function __construct ($user, $platforms = null) {
+    function __construct ($user, $platforms = null, $public = false) {
         if ( $platforms == null ) {
             $platforms = array('base');
         }
 
         $this->user = $user;
         $this->platforms = $platforms;
+
+        // if we need auth add it to the array
+        if($public === FALSE) {
+            $this->auth_dirs[] = 'private';
+        }
     }
 
     /**
@@ -375,20 +383,22 @@ class MetaDataManager {
 
         // Gets the listing of directories to scan, by nested dir name, with full paths
         $dirs = $this->getSugarClientFileDirs('layouts', true);
-        foreach ($dirs as $dir) {
-            // Get the client for this particular file (could be mixed)
-            preg_match('#clients/(.*)/layouts/#', $dir, $m);
-            $platform = $m[1];
+        foreach($this->auth_dirs AS $auth_dir) {
+            foreach ($dirs as $dir) {
+                // Get the client for this particular file (could be mixed)
+                preg_match('#clients/(.*)/'. $auth_dir . '/layouts/#', $dir, $m);
+                $platform = $m[1];
 
-            // Grab our PHP files
-            $files = glob($dir . '*.php');
-            foreach ($files as $file) {
-                $filename = basename($file, '.php');
-                require_once $file;
+                // Grab our PHP files
+                $files = glob($dir . '*.php');
+                foreach ($files as $file) {
+                    $filename = basename($file, '.php');
+                    require_once $file;
 
-                // Only get the viewdefs if they exist for this platform and file
-                if (isset($viewdefs[$platform]['layout'][$filename])) {
-                    $result[$filename] = $viewdefs[$platform]['layout'][$filename];
+                    // Only get the viewdefs if they exist for this platform and file
+                    if (isset($viewdefs[$platform]['layout'][$filename])) {
+                        $result[$filename] = $viewdefs[$platform]['layout'][$filename];
+                    }
                 }
             }
         }
@@ -399,18 +409,19 @@ class MetaDataManager {
 
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
+        foreach($this->auth_dirs AS $auth_dir) {
+            foreach ( $this->platforms as $platform ) {
+                $basedir  = "clients/{$platform}/{$auth_dir}/{$path}/";
+                $custdir  = "custom/$basedir";
+                $basedirs = glob($basedir."*", GLOB_ONLYDIR);
+                $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
+                $alldirs  = array_merge($basedirs, $custdirs);
 
-        foreach ( $this->platforms as $platform ) {
-            $basedir  = "clients/$platform/$path/";
-            $custdir  = "custom/$basedir";
-            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
-            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
-            $alldirs  = array_merge($basedirs, $custdirs);
-
-            foreach ($alldirs as $dir) {
-                // To prevent doing the work twice, let's sort this out by basename
-                $dirname = basename($dir);
-                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
+                foreach ($alldirs as $dir) {
+                    // To prevent doing the work twice, let's sort this out by basename
+                    $dirname = basename($dir);
+                    $dirs[$dirname] = $full ? $dir . '/' : $dirname;
+                }
             }
         }
 
@@ -430,19 +441,20 @@ class MetaDataManager {
         $typePath = $type . 's';
 
         $allSugarFiles = $this->getSugarClientFileDirs($typePath);
-
-        foreach ( $allSugarFiles as $dirname) {
-            $fileData = array('views' => array());
-            // Check each platform in order of precendence to find the "best" controller
-            foreach ( $this->platforms as $platform ) {
-                $controller = "clients/$platform/$typePath/$dirname/$dirname.js";
-                if ( file_exists('custom/'.$controller) ) {
-                    $controller = 'custom/'.$controller;
-                }
-                if ( file_exists($controller) ) {
-                    $fileData['controller'] = file_get_contents($controller);
-                    // We found a controller, let's get out of here!
-                    break;
+        foreach($this->auth_dirs AS $auth_dir) {
+            foreach ( $allSugarFiles as $dirname) {
+                $fileData = array('views' => array());
+                // Check each platform in order of precendence to find the "best" controller
+                foreach ( $this->platforms as $platform ) {
+                    $controller = "clients/$platform/$auth_dir/$typePath/$dirname/$dirname.js";
+                    if ( file_exists('custom/'.$controller) ) {
+                        $controller = 'custom/'.$controller;
+                    }
+                    if ( file_exists($controller) ) {
+                        $fileData['controller'] = file_get_contents($controller);
+                        // We found a controller, let's get out of here!
+                        break;
+                    }
                 }
             }
 
@@ -450,7 +462,7 @@ class MetaDataManager {
             $backwardsPlatforms = array_reverse($this->platforms);
             $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "clients/$platform/$typePath/$dirname/";
+                $templateDirs[] = "clients/$platform/$auth_dir/$typePath/$dirname/";
             }
             $fileData['templates'] = $this->fetchTemplates($templateDirs);
 
@@ -504,9 +516,11 @@ class MetaDataManager {
     public function getViewTemplates() {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
-        foreach ( $backwardsPlatforms as $platform ) {
-            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
-            $templateDirs = array_merge($templateDirs,$moreTemplates);
+        foreach($this->auth_dirs AS $auth_dir) {
+            foreach ( $backwardsPlatforms as $platform ) {
+                $moreTemplates = glob("clients/${platform}/${auth_dir}/views/*",GLOB_ONLYDIR);
+                $templateDirs = array_merge($templateDirs,$moreTemplates);
+            }
         }
         $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));
