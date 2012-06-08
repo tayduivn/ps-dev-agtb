@@ -1,4 +1,4 @@
-<h1 class="nomad">Associate {{module}}</h1>
+<h1 class="nomad">Assign {{moduleSingular}}</h1>
 
 <div class="form-horizontal" id="createRecord" style="display:inline;">
     <fieldset>

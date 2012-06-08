@@ -119,14 +119,28 @@
             return _.filter(model.fields, function (field) {
                 var relationship;
                 return ((field.type == "link") &&
-                   (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
-                   (_.any(modules, function(module) {
+                    (_.any(modules, function(module) {
                         return (module == relationship.lhs_module) ||
                                (module == relationship.rhs_module);
-                   })));
+                    })));
             });
 
+        },
+
+        /**
+         * Shows loading notification.
+         */
+        showLoading: function () {
+            app.alert.show("data_loading", {level:'general', messages:'Loading...'});
+        },
+
+        /**
+         * Hides loading notification.
+         */
+        hideLoading: function () {
+            app.alert.dismiss("data_loading");
         },
 
         /**

@@ -9,6 +9,15 @@ var handler = function(e) {
 $('article').onpress(handler);
 */
 
+$('body').onpress('.bizcard .card',function(e){
+    $(this).next().trigger('click');
+});
+
+$('.bizcard .card').swipeLeft(function(){
+    $(this).next().trigger('click');
+});
+
+
 
 
 $('body').onpress('label.checkbox',function(e){
