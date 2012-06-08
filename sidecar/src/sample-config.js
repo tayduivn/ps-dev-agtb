@@ -135,10 +135,11 @@
             alert: {
                 target: '#alert'
             },
-            subnav: {
-                target: '#subnav'
+            footer: {
+                target: '#footer'
             }
         },
+
         /**
          * Array of modules to display in the nav bar
          ** <pre><code>
@@ -153,7 +154,13 @@
             'Bugs',
             'Cases',
             'KBDocuments'
-        ]
+        ],
+        /**
+         * Client ID for oAuth
+         * Defaults to sugar other values are support_portal
+         * @cfg {Array}
+         */
+        clientID: "sugar"
     }, false);
 
 })(SUGAR.App);

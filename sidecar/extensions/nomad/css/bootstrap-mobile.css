@@ -3273,9 +3273,25 @@ h1 {
 }
 #nomad,
 #content,
-#content > div,
-#content > div > div {
+#content > div {
   display: inline;
+}
+#content > div > div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+}
+#content div > h1.nomad {
+  background-color: #303030;
+  background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
+  background-image: -ms-linear-gradient(top, #404040, #1a1a1a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), to(#1a1a1a));
+  background-image: -webkit-linear-gradient(top, #404040, #1a1a1a);
+  background-image: -o-linear-gradient(top, #404040, #1a1a1a);
+  background-image: linear-gradient(top, #404040, #1a1a1a);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#404040', endColorstr='#1a1a1a', GradientType=0);
 }
 #scroll > .pad > span .control-group,
 #detailListing #listing > ul > li,
@@ -3347,7 +3363,7 @@ article [id^="listing-action"] i.grip {
   font-style: normal;
   height: 100%;
   color: #a8a6a4;
-  margin-top: -61px;
+  margin-top: -53px;
   margin-right: -32px;
 }
 article [id^="listing-action"] i.grip.on {
@@ -3431,6 +3447,9 @@ article p:last-child {
   -moz-box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
   box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
 }
+.cube:active {
+  background-color: #222;
+}
 .navbar .cube:hover {
   text-decoration: none;
 }
@@ -3503,8 +3522,15 @@ a:hover [class^="icon-"] {
   background-color: rgba(255, 0, 0, 0.25);
 }
 #record-action .icon-phone {
-  background: url('../img/phone.png') no-repeat 50% 50%;
-  background-size: 80%;
+  background: url('../img/sprite.png') no-repeat 1% 0;
+  background-size: 660%;
+  height: 22px;
+  width: 26px;
+  margin-top: 13px;
+}
+#record-action .icon-sms-white {
+  background: url('../img/sprite.png') no-repeat 38% 0;
+  background-size: 700%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
@@ -3523,30 +3549,30 @@ a:hover [class^="icon-"] {
   margin: 16px 0 0 0;
 }
 .icon-phone {
-  background: url('../img/phone.png') no-repeat 50% 50%;
-  background-size: 70%;
-  height: 20px;
+  background: url('../img/sprite.png') no-repeat 1% -30%;
+  background-size: 740%;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-phone-black {
-  background: url('../img/phone-black.png') no-repeat 50% 0;
-  background-size: 70%;
-  height: 20px;
+  background: url('../img/sprite.png') no-repeat 18% -30%;
+  background-size: 740%;
+  height: 18px;
   width: 18px;
   margin-bottom: -20%;
 }
 .icon-sms-black {
-  background: url('../img/sms_black.png') no-repeat 50% 0;
-  background-size: 90%;
-  height: 20px;
+  background: url('../img/sprite.png') no-repeat 57% 0;
+  background-size: 700%;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
 .icon-sms-white {
-  background: url('../img/sms_white.png') no-repeat 50% 0;
-  background-size: 90%;
-  height: 20px;
+  background: url('../img/sprite.png') no-repeat 40% 0;
+  background-size: 700%;
+  height: 18px;
   width: 16px;
   margin-bottom: -20%;
 }
@@ -3700,6 +3726,10 @@ html {
 #scroll .pad {
   padding-top: 49px;
 }
+#scroll .pad > textarea {
+  width: 100%;
+  height: 100%;
+}
 .listing {
   height: 100%;
   position: absolute;
@@ -3740,6 +3770,7 @@ html {
   padding-top: 0;
   padding-bottom: 0;
   min-height: 42px;
+  line-height: 42px;
 }
 .listing article.nav.show-more-top-btn {
   top: 93px;
@@ -3809,11 +3840,8 @@ html {
   margin: 8px 0 0 14px;
   color: #c2c2c2;
 }
-.search-query[placeholder] {
-  text-indent: 30px !important;
-}
 .listing .search-query {
-  width: 100%;
+  width: 92%;
   height: 26px;
   -webkit-border-radius: 18px;
   -moz-border-radius: 18px;
@@ -3854,13 +3882,13 @@ html {
   color: #ffffff;
   text-shadow: 0 -1px 0 #000000;
 }
-#backRecord {
+fieldset .btn-inverse {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 2002;
 }
-#saveRecord {
+fieldset .btn-primary {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -3907,6 +3935,9 @@ html {
   text-align: center;
   padding-top: 14px;
 }
+.navbar #create:active {
+  background-color: #222;
+}
 #detailListing .listing {
   /*
   top: 202px; 
@@ -3932,8 +3963,8 @@ h3.nomad {
   color: #ffffff;
   z-index: 2001;
   position: absolute;
-  width: 80%;
-  margin: 0 10%;
+  width: 74%;
+  margin: 0 0 0 13%;
   display: inline-block;
   text-align: center;
   font-size: 16px !important;
@@ -4245,6 +4276,9 @@ h3.nomad {
   box-shadow: none;
   display: block;
   float: left;
+}
+#createRecord input[type=tel] {
+  width: 60% !important;
 }
 #record-action .span1_5th {
   float: left;
@@ -4661,6 +4695,18 @@ h3.nomad {
     }
 }
 */
+/*
+.search-query[placeholder],
+
+
+.search-query {
+  text-indent: -2px !important;
+  padding-left: 34px !important;
+}
+*/
+.search-query {
+  padding-left: 32px !important;
+}
 .pull-right {
   float: right;
 }

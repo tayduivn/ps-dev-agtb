@@ -1,6 +1,6 @@
 <div class="control-group">
     <label class="control-label">{{label}}</label>
     <div class="controls">
-        <textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}">{{value}}</textarea>
+        <textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}" readonly>{{value}}</textarea>
     </div>
 </div>

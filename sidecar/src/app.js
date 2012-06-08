@@ -3,25 +3,25 @@
  * TODO: Don't put this here, it should be in its own file.
  */
 /*
-var offByScope = function(scope) {
-    _.each(this._callbacks, function(node, ev) {
-        if (node.context === scope)
-            this.off(ev, node.callback, node.context);
-    }, this);
-    return this;
-};
-_.extend(Backbone.Events, {
-    offByScope: offByScope
-});
+ var offByScope = function(scope) {
+ _.each(this._callbacks, function(node, ev) {
+ if (node.context === scope)
+ this.off(ev, node.callback, node.context);
+ }, this);
+ return this;
+ };
+ _.extend(Backbone.Events, {
+ offByScope: offByScope
+ });
 
-_.extend(Backbone.Model.prototype, {
-    offByScope: offByScope
-});
+ _.extend(Backbone.Model.prototype, {
+ offByScope: offByScope
+ });
 
-_.extend(Backbone.View.prototype, {
-    offByScope: offByScope
-});
-*/
+ _.extend(Backbone.View.prototype, {
+ offByScope: offByScope
+ });
+ */
 
 /**
  * SideCar Platform
@@ -173,19 +173,6 @@ SUGAR.App = (function() {
 
             _app.events.register(
                 /**
-                 * Fires when route changes a new view has been loaded.
-                 *
-                 * <pre><code>
-                 * obj.on("app:view:change", callback);
-                 * </pre></code>
-                 * @event
-                 */
-                "app:view:change",
-                this
-            );
-
-            _app.events.register(
-                /**
                  * @event
                  * Fires when login succeeds.
                  */
@@ -202,6 +189,19 @@ SUGAR.App = (function() {
                 this
             );
 
+            _app.events.register(
+                /**
+                 * Fires when route changes a new view has been loaded.
+                 *
+                 * <pre><code>
+                 * obj.on("app:view:change", callback);
+                 * </pre></code>
+                 * @event
+                 */
+                "app:view:change",
+                this
+            );
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
@@ -213,7 +213,9 @@ SUGAR.App = (function() {
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
-                keyValueStore: _app.cache
+
+                keyValueStore: _app[_app.config.authStore || "cache"],
+                clientID: _app.config.clientID
             });
 
             if (!opts.silent) {
@@ -309,7 +311,7 @@ SUGAR.App = (function() {
             model = model || context.get("model");
             id = model.id;
             module = context.get("module") || model.module;
-            
+
             route = this.router.buildRoute(module, id, action, params);
             this.router.navigate(route, {trigger: true});
         },
@@ -324,13 +326,26 @@ SUGAR.App = (function() {
          */
         login: function(credentials, data, callbacks) {
             callbacks = callbacks || {};
-            var origSuccess = callbacks.success;
-            callbacks.success = function(data) {
-                _app.trigger("app:login:success", data);
-                if (origSuccess) origSuccess(data);
+            var origSuccess = callbacks.success, loginData;
+            var loadUserCallbacks = {
+                success: function(data) {
+                    if (data.current_user) {
+                        _app.user._reset(data ? data.current_user : null);
+                    }
+                    _app.trigger("app:login:success", loginData);
+                    if (origSuccess) origSuccess(loginData);
+                }
+            }
+            var loginCallbacks = {
+                success: function(data) {
+                    loginData = data;
+                    var method = 'read';
+                    var module = 'me';
+                    _app.api.records(method, module, {}, {}, loadUserCallbacks);
+                }
             };
 
-            return _app.api.login(credentials, data, callbacks);
+            return _app.api.login(credentials, data, loginCallbacks);
         },
 
         /**
@@ -359,5 +374,9 @@ SUGAR.App = (function() {
         },
 
         modules: _modules
-    };
-}());
+    }
+        ;
+}
+    ()
+    )
+;

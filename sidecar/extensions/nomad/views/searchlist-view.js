@@ -18,10 +18,6 @@
             this.timerId = null;
         },
 
-        render: function() {
-            app.view.View.prototype.render.call(this);
-        },
-
         onKeyUp: function(e) {
             if (this.timerId) {
                 window.clearTimeout(this.timerId);
@@ -33,13 +29,34 @@
         onClickFavoritesBtn: function(e) {
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
-            this.collection.fetch();
+            app.nomad.showLoading();
+            this.collection.fetch({favorites: !this.collection.favorites,
+                success: function() {
+                    app.nomad.hideLoading();
+                },
+                error: function () {
+                    $(e.currentTarget).toggleClass('active');
+                    app.nomad.hideLoading();
+                    // TODO: This will handled by error module
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                }
+            });
         },
 
         onClickMyItemsBtn: function(e) {
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
-            this.collection.fetch();
+            app.nomad.showLoading();
+            this.collection.fetch({myItems: !this.collection.myItems,
+                success: function() {
+                    app.nomad.hideLoading();
+                },
+                error: function () {
+                    $(e.currentTarget).toggleClass('active');
+                    app.nomad.hideLoading();
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                }
+            });
         },
 
         onClickMenuCancel: function() {

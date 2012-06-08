@@ -132,6 +132,9 @@ class SugarApplication
 			die();
 		}
 		$GLOBALS['log']->debug('Current user is: '.$GLOBALS['current_user']->user_name);
+	    $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
+	    // Reset ACLs in case after_load_user hook changed ACL setups
+	    SugarACL::resetACLs();
 
 		//set cookies
 		if(isset($_SESSION['authenticated_user_id'])){

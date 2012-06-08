@@ -281,7 +281,7 @@ class SugarSpot
      * @param  $options array  An array of options to better control how the result set is generated
 	 * @return array
 	 */
-    protected function _performSearch($query, $modules, $offset = -1, $limit = 20, $options)
+    protected function _performSearch($query, $modules, $offset = -1, $limit = 20, $options = array())
     {
         if(empty($query)) {
             if(!((isset($options['my_items']) && $options['my_items'] == true )

@@ -59,12 +59,10 @@
      * Renders subnav based on search message appropriate for query term.
      */
     renderSubnav: function(overrideMessage) {
-        if (app.additionalComponents.subnav) {
-            if(overrideMessage) {
-                app.additionalComponents.subnav.renderStatic(overrideMessage);
-            } else {
-                app.additionalComponents.subnav.renderStatic('Show search results for "'+this.lastQuery+'"');
-            }
+        if (this.context.get('subnavModel')) {
+            this.context.get('subnavModel').set({
+                'title': overrideMessage || 'Show search results for "'+this.lastQuery+'"'
+            });
         }
     },
     /**

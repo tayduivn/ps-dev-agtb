@@ -6,21 +6,23 @@
                 app.router.goBack();
             },
             "click #record-action .phone": function () {
-                app.nomad.callPhone(this.getFieldsDataArray(this.phoneFields));
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.callPhone(phones);
             },
             "click #record-action .email": function () {
                 app.nomad.sendEmail(this.getEmails());
             },
             "click #record-action .message": function () {
-                app.nomad.sendSms(this.getFieldsDataArray(this.phoneFields));
+                var phones = this.getFieldsDataArray(this.phoneFields);
+                app.nomad.sendSms(phones);
             },
             "click #record-action .link": function () {
                 var urls = this.getFieldsDataArray(this.urlFields);
-                //debugger;
+                app.nomad.openUrl(urls);
             },
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
-                //debugger;
+                app.nomad.openAddress(addressObj);
             }
         },
 
@@ -46,7 +48,7 @@
                     } else if (field.name.indexOf("address") > -1) {    //find address fields
                         addressFields.push(field);
                     } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
-                        field.type = "email_temp";
+                        field.type = "singleemail";
                     } else if (fields.length < 4) {                     //find four other fields to output
                         fields.push(field);
                     }
@@ -55,9 +57,7 @@
             });
 
             //find link fields
-            var linkFields = _.filter(this.model.fields, function (field, key) {
-                if (field.type == 'link') return true;
-            });
+            var linkFields = app.nomad.getLinks(this.model);
 
             //save founded fields
             this.headerField = headerField;
@@ -89,7 +89,7 @@
                 };
 
             //pass custom data object as the context
-            this._renderWithContext(data);
+            app.view.View.prototype._renderSelf.call(this, data);
         },
 
         /**
@@ -103,7 +103,7 @@
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
                 if (value) data.push({
-                    name: field.name,
+                    name: field.label,
                     value: value
                 });
             });
@@ -120,7 +120,7 @@
             var value, data = {};
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
-                if (value) data[field.name] = value;
+                if (value) data[field.label] = value;
             });
             return data;
         },

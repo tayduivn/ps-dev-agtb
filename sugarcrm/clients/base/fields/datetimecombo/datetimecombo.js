@@ -1,6 +1,6 @@
 ({
-    render:function(value) {
-        app.view.Field.prototype.render.call(this);//call proto render
+    _render:function(value) {
+        app.view.Field.prototype._render.call(this);//call proto render
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",

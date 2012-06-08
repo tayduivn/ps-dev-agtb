@@ -172,7 +172,6 @@ describe("View Manager", function() {
             expect(view instanceof app.view.views.ToolbarView).toBeTruthy();
         });
 
-
     });
 
     describe("should be able to create instances of Layout class which is", function() {

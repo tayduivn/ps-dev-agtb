@@ -55,14 +55,15 @@ SUGAR.Api = (function() {
      * @ignore
      */
     function SugarApi(args) {
-        var _serverUrl, _platform, _keyValueStore;
+        var _serverUrl, _platform, _keyValueStore, _clientID;
         var _accessToken = null;
-        //var _refreshToken = null; // reserved for the future use
+        var _refreshToken = null;
 
         // if no key/value store is provided, the auth token is kept in memory
         _keyValueStore = args && args.keyValueStore;
         _serverUrl = (args && args.serverUrl) || "/rest/v10";
         _platform = (args && args.platform) || "";
+        _clientID = (args && args.clientID) || "sugar";
         if (_keyValueStore) {
             if (!$.isFunction(_keyValueStore.set) ||
                 !$.isFunction(_keyValueStore.get) ||
@@ -77,20 +78,25 @@ SUGAR.Api = (function() {
         function _resetAuth(data) {
             // data is the response from the server
             if (data) {
-                _accessToken = data.token;
+                _accessToken = data.access_token;
                 if (_keyValueStore) _keyValueStore.set("AuthAccessToken", _accessToken);
-                //_refreshToken = data.refreshToken;
-                //if (_keyValueStore) _keyValueStore.set("AuthRefreshToken", _refreshToken);
+                _refreshToken = data.refreshToken;
+                if (_keyValueStore) _keyValueStore.set("AuthRefreshToken", _refreshToken);
             }
             else {
                 _accessToken = null;
+                _refreshToken = null;
                 if (_keyValueStore) _keyValueStore.cut("AuthAccessToken");
-                //_refreshToken = null;
-                //if (_keyValueStore) _keyValueStore.remove("AuthRefreshToken");
+                if (_keyValueStore) _keyValueStore.cut("AuthRefreshToken");
             }
         }
 
         return {
+            /**
+             * Client Id for oAuth
+             * @property {String}
+             */
+            clientID: _clientID,
 
             /**
              * URL of Sugar REST end-point.
@@ -288,7 +294,8 @@ SUGAR.Api = (function() {
              *
              * @param {String} method operation type: create, read, update, or delete.
              * @param {String} module module name.
-             * @param {Object} data object to pass in the request body.
+             * @param {Object} data object; if contains id, action, link, etc., URI will be adjusted accordingly. 
+             * If methods parameter is 'create' or 'update', the data object will be put in the request body payload.
              * @param {Object} params(optional) URL parameters.
              * @param {Object} callbacks(optional) callback object.
              * @return XHR request object.
@@ -387,12 +394,15 @@ SUGAR.Api = (function() {
                 };
 
                 var payload = _.extend(data, {
+                    grant_type:"password",
                     username: credentials.username,
-                    password: credentials.password
+                    password: credentials.password,
+                    client_id: this.clientID,
+                    client_secret:""
                 });
 
                 var method = 'create';
-                var url = this.buildURL("login", method, payload);
+                var url = this.buildURL("oauth2", "token", payload);
                 return this.call(method, url, payload, { success: success, error: error });
             },
 
@@ -409,7 +419,7 @@ SUGAR.Api = (function() {
                 _resetAuth();
 
                 var method = 'create';
-                var url = this.buildURL("logout", method, payload);
+                var url = this.buildURL("oauth2", "logout", payload);
                 return this.call(method, url, payload, callbacks);
             },
 

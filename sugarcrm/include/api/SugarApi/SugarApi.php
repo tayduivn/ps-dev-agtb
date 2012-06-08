@@ -82,7 +82,7 @@ abstract class SugarApi {
             }
             $field = $sfh->getSugarField($type);
             
-            if ( $field != null ) {
+            if ( $field != null && isset($bean->$fieldName) ) {
                 if ( method_exists($field,'apiFormatField') ) {
                     $field->apiFormatField($data, $bean, $args, $fieldName, $properties);
                 } else {

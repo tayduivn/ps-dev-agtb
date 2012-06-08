@@ -9,7 +9,7 @@ $viewdefs['portal']['layout']['dashboard'] = array(
         1 => array(
             'layout' => 'list',
             'context' => array(
-                'module' => 'Notes',
+                'module' => 'Bugs',
             )
         )
     ),

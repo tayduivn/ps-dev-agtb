@@ -115,6 +115,15 @@
         },
 
         /**
+         * Navigates the window history.
+         *
+         * @param {Number} steps Number of steps to navigate (can be negative).
+         */
+        go: function(steps) {
+            window.history.go(steps);
+        },
+
+        /**
          * Starts Backbone history which in turn starts routing the hashtag.
          *
          * See Backbone.history documentation for details.

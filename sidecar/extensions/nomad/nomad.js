@@ -2,15 +2,16 @@
 
     var _rrh = {
 
-        associate: function(module, id, link) {
+        associate: function(module, id, link, depth) {
             var relatedModule = app.data.getRelatedModule(module, link);
-            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);            
+            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);
             app.controller.loadView({
                 module: relatedModule,
                 layout: "associate",
                 viaLink: link,
                 toModule: module,
-                toId: id
+                toId: id,
+                depth:depth
             });
         },
 
@@ -20,18 +21,28 @@
                 parentModule: module,
                 parentModelId: id,
                 link: link,
-                layout: "list"
+                layout: "relationships"
             });
         },
-
-        create: function(module, id, link) {
+        pickerList: function(module, id, action) {
+            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/link/picker/" + action);
+            app.controller.loadView({
+                module: module,
+                modelId: id,
+                layout: "pickerlist",
+                action: action,
+                create: true
+            });
+        },
+        create: function(module, id, link, depth) {
             app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
             app.controller.loadView({
                 parentModule: module,
                 parentModelId: id,
                 link: link,
                 create: true,
-                layout: "edit"
+                layout: "edit",
+                depth:depth
             });
         },
 
@@ -60,8 +71,9 @@
         app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
         app.router.route(":module/:id/link/:link/:relatedId", "relationships:detail", _rrh.record);
         app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
-        app.router.route(":module/:id/link/:link/create", "relationships:create", _rrh.create);
-        app.router.route(":module/:id/link/:link/associate", "relationships:associate", _rrh.associate);
+        app.router.route(":module/:id/link/:link/create?depth=:depth", "relationships:create", _rrh.create);
+        app.router.route(":module/:id/link/:link/associate?depth=:depth", "relationships:associate", _rrh.associate);
+        app.router.route(":module/:id/links/:action","relationships:picker" ,_rrh.pickerList);
 
         app.api.serverUrl = app.isNative ? app.user.get("serverUrl") : app.config.serverUrl;
 
@@ -71,10 +83,12 @@
 
     app.augment("nomad", {
 
-        deviceReady: function() {
+        deviceReady: function(authToken) {
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready");
+            app.logger.debug("Device is ready, auth-token: " + authToken);
 
+            app.AUTH_ACCESS_TOKEN = authToken;
+            app.config.authStore = app.isNative ? 'keychain': 'cache';
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
@@ -95,6 +109,39 @@
             return route;
         },
 
+        /**
+         * Filters out link fields that support multiple relationships and belong to any module managed by the app.
+         * @param {Data.Bean} model Instance of the model to
+         * @return {Array} Array of filtered link names.
+         */
+        getLinks: function (model) {
+            var modules = app.metadata.getModuleList();
+            return _.filter(model.fields, function (field) {
+                var relationship;
+                return ((field.type == "link") &&
+                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    app.data.canHaveMany(model.module, field.name) &&
+                    (_.any(modules, function(module) {
+                        return (module == relationship.lhs_module) ||
+                               (module == relationship.rhs_module);
+                    })));
+            });
+
+        },
+
+        /**
+         * Shows loading notification.
+         */
+        showLoading: function () {
+            app.alert.show("data_loading", {level:'general', messages:'Loading...'});
+        },
+
+        /**
+         * Hides loading notification.
+         */
+        hideLoading: function () {
+            app.alert.dismiss("data_loading");
+        },
 
         /**
          * Displays email chooser UI.
@@ -103,7 +150,7 @@
          * @param {String} body(optional)
          */
         sendEmail: function(emails, subject, body) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending email");
         },
 
         /**
@@ -111,7 +158,7 @@
          * @param {Array} phones
          */
         callPhone: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Calling phone");
         },
 
         /**
@@ -119,7 +166,23 @@
          * @param {Array} phones
          */
         sendSms: function(phones) {
-            // TODO: Implement HTML action sheet view
+            app.logger.debug("Sending SMS");
+        },
+
+        /**
+         * Displays url chooser UI.
+         * @param {Array} phones
+         */
+        openUrl: function(urls) {
+            app.logger.debug("Opening URL");
+        },
+
+        /**
+         * Opens the map with specific address.
+         * @param {Array} phones
+         */
+        openAddress: function(addressObj) {
+            app.logger.debug("Open address");
         }
 
     });

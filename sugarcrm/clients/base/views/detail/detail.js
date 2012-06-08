@@ -23,6 +23,7 @@
             });
             this.$el.find(".more").removeClass("hide");
         }
+        return this;
     },
     showMore: function() {
         var fieldsArray = this.$el.find("form[name=detail]").find("span[sfuuid]") || [];
@@ -46,12 +47,13 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                    if (this.app.additionalComponents.subnav) {
-                        this.app.additionalComponents.subnav.model = app.controller.context.attributes.model;
-                        this.app.additionalComponents.subnav.meta = this.meta;
-                    }
-                }, this
-            );
+                if (this.context.get('subnavModel')) {
+                    this.context.get('subnavModel').set({
+                        'title': this.model.get('name'),
+                        'meta': this.meta
+                    });
+                }
+            }, this);
         }
     }
 

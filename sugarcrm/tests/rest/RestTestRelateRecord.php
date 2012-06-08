@@ -27,12 +27,9 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestRelateRecord extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
 
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
         $this->accounts = array();
         $this->contacts = array();
         $this->opps = array();
@@ -65,7 +62,8 @@ class RestTestRelateRecord extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        parent::tearDown();
     }
 
     public function testFetchRelatedRecord() {
@@ -107,17 +105,9 @@ class RestTestRelateRecord extends RestTestBase {
 
         // Test normal fetch
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
-
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
         // FIXME: Need to wait for this to be repaired in link2.php
         // $this->assertEquals($this->contacts[0]->contact_role,$restReply['reply']['contact_role'],"Did not fetch the related contact's role");
-
-        
-        $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."'");
-        
-        $row = $db->fetchByAssoc($ret);
-        $this->assertEquals($this->contacts[0]->contact_role,$row['contact_role'],"Did not set the related contact's role");
-        
     }
 
     public function testCreateRelatedRecord() {
@@ -140,7 +130,7 @@ class RestTestRelateRecord extends RestTestBase {
                                                       'contact_role'=>'Primary Decision Maker',
                                                       'description'=>'UNIT TEST CONTACT'
                                       )),'POST');
-        
+
         $contact = new Contact();
         $contact->retrieve($restReply['reply']['related_record']['id']);
         // Save it here so it gets deleted later

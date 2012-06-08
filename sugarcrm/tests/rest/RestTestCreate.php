@@ -27,10 +27,7 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestCreate extends RestTestBase {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
     }
     
     public function tearDown()
@@ -39,7 +36,7 @@ class RestTestCreate extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     public function testCreate() {
@@ -49,6 +46,10 @@ class RestTestCreate extends RestTestBase {
 
         $this->assertTrue(isset($restReply['reply']['id']),
                           "An account was not created (or if it was, the ID was not returned)");
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertTrue(isset($restReply['reply']['team_name']), "A team name was not set.");
+        //END SUGARCRM flav=pro ONLY
 
         $this->account_id = $restReply['reply']['id'];
         
@@ -62,6 +63,18 @@ class RestTestCreate extends RestTestBase {
         $this->assertEquals($restReply['reply']['name'],
                             $account->name,
                             "Rest Reply and Bean Do Not Match.");
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->assertEquals($restReply['reply']['team_name'],
+                            'Global',
+                            "Rest Reply Does Not Match Team Name Global.");
+
+        $this->assertEquals($restReply['reply']['team_name'],
+                            $account->team_name,
+                            "Rest Reply and Bean Do Not Match Team Name.");
+        //END SUGARCRM flav=pro ONLY
+
+
     }
 
 }

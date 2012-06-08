@@ -17,17 +17,14 @@
      * Renders Header view
      */
     initialize: function(options) {
-        var self = this;
         app.events.on("app:sync:complete", function() {
-            self.render();
-        });
+            this.render();
+        }, this);
         app.view.View.prototype.initialize.call(this, options);
     },
-    /**
-     * Renders Header view
-     */
     render: function() {
-        var self = this, menuTemplate, moduleList;
+        var self = this,
+            menuTemplate;
         if (!app.api.isAuthenticated()) return;
 
         self.setModuleInfo();
@@ -49,7 +46,7 @@
      * 'this' points to the plugin (not the header view!)
      */
     fireSearchRequest: function (term) {
-        var plugin = this, markup, mlist, params;
+        var plugin = this, mlist, params;
         mlist = app.metadata.getDelimitedModuleList(',');
         params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: app.config.maxSearchQueryResult};
         app.api.search(params, {
@@ -81,6 +78,27 @@
         hashModule = moduleHref.split('/')[0];
         this.$('#moduleList li').removeClass('active');
         this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+    },
+
+    /**
+     * Renders Header view
+     */
+    initialize: function(options) {
+        var self = this;
+        app.events.on("app:sync:complete", function() {
+            self.render();
+        });
+        app.view.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * Renders Header view
+     */
+    render: function() {
+        if (!app.api.isAuthenticated()) return;
+        this.setModuleInfo();
+        this.setCreateTasksList();
+        app.view.View.prototype.render.call(this);
+        return this;
     },
     hide: function() {
         this.$el.hide();
@@ -131,4 +149,3 @@
     }
 
 })
-
