@@ -26,28 +26,27 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="">
+              <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
+              <li>
                 <a href="index.html">Overview</a>
               </li>
-              <li class="">
+              <li>
                 <a href="scaffolding.html">Scaffolding</a>
               </li>
               <li class="active">
                 <a href="base-css.html">Base CSS</a>
               </li>
-              <li class="">
+              <li>
                 <a href="components.html">Components</a>
               </li>
-              <li class="">
+              <li>
                 <a href="widgets.html">Widgets</a>
               </li>
-              <li class="">
+              <li>
                 <a href="less.html">Quick Styles</a>
               </li>
-
             </ul>
           </div>
         </div>
@@ -854,12 +853,17 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
     </div>
     <div class="span9">
       <form class="well">
-        <label>Label name</label>
+        <label>Label name:</label>
         <input type="text" class="span3" placeholder="Type something…"> <span class="help-inline">Associated help text!</span>
+        <label>Label name:</label>
+        <input type="text" class="span3" placeholder="(optional) Type something… "> <span class="help-inline">Associated help text!</span>
         <label class="checkbox">
           <input type="checkbox"> Check me out
         </label>
-        <button type="submit" class="btn">Submit</button>
+        <label class="checkbox">
+          <input type="checkbox"> Check me out (optional)
+        </label>
+        <button type="submit" class="btn btn-primary">Submit</button> <button type="submit" class="btn">Cancel</button>
       </form>
     </div>
   </div> <!-- /row -->

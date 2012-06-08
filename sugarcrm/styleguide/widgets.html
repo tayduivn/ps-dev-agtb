@@ -27,25 +27,25 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">    
-          <a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="">
+              <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
+              <li>
                 <a href="index.html">Overview</a>
               </li>
               <li>
                 <a href="scaffolding.html">Scaffolding</a>
               </li>
-              <li class="">
+              <li>
                 <a href="base-css.html">Base CSS</a>
               </li>
-              <li class="">
+              <li>
                 <a href="components.html">Components</a>
               </li>
               <li class="active">
                 <a href="widgets.html">Widgets</a>
               </li>
-              <li class="">
+              <li>
                 <a href="less.html">Quick Styles</a>
               </li>
             </ul>
@@ -1725,7 +1725,7 @@ $('#my-alert').bind('closed', function () {
           <div class="control-group">
             <label for="select01" class="control-label">Teams:</label>
             <div class="controls pull-left">
-              <select data-placeholder="Choose a account..." class="chzn-select span2 input-append" tabindex="2">
+              <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2" disabled="disabled">
                 <option value="pk">Global</option> 
                 <option value="pk" selected="selected">East</option> 
                 <option value="pk">West</option>
@@ -1744,7 +1744,7 @@ $('#my-alert').bind('closed', function () {
           </div>
           <div class="control-group">
             <div class="controls pull-left">
-              <select data-placeholder="Choose a account..." class="chzn-select span2 input-append" tabindex="2">
+              <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
                 <option value="pk">Global</option> 
                 <option value="pk">East</option> 
                 <option value="pk" selected="selected">West</option>
@@ -1765,7 +1765,7 @@ $('#my-alert').bind('closed', function () {
           <div class="control-group">
             <label for="select01" class="control-label">Emails:</label>
             <div class="controls pull-left">
-                <input type="text" class=" span2 input-append" placeholder="email address" value="dave@sugarcrm.com"> 
+                <input type="text" class="span2" placeholder="email address" value="dave@sugarcrm.com"  disabled="disabled"> 
             </div>
             <div class="btn-toolbar pull-left">
               <div class="btn-group" data-toggle="buttons-checkbox">
