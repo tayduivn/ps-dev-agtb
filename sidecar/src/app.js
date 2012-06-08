@@ -342,6 +342,10 @@ SUGAR.App = (function() {
                     var method = 'read';
                     var module = 'me';
                     _app.api.records(method, module, {}, {}, loadUserCallbacks);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $('#content').show(); 
+                    _app.error.handleHTTPError(xhr, textStatus);
                 }
             };
 
