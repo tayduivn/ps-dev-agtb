@@ -249,6 +249,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'currency',
     'len' => '26,6',
   ),
+  'best_case_worksheet' =>
+  array (
+    'name' => 'best_case_worksheet',
+    'vname' => 'LBL_BEST_CASE_WORKSHEET',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+    'reportable' => true,
+  ),
   'likely_case' =>
   array (
     'name' => 'likely_case',
@@ -256,6 +265,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
+  ),
+  'likely_case_worksheet' =>
+  array (
+    'name' => 'likely_case_worksheet',
+    'vname' => 'LBL_LIKELY_CASE_WORKSHEET',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+    'reportable' => true,
   ),
   'worst_case' =>
   array (
@@ -271,8 +289,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_TIMEPERIOD_ID',
     'type' => 'enum',
     'dbType' => 'id',
-    'function' => array('name'=>'get_timeperiods_dom', 'include'=>'modules/TimePeriods/TimePeriod.php'),
-    'reportable' => false,
+    'function' => 'getTimePeriodsDropDown',
   ),
   'timeperiods' =>
   array(

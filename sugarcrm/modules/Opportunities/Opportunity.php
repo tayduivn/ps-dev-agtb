@@ -417,11 +417,18 @@ $query .= 			"LEFT JOIN users
             //Log an error message here
             $GLOBALS['log']->error();
         }
+
+        if(empty($this->best_case_worksheet) && empty($this->likely_case_worksheet))
+        {
+            $this->best_case_worksheet = $this->best_case;
+            $this->likely_case_worksheet = $this->likely_case;
+        }
         //END SUGARCRM flav=pro ONLY
 
 		require_once('modules/Opportunities/SaveOverload.php');
 
 		perform_save($this);
+
 		return parent::save($check_notify);
 
 	}
@@ -515,13 +522,29 @@ $query .= 			"LEFT JOIN users
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * deleteProductLines
+     * getProducts
+     *
+     * This is a convenience function to return the product lines entries associated with the opportunity
      *
      */
-    public function deleteProductLines()
+    public function getProducts()
+    {
+        return $this->get_linked_beans('products', new Product());
+    }
+
+    /**
+     * deleteProducts
+     *
+     */
+    public function deleteProducts()
     {
         $query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
         $this->db->query($query);
     }
     //END SUGARCRM flav=ent ONLY
+}
+
+
+function getTimePeriodsDropDown(){
+    return TimePeriod::get_timeperiods_dom();
 }

@@ -51,14 +51,9 @@ function tearDown()
 {
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    return;
-    $opportunity = new Opportunity();
-    foreach($this->createdOpportunities as $id)
-    {
-        $opportunity = $opportunity->retrieve($id);
-        $opportunity->deleteAllRelatedLineInformation();
-        $GLOBALS['db']->query("DELETE FROM opportunities WHERE id = '{$opportunity->id}'");
-    }
+    $ids = "('" . implode("','", $this->createdOpportunities) . "')";
+    $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
+    $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
 }
 
 /**

@@ -50,13 +50,13 @@
              * @member Data.BeanCollection
              * @property {Boolean}
              */
-            this.myItems = options.myItems || this.myItems;
+            this.myItems = _.isUndefined(options.myItems) ? this.myItems : options.myItems;
             /**
              * Flag indicating if a collection contains current user's favorite items.
              * @member Data.BeanCollection
              * @property {Boolean}
              */
-            this.favorites = options.favorites || this.favorites;
+            this.favorites = _.isUndefined(options.favorites) ? this.favorites : options.favorites;
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 

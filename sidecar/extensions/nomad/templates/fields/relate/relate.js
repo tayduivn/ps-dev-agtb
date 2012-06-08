@@ -7,7 +7,9 @@
 
         initialize: function(options) {
             app.view.Field.prototype.initialize.call(this, options);
+        },
 
+        createList:function(){
             this.relateLayout = app.view.createLayout({
                 name: 'relate'
             });
@@ -44,22 +46,20 @@
 
             this.relateLayout.addComponent(searchboxView);
             this.relateLayout.addComponent(listView);
-
         },
 
         hideMenu:function(){
-            this.relateLayout.$el.remove();
+            this.relateLayout.dispose();
 
-            //$(app.controller.el).show();
             $(app.controller.layout.el).show();
         },
 
         onClick: function(e) {
             e.preventDefault();
-            //$(app.controller.el).hide();
+            this.createList();
+
             $(app.controller.layout.el).hide();
 
-            //this.relateLayout.$el.appendTo(document.body);
             this.relateLayout.$el.appendTo('#content');
             this.relateLayout.render();
             this.relateLayout.getComponent('list').context.loadData();

@@ -1,3 +1,15 @@
+<link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
+<link rel="stylesheet" href="themes/default/css/bootstrap.css"/>
+<link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+{literal}
+<style type="text/css">
+	.view {
+		border:none;
+	}
+</style>
+{/literal}
+
 <script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script src="../sidecar/lib/backbone/underscore.js"></script>
 <script src="../sidecar/lib/backbone/backbone.js"></script>
@@ -5,10 +17,12 @@
 <script src="../sidecar/lib/stash/stash.js"></script>
 <script src="../sidecar/lib/async/async.js"></script>
 <script src="../sidecar/lib/jstree/jquery.jstree.js"></script>
-<link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
 <script src="../sidecar/lib/chosen/chosen.jquery.js"></script>
-<!-- App Scripts -->
+<script src="../sidecar/lib/sinon/sinon.js"></script>
+<script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
+<script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
 
+{* App Scripts *}
 <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
 <script src='../sidecar/src/app.js'></script>
 <script src='../sidecar/src/utils/utils.js'></script>
@@ -55,25 +69,9 @@
 
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 
-<script src="../sidecar/lib/sinon/sinon.js"></script>
-
-<link rel="stylesheet" href="themes/default/css/bootstrap.css"/>
-<link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-
-<script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
-<script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
-
 <script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
 
-{literal}
-<style type="text/css">
-    .view {
-        border:none;
-    }
-</style>
-{/literal}
 <div class="view-forecastsSubnav subnav"></div>
 <div id="core-module">
     <div id="core" style="" >

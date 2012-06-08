@@ -16,8 +16,11 @@
 
             var searchListView = this.getComponent('searchlist');
 
+            var listView = this.getComponent('list');
+            listView.template =  app.template.get("list.relationships");
+
             if (searchListView) {
-                searchListView.setListView(this.getComponent('list'));
+                searchListView.setListView(listView);
             }
 
         }

@@ -222,6 +222,24 @@ class TimePeriod extends SugarBean {
     }
 
     /**
+     * getCurrentId
+     *
+     * Returns the current timeperiod name if a timeperiod entry is found
+     *
+     */
+    static function getCurrentId($timedate=null)
+    {
+        global $app_strings;
+        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        return $timeperiod;
+    }
+
+    /**
      * getLastCurrentNextIds
      * Returns the quarterly ids of the last, current and next timeperiod
      * @static
@@ -238,7 +256,7 @@ class TimePeriod extends SugarBean {
         $db = DBManagerFactory::getInstance();
         $queryDate = $timedate->getNow();
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
         if(!empty($timeperiod))
         {
@@ -248,7 +266,7 @@ class TimePeriod extends SugarBean {
         //previous timeperiod (3 months ago)
         $queryDate = $queryDate->modify('-3 month');
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
         if(!empty($timeperiod))
         {
@@ -258,7 +276,7 @@ class TimePeriod extends SugarBean {
         //next timeperiod (3 months from today)
         $queryDate = $queryDate->modify('+6 month');
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
         if(!empty($timeperiod))
         {
@@ -280,17 +298,14 @@ class TimePeriod extends SugarBean {
         {
             $db = DBManagerFactory::getInstance();
             $timeperiods = array();
-            $result = $db->query('SELECT name FROM timeperiods WHERE deleted=0');
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE deleted=0');
             while(($row = $db->fetchByAssoc($result)))
             {
-                if(!isset($timeperiods[$row['name']]))
+                if(!isset($timeperiods[$row['id']]))
                 {
-                    $timeperiods[$row['name']]=$row['name'];
+                    $timeperiods[$row['id']]=$row['name'];
                 }
             }
-            global $app_strings;
-            $timeperiods['current'] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
-            $timeperiods['last_current_next'] = $app_strings['LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS']; //'Last,Current,Next';
         }
         return $timeperiods;
     }
