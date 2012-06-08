@@ -45,9 +45,9 @@
                         urls.push(field);
                     } else if (field.type == "email") {                 //if email - do nothing
 
-                    } else if (field.name.indexOf("address") > -1) {    //find address fields
+                    } else if (field.name && field.name.indexOf("address") > -1) {    //find address fields
                         addressFields.push(field);
-                    } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
+                    } else if (field.name && field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
                         field.type = "singleemail";
                     } else if (fields.length < 4) {                     //find four other fields to output
                         fields.push(field);
