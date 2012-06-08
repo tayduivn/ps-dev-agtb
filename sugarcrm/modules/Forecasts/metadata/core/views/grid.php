@@ -7,42 +7,63 @@ $viewdefs['Forecasts']['core']['view']['grid'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-                0 =>
+                array(
+                    'name' => 'forecast',
+                    'label' => 'LBL_FORECAST',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+
                 array(
                     'name' => 'name',
-                    'label' => 'Name',
+                    'label' => 'LBL_NAME',
                     'default' => true,
                     'enabled' => true,
                 ),
-                1 =>
+
+                array(
+                    'name' => 'date_closed',
+                    'label' => 'LBL_DATE_CLOSED',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+
+                array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_SALES_STAGE',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+
+                array(
+                    'name' => 'probability',
+                    'label' => 'LBL_PROBABILITY',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+
                 array(
                     'name' => 'amount',
-                    'label' => 'Opportunity Amount',
+                    'label' => 'LBL_AMOUNT',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true,
                 ),
-                2 =>
+
                 array(
-                    'name' => 'opportunity_type',
-                    'label' => 'Opp. Type',
+                    'name' => 'best_case_worksheet',
+                    'label' => 'LBL_BEST_CASE',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true,
                 ),
-                3 =>
+
                 array(
-                    'name' => 'lead_source',
-                    'label' => 'Lead Source',
+                    'name' => 'likely_case_worksheet',
+                    'label' => 'LBL_LIKELY_CASE',
                     'default' => true,
                     'enabled' => true,
-                ),
-                4 =>
-                array(
-                    'name' => 'assigned_user_id',
-                    'label' => 'Assigned User',
-                    'default' => true,
-                    'enabled' => true,
+                    'clickToEdit' => true,
                 ),
             ),
         ),

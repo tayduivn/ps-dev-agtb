@@ -111,12 +111,15 @@
         var retColumns = [];
 
         for (var i in cols) {
+
+            var title = this.app.lang.get(cols[i].sTitle);
+
             if (onlyVisible) {
                 if (cols[i].bVisible) {
-                    retColumns.push(cols[i].sTitle);
+                    retColumns.push(title);
                 }
             } else {
-                retColumns.push(cols[i].sTitle);
+                retColumns.push(title);
             }
         }
 

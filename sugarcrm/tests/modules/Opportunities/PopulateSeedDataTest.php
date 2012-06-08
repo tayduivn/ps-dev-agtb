@@ -67,7 +67,6 @@ function testPopulateSeedData()
     $product = new Product();
     $user = new User();
     $account->disable_row_level_security = true;
-    $timeperiod->disable_row_level_security = true;
     $product->disable_row_level_security = true;
     $user->disable_row_level_security = true;
 
