@@ -46,7 +46,6 @@
 <script src='clients/base/views/grid/grid.js'></script>
 <script src='clients/base/models/grid/grid.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
-<script src='clients/base/models/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/models/chartOptions/chartOptions.js'></script>
 <script src='clients/base/views/chartOptions/chartOptions.js'></script>

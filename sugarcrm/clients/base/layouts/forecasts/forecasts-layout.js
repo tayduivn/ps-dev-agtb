@@ -34,9 +34,45 @@
         },
 
         initializeAllModels: function() {
-            this._models.filters = new app.Model.Filters();
+            var self = this,
+                modelMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.models;
+
+            _.each(modelMetadata, function(data) {
+                self.createModels(data);
+            });
+
             this._models.chartoptions = new app.Model.ChartOptions();
             this._models.grid = new app.Model.Grid();
+        },
+
+        createModels: function(data) {
+            var Model = Backbone.Model.extend({
+                module: data.module + '/' + data.name.toLowerCase(),
+
+                initialize: function() {
+                    this.setModelBindings()
+                },
+
+                setModelBindings: function() {
+                    var self = this;
+                    this.on('change', function() {
+                        _.each(this.attributes, function(data, key) {
+                            if (self.hasChanged(key)) {
+                                self[key].set(self.get(key));
+                            }
+                        });
+                    });
+                }
+            });
+
+            var model = this._models[data.name.toLowerCase()] = new Model();
+            this.createNestedModels(model, data.models);
+        },
+
+        createNestedModels: function(model, modelsMetadata) {
+            _.each(modelsMetadata, function(name) {
+                model[name] = new Backbone.Model();
+            });
         },
 
         /**

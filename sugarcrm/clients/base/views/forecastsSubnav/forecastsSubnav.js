@@ -17,10 +17,10 @@
             self.fullName = user.full_name;
             self.render();
         });
-//        this.layout.getModel('filters').get('timeperiods').on('change:value', function(model, value) {
-//            self.timePeriod = value;
-//            self.render();
-//        });
+        this.layout.getModel('filters').timeperiods.on('change:value', function(model, value) {
+            self.timePeriod = value;
+            self.render();
+        });
     }
 
 })

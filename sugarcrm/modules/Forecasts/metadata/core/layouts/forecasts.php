@@ -1,8 +1,7 @@
 <?php
 $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
     'type' => 'forecasts',
-    'components' =>
-    array(
+    'components' => array(
         0 => array(
             'view' => 'forecastsFilter',
         ),
@@ -26,6 +25,17 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         7 => array(
             'view' => 'forecastsSubnav',
+        )
+    ),
+    'models' => array(
+        0 => array(
+            'module' => 'Forecasts',
+            'name' => 'Filters',
+            'models' => array(
+                'timeperiods',
+                'stages',
+                'probabilities'
+            )
         )
     )
 );

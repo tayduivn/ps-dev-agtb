@@ -17,7 +17,7 @@
 
     buildDropdowns: function(model) {
         var self = this;
-        self.$el.empty();
+        self.$el.find('.filterOptions').empty();
         _.each(model.attributes, function(data, key) {
             var chosen = app.view.createField({
                     def: {
@@ -28,7 +28,7 @@
                 }),
                 $chosenPlaceholder = $(chosen.getPlaceholder().toString());
 
-            self.$el.append($chosenPlaceholder);
+            self.$el.find('.filterOptions').append($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
             chosen.label = model[key].get('label');
@@ -36,7 +36,8 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            $chosenPlaceholder.find('select').chosen().on('change', function(event, data) {
+            var $chosen = $chosenPlaceholder.find('select').chosen();
+            $chosen.on('change', function(event, data) {
                 model[key].set('value', data.selected);
             });
         });
