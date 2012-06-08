@@ -51,6 +51,10 @@ $mod_strings = array (
   //END SUGARCRM flav=pro ONLY
   'LBL_TYPE'=>'Type:',
   'LBL_SUBJECT' => 'Subject:',
+
+    'LBL_EDIT_BUTTON' => 'Edit',
+    'LBL_REMOVE' => 'Remove',
+
   
   );
 ?>

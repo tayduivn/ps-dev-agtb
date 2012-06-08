@@ -74,11 +74,13 @@ $subpanel_layout = array(
 			'width' => '15%',
 		),
 		'edit_button'=>array(
+            'vname' => 'LBL_EDIT_BUTTON',
 			'widget_class' => 'SubPanelEditButton',
 		 	'module' => 'Contacts',
 			'width' => '5%',
 		),
 		'remove_button'=>array(
+            'vname' => 'LBL_REMOVE',
 			'widget_class' => 'SubPanelRemoveButton',
 		 	'module' => 'Contacts',
 			'width' => '5%',
