@@ -160,7 +160,7 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 				break;
             case 'ibm_db2':
                 $schemaFileName = $schemaFileName . '_ibm_db2.sql';
-                break;				
+                break;
 		}
 
 
@@ -352,7 +352,7 @@ function post_install() {
 		_logThis('Set chartEngine in config.php to JS Charts', $path);
 		$sugar_config['chartEngine'] = 'Jit';
 	}
-    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.	
+    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
     if ($origVersion < '642') {
         _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
         $sugar_config['upload_maxsize'] = 30000000;
@@ -459,6 +459,25 @@ function post_install() {
               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
            }
        }
+    }
+
+    if($origVersion < '651') {
+        // add cleanup job if not there
+        $job = new Scheduler();
+        $job->retrieve_by_string_fields(array("job" => 'function::cleanJobQueue'));
+        if(empty($job->id)) {
+            // not found - create
+            $job->name               = translate('LBL_OOTB_CLEANUP_QUEUE', 'Schedulers');
+            $job->job                = 'function::cleanJobQueue';
+            $job->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
+            $job->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
+            $job->job_interval       = '0::5::*::*::*';
+            $job->status             = 'Active';
+            $job->created_by         = '1';
+            $job->modified_user_id   = '1';
+            $job->catch_up           = '0';
+            $job->save();
+        }
     }
 }
 

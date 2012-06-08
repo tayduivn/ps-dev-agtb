@@ -240,6 +240,8 @@ function make_sugar_config(&$sugar_config)
 		    'min_retry_interval' => 60, // minimal job retry delay
 		    'max_retries' => 5, // how many times to retry the job
 		    'timeout' => 86400, // how long a job may spend as running before being force-failed
+		    'soft_lifetime' => 7, // how many days until job record will be soft deleted after completion
+		    'hard_lifetime' => 21, // how many days until job record will be purged from DB
 		),
 		"cron" => array(
 			'max_cron_jobs' => 10, // max jobs per cron schedule run
@@ -5226,7 +5228,7 @@ function generateETagHeader($etag){
 /**
  * getReportNameTranslation
  *
- * Translates the report name if a translation exists, 
+ * Translates the report name if a translation exists,
  * otherwise just returns the name
  *
  * @param string $reportName
@@ -5234,19 +5236,19 @@ function generateETagHeader($etag){
  */
 function getReportNameTranslation($reportName) {
 	global $current_language;
-	 
+
 	// Used for translating reports
     $mod_strings = return_module_language($current_language, 'Reports');
- 
+
 	// Search for the report name in the default language and get the key
 	$key = array_search($reportName, return_module_language("", "Reports"));
-	
+
 	// If the key was found, use it to get a translation, otherwise just use report name
 	if (!empty($key)) {
-		$title = $mod_strings[$key]; 
+		$title = $mod_strings[$key];
 	} else {
 		$title = $reportName;
 	}
-	
+
 	return $title;
 }
