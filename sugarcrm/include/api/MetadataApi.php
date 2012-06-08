@@ -233,10 +233,9 @@ class MetadataApi extends SugarApi {
     }
 
     public function getPublicMetadata($api, $args) {
-        $data = array();
-
+        $configs = array();
         if($args['platform'] == 'portal') {
-            $configs = array();
+
             $admin = new Administration();
             $admin->retrieveSettings();
             foreach($admin->settings AS $setting_name => $setting_value) {
@@ -245,10 +244,9 @@ class MetadataApi extends SugarApi {
                     $configs[$key] = json_decode(html_entity_decode($setting_value));
                 }
             }
-            $data['config'] = $configs;
         }
         // Default the type filter to everything
-        $this->typeFilter = array('fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl', 'views', 'layouts');
+        $this->typeFilter = array('fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl', 'views', 'layouts', 'config');
 
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
@@ -282,6 +280,7 @@ class MetadataApi extends SugarApi {
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
         $data['appListStrings'] = $mm->getAppListStrings();
+        $data['config'] = $configs;
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
