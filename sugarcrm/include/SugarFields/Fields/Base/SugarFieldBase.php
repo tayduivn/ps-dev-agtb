@@ -9,6 +9,14 @@
  *
  */
 class SugarFieldBase {
+    /**
+     * A simple error property to be accessed by calling code for child object
+     * methods that process data rather than just manipulate it (like SugarFieldFile
+     * and SugarFieldImage when uploading)
+     *
+     * @var string
+     */
+    public $error;
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
     function SugarFieldBase($type) {
@@ -78,7 +86,7 @@ class SugarFieldBase {
         return $rawField;
     }
 
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+    public function apiFormatField($data, $bean, $args, $fieldName, $properties) {
         $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
     }
 

@@ -23,9 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarApiException extends Exception { public $errorCode = 500; }
 class SugarApiExceptionError extends SugarApiException { public $errorCode = 500; }
 class SugarApiExceptionNeedLogin extends SugarApiException { public $errorCode = 401; }
-class SugarApiExceptionInvalidLogin extends SugarApiException { public $errorCode = 401; }
 class SugarApiExceptionNotAuthorized extends SugarApiException { public $errorCode = 403; }
 class SugarApiExceptionNoMethod extends SugarApiException { public $errorCode = 404; }
 class SugarApiExceptionNotFound extends SugarApiException { public $errorCode = 404; }
 class SugarApiExceptionMissingParameter extends SugarApiException { public $errorCode = 412; }
 class SugarApiExceptionInvalidParameter extends SugarApiException { public $errorCode = 415; }
+class SugarApiExceptionRequestMethodFailure extends SugarApiException {public $errorCode = 417; }

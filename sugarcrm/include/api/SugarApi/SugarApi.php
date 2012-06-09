@@ -24,8 +24,13 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 
 abstract class SugarApi {
-    // This class intentionally left blank.
-    // It primarialy serves as a way to flag which classes could be called from externally facing API's
+    /**
+     * Handles validation of required arguments for a request
+     *
+     * @param array $args
+     * @param array $requiredFields
+     * @throws SugarApiExceptionMissingParameter
+     */
     function requireArgs(&$args,$requiredFields = array()) {
         foreach ( $requiredFields as $fieldName ) {
             if ( !isset($args[$fieldName]) ) {
@@ -130,7 +135,7 @@ abstract class SugarApi {
     protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
 
         $bean = BeanFactory::getBean($args['module'],$args['record']);
-        
+
         if ( $bean == FALSE ) {
             // Couldn't load the bean
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
@@ -139,8 +144,50 @@ abstract class SugarApi {
         if (!$bean->ACLAccess($aclToCheck)) {
             throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$args['module']);
         }
-        
+
         return $bean;
     }
 
+    /**
+     * Checks whether the current API user is an owner of a bean. Used in ACL
+     * checks.
+     *
+     * @param SugarBean $bean
+     * @param ServiceBase $api
+     * @return bool
+     */
+    protected function isBeanOwner($bean, $api) {
+        // Default the value
+        $isOwner = false;
+
+        // New records are always owned by creator
+        if ( !isset($bean->id) || $bean->new_with_id ) {
+            $isOwner = true;
+        } else {
+            // It's an existing record
+            if ( isset($bean->field_defs['assigned_user_id']) ) {
+                if ( $api->user->id == $bean->assigned_user_id ) {
+                    $isOwner = true;
+                }
+            }
+        }
+
+        return $isOwner;
+    }
+
+    /**
+     * Verifies field level access for a bean and field for the logged in user
+     *
+     * @param SugarBean $bean The bean to check on
+     * @param string $field The field to check on
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function verifyFieldAccess(SugarBean $bean, $field) {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!$bean->ACLFieldAccess($field)) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionNotAuthorized('Not allowed to edit ' . $field . ' field in ' . $bean->object_name . ' module.');
+        }
+        //END SUGARCRM flav=pro ONLY
+    }
 }
