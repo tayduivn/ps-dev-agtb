@@ -793,7 +793,6 @@
         // Load the profile
         app.router.route("profile", "profile", function() {
             app.controller.loadView({
-                module: "Profile", // TODO: It's not really a module .. do we need this?
                 layout: "profile"
             });
         });
@@ -804,6 +803,12 @@
             });
         });
 
+        app.router.route("error/:type", "error", function(errorType) {
+            app.controller.loadView({
+                layout: "error",
+                errorType: errorType 
+            });
+        });
 
     });
 
