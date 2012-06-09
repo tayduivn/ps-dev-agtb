@@ -196,10 +196,15 @@
          */
         list: function(module) {
             app.logger.debug("Route changed to list of " + module);
-            app.controller.loadView({
-                module: module,
-                layout: "list"
-            });
+            
+            if(_.include(_.keys(app.metadata.getModules()), module)) {
+                app.controller.loadView({
+                    module: module,
+                    layout: "list"
+                });
+            } else {
+                app.router.navigate('error/404', {trigger: true});
+            }
         },
 
         /**
@@ -263,12 +268,17 @@
 
             action = action || "detail";
 
-            app.controller.loadView({
-                module: module,
-                modelId: id,
-                action: action,
-                layout: action
-            });
+            if(_.include(_.keys(app.metadata.getModules()), module)) {
+                app.controller.loadView({
+                    module: module,
+                    modelId: id,
+                    action: action,
+                    layout: action
+                });
+            } else {
+                app.router.navigate('error/404', {trigger: true});
+            }
+            
         }
     });
 

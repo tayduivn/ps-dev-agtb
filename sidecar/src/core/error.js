@@ -112,20 +112,14 @@
                  */
                 this.callCustomIfMatchingError(xhr, error, ".*invalid_request.*", '400', this.handleInvalidRequestError);
                 
-// --------------------------------------------------------------------------- //
-// TODO: Figure out what we want to do for following .. logging for now
-// --------------------------------------------------------------------------- //
                 // The authenticated client is not authorized to use this authorization grant type.
-                this.callCustomIfMatchingError(xhr, error, ".*unauthorized_client.*", '400' /*, TODO - custom handler */);
+                this.callCustomIfMatchingError(xhr, error, ".*unauthorized_client.*", '400', this.handleUnauthorizedClientError);
 
                 // The authorization grant type is not supported by the authorization server.
-                this.callCustomIfMatchingError(xhr, error, ".*unsupported_grant_type.*", '400' /*, TODO - custom handler */);
+                this.callCustomIfMatchingError(xhr, error, ".*unsupported_grant_type.*", '400', this.handleUnsupportedGrantTypeError);
                 
                 // The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
-                this.callCustomIfMatchingError(xhr, error, ".*invalid_scope.*", '400' /*, TODO - custom handler */);
-// --------------------------------------------------------------------------- //
-// --------------------------------------------------------------------------- //
-
+                this.callCustomIfMatchingError(xhr, error, ".*invalid_scope.*", '400', this.handleInvalidScopeError);
             },
             /**
              * Clients can provide a handleUnauthorizedError to override this.
@@ -148,14 +142,18 @@
                 }
             },
             404: function(xhr, error) {
-                // TODO: Redirect to 404/500 page
+                if(xhr && xhr.responseText) {
+                    this.callCustomHandler(xhr, error, this.handleNotFoundError);
+                }  else {
+                    this.handleStatusCodesFallback(getGenericMessage('404', error));
+                }
             },
             /**
-             * Clients can provide a handleNotFoundError to override this.
+             * Clients can provide a handleMethodNotAllowedError to override this.
              */
             405: function(xhr, error) {
                 if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleNotFoundError);
+                    this.callCustomHandler(xhr, error, this.handleMethodNotAllowedError);
                 }  else {
                     this.handleStatusCodesFallback(getGenericMessage('405', error));
                 }
@@ -164,7 +162,11 @@
                 this.handleValidationError(model, xhr.responseText);
             },
             500: function(xhr, error) {
-                // TODO: Redirect to 404/500 page
+                if(xhr && xhr.responseText) {
+                    this.callCustomHandler(xhr, error, this.handleServerError);
+                }  else {
+                    this.handleStatusCodesFallback(getGenericMessage('500', error));
+                }
             }
         },
 
@@ -235,6 +237,8 @@
                 this.handleStatusCodesFallback(xhr.responseText);
             } else {
                 // TODO: Default catch all error code handler
+                // Temporarily going to the handleStatusCodesFallback handler but will probably need
+                // to go to a sensible "all other errors" type of handler.
                 this.handleStatusCodesFallback("Error in handleHTTPError. No responseText available.");
             }
         },
