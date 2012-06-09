@@ -29,7 +29,7 @@ class ExtAPILinkedIn extends OAuthPluginBase {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
-    public $supportedModules = array('Import');
+    public $supportedModules = array();
     public $connector = "ext_rest_linkedin";
 
 	protected $oauthReq = "https://www.linkedin.com/uas/oauth/requestToken";
