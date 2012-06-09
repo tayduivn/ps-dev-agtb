@@ -4,38 +4,42 @@
      * your events from the events hub. This allows components to not depend on each other in a tightly coupled capacity.
      *
      * <pre><code>
-     * var foo = {
+     * (function(app) {
+     *   var foo = {
      *     initialize: function() {
      *         // Register the event with the events hub.
-     *         SUGAR.App.events.register("mynamespaced:event", this);
+     *         app.events.register("mynamespaced:event", this);
      *     },
      *     action: function() {
      *         // Broadcast you revent to the events hub.
      *         // The events hub will then broadcast this event to all its subscribers.
      *         this.trigger("mynamespaced:event");
      *     }
-     * }
+     *   }
      *
-     * var bar = {
+     *   var bar = {
      *     initialize: function() {
      *         // Call a callback when the event is received.
-     *         SUGAR.App.events.on("mynamespaced:event", function() {
+     *         app.events.on("mynamespaced:event", function() {
      *             alert("Event!");
      *         });
      *     }
-     * }
+     *   }
+     *
+     * })(SUGAR.App);
      * </pre></code>
      * @class Core.Events
      * @singleton
      * @alias SUGAR.App.events
      */
     app.augment("events", _.extend({
+
         /**
          * Registers an event with the event proxy.
          *
          * @param {String} event The name of the event.
          * A good practice is to namespace your events with a colon. For example: `"app:start"`
-         * @param context
+         * @param {Backbone.Events} context The object that will trigger the event.
          * @method
          */
         register: function(event, context) {
@@ -47,18 +51,14 @@
         },
 
         /**
-         * Resets the event on the event proxy.
+         * Unregisters an event from the event proxy.
          *
-         * @param {String} event Event name to be cleared
          * @param {Object} context Source to be cleared from
+         * @param {String} event(optional) Event name to be cleared
          * @method
          */
-        clear: function(event, context) {
-            if (arguments.length < 2) {
-                event.off();
-            } else {
-                context.off(event);
-            }
+        unregister: function(context, event) {
+            context.off(event);
         },
 
         /**
@@ -80,4 +80,5 @@
             });
         }
     }, Backbone.Events));
+    
 })(SUGAR.App);

@@ -1,26 +1,37 @@
 describe("Events Hub", function() {
-    var eventHub = SUGAR.App.events,
-        context = _.extend({env: "test"}, Backbone.Events),
-        cb1 = sinon.spy(),
-        cb2 = sinon.spy(),
-        cb3 = sinon.spy();
+    var eventHub, context;
+
+    beforeEach(function() {
+        eventHub = SugarTest.app.events;
+        context = _.extend({}, Backbone.Events);
+    });
 
     describe("when an event is registered", function() {
         it("should fire event and all listners should call their callbacks", function() {
+            var cb = sinon.spy();
             eventHub.register("testEvent", context);
-            eventHub.on("testEvent", cb1);
+            eventHub.on("testEvent", cb);
             context.trigger("testEvent");
 
-            expect(cb1).toHaveBeenCalled();
+            expect(cb).toHaveBeenCalled();
         });
     });
 
     describe("when an event is removed", function() {
         it("should not broadcast removed events to subscribers", function() {
+            var cb1 = sinon.spy();
+            var cb2 = sinon.spy();
+
+            eventHub.register("testEvent", context);
+            eventHub.on("testEvent", cb1);
+
             eventHub.register("nextEvent", context);
+            eventHub.on("nextEvent", cb1);
             eventHub.on("nextEvent", cb2);
-            eventHub.clear("nextEvent", context);
+            eventHub.unregister(context, "nextEvent");
+
             context.trigger("nextEvent");
+            context.trigger("testEvent");
             context.trigger("testEvent");
 
             expect(cb2).not.toHaveBeenCalled();
@@ -30,11 +41,16 @@ describe("Events Hub", function() {
 
     describe("when all events are removed", function() {
         it("should not broadcast any events", function() {
-            eventHub.on("all", cb3);
-            eventHub.clear(context);
+            var cb = sinon.spy();
+
+            eventHub.register("testEvent", context);
+            eventHub.on("testEvent", cb);
+            eventHub.on("all", cb);
+            eventHub.unregister(context);
+
             context.trigger("testEvent");
 
-            expect(cb3).not.toHaveBeenCalled();
+            expect(cb).not.toHaveBeenCalled();
         });
     });
 
