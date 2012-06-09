@@ -74,9 +74,24 @@ class SugarFieldImage extends SugarFieldBase {
 			{
 				if ($upload_file->confirm_upload())
 				{
+                    // Capture the old value in case of error
+                    $oldvalue = $bean->$field;
+
+                    // Create the new field value
 					$bean->$field = create_guid();
-					$upload_file->final_move($bean->$field);
+
+                    // Add checking for actual file move for reporting to consumers
+					if (!$upload_file->final_move($bean->$field)) {
+                        // If this was a fail, reset the bean field to original
+                        $bean->$field = $oldvalue;
+                        $this->error = $upload_file->getErrorMessage();
+                    }
 				}
+                else
+                {
+                    // Added error reporting
+                    $this->error = $upload_file->getErrorMessage();
+                }
 			}
 		}
 
