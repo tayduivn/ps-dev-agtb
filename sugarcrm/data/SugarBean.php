@@ -4445,9 +4445,9 @@ function save_relationship_changes($is_update, $exclude=array())
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name) && !empty($this->fetched_row['tn_name'])) {
             if(!empty($GLOBALS['current_user']) && $GLOBALS['current_user']->showLastNameFirst()) {
-		        $this->team_name = trim($this->fetched_row['tn_name_2'] . ' ' . $this->fetched_row['tn_name']);
+		        $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name_2'] . ' ' . $this->fetched_row['tn_name']);
 		    } else {
-		      $this->team_name = trim($this->fetched_row['tn_name'] . ' ' . $this->fetched_row['tn_name_2']);
+		      $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name'] . ' ' . $this->fetched_row['tn_name_2']);
 		    }
         }
  		//END SUGARCRM flav=pro ONLY
