@@ -79,7 +79,22 @@ $dictionary['Email'] = array(
 			'dbType' => 'id',
 			'comment' => 'User ID that last modified record',
 		),
-		'created_by' => array (
+	   'modified_by_name' =>
+    	  array (
+    	    'name' => 'modified_by_name',
+    	    'vname' => 'LBL_MODIFIED_NAME',
+    	    'type' => 'relate',
+    	    'reportable'=>false,
+    	    'source'=>'non-db',
+    	    'rname'=>'user_name',
+    	    'table' => 'users',
+    	    'id_name' => 'modified_user_id',
+    	    'module'=>'Users',
+    	    'link'=>'modified_user_link',
+    	    'duplicate_merge'=>'disabled',
+            'massupdate' => false,
+    	  ),
+  	    'created_by' => array (
 			'name' => 'created_by',
 			'vname' => 'LBL_CREATED_BY',
 			'type' => 'id',
@@ -87,7 +102,23 @@ $dictionary['Email'] = array(
 			'reportable' => false,
 			'comment' => 'User name who created record',
 		),
-		'deleted' => array (
+	  	'created_by_name' =>
+    	  array (
+    	    'name' => 'created_by_name',
+    		'vname' => 'LBL_CREATED',
+    		'type' => 'relate',
+    		'reportable'=>false,
+    	    'link' => 'created_by_link',
+    	    'rname' => 'user_name',
+    		'source'=>'non-db',
+    		'table' => 'users',
+    		'id_name' => 'created_by',
+    		'module'=>'Users',
+    		'duplicate_merge'=>'disabled',
+            'importable' => 'false',
+            'massupdate' => false,
+    	),
+	'deleted' => array (
 			'name' => 'deleted',
 			'vname' => 'LBL_DELETED',
 			'type' => 'bool',
@@ -389,7 +420,7 @@ $dictionary['Email'] = array(
 		),
 
 		//END SUGARCRM flav!=sales ONLY
-		
+
 //BEGIN SUGARCRM flav=pro ONLY
 
 		'quotes'=> array(
