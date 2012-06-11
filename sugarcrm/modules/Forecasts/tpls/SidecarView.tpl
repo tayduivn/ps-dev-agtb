@@ -21,6 +21,7 @@
 <script src="../sidecar/lib/sinon/sinon.js"></script>
 <script src="../sidecar/lib/jeditable/jquery.jeditable.js"></script>
 <script src="../sidecar/lib/datatables/media/js/jquery.dataTables.js"></script>
+<script src="../sidecar/lib/datatables/media/js/dataTables.fnMultiFilter.js"></script>
 
 {* App Scripts *}
 <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
