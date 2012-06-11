@@ -38,8 +38,9 @@
              * Template to render (optional).
              * @cfg {Function}
              */
-            this.template = app.template.getView(this.name, this.module) ||
-                            app.template.getView(this.name);
+            this.template = options.template || app.template.getView(this.name, this.module) ||
+                            app.template.getView(this.name) ||
+                            (options.meta && options.meta.type ? app.template.getView(options.meta.type) : null);
 
             /**
              * Dictionary of field widgets.

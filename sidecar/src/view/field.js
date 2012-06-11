@@ -166,8 +166,9 @@
                 'edit': 'detail'
             };
 
-            // options.viewName is used to override the template
-            var viewName = this.options.viewName || this.view.name;
+            // options.viewName or view metadata type is used to override the template
+            var viewName = this.options.viewName ||
+                (this.view.meta && this.view.meta.type ? this.view.meta.type : this.view.name);
             while (viewName) {
                 if (app.acl.hasAccessToModel(viewName, this.model, this.name)) break;
                 viewName = viewFallbackMap[viewName];
