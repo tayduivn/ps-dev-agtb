@@ -125,6 +125,19 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
+        {
+            //END SUGARCRM flav=pro ONLY
+            $lhs->$lhsLinkName->addBean($rhs);
+            $rhs->$rhsLinkName->addBean($lhs);
+
+            $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
+            $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
+            //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
 
@@ -223,6 +236,21 @@ class M2MRelationship extends SugarRelationship
         {
             $GLOBALS['log']->fatal("could not load RHS $rhsLinkName");
             return false;
+        }
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            if ($lhs->$lhsLinkName instanceof Link2)
+            {
+                $lhs->$lhsLinkName->load();
+                $this->callBeforeDelete($lhs, $rhs, $lhsLinkName);
+            }
+
+            if ($rhs->$rhsLinkName instanceof Link2)
+            {
+                $rhs->$rhsLinkName->load();
+                $this->callBeforeDelete($rhs, $lhs, $rhsLinkName);
+            }
         }
 
         $dataToRemove = array(

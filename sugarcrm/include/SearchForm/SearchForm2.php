@@ -100,11 +100,11 @@ require_once('include/EditView/EditView2.php');
  		$this->view = $this->view.'_'.$displayView;
  		$tokens = explode('_', $this->displayView);
  		$this->parsedView = $tokens[0];
+                $this->searchFields = $searchFields[$this->module];
  		if($this->displayView != 'saved_views'){
  			$this->_build_field_defs();
  		}
 
-        $this->searchFields = $searchFields[$this->module];
 
         // Setup the tab array.
         $this->tabs = array();
@@ -396,7 +396,8 @@ require_once('include/EditView/EditView2.php');
 	                // fill in enums
                     $this->fieldDefs[$fvName]['options'] = $GLOBALS['app_list_strings'][$this->fieldDefs[$fvName]['options']];
                     //Hack to add blanks for parent types on search views
-                    if ($this->fieldDefs[$fvName]['type'] == "parent_type" || $this->fieldDefs[$fvName]['type'] == "parent")
+                    //53131 - add blank option for SearchField options with def 'options_add_blank' set to true
+                    if ($this->fieldDefs[$fvName]['type'] == "parent_type" || $this->fieldDefs[$fvName]['type'] == "parent" || (isset($this->searchFields[$name]['options_add_blank']) && $this->searchFields[$name]['options_add_blank']) )
                     {
                         $this->fieldDefs[$fvName]['options'] = array_merge(array(""=>""), $this->fieldDefs[$fvName]['options']);
                     }

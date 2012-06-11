@@ -79,6 +79,12 @@ class SugarBean
 	//END SUGARCRM flav=pro ONLY
 
 	/**
+	 * How deep logic hooks can go
+	 * @var int
+	 */
+	protected $max_logic_depth = 10;
+
+	/**
 	 * Disble vardefs.  This should be set to true only for beans that do not have varders.  Tracker is an example
 	 *
 	 * @var BOOL -- default false
@@ -256,6 +262,13 @@ class SugarBean
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
     var $in_import = false;
+    /**
+     * A way to keep track of the loaded relationships so when we clone the object we can unset them.
+     *
+     * @var array
+     */
+    protected $loaded_relationships = array();
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -500,6 +513,13 @@ class SugarBean
         $table_name=$this->get_audit_table_name();
 
         require('metadata/audit_templateMetaData.php');
+
+        // Bug: 52583 Need ability to customize template for audit tables
+        $custom = 'custom/metadata/audit_templateMetaData_' . $this->getTableName() . '.php';
+        if (file_exists($custom))
+        {
+            require($custom);
+        }
 
         $fieldDefs = $dictionary['audit']['fields'];
         $indices = $dictionary['audit']['indices'];
@@ -940,6 +960,23 @@ class SugarBean
 
 
     /**
+     * Handle the following when a SugarBean object is cloned
+     *
+     * Currently all this does it unset any relationships that were created prior to cloning the object
+     *
+     * @api
+     */
+    public function __clone()
+    {
+        if(!empty($this->loaded_relationships)) {
+            foreach($this->loaded_relationships as $rel) {
+                unset($this->$rel);
+            }
+        }
+    }
+
+
+    /**
      * Loads the request relationship. This method should be called before performing any operations on the related data.
      *
      * This method searches the vardef array for the requested attribute's definition. If the attribute is of the type
@@ -982,6 +1019,8 @@ class SugarBean
                     unset($this->$rel_name);
                     return false;
                 }
+                // keep track of the loaded relationships
+                $this->loaded_relationships[] = $rel_name;
                 return true;
             }
         }
@@ -3157,6 +3196,8 @@ function save_relationship_changes($is_update, $exclude=array())
         if($custom_join)
         {
             $ret_array['from'] .= ' ' . $custom_join['join'];
+            // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
+            $ret_array['from_min'] .= ' ' . $custom_join['join'];
         }
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
@@ -3258,11 +3299,15 @@ function save_relationship_changes($is_update, $exclude=array())
                 $ret_array['select'] .= ", $this->table_name.$field $alias";
                 $selectedFields["$this->table_name.$field"] = true;
             } else if(  (!isset($data['source']) || $data['source'] == 'custom_fields') && (!empty($alias) || !empty($filter) )) {
-                $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
+                //add this column only if it has NOT already been added to select statement string
+                $colPos = strpos($ret_array['select'],"$this->table_name"."_cstm".".$field");
+                if(!$colPos || $colPos<0)
+                {
+                    $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
+                }
+
                 $selectedFields["$this->table_name.$field"] = true;
             }
-
-
 
             if($data['type'] != 'relate' && isset($data['db_concat_fields']))
             {
@@ -5038,7 +5083,11 @@ function save_relationship_changes($is_update, $exclude=array())
         // We need to confirm that the user is a member of the team of the item.
 
         global $current_user;
-
+        if(empty($current_user) || empty($current_user->id))
+        {
+            return;
+        }
+                
         // The user either has to be an admin, or be assigned to the team that owns the data
         $team_table_alias = 'team_memberships';
 
@@ -5279,7 +5328,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!isset($this->processed) || $this->processed == false){
             //add some logic to ensure we do not get into an infinite loop
             if(!empty($this->logicHookDepth[$event])) {
-                if($this->logicHookDepth[$event] > 10)
+                if($this->logicHookDepth[$event] > $this->max_logic_depth)
                     return;
             }else
                 $this->logicHookDepth[$event] = 0;
@@ -5297,9 +5346,10 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+            $this->logicHookDepth[$event]--;
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")
+            if (in_array($event, array('after_relationship_add', 'after_relationship_delete', 'before_delete')))
             {
                 $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }

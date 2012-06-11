@@ -2079,13 +2079,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDBGuidGeneration()
     {
-        $guids = array();
-        $sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
-        for($i = 0; $i < 1000; $i++)
-        {
-            $newguid = $this->_db->getOne($sql);
-            $this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
-            $guids []= $newguid;
-        }
-    }
+
+		$guids = array();
+		$sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
+		for($i = 0; $i < 1000; $i++)
+		{
+			$newguid = $this->_db->getOne($sql);
+			$this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
+			$guids []= $newguid;
+		}
+	}
 }

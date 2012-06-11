@@ -274,12 +274,19 @@ class IBMDB2Manager  extends DBManager
 	{
         $start = (int)$start;
         $count = (int)$count;
-	    if ($start < 0)
-			$start = 0;
+
 		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		$sql = "SELECT * FROM ($sql) LIMIT $start,$count";
-		$this->lastsql = $sql;
+        if ($start <= 0)
+        {
+            $start = ''; // Not specifying a 0 start helps the DB2 optimizer create a better plan
+        }
+        else
+        {
+            $start .= ',';
+        }
+
+        $sql = "SELECT * FROM ($sql) LIMIT $start $count OPTIMIZE FOR $count ROWS";		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
 			$this->checkQuery($sql);
@@ -1688,29 +1695,29 @@ EOQ;
 	 * @see DBManager::massageValue()
 	 */
     public function massageValue($val, $fieldDef)
+    {
+       $type = $this->getFieldType($fieldDef);
+       $ctype = $this->getColumnType($type);
+
+       // Deal with values that would exceed the 32k constant limit of DB2
+       if(strpos($ctype, 'clob') !== false && strlen($val) > 32000) //Note we assume DB2 counts bytes and not characters
        {
-           $type = $this->getFieldType($fieldDef);
-           $ctype = $this->getColumnType($type);
-
-           // Deal with values that would exceed the 32k constant limit of DB2
-           if(strpos($ctype, 'clob') !== false && strlen($val) > 32000) //Note we assume DB2 counts bytes and not characters
+           for($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) // Incrementing with number of bytes of chunk to not loose any characters
            {
-               for($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) // Incrementing with number of bytes of chunk to not loose any characters
+               $chunk = mb_strcut($val, $pos, 32000);  //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
+               if(!isset($massagedValue))
                {
-                   $chunk = mb_strcut($val, $pos, 32000);  //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
-                   if(!isset($massagedValue))
-                   {
-                       $massagedValue = "TO_CLOB('$chunk')";
-                   } else {
-                       $massagedValue = "CONCAT($massagedValue, '$chunk')";
-                   }
+                   $massagedValue = "TO_CLOB('$chunk')";
+               } else {
+                   $massagedValue = "CONCAT($massagedValue, '$chunk')";
                }
-
-               return $massagedValue;
            }
 
-           return parent::massageValue($val, $fieldDef);
+           return $massagedValue;
        }
+
+       return parent::massageValue($val, $fieldDef);
+    }
 
     /**
      * Returns a DB specific FROM clause which can be used to select against functions.
@@ -1728,9 +1735,10 @@ EOQ;
      * I.e. generate a unique Sugar id in a sub select of an insert statement.
      * @return string
      */
-        public function getGuidSQL()
+
+	public function getGuidSQL()
     {
         $guidStart = create_guid_section(9);
-        return "'$guidStart-' || HEX(generate_unique())";
+      	return "'$guidStart-' || HEX(generate_unique())";
     }
 }

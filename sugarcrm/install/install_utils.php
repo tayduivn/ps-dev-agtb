@@ -877,6 +877,13 @@ $contents = '';
 $restrict_str = <<<EOQ
 
 # BEGIN SUGARCRM RESTRICTIONS
+
+EOQ;
+if (ini_get('suhosin.perdir') !== false && strpos(ini_get('suhosin.perdir'), 'e') !== false)
+{
+    $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
+}
+$restrict_str .= <<<EOQ
 RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)

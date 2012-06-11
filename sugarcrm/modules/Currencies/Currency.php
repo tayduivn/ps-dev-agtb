@@ -378,6 +378,7 @@ function format_number($amount, $round = null, $decimals = null, $params = array
 
 		if($checkAmount >= 1000 || $checkAmount <= -1000) {
 			$amount = round(($amount / 1000), 0);
+			$amount = number_format($amount, 0, $dec_sep, $num_grp_sep); // add for SI bug 52498
 			$amount = $amount . 'k';
 			$amount = format_place_symbol($amount, $symbol,(empty($params['symbol_space']) ? false : true));
 		} else {

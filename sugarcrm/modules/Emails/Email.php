@@ -2564,8 +2564,8 @@ class Email extends SugarBean {
             'flagged' => 'flagged'
         );
 
-	     $sort = !empty($_REQUEST['sort']) ? $_REQUEST['sort'] : "";
-         $direction = !empty($_REQUEST['dir']) ? $_REQUEST['dir'] : "";
+	     $sort = !empty($_REQUEST['sort']) ? $this->db->getValidDBName($_REQUEST['sort']) : "";
+         $direction = !empty($_REQUEST['dir'])  && in_array(strtolower($_REQUEST['dir']), array("asc", "desc")) ? $_REQUEST['dir'] : "";
 
          $order = ( !empty($sort) && !empty($direction) ) ? " ORDER BY {$hrSortLocal[$sort]} {$direction}" : "";
 

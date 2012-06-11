@@ -2649,7 +2649,7 @@ eoq;
 				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
-				// set flag to show that this was run
+			// set flag to show that this was run
 			$user->setPreference("email2Preflight", true, 1, "Emails");
 		}
 	}
@@ -3072,7 +3072,10 @@ eoq;
 	function getCacheValue($ieId, $type, $file, $key) {
 		global $sugar_config;
 
-		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
+		$cleanIeId = cleanDirName($ieId);
+		$cleanType = cleanDirName($type);
+		$cleanFile = cleanFileName($file);
+		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3151,7 +3154,10 @@ eoq;
 	function writeCacheFile($key, $var, $ieId, $type, $file) {
 		global $sugar_config;
 
-		$the_file = sugar_cached("/modules/Emails/{$ieId}/{$type}/{$file}");
+		$cleanIeId = cleanDirName($ieId);
+		$cleanType = cleanDirName($type);
+		$cleanFile = cleanFileName($file);
+		$the_file = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;

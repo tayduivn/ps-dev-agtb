@@ -100,6 +100,5 @@ class ViewEditFormula extends SugarView
  	}
 
 
-
 }
 ?>

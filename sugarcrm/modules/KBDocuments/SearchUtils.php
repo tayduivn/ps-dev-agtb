@@ -803,8 +803,13 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $qry_arr['custom_from'] = "INNER JOIN(
               SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 ";
 
-        // do not do full text search if $query_include[0] is '*' or not defined -bug 47789
-        if(!empty($query_include) && $query_include[0] != '*'){
+	    // do not do full text search if $query_include[0] is '*' or not defined -bug 47789
+        // Bug 52409 - Also check if $query_must and $query_exclude aren't empty
+        if ((!empty($query_include) && $query_include[0] != '*') || !empty($query_must)) {
+        	// If we are doing a full text search, remove from $query_include the '*' value if it exists
+        	if (!empty($query_include)) {
+        		   $query_include = array_values(array_diff($query_include, array("*")));
+        	}
             $qry_arr['custom_from']= $qry_arr['custom_from']. "and kbcontent_id in (
                  select id from kbcontents where deleted = 0 and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).")";
         }

@@ -1,7 +1,7 @@
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Sales Subscription
+ * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/eula/sugarcrm-sales-subscription-agreement.html
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -22,8 +22,9 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 (function() {
 
@@ -226,6 +227,19 @@ AH.getValue = function(variable, view, ignoreLinks) {
 		return field.checked ? SUGAR.expressions.Expression.TRUE : SUGAR.expressions.Expression.FALSE;
 	}
 
+    if(field.tagName.toLowerCase() == 'input' && field.type.toLowerCase() == 'radio') {
+        var form = field.form;
+        var radioButtons = form[field.name];
+
+        for(var rbi=0; rbi < radioButtons.length; rbi++) {
+            var button = radioButtons[rbi];
+
+            if(button.checked) {
+                return button.value;
+            }
+        }
+     }
+
 	//Special case for dates
 	if (field.className && (field.className == "DateTimeCombo" || field.className == "Date")){
 		return SUGAR.util.DateUtils.parse(field.value, "user");
@@ -316,7 +330,7 @@ AH.getElement = function(variable, view) {
 	// retrieve the variable
 	var field = AH.VARIABLE_MAP[view][variable];
 
-	if ( field == null )	
+	if ( field == null )
 		field = YAHOO.util.Dom.get(variable);
 
 	return field;
@@ -352,6 +366,19 @@ AH.assign = function(variable, value, flash)
 	else if (field.type == "checkbox") {
 		field.checked = value == SUGAR.expressions.Expression.TRUE || value === true;
 	}
+    else if(field.type == "radio") {//52997 - select radio button
+        var radioButtons = field.form[field.id];
+
+        for(var rbi=0; rbi < radiobuttons.length; rbi++) {
+            var button = radioButtons[rbi];
+
+            if(button.value == value) {
+                button.checked = true;
+            } else {
+                button.checked = false;
+            }
+        }
+    }
     else if(value instanceof Date)
     {
         if (Dom.hasClass(field, "date_input"))
@@ -387,7 +414,7 @@ AH.assign = function(variable, value, flash)
                     localPrecision = precision;
                 }
             }
-            
+
             if ( value != '' ) {
                 value = formatNumber(value,num_grp_sep,dec_sep,localPrecision,localPrecision);
             }
@@ -428,6 +455,14 @@ var attachListener = function(el, callback, scope, view)
     if (el.type && el.type.toUpperCase() == "CHECKBOX")
     {
         return YAHOO.util.Event.addListener(el, "click", callback, scope, true);
+    }
+    else if (el.type && el.type.toUpperCase() == "RADIO"){//52997 - add event listners on Radio button elements
+        var radioButtons = el.form[el.id];
+
+        for(var radioButtonIndex = 0; radioButtonIndex < radioButtons.length; radioButtonIndex++) {
+            var button = radioButtons[radioButtonIndex];
+            YAHOO.util.Event.addListener(button, "click", callback, scope, true);
+        }
     }
     else {
         return YAHOO.util.Event.addListener(el, "change", callback, scope, true);
@@ -535,7 +570,7 @@ AH.showError = function(variable, error)
 	// retrieve the variable
 	var field = AH.getElement(variable);
 
-	if ( field == null )	
+	if ( field == null )
 		return null;
 
 	add_error_style(field.form.name, field, error, false);

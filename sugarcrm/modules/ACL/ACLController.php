@@ -110,7 +110,7 @@ class ACLController {
 		return false;
 	}
 
-	function disabledModuleList($moduleList, $by_value=true,$view='list'){
+	static function disabledModuleList($moduleList, $by_value=true,$view='list'){
 		global $aclModuleList, $current_user;
 		if(is_admin($GLOBALS['current_user'])) return array();
 		$actions = ACLAction::getUserActions($current_user->id, false);

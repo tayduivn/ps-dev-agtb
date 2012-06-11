@@ -460,7 +460,20 @@ $dictionary['User'] = array(
 		      'source' => 'non-db',
 		      'duplicate_merge' => 'disabled',
 		      'studio' => 'false',
+                'reportable'=>false,
 		    ),
+            'default_primary_team' => array (
+                'name' => 'default_primary_team',
+                'type' => 'link',
+                'relationship' => 'users_team',
+                'vname' => 'LBL_DEFAULT_PRIMARY_TEAM',
+                'link_type' => 'one',
+                'module' => 'Teams',
+                'bean_name' => 'Team',
+                'source' => 'non-db',
+                'duplicate_merge' => 'disabled',
+                'studio' => 'false',
+            ),
 		    'team_count_link' =>
 	  			array (
 	  			'name' => 'team_count_link',
@@ -493,8 +506,15 @@ $dictionary['User'] = array(
 	            'type' => 'link',
 	            'relationship' => 'team_memberships',
 	            'source' => 'non-db',
-	            'vname' => 'LBL_TEAMS'
+	            'vname' => 'LBL_TEAM_MEMBERSHIP'
         	) ,
+            'team_sets' => array(
+                'name' => 'team_sets',
+                'type' => 'link',
+                'relationship' => 'users_team_sets',
+                'source' => 'non-db',
+                'vname' => 'LBL_TEAM_SET'
+            ),
 			'users_signatures' => array(
 			    'name' => 'users_signatures',
 			    'type' => 'link',
@@ -913,10 +933,27 @@ $dictionary['User'] = array(
 	            'join_key_lhs'      => 'team_set_id',
 	            'join_key_rhs'      => 'team_id',
 			),
-	   'users_team' =>
-	   array('lhs_module'=> 'Teams', 'lhs_table'=> 'teams', 'lhs_key' => 'id',
-	    'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'default_team',
-	   'relationship_type'=>'one-to-many'),
+        'users_team_sets' => array (
+            'lhs_module'        => 'Teams',
+            'lhs_table'         => 'teams',
+            'lhs_key'           => 'id',
+            'rhs_module'        => 'Users',
+            'rhs_table'         => 'users',
+            'rhs_key'           => 'team_set_id',
+            'relationship_type' => 'many-to-many',
+            'join_table'        => 'team_sets_teams',
+            'join_key_lhs'      => 'team_id',
+            'join_key_rhs'      => 'team_set_id',
+        ),
+        'users_team' => array(
+            'lhs_module'=> 'Teams',
+            'lhs_table'=> 'teams',
+            'lhs_key' => 'id',
+            'rhs_module'=> 'Users',
+            'rhs_table'=> 'users',
+            'rhs_key' => 'default_team',
+            'relationship_type'=>'one-to-many'
+        ),
 	   //END SUGARCRM flav=pro ONLY
     ),
 
