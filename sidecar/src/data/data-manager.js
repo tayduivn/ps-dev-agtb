@@ -431,7 +431,7 @@
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error, self);
+                app.error.handleHttpError(xhr, error, self);
 
                 if (options.error) {
                     options.error(xhr, error);

@@ -370,7 +370,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-                    app.error.handleHTTPError(error);
+                    app.error.handleHttpError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

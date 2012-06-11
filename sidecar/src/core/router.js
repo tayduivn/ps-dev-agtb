@@ -64,6 +64,7 @@
         routes: {
             "": "index",
             "logout": "logout",
+            "error/:type": "error",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -196,15 +197,10 @@
          */
         list: function(module) {
             app.logger.debug("Route changed to list of " + module);
-            
-            if(_.include(_.keys(app.metadata.getModules()), module)) {
-                app.controller.loadView({
-                    module: module,
-                    layout: "list"
-                });
-            } else {
-                app.router.navigate('error/404', {trigger: true});
-            }
+            app.controller.loadView({
+                module: module,
+                layout: "list"
+            });
         },
 
         /**
@@ -268,18 +264,28 @@
 
             action = action || "detail";
 
-            if(_.include(_.keys(app.metadata.getModules()), module)) {
+            // if (_.has(app.metadata.getModules(), module)) {
                 app.controller.loadView({
                     module: module,
                     modelId: id,
                     action: action,
                     layout: action
                 });
+                /*
             } else {
                 app.router.navigate('error/404', {trigger: true});
             }
+            */
             
+        },
+        error: function(errorType) {
+            app.logger.debug("Error route: " + errorType);
+            app.controller.loadView({
+                layout: "error",
+                errorType: errorType 
+            });
         }
+        
     });
 
     app.augment("router", new Router(), false);

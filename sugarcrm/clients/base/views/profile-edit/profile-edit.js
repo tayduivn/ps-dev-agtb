@@ -56,7 +56,7 @@
             },
             error: function(xhr, error) {
                 app.alert.dismiss('fetch_edit_contact_record');
-                app.error.handleHTTPError(xhr, error, self);
+                app.error.handleHttpError(xhr, error, self);
             }
         });
     },
