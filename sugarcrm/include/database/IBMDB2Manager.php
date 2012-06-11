@@ -274,12 +274,19 @@ class IBMDB2Manager  extends DBManager
 	{
         $start = (int)$start;
         $count = (int)$count;
-	    if ($start < 0)
-			$start = 0;
+
 		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		$sql = "SELECT * FROM ($sql) LIMIT $start,$count";
-		$this->lastsql = $sql;
+        if ($start <= 0)
+        {
+            $start = ''; // Not specifying a 0 start helps the DB2 optimizer create a better plan
+        }
+        else
+        {
+            $start .= ',';
+        }
+
+        $sql = "SELECT * FROM ($sql) LIMIT $start $count OPTIMIZE FOR $count ROWS";		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
 			$this->checkQuery($sql);
