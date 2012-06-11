@@ -1679,6 +1679,7 @@ SE.composeLayout = {
      * @param int Instance index
      */
     saveDraft : function(tinyInstance) {
+        SE.tinyInstances.currentHtmleditor = 'htmleditor' + tinyInstance;
         this.sendEmail(tinyInstance, true);
     },
 
