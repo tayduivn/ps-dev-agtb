@@ -20,12 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('data/BeanFactory.php');
-require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('include/api/ModuleApi.php');
-require_once('include/api/ListApi.php');
 
-class ForecastModuleApi extends ModuleApi {
+class ForecastsWorksheetApi extends ModuleApi {
 
     public function __construct()
     {
@@ -37,45 +34,13 @@ class ForecastModuleApi extends ModuleApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'filters' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','filters'),
-                'pathVars' => array('',''),
-                'method' => 'filters',
-                'shortHelp' => 'forecast filters',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#filters',
-            ),
-            'chartoptions' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','chartoptions'),
-                'pathVars' => array('',''),
-                'method' => 'chartOptions',
-                'shortHelp' => 'forecasting chart options',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#chartOptions',
-            ),
-            'teams' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','teams'),
-                'pathVars' => array('',''),
-                'method' => 'ping',
-                'shortHelp' => 'teams for tree view',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#teams',
-            ),
             'worksheet' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','filters'),
+                'path' => array('Forecasts','worksheet'),
                 'pathVars' => array('',''),
-                'method' => 'ping',
+                'method' => 'worksheet',
                 'shortHelp' => 'A ping',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#ping',
-            ),
-            'reportees' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', 'reportees', '?'),
-                'pathVars' => array('','','userId'),
-                'method' => 'getReportees',
-                'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#reportees',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
             ),
             'grid' => array(
                 'reqType' => 'GET',
@@ -83,7 +48,7 @@ class ForecastModuleApi extends ModuleApi {
                 'pathVars' => array('',''),
                 'method' => 'grid',
                 'shortHelp' => 'A grid',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#grid',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#grid',
             ),
             'forecastsCommitted' => array(
                 'reqType' => 'GET',
@@ -91,143 +56,10 @@ class ForecastModuleApi extends ModuleApi {
                 'pathVars' => array('',''),
                 'method' => 'forecastsCommitted',
                 'shortHelp' => 'Most recent committed forecast entry',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastModuleApi.html#forecastsCommitted',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
             )
         );
         return $parentApi;
-    }
-
-    public function ping($api, $args) {
-        // Just a normal ping request
-        return "I'm a duck.";
-    }
-
-    public function filters($api, $args) {
-        // placeholder for filters
-        // todo: really make this work
-        global $app_list_strings, $current_language;
-        $app_list_strings = return_app_list_strings_language($current_language);
-
-        return array(
-            'timeperiods' => array(
-                'label' => 'Forecast Period:',
-                'options' => TimePeriod::get_timeperiods_dom(),
-            ),
-            'stages' => array(
-                'label' => 'Sales Stage:',
-                'options' => $app_list_strings['sales_stage_dom'],
-            ),
-            'probabilities' => array(
-                'label' => 'Probability (>=):',
-                'options' => $app_list_strings['sales_probability_dom'],
-            ),
-        );
-    }
-
-    public function chartOptions($api, $args) {
-        // placeholder for filters
-        // todo: really make this work
-        return array(
-            'horizontal' => array(
-                'label' => 'Horizontal (x):',
-                'options' => array(
-                    'x0' => 'Team Members',
-                    'x1' => 'Account',
-                    'x2' => 'Channel',
-                    'x3' => 'Line Items',
-                    'x4' => 'Month',
-                ),
-            ),
-            'vertical' => array(
-                'label' => 'Vertical (y):',
-                'options' => array(
-                    'y0' => 'Revenue',
-                    'y1' => 'Number of Units',
-                ),
-            ),
-            'groupby' => array(
-                'label' => 'Group By:',
-                'options' => array(
-                    'y0' => 'Sales Stage',
-                    'y1' => 'Revenue Type',
-                ),
-            ),
-        );
-    }
-
-    /***
-     * Returns a hierarchy of users reporting to the current user
-     *
-     * @param $api
-     * @param $args
-     * @return string
-     */
-    public function getReportees($api, $args) {
-        $id = $args['userId'];
-
-        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
-            false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
-        );
-
-        $result = $GLOBALS['db']->query($sql);
-
-        // Final array to be returned
-        $treeData = '';
-
-        $flatUsers = array();
-        while($row = $GLOBALS['db']->fetchByAssoc($result))
-        {
-            if(empty($users[$row['_level']]))  {
-                $users[$row['_level']] = array();
-            }
-
-            $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
-
-            $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
-
-            $user = array(
-                'data' => $fullName,
-                'children' => array(),
-                'metadata' => array(
-                    "id" => $row['id'],
-                    "full_name" => $fullName,
-                    "first_name" => $row['first_name'],
-                    "last_name" => $row['last_name'],
-                    "reports_to_id" => $row['reports_to_id']
-                ),
-                'state' => $openClosed
-            );
-
-            // Set the main user id as the root for treeData
-            if($user['metadata']['id'] == $id)
-            {
-                $treeData = $user;
-            } else {
-                $flatUsers[] = $user;
-            }
-        }
-
-        $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers );
-
-        return $treeData;
-    }
-
-    /***
-     * Recursive function to get all children of a specific parent $id
-     * given a list of $users
-     * @param $id {int} ID value of the parent user
-     * @param $users {Array} of users
-     * @return array of child users
-     */
-    public function getChildren( $id, $users ) {
-        $retChildren = array();
-        foreach( $users as $user ) {
-            if( $user['metadata']['reports_to_id'] == $id ) {
-                $user['children'] = $this->getChildren( $user['metadata']['id'] , $users );
-                $retChildren[] = $user;
-            }
-        }
-        return $retChildren;
     }
 
     /**
@@ -319,4 +151,8 @@ class ForecastModuleApi extends ModuleApi {
         return array('committed' => $forecasts);
     }
 
+    public function worksheet(){
+        //placeholder
+        return "worksheet placeholder";
+    }
 }
