@@ -833,30 +833,33 @@
         }
     });
 
-    var oLoadView = app.controller.loadView;
-    app.controller.loadView = function(params) {
-        if (typeof(app.config) == undefined || (app.config  && app.config.appStatus == 'offline')) {
+    app.Controller = app.Controller.extend({
+        loadView: function(params) {
             var self = this;
-            var callback = function(data){
-                var params = {
-                                module: "Login",
-                                layout: "login",
-                                create: true
-                            };
-                oLoadView.call(self, params)
-                SUGAR.App.alert.show('appOffline', {
-                    level:"error",
-                    title:'Error',
-                    messages:'Sorry the application is not available at this time. Please contact the site administrator.',
-                    autoclose:false
-                });
-            };
+            // TODO: Will it ever happen: app.config == undefined?
+            // app.config should always be present because the logger depends on it
+            if (typeof(app.config) == undefined || (app.config && app.config.appStatus == 'offline')) {
+                var callback = function(data) {
+                    var params = {
+                        module: "Login",
+                        layout: "login",
+                        create: true
+                    };
+                    app.Controller.__super__.loadView.call(self, params);
+                    app.alert.show('appOffline', {
+                        level: "error",
+                        title: 'Error',
+                        messages: 'Sorry the application is not available at this time. Please contact the site administrator.',
+                        autoclose: false
+                    });
+                };
 
-            app.logout({success: callback, error:callback});
-            return;
-        };
-        return oLoadView.call(this, params);
-    };
+                app.logout({success: callback, error: callback});
+                return;
+            }
+            app.Controller.__super__.loadView.call(this, params);
+        }
+    });
 
     var _rrh = {
         /**
