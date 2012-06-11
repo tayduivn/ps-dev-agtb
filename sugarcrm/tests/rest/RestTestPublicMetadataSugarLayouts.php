@@ -24,14 +24,14 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarLayouts extends RestTestBase {
+class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     protected $_testPaths = array(
-        'wiggle' => 'clients/base/private/layouts/wiggle/wiggle.php',
-        'woggle' => 'custom/clients/base/private/layouts/woggle/woggle.php',
-        'bizzle' => 'clients/portal/private/layouts/bizzle/bizzle.php',
-        'bozzle' => 'custom/clients/portal/private/layouts/bozzle/bozzle.php',
-        'pizzle' => 'clients/mobile/private/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
-        'pozzle' => 'custom/clients/mobile/private/layouts/pozzle/pozzle.php',
+        'wiggle' => 'clients/base/public/layouts/wiggle/wiggle.php',
+        'woggle' => 'custom/clients/base/public/layouts/woggle/woggle.php',
+        'bizzle' => 'clients/portal/public/layouts/bizzle/bizzle.php',
+        'bozzle' => 'custom/clients/portal/public/layouts/bozzle/bozzle.php',
+        'pizzle' => 'clients/mobile/public/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
+        'pozzle' => 'custom/clients/mobile/public/layouts/pozzle/pozzle.php',
     );
     
     protected $_testFilesCreated = array();

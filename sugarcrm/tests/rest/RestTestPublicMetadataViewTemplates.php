@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataViewTemplates extends RestTestBase {
+class RestTestPublicMetadataViewTemplates extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -54,10 +54,10 @@ class RestTestMetadataViewTemplates extends RestTestBase {
     }
     
     public function testMetadataViewTemplatesHbt() {
-        $filesToCheck = array('clients/portal/private/views/edit/edit.hbt',
-                              'clients/base/private/views/edit/edit.hbt',
-                              'custom/clients/portal/private/views/edit/edit.hbt',
-                              'custom/clients/base/private/views/edit/edit.hbt',
+        $filesToCheck = array('clients/portal/public/views/edit/edit.hbt',
+                              'clients/base/public/views/edit/edit.hbt',
+                              'custom/clients/portal/public/views/edit/edit.hbt',
+                              'custom/clients/base/public/views/edit/edit.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -68,10 +68,10 @@ class RestTestMetadataViewTemplates extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/portal/private/views/edit',
-                            'clients/base/private/views/edit',
-                            'custom/clients/portal/private/views/edit',
-                            'custom/clients/base/private/views/edit',
+        $dirsToMake = array('clients/portal/public/views/edit',
+                            'clients/base/public/views/edit',
+                            'custom/clients/portal/public/views/edit',
+                            'custom/clients/base/public/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
