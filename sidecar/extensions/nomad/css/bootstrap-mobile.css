@@ -3534,18 +3534,24 @@ a:hover [class^="icon-"] {
   background-color: rgba(255, 0, 0, 0.25);
 }
 #record-action .icon-phone {
-  background: url('../img/sprite.png') no-repeat 1% 0;
   background-size: 660%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
 }
+#record-action .icon-phone,
+#record-action .icon-phone:active {
+  background: url('../img/sprite.png') no-repeat 1% 0;
+}
 #record-action .icon-sms-white {
-  background: url('../img/sprite.png') no-repeat 38% 0;
   background-size: 700%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
+}
+#record-action .icon-sms-white,
+#record-action .icon-sms-white:active {
+  background: url('../img/sprite.png') no-repeat 38% 0 !important;
 }
 #record-action > a:not(:last-child) {
   -webkit-box-shadow: inset -1px 0 0 #000000, 1px 0 0 #333333;
@@ -3569,7 +3575,7 @@ a:hover [class^="icon-"] {
   margin-bottom: -20%;
 }
 .icon-phone:active {
-  background: url('../img/sprite.png') no-repeat 18% -30% !important;
+  background: url('../img/sprite.png') no-repeat 18% -30%;
 }
 .icon-phone-black {
   background: url('../img/sprite.png') no-repeat 18% -30%;
@@ -3579,7 +3585,7 @@ a:hover [class^="icon-"] {
   margin-bottom: -20%;
 }
 .icon-phone-black:active {
-  background: url('../img/sprite.png') no-repeat 1% -30% !important;
+  background: url('../img/sprite.png') no-repeat 1% -30%;
 }
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
@@ -3589,7 +3595,7 @@ a:hover [class^="icon-"] {
   margin-bottom: -20%;
 }
 .icon-sms-black:active {
-  background: url('../img/sprite.png') no-repeat 38% 0 !important;
+  background: url('../img/sprite.png') no-repeat 38% 0;
 }
 .icon-sms-white {
   background: url('../img/sprite.png') no-repeat 38% 0;
