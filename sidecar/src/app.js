@@ -202,14 +202,6 @@ SUGAR.App = (function() {
                 this
             );
 
-            // Here we initialize all the modules;
-            // TODO DEPRECATED: Convert old style initialization method to noveau style
-            _.each(_modules, function(module) {
-                if (_.isFunction(module.init)) {
-                    module.init(this);
-                }
-            }, this);
-
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
@@ -218,7 +210,24 @@ SUGAR.App = (function() {
                 clientID: _app.config.clientID
             });
 
+            async.series([function(callback) {
+                var syncCallback = null;
+                var options = {
+                    public: true
+                };
+                _app.metadata.sync(syncCallback, options);
+            }]);
+
             this.loadConfig();
+
+            // Here we initialize all the modules;
+            // TODO DEPRECATED: Convert old style initialization method to noveau style
+            _.each(_modules, function(module) {
+                if (_.isFunction(module.init)) {
+                    module.init(this);
+                }
+            }, this);
+
 
             if (!opts.silent) {
                 _app.trigger("app:init", this);

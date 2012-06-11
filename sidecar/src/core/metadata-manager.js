@@ -48,10 +48,10 @@
         return container[property];
     }
 
-     // Initializes custom layouts/views templates and controllers
+    // Initializes custom layouts/views templates and controllers
     function _initCustomComponents(module, moduleName) {
         _.each(["layout", "view"], function(type) {
-            _.each(module[type + 's'], function (def, name) {
+            _.each(module[type + 's'], function(def, name) {
                 if (type === "view" && def.template) { // Only views can have templates
                     app.template.setView(name, moduleName, def.template, true);
                 }
@@ -96,11 +96,11 @@
          * @param module Module definition
          * @private
          */
-        _patchMetadata: function (moduleName, module) {
+        _patchMetadata: function(moduleName, module) {
             if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view) {
-                if(view.meta) {
+                if (view.meta) {
                     _.each(view.meta.panels, function(panel) {
                         _.each(panel.fields, function(field, fieldIndex) {
                             var name = _.isString(field) ? field : field.name;
@@ -248,7 +248,7 @@
          * @return {Object}
          */
         getDelimitedModuleList: function(delimiter) {
-            if(!delimiter) return null;
+            if (!delimiter) return null;
             return _.toArray(this.getModuleList()).join(delimiter);
         },
 
@@ -288,7 +288,7 @@
          */
         set: function(data) {
             if (data.modules) {
-                var modules = []; 
+                var modules = [];
 
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = this._patchMetadata(module, entry);
@@ -298,7 +298,7 @@
                     // Compile templates and declare components for custom layouts and views
                     _initCustomComponents(entry, module);
 
-                   }, this);
+                }, this);
                 _set("modules", modules.join(","));
             }
 
@@ -372,16 +372,18 @@
         /**
          * Syncs metadata from the server. Saves the metadata to the local cache.
          * @param {Function} callback(optional) Callback function to be executed after sync completes.
+         * @param {Object} options(optional) Sync call options currently supports public:true to get public metadata.
          */
-        sync: function(callback) {
+        sync: function(callback, options) {
+            options = options || {};
             var self = this;
             var metadataTypes = app.config.metadataTypes || [];
             app.api.getMetadata(self.getHash(), metadataTypes, [], {
                 success: function(metadata, textStatus, jqXHR) {
                     if (jqXHR.status == 304) { // Our metadata is up to date so we do nothing.
-                        app.logger.debug("Metadata is up to date");
+                        app.logger.trace("Metadata is up to date");
                     } else if (jqXHR.status == 200) { // Need to update our app with new metadata.
-                        app.logger.debug("Metadata is out of date");
+                        app.logger.trace("Metadata is out of date");
                         self.set(metadata);
                     }
 
@@ -396,7 +398,7 @@
                         callback.call(self, error);
                     }
                 }
-            });
+            }, options);
         }
     });
 

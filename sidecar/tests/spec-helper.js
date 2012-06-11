@@ -68,7 +68,12 @@ var SugarTest = {};
     };
 
     test.seedApp = function() {
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\/public\?typeFilter=&moduleFilter.*/,
+            [304, {"Content-Type": "application/json"}, JSON.stringify({modules:{}})]);
         SugarTest.app = SUGAR.App.init({el: "body"});
+        SugarTest.server.respond();
+        SugarTest.server.restore();
     };
 
     test.seedFakeServer = function() {
@@ -85,12 +90,17 @@ var SugarTest = {};
 beforeEach(function(){
     SugarTest.resetWaitFlag();
 
-    SugarTest.app = SUGAR.App.init({el: "body", silent: true});
+    SugarTest.seedFakeServer();
+    SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\/public\?typeFilter=&moduleFilter.*/,
+        [304, {"Content-Type": "application/json"}, JSON.stringify({modules:{}})]);
 
+    SugarTest.app = SUGAR.App.init({el: "body", silent: true});
     SugarTest.app.config.logLevel = SUGAR.App.logger.levels.DEBUG;
     SugarTest.app.config.env = "test";
     SugarTest.app.config.appId = "portal";
     SugarTest.app.config.maxQueryResult = 20;
+    SugarTest.server.respond();
+    SugarTest.server.restore();
 
     SugarTest.storage = {};
     SugarTest.app.cache.store = SugarTest.keyValueStore;
