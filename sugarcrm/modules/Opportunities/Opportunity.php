@@ -410,8 +410,11 @@ $query .= 			"LEFT JOIN users
         }
 
 
-        $this->timeperiod_id = TimePeriod::getCurrentId();
-
+        $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' AND end_date > '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
+        if(!empty($timeperiod))
+        {
+            $this->timeperiod_id = $timeperiod;
+        }
         /*
         if(empty($this->best_case_worksheet) && empty($this->likely_case_worksheet))
         {
