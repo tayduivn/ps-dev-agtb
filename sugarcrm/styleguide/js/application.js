@@ -103,11 +103,6 @@
         return false;
       })
 
-  		// tour
-      $('#tour').on('click', function (e) {
-  			$('.pointsolight').prependTo('body');
-      })
-
       $('.btngroup .btn').button()
 
 
