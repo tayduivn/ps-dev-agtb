@@ -64,6 +64,7 @@
         routes: {
             "": "index",
             "logout": "logout",
+            "logout/?clear=:clear": "logout",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -243,13 +244,13 @@
         /**
          * Handles `logout` route.
          */
-        logout: function() {
-            app.logger.debug("Logging out");
-            var self = this;
-            app.logout({success: function(data) {
+        logout: function(clear) {
+            clear = clear == "1" ? true : false;
+            app.logger.debug("Logging out: " + clear);
+            app.logout({success: function() {
                 app.router.navigate("#");
                 app.router.login();
-            }});
+            }}, clear);
         },
 
         /**

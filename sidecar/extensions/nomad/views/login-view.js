@@ -51,7 +51,11 @@
                 app.login(args, null, {
                     success: function() {
                         app.logger.debug("logged in successfully!");
-                        app.user.set("serverUrl", app.api.serverUrl);
+                        app.user.set({
+                            loginName: args.username,
+                            loginUrl: url,
+                            serverUrl: app.api.serverUrl
+                        });
                     },
                     error: function(error) {
                         app.logger.debug("login failed: " + error);
@@ -63,7 +67,15 @@
 
         render: function() {
             this.loginButtonLabel = app.utils.capitalize(app.lang.getAppString("LOGIN").toLowerCase());
-            this.model.set("url", "http://", { silent: true });
+            var url = app.user.get("loginUrl") || ((app.config.useHttps === true) ? "https://" : "http://");
+            this.model.set({
+                username: app.user.get("loginName") || "",
+                url: url
+            },
+            {
+                silent: true
+            });
+
             app.view.View.prototype.render.call(this);
 
             if (!app.isNative) {
