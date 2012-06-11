@@ -1,6 +1,6 @@
 <div class="container-fluid">
 <form name='{{name}}'>
-    <div class="card2">
+    <div class="card2 span7">
         {{#each meta.panels}}
         {{#each fields}}
         {{field ../../this}}
