@@ -3567,12 +3567,18 @@ a:hover [class^="icon-"] {
   width: 18px;
   margin-bottom: -20%;
 }
+.icon-phone:active {
+  background: url('../img/sprite.png') no-repeat 18% -30% !important;
+}
 .icon-phone-black {
   background: url('../img/sprite.png') no-repeat 18% -30%;
   background-size: 740%;
   height: 18px;
   width: 18px;
   margin-bottom: -20%;
+}
+.icon-phone-black:active {
+  background: url('../img/sprite.png') no-repeat 1% -30% !important;
 }
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
@@ -3581,12 +3587,18 @@ a:hover [class^="icon-"] {
   width: 16px;
   margin-bottom: -20%;
 }
+.icon-sms-black:active {
+  background: url('../img/sprite.png') no-repeat 38% 0 !important;
+}
 .icon-sms-white {
-  background: url('../img/sprite.png') no-repeat 40% 0;
+  background: url('../img/sprite.png') no-repeat 38% 0;
   background-size: 700%;
   height: 18px;
   width: 16px;
   margin-bottom: -20%;
+}
+.icon-sms-white:active {
+  background: url('../img/sprite.png') no-repeat 57% 0 !important;
 }
 .icon-account-black {
   background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
