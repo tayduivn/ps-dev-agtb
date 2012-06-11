@@ -498,10 +498,11 @@ class MetaDataManager {
         $meta = array();
         if (is_dir($dir)) {
             // Get the client, type amd name for this particular directory
-            preg_match("#clients/(.*)/(.*)/(.*)/#", $dir, $m);
+            preg_match("#clients/(.*)/(.*)/(.*)/(.*)/#", $dir, $m);
             $platform = $m[1];
-            $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
-            $filename = $m[3];
+            $auth = $m[2];
+            $type = substr_replace($m[3], '', -1); // Pluck the 's' from the type
+            $filename = $m[4];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
 
             if (file_exists($file)) {
