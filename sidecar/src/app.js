@@ -202,6 +202,11 @@ SUGAR.App = (function() {
                 this
             );
 
+            // Instantiate controller: <Capitalized-appId>Controller or Controller.
+            var className = _app.utils.capitalize(_app.config ? _app.config.appId : "") + "Controller";
+            var Klass = this[className] || this["Controller"];
+            this.controller = new Klass();
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {

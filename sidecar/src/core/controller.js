@@ -2,6 +2,27 @@
     /**
      * Controller manages the loading and unloading of layouts within the app.
      *
+     * **Extending controller**
+     *
+     * Application may choose to extend the controller to provide custom implementation.
+     * Your custom controller class name should be capiltalized {@link Config#appId} followed by `Controller` word.
+     * <pre><code>
+     * (function(app) {
+     *
+     *     app.PortalController = app.Controller.extend({
+     *
+     *         loadView: function(params) {
+     *            // Custom implementation of loadView
+     *
+     *            // Should you need to call super method:
+     *            app.Controller.prototype.loadView.call(this, params);
+     *         }
+     *
+     *     });
+     *
+     * })(SUGAR.App);
+     * </code></pre>
+     *
      * @class Core.Controller
      * @singleton
      * @alias SUGAR.App.controller
@@ -13,7 +34,7 @@
          * @constructor
          * @ignore
          */
-        initialize: function(options) {
+        initialize: function() {
             /**
              * The primary context of the app.
              * This context is associated with the root layout.
@@ -100,12 +121,12 @@
         }
     });
 
-    app.augment("controller", new Controller(), false);
+    app.augment("Controller", Controller, false);
 
     app.events.on("app:init", function(app) {
-        this.setElement(app.$rootEl);
+        app.controller.setElement(app.$rootEl);
     }, app.controller).on("app:start", function(app) {
-        this.loadAdditionalComponents(app.config.additionalComponents);
-    }, app.controller);
+        app.controller.loadAdditionalComponents(app.config.additionalComponents);
+    });
 
 })(SUGAR.App);
