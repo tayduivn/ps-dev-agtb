@@ -61,17 +61,6 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                 'label' => 'default',
                 'fields' =>
                 array(
-                    'priority',
-                    'status',
-                    'source',
-                    'product_category',
-                    array(
-                        'name' => 'resolution',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
                     array(
                         'name' => 'name',
                         'displayParams' =>
@@ -85,14 +74,10 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                         array(
                             'colspan' => 2,
                         ),
-                    ),
-                    array(
-                        'name' => 'work_log',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
+                    ), 
+                    'type',
+                    'product_category',
+                    'priority',
                 ),
             ),
         ),
