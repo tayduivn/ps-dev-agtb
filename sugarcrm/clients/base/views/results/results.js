@@ -32,15 +32,15 @@
     /**
      * Uses query in context and fires a search request thereafter rendering
      */
-    render: function() {
-        var self = this, collection;
+    _renderSelf: function() {
+        var self = this;
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(data) {
             // Add the records to context's collection
             if(data && data.records && data.records.length) {
                 self.updateCollection(data);
                 
-                app.view.View.prototype.render.call(self);
+                app.view.View.prototype._renderSelf.call(self);
                 self.renderSubnav();
             } else {
                 self.renderSubnav('No results found for "'+self.lastQuery+'"');
@@ -51,9 +51,8 @@
      * Updates the collection with search results.
      */
     updateCollection: function(data) {
-        var collection = this.context.get('collection');
-        collection.add(data.records, {silent: true});
-        collection.next_offset = this.nextOffset = data.next_offset ? data.next_offset : -1;
+        this.collection.add(data.records, {silent: true});
+        this.collection.next_offset = this.nextOffset = data.next_offset ? data.next_offset : -1;
     },
     /**
      * Renders subnav based on search message appropriate for query term.
@@ -134,9 +133,8 @@
      * Show more search results
      */
     showMoreResults: function() {
-        var self = this, collection;
+        var self = this;
         app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
-        collection = this.context.get('collection');
 
         self.fireSearchRequest(function(data) {
             app.alert.dismiss('show_more_search_results');
@@ -147,7 +145,7 @@
                 app.view.View.prototype.render.call(self);
                 self.renderSubnav();
             } 
-        }, collection.next_offset);
+        }, this.collection.next_offset);
     }
 
 })

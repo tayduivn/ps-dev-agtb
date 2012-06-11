@@ -181,7 +181,7 @@
      */
     Handlebars.registerHelper('notEq', function(val1, val2, block) {
         if (!block) return "";
-        return val1 !== val2 ? block(this) : block.inverse(this);
+        return val1 != val2 ? block(this) : block.inverse(this);
     });
 
     /**

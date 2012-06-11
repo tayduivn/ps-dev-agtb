@@ -10,6 +10,7 @@
             'swipeLeft article': 'onSwipeLeftItem',
             'swipeRight article': 'onSwipeRightItem',
             'click .remove-item-btn': 'onRemoveItem',
+            'click .unlink-item-btn': 'onUnlinkItem',
             'click .edit-item-btn': 'onEditItem',
             'click .menu-item':'onClickMenuItem'
         },
@@ -176,6 +177,16 @@
                 var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
                 var model = this.collection.get(cid);
                 model.destroy();
+            }
+        },
+        onUnlinkItem: function (e) {
+            e.preventDefault();
+            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
+
+            if (isOk) {
+                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
+                var model = this.collection.get(cid);
+                model.destroy({ relate: true });
             }
         },
         onEditItem: function (e) {

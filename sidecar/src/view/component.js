@@ -116,6 +116,8 @@
         unbind: function() {
             this.off();
             this.undelegateEvents();
+            app.events.off(null, null, this);
+            app.events.unregister(this);
         },
 
         /**

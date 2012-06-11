@@ -202,6 +202,11 @@ SUGAR.App = (function() {
                 this
             );
 
+            // Instantiate controller: <Capitalized-appId>Controller or Controller.
+            var className = _app.utils.capitalize(_app.config ? _app.config.appId : "") + "Controller";
+            var Klass = this[className] || this["Controller"];
+            this.controller = new Klass();
+
             // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
@@ -351,9 +356,10 @@ SUGAR.App = (function() {
         /**
          * Logs out this app.
          * @param  {Object} callbacks(optional) callback object.
+         * @param {Boolean} clear(optional) Flag indicating if user information must be deleted from local storage.
          * @return {Object} XHR request object.
          */
-        logout: function(callbacks) {
+        logout: function(callbacks, clear) {
             var originalSuccess, xhr;
             callbacks = callbacks || {};
             originalSuccess = callbacks.success;
@@ -363,7 +369,7 @@ SUGAR.App = (function() {
                 // It takes a 'clear' boolean indicating whether we want
                 // to completely clear user's data or leave intact. Later,
                 // we should let user choose. For they get "zapped"
-                _app.trigger("app:logout", true);
+                _app.trigger("app:logout", clear);
                 if (originalSuccess) {
                     originalSuccess(data);
                 }
@@ -374,9 +380,6 @@ SUGAR.App = (function() {
         },
 
         modules: _modules
-    }
-        ;
-}
-    ()
-    )
-;
+    };
+
+}());
