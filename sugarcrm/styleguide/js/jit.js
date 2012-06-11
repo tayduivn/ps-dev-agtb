@@ -11684,8 +11684,10 @@ $jit.ST.Plot.NodeTypes.implement({
           showLabels = config.showLabels,
           showNodeLabels = config.showNodeLabels,
           label = config.Label,
-          margin = config.Margin;
-          
+          margin = config.Margin,
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue');
+
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
         	acum += (dimArray[i] || 0);
@@ -11797,15 +11799,15 @@ $jit.ST.Plot.NodeTypes.implement({
 
                       var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
                           y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
-                          x1 = x + (dimArray[0]/valueArray[0] * goalMarker[i]),
-                          x2 = x + (dimArray[0]/valueArray[0] * goalMarker[i]);
+                          x1 = x + (chartDim/maxTickValue * goalMarker[i]),
+                          x2 = x + (chartDim/maxTickValue * goalMarker[i]);
                       ctx.beginPath();
                       $.dashedLine(ctx,x1, y1, x2, y2);
                       ctx.closePath();
                       ctx.stroke();
                   } else if(goalMarkerType[i] == 'individual') {
                       ctx.beginPath();
-                      $.dashedLine(ctx,x + (dimArray[0]/valueArray[0] * goalMarker[i]), y, x + (acum/valAcum * goalMarker[i]), y + height);
+                      $.dashedLine(ctx,x + (chartDim/maxTickValue * goalMarker[i]), y, x + (acum/valAcum * goalMarker[i]), y + height);
                       ctx.closePath();
                       ctx.stroke();
                   }
@@ -11813,8 +11815,8 @@ $jit.ST.Plot.NodeTypes.implement({
                   if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
                       var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
                           x2 = canvasSize.width/2 - margin.right,
-                          y1 = y - (dimArray[0]/valueArray[0] * goalMarker[i]),
-                          y2 = y - (dimArray[0]/valueArray[0] * goalMarker[i]);
+                          y1 = y - (chartDim/maxTickValue * goalMarker[i]),
+                          y2 = y - (chartDim/maxTickValue * goalMarker[i]);
                       ctx.beginPath();
                       //console.log(x1, y1, x2, y2)
                       $.dashedLine(ctx,x1, y1, x2, y2);
@@ -11822,7 +11824,7 @@ $jit.ST.Plot.NodeTypes.implement({
                       ctx.stroke();
                   } else if(goalMarkerType[i] == 'individual') {
                       ctx.beginPath();
-                      $.dashedLine(ctx,x, y - (dimArray[0]/valueArray[0] * goalMarker[i]), x + width, y - (acum/valAcum * goalMarker[i]));
+                      $.dashedLine(ctx,x, y - (chartDim/maxTickValue * goalMarker[i]), x + width, y - (acum/valAcum * goalMarker[i]));
                       ctx.closePath();
                       ctx.stroke();
                   }
@@ -11961,7 +11963,9 @@ $jit.ST.Plot.NodeTypes.implement({
           nodeIndex = node.getData('nodeIndex'),
           label = config.Label,
           margin = config.Margin,
-          canvasSize = this.viz.canvas.getSize();
+          canvasSize = this.viz.canvas.getSize(),
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue');
 
 	     //console.log("mx:" + mpos.x + " x1:" + x1 + " x2:" + x2);
 	    // console.log("my:" + mpos.y + " y1:" + y1);
@@ -11972,13 +11976,13 @@ $jit.ST.Plot.NodeTypes.implement({
                 if(horz) {
 
                     if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1 ) {
-                        var x1 = (x + dimArray[0]/valueArray[0] * goalMarker[i]) - 2,
-                            x2 = (x + dimArray[0]/valueArray[0] * goalMarker[i]) + 2,
+                        var x1 = (x + chartDim/maxTickValue * goalMarker[i]) - 2,
+                            x2 = (x + chartDim/maxTickValue * goalMarker[i]) + 2,
                             y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
                             y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
                     } else if(goalMarkerType[i] == 'individual') {
-                        var x1 = (x + dimArray[0]/valueArray[0] * goalMarker[i]) - 2,
-                            x2 = (x + dimArray[0]/valueArray[0] * goalMarker[i]) + 2,
+                        var x1 = (x + chartDim/maxTickValue * goalMarker[i]) - 2,
+                            x2 = (x + chartDim/maxTickValue * goalMarker[i]) + 2,
                             y1 = y,
                             y2 = y + height;
 
@@ -11996,13 +12000,13 @@ $jit.ST.Plot.NodeTypes.implement({
                     if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
                         var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
                             x2 = canvasSize.width/2 - margin.right,
-                            y1 = (y - dimArray[0]/valueArray[0] * goalMarker[i]) - 2,
-                            y2 = (y - dimArray[0]/valueArray[0] * goalMarker[i]) + 2;
+                            y1 = (y - chartDim/maxTickValue * goalMarker[i]) - 2,
+                            y2 = (y - chartDim/maxTickValue * goalMarker[i]) + 2;
                     } else if(goalMarkerType[i] == 'individual') {
                         var x1 = x,
                             x2 = x + width,
-                            y1 = (y - dimArray[0]/valueArray[0] * goalMarker[i]) - 2,
-                            y2 = (y - dimArray[0]/valueArray[0] * goalMarker[i]) + 2;
+                            y1 = (y - chartDim/maxTickValue * goalMarker[i]) - 2,
+                            y2 = (y - chartDim/maxTickValue * goalMarker[i]) + 2;
                     }
 
 
@@ -13197,7 +13201,8 @@ $jit.BarChart = new Class({
 		nameLength = name.length;
         groupTotalValue = 0,
         properties = $.splat(json.properties)[0];
-        
+
+
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
@@ -13230,7 +13235,7 @@ $jit.BarChart = new Class({
 
       }
 
-      
+
       ch.push({
         'id': prefix + val.label,
         'name': val.label,
@@ -13341,7 +13346,7 @@ $jit.BarChart = new Class({
   updateJSON: function(json, onComplete) {
     if(this.busy) return;
     this.busy = true;
-    
+
     var st = this.st;
     var graph = st.graph;
     var config = this.config;
@@ -13352,7 +13357,8 @@ $jit.BarChart = new Class({
         title = config.Title,
         note = config.ScrollNote;
     var that = this;
-    var horz = this.config.orientation == 'horizontal';
+    var horz = this.config.orientation == 'horizontal',
+        properties = $.splat(json.properties)[0];
     $.each(values, function(v) {
       var n = graph.getByName(v.label);
       if(n) {
@@ -13360,6 +13366,12 @@ $jit.BarChart = new Class({
         if(json.label) {
           n.setData('stringArray', $.splat(json.label));
         }
+          if(v.goalmarkervalue != undefined)   {
+
+              n.setData('goalMarker', v.goalmarkervalue);
+              n.setData('goalMarkerValueLabel', v.goalmarkervaluelabel);
+          }
+
       }
     });
     this.normalizeDims();
@@ -13385,6 +13397,8 @@ $jit.BarChart = new Class({
           }
         });
       }
+    } else {
+        this.busy = false;
     }
 
   if(renderBackground) {
@@ -13621,8 +13635,10 @@ $jit.BarChart = new Class({
       	fixedDim = animateValue.length * 40;
       }
       n.setData(dim1, fixedDim);
-      
-      
+      n.setData('maxTickValue',maxTickValue);
+      n.setData('chartDim',height);
+
+
       if(animate) {
         n.setData(dim2, acum * height / maxValue, 'end');
         n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 

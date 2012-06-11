@@ -5074,6 +5074,9 @@ table.dataTable td.center,
 table.dataTable td.dataTables_empty {
   text-align: center;
 }
+.dataTables_wrapper.unmodified table.datatable tbody td {
+  white-space: normal;
+}
 /*
  * Table wrapper
  */
@@ -5081,6 +5084,10 @@ table.dataTable td.dataTables_empty {
   position: relative;
   clear: both;
   *zoom: 1;
+}
+.dataTables_wrapper.unmodified select {
+  display: inline;
+  width: auto;
 }
 /*
  * Page length menu
@@ -5091,6 +5098,16 @@ table.dataTable td.dataTables_empty {
 /*
  * Filter
  */
+.dataTables_wrapper.unmodified .dataTables_filter {
+  background: none repeat scroll 0 0 transparent;
+  border: 0 none;
+  box-shadow: none;
+  display: inline;
+  float: right;
+}
+.dataTables_wrapper.unmodified .dataTables_filter input.span12 {
+  width: auto;
+}
 .dataTables_filter {
   text-align: right;
 }
@@ -5665,6 +5682,141 @@ table.dataTable th:active {
 #vakata-contextmenu.jstree-sugar-context li ul {
   margin-left: -4px;
 }
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after {
+  content: "No";
+}
+.iphone-toggle-buttons input[type="checkbox"]:checked + span::after,
+.iphone-toggle-buttons input[type="radio"]:checked + span::after {
+  content: "Yes";
+}
+.iphone-toggle-buttons {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.iphone-toggle-buttons {
+  margin: 0;
+}
+.iphone-toggle-buttons label,
+.iphone-toggle-buttons input[type="checkbox"] + span,
+.iphone-toggle-buttons input[type="radio"] + span,
+.iphone-toggle-buttons input[type="checkbox"] + span::before,
+.iphone-toggle-buttons input[type="radio"] + span::before,
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after {
+  display: inline-block;
+}
+.iphone-toggle-buttons label,
+.iphone-toggle-buttons input[type="checkbox"] + span,
+.iphone-toggle-buttons input[type="radio"] + span {
+  vertical-align: middle;
+}
+.iphone-toggle-buttons input[type="checkbox"] + span,
+.iphone-toggle-buttons input[type="radio"] + span,
+.iphone-toggle-buttons input[type="checkbox"] + span::before,
+.iphone-toggle-buttons input[type="radio"] + span::before,
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after {
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+}
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after,
+.iphone-toggle-buttons input[type="checkbox"]:checked + span::before,
+.iphone-toggle-buttons input[type="radio"]:checked + span::before {
+  right: 2px;
+}
+.iphone-toggle-buttons input[type="checkbox"] + span::before,
+.iphone-toggle-buttons input[type="radio"] + span::before,
+.iphone-toggle-buttons input[type="checkbox"]:checked + span::after,
+.iphone-toggle-buttons input[type="radio"]:checked + span::after {
+  left: 0;
+}
+.iphone-toggle-buttons input[type="checkbox"],
+.iphone-toggle-buttons input[type="radio"],
+.iphone-toggle-buttons input[type="checkbox"] + span::before,
+.iphone-toggle-buttons input[type="radio"] + span::before,
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after {
+  position: absolute;
+}
+.iphone-toggle-buttons label {
+  margin: 0px;
+  cursor: pointer;
+}
+.iphone-toggle-buttons input[type="checkbox"],
+.iphone-toggle-buttons input[type="radio"] {
+  filter: alpha(opacity=0);
+  -moz-opacity: 0;
+  -webkit-opacity: 0;
+  opacity: 0;
+}
+.iphone-toggle-buttons input[type="checkbox"] + span,
+.iphone-toggle-buttons input[type="radio"] + span {
+  width: 60px;
+  height: 22px;
+  font-size: 12px;
+  color: #FFF;
+  border: 0 none;
+  background-color: #58595b;
+  -webkit-box-shadow: inset 0px 1px 1px #262627;
+  -moz-box-shadow: inset 0px 1px 1px #262627;
+  box-shadow: inset 0px 1px 1px #262627;
+  position: relative;
+  text-indent: -9999px;
+}
+.iphone-toggle-buttons input[type="checkbox"] + span::before,
+.iphone-toggle-buttons input[type="radio"] + span::before {
+  content: "";
+  width: 29%;
+  height: 18px;
+  top: 2px;
+  left: 2px;
+  background-color: #f8f8f8;
+  background-image: -moz-linear-gradient(top, #ffffff, #eeeeee);
+  background-image: -ms-linear-gradient(top, #ffffff, #eeeeee);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#eeeeee));
+  background-image: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+  background-image: -o-linear-gradient(top, #ffffff, #eeeeee);
+  background-image: linear-gradient(top, #ffffff, #eeeeee);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
+}
+.iphone-toggle-buttons input[type="checkbox"] + span::after,
+.iphone-toggle-buttons input[type="radio"] + span::after {
+  text-indent: 0;
+  width: 72%;
+  height: 22px;
+  text-align: center;
+  top: 1px;
+}
+.iphone-toggle-buttons input[type="checkbox"]:checked + span,
+.iphone-toggle-buttons input[type="radio"]:checked + span {
+  background-color: #3fb300;
+  color: #fff;
+  -webkit-box-shadow: inset 0px 1px 1px #1b4d00;
+  -moz-box-shadow: inset 0px 1px 1px #1b4d00;
+  box-shadow: inset 0px 1px 1px #1b4d00;
+}
+.iphone-toggle-buttons input[type="checkbox"]:checked + span::before,
+.iphone-toggle-buttons input[type="radio"]:checked + span::before {
+  left: auto;
+}
+.iphone-toggle-buttons input[type="checkbox"]:checked + span::after,
+.iphone-toggle-buttons input[type="radio"]:checked + span::after {
+  height: 22px;
+  top: 1px;
+  -moz-border-radius: 15px 0 0 15px;
+  -webkit-border-radius: 15px 0 0 15px;
+  border-radius: 15px 0 0 15px;
+}
+.browser-support li.ie6,
+.browser-support li.ie7,
+.browser-support li.ie8 {
+  display: none;
+}
 /* Body and structure
 -------------------------------------------------- */
 body {
@@ -5900,8 +6052,7 @@ table td .btn-toolbar {
 .dblclick input {
   padding: 3px 3px 2px;
   position: absolute;
-  top: 9px;
-  left: 3px;
+  top: 1px;
   width: 80% !important;
 }
 table tfoot td {

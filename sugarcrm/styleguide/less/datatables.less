@@ -17,7 +17,9 @@ table.dataTable td.center,
 table.dataTable td.dataTables_empty {
 	text-align: center;
 }
-
+.dataTables_wrapper.unmodified table.datatable tbody td    {
+    white-space: normal;
+}
 /*
  * Table wrapper
  */
@@ -27,6 +29,10 @@ table.dataTable td.dataTables_empty {
 	*zoom: 1;
 }
 
+.dataTables_wrapper.unmodified select {
+    display: inline;
+    width: auto;
+}
 
 /*
  * Page length menu
@@ -39,6 +45,19 @@ table.dataTable td.dataTables_empty {
 /*
  * Filter
  */
+
+.dataTables_wrapper.unmodified .dataTables_filter {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    box-shadow: none;
+    display: inline;
+    float: right;
+}
+
+.dataTables_wrapper.unmodified .dataTables_filter input.span12 {
+    width: auto;
+}
+
 .dataTables_filter {
 	text-align: right;
 }

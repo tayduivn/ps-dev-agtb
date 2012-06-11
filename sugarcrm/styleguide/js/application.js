@@ -161,8 +161,7 @@
     $("[rel=popoverTop]").popover({placement: "top"})
 
     //clickovers  
-    //$('[rel="clickover"]').clickover()
-    //$('[rel="clickoverTop"]').clickover({placement: "top"})
+
     /*
     $('table.datatable').dataTable({
       "bPaginate": false,

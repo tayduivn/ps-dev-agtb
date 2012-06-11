@@ -1,0 +1,40 @@
+{
+  "aaData": [
+    [
+
+      "opp1",
+      "<a href='link.html'>Opp A</a> <a href=\"\" rel=\"clickoverTop\" data-title=\"Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>\" class='pull-right'><i class=\"icon-search label label-warn\"></i></a>",
+      "2012-01-01",
+      "Proposal",
+      "60",
+      50000,
+      60000,
+      50000 ,
+      "opp1 row details"
+    ],
+    [
+
+      "opp2",
+      "<a href='link.html'>Opp B</a> <a href=\"\" rel=\"clickoverTop\" data-title=\"Opp B Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>\" class='pull-right'><i class=\"icon-search label label-warn\"></i></a>",
+      "2012-02-01",
+      "Negotiation",
+      "70",
+      50000,
+      65000,
+      50000,
+      "opp2 row details"
+    ],
+    [
+
+      "opp3",
+      "<a href='link.html'>Opp C</a> <a href=\"\" rel=\"clickoverTop\" data-title=\"Opp C Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>\" class='pull-right'><i class=\"icon-search label label-warn\"></i></a>",
+      "2012-03-01",
+      "Closed",
+      "100",
+      50000,
+      90000,
+      90000  ,
+      "opp3 row details"
+    ]
+  ]
+}
