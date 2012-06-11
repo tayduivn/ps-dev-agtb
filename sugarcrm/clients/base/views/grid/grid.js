@@ -25,7 +25,7 @@
         this.isExpandableRows = false;
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = self.layout.getModel('grid');
+        this._collection = this.context.model.grid;
 
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.filterGridById, this);
