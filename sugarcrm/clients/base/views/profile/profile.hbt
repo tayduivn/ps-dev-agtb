@@ -1,23 +1,25 @@
-<div class="card2">
-    <div class="profile span7">
-        <a href="" class="pull-right">
-          {{! TODO: add image: <img src="" class="avatar" alt="avatar abcindustries"> }}
-        </a>
-        {{#each meta.panels}}
-        {{#each fields}}
-        {{#notMatch this.name "primary_address.*"}}
-        {{field ../../../this ../../../model}}
-        {{/notMatch}}
-        {{/each}}
-        {{/each}}
-        <span><div class="row-fluid">
-            {{! TODO: Use language agnostic labels here }}
-            <div class="span2 address">Address</div>
-                <div class="span4">
-                    {{model.attributes.primary_address_street}}<br>
-                    {{model.attributes.primary_address_city}}, {{model.attributes.primary_address_state}} {{model.attributes.primary_address_postalcode}}
+<div class="card2 row-fluid">
+    <div class="container-fluid">
+        <div class="profile span7">
+            <a href="" class="pull-right">
+              {{! TODO: add image: <img src="" class="avatar" alt="avatar abcindustries"> }}
+            </a>
+            {{#each meta.panels}}
+            {{#each fields}}
+            {{#notMatch this.name "primary_address.*"}}
+            {{field ../../../this ../../../model}}
+            {{/notMatch}}
+            {{/each}}
+            {{/each}}
+            <span><div class="row-fluid">
+                <div class="span4 address"><strong>{{getLabel "LBL_PRIMARY_ADDRESS" "Contacts"}}</strong></div>
+                    <div class="span8">
+                        {{model.attributes.primary_address_street}}<br>
+                        {{model.attributes.primary_address_city}}, {{model.attributes.primary_address_state}} {{model.attributes.primary_address_postalcode}}<br>
+                        {{model.attributes.primary_address_country}}
+                    </div>
                 </div>
-            </div>
-        </span>
+            </span>
+        </div>
     </div>
 </div>

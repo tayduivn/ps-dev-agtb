@@ -5,13 +5,18 @@
  * @extends View.View
  */
 ({
-    events: {
-        'click [name=save_button]': 'saveModel'
-    },
+    events: {},
     initialize: function(options) {
-        this.options.meta = this._meta;
+        this.options.meta = app.metadata.getView('Contacts', 'edit');
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
+        //this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
+        // Explanation: So until the Contacts vardefs.php provide label mappings, etc.,
+        // (which may not happen because a lot of these fields are inherited from Person)
+        // we need to supply the label in Contacts/metadata/portal/views/detail.php. But 
+        // this causes an issue since fields defs in client/base/fields/text for example,
+        // for detail assume the label is already there. So I'm using the profileedit field
+        // which does something like: {{str label model.module}} 
+        this.fallbackFieldTemplate = "profileedit"; 
     },
     render: function() {
         var self = this, currentUserAttributes;
@@ -41,6 +46,9 @@
                     // ---------------------------------------------- //
                     // ---------------------------------------------- //
                 } 
+            },
+            error: function(xhr, error) {
+                app.error.handleHttpError(xhr, error, self);
             }
         });
         ////////////////////////////////////////////////////////////////////
@@ -66,10 +74,9 @@
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
             self.context.get('subnavModel').set({
                 'title': fullName,
-                'meta': {
-                    "buttons": self._meta.buttons 
-                }
+                'meta': self.meta
             });
+            
             // Bypass subnav click handler
             $('.save-profile').on('click', function(e) {
                 e.stopPropagation();
@@ -79,137 +86,25 @@
         }
     },
     setModel: function(data) {
-        this.model.set(data, {silent: true});
+        this.model = app.data.createBean("Contacts", data);
         this.model.module = 'Contacts';
+        this.context.set('model', this.model);
     },
     saveModel: function() {
         var self = this, options;
         app.alert.show('save_profile_edit_view', {level: 'process', title: 'Saving'});
         options = {
-                success: function() {
-                    app.alert.dismiss('save_profile_edit_view');
-                    alert('TODO: redirect to profile...');
-                },
-                fieldsToValidate: self.getFields(this.model.module)
-        };
-        this.model.url = app.api.buildURL("Contacts", "update", this.model.attributes);
-        Backbone.Model.prototype.save.call(this.model, null, options);
-    },
-    // I assume this will eventually be in clients/base/views/profile-edit/profile-edit.php
-    _meta: {
-            "buttons": [
-                {
-                    "name": "save_button",
-                    "type": "button",
-                    "label": "Save",
-                    "value": "save",
-                    "class": "save-profile",
-                    "primary": true
-                },
-                {
-                    "name": "cancel_button",
-                    "type": "button",
-                    "label": "Cancel",
-                    "value": "cancel",
-                    "events": {
-                        "click": "function(){ window.history.back(); }"
-                    },
-                    "primary": false
-                }
-            ],
-            "templateMeta": {
-                "maxColumns": "2",
-                "widths": [
-                    {
-                        "label": "10",
-                        "field": "30"
-                    },
-                    {
-                        "label": "10",
-                        "field": "30"
-                    }
-                ],
-                "formId": "ProfileEditView",
-                "formName": "ProfileEditView",
-                "useTabs": false
+            success: function() {
+                app.alert.dismiss('save_profile_edit_view');
+                app.router.navigate('profile', {trigger: true});
             },
-            "panels": [
-                {
-                    "label": "default",
-                    "fields": [
-                        {
-                            // TODO: Add appropriate LBL to appstrings 
-                            "label": "First name",
-                            "name": "first_name",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "name": "last_name",
-                            // TODO: Add appropriate LBL to appstrings 
-                            "label": "Last name",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "label": "LBL_ACCOUNT",
-                            "name": "account_name",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "name": "title",
-                            // TODO: Add appropriate LBL to appstrings 
-                            "label": "Title", 
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "label": "LBL_PRIMARY_ADDRESS_STREET",
-                            "name": "primary_address_street",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "label": "LBL_PRIMARY_ADDRESS_CITY",
-                            "name": "primary_address_city",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "label": "LBL_PRIMARY_ADDRESS_STATE",
-                            "name": "primary_address_state",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "label": "LBL_PRIMARY_ADDRESS_POSTALCODE",
-                            "name": "primary_address_postalcode",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "name": "phone_home",
-                            // TODO: Add appropriate LBL to appstrings for work/home/mobile phones - LBL_LIST_PHONE == 'Phone'
-                            "label": "Home phone",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "name": "phone_work",
-                            "label": "Work phone",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                        {
-                            "name": "phone_mobile",
-                            "label": "Mobile phone",
-                            "colspan": 2,
-                            "type": "text"
-                        },
-                    ]
-                }
-            ]
-        }
+            error: function(xhr, textStatus, errorThrown) {
+                app.alert.dismiss('save_profile_edit_view');
+                app.error.handleHttpError(xhr, textStatus);
+            },
+            fieldsToValidate: self.getFields(this.model.module)
+        };
+        self.model.save(null, options);
+    }
 
 })

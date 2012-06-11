@@ -11,9 +11,9 @@
                         </div>
             <div class="btn-toolbar pull-left">
                           <div class="btn-group" data-toggle="buttons-checkbox" data-parentEmail="{{email_address}}">
-                            <button type="button" class="btn btn-edit {{eq primary_address "1" "active" ""}} is_primary" data-emailproperty="primary_address" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
-                            <button type="button" class="btn btn-edit {{eq opt_out "1" "active" ""}}" data-emailproperty="opt_out" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
-                            <button type="button" class="btn btn-edit {{eq invalid_email "1" "active" ""}}" data-emailproperty="invalid_email" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
+                              <button type="button" class="btn btn-edit {{#eq primary_address "1"}} active{{/eq}} is_primary" data-emailproperty="primary_address" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                              <button type="button" class="btn btn-edit {{#eq opt_out "1"}} active{{/eq}}" data-emailproperty="opt_out" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
+                              <button type="button" class="btn btn-edit {{#eq invalid_email "1"}} active{{/eq}}" data-emailproperty="invalid_email" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
                           </div>
                           <div class="btn-group">
                             <a href="javascript:void(0)" class="btn removeEmail" rel="tooltip" data-parentEmail="{{email_address}}"><i class="icon-minus"></i></a>

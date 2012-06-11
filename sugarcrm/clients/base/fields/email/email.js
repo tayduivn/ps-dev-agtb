@@ -26,6 +26,14 @@
      * @param {Object} event
      */
     remove: function(event) {
+console.log("**************");
+console.log("**************");
+console.log("**************");
+console.log("GOT IN....");
+console.log("**************");
+console.log("**************");
+console.log("**************");
+console.log("**************");
         var emailAddress = $(event.target).data('parentemail') || $(event.target).parent().data('parentemail'),
             existingAddresses = this.model.get(this.name);
 
