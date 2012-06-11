@@ -202,6 +202,11 @@ SUGAR.App = (function() {
                 this
             );
 
+            // App cache must be inited first
+            if (_app.cache) {
+                _app.cache.init(this);
+            }
+
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
@@ -215,7 +220,7 @@ SUGAR.App = (function() {
                 var options = {
                     public: true
                 };
-                _app.metadata.sync(syncCallback, options);
+               _app.metadata.sync(syncCallback, options);
             }]);
 
             this.loadConfig();
