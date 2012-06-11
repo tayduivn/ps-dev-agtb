@@ -264,20 +264,13 @@
             app.logger.debug("Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
-
-            // if (_.has(app.metadata.getModules(), module)) {
-                app.controller.loadView({
-                    module: module,
-                    modelId: id,
-                    action: action,
-                    layout: action
-                });
-                /*
-            } else {
-                app.router.navigate('error/404', {trigger: true});
-            }
-            */
-            
+            app.controller.loadView({
+                module: module,
+                modelId: id,
+                action: action,
+                layout: action
+            });
+        
         },
         error: function(errorType) {
             app.logger.debug("Error route: " + errorType);
