@@ -29,7 +29,8 @@ require_once('tests/rest/RestTestBase.php');
  *
  * @group forecasts
  */
-class ForecastModuleApiTest extends RestTestBase {
+class ForecastsFiltersApiTest extends RestTestBase
+{
 
     private $currentUser;
     private $employee1;
