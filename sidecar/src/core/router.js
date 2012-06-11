@@ -183,12 +183,9 @@
          */
         index: function() {
             app.logger.debug("Route changed to index");
-            if (app.config.defaultModule) {
-                this.list(app.config.defaultModule);
-            }
-            else {
+            if (app.acl.hasAccess('read', 'Home')) {
                 this.layout("Home", "home");
-            }
+            } 
         },
 
         /**
