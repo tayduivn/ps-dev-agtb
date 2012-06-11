@@ -22,14 +22,14 @@ describe("Error module", function() {
 
         app.error.initialize({statusCodes: statusCodes});
 
-        sinon.spy(app.error, "handleHTTPError");
+        sinon.spy(app.error, "handleHttpError");
         SugarTest.server.respondWith([404, {}, ""]);
         bean.save();
         SugarTest.server.respond();
         expect(handled).toBeTruthy();
-        expect(app.error.handleHTTPError.called).toBeTruthy();
+        expect(app.error.handleHttpError.called).toBeTruthy();
 
-        app.error.handleHTTPError.restore();
+        app.error.handleHttpError.restore();
     });
 
     it("should handle validation errors", function() {
@@ -81,16 +81,13 @@ describe("Error module", function() {
             responseText: '{ERROR: "invalid_grant"}',
             status: '400'
         };
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respondWith([400, {}, ""]);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleInvalidGrantError.called).toBeTruthy();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleInvalidGrantError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleInvalidGrantError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler.called).toBeTruthy();
         spyFallbackHandler.restore();
@@ -104,16 +101,13 @@ describe("Error module", function() {
             responseText: '{ERROR: "invalid_client"}',
             status: '400'
         };
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respondWith([400, {}, ""]);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleInvalidClientError.called).toBeTruthy();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleInvalidClientError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleInvalidClientError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler.called).toBeTruthy();
         spyFallbackHandler.restore();
@@ -128,16 +122,13 @@ describe("Error module", function() {
             status: '401',
             responseText: '{foo:"bar"}'
         };
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respondWith([401, {}, ""]);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleUnauthorizedError.called).toBeTruthy();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleUnauthorizedError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleUnauthorizedError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler.called).toBeTruthy();
         spyFallbackHandler.restore();
@@ -151,16 +142,13 @@ describe("Error module", function() {
             status: '403',
             responseText: '{foo:"bar"}'
         };
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respondWith([403, {}, ""]);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleForbiddenError.called).toBeTruthy();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleForbiddenError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHTTPError(xhr);
-        SugarTest.server.respond();
+        app.error.handleHttpError(xhr);
         expect(spyHandleForbiddenError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler.called).toBeTruthy();
         spyFallbackHandler.restore();

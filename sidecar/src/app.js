@@ -330,27 +330,33 @@ SUGAR.App = (function() {
          * @return {Object} XHR request object.
          */
         login: function(credentials, data, callbacks) {
-            callbacks = callbacks || {};
-            var origSuccess = callbacks.success, loginData;
-            var loadUserCallbacks = {
+            callbacks       = callbacks || {};
+            var origSuccess = callbacks.success,
+                origError   = callbacks.error,
+                loginData, loadUserCallbacks, loginCallbacks;
+
+            loadUserCallbacks = {
                 success: function(data) {
                     if (data.current_user) {
                         _app.user._reset(data ? data.current_user : null);
                     }
                     _app.trigger("app:login:success", loginData);
                     if (origSuccess) origSuccess(loginData);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if (origError) origError(xhr, textStatus, errorThrown);
+                    _app.error.handleHttpError(xhr, textStatus);
                 }
-            }
-            var loginCallbacks = {
+            };
+            loginCallbacks = {
                 success: function(data) {
+                    var method = 'read', module = 'me';
                     loginData = data;
-                    var method = 'read';
-                    var module = 'me';
                     _app.api.records(method, module, {}, {}, loadUserCallbacks);
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    $('#content').show(); 
-                    _app.error.handleHTTPError(xhr, textStatus);
+                    if (origError) origError(xhr, textStatus, errorThrown);
+                    _app.error.handleHttpError(xhr, textStatus);
                 }
             };
 
@@ -364,9 +370,10 @@ SUGAR.App = (function() {
          * @return {Object} XHR request object.
          */
         logout: function(callbacks, clear) {
-            var originalSuccess, xhr;
+            var originalSuccess, originalError, xhr;
             callbacks = callbacks || {};
             originalSuccess = callbacks.success;
+            originalError = callbacks.error;
 
             callbacks.success = function(data) {
                 // TODO: The user.js module now listens for logout event.
@@ -377,6 +384,10 @@ SUGAR.App = (function() {
                 if (originalSuccess) {
                     originalSuccess(data);
                 }
+            };
+            callbacks.error = function(xhr, textStatus, errorThrown) {
+                if (originalError) originalError(xhr, textStatus, errorThrown);
+                _app.error.handleHttpError(xhr, textStatus);
             };
 
             xhr = _app.api.logout(callbacks);

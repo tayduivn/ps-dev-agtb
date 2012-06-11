@@ -773,6 +773,28 @@
         app.metadata.set(base_metadata);
         app.data.declareModels();
 
+        var origRoutingBefore = app.routing.before;
+        app.routing.before = function(route, args) {
+            var module;
+
+            // First make sure we pass all original routing before tests.
+            if(origRoutingBefore(route, args)) {
+
+                // Check list and record routes module is defined or 404.
+                if(route === 'list' || route === 'record') {
+                    module = args[0] ? args[0] : null;
+
+                    if (!module || !_.has(app.metadata.getModules(), module)) {
+                        app.router.navigate('error/404', {trigger: true});
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+            return true;
+        };
+        
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
@@ -802,14 +824,6 @@
                 layout: "profileedit"
             });
         });
-
-        app.router.route("error/:type", "error", function(errorType) {
-            app.controller.loadView({
-                layout: "error",
-                errorType: errorType 
-            });
-        });
-
     });
 
     app.view.Field = app.view.Field.extend({

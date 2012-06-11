@@ -37,6 +37,13 @@
                 this.enableOnError();
             }
         },
+        callCustomHandlerIfXhr: function(xhr, error, status, fn) {
+            if(xhr && xhr.responseText) {
+                this.callCustomHandler(xhr, error, fn);
+            }  else {
+                this.handleStatusCodesFallback(getGenericMessage(status, error));
+            }
+        },
 
         // This attempts to call function fn (which may not exist), otherwise,
         // falls back to handleStatusCodesFallback. Caller ensures xhr.responseText exists.
@@ -47,17 +54,14 @@
                 this.handleStatusCodesFallback(xhr.responseText);
             }
         },
-
         /**
          * Attempts to match on regexStr and delegate to corresponding handler. Otherwise,
          * resorts to calling handleStatusCodesFallback fallback.
          */
         callCustomIfMatchingError: function(xhr, error, regexStr, statusCode, fn) {
             var re = new RegExp(regexStr); 
-            if(xhr && xhr.responseText) {
-                if(re.test(xhr.responseText)) {
-                    this.callCustomHandler(xhr, error, fn);
-                } 
+            if(xhr && xhr.responseText && re.test(xhr.responseText)) {
+                this.callCustomHandler(xhr, error, fn);
             } else {
                 this.handleStatusCodesFallback(getGenericMessage(statusCode, error));
             }
@@ -135,38 +139,22 @@
              * Clients can provide a handleForbiddenError to override this.
              */
             403: function(xhr, error) {
-                if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleForbiddenError);
-                }  else {
-                    this.handleStatusCodesFallback(getGenericMessage('403', error));
-                }
+                this.callCustomHandlerIfXhr(xhr, error, '403', this.handleForbiddenError);
             },
             404: function(xhr, error) {
-                if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleNotFoundError);
-                }  else {
-                    this.handleStatusCodesFallback(getGenericMessage('404', error));
-                }
+                this.callCustomHandlerIfXhr(xhr, error, '404', this.handleNotFoundError);
             },
             /**
              * Clients can provide a handleMethodNotAllowedError to override this.
              */
             405: function(xhr, error) {
-                if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleMethodNotAllowedError);
-                }  else {
-                    this.handleStatusCodesFallback(getGenericMessage('405', error));
-                }
+                this.callCustomHandlerIfXhr(xhr, error, '405', this.handleMethodNotAllowedError);
             },
             422: function(xhr, error, model) {
                 this.handleValidationError(model, xhr.responseText);
             },
             500: function(xhr, error) {
-                if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleServerError);
-                }  else {
-                    this.handleStatusCodesFallback(getGenericMessage('500', error));
-                }
+                this.callCustomHandlerIfXhr(xhr, error, '500', this.handleServerError);
             }
         },
 
@@ -227,19 +215,19 @@
          * @param {String} error Error message
          * @method
          */
-        handleHTTPError: function(xhr, error, model) {
+        handleHttpError: function(xhr, error, model) {
             // If we have a handler defined for this status code
-            if (xhr.status && this.statusCodes[xhr.status]) {
-                this.statusCodes[xhr.status].call(this, xhr, error, model);
-
-            // We probably need to think the following two conditions through a bit more ;=)
-            } else if(xhr.responseText) {
-                this.handleStatusCodesFallback(xhr.responseText);
-            } else {
-                // TODO: Default catch all error code handler
-                // Temporarily going to the handleStatusCodesFallback handler but will probably need
-                // to go to a sensible "all other errors" type of handler.
-                this.handleStatusCodesFallback("Error in handleHTTPError. No responseText available.");
+            if(xhr) {
+                if (xhr.status && this.statusCodes[xhr.status]) {
+                    this.statusCodes[xhr.status].call(this, xhr, error, model);
+                } else if(xhr.responseText) {
+                    this.handleStatusCodesFallback(xhr.responseText);
+                } else {
+                    // TODO: Default catch all error code handler
+                    // Temporarily going to the handleStatusCodesFallback handler but will probably need
+                    // to go to a sensible "all other errors" type of handler.
+                    this.handleStatusCodesFallback("Error in handleHttpError. No responseText available.");
+                }
             }
         },
 
