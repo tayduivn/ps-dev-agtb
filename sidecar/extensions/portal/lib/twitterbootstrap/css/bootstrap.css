@@ -5800,7 +5800,7 @@ h1 {
 /* tour */
 .tourSee {
   color: #ffffff;
-  position: absolute;
+  position: fixed;
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
@@ -7238,6 +7238,12 @@ color: @red;
   position: relative;
   display: inline-block;
   float: right;
+}
+#searchForm .btn {
+  margin-right: 0px;
+}
+#searchForm input.search-query {
+  min-width: 237px;
 }
 @media (max-width: 480px) {
   .nav-collapse {

@@ -1,17 +1,17 @@
 <div class="card2">
                 <div class="block filtered tabbable tabs-left" id="moduleActivity">
                     <ul class="nav nav-tabs results">
-                        {{#each context.attributes.collection.models}}
+                        {{#each collection.models}}
                         <li class="search">
                             <a data-toggle="tab"><span class="label label-log">{{str "LBL_MODULE_NAME" attributes._module}}</span></a>
-                            <p><a href="#{{attributes._module}}/{{id}}">{{fieldWithName ../this "name" this}}</a></p>
+                            <p><a href="#{{attributes._module}}/{{id}}">{{attributes.name}}</a></p>
                             <div class="actions">
                                <a><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                             </div>
                         </li>
                         {{/each}}
                     </ul>
-                    {{#notEq context.attributes.collection.next_offset "-1"}}
+                    {{#notEq collection.next_offset "-1"}}
                         {{#each meta.buttons}}
                             {{field ../this ../model}}
                         {{/each}}
@@ -22,19 +22,19 @@
                         {{field ../this ../model}}
                     </li>
                     {{/each}}
-                    {{#if context.attributes.collection.page}}
-                    {{#eq context.attributes.collection.page "1"}}
-                    {{#notEq context.attributes.collection.next_offset "-1"}}
+                    {{#if collection.page}}
+                    {{#eq collection.page "1"}}
+                    {{#notEq collection.next_offset "-1"}}
                     <li>
                         <div class="page_counter">
-                            <small>Page {{context.attributes.collection.page}}</small>
+                            <small>Page {{collection.page}}</small>
                         </div>
                     </li>
                     {{/notEq}}
                     {{else}}
                     <li>
                         <div class="page_counter">
-                            <small>Page {{context.attributes.collection.page}}</small>
+                            <small>Page {{collection.page}}</small>
                         </div>
                     </li>
                     {{/eq}}

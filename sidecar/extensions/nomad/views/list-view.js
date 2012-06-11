@@ -10,6 +10,7 @@
             'swipeLeft article': 'onSwipeLeftItem',
             'swipeRight article': 'onSwipeRightItem',
             'click .remove-item-btn': 'onRemoveItem',
+            'click .unlink-item-btn': 'onUnlinkItem',
             'click .edit-item-btn': 'onEditItem',
             'click .menu-item':'onClickMenuItem'
         },
@@ -28,10 +29,14 @@
 
             this.activeArticle = null;
         },
-        render: function () {
-            app.view.View.prototype.render.call(this);
+        _renderSelf: function () {
+            app.view.View.prototype._renderSelf.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
+
+            if (this.collection.next_offset === -1) {
+                this.$('.show-more-bottom-btn').hide();
+            }
         },
         search: function (text) {
             this.collection.fetch();
@@ -70,6 +75,7 @@
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult, 0);
 
             this.collection.fetch({add: true,
+                relate: !!this.context.get('link'),
                 silent: true,
                 offset: offset,
                 max_num: app.config.maxQueryResult,
@@ -110,7 +116,9 @@
         showMoreBottomRecords: function () {
             this.showLoadingMsg('.show-more-bottom-btn',true);
 
+            //relate: !!this.context.get('link'),
             this.collection.paginate({add: true,
+                relate: !!this.context.get('link'),
                 success: _.bind(function () {
                     if (this.collection.length > this.getMaxPageSize()) {
                         this.$('.show-more-top-btn').show();
@@ -169,6 +177,16 @@
                 var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
                 var model = this.collection.get(cid);
                 model.destroy();
+            }
+        },
+        onUnlinkItem: function (e) {
+            e.preventDefault();
+            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
+
+            if (isOk) {
+                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
+                var model = this.collection.get(cid);
+                model.destroy({ relate: true });
             }
         },
         onEditItem: function (e) {

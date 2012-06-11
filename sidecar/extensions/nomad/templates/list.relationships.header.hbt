@@ -1,12 +1,13 @@
-<h1 class="nomad">Associate {{module}}</h1>
+<h1 class="nomad">Related {{module}}</h1>
 
 <div class="form-horizontal" id="createRecord" style="display:inline;">
     <fieldset>
         <div>
-            <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Cancel</a>
+            <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Back</a>
         </div>
     </fieldset>
 </div>
+<!--
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 listing fav filtered">
@@ -14,7 +15,7 @@
                 <i class="icon-search"></i>
                 <div class="form-search row-fluid">
                     <input type="text" class="search-query"
-                           placeholder="       Search all {{context.attributes.module}}">
+                           placeholder="Search all {{context.attributes.module}}">
                     <aside>
                         <div class="btn-group">
                             <a title="Starred" href="#" class="btn favorites-btn"><i class="icon-star"></i></a>
@@ -25,4 +26,4 @@
             </section>
         </div>
     </div>
-</div>
+</div>-->

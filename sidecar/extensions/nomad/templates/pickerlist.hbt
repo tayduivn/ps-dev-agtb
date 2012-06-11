@@ -1,10 +1,11 @@
+<h1 class="nomad">Choose link type</h1>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 listing" id="listing"><i></i>
             <div>
                 {{#each items}}
                 <article class="picker-list-row">
-                    <a href="#{{buildLinkRoute ../context ../model this.name ../action}}">
+                    <a href="#{{buildLinkRoute ../context ../model this.name ../action}}?depth=2">
                         {{this.name}}
                     </a>
                 </article>
@@ -15,7 +16,6 @@
 </div>
 <fieldset>
     <div>
-        <span class="blankspacer left"></span>
         <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Back</a>
     </div>
 </fieldset>

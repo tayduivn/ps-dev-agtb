@@ -38,7 +38,8 @@
             }, 4);
 
             q.drain = function() {
-                app.router.go(-2);
+                var depth = parseInt(source.context.get("depth")) || 1;
+                app.router.go(-depth);
             };
 
             this.$('.selecterd-flag:checked').each(function() {

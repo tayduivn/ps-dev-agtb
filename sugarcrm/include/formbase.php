@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: formbase.php 53409 2010-01-04 03:31:15Z roger $
@@ -51,14 +51,14 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 	if(!empty($_REQUEST[$prefix.'record']) && !$skipRetrieve)
 		$focus->retrieve($_REQUEST[$prefix.'record']);
 
-	if(!empty($_POST['assigned_user_id']) && 
-	    ($focus->assigned_user_id != $_POST['assigned_user_id']) && 
+	if(!empty($_POST['assigned_user_id']) &&
+	    ($focus->assigned_user_id != $_POST['assigned_user_id']) &&
 	    ($_POST['assigned_user_id'] != $current_user->id)) {
 		$GLOBALS['check_notify'] = true;
 	}
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
-   
+
 	foreach($focus->field_defs as $field=>$def) {
         if ( $field == 'id' && !empty($focus->id) ) {
             // Don't try and overwrite the ID
@@ -78,11 +78,11 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 				if($_POST[$prefix.$field][0] === '' && !empty($_POST[$prefix.$field][1]) ) {
 					unset($_POST[$prefix.$field][0]);
 				}
-				$_POST[$prefix.$field] = encodeMultienumValue($_POST[$prefix.$field]);	
+				$_POST[$prefix.$field] = encodeMultienumValue($_POST[$prefix.$field]);
 			}
 
 			$focus->$field = $_POST[$prefix.$field];
-			/* 
+			/*
 			 * overrides the passed value for booleans.
 			 * this will be fully deprecated when the change to binary booleans is complete.
 			 /
@@ -141,7 +141,7 @@ function getPostToForm($ignore='', $isRegularExpression=false)
 			if(!preg_match($ignore, $key)) {
                                 $fields .= add_hidden_elements($key, $value);
 			}
-		}	
+		}
 	} else {
 		foreach ($_POST as $key=>$value){
 			if($key != $ignore) {
@@ -157,6 +157,7 @@ function getGetToForm($ignore='', $usePostAsAuthority = false)
 	$fields = '';
 	foreach ($_GET as $key=>$value)
 	{
+	    if(is_array($value)) continue;
 		if($key != $ignore){
 			if(!$usePostAsAuthority || !isset($_POST[$key])){
 				$fields.= "<input type='hidden' name='$key' value='$value'>";
@@ -184,11 +185,11 @@ function handleRedirect($return_id='', $return_module='', $additionalFlags = fal
 
 	$url = buildRedirectURL($return_id, $return_module);
 	header($url);
-	exit;	
+	exit;
 }
 
 //eggsurplus: abstract to simplify unit testing
-function buildRedirectURL($return_id='', $return_module='') 
+function buildRedirectURL($return_id='', $return_module='')
 {
     if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "")
 	{
@@ -200,44 +201,44 @@ function buildRedirectURL($return_id='', $return_module='')
 	}
 	if(isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != "")
 	{
-	    
+
 	   //if we are doing a "Close and Create New"
         if(isCloseAndCreateNewPressed())
         {
-            $return_action = "EditView";    
-            $isDuplicate = "true";        
+            $return_action = "EditView";
+            $isDuplicate = "true";
             $status = "";
-            
+
             // Meeting Integration
             if(isset($_REQUEST['meetingIntegrationFlag']) && $_REQUEST['meetingIntegrationFlag'] == 1) {
             	$additionalFlags = array('meetingIntegrationShowForm' => '1');
             }
             // END Meeting Integration
-        } 
+        }
 		// if we create a new record "Save", we want to redirect to the DetailView
-		else if(isset($_REQUEST['action']) && $_REQUEST['action'] == "Save" 
+		else if(isset($_REQUEST['action']) && $_REQUEST['action'] == "Save"
 			&& $_REQUEST['return_module'] != 'Activities'
 //BEGIN SUGARCRM flav=pro ONLY
-			&& $_REQUEST['return_module'] != 'WorkFlow'  
+			&& $_REQUEST['return_module'] != 'WorkFlow'
 //END SUGARCRM flav=pro ONLY
-			&& $_REQUEST['return_module'] != 'Home' 
+			&& $_REQUEST['return_module'] != 'Home'
 //BEGIN SUGARCRM flav!=sales ONLY
-			&& $_REQUEST['return_module'] != 'Forecasts' 
+			&& $_REQUEST['return_module'] != 'Forecasts'
 //END SUGARCRM flav!=sales ONLY
 			&& $_REQUEST['return_module'] != 'Calendar'
 			&& $_REQUEST['return_module'] != 'MailMerge'
 			//BEGIN SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'TeamNotices'
 			//END SUGARCRM flav=pro ONLY
-			) 
+			)
 			{
 			    $return_action = 'DetailView';
 			} elseif($_REQUEST['return_module'] == 'Activities' || $_REQUEST['return_module'] == 'Calendar') {
 			$return_module = $_REQUEST['module'];
-			$return_action = $_REQUEST['return_action']; 
+			$return_action = $_REQUEST['return_action'];
 			// wp: return action needs to be set for one-click close in task list
-		} 
-		else 
+		}
+		else
 		{
 			// if we "Cancel", we go back to the list view.
 			$return_action = $_REQUEST['return_action'];
@@ -247,7 +248,7 @@ function buildRedirectURL($return_id='', $return_module='')
 	{
 		$return_action = "DetailView";
 	}
-	
+
 	if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "")
 	{
 		$return_id = $_REQUEST['return_id'];
@@ -259,7 +260,7 @@ function buildRedirectURL($return_id='', $return_module='')
             $add .= "&{$k}={$v}";
         }
     }
-    
+
     if (!isset($isDuplicate) || !$isDuplicate)
     {
         $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action{$add}";
@@ -322,23 +323,23 @@ function getLikeForEachWord($fieldname, $value, $minsize=4)
 }
 
 function isCloseAndCreateNewPressed() {
-    return isset($_REQUEST['action']) && 
+    return isset($_REQUEST['action']) &&
            $_REQUEST['action'] == "Save" &&
-           isset($_REQUEST['isSaveAndNew']) && 
-           $_REQUEST['isSaveAndNew'] == 'true';	
+           isset($_REQUEST['isSaveAndNew']) &&
+           $_REQUEST['isSaveAndNew'] == 'true';
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
 /**
  * This is a helper function to return the url portion of the teams sent
- * 
+ *
  * @param $module String value of module used for the prefixing
  * @return String URL format of teams sent to the form base code
  */
 function get_teams_url($module='') {
 	require_once('include/SugarFields/SugarFieldHandler.php');
-	$sfh = new SugarFieldHandler();  
-	$sf = $sfh->getSugarField('Teamset', true);      	
+	$sfh = new SugarFieldHandler();
+	$sf = $sfh->getSugarField('Teamset', true);
     $teams = $sf->getTeamsFromRequest('team_name');
     $url = '';
 	if(!empty($teams)) {
@@ -352,7 +353,7 @@ function get_teams_url($module='') {
            $url .= "&{$module}team_name_collection_{$count}=" . urlencode($name);
            $count++;
 	   }
-	   
+
 	   if(isset($_REQUEST['primary_team_name_collection'])) {
 	   	  $primary_index = $_REQUEST['primary_team_name_collection'];
 	   	  $primary_team_id = $_REQUEST["id_team_name_collection_{$primary_index}"];
@@ -367,7 +368,7 @@ function get_teams_url($module='') {
  * get_teams_hidden_inputs
  * This is a helper function to construct a String of the hidden input parameters representing the
  * teams that were sent to the form base code
- * 
+ *
  * @param $module String value of module
  * @return String HTML format of teams sent to the form base code
  */
@@ -376,18 +377,18 @@ function get_teams_hidden_inputs($module='') {
 	if(!empty($module)) {
 		foreach($_REQUEST as $name=>$value) {
 			if(preg_match("/^{$module}(.*?team_name.*?$)/", $name, $matches)) {
-			   $_REQUEST[$matches[1]] = $value;  
+			   $_REQUEST[$matches[1]] = $value;
 			}
 		}
 	}
 
-	
+
 	require_once('include/SugarFields/SugarFieldHandler.php');
-	$sfh = new SugarFieldHandler();  
-	$sf = $sfh->getSugarField('Teamset', true);      	
-    $teams = $sf->getTeamsFromRequest('team_name');	
+	$sfh = new SugarFieldHandler();
+	$sf = $sfh->getSugarField('Teamset', true);
+    $teams = $sf->getTeamsFromRequest('team_name');
     $input = '';
-    
+
 	if(!empty($teams)) {
 	   $count = 0;
 	   foreach($teams as $id=>$name) {
@@ -400,7 +401,7 @@ function get_teams_hidden_inputs($module='') {
 	      $input .= "<input type='hidden' name='primary_team_name_collection' value='" . $_REQUEST['primary_team_name_collection'] . "'>\n";
 	   }
 	}
-	return $input;    
+	return $input;
 }
 //END SUGARCRM flav=pro ONLY
 
