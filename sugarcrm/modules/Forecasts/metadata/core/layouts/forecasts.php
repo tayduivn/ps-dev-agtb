@@ -39,7 +39,7 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
             'view' => 'changeLog',
         ),
         6 => array(
-            'view' => 'grid',
+            'view' => 'forecastsWorksheet',
         ),
         7 => array(
             'view' => 'forecastsSubnav',

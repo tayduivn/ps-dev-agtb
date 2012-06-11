@@ -43,7 +43,7 @@
                 }
             });
 
-            this._models.grid = new app.Model.Grid();
+            this._models.worksheet = new app.Model.Worksheet();
         },
 
         createModels: function(data) {

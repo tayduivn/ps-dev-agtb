@@ -1,7 +1,7 @@
 /**
  * View that displays header for current app
- * @class View.Views.GridView
- * @alias SUGAR.App.layout.GridView
+ * @class View.Views.WorksheetView
+ * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
  */
 ({
@@ -25,14 +25,14 @@
         this.isExpandableRows = false;
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = self.layout.getModel('grid');
+        this._collection = self.layout.getModel('worksheet');
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", this.filterGridById, this);
+        this.layout.context.on("change:selectedUser", this.filterWorksheetById, this);
     },
 
     /**
-     * Renders Grid view
+     * Renders view
      */
     render:function () {
         var self = this;
@@ -62,7 +62,7 @@
      *
      * @param params is always a context
      */
-    filterGridById:function (params) {
+    filterWorksheetById:function (params) {
         this.gTable.fnFilter(params.attributes.selectedUser.id);
     },
 

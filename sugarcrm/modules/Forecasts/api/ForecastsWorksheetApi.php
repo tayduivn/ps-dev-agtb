@@ -42,14 +42,6 @@ class ForecastsWorksheetApi extends ModuleApi {
                 'shortHelp' => 'A ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
             ),
-            'grid' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','grid'),
-                'pathVars' => array('',''),
-                'method' => 'grid',
-                'shortHelp' => 'A grid',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#grid',
-            ),
             'forecastsCommitted' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts','forecastsCommitted'),
@@ -69,7 +61,7 @@ class ForecastsWorksheetApi extends ModuleApi {
      * @param $args
      * @return array
      */
-    public function grid($api, $args)
+    public function worksheet($api, $args)
     {
         require_once('modules/Reports/Report.php');
         global $current_user, $mod_strings, $app_list_strings, $app_strings;
@@ -151,8 +143,4 @@ class ForecastsWorksheetApi extends ModuleApi {
         return array('committed' => $forecasts);
     }
 
-    public function worksheet(){
-        //placeholder
-        return "worksheet placeholder";
-    }
 }
