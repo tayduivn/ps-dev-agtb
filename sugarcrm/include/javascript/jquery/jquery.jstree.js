@@ -1417,12 +1417,13 @@
 	$.jstree.plugin("themes", {
 		__init : function () { 
 			this.get_container()
-				.bind("init.jstree", $.proxy(function () {
-						var s = this._get_settings().themes;
-						this.data.themes.dots = s.dots; 
-						this.data.themes.icons = s.icons; 
-						this.set_theme(s.theme, s.url);
-					}, this))
+                // REMOVED so jsTree does not try to load its own CSS over our styleguide css
+                //.bind("init.jstree", $.proxy(function () {
+                //		var s = this._get_settings().themes;
+                //		this.data.themes.dots = s.dots;
+                //		this.data.themes.icons = s.icons;
+                //		this.set_theme(s.theme, s.url);
+                //	}, this))
 				.bind("loaded.jstree", $.proxy(function () {
 						// bound here too, as simple HTML tree's won't honor dots & icons otherwise
 						if(!this.data.themes.dots) { this.hide_dots(); }
@@ -1440,7 +1441,7 @@
 		_fn : {
 			set_theme : function (theme_name, theme_url) {
 				if(!theme_name) { return false; }
-				if(!theme_url) { theme_url = $.jstree._themes + theme_name + '/boostrap.css'; }
+				if(!theme_url) { theme_url = $.jstree._themes + theme_name + '/style.css'; }
 				if($.inArray(theme_url, themes_loaded) == -1) {
 					$.vakata.css.add_sheet({ "url" : theme_url });
 					themes_loaded.push(theme_url);
