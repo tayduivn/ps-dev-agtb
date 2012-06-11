@@ -46,7 +46,7 @@ class RestTestPublicMetadataSugarLayouts extends RestTestBase {
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         foreach ($this->_testPaths as $file) {
-            preg_match('#clients/(.*)/layouts/#', $file, $m);
+            preg_match('#clients/(.*)/(.*)/layouts/#', $file, $m);
             $platform = $m[1];
             $filename = basename($file, '.php');
             $contents = "<?php\n\$viewdefs['$platform']['layout']['$filename'] = array('test' => 'foo');\n";
