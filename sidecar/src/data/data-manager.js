@@ -500,7 +500,7 @@
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error, model);
+                app.error.handleHttpError(xhr, error, model);
 
                 self.trigger("data:sync:end", method, model, error);
                 if (options.error) options.error(xhr, error);
