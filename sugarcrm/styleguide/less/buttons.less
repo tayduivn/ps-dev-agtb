@@ -102,7 +102,7 @@
 }
 
 
-// Alternate buttons
+// Alternate buttonshttp://suga.site/sugar7/forecast_james_pro.html#
 // --------------------------------------------------
 
 // Set text color
@@ -128,7 +128,8 @@
 .btn-danger.active,
 .btn-success.active,
 .btn-info.active,
-.btn-inverse.active {
+.btn-inverse.active,
+.btn-invisible.active {
   color: rgba(255,255,255,.75);
 }
 
@@ -158,6 +159,19 @@
 .btn-inverse {
   .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
 }
+
+// invisible appears as no button
+.btn-invisible {
+  background: none;
+  border: 1px solid transparent;
+  .box-shadow(none);
+}
+.btn-invisible:hover {
+border: 1px solid lighten(@btnBorder, 1%);
+*border: 0; // Remove the border to prevent IE7's black border on input:focus
+border-top-color: darken(@btnBorder, 5%);
+}
+
 
 
 // Cross-browser Jank

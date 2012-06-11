@@ -148,9 +148,12 @@
   	    return false;
   	})
 
-
-
-
+    $('table.datatable').dataTable({
+      "bPaginate": false,
+      "bFilter": true,
+      "bInfo": false,
+      "bAutoWidth": false
+    })  
 
     // Select widget
     $(".chzn-select").chosen()
@@ -162,12 +165,8 @@
 
     //clickovers  
 
-    /*
-    $('table.datatable').dataTable({
-      "bPaginate": false,
-      "bFilter": true,
-      "bInfo": false,
-      "bAutoWidth": false
-    })  */
+    $('[rel="clickover"]').clickover()
+    $('[rel="clickoverTop"]').clickover({placement: "top"})
+
 
 }(window.jQuery)

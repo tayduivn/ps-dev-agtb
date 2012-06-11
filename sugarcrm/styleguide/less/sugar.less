@@ -51,6 +51,10 @@ footer {
 .successBackground {background-color: @successBackground;}
 .warningBackground {background-color: @warningBackground;}
 
+.table-striped tbody tr.odd.thegray td {
+  background-color: @gray !important;
+  color: @gray !important;  
+}
 
 /* Typography */
 h1 {font-size: 26px !important;}
@@ -264,11 +268,24 @@ border-right: 1px solid @grayLighter;
           transition: all .2s linear;
   }
 
+#folded > div {
+    width: inherit;
+}
+
 #folded .tab-pane#overview {
-    background: @white;
     border-left: none;
   }
 #folded .tab-pane.active#overview {
+  border-left: 1px solid darken(@grayLighter, 4%);
+}
+#dashboard  #folded .tab-pane.active {
+  position: fixed !important;
+  top: 47px;
+  right: 0;
+  background: @grayLighter;
+  height: 100%;
+  width: inherit;
+  padding: 20px 0;
   border-left: 1px solid darken(@grayLighter, 4%);
 }
 #folded .tab-pane.active {
@@ -286,7 +303,7 @@ border-right: 1px solid @grayLighter;
 #folded [data-toggle="tab"].actions {top: 0; color: @gray;}
 
 #searchActivity {margin-top: -12px;}
-
+.subhead {margin-top: 20px;}
 .subnav-fixed {
   position: fixed;
   top: 48px;
@@ -308,23 +325,16 @@ border-right: 1px solid @grayLighter;
   margin: 0 auto;
   padding: 0 1px;
 }
-.subnav .nav > li:first-child > a,
-.subnav .nav > li:first-child > a:hover {
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-          border-radius: 0;
-}
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url(../img/badge_256.png) 50% 50% no-repeat;
-  background-size: 50%;
+  background: url(../img/badge_256g.png) 50% 8px no-repeat;
   float: left;
+  height: 19px;
+  width: 26px;
   z-index: 2000;
   display: block;
-  height: 44px;
-  width: 44px;
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
@@ -366,25 +376,10 @@ article .avatar {
 	.border-radius(3px);
 }
 
+
 .navbar form .btn {
-	margin-top: 8px;
-	margin-left: -33px;
-	padding: 5px 10px;
-	min-width: 16px;
-  .border-radius (0 4px 4px 0);
-}
-
-.navbar .btn {
-	margin-top: 8px;
-	min-width: 16px;
-	display: inline;
-}
-
-.navbar .dropdown .btn {
-	margin-top: 8px;
-	min-width: 16px;
-	padding: 3px 4px !important;	
-	display: block;
+	margin-left: -11px;
+	line-height: 16px;
 }
 
 .logo {
@@ -430,6 +425,17 @@ article .avatar {
 }
 .subnav .control-group .btn-toolbar.pull-right {
   margin: 0;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  cursor: not-allowed;
+  background-color: transparent !important;
+  border: none !important;
 }
 
 /* blocks */
@@ -479,7 +485,7 @@ article .avatar {
 }
 
 .block.tabs-left .nav-tabs p {
-  margin: -18px 60px 10px 70px;
+  margin: -18px 80px 10px 70px;
 }
 
 .block.tabs-left .nav-tabs li li .avatar {
@@ -630,13 +636,13 @@ position: relative;
 .card2 {
   margin: -10px 0 20px;
 }
-.card2 .row-fluid {
+.card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
   padding: 10px 0 0;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 #folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
-.card2 .extend + .row-fluid, .card2 .row-fluid:last-child {
+.card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 
@@ -797,11 +803,12 @@ margin-left: 0;
 .block span.add-on {margin-left:0 !important;}
 .span2 .input-prepend input {width: inherit;}
 
-.vcard span, .block span {
+.vcard span {
 	display: block;	
 }
 .block span.label {
-	width: 44px;
+	width: 20px;
+	height: 30px;
 	margin: -6px 10px 0 -10px;
 }
 .vcard span.tel,
@@ -864,9 +871,32 @@ hr.soften {
   font-weight: 500;
   margin-top: -5px;
 }
+.subnav {
+  z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
+  border: solid @grayLight 1px; /* drop the border on the fixed edges */
+  .border-radius(4px);
+  @shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+}
+.subnav .nav {margin: 0;}
 .subnav .btn-toolbar.pull-right {margin: 9px 20px 0 0;}
 .subnav .btn-toolbar.pull-left {margin: 9px 0 0 0;}
-
+.subnav .nav > li {margin: 0; padding: 0;}
+.subnav .nav > li a {
+  color: @gray; 
+  text-shadow: 0 1px 1px rgba(255,255,255,.9); 
+  padding: 8px; 
+  margin: 6px 0 6px 6px;
+}
+.subnav .nav > li.active a {
+background-color: darken(@gray, 10%);
+background-color: darken(@gray, 15%) e("\9");
+background-image: none;
+color: @grayLighter !important;
+text-shadow: 0 1px 1px rgba(0,0,0,.75);
+outline: 0;
+.box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
+}
 
 /* Fixed subnav on scroll, but only for 980px and up (sorry IE!) */
 @media (min-width: 980px) {
@@ -887,12 +917,6 @@ hr.soften {
     width: 938px;
     margin: 0 auto;
     padding: 0 1px;
-  }
-  .subnav .nav > li:first-child > a,
-  .subnav .nav > li:first-child > a:hover {
-    -webkit-border-radius: 0;
-       -moz-border-radius: 0;
-            border-radius: 0;
   }
 }
 
@@ -1190,11 +1214,18 @@ color: @red;
     font-size: 14px;
 }
 .navbar .advanced {
-  padding: 6px 10px;
-  margin-right: -10px;
-  margin-left: -10px;
-  margin-top: -30px;
-  text-decoration: none;
+  position: absolute;
+  top: -8px;
+  right: -20px;
+  line-height: 18px;
+}
+.navbar .advanced .dropdown-menu {
+  right: 35px;
+}
+
+.navbar .nav > li > a.btn {
+  padding: 4px 8px;
+  margin-top: 8px;
 }
 
 .btn-small .caret  {
@@ -1209,6 +1240,25 @@ color: @red;
   width: 98%;
   text-align: center;
 }
+
+.thumbnav {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+}
+.thumbnav li {
+  display: block;
+  margin: 0 0 8px;
+}
+.thumbnav li i {
+  font-size: 18px;
+  padding-top: 6px
+}
+.thumbnav li a {
+  font-size: 11px;
+  min-width: 32px;
+}
+
 
 /* Progress
 ------------------------- */
