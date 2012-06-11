@@ -3556,6 +3556,7 @@ a:hover [class^="icon-"] {
   margin: 0;
   padding: 0;
   height: 52px;
+  text-decoration: none;
 }
 #record-action > a > i {
   margin: 16px 0 0 0;
