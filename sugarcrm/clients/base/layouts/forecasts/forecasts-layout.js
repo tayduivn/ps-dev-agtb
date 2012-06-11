@@ -16,6 +16,7 @@
 
             this.context = _.extend(this.context, {
                 register: app.events.register,
+                selectedTimePeriod: '',
                 // keep a record of the currently selected user on context
                 selectedUser: {}
             });
