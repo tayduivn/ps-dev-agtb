@@ -39,7 +39,7 @@
         var self = this;
         app.view.View.prototype.render.call(this);
 
-        this.gTable = this.$el.find('#gridTable').dataTable(
+        this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "bInfo":false,
                 "bPaginate":false
@@ -48,7 +48,7 @@
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
-            $('#gridTable tr').on('click', function () {
+            $('.worksheetTable tr').on('click', function () {
                 if (self.gTable.fnIsOpen(this)) {
                     self.gTable.fnClose(this);
                 } else {
@@ -63,7 +63,7 @@
      *
      * @param params is always a context
      */
-    filterGridById:function (params) {
+    filterWorksheetById:function (params) {
         this.gTable.fnFilter(params.attributes.selectedUser.id);
     },
 

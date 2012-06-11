@@ -270,7 +270,7 @@ fixtures.metadata = {
                                 "view" : "grid",
                                 "listeners" : [
                                     {
-                                        "treeview:node_select" : "filterGridById"
+                                        "treeview:node_select" : "filterWorksheetById"
                                     }
                                 ]
 

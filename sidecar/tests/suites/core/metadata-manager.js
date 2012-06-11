@@ -184,7 +184,7 @@ describe('Metadata Manager', function() {
             // have to call the layout first before we can get the listeners
             var listLayout = app.metadata.getLayout("Cases","list");
             var gridListeners = app.metadata.getListeners( module, layout, view );
-            expect(gridListeners).toEqual([{"treeview:node_select" : "filterGridById"}])
+            expect(gridListeners).toEqual([{"treeview:node_select" : "filterWorksheetById"}])
         });
     });
 });
