@@ -71,6 +71,7 @@ class ForecastsFiltersApi extends ModuleApi {
         return array(
             'timeperiods' => array(
                 'label' => 'Forecast Period:',
+                'default' => TimePeriod::getCurrentId(),
                 'options' => TimePeriod::get_timeperiods_dom(),
             ),
             'stages' => array(
