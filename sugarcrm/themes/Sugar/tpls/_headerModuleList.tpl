@@ -59,7 +59,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 	{if $name == "Home"}
 		{assign var='homeImageLabel' value=$homeImage}
 		{assign var='homeClass' value='home'}
-		{assign var='title' value=$name}
+		{assign var='title' value=$APP.LBL_TABGROUP_HOME}
 	{else}
 		{assign var='homeImageLabel' value=''}
 		{assign var='homeClass' value=''}

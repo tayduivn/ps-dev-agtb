@@ -80,23 +80,23 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
         // Start overwrite
         $this->writeHTMLTable($table, false, $options);
     }
-    
+
     function display(){
         //turn off all error reporting so that PHP warnings don't munge the PDF code
-        error_reporting(E_ALL);
+        error_reporting(0);
         set_time_limit(1800);
-        
-        //Create new page           
+
+        //Create new page
         $this->AddPage();
         $this->SetFont(PDF_FONT_NAME_MAIN,'',PDF_FONT_SIZE_MAIN);
         $this->Ln();
     }
-    
+
     /**
      * To be override
      */
     function buildFileName(){
-        
+
     }
     /**
      * This method draw an horizontal line with a quotes specific style.

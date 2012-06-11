@@ -5,10 +5,12 @@
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
+            this.template = app.template.get("list"); //todo:remove it later
+
             // This view behaves like the list view
             this.meta = app.metadata.getView(this.module, "list");
             this.fallbackFieldTemplate = "list";
-            
+
             this.parentModule = this.context.get("toModule");
             this.parentId = this.context.get("toId");
             this.link = this.context.get("viaLink");
@@ -22,28 +24,30 @@
             app.logger.debug("Multiselect: " + this.multiselect);
         },
 
-        onSaveClicked: function() {
+        save: function() {
+            var source = this;
 
-            // Loop through all selected items in the list
-            // For each such item do the following:
+            var q = async.queue(function (task, callback) {
+                task.relateBean.save(null, {
+                    relate: true,
+                    fieldsToValidate:{}, //TODO: remove it
+                    success: function() {
+                        callback();
+                    }
+                });
+            }, 4);
 
-            // Grab them from this.collection
-            //var selectedIndex = 0; //
-            //var selectedBean = this.collection.at(selectedIndex);
-            // Create a related bean from it
-            //selectedBean = app.data.createRelatedBean(this.parentBean, selectedBean, this.link);
-            // Save it
-            //selectedBean.save(null, {
-            //    relate: true,
-            //    success: function() {/* navigate back */}
-            //});
-        },
+            q.drain = function() {
+                var depth = parseInt(source.context.get("depth")) || 1;
+                app.router.go(-depth);
+            };
 
-        onCancelClicked: function() {
+            this.$('.selecterd-flag:checked').each(function() {
+                var cid = $(this).closest('article').attr('id').replace(source.module, '');
 
+                q.push({relateBean: app.data.createRelatedBean(source.parentBean, source.collection.get(cid), source.link)});
+            });
         }
-
-
     });
 
 })(SUGAR.App);

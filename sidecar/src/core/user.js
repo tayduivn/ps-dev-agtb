@@ -93,11 +93,14 @@
          * @private
          */
         _reset: function(user) {
+            app.logger.trace(user);
             // Clear local storage if complete reset is requested
             // or the new user that is about to be set has different ID (multiple users per domain are not supported)
             if (!user || (user.id != _usr.id)) {
                 _usr.clear({silent:true});
-                app.cache.cut(_key);
+                if (app.cache.has(_key)) {
+                    app.cache.cut(_key);
+                }
             }
 
             if (user) {
@@ -106,11 +109,8 @@
         }
     };
 
-    app.events.on("app:login:success", function(data) {
-        // Server always wins. We update the user with fresh data from the server
-        _user._reset(data ? data.current_user : null);
-    }).on("app:logout", function(clear) {
-        if (clear) {
+    app.events.on("app:logout", function(clear) {
+        if (clear === true) {
             _user._reset();
         }
     });

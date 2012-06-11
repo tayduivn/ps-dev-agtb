@@ -38,14 +38,14 @@ describe("App", function() {
         it("should fire a app:init event when initialized", function() {
             var cbSpy = sinon.spy(function() {});
             SugarTest.app.events.on("app:init", cbSpy);
-            SugarTest.app.trigger("app:init", this, {modules: cbSpy});
+            SugarTest.app.trigger("app:init", SugarTest.app, {modules: cbSpy});
             expect(cbSpy).toHaveBeenCalled();
         });
     });
 
     it("should initialize addtional components", function() {
         var components = {login:{target:'#footer'}};
-        SugarTest.app.loadAdditionalComponents(components);
+        SugarTest.app.controller.loadAdditionalComponents(components);
         expect(SugarTest.app.additionalComponents.login).toBeDefined();
     });
 
@@ -73,7 +73,6 @@ describe("App", function() {
 
             SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
             SugarTest.app.on("app:sync:complete", cbSpy);
-
             SugarTest.app.sync();
             SugarTest.wait();
 
@@ -81,14 +80,11 @@ describe("App", function() {
                 expect(cbSpy).toHaveBeenCalled();
             });
         });
-
-        it('should start and call sync if authenticated', function() {
-            var syncSpy = sinon.spy(SUGAR.App, 'sync');
-            
-            SugarTest.app.start();
-            expect(syncSpy.called).toBeTruthy();
-
-            SUGAR.App.sync.restore();
+        it('should call sync after login', function() {
+            var cbSpy = sinon.stub(SUGAR.App, 'sync', function() { return true; });
+            SugarTest.app.trigger("app:login:success");
+            expect(cbSpy).toHaveBeenCalled();
+            SugarTest.app.sync.restore();
         });
 
         it("should fire a sync:error event when one of the sync jobs have failed", function() {
@@ -111,14 +107,15 @@ describe("App", function() {
         var model = new Backbone.Model(),
             action = "edit",
             options = {},
-            context = {},
+            context = SugarTest.app.context.getContext(),
             routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        SugarTest.app.navigate(context, action, model, options);
+        context.set("model", model);
+        SugarTest.app.navigate(context, model, action, options);
 
-        expect(routerSpy).toHaveBeenCalled();
+        expect(routerSpy).toHaveBeenCalledWith("Contacts/1234/edit");
 
         routerSpy.restore();
     });
@@ -132,7 +129,7 @@ describe("App", function() {
             callbacks   = {success: successFn};
 
         mock.expects("login").once().withArgs(
-            'foo', credentials, callbacks );
+            'foo', credentials);
         app.login('foo', credentials, callbacks );
         expect(mock.verify()).toBeTruthy();
     });

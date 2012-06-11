@@ -137,7 +137,8 @@ class SchedulersViewEdit extends ViewEdit {
 		if($this->bean->time_from || $this->bean->time_to) {
 			$this->bean->adv_interval = true;
 		}
-
+	
+		$this->ss->assign("adv_interval", $this->bean->adv_interval?"true":"false");
 		$this->ss->assign("adv_visibility", $this->bean->adv_interval?"":"display: none");
 		$this->ss->assign("basic_visibility", $this->bean->adv_interval?"display: none":"");
 		

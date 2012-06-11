@@ -1,41 +1,54 @@
 (function(app) {
     /**
-     * Controller manages the loading and unloading of Views within the app. It extends from a Backbone.View.
+     * Controller manages the loading and unloading of layouts within the app.
+     *
+     * **Extending controller**
+     *
+     * Application may choose to extend the controller to provide custom implementation.
+     * Your custom controller class name should be capiltalized {@link Config#appId} followed by `Controller` word.
+     * <pre><code>
+     * (function(app) {
+     *
+     *     app.PortalController = app.Controller.extend({
+     *
+     *         loadView: function(params) {
+     *            // Custom implementation of loadView
+     *
+     *            // Should you need to call super method:
+     *            app.Controller.prototype.loadView.call(this, params);
+     *         }
+     *
+     *     });
+     *
+     * })(SUGAR.App);
+     * </code></pre>
+     *
      * @class Core.Controller
      * @singleton
      * @alias SUGAR.App.controller
      */
     var Controller = Backbone.View.extend({
         /**
-         * Initialize our controller with a context object
+         * Initializes this controller.
          * @private
-         * @method
+         * @constructor
+         * @ignore
          */
         initialize: function() {
             /**
-             * The primary context state variable - the states associated with the focus of the View
-             * @property {Object}
+             * The primary context of the app.
+             * This context is associated with the root layout.
+             * @property {Core.Context}
              */
             this.context = app.context.getContext();
 
-            // Subscribe and publish events
-            app.events.register(
-                /**
-                 * Start event. Fired when the application has
-                 * finished loading its dependencies and should initialize
-                 * everything.
-                 *
-                 * <pre><code>
-                 * obj.on("app:start", callback);
-                 * </pre></code>
-                 * @event
-                 */
-                "app:start",
-                this
-            );
+            app.events.on("app:sync:complete", function() {
+                app.router.start();
+            });
 
-            // When the app has been synced, start the rest of the app flow.
-            app.events.on("app:sync:complete", this.syncComplete);
+            app.events.on("app:login:success", function() {
+                app.sync();
+            });
         },
 
         /**
@@ -50,7 +63,10 @@
          * - layout: Name of the layout to .oad
          */
         loadView: function(params) {
-            this.layout = null;
+
+            if (this.layout) {
+                this.layout.dispose();
+            }
 
             // Reset context and initialize it with new params
             this.context.clear({silent: true});
@@ -66,54 +82,51 @@
             });
 
             //A context needs to have a primary layout to render to the page
-            this.context.set({layout:this.layout});
+            this.context.set("layout", this.layout);
+
+            // Render the layout to the main element
+            app.$contentEl.html(this.layout.$el);
 
             // Render the layout with empty data
-            if (this.layout) {
-                this.layout.render();
-            }
+            this.layout.render();
 
-            app.trigger("app:view:change", params.layout);
-
-            // Render the rendered layout to the main element
-            this.$('#content').html(this.layout.$el);
+            app.trigger("app:view:change", params.layout, params);
 
             // Fetch the data, the layout will be rendered when fetch completes
             this.context.loadData();
         },
 
         /**
-         * Callback function once the app.sync() finishes. This should check if
-         * the current user has authenticated or not and handle the redirection
-         * if necessary.
-         * @method
+         * Creates, renders, and registers within the app additional components.
          */
-        syncComplete: function() {
-            app.router.start();
+        loadAdditionalComponents: function(components) {
+            // Unload components that may be loaded previously
+            _.each(app.additionalComponents, function(component) {
+                if (component) {
+                    component.remove();
+                    component.dispose();
+                }
+            });
+
+            app.additionalComponents = {};
+            _.each(components, function(component, name) {
+                if (component.target) {
+                    (app.additionalComponents[name] = app.view.createView({
+                        name: name,
+                        context: this.context,
+                        el: this.$(component.target)
+                    })).render();
+                }
+            });
         }
     });
 
-    /**
-     * Should be auto initialized by the app.
-     * @private
-     */
-    var module = {
-        /**
-         * Initializes this module when a new instance of App is created.
-         *
-         * @param {Object} instance The instance of the App
-         * @param {Array} modules An optional list of modules to initialize
-         * @method
-         */
-        initController: function(instance, modules) {
-            if (modules && _.indexOf(modules, "controller") == -1) {
-                return;
-            }
+    app.augment("Controller", Controller, false);
 
-            instance.controller = _.extend(module, instance.controller, new Controller({el: app.rootEl}));
-        }
-    };
+    app.events.on("app:init", function(app) {
+        app.controller.setElement(app.$rootEl);
+    }, app.controller).on("app:start", function(app) {
+        app.controller.loadAdditionalComponents(app.config.additionalComponents);
+    });
 
-    app.events.on("app:init", module.initController);
-    app.augment("controller", module);
 })(SUGAR.App);

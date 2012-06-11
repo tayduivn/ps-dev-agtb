@@ -25,26 +25,13 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadata extends RestTestBase {
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-    
-    public function tearDown()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    }
-
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
     
-        $this->assertTrue(isset($restReply['reply']['sugarFields']),'SugarFields are missing.');
+        $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 

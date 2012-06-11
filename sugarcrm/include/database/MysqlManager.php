@@ -1459,7 +1459,6 @@ class MysqlManager extends DBManager
 	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 
-
     /**
      * Create or updates the stored procedures for the recursive query capabilities
      * @return resource
@@ -1617,5 +1616,26 @@ class MysqlManager extends DBManager
 
         $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
         return $sql;
+    }
+
+    /**
+     * Returns a DB specific FROM clause which can be used to select against functions.
+     * Note that depending on the database that this may also be an empty string.
+     * @return string
+     */
+    public function getFromDummyTable()
+    {
+        return '';
+    }
+
+    /**
+     * Returns a DB specific piece of SQL which will generate GUID (UUID)
+     * This string can be used in dynamic SQL to do multiple inserts with a single query.
+     * I.e. generate a unique Sugar id in a sub select of an insert statement.
+     * @return string
+     */
+        public function getGuidSQL()
+    {
+        return 'UUID()';
     }
 }

@@ -448,6 +448,27 @@ enableInsideViewConnector();
 
 // Install the logic hook for FTS
 installLog("Creating FTS logic hook");
+if (!function_exists('createFTSLogicHook')) {
+    function createFTSLogicHook($filePath = 'application/Ext/LogicHooks/logichooks.ext.php')
+    {
+        $customFileLoc = create_custom_directory($filePath);
+        $fp = sugar_fopen($customFileLoc, 'wb');
+        $contents = <<<CIA
+<?php
+if (!isset(\$hook_array) || !is_array(\$hook_array)) {
+    \$hook_array = array();
+}
+if (!isset(\$hook_array['after_save']) || !is_array(\$hook_array['after_save'])) {
+    \$hook_array['after_save'] = array();
+}
+\$hook_array['after_save'][] = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
+CIA;
+
+        fwrite($fp,$contents);
+        fclose($fp);
+
+    }
+}
 createFTSLogicHook();
 // also write it to Extension directory so it won't be lost when rebuilding extensions
 createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
@@ -474,7 +495,7 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
         //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($_SESSION['fts_type']))
+        if(!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type']))
         {
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
             $indexer = new SugarSearchEngineFullIndexer();

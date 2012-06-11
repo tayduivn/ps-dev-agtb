@@ -9,6 +9,23 @@ var handler = function(e) {
 $('article').onpress(handler);
 */
 
+$('body').onpress('.bizcard .card',function(e){
+    $(this).next().trigger('click');
+});
+
+$('.bizcard .card').swipeLeft(function(){
+    $(this).next().trigger('click');
+});
+
+
+
+
+$('body').onpress('label.checkbox',function(e){
+    $(this).find('input[type=checkbox]').trigger('click');
+    e.preventDefault();
+});
+
+
     $('body').onpress('.xxx',function(e){
         e.preventDefault();
         //$(this).remove();
@@ -36,10 +53,13 @@ $('article').onpress(handler);
 	);
 	$('#logo').swipeRight(function () {
 		closeBottomMenu();
-		$('html').find('body').addClass('onL');
+		$('html').find('body').addClass('onL',function(){
+			$('.nav-collapse').show();
+		});
 	});
 	$('#logo').swipeLeft(function () {
-	      $('html').find('body').toggleClass('onL');
+		$('html').find('body').removeClass('onL');
+		$('.nav-collapse').hide();
 	      return false;
 	});
 	$('#create').bind('touchmove', function (e) {
@@ -67,7 +87,6 @@ $('article').onpress(handler);
 	$('#search').swipeDown(function () {
 		$('body').find('#searchForm').toggleClass('hide');
 	});
-
 	$('.thrhld').on('click',function () {
 		if($(this).parent().hasClass('teaser')) {
 			$(this).parent().removeClass('teaser');

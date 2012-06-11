@@ -477,12 +477,15 @@ class ListViewData {
 			$totalCount  = $this->getTotalCount($main_query);
 		}
 		SugarVCR::recordIDs($this->seed->module_dir, array_keys($idIndex), $offset, $totalCount);
+        $module_names = array(
+            'Prospects' => 'Targets'
+        );
 		$endOffset = (floor(($totalCount - 1) / $limit)) * $limit;
 		$pageData['ordering'] = $order;
 		$pageData['ordering']['sortOrder'] = $this->getReverseSortOrder($pageData['ordering']['sortOrder']);
 		$pageData['urls'] = $this->generateURLS($pageData['ordering']['sortOrder'], $offset, $prevOffset, $nextOffset,  $endOffset, $totalCounted);
 		$pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
-		$pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir);
+		$pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir, 'moduleName' => strtr($seed->module_dir, $module_names));
         $pageData['stamp'] = $this->stamp;
         $pageData['access'] = array('view' => $this->seed->ACLAccess('DetailView'), 'edit' => $this->seed->ACLAccess('EditView'));
 		$pageData['idIndex'] = $idIndex;
@@ -491,14 +494,18 @@ class ListViewData {
         }
         
         $queryString = '';
-
-        if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search")
+		
+        if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" || 
+        	isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"] > 1) || $_REQUEST["type_basic"][0] != "") ||
+        	isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords")
         {
             $queryString = "-advanced_search";
         }
         else if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search")
         {
-            $searchMetaData = SearchForm::retrieveSearchDefs($seed->module_dir);
+            if($seed->module_dir == "Reports") $searchMetaData = SearchFormReports::retrieveReportsSearchDefs();
+            else $searchMetaData = SearchForm::retrieveSearchDefs($seed->module_dir);
+
             $basicSearchFields = array();
 
             if( isset($searchMetaData['searchdefs']) && isset($searchMetaData['searchdefs'][$seed->module_dir]['layout']['basic_search']) )

@@ -1,4 +1,54 @@
 (function(app) {
+
+    /**
+     * Manages routing behavior.
+     *
+     *
+     * The default implementation provides `before` and `after` callbacks that are executed
+     * before and after a route gets triggered.
+     *
+     * @class Core.Routing
+     * @singleton
+     * @alias SUGAR.App.routing
+     */
+    app.augment("routing", {
+
+        /**
+         * Checks if a user is authenticated before triggering a route.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         * @return {Boolean} Flag indicating if the route should be triggered (`true`).
+         */
+        before: function(route, args) {
+            // skip this check for all white-listed routes (app.config.unsecureRoutes)]
+            if (_.indexOf(app.config.unsecureRoutes, route) >= 0) return true;
+
+            // Check if a user is un-athenticated and redirect him to login
+            if (!app.api.isAuthenticated()) {
+                app.router.login();
+                return false;
+            }
+            else if (!app.isSynced) {
+                Backbone.history.stop();
+                app.sync();
+                return false;
+            }
+            return true;
+        },
+
+        /**
+         * Gets called after a route gets triggered.
+         *
+         * The default implementation does nothing.
+         * @param {String} route Route name.
+         * @param args(optional) Route parameters.
+         */
+        after: function(route, args) {
+            // Do nothing
+        }
+
+    });
+
     /**
      * Router manages the watching of the address hash and routes to the correct handler.
      * @class Core.Router
@@ -7,10 +57,6 @@
      */
     var Router = Backbone.Router.extend({
 
-        // TODO: This router does not support routes that don't require users been authenticated
-        // For example, one can not navigate to http://localhost:8888/portal#signup
-        // This must be refactored!!!
-
         /**
          * Routes hash map.
          * @property {Object}
@@ -18,7 +64,7 @@
         routes: {
             "": "index",
             "logout": "logout",
-            "signup": "signup", // TODO: This route is useless. See comment above
+            "logout/?clear=:clear": "logout",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -27,20 +73,36 @@
         },
 
         /**
-         * See `Backbone.Router.navigate` documentation for details.
+         * Calls {@link Core.Routing#before} before invoking a route handler
+         * and {@link Core.Routing#after} after the handler is invoked.
          *
-         * Sidecar overrides this method to redirect the app to the login route if the app is not authenticated.
-         * @param {String} fragment URL fragment.
-         * @param options(optional) Route options.
+         * @param {Function} handler Route callback handler.
+         * @private
          */
-        navigate: function(fragment, options) {
-            if (!(app.api.isAuthenticated())) {
-                Backbone.Router.prototype.navigate.call(this, fragment);
-                this.login();
-                Backbone.history.stop();
-            } else {
-                Backbone.Router.prototype.navigate.call(this, fragment, options);
+        _routeHandler: function(handler) {
+            var args = Array.prototype.slice.call(arguments, 1),
+                route = handler.route;
+
+            if (app.routing.before(route, args)) {
+                handler.apply(this, args);
+                app.routing.after(route, args);
             }
+        },
+
+        /**
+         * Registeres a handler for a named route.
+         *
+         * This method wraps the handler into {@link Core.Router#_routeHandler} method.
+         *
+         * @param {String} route Route expression.
+         * @param {String} name Route name.
+         * @param {Function/String} callback Route handler.
+         */
+        route: function(route, name, callback) {
+            if (!callback) callback = this[name];
+            callback.route = name;
+            callback = _.wrap(callback, this._routeHandler);
+            Backbone.Router.prototype.route.call(this, route, name, callback);
         },
 
         /**
@@ -51,6 +113,15 @@
         goBack: function() {
             app.logger.debug("Navigating back...");
             window.history.back();
+        },
+
+        /**
+         * Navigates the window history.
+         *
+         * @param {Number} steps Number of steps to navigate (can be negative).
+         */
+        go: function(steps) {
+            window.history.go(steps);
         },
 
         /**
@@ -162,7 +233,7 @@
          * Handles `login` route.
          */
         login: function() {
-            app.logger.debug("Loging in");
+            app.logger.debug("Logging in");
             app.controller.loadView({
                 module: "Login",
                 layout: "login",
@@ -173,24 +244,13 @@
         /**
          * Handles `logout` route.
          */
-        logout: function() {
-            app.logger.debug("Loging out");
-            var self = this;
-            app.logout({success: function(data) {
-                self.navigate("#");
-            }});
-        },
-
-        /**
-         * Handles `signup` route.
-         */
-        signup: function() {
-            app.logger.debug("Route changed to signup");
-            app.controller.loadView({
-                module: "Signup",
-                layout: "signup",
-                create: true
-            });
+        logout: function(clear) {
+            clear = clear == "1" ? true : false;
+            app.logger.debug("Logging out: " + clear);
+            app.logout({success: function() {
+                app.router.navigate("#");
+                app.router.login();
+            }}, clear);
         },
 
         /**

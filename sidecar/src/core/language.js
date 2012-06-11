@@ -36,10 +36,11 @@
         /**
          * Retrieves an application list string or object.
          * @param {String} key Key of the string to retrieve.
+         * @param {String} defaultValue(optional) Value to return if the key is not found.
          * @return {Object/String} String or object for the given key.
          */
-        getAppListStrings: function(key) {
-            return this._get("appListStrings", key);
+        getAppListStrings: function(key, defaultValue) {
+            return this._get("appListStrings", key) || defaultValue;
         },
 
         /**

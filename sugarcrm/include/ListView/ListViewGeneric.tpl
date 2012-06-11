@@ -44,6 +44,11 @@
         $('.selectActionsDisabled').children().each(function(index) {
             $(this).attr('onclick','').unbind('click');
         });
+        
+        var selectedTopValue = $("#selectCountTop").attr("value");
+        if(typeof(selectedTopValue) != "undefined" && selectedTopValue != "0"){
+        	sugarListView.prototype.toggleSelected();
+        }
 	});
 {/literal}	
 </script>
@@ -63,7 +68,7 @@
                     {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS|replace:"<item2>":$createLink|replace:"<item3>":$importLink}
                 </p>
                 <p class="submsg">
-                    {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item4>":$helpLink}
+                    {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$pageData.bean.moduleName|replace:"<item4>":$helpLink}
                 </p>
         {elseif $query == "-advanced_search"}
             <p class="msg">

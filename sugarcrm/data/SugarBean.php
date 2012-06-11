@@ -268,6 +268,18 @@ class SugarBean
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
     var $in_import = false;
+
+    /**
+     * Default ACL classes, for dynamic ACL/customizations
+     * @var array
+     */
+    protected static $default_acls = array();
+    /**
+     * Default visibility classes, for dynamic ACL/customizations
+     * @var array
+     */
+    protected static $default_visibility = array();
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -383,6 +395,42 @@ class SugarBean
     }
 
     /**
+     * Get default visibility settings
+     * @return array
+     */
+    public static function getDefaultVisibility()
+    {
+        return self::$default_visibility;
+    }
+
+    /**
+     * Set default visibility settings
+     * @return array
+     */
+    public static function setDefaultVisibility($data)
+    {
+        self::$default_visibility = $data;
+    }
+
+    /**
+     * Get default ACL settings
+     * @return array
+     */
+    public static function getDefaultACL()
+    {
+        return self::$default_acl;
+    }
+
+    /**
+     * Set default ACL settings
+     * @return array
+     */
+    public static function setDefaultACL($data)
+    {
+        self::$default_acl = $data;
+    }
+
+    /**
      * Load visibility manager
      * @return BeanVisibility
      */
@@ -390,7 +438,7 @@ class SugarBean
     {
         if(empty($this->visibility)) {
             $data = isset($GLOBALS['dictionary'][$this->object_name]['visibility'])?$GLOBALS['dictionary'][$this->object_name]['visibility']:array();
-            $this->visibility = new BeanVisibility($this, $data);
+            $this->visibility = new BeanVisibility($this, array_merge($data, self::$default_visibility));
         }
         return $this->visibility;
     }
@@ -658,7 +706,11 @@ class SugarBean
     //BEGIN SUGARCRM flav=pro ONLY
     public function isFavoritesEnabled()
     {
-        return !empty($GLOBALS['dictionary'][$this->getObjectName()]['favorites']);
+    	if(isset($GLOBALS['dictionary'][$this->getObjectName()]['favorites']))
+    	{
+    		return $GLOBALS['dictionary'][$this->getObjectName()]['favorites'];
+    	}
+        return false;
     }
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=following ONLY
@@ -5380,16 +5432,15 @@ function save_relationship_changes($is_update, $exclude=array())
 
     /**
      * Default ACL implementations for a bean
+     * @return array
      */
     public function defaultACLs()
     {
-        if($this->bean_implements('ACL')) {
-// FIXME: make configurable
-            return array(
-            	'SugarACLStatic',
-            );
+        $data = isset($GLOBALS['dictionary'][$this->object_name]['acls'])?$GLOBALS['dictionary'][$this->object_name]['acls']:array();
+        if(!isset($data['SugarACLStatic']) && $this->bean_implements('ACL')) {
+             $data['SugarACLStatic'] = true;
         }
-        return array();
+        return array_merge($data, self::$default_acls);
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -5565,16 +5616,16 @@ function save_relationship_changes($is_update, $exclude=array())
     *
     * @return STRING
     */
-    function getOwnerField()
+    function getOwnerField($returnFieldName = false)
     {
         if (isset($this->field_defs['assigned_user_id']))
         {
-            return $this->assigned_user_id;
+            return $returnFieldName? 'assigned_user_id': $this->assigned_user_id;
         }
 
         if (isset($this->field_defs['created_by']))
         {
-            return $this->created_by;
+            return $returnFieldName? 'created_by': $this->created_by;
         }
 
         return '';

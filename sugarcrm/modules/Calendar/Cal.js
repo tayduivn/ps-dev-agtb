@@ -47,6 +47,7 @@
 	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
 	CAL.dd_registry = new Object();
 	CAL.resize_registry = new Object();
+	CAL.print = false;
 	
 	CAL.dom = YAHOO.util.Dom;
 	CAL.get = YAHOO.util.Dom.get;
@@ -966,6 +967,10 @@
 		if(typeof SugarWidgetSchedulerSearch.hideCreateForm != 'undefined')
 			SugarWidgetSchedulerSearch.hideCreateForm();
 			
+		$("#scheduler .schedulerInvitees").css("display", "");
+		$("#create-invitees-title").css("display", "");
+		$("#create-invitees-buttons").css("display", "");
+			
 		if(CAL.enable_repeat){			
 			CAL.reset_repeat_form();
 		}			
@@ -1294,6 +1299,11 @@
 							CAL.get("btn-save").focus();
 								
 							setTimeout(function(){
+								if (!res.edit) {									
+									$("#scheduler .schedulerInvitees").css("display", "none");
+									$("#create-invitees-buttons").css("display", "none");
+									$("#create-invitees-title").css("display", "none");
+								}
 								enableQS(false);
 								disableOnUnloadEditView();
 							},500);	
@@ -1948,6 +1958,10 @@
 		
 		var day_width;
 		var cal_width = document.getElementById("cal-width-helper").offsetWidth;
+		
+		if (CAL.print) {
+			cal_width = 800;
+		}
 			
 		var left_width = 80;
 		if(CAL.style == "basic"){

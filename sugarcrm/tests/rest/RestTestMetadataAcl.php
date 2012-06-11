@@ -25,14 +25,6 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadataAcl extends RestTestBase {
-    public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-    }
-    
     public function tearDown()
     {
         global $db;
@@ -44,7 +36,8 @@ class RestTestMetadataAcl extends RestTestBase {
             $db->query("DELETE FROM acl_roles WHERE id = '{$this->aclRole->id}'");
             $db->commit();
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        
+        parent::tearDown();
     }
 
     public function testMetadataAclBasic() {

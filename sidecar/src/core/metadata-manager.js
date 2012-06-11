@@ -3,13 +3,21 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
+    var _layoutPrefix = "l:";
+    var _viewPrefix = "v:";
     var _langPrefix = "lang:";
+
+    // TODO: Maybe just have this all in _metadata?
 
     // Metadata that has been loaded from offline storage (memory cache)
     // Module specific metadata
     var _metadata = {};
     // Field definitions
     var _fields = {};
+    // View definitions
+    var _views = {};
+    // Layout definitions
+    var _layouts = {};
     // String packs
     var _lang = {};
     // Other
@@ -71,7 +79,14 @@
             name: "text",
             text: "textarea",
             decimal: "float",
-            currency: "text"
+            currency: "text",
+            // viewdefs use "link" type to denote the fact the field is actually a url instead of using type "url" from vardefs
+            // in the main product there are identical templates for both url and link
+            // note that if someone puts a "real" link field (relationship link) on a view, it'll break the mapping
+            // this should be fixed on the server because "link" type on a view was meant to be something like
+            // a display type, not widget type. In other words, it tells the app to make the url a hyperlink
+            // instead of displaying it as a text string.
+            link: "url"
         },
 
         /**
@@ -95,11 +110,6 @@
                                     field = { name: field };
                                 }
 
-                                // Assign type
-                                field.type = field.type || fieldDef.type;
-                                // Patch type
-                                field.type = self.fieldTypeMap[field.type] || field.type;
-
                                 // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
                                 // TODO: This should be done on the server-side on my opinion
 
@@ -107,6 +117,11 @@
                                     _.extend(field, field.displayParams);
                                     delete field.displayParams;
                                 }
+
+                                // Assign type
+                                field.type = field.type || fieldDef.type;
+                                // Patch type
+                                field.type = self.fieldTypeMap[field.type] || field.type;
 
                                 panel.fields[fieldIndex] = field;
                             }
@@ -184,6 +199,12 @@
             var metadata = this.getModule(module, "views");
             if (metadata && metadata[view]) {
                 metadata = metadata[view].meta;
+            } else if (_views[view]) {
+                metadata = _views[view];
+            }
+
+            if (!metadata) {
+                app.logger.error("No view found for " + view);
             }
 
             return metadata;
@@ -198,8 +219,15 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
 
+            // Check to see if there is a module layout
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
+            } else if (_layouts[layout]) { // Look for a module non-specific layout
+                metadata = _layouts[layout].meta;
+            }
+
+            if (!metadata) {
+                app.logger.error("No layout found for " + layout);
             }
 
             return metadata;
@@ -211,6 +239,16 @@
          */
         getModuleList: function() {
             return _getMeta(_app, "moduleList", "", true) || {};
+        },
+
+        /**
+         * Gets module list as delimited string
+         * @param {String} The delimiter to use.
+         * @return {Object}
+         */
+        getDelimitedModuleList: function(delimiter) {
+            if(!delimiter) return null;
+            return _.toArray(this.getModuleList()).join(delimiter);
         },
 
         /**
@@ -254,12 +292,32 @@
                 _set("modules", modules.join(","));
             }
 
-            if (data.sugarFields) {
-                _.each(data.sugarFields, function(entry, type) {
+            if (data.fields) {
+                _.each(data.fields, function(entry, type) {
                     _fields[type] = entry;
                     _set(_fieldPrefix + type, entry);
                     if (entry.controller) {
                         app.view.declareComponent("field", type, null, entry.controller);
+                    }
+                });
+            }
+
+            if (data.views) {
+                _.each(data.views, function(entry, type) {
+                    _views[type] = entry;
+                    _set(_viewPrefix + type, entry);
+                    if (entry.controller) {
+                        app.view.declareComponent("view", type, null, entry.controller);
+                    }
+                });
+            }
+
+            if (data.layouts) {
+                _.each(data.layouts, function(layout, type) {
+                    _layouts[type] = layout;
+                    _set(_layoutPrefix + type, layout);
+                    if (layout.controller) {
+                        app.view.declareComponent("layout", type, null, layout.controller);
                     }
                 });
             }
@@ -275,6 +333,11 @@
             _setMeta(_app, "_hash", "", data);
 
             app.template.set(data, true);
+
+            // Cache the metadata
+            if (app.config.env == "dev") {
+                this.data = data;
+            }
         },
 
         /**
@@ -307,7 +370,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-
+                    app.error.handleHTTPError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

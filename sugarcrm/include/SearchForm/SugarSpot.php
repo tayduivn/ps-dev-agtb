@@ -255,6 +255,8 @@ class SugarSpot
      *
      * @param $query string what we are searching for
      * @param $offset int search result offset
+     * @param  $limit  int    search limit
+     * @param  $options array  An array of options to better control how the result set is generated
      * @return array
      */
     public function search($query, $offset = -1, $limit = 20, $options = array())
@@ -264,7 +266,7 @@ class SugarSpot
         else
             $modules = $this->getSearchModules();
 
-        return $this->_performSearch($query, $modules, $offset, $limit);
+        return $this->_performSearch($query, $modules, $offset, $limit, $options);
 
     }
 	/**
@@ -276,11 +278,19 @@ class SugarSpot
 	 * @param  $modules array  modules we are searching in
 	 * @param  $offset  int   search result offset
      * @param  $limit  int    search limit
+     * @param  $options array  An array of options to better control how the result set is generated
 	 * @return array
 	 */
-    protected function _performSearch($query, $modules, $offset = -1, $limit = 20)
+    protected function _performSearch($query, $modules, $offset = -1, $limit = 20, $options = array())
     {
-        if(empty($query)) return array();
+        if(empty($query)) {
+            if(!((isset($options['my_items']) && $options['my_items'] == true )
+                 || (isset($options['favorites']) && $options['favorites'] == 2)
+                 || (isset($options['allowEmptySearch']) && $options['allowEmptySearch'] == true))) {
+                // Make sure we aren't just searching for my items or favorites
+                return array();
+            }
+        }
         $primary_module='';
         $results = array();
         require_once 'include/SearchForm/SearchForm2.php' ;
@@ -297,6 +307,11 @@ class SugarSpot
 		}
     	$totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
 
+        if ( empty($options['orderBy']) ) {
+            $orderBy = "date_modified DESC";
+        } else {
+            $orderBy = $options['orderBy'];
+        }
 
         foreach($modules as $moduleName)
         {
@@ -376,14 +391,26 @@ class SugarSpot
                     unset($searchFields[$moduleName][$k]);
 				}
 			} //foreach
+            
+            $allowBlankSearch = false;
+            // Add an extra search filter for my items
+            if (!empty($options['my_items']) && $options['my_items'] == true ) {
+                $searchFields[$moduleName]['assigned_user_id']['value'] = $GLOBALS['current_user']->id;
+                $allowBlankSearch = true;
+            }
+            // If we are just searching by favorites, add a no-op query parameter so we still search
+            if (!empty($options['favorites']) && $options['favorites'] == 2 ) {
+                $allowBlankSearch = true;
+            }
+            if (!empty($options['allowEmptySearch']) && $options['allowEmptySearch'] == true ) {
+                $allowBlankSearch = true;
+            }
 
             //If no search field criteria matched then continue to next module
-			if (empty($searchFields[$moduleName]))
+			if (empty($searchFields[$moduleName]) && !$allowBlankSearch)
             {
                 continue;
             }
-
-            if (empty($searchFields[$moduleName])) continue;
 
             if(isset($seed->field_defs['name']))
             {
@@ -439,36 +466,75 @@ class SugarSpot
                     $return_fields[$field] = $seed->field_defs[$field];
                 }
             }
-
-
+            if ( !empty($options['fields']) ) {
+                $extraFields = array();
+                if ( !empty($options['fields'][$moduleName]) ) {
+                    $extraFields = $options['fields'][$moduleName];
+                } else if ( !empty($options['fields']['_default']) ) {
+                    $extraFields = $options['fields']['_default'];
+                }
+                if ( empty($extraFields) ) {
+                    // We set the 'fields' parameter, but left it blank, we should fetch all fields
+                    $return_fields = '';
+                } else {
+                    
+                    foreach ( $extraFields as $extraField ) {
+                        if ( $extraField == 'id' ) {
+                            // Already in the list of fields it will return
+                            continue;
+                        }
+                        if ( isset($seed->field_defs[$extraField]) && ! isset($return_fields[$extraField]) ) {
+                            $return_fields[$extraField] = $seed->field_defs[$extraField];
+                        }
+                    }
+                }
+            }
             $searchForm = new SearchForm ( $seed, $moduleName ) ;
             $searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
             $where_clauses = $searchForm->generateSearchWhere() ;
 
+            $orderBy = '';
+            if ( isset($options['orderBy']) ) {
+                $orderBy = $options['orderBy'];
+            }
+
             if(empty($where_clauses))
             {
-                continue;
+                if ( $allowBlankSearch ) {
+                    $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
+                    $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
+                } else {
+                    continue;
+                }
             }
-            if(count($where_clauses) > 1)
+            else if(count($where_clauses) > 1)
             {
                 $query_parts =  array();
 
-                $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array(), 0, '', true, $seed, true);
+                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach($where_clauses as $n => $clause)
                 {
                     $allfields = $return_fields;
-                    $skey = $search_keys[$n];
-                    if(isset($seed->field_defs[$skey]))
-                    {
-                        // Joins for foreign fields aren't produced unless the field is in result, hence the merge
-                        $allfields[$skey] = $seed->field_defs[$skey];
+                    if ( !empty($return_fields) ) {
+                        // We don't have any specific return_fields, so leaving this blank will include everything in the query
+                        $skey = $search_keys[$n];
+                        if(isset($seed->field_defs[$skey]))
+                        {
+                            // Joins for foreign fields aren't produced unless the field is in result, hence the merge
+                            $allfields[$skey] = $seed->field_defs[$skey];
+                        }
                     }
-                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, array(), 0, '', true, $seed, true);
-                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
+                    // Individual UNION's don't allow order by
+                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'];
                 }
-                $main_query = "(".join(") UNION (", $query_parts).")";
+                // So we add it to the output of all of the unions
+                $main_query = "(".join(")\n UNION (", $query_parts).")";
+                if ( !empty($orderBy) ) { 
+                    $main_query .= " ORDER BY ".$orderBy; 
+                }
             }
             else
             {
@@ -479,7 +545,7 @@ class SugarSpot
                         $return_fields[$k] = $seed->field_defs[$k];
                     }
                 }
-                $ret_array = $seed->create_new_list_query('', $where_clauses[0], $return_fields, array(), 0, '', true, $seed, true);
+                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
                 $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
             }
 
@@ -495,7 +561,7 @@ class SugarSpot
                     $limit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
                 }
 
-                if($offset == 'end')
+                if($offset === 'end')
                 {
                     $totalCount = $this->_getCount($seed, $main_query);
                     if($totalCount)
@@ -505,6 +571,10 @@ class SugarSpot
                     {
                         $offset = 0;
                     }
+                }
+
+                if ( isset($options['limitPerModule']) ) {
+                    $limit = $options['limitPerModule'] - 1;
                 }
                 $result = $seed->db->limitQuery($main_query, $offset, $limit + 1);
             }
@@ -516,34 +586,43 @@ class SugarSpot
                 $temp = clone $seed;
                 $temp->setupCustomFields($temp->module_dir);
                 $temp->loadFromRow($row);
-                $data[] = $temp->get_list_view_data($return_fields);
-                $count++;
+                if ( isset($options['return_beans']) && $options['return_beans'] ) {
+                    $data[] = $temp;
+                } else {
+                    $data[] = $temp->get_list_view_data($return_fields);
+                }
+                if ( isset($options['limitPerModule']) ) {
+                    // Don't keep track of the counted records if we are already applying per-module limits
+                    $count = 0;
+                } else {
+                    $count++;
+                }
             }
 
             $nextOffset = -1;
             $prevOffset = -1;
             $endOffset = -1;
 
-            if($count >= $limit)
-            {
-                $nextOffset = $offset + $limit;
-            }
-
-            if($offset > 0)
-            {
-                $prevOffset = $offset - $limit;
-                if($prevOffset < 0) $prevOffset = 0;
-            }
-
-            if( $count >= $limit && $totalCounted)
-            {
-                if(!isset($totalCount))
-                {
-                    $totalCount  = $this->_getCount($seed, $main_query);
+            if ( !isset($options['limitPerModule']) || !$options['limitPerModule']) {
+                // Don't worry about the offsets if we are running a per-module limit
+                if($count >= $limit) {
+                    $nextOffset = $offset + $limit;
                 }
-            } else
-            {
-                $totalCount = $count + $offset;
+                
+                if($offset > 0) {
+                    $prevOffset = $offset - $limit;
+                    if($prevOffset < 0) {
+                        $prevOffset = 0;
+                    }
+                }
+                
+                if( $count >= $limit && $totalCounted) {
+                    if(!isset($totalCount)) {
+                        $totalCount  = $this->_getCount($seed, $main_query);
+                    }
+                } else {
+                    $totalCount = $count + $offset;
+                }
             }
 
             $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);

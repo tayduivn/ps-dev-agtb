@@ -10,61 +10,83 @@
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
-            var self = this;
-            app.events.on("app:view:change", function() {
-                self.render();
-            });
+            app.events.on("app:view:change", function(layout, params) {
+                    this.render(layout, params);
+            }, this);
         },
 
-        render: function() {
+        render: function(layout, params) {
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
             else {
                 this.$el.removeClass("hide");
-                app.view.View.prototype.render.call(this);
-                this._renderLeftList();
-                this._renderRightList();
-            }
-            //this.delegateEvents();
-        },
+                app.view.View.prototype._renderSelf.call(this);
+                this._renderLeftList(app.template.get('left.menu'),
+                    {
+                        items: _.keys(app.metadata.getModuleList()),
+                        userName: app.user.get('full_name'),
+                        userId: app.user.get('id')
+                    });
 
-        onCreateClicked:function(){
+                if (layout === "relationships") {
+                    var module = params.parentModule;
+                    var id = params.parentModelId;
+                    var link = params.link;
+                    this._renderRightList(app.template.get('right.menu.relationships'),
+                        {
+                            createURL: app.nomad.buildLinkRoute(module,id,link,"create?depth=1"),
+                            associateURL: app.nomad.buildLinkRoute(module,id,link,"associate?depth=1"),
+                            module: params.link
+                        });
+
+                } else if (layout === "detail") {
+                    this._renderRightList(app.template.get('right.menu.relationships'),
+                        {
+                            createURL: app.router.buildRoute(params.module, params.modelId) + "/links/create",
+                            associateURL: app.router.buildRoute(params.module, params.modelId) + "/links/associate",
+                            module: ""
+                        });
+                }
+                else {
+                    this._renderRightList(app.template.get('right.menu'), _.keys(app.metadata.getModuleList()));
+                }
+            }
+            return this;
+        },
+        onCreateClicked: function() {
             $(document.body).removeClass('onR');
         },
-
-        onModuleTabClicked:function(){
+        onModuleTabClicked: function() {
             $(document.body).removeClass('onL');
         },
-
-        onHomeClicked:function(e){
+        onHomeClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onL');
+            this.toggleMenu();
         },
-
-        onAddClicked:function(e){
+        onAddClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onR');
+            this.toggleMenu();
         },
-
-        _renderLeftList:function () {
-            var tmpl = app.template.get('left.menu');
-
-            if (tmpl) {
-                this.$('#moduleList').append(tmpl({items:_.keys(app.metadata.getModuleList()),
-                    userName:app.user.get('full_name'),
-                    userId:app.user.get('id')}));
+        toggleMenu:function(){
+            if($(document.body).hasClass('onL') || $(document.body).hasClass('onR')){
+                this.$('.nav-collapse').show();
+            }else{
+                this.$('.nav-collapse').hide();
             }
         },
-
-        _renderRightList: function() {
-            var tmpl = app.template.get('right.menu');
-
+        _renderLeftList:function (tmpl,data) {
             if (tmpl) {
-                this.$('#createList').append(tmpl(_.keys(app.metadata.getModuleList())));
+                this.$('#moduleList').append(tmpl(data));
+            }
+        },
+        _renderRightList: function(tmpl,data) {
+            if (tmpl) {
+                this.$('#createList').append(tmpl(data));
             }
         }
 
     });
-
 })(SUGAR.App);

@@ -1,6 +1,6 @@
 ({
-    render:function(value) {
-        app.view.Field.prototype.render.call(this);//call proto render
+    _render:function(value) {
+        app.view.Field.prototype._render.call(this);//call proto render
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",
@@ -69,12 +69,14 @@
             {key: "pm", value: "pm"}
         ]
     },
-    bindDomChange: function(model, fieldName) {
-        var self = this
-        var date = this.$el.find('input');
+    bindDomChange: function() {
+        var self = this;
+        var date = this.$('input');
+        var model = this.model;
+        var fieldName = this.name;
 
-        var hour = this.$el.find('.date_time_hours');
-        var minute = this.$el.find('.date_time_minutes');
+        var hour = this.$('.date_time_hours');
+        var minute = this.$('.date_time_minutes');
 
         //TODO add AM PM support depending on user prefs
         date.on('change', function(ev) {

@@ -67,7 +67,7 @@
 <tr>
 <td>
 
-{sugar_action_menu buttons=$action_button class="clickMenu fancymenu"}
+{sugar_action_menu id="detail_header_action_menu" buttons=$action_button class="clickMenu fancymenu"}
 </td>
 </tr>
 </table>

@@ -144,7 +144,7 @@ requiredTxt = 'Missing required field:';
 invalidTxt = 'Invalid Value:';
 </script><!-- crmprint --><div id='footer'><!--end body panes-->
 
-	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='underFooter'><tr><td align='center' class='copyRight'>{$app.LBL_SUGAR_COPYRIGHT}<br /><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0'  width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt=$mod_strings.LBL_POWERED_BY_SUGAR></a>
+	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='underFooter'><tr><td align='center' class='copyRight'>{$app.LBL_SUGAR_COPYRIGHT}<br /><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0'  width='120' height='34' src='include/images/poweredby_sugarcrm_65.png' alt=$mod_strings.LBL_POWERED_BY_SUGAR></a>
 
 </td></tr></table></div>
 </body></html>

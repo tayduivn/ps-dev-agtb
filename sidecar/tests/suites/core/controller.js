@@ -30,17 +30,12 @@ describe("Controller", function() {
 
         });
 
-        it("should fire a app:view:change event", function() {
-            var cbSpy = sinon.spy(function() {});
-            app.events.on("app:view:change", cbSpy);
-
-            var params = {
-                    module: "Contacts",
-                    layout: "list"
-                };
-            app.controller.loadView(params);
-            expect(cbSpy).toHaveBeenCalled();
+        it("should render addtional components", function() {
+            var components = {login: {target: '#footer'}};
+            app.controller.loadAdditionalComponents(components);
+            app.controller.loadAdditionalComponents(components); // we should be able to call it multiple times safely
+            expect(app.additionalComponents.login instanceof app.view.View).toBeTruthy();
+            expect(app.additionalComponents.login.name).toEqual('login');
         });
-
     });
 });

@@ -35,9 +35,9 @@ $viewdefs['OAuthKeys']['EditView'] = array(
  'panels' =>array (
   'default' =>
   array (
-    array('name'),
-    array ('c_key', 'c_secret'),
-    array('description'),
+      array('name','oauth_type'),
+    array ('c_key', 'client_type'),
+    array('c_secret','description'),
   ),
 ),
 );

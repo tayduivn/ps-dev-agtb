@@ -227,7 +227,7 @@ class LanguageManager
 		if(!$refresh)
 		{
 			$return_result = sugar_cache_retrieve($key);
-			if(!empty($return_result)){
+			if(!empty($return_result) && is_array($return_result)){
 				return $return_result;
 			}
 		}

@@ -12,13 +12,15 @@
         };
         return value;
     },
-    bindDomChange: function(model, fieldName) {
+    bindDomChange: function() {
         var self = this;
-        var street = this.$el.find('.address_street');
-        var city = this.$el.find('.address_city');
-        var country = this.$el.find('.address_country');
-        var postalcode = this.$el.find('.address_postalcode');
-        var state = this.$el.find('.address_state');
+        var model = this.model;
+        var fieldName = this.name;
+        var street = this.$('.address_street');
+        var city = this.$('.address_city');
+        var country = this.$('.address_country');
+        var postalcode = this.$('.address_postalcode');
+        var state = this.$('.address_state');
         street.on('change', function() {
             model.set(fieldName, self.unformat(street.val()));
         });
