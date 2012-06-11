@@ -58,8 +58,8 @@
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/base/views/grid/grid.js'></script>
-<script src='clients/base/models/grid/grid.js'></script>
+<script src='clients/base/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/base/models/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
 <script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/chartOptions/chartOptions.js'></script>
@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         <hr />
-                        <div class="view-grid"></div>
+                        <div class="view-forecastsWorksheet"></div>
                     </div>
                 </div>
             </div>

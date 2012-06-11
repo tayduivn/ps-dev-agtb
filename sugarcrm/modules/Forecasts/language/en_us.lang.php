@@ -211,6 +211,12 @@ $mod_strings = array (
   'LBL_COPY_FROM'=>'Copy value from:',
     
   'LBL_CHART_TITLE'=>'Quota vs. Committed vs. Actual',
+
+    'LBL_FORECAST' => 'Forecast',
+    'LBL_SALES_STAGE' => 'Stage',
+    'LBL_AMOUNT' => 'Amount',
+    'LBL_DATE_CLOSED' => 'Expected Close',
+    'LBL_PROBABILITY' => 'Probability',
 );
 
 

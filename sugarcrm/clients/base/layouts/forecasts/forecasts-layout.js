@@ -40,7 +40,7 @@
                 }
             });
 
-            models.grid = new app.Model.Grid();
+            models.worksheet = new app.Model.Worksheet();
             return models;
         },
 

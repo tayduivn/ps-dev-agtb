@@ -1,10 +1,11 @@
 /**
  * View that displays header for current app
- * @class View.Views.GridView
- * @alias SUGAR.App.layout.GridView
+ * @class View.Views.WorksheetView
+ * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
  */
 ({
+    viewModule: app.viewModule,
 
     gTable:'',
 
@@ -25,20 +26,20 @@
         this.isExpandableRows = false;
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.model.grid;
+        this._collection = this.context.model.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", this.filterGridById, this);
+        this.layout.context.on("change:selectedUser", this.filterWorksheetById, this);
     },
 
     /**
-     * Renders Grid view
+     * Renders view
      */
     render:function () {
         var self = this;
         app.view.View.prototype.render.call(this);
 
-        this.gTable = this.$el.find('#gridTable').dataTable(
+        this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "bInfo":false,
                 "bPaginate":false
@@ -47,7 +48,7 @@
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
-            $('#gridTable tr').on('click', function () {
+            $('.worksheetTable tr').on('click', function () {
                 if (self.gTable.fnIsOpen(this)) {
                     self.gTable.fnClose(this);
                 } else {
@@ -62,7 +63,7 @@
      *
      * @param params is always a context
      */
-    filterGridById:function (params) {
+    filterWorksheetById:function (params) {
         this.gTable.fnFilter(params.attributes.selectedUser.id);
     },
 
