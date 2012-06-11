@@ -29,21 +29,34 @@ function preprocess($type = NULL, $reporter){
     return $pdf;
 }
 
-function process($pdf, $reportname, $stream){
+/**
+ * Returns filename for specified report name and file extension
+ *
+ * @param string $report_name
+ * @param string $extension
+ * @return string
+ */
+function get_report_filename($report_name, $extension)
+{
     global $current_user;
 
-    $pdf->process();
-    @ob_clean();
     $filenamestamp = '';
     if(isset($current_user)){
         $filenamestamp .= '_'.$current_user->user_name;
     }
     $filenamestamp .= '_'.date(translate('LBL_PDF_TIMESTAMP', 'Reports'), time());
     $cr = array(' ',"\r", "\n","/");
-    $filename = str_replace($cr, '_', $reportname.$filenamestamp.'.pdf');
+    $filename = str_replace($cr, '_', $report_name.$filenamestamp.'.' . $extension);
     if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT'])) {
         $filename = urlencode($filename);
     }
+    return $filename;
+}
+
+function process($pdf, $reportname, $stream){
+    $pdf->process();
+    $filename = get_report_filename($reportname, 'pdf');
+    @ob_clean();
     if($stream){
         //Force download as a file
         $pdf->Output($filename,'D');
