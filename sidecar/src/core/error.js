@@ -129,11 +129,7 @@
              * Clients can provide a handleUnauthorizedError to override this.
              */
             401: function(xhr, error) {
-                if(xhr && xhr.responseText) {
-                    this.callCustomHandler(xhr, error, this.handleUnauthorizedError);
-                }  else {
-                    this.handleStatusCodesFallback(getGenericMessage('401', error));
-                }
+                this.callCustomHandlerIfXhr(xhr, error, '401', this.handleUnauthorizedError);
             },
             /**
              * Clients can provide a handleForbiddenError to override this.
