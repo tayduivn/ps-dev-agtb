@@ -10,7 +10,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = self.layout.getModel('filters');
+            model = this.context.model.filters;
 
         model.on('change', function() {
             self.buildDropdowns(this);

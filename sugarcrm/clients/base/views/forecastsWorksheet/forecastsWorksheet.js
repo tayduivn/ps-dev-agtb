@@ -5,6 +5,7 @@
  * @extends View.View
  */
 ({
+    viewModule: app.viewModule,
 
     gTable:'',
 
@@ -25,7 +26,7 @@
         this.isExpandableRows = false;
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = self.layout.getModel('worksheet');
+        this._collection = this.context.model.worksheet;
 
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.filterWorksheetById, this);
@@ -62,7 +63,7 @@
      *
      * @param params is always a context
      */
-    filterWorksheetById:function (params) {
+    filterGridById:function (params) {
         this.gTable.fnFilter(params.attributes.selectedUser.id);
     },
 

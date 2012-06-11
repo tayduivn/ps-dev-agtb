@@ -8,7 +8,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = self.layout.getModel('chartoptions');
+            model = this.context.model.chartoptions;
 
         model.on('change', function() {
             self.buildDropdowns(this);

@@ -7,47 +7,44 @@
      */
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
-        _models: {},
-
         initialize: function(options) {
-            this.initializeAllModels();
+            var models = this.initializeAllModels();
 
-            app.view.Layout.prototype.initialize.call(this, options);
-
-            this.context = _.extend(this.context, {
+            options.context = _.extend(options.context, {
+                model: models,
                 register: app.events.register,
                 selectedTimePeriod: '',
                 // keep a record of the currently selected user on context
                 selectedUser: {}
             });
 
+            app.view.Layout.prototype.initialize.call(this, options);
+
             this.fetchAllModels();
         },
 
         fetchAllModels: function() {
-            _.each(this._models, function(model, key) {
+            _.each(this.context.model, function(model, key) {
                 model.fetch();
             });
         },
 
-        getModel: function(name) {
-            return this._models[name];
-        },
-
         initializeAllModels: function() {
             var self = this,
-                componentsMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.components;
+                componentsMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.components,
+                models = {};
 
             _.each(componentsMetadata, function(component) {
                 if (component.model) {
-                    self.createModels(component.model);
+                    self.createModels(models, component.model);
                 }
             });
 
-            this._models.worksheet = new app.Model.Worksheet();
+            models.worksheet = new app.Model.Worksheet();
+            return models;
         },
 
-        createModels: function(data) {
+        createModels: function(models, data) {
             var Model = Backbone.Model.extend({
                 module: data.module + '/' + data.name.toLowerCase(),
 
@@ -67,7 +64,7 @@
                 }
             });
 
-            var model = this._models[data.name.toLowerCase()] = new Model();
+            var model = models[data.name.toLowerCase()] = new Model();
             this.createNestedModels(model, data.models);
         },
 

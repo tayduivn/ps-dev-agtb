@@ -4,7 +4,7 @@
         <thead>
             <tr>
             {{#each fields}}
-                <th>{{label}}</th>
+                <th>{{str label ../../viewModule}}</th>
             {{/each}}
             </tr>
         </thead>
