@@ -514,9 +514,14 @@ class Importer
         */
         if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
              ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-        )
+        ) 
             $focus->update_date_modified = false;
 
+        // Bug 53636 - Allow update of "Date Created"
+        if (!empty($focus->date_entered)) {
+        	$focus->update_date_entered = true;
+        }
+            
         $focus->optimistic_lock = false;
         if ( $focus->object_name == "Contact" && isset($focus->sync_contact) )
         {
