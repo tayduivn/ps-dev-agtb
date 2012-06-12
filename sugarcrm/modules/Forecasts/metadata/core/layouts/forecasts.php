@@ -36,7 +36,14 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
             'view' => 'progress',
         ),
         5 => array(
-            'view' => 'changeLog',
+            'view' => 'forecastsCommitted',
+            'model' => array(
+                'module' => 'Forecasts',
+                'name' => 'Committed',
+                'models' => array(
+                    'committed',
+                )
+            ),
         ),
         6 => array(
             'view' => 'forecastsWorksheet',

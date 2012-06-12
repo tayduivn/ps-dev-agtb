@@ -47,8 +47,92 @@ class ForecastsChartApi extends ModuleApi {
     }
 
     public function chart($api, $args) {
-        // Just a placeholder for now
-        return "chart placeholder";
+        require_once('modules/Reports/Report.php');
+        global $current_user, $mod_strings, $app_list_strings, $app_strings;
+        $app_list_strings = return_app_list_strings_language('en');
+        $app_strings = return_application_language('en');
+        $mod_strings = return_module_language('en', 'Opportunities');
+        $saved_report = new SavedReport();
+        $report_defs = array();
+        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_4",null,null,"Filter.1_table_filter_row_4",null,null],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"probability","table_key":"self","qualifier_name":"between","runtime":1,"input_name0":"70","input_name1":"100"},"1":{"name":"sales_stage","table_key":"self","qualifier_name":"one_of","runtime":1,"input_name0":["Prospecting","Qualification","Needs Analysis","Value Proposition","Id. Decision Makers","Perception Analysis","Proposal\/Price Quote","Negotiation\/Review","Closed Won","Closed Lost"]},"2":{"name":"timeperiod_id","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["2cb25447-b5c3-c71e-78bc-4fd2262190fa"]},"3":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"is","runtime":1,"input_name0":["Current User"]}}}}', 'detailed_summary', 'vBarF');        //$result = $saved_report->save_report(-1, $current_user->id, $report_defs['ForecastSeedReport1'][1], $report_defs['ForecastSeedReport1'][0], $report_defs['ForecastSeedReport1'][3], $report_defs['ForecastSeedReport1'][2], 1, '1', $report_defs['ForecastSeedReport1'][4]);
+        $report = new Report($report_defs['ForecastSeedReport1'][2]);
+
+
+        //Temp for now...
+        foreach($report->report_def['filters_def']['Filter_1'] as $key=>$def)
+        {
+            if(is_array($def) && isset($def['name']))
+            {
+                $name = $def['name'];
+                switch ($name)
+                {
+                    case 'probability':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = 0;
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name1'] = 70;
+                    break;
+
+                    case 'sales_stage':
+
+                    break;
+
+                    case 'timeperiod_id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array(TimePeriod::getCurrentId());
+                    break;
+
+                    case 'id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array($current_user->id);
+                    break;
+                }
+
+            }
+        }
+
+
+        //Get the goal marker values
+        require_once("include/SugarCharts/ChartDisplay.php");
+        $chartDisplay = new ChartDisplay();
+        $chartDisplay->setReporter($report);
+
+        //$report->chart_rows gives us the data
+        //$report->chart_rows
+
+        //Todo: separate the return types depending on what is requested
+        //Here is a sample of a vertical stacked bar chart data
+        $response = array(
+            'properties' => array(
+                'gauge_target_list'=>'Array',
+                'title'=>'Title',
+                'subtitle'=>'Subtitle',
+                'type'=>'horizontal group by chart',
+                'legend'=>'on',
+                'labels'=>'value',
+                'print'=>'on',
+                'goal_marker_type' => array('group', 'group'), //Two groups of markers
+                'goal_marker_color' => array('#3FB300', '#444444'),
+                'goal_marker_label' => array('Quota', 'Likely'),
+                'label_name' => 'Sales Stage',
+                'value_name' => 'Amount'
+            ),
+            'label' => array('Qualified','Proposal','Negotiation','Closed'),
+            'color' => array('#8c2b2b', '#468c2b', '#2b5d8c', '#cd5200', '#e6bf00', '#7f3acd', '#00a9b8'),
+        );
+
+        //This will get messy... maybe we just have to query directly?
+        $values = array();
+        foreach($report->chart_rows as $data)
+        {
+            foreach($data['cells'] as $key1=>$items)
+            {
+                 foreach($items as $key2=>$value)
+                 {
+
+                 }
+            }
+        }
+
+        $response['values'] = $values;
+        return $response;
+
     }
 
 }

@@ -70,20 +70,38 @@ class ForecastsWorksheetApi extends ModuleApi {
         $mod_strings = return_module_language('en', 'Opportunities');
         $saved_report = new SavedReport();
         $report_defs = array();
-        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case","label":"Best case","table_key":"self"},{"name":"likely_case","label":"Likely case","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"}],"report_name":"Another Test","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"seed_jim_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"is","runtime":1,"input_name0":["Current User"]},"1":{"name":"timeperiod_id","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["2cb25447-b5c3-c71e-78bc-4fd2262190fa"]},"2":{"name":"probability","table_key":"self","qualifier_name":"between","runtime":1,"input_name0":"0","input_name1":"70"},"3":{"name":"sales_stage","table_key":"self","qualifier_name":"one_of","runtime":1,"input_name0":["Prospecting","Qualification","Needs Analysis","Value Proposition","Id. Decision Makers","Perception Analysis","Proposal\/Price Quote","Negotiation\/Review","Closed Won"]}}}}', 'detailed_summary', 'vBarF');        //$result = $saved_report->save_report(-1, $current_user->id, $report_defs['ForecastSeedReport1'][1], $report_defs['ForecastSeedReport1'][0], $report_defs['ForecastSeedReport1'][3], $report_defs['ForecastSeedReport1'][2], 1, '1', $report_defs['ForecastSeedReport1'][4]);
+        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_4",null,null,"Filter.1_table_filter_row_4",null,null],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"probability","table_key":"self","qualifier_name":"between","runtime":1,"input_name0":"70","input_name1":"100"},"1":{"name":"sales_stage","table_key":"self","qualifier_name":"one_of","runtime":1,"input_name0":["Prospecting","Qualification","Needs Analysis","Value Proposition","Id. Decision Makers","Perception Analysis","Proposal\/Price Quote","Negotiation\/Review","Closed Won","Closed Lost"]},"2":{"name":"timeperiod_id","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["2cb25447-b5c3-c71e-78bc-4fd2262190fa"]},"3":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"is","runtime":1,"input_name0":["Current User"]}}}}', 'detailed_summary', 'vBarF');        //$result = $saved_report->save_report(-1, $current_user->id, $report_defs['ForecastSeedReport1'][1], $report_defs['ForecastSeedReport1'][0], $report_defs['ForecastSeedReport1'][3], $report_defs['ForecastSeedReport1'][2], 1, '1', $report_defs['ForecastSeedReport1'][4]);
         $report = new Report($report_defs['ForecastSeedReport1'][2]);
 
-        //Change the timeperiod to the current timperiod or whatever is given...
 
-        //Timeperiod
-        $report->report_def['filters_def']['Filter_1'][1]['input_name0'] = array(TimePeriod::getCurrentId());
+        //Temp for now...
+        foreach($report->report_def['filters_def']['Filter_1'] as $key=>$def)
+        {
+            if(is_array($def) && isset($def['name']))
+            {
+                $name = $def['name'];
+                switch ($name)
+                {
+                    case 'probability':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = 0;
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name1'] = 70;
+                    break;
 
-        //Probability between
-        $report->report_def['filters_def']['Filter_1'][2]['input_name0'] = 0;
-        $report->report_def['filters_def']['Filter_1'][2]['input_name1'] = 70;
+                    case 'sales_stage':
 
-        //Sales Stage
-        //$report->report_def['fitlers_def']['Filter_1'][3]['input_name0'] = array();
+                    break;
+
+                    case 'timeperiod_id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array(TimePeriod::getCurrentId());
+                    break;
+
+                    case 'id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array($current_user->id);
+                    break;
+                }
+
+            }
+        }
 
         /*
         $testFilters = array(
@@ -123,8 +141,8 @@ class ForecastsWorksheetApi extends ModuleApi {
             $row['date_closed'] = $row['opportunities_date_closed'];
             $row['probability'] = $row['opportunities_probability'];
             $row['sales_stage'] = $row['opportunities_sales_stage'];
-            $row['best_case_worksheet'] = $row['opportunities_best_case'];
-            $row['likely_case_worksheet'] = $row['opportunities_likely_case'];
+            $row['best_case_worksheet'] = $row['OPPORTUNITIES_BEST_CAS81CC16'];
+            $row['likely_case_worksheet'] = $row['OPPORTUNITIES_LIKELY_C7E6E04'];
             $opps[] = $row;
         }
         return $opps;
@@ -133,12 +151,12 @@ class ForecastsWorksheetApi extends ModuleApi {
     public function forecastsCommitted($api, $args)
     {
         global $current_user;
-        $query = "SELECT * FROM forecasts WHERE user_id = '{$current_user->id}' AND deleted = 0 ORDER BY date_entered desc";
+        $query = "SELECT * FROM forecasts WHERE user_id = '{$current_user->id}' AND deleted = 0 AND forecast_type='Direct' ORDER BY date_entered desc";
         $results = $GLOBALS['db']->query($query);
         $forecasts = array();
         while(($row = $GLOBALS['db']->fetchByAssoc($results)))
         {
-            $forecasts[] = $row;
+            $forecasts[$row['id']] = $row;
         }
         return array('committed' => $forecasts);
     }

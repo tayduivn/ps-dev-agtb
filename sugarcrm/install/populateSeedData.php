@@ -240,14 +240,14 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->billing_address_city = $sugar_demodata['city_array'][mt_rand(0,$city_array_count-1)];
 	if($i % 3 == 1)	{
 		$account->billing_address_state = "NY";
-		$assigned_user_id = mt_rand(9,10);
+		$assigned_user_id = mt_rand(9,11);
 		if($assigned_user_id == 9) {
 			$account->assigned_user_name = "seed_will";
-			$account->assigned_user_id = $account->assigned_user_name."_id";
-		} else {
+		} else if($assigned_user_id == 10) {
 			$account->assigned_user_name = "seed_chris";
-			$account->assigned_user_id = $account->assigned_user_name."_id";
-		}
+		} else {
+            $account->assigned_user_name = "seed_jim";
+        }
 
 		$account->assigned_user_id = $account->assigned_user_name."_id";
 	} else {

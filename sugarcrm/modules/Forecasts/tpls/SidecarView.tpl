@@ -61,8 +61,8 @@
 <script src='clients/base/views/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/base/models/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
-<script src='clients/base/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/base/views/chartOptions/chartOptions.js'></script>
+<script src='clients/base/views/forecastsCommitted/forecastsCommitted.js'></script>
 <script src='clients/base/views/forecastsSubnav/forecastsSubnav.js'></script>
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
@@ -92,12 +92,18 @@
                             <div class="tab-pane active" id="overview">
                                 <div class="block" id="moduleTwitter">
                                     <div class="view-progress"></div>
-                                    <div class="view-changeLog"></div>
                                 </div>
                             </div>
                         </div>
-                        <hr />
-                        <div class="view-forecastsWorksheet"></div>
+                        <hr/>
+                        <div class="topline thumbnail">
+                            <div class="row-fluid">
+                            <div class="view-forecastsCommitted"></div>
+                            <hr>
+                            <div class="view-forecastsWorksheet"></div>
+                            <div class="view-summary"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
