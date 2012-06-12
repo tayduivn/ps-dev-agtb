@@ -333,19 +333,23 @@ a:hover [class^="icon-"]{
 }
 
 #record-action .icon-phone {
-  background: url('../img/sprite.png') no-repeat 1% 0;
   background-size: 660%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
+  &, &:active {
+    background: url('../img/sprite.png') no-repeat 1% 0;
+  }
 }
 
 #record-action .icon-sms-white {
-  background: url('../img/sprite.png') no-repeat 38% 0;
   background-size: 700%;
   height: 22px;
   width: 26px;
   margin-top: 13px;
+  &, &:active {
+    background: url('../img/sprite.png') no-repeat 38% 0 !important;
+  }
 }
 
 #record-action > a:not(:last-child) {
@@ -356,13 +360,14 @@ a:hover [class^="icon-"]{
 #record-action > a {
 margin:0;
 padding:0;
-
 height:52px;
+text-decoration:none;
 }
 
 #record-action > a > i {
   margin:16px 0 0 0;
 }
+
 
 .icon-phone {
   background: url('../img/sprite.png') no-repeat 1% -30%;
@@ -370,6 +375,9 @@ height:52px;
   height: 18px;
   width: 18px;
   margin-bottom: -20%;
+  &:active {
+    background: url('../img/sprite.png') no-repeat 18% -30%;
+  }
 }
 
 .icon-phone-black {
@@ -378,22 +386,31 @@ height:52px;
   height: 18px;
   width: 18px;
   margin-bottom: -20%;
+  &:active {
+    background: url('../img/sprite.png') no-repeat 1% -30% ;
+  }
 }
 
 .icon-sms-black {
-background: url('../img/sprite.png') no-repeat 57% 0;
-background-size: 700%;
-height: 18px;
-width: 16px;
-margin-bottom: -20%;
+  background: url('../img/sprite.png') no-repeat 57% 0;
+  background-size: 700%;
+  height: 18px;
+  width: 16px;
+  margin-bottom: -20%;
+  &:active {
+    background: url('../img/sprite.png') no-repeat 38% 0;
+  }
 }
 
 .icon-sms-white {
-background: url('../img/sprite.png') no-repeat 40% 0;
-background-size: 700%;
-height: 18px;
-width: 16px;
-margin-bottom: -20%;
+  background: url('../img/sprite.png') no-repeat 38% 0;
+  background-size: 700%;
+  height: 18px;
+  width: 16px;
+  margin-bottom: -20%;
+  &:active {
+    background: url('../img/sprite.png') no-repeat 57% 0 !important;
+  }
 }
 
 .icon-account-black {
@@ -402,7 +419,6 @@ margin-bottom: -20%;
   width: 18px;
   margin-bottom: -20%;
 }
-
 
 .navbar [class^="icon-"] {
   margin-top: 2px;
@@ -717,6 +733,25 @@ fieldset .btn-primary {
   &.left {
     left: 0px;
   }
+}
+
+fieldset .nav {
+  position: absolute;
+  top: 4px;
+  left: 62px;
+  width: 38px;
+  z-index: 2001;
+  height: 38px;
+  line-height: 38px;
+  a {
+    color:#fff;
+    text-decoration:none;
+  }
+}
+
+.onL fieldset .nav,
+.onR fieldset .nav {
+  display:none;
 }
 
 .navbar #back .icon-chevron-left {

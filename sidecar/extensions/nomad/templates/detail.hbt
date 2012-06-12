@@ -41,8 +41,7 @@
     </div>
 </div>
 <fieldset>
-    <div>
-        <span class="blankspacer left"></span>
-        <a href="javascript:void(0)" class="btn btn-inverse" id="backRecord">Back</a>
+    <div class="nav">
+        <a href="javascript:void(0)" class="back" id="backRecord"><i class="icon-chevron-left"></i></a>
     </div>
 </fieldset>
