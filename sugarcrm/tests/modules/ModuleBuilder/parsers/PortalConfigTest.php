@@ -22,10 +22,9 @@
 require_once("modules/ModuleBuilder/parsers/parser.portalconfig.php");
 require_once("modules/ACLRoles/ACLRole.php");
 
-class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
     var $requestVars = array(
-        'enabled' => 'true',
         'appName' => 'testApp',
         'serverUrl' => 'testURL',
         'maxQueryResult' => '5',
@@ -45,15 +44,7 @@ class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->user->id}'");
             $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '{$this->user->id}'");
         }
-        // TODO FIX TEARDOWN
-        if (isset($this->role->id)) {
-            $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id = '{$this->role->id}'");
-            $actionsResult = $GLOBALS['db']->query("SELECT action_id FROM acl_roles_actions WHERE role_id = '{$this->role->id}'");
-            while ($actionRow = $GLOBALS['db']->fetchByAssoc($actionsResult)) {
-                $GLOBALS['db']->query("DELETE FROM acl_actions WHERE id = '{$actionRow['id']}'");
-            }
-            $GLOBALS['db']->query("DELETE FROM acl_roles_actions WHERE role_id = '{$this->role->id}'");
-        }
+        //unset($_SESSION['ACL']);
     }
 
     public function test_PortalConfigParserHandleSaveConfig()
@@ -72,7 +63,7 @@ class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         foreach ($this->requestVars as $varKey => $value) {
-            $this->assertEquals($retrievedSettings[$varKey], $value);
+            $this->assertEquals(json_decode(html_entity_decode($retrievedSettings[$varKey])), $value);
         }
 
 
@@ -87,19 +78,19 @@ class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
         $oUserId = $this->user->id;
         $this->user = $parser->getPortalUser();
         $this->assertEquals($this->user->id, $oUserId);
-
     }
 
     public function test_PortalConfigCreateRole()
     {
-
         $parser = new ParserModifyPortalConfig();
+
         $this->role = $parser->getPortalACLRole();
         $this->assertNotEquals($this->role->id, '');
+
         $oRoleId = $this->role->id;
+
         $this->role = $parser->getPortalACLRole();
+
         $this->assertEquals($this->role->id, $oRoleId);
     }
-
-
 }

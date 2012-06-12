@@ -131,10 +131,10 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     function getPortalACLRole()
     {
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
-        $allowedActions = array('edit', 'detail', 'list', 'view');
+        $allowedActions = array('edit','admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
-        if ($role->id == '') {
+        if (empty($role->id)) {
             $role->name = "Customer Self-Service Portal Role";
             $role->description = "Customer Self-Service Portal Role";
             $role->save();
@@ -153,9 +153,11 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                     }
                 }
                 if (in_array($moduleName, $allowedModules)) {
+                    $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
+                    $role->setAction($role->id, $actions['module']['admin']['id'], ACL_ALLOW_ALL);
                     foreach ($actions['module'] as $actionName => $action) {
                         if (in_array($actionName, $allowedActions)) {
-                            $aclAllow = ACL_ALLOW_ENABLED;
+                            $aclAllow = ACL_ALLOW_ALL;
                         } else {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
