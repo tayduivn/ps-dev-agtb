@@ -40,6 +40,8 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
     }
 
     if (linkName.length > 0 && linkName.indexOf('pdfManagerRelateLink_') == -1) {
+        $('#subField').empty();
+        $('#subField').hide();
         return true;
     }    
     var url = "index.php?" + SUGAR.util.paramsToUrl({

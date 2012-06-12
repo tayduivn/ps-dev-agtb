@@ -68,7 +68,7 @@ class PdfManagerHelper {
         $fieldsForSelectedModule = array();
         if (!empty($moduleName)) {
             // Retrieve the list of field
-            $fieldsForSelectedModule = FormulaHelper::getRelatableFieldsForLink(array('module' => $moduleName));
+            $fieldsForSelectedModule = PdfManagerHelper::getRelatableFieldsForLink(array('module' => $moduleName));
             asort($fieldsForSelectedModule);
             
             if (!empty($fieldsForSelectedModule) && $addLinks) {
@@ -95,10 +95,11 @@ class PdfManagerHelper {
     
     
     static function getLinksForModule($module) {
+        global $app_list_strings;
         $focus = BeanFactory::newBean($module);
         $focus->id = create_guid();
                 
-        $fields = FormulaHelper::cleanFields($focus->field_defs);
+        $fields = PdfManagerHelper::cleanFields($focus->field_defs);
 
         $links = array();
         
@@ -108,9 +109,10 @@ class PdfManagerHelper {
             $name = 'products';
             $def = $focusBundle->field_defs[$name];
             $focusBundle->load_relationship($name);                    
-            $fieldsBundle = FormulaHelper::cleanFields($focusBundle->field_defs);
-            $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
-            $relatedModule = 'Product';
+            $fieldsBundle = PdfManagerHelper::cleanFields($focusBundle->field_defs);
+            $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
+            $relatedModule = (!empty($app_list_strings['moduleListSingular']['Product'])) ? 
+                                $app_list_strings['moduleListSingular']['Product'] : 'Product';
             $links[$name] = array (
                 "label" => "$label ($relatedModule)",
                 "module" => $relatedModule
@@ -119,8 +121,9 @@ class PdfManagerHelper {
             $name = 'product_bundles';
             $def = $focus->field_defs[$name];
             $focus->load_relationship($name);
-            $relatedModule = $focus->$name->getRelatedModuleName();
-            $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
+            $relatedModule = (!empty($app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()])) ? 
+                                $app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()] : $focus->$name->getRelatedModuleName();
+            $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
             $links[$name] = array(
                 "label" => "$label ($relatedModule)",
                 "module" => $relatedModule
@@ -135,7 +138,8 @@ class PdfManagerHelper {
             $name = $val[0];
             $def = $focus->field_defs[$name];
             if ($val[1] == "relate" && $focus->load_relationship($name)) {
-                $relatedModule = $focus->$name->getRelatedModuleName();
+                $relatedModule = (!empty($app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()])) ? 
+                                $app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()] : $focus->$name->getRelatedModuleName();
                 if (
                     (isset($def['link_type']) && $def['link_type'] == 'one') ||
                     ($focus->$name->_relationship->relationship_type == 'one-to-one') || 
@@ -150,7 +154,7 @@ class PdfManagerHelper {
                     }
 
                 
-                    $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
+                    $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
                     $links[$name] = array(
                         "label" => "$label ($relatedModule)",
                         "module" => $relatedModule
@@ -162,6 +166,118 @@ class PdfManagerHelper {
         return $links;
     }    
     
+    /**
+     * @static
+     * @param array $link
+     * @param MBPackage $package
+     * @param array $allowedTypes list of types to allow as related fields
+     * @return array
+     */
+    public static function getRelatableFieldsForLink($link, $package = null, $allowedTypes = array())
+    {
+        $rfields = array();
+        $relatedModule = $link["module"];
+        $mbModule = null;
+        if (!empty($package))
+            $mbModule = $package->getModuleByFullName($relatedModule);
+        //First, create a dummy bean to access the relationship info
+        if (empty($mbModule)) {
+            $relatedBean = BeanFactory::getBean($relatedModule);
+            $field_defs = $relatedBean->field_defs;
+        } else {
+            $field_defs = $mbModule->getVardefs(false);
+            $field_defs = $field_defs['fields'];
+        }
+
+        $relatedFields = PdfManagerHelper::cleanFields($field_defs, false, true);
+        foreach ($relatedFields as $val) {
+            $name = $val[0];
+            //Rollups must be either a number or a possible number (like a string) to roll up
+            if (!empty($allowedTypes) && !in_array($val[1], $allowedTypes))
+                continue;
+
+            $def = $field_defs[$name];
+            if (empty($mbModule))
+                $rfields[$name] = empty($def['vname']) ? $name : str_replace(":", "", translate($def['vname'], $relatedModule));
+            else
+                $rfields[$name] = empty($def['vname']) ? $name : str_replace(":", "", $mbModule->mblanguage->translate($def['vname']));
+            //Strip the ":" from any labels that have one
+            if (substr($rfields[$name], -1) == ":")
+                $rfields[$name] = substr($rfields[$name], 0, strlen($rfields[$name]) - 1);
+        }
+
+        return $rfields;
+    }
+    
+    /**
+     * Takes an array of field defs and returns a formated list of fields that are valid for use in select list.
+     *
+     * @param array $fieldDef
+     * @return array
+     */
+    public static function cleanFields($fieldDef, $includeLinks = true, $forRelatedField = false, $returnKeys = false)
+    {
+        $fieldArray = array();
+        foreach ($fieldDef as $fieldName => $def) {
+            if (!is_array($def) || $fieldName == 'deleted' || empty($def['type']))
+                continue;
+            //Check the studio property of the field def.
+            if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
+                (isset($def['studio']['formula']) && self::isFalse($def['studio']['formula'])) ||
+                ($forRelatedField && isset($def['studio']['related']) && self::isFalse($def['studio']['related']))
+            ))))
+            {
+                continue;
+            }
+            switch ($def['type']) {
+                case "int":
+                case "float":
+                case "decimal":
+                case "currency":
+                    $fieldArray[$fieldName] = array($fieldName, 'number');
+                    break;
+                case "bool":
+                    $fieldArray[$fieldName] = array($fieldName, 'boolean');
+                    break;
+                case "varchar":
+                case "name":
+                case "phone":
+                case "text":
+                case "url":
+                case "encrypt":
+                case "enum":
+                    $fieldArray[$fieldName] = array($fieldName, 'string');
+                    break;
+                case "date":
+                case "datetime":
+                case "datetimecombo":
+                    $fieldArray[$fieldName] = array($fieldName, 'date');
+                    break;
+                case "link":
+                    if ($includeLinks)
+                        $fieldArray[$fieldName] = array($fieldName, 'relate');
+                    break;
+                default:
+                    //Do Nothing
+                    break;
+            }
+        }
+
+        if ($returnKeys)
+            return $fieldArray;
+
+        return array_values($fieldArray);
+    }
+    
+    protected static function isFalse($v){
+        if (is_string($v)){
+            return strToLower($v) == "false";
+        }
+        if (is_array($v))
+            return false;
+
+        return $v == false;
+    }
 }
 
 

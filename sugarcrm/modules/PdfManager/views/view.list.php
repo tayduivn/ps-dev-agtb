@@ -38,5 +38,9 @@ class PdfManagerViewList extends ViewList
  	{
  		parent::preDisplay();
  		$this->lv->quickViewLinks = false;
+        $this->lv->export = false;
+        $this->lv->mergeduplicates = 0;
+ 		$this->lv->showMassupdateFields = false;
+
  	}
 }
