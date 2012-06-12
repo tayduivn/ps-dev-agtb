@@ -81,6 +81,6 @@ describe('template', function() {
 
         app.template.set(data);
 
-        expect(app.template.get("test")()).toEqual(source);
+        expect(app.template.getLayout("test")()).toEqual(source);
     });
 });

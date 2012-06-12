@@ -114,16 +114,20 @@
             return this._getField(type, view, fallbackTemplate)[1];
         },
 
-        /**
-         * Retrieves compiled template for layout
-         * @param name
-         * @param module
-         * @return {Array}
-         * @private
-         */
+        // Convenience private method
         _getLayout: function(name, module) {
-            var key = name + (module ? ("." + module) : "");
+            var key = "l." + name + (module ? ("." + module) : "");
             return [key, this.get(key)];
+        },
+
+        /**
+         * Gets compiled template for a layout.
+         * @param {String} name Layout name.
+         * @param {String} module(optional) Module name.
+         * @return {Function} Compiled template.
+         */
+        getLayout: function(name, module) {
+            return this._getLayout(name, module)[1];
         },
 
         /**
