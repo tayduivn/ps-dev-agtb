@@ -1,8 +1,0 @@
-<h3>{{context.state.module}} Example</h3>
-{{#each meta.panels}}
-	<ul>
-	{{#each fields}}
-		<li>{{name}}</li>
-    {{/each}}
-	</ul>
-{{/each}}
