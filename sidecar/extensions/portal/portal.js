@@ -772,28 +772,6 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-
-        var origRoutingBefore = app.routing.before;
-        app.routing.before = function(route, args) {
-            var module;
-
-            // First make sure we pass all original routing before tests.
-            if(origRoutingBefore(route, args)) {
-
-                // Check list and record routes module is defined or 404.
-                if(route === 'list' || route === 'record') {
-                    module = args[0] ? args[0] : null;
-
-                    if (!module || !_.has(app.metadata.getModules(), module)) {
-                        app.router.navigate('error/404', {trigger: true});
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-            return true;
-        };
         
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
@@ -828,8 +806,16 @@
 
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
-        var dm;
+        var dm, nonModuleRoutes;
+        nonModuleRoutes = [
+            "search",
+            "error",
+            "profile",
+            "profileedit"
+        ];
 
+        app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
+        
         // Perform any original before checks .. if these fail return false
         if (!oRoutingBefore.call(this, route, args)) return false;
 
@@ -855,8 +841,8 @@
                 alertUser();
                 return false;
             }
-        // If route is NOT index check if module loaded and user has access to it.
-        } else if (!app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
             alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
             return false;
