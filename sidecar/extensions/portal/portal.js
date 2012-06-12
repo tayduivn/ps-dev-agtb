@@ -153,6 +153,18 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
+                                {     
+                                    name: "cancel_button",
+                                    type: "button",
+                                    label: "Cancel",
+                                    value: "signup",
+                                    primary: false,
+                                    events: {
+                                        click: "function(){" +
+                                            "app.router.goBack();" +
+                                            "}"
+                                    } 
+                                },
                                 {
                                     name: "signup_button",
                                     type: "button",
@@ -190,18 +202,6 @@
                                             "       }" +
                                             "   });" +
                                             "   }" +
-                                            "}"
-                                    }
-                                },
-                                {
-                                    name: "cancel_button",
-                                    type: "button",
-                                    label: "Cancel",
-                                    value: "signup",
-                                    primary: false,
-                                    events: {
-                                        click: "function(){" +
-                                            "app.router.goBack();" +
                                             "}"
                                     }
                                 }
