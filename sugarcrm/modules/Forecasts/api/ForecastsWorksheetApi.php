@@ -44,7 +44,7 @@ class ForecastsWorksheetApi extends ModuleApi {
             ),
             'forecastsCommitted' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','forecastsCommitted'),
+                'path' => array('Forecasts','committed'),
                 'pathVars' => array('',''),
                 'method' => 'forecastsCommitted',
                 'shortHelp' => 'Most recent committed forecast entry',
