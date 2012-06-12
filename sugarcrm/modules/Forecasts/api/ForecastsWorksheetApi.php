@@ -106,13 +106,13 @@ class ForecastsWorksheetApi extends ModuleApi {
         /*
         $testFilters = array(
             'timeperiod_id' => TimePeriod::getCurrentId(),
-            'probability' => array('between', array(0, 70)),
-            'sales_stage' => array('in', array('Prospecting', 'Qualification', 'Needs Analysis')),
+            'probability' => array('$between' => array(0, 70)),
+            'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
 
         require_once('include/SugarParsers/Filter.php');
         $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse(array('and'=>$testFilters));
+        $filter->parse(array('$and'=>$testFilters));
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
         $reportFilters = $filter->convert($converter);
         $report->report_def['filters_def'] = $reportFilters;
