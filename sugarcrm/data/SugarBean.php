@@ -3681,7 +3681,15 @@ function save_relationship_changes($is_update, $exclude=array())
                         }
                         else
                         {
-                            $queries[$child_info['parent_type']] .= ' , name parent_name';
+                            if (is_object($templates[$child_info['parent_type']])) {
+                                $vars = get_object_vars($templates[$child_info['parent_type']]);
+                            }
+                            if (isset($vars) && !array_key_exists('name', $vars) && array_key_exists('document_name', $vars)) {
+                                $queries[$child_info['parent_type']] .= ', document_name parent_name';
+                            }
+                            else {
+                                $queries[$child_info['parent_type']] .= ', name parent_name';
+                            }
                         }
                         if(isset($templates[$child_info['parent_type']]->field_defs['assigned_user_id']))
                         {
