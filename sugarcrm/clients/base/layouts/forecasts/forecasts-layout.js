@@ -15,7 +15,12 @@
                 register: app.events.register,
                 selectedTimePeriod: '',
                 // keep a record of the currently selected user on context
-                selectedUser: {}
+                selectedUser: {},
+                getGridFilters: function(){
+                    return {
+                        "assigned_user_id": this.attributes.selectedUser.id
+                    };
+                }
             });
 
             app.view.Layout.prototype.initialize.call(this, options);

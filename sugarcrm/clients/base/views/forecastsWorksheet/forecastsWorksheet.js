@@ -39,8 +39,17 @@
         var self = this;
         app.view.View.prototype.render.call(this);
 
-        this.gTable = this.$('.worksheetTable').dataTable(
+        // parse metadata into columnDefs
+        // so you can sort on the column's "name" prop from metadata
+        var columnDefs = [];
+        var fields = this.meta.panels[0].fields;
+        for( var i = 0; i < fields.length; i++ )  {
+            columnDefs.push( { "sName": fields[i].name, "aTargets": [ i ] } );
+        }
+
+        this.gTable = this.$el.find('#gridTable').dataTable(
             {
+                "aoColumnDefs": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
             }
@@ -64,7 +73,9 @@
      * @param params is always a context
      */
     filterWorksheetById:function (params) {
-        this.gTable.fnFilter(params.attributes.selectedUser.id);
+        if(params.hasOwnProperty("getGridFilters") && this.gTable.hasOwnProperty("fnMultiFilter"))  {
+            this.gTable.fnMultiFilter(params.getGridFilters());
+        }
     },
 
     /**
