@@ -7,43 +7,58 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-                0 =>
                 array(
                     'name' => 'case_number',
-                    'label' => 'ID',
-                    'enabled' => true,
+                    'width' =>  8,
+                    'link' => true,
+                    'label' => 'LBL_LIST_NUMBER',
                     'sorting' => true,
-                    'width' =>  8
+                    'enabled' => true,
+                    'default' => true
                 ),
-                1 =>
                 array(
                     'name' => 'name',
-                    'label' => 'Title',
-                    'enabled' => true,
+                    'width' =>  49,
                     'link' => true,
+                    'label' => 'LBL_LIST_SUBJECT',
                     'sorting' => true,
-                    'width' =>  49
-                ),
-                2 =>
-                array(
-                    'name' => 'status',
-                    'label' => 'Status',
                     'enabled' => true,
-                    'sorting' => true,
-                    'width' =>  17
+                    'default' => true
                 ),
-                3 =>
+                array(                 
+                    'name' => 'status',    
+                    'width' =>  17,     
+                    'label' => 'LBL_LIST_STATUS',
+                    'sorting' => true,
+                    'enabled' => true,
+                    'default' => true
+                ),
                 array(
-                    'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'name' => 'priority',
+                    'width' =>  13,
+                    'label' => 'LBL_LIST_PRIORITY',
+                    'sorting' => true,
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array(               
+                    'name' => 'type',  
+                    'width' =>  13,  
+                    'label' => 'LBL_TYPE',
+                    'sorting' => true,
+                    'enabled' => true,
+                    'default' => true
+                ),
+                array (
+                    'name' => 'date_entered',
+                    'label' => 'LBL_LIST_DATE_CREATED',
+                    'sorting' => true,
+                    'enabled' => true,
+                    'width' => 13,
                     'default' => true,
-                    'enabled' => true,
-                    'sorting' => true,
-                    'width' => 17
                 ),
             ),
         ),
     ),
 );
-
 
