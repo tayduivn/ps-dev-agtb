@@ -122,10 +122,8 @@
                 return ((field.type == "link") &&
                     (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
-                    (_.any(modules, function(module) {
-                        return  (module == relationship.lhs_module) ||
-                                (module == relationship.rhs_module);
-                    })));
+                    _.has(modules, relationship.lhs_module) &&
+                    _.has(modules, relationship.rhs_module));
             });
 
         },
