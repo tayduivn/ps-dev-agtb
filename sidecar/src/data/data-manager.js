@@ -106,7 +106,9 @@
          * @method
          */
         init: function() {
-            Backbone.sync = _.bind(this.sync, this);
+            var sync = _.bind(this.sync, this);
+            app.Bean.prototype.sync = sync;
+            app.BeanCollection.prototype.sync = sync;
 
             app.events.register(
                 /**
