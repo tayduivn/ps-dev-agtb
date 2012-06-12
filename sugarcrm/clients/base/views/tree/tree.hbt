@@ -1,4 +1,4 @@
 <div class="block">
-    <h4>{{meta.panels.0.label}}:</h4>
+    <h4>Teams</h4>
     <div id="people" class="jst"></div>
 </div>
