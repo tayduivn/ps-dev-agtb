@@ -18,19 +18,32 @@
             this.timerId = null;
         },
 
+        _renderSelf: function() {
+            app.view.View.prototype._renderSelf.call(this);
+            this.$searchBox = this.$('.search-query');
+        },
+
         onKeyUp: function(e) {
             if (this.timerId) {
                 window.clearTimeout(this.timerId);
             }
 
-            this.timerId = window.setTimeout(_.bind(this.search, this, [this.$('.search-query').val()]), this.ITEM_TYPE_DELAY);
+            var self = this;
+
+            this.timerId = window.setTimeout(
+                function() {
+                    self.search(self.$searchBox.val()) ;
+                },
+                this.ITEM_TYPE_DELAY
+            );
         },
 
         onClickFavoritesBtn: function(e) {
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
             app.nomad.showLoading();
-            this.collection.fetch({favorites: !this.collection.favorites,
+            this.collection.fetch({
+                favorites: !this.collection.favorites,
                 success: function() {
                     app.nomad.hideLoading();
                 },
@@ -47,7 +60,8 @@
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
             app.nomad.showLoading();
-            this.collection.fetch({myItems: !this.collection.myItems,
+            this.collection.fetch({
+                myItems: !this.collection.myItems,
                 success: function() {
                     app.nomad.hideLoading();
                 },
@@ -65,14 +79,17 @@
         onClickMenuSave: function() {
 
         },
-        setListView:function(listView){
+
+        setListView: function(listView) {
             this.listView = listView;
         },
+
         search: function(text) {
-            if(this.listView){
+            if (this.listView) {
                 this.listView.search(text);
             }
         }
+
     });
 
 })(SUGAR.App);
