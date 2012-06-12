@@ -1,7 +1,7 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
-        <a class="cube" href="#" rel="tooltip" data-original-title="Dashboard"></a>
+        <a class="cube" href="#" rel="tooltip" title="Dashboard"></a>
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
               {{#each moduleList}}
