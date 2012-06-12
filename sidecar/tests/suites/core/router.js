@@ -42,7 +42,8 @@ describe("Router", function() {
         expect(route).toEqual("Contacts/create");
     });
 
-    it("should handle index route with default module", function() {
+    // TODO: Move to portal tests. It's handled in portal.js routing.before.
+    xit("should handle index route with default module", function() {
         app.config.defaultModule = "Cases";
         var mock = sinon.mock(app.controller);
         mock.expects("loadView").once().withArgs({

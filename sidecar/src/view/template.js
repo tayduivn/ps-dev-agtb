@@ -114,6 +114,22 @@
             return this._getField(type, view, fallbackTemplate)[1];
         },
 
+        // Convenience private method
+        _getLayout: function(name, module) {
+            var key = "l." + name + (module ? ("." + module) : "");
+            return [key, this.get(key)];
+        },
+
+        /**
+         * Gets compiled template for a layout.
+         * @param {String} name Layout name.
+         * @param {String} module(optional) Module name.
+         * @return {Function} Compiled template.
+         */
+        getLayout: function(name, module) {
+            return this._getLayout(name, module)[1];
+        },
+
         /**
          * Compiles and puts into local storage a view template.
          * @param {String} name View name.
@@ -137,6 +153,18 @@
         setField: function(type, view, src, force) {
             // Don't fall back to default template (false flag)
             return this._compile(this._getField(type, view), src, force);
+        },
+
+        /**
+         * Compiles and stores layout templates
+         * @param {String} type Layout Type
+         * @param {String} layout Layout Name
+         * @param {String} src Raw template source
+         * @param {Boolean} force Flag indicating if the template must be re-compiled
+         * @return {Function} Compiled template
+         */
+        setLayout: function(type, layout, src, force) {
+            return this._compile(this._getLayout(type, layout), src, force);
         },
 
         /**
@@ -201,15 +229,15 @@
                 }, this);
             }
 
-//            if (metadata.layouts) {
-//                _.each(metadata.layouts, function(field, type) {
-//                    if (type != "_hash") {
-//                        _.each(field.templates, function(src, view) {
-//                            this.setField(type, view, src, force);
-//                        }, this);
-//                    }
-//                }, this);
-//            }
+            if (metadata.layouts) {
+                _.each(metadata.layouts, function(layout, type) {
+                    if (type != "_hash") {
+                        _.each(layout.templates, function(src, view) {
+                            this.setLayout(type, null, src, force);
+                        }, this);
+                    }
+                }, this);
+            }
         },
 
         /**

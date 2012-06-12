@@ -22,14 +22,14 @@ describe("Error module", function() {
 
         app.error.initialize({statusCodes: statusCodes});
 
-        sinon.spy(app.error, "handleHTTPError");
+        sinon.spy(app.error, "handleHttpError");
         SugarTest.server.respondWith([404, {}, ""]);
         bean.save();
         SugarTest.server.respond();
         expect(handled).toBeTruthy();
-        expect(app.error.handleHTTPError.called).toBeTruthy();
+        expect(app.error.handleHttpError.called).toBeTruthy();
 
-        app.error.handleHTTPError.restore();
+        app.error.handleHttpError.restore();
     });
 
     it("should handle validation errors", function() {
@@ -72,4 +72,87 @@ describe("Error module", function() {
         var string = app.error.getErrorString(errorKey, context);
         expect(string).toEqual("Some error string 10");
     });
+
+    it("should call handleInvalidGrantError callback if available, or, resort to fallback", function() {
+        var spyHandleInvalidGrantError, spyFallbackHandler, xhr;
+        app.error.handleInvalidGrantError = function() {};
+        spyHandleInvalidGrantError = sinon.spy(app.error, 'handleInvalidGrantError');
+        xhr = {
+            responseText: '{ERROR: "invalid_grant"}',
+            status: '400'
+        };
+        app.error.handleHttpError(xhr);
+        expect(spyHandleInvalidGrantError.called).toBeTruthy();
+
+        // Now try with it undefined and the fallback should get called
+        app.error.handleInvalidGrantError = undefined;
+        spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
+        app.error.handleHttpError(xhr);
+        expect(spyHandleInvalidGrantError).not.toHaveBeenCalledTwice();
+        expect(spyFallbackHandler.called).toBeTruthy();
+        spyFallbackHandler.restore();
+    });
+    
+    it("should call handleInvalidClientError callback if available, or, resort to fallback", function() {
+        var spyHandleInvalidClientError, spyFallbackHandler, xhr;
+        app.error.handleInvalidClientError = function() {};
+        spyHandleInvalidClientError = sinon.spy(app.error, 'handleInvalidClientError');
+        xhr = {
+            responseText: '{ERROR: "invalid_client"}',
+            status: '400'
+        };
+        app.error.handleHttpError(xhr);
+        expect(spyHandleInvalidClientError.called).toBeTruthy();
+
+        // Now try with it undefined and the fallback should get called
+        app.error.handleInvalidClientError = undefined;
+        spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
+        app.error.handleHttpError(xhr);
+        expect(spyHandleInvalidClientError).not.toHaveBeenCalledTwice();
+        expect(spyFallbackHandler.called).toBeTruthy();
+        spyFallbackHandler.restore();
+    });
+
+    
+    it("should call handleUnauthorizedError callback on 401 if available, or, resort to fallback", function() {
+        var spyHandleUnauthorizedError, spyFallbackHandler, xhr;
+        app.error.handleUnauthorizedError = function() {};
+        spyHandleUnauthorizedError = sinon.spy(app.error, 'handleUnauthorizedError');
+        xhr = {
+            status: '401',
+            responseText: '{foo:"bar"}'
+        };
+        app.error.handleHttpError(xhr);
+        expect(spyHandleUnauthorizedError.called).toBeTruthy();
+
+        // Now try with it undefined and the fallback should get called
+        app.error.handleUnauthorizedError = undefined;
+        spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
+        app.error.handleHttpError(xhr);
+        expect(spyHandleUnauthorizedError).not.toHaveBeenCalledTwice();
+        expect(spyFallbackHandler.called).toBeTruthy();
+        spyFallbackHandler.restore();
+    });
+
+    it("should call handleForbiddenError callback on 403 if available, or, resort to fallback", function() {
+        var spyHandleForbiddenError, spyFallbackHandler, xhr;
+        app.error.handleForbiddenError = function() {};
+        spyHandleForbiddenError = sinon.spy(app.error, 'handleForbiddenError');
+        xhr = {
+            status: '403',
+            responseText: '{foo:"bar"}'
+        };
+        app.error.handleHttpError(xhr);
+        expect(spyHandleForbiddenError.called).toBeTruthy();
+
+        // Now try with it undefined and the fallback should get called
+        app.error.handleForbiddenError = undefined;
+        spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
+        app.error.handleHttpError(xhr);
+        expect(spyHandleForbiddenError).not.toHaveBeenCalledTwice();
+        expect(spyFallbackHandler.called).toBeTruthy();
+        spyFallbackHandler.restore();
+    });
+    
+
 });

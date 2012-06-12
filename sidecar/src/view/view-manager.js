@@ -96,8 +96,8 @@
          * @return {View.Component} New instance of a component.
          * @private
          */
-        _createComponent: function(type, name, params) {
-            var layoutType = type === "layout" ? params.type : null;
+        _createComponent: function(type, name, params, layoutType) {
+            layoutType = layoutType || params.type || null;
             var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
             var component = new Klass(params);
             component.bindDataChange();
@@ -158,7 +158,7 @@
             params.module  = params.module || params.context.get("module");
             params.meta    = params.meta || app.metadata.getView(params.module, params.name);
 
-            return this._createComponent("view", params.name, params);
+            return this._createComponent("view", params.name, params, (params.meta ? params.meta.type : null));
         },
 
         /**

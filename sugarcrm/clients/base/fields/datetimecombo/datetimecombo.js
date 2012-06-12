@@ -71,12 +71,12 @@
     },
     bindDomChange: function() {
         var self = this;
-        var date = this.$el.find('input');
+        var date = this.$('input');
         var model = this.model;
         var fieldName = this.name;
 
-        var hour = this.$el.find('.date_time_hours');
-        var minute = this.$el.find('.date_time_minutes');
+        var hour = this.$('.date_time_hours');
+        var minute = this.$('.date_time_minutes');
 
         //TODO add AM PM support depending on user prefs
         date.on('change', function(ev) {

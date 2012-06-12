@@ -30,8 +30,7 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
         'bizzle' => 'clients/portal/layouts/bizzle/bizzle.php',
         'bozzle' => 'custom/clients/portal/layouts/bozzle/bozzle.php',
-        'pizzle' => 'clients/mobile/layouts/pizzle/pizzle.php',
-        'pezzle' => 'clients/mobile/layouts/pizzle/pezzle.php', // To test more than one in a dir
+        'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
     );
     
@@ -118,8 +117,8 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
         $reply = $this->_restCall('metadata?typeFilter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('pizzle', $reply['reply']['layouts'], 'Test result not found');
-        $this->assertNotEmpty($reply['reply']['layouts']['pizzle']['test'], 'Test result data not returned');
-        $this->assertNotEmpty($reply['reply']['layouts']['pezzle']['test'], 'Test result data not returned');
+        $this->assertEmpty($reply['reply']['layouts']['dizzle'], 'Incorrectly picked up metadata that should not have been read');
+        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'BASE metadata not picked up');
+        $this->assertNotEmpty($reply['reply']['layouts']['wiggle']['meta']['test'], 'Test result data not returned');
     }
 }
