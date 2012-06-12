@@ -171,21 +171,41 @@ class SugarParsers_Filter
                 unset($_cvKlass, $cvKlass);
             }
 
-            if (is_array($value) && $key != '$in') {
+            if (is_array($value) && $key != '$in'&& $key != '$between')
+            {
                 // we need to parse this level
                 $value = $this->parseFilterArray($value);
-                if (count($value) == 1 && isset($value[0])) {
+                if (count($value) == 1 && isset($value[0]))
+                {
                     // we have one filter that is not assigned to a filed
                     // just store the filter
                     $value = $value[0];
                 }
-            } elseif ($key == '$in') {
-                if (!is_array($value)) {
+            }
+            elseif ($key == '$in')
+            {
+                if (!is_array($value))
+                {
                     $value = array($value);
-                } else {
+                }
+                else
+                {
                     // take out any keys that may be there since we don't need them
                     $value = array_values($value);
                 }
+            }
+            elseif ($key == '$between')
+            {
+                $filter = new $klass();
+                $filter->filter($value);
+                $value = $this->parseFilterArray($filter->getValue());
+                if (count($value) == 1 && isset($value[0]))
+                {
+                    // we have one filter that is not assigned to a field
+                    // just store the filter
+                    $value = $value[0];
+                }
+                $valueHasVariables = true;
             }
 
             /* @var $klass SugarParsers_Filter_AbstractFilter */
