@@ -11,9 +11,7 @@
             var models = this.initializeAllModels();
 
             options.context = _.extend(options.context, {
-                model: {
-                    forecasts: models
-                },
+                model: models,
                 register: app.events.register,
                 selectedTimePeriod: '',
                 // keep a record of the currently selected user on context
@@ -42,13 +40,20 @@
                 models = {};
 
             _.each(componentsMetadata, function(component) {
-                var modelMetadata = component.model;
+                var model,
+                    modelMetadata = component.model;
+
                 if (modelMetadata) {
-                    models[modelMetadata.name.toLowerCase()] = self.createModel(modelMetadata.module, modelMetadata.name);
+                    if (!models[modelMetadata.module.toLowerCase()]) {
+                        models[modelMetadata.module.toLowerCase()] = {};
+                    }
+
+                    model = self.createModel(modelMetadata.module, modelMetadata.name);
+                    models[modelMetadata.module.toLowerCase()][modelMetadata.name.toLowerCase()] = model;
                 }
             });
 
-            models.worksheet = new app.Model.Worksheet();
+            models.forecasts.worksheet = new app.Model.Worksheet(); //TODO: create model using the metadata
             return models;
         },
 
