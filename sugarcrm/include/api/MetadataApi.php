@@ -232,8 +232,11 @@ class MetadataApi extends SugarApi {
         
     }
 
+    // this is the function for the endpoint of the public metadata api.
     public function getPublicMetadata($api, $args) {
         $configs = array();
+
+        // right now we are getting the config only for the portal
         if($args['platform'] == 'portal') {
 
             $admin = new Administration();
@@ -245,8 +248,8 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-        // Default the type filter to everything
-        $this->typeFilter = array('fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl', 'views', 'layouts', 'config');
+        // Default the type filter to everything available to the public, no module info at this time
+        $this->typeFilter = array('fields','viewTemplates','labels','appStrings','appListStrings','acl', 'views', 'layouts', 'config');
 
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
@@ -256,7 +259,6 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        $moduleFilter = array();
         $onlyHash = false;
 
         if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
@@ -268,7 +270,7 @@ class MetadataApi extends SugarApi {
         } else {
             $this->platforms = array('base');
         }
-
+        // since this is a public metadata call pass true to the meta data manager to only get public/
         $mm = $this->getMetadataManager( TRUE );
 
         // Start collecting data

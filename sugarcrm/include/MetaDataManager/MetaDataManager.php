@@ -56,7 +56,7 @@ class MetaDataManager {
      *
      * @param User $user A User bean
      * @param array $platforms A list of clients
-     * @param bool $noauth is this a No Auth metadata grab
+     * @param bool $public is this a public metadata grab
      */
     function __construct ($user, $platforms = null, $public = false) {
         if ( $platforms == null ) {

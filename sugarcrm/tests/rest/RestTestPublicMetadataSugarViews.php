@@ -30,7 +30,6 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
         $this->oldFiles = array();
     }
     

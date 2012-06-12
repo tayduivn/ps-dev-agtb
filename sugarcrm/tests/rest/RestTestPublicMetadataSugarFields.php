@@ -47,7 +47,7 @@ class RestTestPublicMetadataSugarFields extends RestTestBase {
     }
 
     public function testMetadataSugarFields() {
-        $restReply = $this->_restCall('metadata?typeFilter=fields');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields');
 
         $this->assertTrue(isset($restReply['reply']['fields']['_hash']),'SugarField hash is missing.');
     }
