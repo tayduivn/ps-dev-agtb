@@ -24,14 +24,14 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarLayouts extends RestTestBase {
+class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     protected $_testPaths = array(
-        'wiggle' => 'clients/base/private/layouts/wiggle/wiggle.php',
-        'woggle' => 'custom/clients/base/private/layouts/woggle/woggle.php',
-        'bizzle' => 'clients/portal/private/layouts/bizzle/bizzle.php',
-        'bozzle' => 'custom/clients/portal/private/layouts/bozzle/bozzle.php',
-        'pizzle' => 'clients/mobile/private/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
-        'pozzle' => 'custom/clients/mobile/private/layouts/pozzle/pozzle.php',
+        'wiggle' => 'clients/base/public/layouts/wiggle/wiggle.php',
+        'woggle' => 'custom/clients/base/public/layouts/woggle/woggle.php',
+        'bizzle' => 'clients/portal/public/layouts/bizzle/bizzle.php',
+        'bozzle' => 'custom/clients/portal/public/layouts/bozzle/bozzle.php',
+        'pizzle' => 'clients/mobile/public/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
+        'pozzle' => 'custom/clients/mobile/public/layouts/pozzle/pozzle.php',
     );
     
     protected $_testFilesCreated = array();
@@ -43,10 +43,9 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         foreach ($this->_testPaths as $file) {
-            preg_match('#clients/(.*)/layouts/#', $file, $m);
+            preg_match('#clients/(.*)/(.*)/layouts/#', $file, $m);
             $platform = $m[1];
             $filename = basename($file, '.php');
             $contents = "<?php\n\$viewdefs['$platform']['layout']['$filename'] = array('test' => 'foo');\n";
@@ -79,42 +78,42 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
     }
 
     public function testBaseLayoutRequestAll() {
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata/public');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
     }
 
     public function testBaseLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?typeFilter=layouts');
+        $reply = $this->_restCall('metadata/public?typeFilter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
 
     public function testPortalLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=portal');
+        $reply = $this->_restCall('metadata/public?platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bizzle', $reply['reply']['layouts'], 'Test result not found');
     }
 
     public function testPortalLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?typeFilter=layouts&platform=portal');
+        $reply = $this->_restCall('metadata/public?typeFilter=layouts&platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bozzle', $reply['reply']['layouts'], 'Test result not found');
     }
 
     public function testMobileLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=mobile');
+        $reply = $this->_restCall('metadata/public?platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
     }
 
     public function testMobileLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?typeFilter=layouts&platform=mobile');
+        $reply = $this->_restCall('metadata/public?typeFilter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertEmpty($reply['reply']['layouts']['dizzle'], 'Incorrectly picked up metadata that should not have been read');
