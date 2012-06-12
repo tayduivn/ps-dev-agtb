@@ -10,7 +10,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = this.context.model.filters;
+            model = this.context.model.forecasts.filters;
 
         model.on('change', function() {
             self.buildDropdowns(this);
@@ -28,35 +28,37 @@
                     },
                     view: self
                 }),
-                $chosenPlaceholder = $(chosen.getPlaceholder().toString());
+                $chosenPlaceholder = $(chosen.getPlaceholder().toString()),
+                modelData = model.get(key);
 
             self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
-            chosen.label = model[key].get('label');
-            if (model[key].get('default')) {
-                chosen.model.set(key, model[key].get('default'));
+            chosen.label = modelData.label;
+            if (modelData.default) {
+                chosen.model.set(key, modelData.default);
             }
-            chosen.def.options = model[key].get('options');
+            chosen.def.options = modelData.options;
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
             if (key === 'timeperiods') {
-                self.setupTimePeriodActions($chosenPlaceholder, model[key]);
+                self.setupTimePeriodActions($chosenPlaceholder, modelData);
             }
         });
     },
 
-    setupTimePeriodActions: function($dropdown, model) {
+    setupTimePeriodActions: function($dropdown, modelData) {
         var self = this;
+
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             self.context.set('selectedTimePeriod', label);
         });
 
-        if (model.get('default')) {
+        if (modelData.default) {
             $dropdown.find('select').trigger('change', {
-                selected: model.get('default')
+                selected: modelData.default
             });
         }
     }
