@@ -234,12 +234,17 @@ class RestService extends ServiceBase {
             // Add the necessary visibility and acl classes to the default bean list
             require_once('modules/ACL/SugarACLSupportPortal.php');
             $default_acls = SugarBean::getDefaultACL();
-            $default_acls['SugarACLSupportPortal'] = array();
+            // This one overrides the Static ACL's, so disable that
+            unset($default_acls['SugarACLStatic']);
+            $default_acls['SugarACLStatic'] = false;
+            $default_acls['SugarACLSupportPortal'] = true;
             SugarBean::setDefaultACL($default_acls);
+            SugarACL::resetACLs();
 
             $default_visibility = SugarBean::getDefaultVisibility();
-            $default_visibility['SupportPortalVisibility'] = array();
+            $default_visibility['SupportPortalVisibility'] = true;
             SugarBean::setDefaultVisibility($default_visibility);
+            $GLOBALS['log']->debug("Added SupportPortalVisibility to session.");
         }
         
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');

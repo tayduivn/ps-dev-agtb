@@ -2435,6 +2435,9 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         $query .= " WHERE $this->table_name.id = ".$this->db->quoted($id);
         if ($deleted) $query .= " AND $this->table_name.deleted=0";
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->addVisibilityWhere($query);
+        //END SUGARCRM flav=pro ONLY
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))

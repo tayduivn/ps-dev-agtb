@@ -34,11 +34,17 @@ class SupportPortalVisibility extends SugarVisibility
      * @param $queryType string Either 'from' or 'where' to match the two types we understand right now.
      * @return string What to append to the query
      */
-    protected function addVisibilityPortal(&$query, $queryType) 
+    protected function addVisibilityPortal($query, $queryType) 
     {
         if ( empty($_SESSION['type']) || $_SESSION['type'] != 'support_portal' ) {
+            $GLOBALS['log']->error("Not a portal user, but running through the portal visibility class.");
             return;
         }
+        if ($this->bean->disable_row_level_security) {
+            $GLOBALS['log']->debug("No portal security applied to module (row-level security disabled): ".$this->bean->module_dir);
+            return;
+        }
+
 
         $table_alias = $this->getOption('table_alias');
         if(empty($table_alias)) {
@@ -179,13 +185,18 @@ class SupportPortalVisibility extends SugarVisibility
     public function addVisibilityFrom(&$query)
     {
         $query .= $this->addVisibilityPortal($query,'from');
-        return $query;
+        return;
     }
 
     public function addVisibilityWhere(&$query)
     {
-        $query .= $this->addVisibilityPortal($query,'where');
-        return $query;
+        $queryPart = $this->addVisibilityPortal($query,'where');
+        if ( !empty($query) && !empty($queryPart) ) {
+            $query .= " AND ".$queryPart;
+        } else if (!empty($queryPart)) {
+            $query .= $queryPart;
+        }
+        return;
     }
 
 }

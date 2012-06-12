@@ -30,7 +30,6 @@ class TeamSecurity extends SugarVisibility
     {
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
         if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
-            $this->bean->disable_row_level_security = true;
             return;
         }
 

@@ -24,13 +24,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Static ACL implementation - ACLs defined per-module
  * Uses ACLController and ACLAction
  */
-class SugarACLSupportPortal extends SugarACLStrategy
+class SugarACLSupportPortal extends SugarACLStatic
 {
     /**
      * Is the current user a portal user?
      * @return bool Yes, the user is a portal user
      */
-    public function isPortalUser()
+    protected function isPortalUser()
     {
         if (!empty($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
             return true;
@@ -39,40 +39,79 @@ class SugarACLSupportPortal extends SugarACLStrategy
     }
 
     /**
-     * (non-PHPdoc)
-     * @see SugarACLStrategy::checkAccess()
+     * Determines if a portal user "owns" a record
+     * @param SugarBean $bean
      */
-    public function checkAccess($module, $action, $context)
-    {
-        if ( !$this->isPortalUser() ) {
-            // Not a portal user, always return true
-            // true sends the system on to check further ACL's
+    protected function isPortalOwner(SugarBean $bean) {
+        if ( empty($bean->id) || $bean->new_with_id ) {
+            // New record, they are the owner.
             return true;
         }
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Team security is always disabled for portal users
-        if($action == "team_security") {
-            return false;
+        switch( $bean->module_dir ) {
+            case 'Contacts':
+                return $bean->id == $_SESSION['contact_id'];
+                break;
+                // Cases & Bugs work the same way, so handily enough we can share the code.
+            case 'Cases':
+            case 'Bugs':
+                $bean->load_relationship('contacts');
+                $rows = $bean->contacts->query(array(
+                                                   'where'=>array(
+                                                       'lhs_field'=>'contact.id',
+                                                       'operator'=>'=',
+                                                       'rhs_value'=>$GLOBALS['db']->quote($_SESSION['contact_id']),
+                                                       )));
+                return count($rows) > 0;
+                break;
+            default:
+                // Unless we know how to find the "owner", they can't own it.
+                return false;
         }
-        //END SUGARCRM flav=pro ONLY
-        $user = $this->getCurrentUser($context);
-        if($user && $user->isAdminForModule($module)) {
-            return true;
+    }
+
+    /**
+     * Handles the special access controls of the portal system, primarily disabling editing of records while allowing for record creation
+     * @param string $module
+     * @param string $action
+     * @param array $context THIS IS MODIFIED, owner_override is modified and set according to if the portal user is the "owner" of this object
+     */
+    protected function portalAccess($module, $action, &$context) {
+        // Leave this set to null to let the decision be handled by the parent
+        $accessGranted = null;
+
+        if ($this->isPortalUser() ) {
+            $bean = isset($context['bean'])?$context['bean']:null;
+            if (!$bean) {
+                // There is no bean, without a bean portal ACL's wont work
+                // So for security we will deny the request
+                $accessGranted = false;
+            }
+            
+            $context['owner_override'] = $this->isPortalOwner($bean);
+            if ( $context['owner_override'] ) {
+                $GLOBALS['log']->fatal('IKEA: We are an owner.');
+            } else {
+                $GLOBALS['log']->fatal('IKEA: NOT an owner.');
+            }
+            
+            if(isset(self::$action_translate[$action])) {
+                $action = self::$action_translate[$action];
+            }
+
+            // Only allow users to create records, never edit, for everything but Contacts
+            if ($bean->module_dir != 'Contacts' ) {
+                if ($action=='edit' && !empty($bean->id) && !$bean->new_with_id) {
+                    $accessGranted = false;
+                }
+            } else {
+                // Can't create new Contacts
+                if ($action == 'edit' && (empty($bean->id) || $bean->new_with_id)) {
+                    $accessGranted = false;
+                }
+            }
         }
 
-        $action = strtolower($action);
-
-        if($action == "field") {
-            return $this->fieldACL($module, $context['action'], $context);
-        }
-
-        if(!empty($context['bean'])) {
-            return $this->beanACL($module, $action, $context);
-        }
-
-        // Not a field, not a bean, return true and let the normal ACL handle it.
-        return true;
+        return $accessGranted;
     }
 
     static $action_translate = array(
@@ -94,41 +133,13 @@ class SugarACLSupportPortal extends SugarACLStrategy
      */
     protected function fieldACL($module, $action, $context)
     {
-        if (!$this->isPortalUser() ) {
-            return true;
+        $accessGranted = $this->portalAccess($module, $action, $context);
+
+        if( !isset($accessGranted) ) {
+            $accessGranted = parent::fieldACL($module, $action, $context);
         }
 
-        $bean = isset($context['bean'])?$context['bean']:null;
-        if (!$bean) {
-            // There is no bean, without a bean portal ACL's wont work
-            // So for security we will deny the request
-            return false;
-        }
-
-        $is_owner = false;
-        if(!empty($context['owner_override'])) {
-            $is_owner = $context['owner_override'];
-        } else {
-            if($bean) {
-                $is_owner = $bean->isOwner($GLOBALS['current_user']);
-            }
-        }
-
-        if(isset(self::$action_translate[$action])) {
-            $action = self::$action_translate[$action];
-        }
-
-        // Only allow users to create records, never edit
-        if ($action=='edit' || $action=='create' || $action=='save') {
-            if (empty($bean->id) || $bean->new_with_id ) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            // If they aren't writing to the field, let the normal ACL's take control
-            return true;
-        }
+        return $accessGranted;
     }
 
     /**
@@ -139,35 +150,13 @@ class SugarACLSupportPortal extends SugarACLStrategy
      */
     protected function beanACL($module, $action, $context)
     {
-        if (!$this->isPortalUser() ) {
-            return true;
+        $accessGranted = $this->portalAccess($module, $action, $context);
+
+        if( !isset($accessGranted) ) {
+            $accessGranted = parent::beanACL($module, $action, $context);
         }
 
-        $bean = $context['bean'];
-
-        if(!empty($context['owner_override'])) {
-            $is_owner = $context['owner_override'];
-        } else {
-            $is_owner = $bean->isOwner($GLOBALS['current_user']);
-        }
-
-        if(isset(self::$action_translate[$action])) {
-            $action = self::$action_translate[$action];
-        }
-
-        switch ($action)
-        {
-            case 'edit':
-                if (empty($bean->id) || $bean->new_with_id ) {
-                    // It's really create
-                    return true;
-                } else {
-                    // They are trying to edit, which isn't allowed
-                    return false;
-                }
-        }
-        //if it is not one of the above views then it should be implemented on the page level
-        return true;
+        return $accessGranted;
 
     }
 }
