@@ -4,7 +4,7 @@
     }
 
     app.Model.ChartOptions = Backbone.Model.extend({
-        url: 'Forecasts/chartOptions',
+        url: app.config.serverUrl + '/Forecasts/chartOptions',
 
         initialize: function(attributes, options) {
             Backbone.Model.prototype.initialize.call(this, attributes, options);

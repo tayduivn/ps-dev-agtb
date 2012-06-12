@@ -4,7 +4,7 @@
     }
 
     app.Model.Worksheet = Backbone.Collection.extend({
-        url:"Forecasts/worksheet"
+        url: app.config.serverUrl + "/Forecasts/worksheet"
     });
 
 })(SUGAR.App);

@@ -4,7 +4,7 @@
     }
 
     app.Model.Filters = Backbone.Model.extend({
-        url: 'Forecasts/filters',
+        url: app.config.serverUrl + '/Forecasts/filters',
 
         initialize: function(attributes, options) {
             Backbone.Model.prototype.initialize.call(this, attributes, options);
