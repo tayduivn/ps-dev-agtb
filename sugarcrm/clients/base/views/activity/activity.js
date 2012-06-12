@@ -9,7 +9,7 @@
         'click #saveNote': 'saveNote',
         'click .search': 'showSearch',
         'click .addNote': 'openNoteModal',
-        'click .icon-eye-open': 'loadChildDetailView'
+        'click .activity a': 'loadChildDetailView'
     },
     bindDataChange: function() {
         if (this.collection) {
@@ -57,10 +57,11 @@
     loadChildDetailView: function(e) {
         // UI fix
         this.$("li.activity").removeClass("on");
-        this.$(e.currentTarget).parent().parent().parent().addClass("on");
+        var $parent = this.$(e.currentTarget).parents("li.activity");
+        $parent.addClass("on");
 
         // gets the activityId in the data attribute
-        var activityId = this.$(e.currentTarget).parent().parent().parent().data("id");
+        var activityId = $parent.data("id");
 
         // gets the activity model
         var activity = this.collection.get(activityId);
