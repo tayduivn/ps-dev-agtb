@@ -88,11 +88,6 @@ class SugarACLSupportPortal extends SugarACLStatic
             }
             
             $context['owner_override'] = $this->isPortalOwner($bean);
-            if ( $context['owner_override'] ) {
-                $GLOBALS['log']->fatal('IKEA: We are an owner.');
-            } else {
-                $GLOBALS['log']->fatal('IKEA: NOT an owner.');
-            }
             
             if(isset(self::$action_translate[$action])) {
                 $action = self::$action_translate[$action];
