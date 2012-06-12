@@ -48,22 +48,21 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
      * testMultipleFilters
      *
      * @group SugarParser
-     * @outputBuffering disabled
      */
     public function testMultipleFilters()
     {
         $this->obj = new SugarParsers_Filter(new Opportunity());
         $testFilters = array(
             'timeperiod_id' => TimePeriod::getCurrentId(),
-            'probability' => array('$and' => array('$lte'=>0, '$gte'=>70)),
+            'probability' => array('$lte'=>0, '$gte'=>70),
             'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
 
         $this->obj->parse($testFilters);
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
         $reportFilters = $this->obj->convert($converter);
-        echo var_export($reportFilters, true);
-        //$this->assertEquals(3, count($reportFilters['Filter_1']));
+        //We should have 4 elements (two for the probability) + the operator (AND)
+        $this->assertEquals(5, count($reportFilters['Filter_1']));
 
     }
 }
