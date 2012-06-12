@@ -47,7 +47,7 @@
             columnDefs.push( { "sName": fields[i].name, "aTargets": [ i ] } );
         }
 
-        this.gTable = this.$el.find('#gridTable').dataTable(
+        this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
