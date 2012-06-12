@@ -29,7 +29,8 @@
         this._collection = this.context.model.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", this.filterWorksheetById, this);
+        this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
+        this.layout.context.on("change:selectedTimePeriod", this.updateWorksheetBySelectedTimePeriod, this);
     },
 
     /**
@@ -68,14 +69,24 @@
     },
 
     /**
-     * Event Handler for filtering the grid by an ID value
+     * Event Handler for updating the worksheet by a selected user
      *
      * @param params is always a context
      */
-    filterWorksheetById:function (params) {
-        if(params.hasOwnProperty("getGridFilters") && this.gTable.hasOwnProperty("fnMultiFilter"))  {
-            this.gTable.fnMultiFilter(params.getGridFilters());
-        }
+    updateWorksheetBySelectedUser:function (params) {
+        // TODO: What happens when a user is selected
+        // this is a placeholder for that functionality
+        //this.gTable.fnFilter({ "assigned_user_id" : params.attributes.selectedUser.id });
+    },
+
+    /**
+     * Event Handler for updating the worksheet by a timeperiod id
+     *
+     * @param params is always a context
+     */
+    updateWorksheetBySelectedTimePeriod:function (params) {
+        if(this.hasColumn("timeperiod_id"))
+            this.gTable.fnFilter({ "timeperiod_id" : params.attributes.selectedTimePeriod.id });
     },
 
     /**
@@ -136,5 +147,24 @@
         }
 
         return retColumns;
+    },
+
+    /***
+     * Checks current gTable to see if a particular column name exists
+     * @param columnName the column sName you're checking for.  NOT the Column sTitle/heading
+     * @return {Boolean} true if it exists, false if not
+     */
+    hasColumn:function(columnName) {
+        var containsColumnName = false;
+        var cols = this.gTable.fnSettings().aoColumns;
+
+        for (var i in cols) {
+            if(cols[i].sName == columnName)  {
+                containsColumnName = true;
+                break;
+            }
+        }
+
+        return containsColumnName;
     }
 })

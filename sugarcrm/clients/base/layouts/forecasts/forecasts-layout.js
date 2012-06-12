@@ -13,14 +13,8 @@
             options.context = _.extend(options.context, {
                 model: models,
                 register: app.events.register,
-                selectedTimePeriod: '',
-                // keep a record of the currently selected user on context
-                selectedUser: {},
-                getGridFilters: function(){
-                    return {
-                        "assigned_user_id": this.attributes.selectedUser.id
-                    };
-                }
+                selectedTimePeriod: {},
+                selectedUser: {}
             });
 
             app.view.Layout.prototype.initialize.call(this, options);

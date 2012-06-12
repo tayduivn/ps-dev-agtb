@@ -53,7 +53,8 @@
 
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
-            self.context.set('selectedTimePeriod', label);
+            var id = $(this).find('option:[value='+data.selected+']').val();
+            self.context.set('selectedTimePeriod', {"id": id, "label": label});
         });
 
         if (modelData.default) {
