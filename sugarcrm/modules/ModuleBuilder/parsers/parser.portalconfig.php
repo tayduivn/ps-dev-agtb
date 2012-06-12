@@ -70,15 +70,17 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         }
         $configString = json_encode($portalConfig, true);
 
+        if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
+            $portalConfig['on'] = 1;
+        } else {
+            $portalConfig['on'] = 0;
+        }
+
         foreach ($portalConfig as $fieldKey => $fieldValue) {
             $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
         }
 
-        $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-        //TODO: comment this back in and put this file in the right place
-        //sugar_file_put_contents('dtamconfig.js', $portalJSConfig);
-
-        if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
+        if (isset($portalConfig['on']) && $portalConfig['on'] == 1) {
             $u = $this->getPortalUser();
             $role = $this->getPortalACLRole();
 

@@ -36,7 +36,7 @@
         <tr>
             <td colspan='2' nowrap>
             {$mod.LBL_PORTAL_ENABLE}:
-                <input type="checkbox" name="on" {if $on == "true"} checked{/if} class='portalField' id="on" value="false"/>
+                <input type="checkbox" name="on" {if $on eq 1}checked{/if} class='portalField' id="on" value="1"/>
             </td>
         </tr>
         <tr>
