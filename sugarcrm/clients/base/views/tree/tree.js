@@ -18,9 +18,10 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        // IF the above line is the only thing in this function,
-        // we can remove the whole function
-        // Leaving function here in case we need to add more to initialize FOR NOW!
+
+        // Hide the whole tree view until jsTree gets it's data back
+        // if current user has reportees, then we'll show the tree view
+        $('.view-tree').hide();
     },
 
     /**
@@ -41,9 +42,9 @@
                 "ajax" : {
                     "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id'),
                     "success" : function(data)  {
-                        // IF this user has no children (is not a manager) then hide the tree
-                        if( data.children.length == 0 )  {
-                            self.jsTree.hide();
+                        // IF this user has children (is a manager/has reportees) then show the tree view
+                        if( data.children.length > 0 )  {
+                            $('.view-tree').show();
                         }
                     }
                 }
