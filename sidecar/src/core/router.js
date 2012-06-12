@@ -65,6 +65,7 @@
             "": "index",
             "logout": "logout",
             "logout/?clear=:clear": "logout",
+            "error/:type": "error",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -260,14 +261,22 @@
             app.logger.debug("Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
-
             app.controller.loadView({
                 module: module,
                 modelId: id,
                 action: action,
                 layout: action
             });
+        
+        },
+        error: function(errorType) {
+            app.logger.debug("Error route: " + errorType);
+            app.controller.loadView({
+                layout: "error",
+                errorType: errorType 
+            });
         }
+        
     });
 
     app.augment("router", new Router(), false);
