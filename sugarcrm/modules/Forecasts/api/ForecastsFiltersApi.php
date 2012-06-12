@@ -124,6 +124,9 @@ class ForecastsFiltersApi extends ModuleApi {
      * @return string
      */
     public function getReportees($api, $args) {
+        // TEMPORARY SOLUTION to lack of setting limits on recursive SQL function
+        $maxLevel = 2;
+
         $id = $args['userId'];
 
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
@@ -138,33 +141,36 @@ class ForecastsFiltersApi extends ModuleApi {
         $flatUsers = array();
         while($row = $GLOBALS['db']->fetchByAssoc($result))
         {
-            if(empty($users[$row['_level']]))  {
-                $users[$row['_level']] = array();
-            }
-
-            $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
-
-            $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
-
-            $user = array(
-                'data' => $fullName,
-                'children' => array(),
-                'metadata' => array(
-                    "id" => $row['id'],
-                    "full_name" => $fullName,
-                    "first_name" => $row['first_name'],
-                    "last_name" => $row['last_name'],
-                    "reports_to_id" => $row['reports_to_id']
-                ),
-                'state' => $openClosed
-            );
-
-            // Set the main user id as the root for treeData
-            if($user['metadata']['id'] == $id)
+            if( $row['_level'] <= $maxLevel )
             {
-                $treeData = $user;
-            } else {
-                $flatUsers[] = $user;
+                if(empty($users[$row['_level']]))  {
+                    $users[$row['_level']] = array();
+                }
+
+                $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
+
+                $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
+
+                $user = array(
+                    'data' => $fullName,
+                    'children' => array(),
+                    'metadata' => array(
+                        "id" => $row['id'],
+                        "full_name" => $fullName,
+                        "first_name" => $row['first_name'],
+                        "last_name" => $row['last_name'],
+                        "reports_to_id" => $row['reports_to_id']
+                    ),
+                    'state' => $openClosed
+                );
+
+                // Set the main user id as the root for treeData
+                if($user['metadata']['id'] == $id)
+                {
+                    $treeData = $user;
+                } else {
+                    $flatUsers[] = $user;
+                }
             }
         }
 

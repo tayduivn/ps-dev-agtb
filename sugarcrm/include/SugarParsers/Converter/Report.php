@@ -112,8 +112,9 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         }
 
         if (is_array($value)) {
-            foreach ($value as $k => $v) {
-                $this->_convert($k, $v);
+            foreach ($value as $v) {
+                //We need to retain the top level key so we pass in the top level key (variable name) and call _convert once more
+                $this->_convert($key, $v);
             }
         } else {
             if (is_integer($key)) {
