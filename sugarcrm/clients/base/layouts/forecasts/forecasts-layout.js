@@ -46,7 +46,7 @@
 
         createModels: function(models, data) {
             var Model = Backbone.Model.extend({
-                module: data.module + '/' + data.name.toLowerCase(),
+                url: data.module + '/' + data.name.toLowerCase(),
 
                 initialize: function() {
                     this.setModelBindings()

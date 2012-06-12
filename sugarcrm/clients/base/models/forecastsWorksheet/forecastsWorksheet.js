@@ -3,10 +3,8 @@
         app.Model = {};
     }
 
-    var _worksheetModel = Backbone.Model.extend();
-
     app.Model.Worksheet = Backbone.Collection.extend({
-        module:"Forecasts/worksheet"
+        url:"Forecasts/worksheet"
     });
 
 })(SUGAR.App);

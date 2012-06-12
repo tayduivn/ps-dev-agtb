@@ -4,7 +4,7 @@
     }
 
     app.Model.Committed = Backbone.Model.extend({
-        module: 'Forecasts/forecastsCommitted',
+        url: 'Forecasts/forecastsCommitted',
 
         initialize: function(attributes, options) {
             Backbone.Model.prototype.initialize.call(this, attributes, options);
