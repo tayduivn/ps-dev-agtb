@@ -168,7 +168,9 @@ class ForecastsFiltersApi extends ModuleApi {
             }
         }
 
-        $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers );
+        // if this is empty, something is really wrong
+        if(!empty($treeData))
+            $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers );
 
         return $treeData;
     }
