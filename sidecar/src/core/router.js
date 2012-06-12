@@ -65,6 +65,7 @@
             "": "index",
             "logout": "logout",
             "logout/?clear=:clear": "logout",
+            "error/:type": "error",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -186,7 +187,7 @@
             if (app.config.defaultModule) {
                 this.list(app.config.defaultModule);
             }
-            else {
+            else if (app.acl.hasAccess('read', 'Home')) {
                 this.layout("Home", "home");
             }
         },
@@ -263,14 +264,22 @@
             app.logger.debug("Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
-
             app.controller.loadView({
                 module: module,
                 modelId: id,
                 action: action,
                 layout: action
             });
+        
+        },
+        error: function(errorType) {
+            app.logger.debug("Error route: " + errorType);
+            app.controller.loadView({
+                layout: "error",
+                errorType: errorType 
+            });
         }
+        
     });
 
     app.augment("router", new Router(), false);

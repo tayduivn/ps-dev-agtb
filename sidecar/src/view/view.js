@@ -27,7 +27,8 @@
              * @cfg {Function}
              */
             this.template = options.template || app.template.getView(this.name, this.module) ||
-                            app.template.getView(this.name);
+                            app.template.getView(this.name) ||
+                            (options.meta && options.meta.type ? app.template.getView(options.meta.type) : null);
 
             /**
              * Dictionary of field widgets.

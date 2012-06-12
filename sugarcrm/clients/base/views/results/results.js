@@ -79,7 +79,7 @@
             },
             error:function(xhr, e) {
                 cb(null); // dismiss the alert
-                app.error.handleHTTPError(xhr, e, self);
+                app.error.handleHttpError(xhr, e, self);
                 app.logger.error("Failed to fetch search results " + this + "\n" + e);
             }
         });

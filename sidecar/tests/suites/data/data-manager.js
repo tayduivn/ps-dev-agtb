@@ -41,7 +41,7 @@ describe("DataManager", function() {
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        mock = sinon.mock(Backbone);
+        mock = sinon.mock(app.Bean.prototype);
         mock.expects("sync").once().withArgs("read");
 
         bean = dm.createBean(moduleName, {id: "xyz"});
@@ -56,7 +56,7 @@ describe("DataManager", function() {
         var moduleName = "Teams", mock, collection;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        mock = sinon.mock(Backbone);
+        mock = sinon.mock(app.BeanCollection.prototype);
         mock.expects("sync").once().withArgs("read");
 
         collection = dm.createBeanCollection(moduleName, null);
