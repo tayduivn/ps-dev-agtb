@@ -29,6 +29,7 @@
 
             this.activeArticle = null;
         },
+
         _renderSelf: function () {
             app.view.View.prototype._renderSelf.call(this);
 
@@ -38,11 +39,14 @@
                 this.$('.show-more-bottom-btn').hide();
             }
         },
-        search: function (text) {
-            this.collection.fetch();
+
+        search: function(query) {
+            this.collection.fetch({
+                query: query
+            });
         },
-        addOne: function (model, collection, options) {
-            app.logger.debug('ADD ONE!');
+
+        onItemAdded: function (model, collection, options) {
             var fieldId = app.view.getFieldId();
 
             var item = Handlebars.helpers.include('list.item', model, this, this.meta.panels[0].fields);
@@ -57,24 +61,26 @@
                 this._renderField(this.fields[i]);
             }
         },
-        removeOne: function (model) {
-            app.logger.debug('REMOVE ONE!');
+
+        onItemRemoved: function (model) {
             this.$("#" + this.module + model.id).remove();
         },
 
         bindDataChange: function () {
             if (this.collection) {
                 this.collection.on("reset", this.render, this);
-                this.collection.on('add', this.addOne, this);
-                this.collection.on('remove', this.removeOne, this);
+                this.collection.on('add', this.onItemAdded, this);
+                this.collection.on('remove', this.onItemRemoved, this);
             }
         },
+
         showMoreTopRecords: function () {
             this.showLoadingMsg('.show-more-top-btn',true);
 
             var offset = Math.max(this.collection.offset - this.collection.length - app.config.maxQueryResult, 0);
 
-            this.collection.fetch({add: true,
+            this.collection.fetch({
+                add: true,
                 relate: !!this.context.get('link'),
                 silent: true,
                 offset: offset,
@@ -113,6 +119,7 @@
 
                 }, this)});
         },
+
         showMoreBottomRecords: function () {
             this.showLoadingMsg('.show-more-bottom-btn',true);
 
@@ -138,6 +145,7 @@
 
                 }, this)});
         },
+
         showLoadingMsg: function (selector, isShow) {
             if (isShow) {
                 this.$(selector + ' .show_more_posts').hide();
@@ -147,14 +155,17 @@
                 this.$(selector + ' .loading-holder').hide();
             }
         },
+
         getMaxPageSize: function () {
             return Math.max(this.MAX_PAGE_SIZE, app.config.maxQueryResult);
         },
+
         onClickGrip: function (e) {
             var grip = $(e.target);
             var isActive = grip.hasClass('on');
             grip.closest('article').trigger(isActive ? 'swipeRight' : 'swipeLeft');
         },
+
         onSwipeLeftItem: function (e) {
             if (this.activeArticle) {
                 this.activeArticle.trigger('swipeRight');
@@ -165,10 +176,12 @@
             this.activeArticle.find('.grip').addClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
         },
+
         onSwipeRightItem: function (e) {
             this.activeArticle.find('.grip').removeClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
         },
+
         onRemoveItem: function (e) {
             e.preventDefault();
             var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
@@ -179,6 +192,7 @@
                 model.destroy();
             }
         },
+
         onUnlinkItem: function (e) {
             e.preventDefault();
             var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
@@ -189,11 +203,13 @@
                 model.destroy({ relate: true });
             }
         },
+
         onEditItem: function (e) {
             e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
         },
+
         onClickMenuItem:function(e){
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
