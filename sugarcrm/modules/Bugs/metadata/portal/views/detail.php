@@ -30,16 +30,6 @@ $viewdefs ['Bugs']['portal']['view']['detail'] =
                             'colspan' => 2,
                         ),
                     ),
-                    'status',
-                    'priority',
-                    'source',
-                    'product_category',
-                    'resolution',
-                    'type',
-                    'date_modified',
-                    'modified_by_name',
-                    'created_by_name',
-                    'date_entered',
                     array(
                         'name' => 'name',
                         'displayParams' =>
@@ -47,6 +37,16 @@ $viewdefs ['Bugs']['portal']['view']['detail'] =
                             'colspan' => 2,
                         ),
                     ),
+                    'date_entered',
+                    'status',
+                    'priority',
+                    'source',
+                    'product_category',
+                    'type',
+                    'resolution',
+                    'date_modified',
+                    'modified_by_name',
+                    'created_by_name',
                     array(
                         'name' => 'description',
                         'displayParams' =>
