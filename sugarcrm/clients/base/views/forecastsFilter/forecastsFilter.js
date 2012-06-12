@@ -51,7 +51,6 @@
         var self = this;
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
-            model.set('value', label);
             self.context.set('selectedTimePeriod', label);
         });
 
