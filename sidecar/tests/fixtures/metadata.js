@@ -1243,10 +1243,12 @@ fixtures.metadata = {
   },
     'layouts': {
         "list": {
-            "type": "simple",
-            "components": [
-                {view: "list"}
-            ]
+            'meta': {
+                "type": "simple",
+                "components": [
+                    {view: "list"}
+                ]
+            }
         }
     },
 };

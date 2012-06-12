@@ -106,7 +106,9 @@
          * @method
          */
         init: function() {
-            Backbone.sync = _.bind(this.sync, this);
+            var sync = _.bind(this.sync, this);
+            app.Bean.prototype.sync = sync;
+            app.BeanCollection.prototype.sync = sync;
 
             app.events.register(
                 /**
@@ -500,7 +502,7 @@
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error, model);
+                app.error.handleHttpError(xhr, error, model);
 
                 self.trigger("data:sync:end", method, model, error);
                 if (options.error) options.error(xhr, error);

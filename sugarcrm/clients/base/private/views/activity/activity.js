@@ -33,8 +33,8 @@
             success: function(data) {
                 self.$('#saveNote').button();
                 self.$('#noteModal').modal('hide').find('form').get(0).reset();
-                self.collection.add(newNote);
-                self.render();
+                //refetch is necessary to ensure we pull in any logic hook or workflow updates
+                self.collection.fetch({relate: true});
             },
             error: function(data) {
                 self.$('#saveNote').button();

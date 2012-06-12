@@ -32,7 +32,8 @@
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "this.app.login(args, null, {error:"+
+                                            "function(){ app.alert.dismiss('login'); $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
@@ -163,7 +164,7 @@
                                             "function(){ var self = this; " +
                                             "   if(this.model.isValid()) {" +
                                             "   $('#content').hide(); " +
-                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoclose:false}); " +
+                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
                                             "   var contactData={" +
                                             "       first_name:this.model.get(\"first_name\"), " +
                                             "       last_name:this.model.get(\"last_name\")," +
@@ -772,6 +773,28 @@
         app.metadata.set(base_metadata);
         app.data.declareModels();
 
+        var origRoutingBefore = app.routing.before;
+        app.routing.before = function(route, args) {
+            var module;
+
+            // First make sure we pass all original routing before tests.
+            if(origRoutingBefore(route, args)) {
+
+                // Check list and record routes module is defined or 404.
+                if(route === 'list' || route === 'record') {
+                    module = args[0] ? args[0] : null;
+
+                    if (!module || !_.has(app.metadata.getModules(), module)) {
+                        app.router.navigate('error/404', {trigger: true});
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+            return true;
+        };
+        
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
@@ -792,7 +815,6 @@
         // Load the profile
         app.router.route("profile", "profile", function() {
             app.controller.loadView({
-                module: "Profile", // TODO: It's not really a module .. do we need this?
                 layout: "profile"
             });
         });
@@ -802,9 +824,45 @@
                 layout: "profileedit"
             });
         });
-
-
     });
+
+    var oRoutingBefore = app.routing.before;
+    app.routing.before = function(route, args) {
+        var dm;
+
+        // Perform any original before checks .. if these fail return false
+        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        function alertUser(msg) {
+            // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
+            msg = msg || "At minimum, you need to have the 'Home' module enabled to use this application.";
+
+            app.alert.show("no-sidecar-access", {
+                level: "error",
+                title: "Error",
+                messages: [msg]
+            });
+        }
+
+        // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
+        if(route === 'index') {
+            dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
+            if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
+                app.router.list(dm);
+            } else if(app.acl.hasAccess('read', 'Home')) {
+                app.router.index();
+            } else {
+                alertUser();
+                return false;
+            }
+        // If route is NOT index check if module loaded and user has access to it.
+        } else if (!app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            app.logger.error("Module not loaded or user does not have access. ", route);
+            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            return false;
+        } 
+        return true;
+    };
 
     app.view.Field = app.view.Field.extend({
         /**

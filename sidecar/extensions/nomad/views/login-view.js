@@ -19,6 +19,7 @@
         },
 
         login: function () {
+            app.alert.dismissAll();
             var loginBtn = this.$('#login_btn');
             if (loginBtn.is('[disabled=disabled]')) return false;
 
