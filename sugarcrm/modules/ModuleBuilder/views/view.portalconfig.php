@@ -52,7 +52,7 @@ class ViewPortalConfig extends SugarView
 
 	function display() 
 	{
-        $portalFields = array('on'=>'false', 'appName'=>'Support Portal', 'logoURL'=>
+        $portalFields = array('on'=>'false', 'logoURL'=>
         '', 'maxQueryResult'=>'20', 'detailFieldCount'=>'5');
         $admin = new Administration();
        	$admin->retrieveSettings();

@@ -1,6 +1,23 @@
 /**
  * Base bean collection class.
  *
+ * **Filtering and searching**
+ *
+ * The collection's {@link Data.BeanCollection#fetch} method supports filter and seach options.
+ * For example, to search favorite accounts that have `"Acme"` string in their name:
+ * <pre><code>
+ * (function(app) {
+ *
+ *     var accounts = app.data.createBeanCollection("Accounts");
+ *     accounts.fetch({
+ *         favorites: true,
+ *         query: "Acme"
+ *     });
+ *
+ * })(SUGAR.App);
+ * </code></pre>
+ *
+ *
  * @class Data.BeanCollection
  * @alias SUGAR.App.BeanCollection
  * @extends Backbone.Collection
@@ -25,14 +42,17 @@
         /**
          * Fetches beans.
          *
-         * Options:
+         * @param options(optional) fetch options
          *
          * - relate: boolean flag indicating that relationships should be fetched.
-         * All other options are standard options outlined in the backbone docs.
-         * User {@link Data.BeanCollection#paginate} for details about pagination options.
+         * - myItems: boolean flag indicating to fetch records assigned to the current user only
+         * - favorites: boolean flag indicating to fetch favorites
+         * - query: search query string
+         * - add: boolean flag indicating if new records should be appended to the collection.
+         * - success: success callback.
+         * - error: error callback.
          *
-         * Triggers <code>app:collection:fetch</code> event.
-         * @param options(optional) fetch options
+         * See {@link Data.BeanCollection#paginate} for details about pagination options.
          */
         fetch: function(options) {
             options = options || {};
@@ -44,53 +64,27 @@
              * @member Data.BeanCollection
              * @property {Array}
              */
-            this.fields = options.fields || this.fields || null;
-            /**
-             * Flag indicating if a collection contains items assigned to the current user.
-             * @member Data.BeanCollection
-             * @property {Boolean}
-             */
-            this.myItems = options.myItems || this.myItems;
-            /**
-             * Flag indicating if a collection contains current user's favorite items.
-             * @member Data.BeanCollection
-             * @property {Boolean}
-             */
-            this.favorites = options.favorites || this.favorites;
-            return Backbone.Collection.prototype.fetch.call(this, options);
-        },
+            options.fields = this.fields = options.fields || this.fields || null;
 
-        /**
-         * Returns string representation useful for debugging:
-         * <code>coll:[module-name]-[length]</code>  or
-         * <code>coll:[related-module-name]/[id]/[module-name]-[length]</code> if it's a collection of related beans.
-         * @return {String} string representation of this collection.
-         */
-        toString: function() {
-            return "coll:" + (this.link ?
-                (this.link.bean.module + "/" + this.link.bean.id + "/") : "") +
-                this.module + "-" + this.length;
+            options.myItems = _.isUndefined(options.myItems) ? this.myItems : options.myItems;
+            options.favorites = _.isUndefined(options.favorites) ? this.favorites : options.favorites;
+            options.query = _.isUndefined(options.query) ? this.query : options.query;
+
+            return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
         /**
          * Paginates a collection.
          *
-         * Options:
+         * @param options(optional) fetch options
          *
          * - page: page index (integer) from the current page to paginate to.
-         * - relate: boolean flag indicating that relationships should be fetched.
-         * - add: boolean flag indicating if new records should be appended to the collection.
-         * - success: success callback.
-         * - error: error callback.
-         * All other options are standard options outlined in the backbone docs.
-         * @param options(optional) fetch options
+         *
+         * For other options see {@link Data.BeanCollection#fetch} method.
          */
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
-            options.fields = options.fields || this.fields || null;
-            options.myItems = options.myItems || this.myItems;
-            options.favorites = options.favorites || this.favorites;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
@@ -112,6 +106,18 @@
                 pageNumber = Math.ceil(this.offset / app.config.maxQueryResult);
             }
             return pageNumber;
+        },
+
+        /**
+         * Returns string representation useful for debugging:
+         * <code>coll:[module-name]-[length]</code>  or
+         * <code>coll:[related-module-name]/[id]/[module-name]-[length]</code> if it's a collection of related beans.
+         * @return {String} string representation of this collection.
+         */
+        toString: function() {
+            return "coll:" + (this.link ?
+                (this.link.bean.module + "/" + this.link.bean.id + "/") : "") +
+                this.module + "-" + this.length;
         }
 
     }), false);

@@ -167,8 +167,9 @@
                 'edit': 'detail'
             };
 
-            // options.viewName is used to override the template
-            var viewName = this.options.viewName || this.view.name;
+            // options.viewName or view metadata type is used to override the template
+            var viewName = this.options.viewName ||
+                (this.view.meta && this.view.meta.type ? this.view.meta.type : this.view.name);
             while (viewName) {
                 if (app.acl.hasAccessToModel(viewName, this.model, this.name)) break;
                 viewName = viewFallbackMap[viewName];
@@ -242,9 +243,7 @@
          * Once the template is rendered, DOM changes are bound to the model.
          * @return {Object} The instance of this field.
          */
-        render: function() {
-            if (this.disposed === true) throw new Error("Unable to render field because it's disposed: " + this);
-
+        _render: function() {
             this._loadTemplate();
             if (this.model instanceof Backbone.Model) {
                 /**

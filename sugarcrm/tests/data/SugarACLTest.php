@@ -37,14 +37,11 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function getTestMock()
     {
-        $bean = $this->getBeanMock();
+        $bean = $this->getMockBuilder('MockSugarBeanACL')->disableOriginalConstructor()->getMock();
         $bean->model_name   = 'test';
         $bean->object_name  = 'test';
         $bean->module_dir   = 'test';
-        $bean->expects($this->any())
-            ->method('defaultACLs')
-            ->will($this->returnValue(array('SugarACLStatic')));
-
+        $bean->expects($this->any())->method("bean_implements")->will($this->returnValue(true));
 
         return $bean;
     }
@@ -60,8 +57,8 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
     {
 
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = $config;
-
-        $acls = SugarACL::loadACLs($this->bean);
+        SugarACL::resetACLs();
+        $acls = SugarACL::loadACLs($this->bean->object_name, array("bean" => $this->bean));
 
         $this->assertEquals($count, count($acls));
 
@@ -173,4 +170,12 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     }
 }
-?>
+
+class MockSugarBeanACL extends SugarBean
+{
+    // do not let the mock kill defaultACLs function
+    final public function defaultACLs()
+    {
+        return parent::defaultACLs();
+    }
+}

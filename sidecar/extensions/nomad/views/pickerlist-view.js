@@ -5,20 +5,25 @@
             'click .picker-list-row': 'onRowClick',
             'click .menu-cancel': 'onClickMenuCancel'
         },
+
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
             this.data = {};
         },
-        _renderSelf:function(){
-            this._renderWithContext(this.data,this.options.templateOptions);
+
+        _renderSelf: function() {
+            app.view.View.prototype._renderSelf.call(this, this.data);
         },
-        setData:function(data){
+
+        setData: function(data){
             this.data = data;
         },
-        onRowClick:function(e){
+
+        onRowClick: function(e){
             //e.preventDefault();
         },
-        onClickMenuCancel:function(e){
+
+        onClickMenuCancel: function(e){
             e.preventDefault();
             app.router.goBack();
         }

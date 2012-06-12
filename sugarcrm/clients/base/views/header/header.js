@@ -17,22 +17,17 @@
      * Renders Header view
      */
     initialize: function(options) {
-        var self = this;
-        app.events.on("app:sync:complete", function() {
-            self.render();
-        });
+        app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
-    /**
-     * Renders Header view
-     */
-    render: function() {
-        var self = this, menuTemplate, moduleList;
+    _renderSelf: function() {
+        var self = this,
+            menuTemplate;
         if (!app.api.isAuthenticated()) return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
-        app.view.View.prototype.render.call(self);
+        app.view.View.prototype._renderSelf.call(self);
 
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
@@ -41,15 +36,13 @@
             compiler: menuTemplate,
             buttonElement: '.navbar-search a.btn'
         });
-
     },
-
     /** 
      * Callback for the searchahead plugin .. note that
      * 'this' points to the plugin (not the header view!)
      */
     fireSearchRequest: function (term) {
-        var plugin = this, markup, mlist, params;
+        var plugin = this, mlist, params;
         mlist = app.metadata.getDelimitedModuleList(',');
         params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: app.config.maxSearchQueryResult};
         app.api.search(params, {
@@ -81,27 +74,6 @@
         hashModule = moduleHref.split('/')[0];
         this.$('#moduleList li').removeClass('active');
         this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
-    },
-
-    /**
-     * Renders Header view
-     */
-    initialize: function(options) {
-        var self = this;
-        app.events.on("app:sync:complete", function() {
-            self.render();
-        });
-        app.view.View.prototype.initialize.call(this, options);
-    },
-    /**
-     * Renders Header view
-     */
-    render: function() {
-        if (!app.api.isAuthenticated()) return;
-        this.setModuleInfo();
-        this.setCreateTasksList();
-        app.view.View.prototype.render.call(this);
-        return this;
     },
     hide: function() {
         this.$el.hide();
@@ -140,8 +112,12 @@
     setModuleInfo: function() {
         var self = this;
         this.createListLabels = [];
-        this.currentModule = this.context.get('module');
+        this.currentModule = this.module;
         this.moduleList = _.toArray(app.metadata.getModuleList());
+
+        if (app.config && app.config.displayModules) {
+            this.moduleList = _.intersection(this.moduleList, app.config.displayModules)
+        };
     },
 
     /**

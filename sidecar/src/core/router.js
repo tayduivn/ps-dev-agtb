@@ -64,6 +64,8 @@
         routes: {
             "": "index",
             "logout": "logout",
+            "logout/?clear=:clear": "logout",
+            "error/:type": "error",
             ":module": "list",
             ":module/layout/:view": "layout",
             ":module/create": "create",
@@ -113,9 +115,16 @@
             app.logger.debug("Navigating back...");
             window.history.back();
         },
+
+        /**
+         * Navigates the window history.
+         *
+         * @param {Number} steps Number of steps to navigate (can be negative).
+         */
         go: function(steps) {
             window.history.go(steps);
         },
+
         /**
          * Starts Backbone history which in turn starts routing the hashtag.
          *
@@ -178,7 +187,7 @@
             if (app.config.defaultModule) {
                 this.list(app.config.defaultModule);
             }
-            else {
+            else if (app.acl.hasAccess('read', 'Home')) {
                 this.layout("Home", "home");
             }
         },
@@ -225,7 +234,7 @@
          * Handles `login` route.
          */
         login: function() {
-            app.logger.debug("Loging in");
+            app.logger.debug("Logging in");
             app.controller.loadView({
                 module: "Login",
                 layout: "login",
@@ -236,13 +245,13 @@
         /**
          * Handles `logout` route.
          */
-        logout: function() {
-            app.logger.debug("Loging out");
-            var self = this;
-            app.logout({success: function(data) {
+        logout: function(clear) {
+            clear = clear == "1" ? true : false;
+            app.logger.debug("Logging out: " + clear);
+            app.logout({success: function() {
                 app.router.navigate("#");
                 app.router.login();
-            }});
+            }}, clear);
         },
 
         /**
@@ -255,14 +264,22 @@
             app.logger.debug("Route changed: " + module + "/" + id + "/" + action);
 
             action = action || "detail";
-
             app.controller.loadView({
                 module: module,
                 modelId: id,
                 action: action,
                 layout: action
             });
+        
+        },
+        error: function(errorType) {
+            app.logger.debug("Error route: " + errorType);
+            app.controller.loadView({
+                layout: "error",
+                errorType: errorType 
+            });
         }
+        
     });
 
     app.augment("router", new Router(), false);

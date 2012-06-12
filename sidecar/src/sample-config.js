@@ -58,6 +58,12 @@
         maxQueryResult: 20,
 
         /**
+         * Max search query result set size (for global search)
+         * @cfg {Number}        
+         */
+        maxSearchQueryResult: 3,
+
+        /**
         * # of fields to display on the detail view
         * @cfg {Number}
         */
@@ -131,6 +137,9 @@
         additionalComponents: {
             header: {
                 target: '#header'
+            },
+            alert: {
+                target: '#alert'
             },
             footer: {
                 target: '#footer'

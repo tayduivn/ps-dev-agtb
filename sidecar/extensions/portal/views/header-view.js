@@ -1,7 +1,5 @@
 (function(app) {
 
-    var maxNumSearch = app.config.maxSearchQueryResult;
-
     /**
      * View that displays header for current app
      * @class View.Views.HeaderView
@@ -20,22 +18,17 @@
          * Renders Header view
          */
         initialize: function(options) {
-            var self = this;
-            app.events.on("app:sync:complete", function() {
-                self.render();
-            });
+        app.events.on("app:sync:complete", this.render, this);
             app.view.View.prototype.initialize.call(this, options);
         },
-        /**
-         * Renders Header view
-         */
-        render: function() {
-            var self = this, menuTemplate, moduleList;
+        _renderSelf: function() {
+            var self = this,
+                menuTemplate;
             if (!app.api.isAuthenticated()) return;
 
             self.setModuleInfo();
             self.setCreateTasksList();
-            app.view.View.prototype.render.call(self);
+            app.view.View.prototype._renderSelf.call(self);
 
             // Search ahead drop down menu stuff
             menuTemplate = app.template.getView('dropdown-menu');
@@ -44,17 +37,15 @@
                 compiler: menuTemplate,
                 buttonElement: '.navbar-search a.btn'
             });
-
         },
-
         /** 
          * Callback for the searchahead plugin .. note that
          * 'this' points to the plugin (not the header view!)
          */
         fireSearchRequest: function (term) {
-            var plugin = this, markup, mlist, params;
+            var plugin = this, mlist, params;
             mlist = app.metadata.getDelimitedModuleList(',');
-            params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: maxNumSearch};
+            params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: app.config.maxSearchQueryResult};
             app.api.search(params, {
                 success:function(data) {
                     plugin.provide(data);
@@ -122,7 +113,6 @@
         setModuleInfo: function() {
             var self = this;
             this.createListLabels = [];
-            this.currentModule = this.context.get('module');
             this.moduleList = _.toArray(app.metadata.getModuleList());
 
             if (app.config && app.config.displayModules) {

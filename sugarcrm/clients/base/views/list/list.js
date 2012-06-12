@@ -2,8 +2,8 @@
 
 /**
  * View that displays a list of models pulled from the context's collection.
- * @class View.Views.TableView
- * @alias SUGAR.App.layout.TableView
+ * @class View.Views.ListView
+ * @alias SUGAR.App.layout.ListView
  * @extends View.View
  */
     events: {
@@ -11,26 +11,22 @@
         'mouseenter tr': 'showActions',
         'mouseleave tr': 'hideActions'
     },
-    render: function() {
-        var self = this;
-        app.view.View.prototype.render.call(self);
+    _renderSelf: function() {
+        app.view.View.prototype._renderSelf.call(this);
         // off prevents multiple bindings for each render
-        self.layout.off("list:search:fire", null, this); 
-        self.layout.off("list:paginate:success", null, this); 
-        self.layout.on("list:search:fire", self.fireSearch, this); 
-        self.layout.on("list:paginate:success", self.render, this); 
+        this.layout.off("list:search:fire", null, this);
+        this.layout.off("list:paginate:success", null, this);
+        this.layout.on("list:search:fire", this.fireSearch, this);
+        this.layout.on("list:paginate:success", this.render, this);
     },
-
     fireSearch: function(term) {
-        var collection, options;
-        collection = this.context.get('collection');
-        options = {
+        var options = {
             params: { 
-                q: term,
+                q: term
             },
-            fields: collection.fields ? collection.fields : app.controller.context.get('collection')
+            fields: this.collection.fields || {}
         };
-        collection.fetch(options);
+        this.collection.fetch(options);
     },
 
     /**
@@ -49,7 +45,7 @@
         };
 
         //TODO probably need to check if we can sort this field from metadata
-        collection = this.context.get('collection');
+        collection = this.collection;
         fieldName = this.$(event.target).data('fieldname');
 
         if (!collection.orderBy) {

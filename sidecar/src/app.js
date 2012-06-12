@@ -207,6 +207,11 @@ SUGAR.App = (function() {
                 _app.cache.init(this);
             }
 
+            // Instantiate controller: <Capitalized-appId>Controller or Controller.
+            var className = _app.utils.capitalize(_app.config ? _app.config.appId : "") + "Controller";
+            var Klass = this[className] || this["Controller"];
+            this.controller = new Klass();
+
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
@@ -350,23 +355,33 @@ SUGAR.App = (function() {
          * @return {Object} XHR request object.
          */
         login: function(credentials, data, callbacks) {
-            callbacks = callbacks || {};
-            var origSuccess = callbacks.success, loginData;
-            var loadUserCallbacks = {
+            callbacks       = callbacks || {};
+            var origSuccess = callbacks.success,
+                origError   = callbacks.error,
+                loginData, loadUserCallbacks, loginCallbacks;
+
+            loadUserCallbacks = {
                 success: function(data) {
                     if (data.current_user) {
                         _app.user._reset(data ? data.current_user : null);
                     }
                     _app.trigger("app:login:success", loginData);
                     if (origSuccess) origSuccess(loginData);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if (origError) origError(xhr, textStatus, errorThrown);
+                    _app.error.handleHttpError(xhr, textStatus);
                 }
-            }
-            var loginCallbacks = {
+            };
+            loginCallbacks = {
                 success: function(data) {
+                    var method = 'read', module = 'me';
                     loginData = data;
-                    var method = 'read';
-                    var module = 'me';
                     _app.api.records(method, module, {}, {}, loadUserCallbacks);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if (origError) origError(xhr, textStatus, errorThrown);
+                    _app.error.handleHttpError(xhr, textStatus);
                 }
             };
 
@@ -376,22 +391,28 @@ SUGAR.App = (function() {
         /**
          * Logs out this app.
          * @param  {Object} callbacks(optional) callback object.
+         * @param {Boolean} clear(optional) Flag indicating if user information must be deleted from local storage.
          * @return {Object} XHR request object.
          */
-        logout: function(callbacks) {
-            var originalSuccess, xhr;
+        logout: function(callbacks, clear) {
+            var originalSuccess, originalError, xhr;
             callbacks = callbacks || {};
             originalSuccess = callbacks.success;
+            originalError = callbacks.error;
 
             callbacks.success = function(data) {
                 // TODO: The user.js module now listens for logout event.
                 // It takes a 'clear' boolean indicating whether we want
                 // to completely clear user's data or leave intact. Later,
                 // we should let user choose. For they get "zapped"
-                _app.trigger("app:logout", true);
+                _app.trigger("app:logout", clear);
                 if (originalSuccess) {
                     originalSuccess(data);
                 }
+            };
+            callbacks.error = function(xhr, textStatus, errorThrown) {
+                if (originalError) originalError(xhr, textStatus, errorThrown);
+                _app.error.handleHttpError(xhr, textStatus);
             };
 
             xhr = _app.api.logout(callbacks);
@@ -399,9 +420,6 @@ SUGAR.App = (function() {
         },
 
         modules: _modules
-    }
-        ;
-}
-    ()
-    )
-;
+    };
+
+}());

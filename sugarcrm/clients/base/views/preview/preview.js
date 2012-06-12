@@ -66,7 +66,7 @@
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
     },
-    render: function() {
+    _render: function() {
         // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
         this.layout.layout.off("search:preview", null, this);
         this.layout.layout.on("search:preview", this.togglePreview, this);
@@ -76,7 +76,9 @@
     togglePreview: function(model) {
         if(model) {
             this.model.set(model);
-            app.view.View.prototype.render.call(this);
+            this.model.module = this.model.get('_module');
+            // in turn calls _renderSelf, but also populates our fields via _renderField
+            app.view.View.prototype._render.call(this);
         }
     },
     closePreview: function() {

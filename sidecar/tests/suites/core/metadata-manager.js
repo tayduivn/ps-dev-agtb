@@ -54,7 +54,7 @@ describe('Metadata Manager', function() {
     });
 
     it('should get default layout defs', function() {
-        expect(app.metadata.getLayout("Test", "list")).toEqual(meta.layouts.list);
+        expect(app.metadata.getLayout("Test", "list")).toEqual(meta.layouts.list.meta);
     });
 
     it('should get a specific layout', function() {

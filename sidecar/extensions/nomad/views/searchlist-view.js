@@ -18,8 +18,9 @@
             this.timerId = null;
         },
 
-        render: function() {
-            app.view.View.prototype.render.call(this);
+        _renderSelf: function() {
+            app.view.View.prototype._renderSelf.call(this);
+            this.$searchBox = this.$('.search-query');
         },
 
         onKeyUp: function(e) {
@@ -27,19 +28,49 @@
                 window.clearTimeout(this.timerId);
             }
 
-            this.timerId = window.setTimeout(_.bind(this.search, this, [this.$('.search-query').val()]), this.ITEM_TYPE_DELAY);
+            var self = this;
+
+            this.timerId = window.setTimeout(
+                function() {
+                    self.search(self.$searchBox.val()) ;
+                },
+                this.ITEM_TYPE_DELAY
+            );
         },
 
         onClickFavoritesBtn: function(e) {
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
-            this.collection.fetch();
+            app.nomad.showLoading();
+            this.collection.fetch({
+                favorites: !this.collection.favorites,
+                success: function() {
+                    app.nomad.hideLoading();
+                },
+                error: function () {
+                    $(e.currentTarget).toggleClass('active');
+                    app.nomad.hideLoading();
+                    // TODO: This will handled by error module
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                }
+            });
         },
 
         onClickMyItemsBtn: function(e) {
             e.preventDefault();
             $(e.currentTarget).toggleClass('active');
-            this.collection.fetch();
+            app.nomad.showLoading();
+            this.collection.fetch({
+                myItems: !this.collection.myItems,
+                success: function() {
+                    app.nomad.hideLoading();
+                },
+                error: function () {
+                    $(e.currentTarget).toggleClass('active');
+                    app.nomad.hideLoading();
+                    //app.alert.show("data_fetch_error", {level: "error", messages: "Data fetch error!", autoClose: true});
+                }
+            });
         },
 
         onClickMenuCancel: function() {
@@ -48,14 +79,17 @@
         onClickMenuSave: function() {
 
         },
-        setListView:function(listView){
+
+        setListView: function(listView) {
             this.listView = listView;
         },
+
         search: function(text) {
-            if(this.listView){
+            if (this.listView) {
                 this.listView.search(text);
             }
         }
+
     });
 
 })(SUGAR.App);

@@ -10,7 +10,9 @@
                 app.nomad.callPhone(phones);
             },
             "click #record-action .email": function () {
-                app.nomad.sendEmail(this.getEmails());
+                //app.nomad.sendEmail(this.getEmails());
+                var emails = this.getFieldsDataArray(this.emailFields);
+                app.nomad.sendEmail(emails);
             },
             "click #record-action .message": function () {
                 var phones = this.getFieldsDataArray(this.phoneFields);
@@ -22,7 +24,7 @@
             },
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
-                app.nomad.openOpenAddress(addressObj);
+                app.nomad.openAddress(addressObj);
             }
         },
 
@@ -31,7 +33,7 @@
 
             //iterate over all fields and get the needed ones
             var view = this;
-            var headerField, image, fields = [], phones = [], urls = [], addressFields = [];
+            var headerField, image, fields = [], phones = [], urls = [], emails = [], addressFields = [];
             _.each(this.meta.panels, function (panel, panelIndex) {
                 _.each(panel.fields, function (field, fieldIndex) {
 
@@ -45,10 +47,11 @@
                         urls.push(field);
                     } else if (field.type == "email") {                 //if email - do nothing
 
-                    } else if (field.name.indexOf("address") > -1) {    //find address fields
+                    } else if (field.name && field.name.indexOf("address") > -1) {    //find address fields
                         addressFields.push(field);
-                    } else if (field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
-                        field.type = "email_temp";
+                    } else if (field.name && field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
+                        field.type = "singleemail";
+                        emails.push(field);
                     } else if (fields.length < 4) {                     //find four other fields to output
                         fields.push(field);
                     }
@@ -66,30 +69,42 @@
             this.otherFields = fields;
 
             this.addressFields = addressFields;
+            this.emailFields = emails;
             this.phoneFields = phones;
             this.urlFields = urls;
 
         },
 
         /**
-         * Renders the view onto the page.
+         * Renders the view onto the page passing custom data object into the template.
          *
          * Overrides default views method to pass custom data object as the context.
          * @protected
          */
         _renderSelf: function () {
-
             //create custom data object
             var data = {
                     viewObj: this,
                     headerField: this.headerField,
                     image: this.imageField,
                     fields: this.otherFields,
-                    links: this.linkFields
+                    links: this.linkFields,
+
+                    //action buttons settings
+                    isPhoneBtn: !!this.phoneFields.length,
+                    isPhoneNotEmpty: this.isDataDefined(this.phoneFields),
+                    isEmailBtn: !!this.emailFields.length,
+                    isEmailNotEmpty: this.isDataDefined(this.emailFields),
+                    isMessageBtn: !!this.phoneFields.length,
+                    isMessageNotEmpty: this.isDataDefined(this.phoneFields),
+                    isUrlBtn: !!this.urlFields.length,
+                    isUrlNotEmpty: this.isDataDefined(this.urlFields),
+                    isAddressBtn: !!this.addressFields.length,
+                    isAddressNotEmpty: this.isDataDefined(this.addressFields)
                 };
 
             //pass custom data object as the context
-            this._renderWithContext(data);
+            app.view.View.prototype._renderSelf.call(this, data);
         },
 
         /**
@@ -108,6 +123,10 @@
                 });
             });
             return data;
+        },
+
+        isDataDefined: function (data) {
+            return _.any(data, function(item, key) { return !!item; });
         },
 
         /**

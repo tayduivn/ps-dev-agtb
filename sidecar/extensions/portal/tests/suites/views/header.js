@@ -24,7 +24,7 @@ describe("Header View", function() {
             };
         view = new HeaderView(options);
         view.setModuleInfo();
-        expect(view.currentModule).toEqual('cases');
+        expect(view.module).toEqual('cases');
     });
 
     it("should set the current module list", function() {

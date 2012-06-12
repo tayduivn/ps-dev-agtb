@@ -1,10 +1,10 @@
 describe("DataManager", function() {
 
-    var metadata, app,
-        dm = SUGAR.App.data;
+    var metadata, app, dm;
 
     beforeEach(function() {
         app = SugarTest.app;
+        dm = app.data;
         metadata = SugarTest.loadFixture("metadata");
         app.config.maxQueryResult = 2;
         dm.reset();
@@ -41,7 +41,7 @@ describe("DataManager", function() {
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        mock = sinon.mock(Backbone);
+        mock = sinon.mock(app.Bean.prototype);
         mock.expects("sync").once().withArgs("read");
 
         bean = dm.createBean(moduleName, {id: "xyz"});
@@ -56,7 +56,7 @@ describe("DataManager", function() {
         var moduleName = "Teams", mock, collection;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        mock = sinon.mock(Backbone);
+        mock = sinon.mock(app.BeanCollection.prototype);
         mock.expects("sync").once().withArgs("read");
 
         collection = dm.createBeanCollection(moduleName, null);
@@ -74,14 +74,21 @@ describe("DataManager", function() {
 
         contact = SugarTest.loadFixture("contact");
 
+        var cb1 = sinon.spy(), cb2 = sinon.spy();
+        app.events.on("data:sync:start", cb1);
+        app.events.on("data:sync:end", cb2);
+
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contact)]);
 
         bean.fetch();
+
+        expect(cb1).toHaveBeenCalled();
         SugarTest.server.respond();
 
+        expect(cb2).toHaveBeenCalled();
         expect(bean.get("primary_address_city")).toEqual("Cupertino");
     });
 

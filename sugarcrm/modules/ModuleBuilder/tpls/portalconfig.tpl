@@ -39,16 +39,6 @@
                 <input type="checkbox" name="on" {if $on == "true"} checked{/if} class='portalField' id="on" value="false"/>
             </td>
         </tr>
-
-        <tr>
-            <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_APP_NAME}:<span class="required">*</span>
-            </td>
-            <td colspan='1' nowrap>
-
-                <input  class='portalProperty portalField' id='appName' name='appName' disabled value='{$appName}' size=60>
-            </td>
-        </tr>
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LOGO_URL}:

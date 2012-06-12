@@ -59,7 +59,7 @@ class MetadataApi extends SugarApi {
 
     public function getAllMetadata($api, $args) {
         // Default the type filter to everything
-        $this->typeFilter = array('modules','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts');
+        $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts');
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['typeFilter']);
@@ -157,7 +157,7 @@ class MetadataApi extends SugarApi {
 
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarLayouts();
+        $data['layouts'] = $mm->getSugarClientFiles('layout');
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
         $data['appListStrings'] = $mm->getAppListStrings();
@@ -165,7 +165,7 @@ class MetadataApi extends SugarApi {
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
-        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts');
+        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList');
         $perModuleChunks = array('modules','modStrings','acl');
 
 

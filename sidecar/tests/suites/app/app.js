@@ -48,7 +48,7 @@ describe("App", function() {
         it("should fire a app:init event when initialized", function() {
             var cbSpy = sinon.spy(function() {});
             SugarTest.app.events.on("app:init", cbSpy);
-            SugarTest.app.trigger("app:init", this, {modules: cbSpy});
+            SugarTest.app.trigger("app:init", SugarTest.app, {modules: cbSpy});
             expect(cbSpy).toHaveBeenCalled();
         });
     });

@@ -110,7 +110,7 @@
     };
 
     app.events.on("app:logout", function(clear) {
-        if (clear) {
+        if (clear === true) {
             _user._reset();
         }
     });

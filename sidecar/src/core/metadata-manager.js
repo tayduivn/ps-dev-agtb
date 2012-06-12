@@ -205,7 +205,7 @@
             }
 
             if (!metadata) {
-                app.logger.error("No view found for " + view);
+                app.logger.info("No view found for " + view);
             }
 
             return metadata;
@@ -224,11 +224,11 @@
             if (metadata && metadata[layout]) {
                 metadata = metadata[layout].meta;
             } else if (_layouts[layout]) { // Look for a module non-specific layout
-                metadata = _layouts[layout];
+                metadata = _layouts[layout].meta;
             }
 
             if (!metadata) {
-                app.logger.error("No layout found for " + layout);
+                app.logger.info("No layout found for " + layout);
             }
 
             return metadata;
@@ -393,7 +393,7 @@
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata " + error);
-                    app.error.handleHTTPError(error);
+                    app.error.handleHttpError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

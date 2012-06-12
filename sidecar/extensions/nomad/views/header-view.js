@@ -14,13 +14,14 @@
                     this.render(layout, params);
             }, this);
         },
+
         render: function(layout, params) {
             if (!app.api.isAuthenticated()) {
                 this.$el.addClass("hide");
             }
             else {
                 this.$el.removeClass("hide");
-                app.view.View.prototype.render.call(this);
+                app.view.View.prototype._renderSelf.call(this);
                 this._renderLeftList(app.template.get('left.menu'),
                     {
                         items: _.keys(app.metadata.getModuleList()),
@@ -34,16 +35,16 @@
                     var link = params.link;
                     this._renderRightList(app.template.get('right.menu.relationships'),
                         {
-                            createURL: app.nomad.buildLinkRoute(module,id,link,"create"),
-                            associateURL: app.nomad.buildLinkRoute(module,id,link,"associate"),
+                            createURL: app.nomad.buildLinkRoute(module,id,link,"create?depth=1"),
+                            associateURL: app.nomad.buildLinkRoute(module,id,link,"associate?depth=1"),
                             module: params.link
                         });
 
                 } else if (layout === "detail") {
                     this._renderRightList(app.template.get('right.menu.relationships'),
                         {
-                            createURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/create",
-                            associateURL: app.router.buildRoute(params.module, params.modelId) + "/link/picker/associate",
+                            createURL: app.router.buildRoute(params.module, params.modelId) + "/links/create",
+                            associateURL: app.router.buildRoute(params.module, params.modelId) + "/links/associate",
                             module: ""
                         });
                 }
