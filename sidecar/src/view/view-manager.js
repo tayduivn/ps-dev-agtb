@@ -158,7 +158,7 @@
             params.module  = params.module || params.context.get("module");
             params.meta    = params.meta || app.metadata.getView(params.module, params.name);
 
-            return this._createComponent("view", params.name, params, params.meta.type);
+            return this._createComponent("view", params.name, params, (params.meta ? params.meta.type : null));
         },
 
         /**
