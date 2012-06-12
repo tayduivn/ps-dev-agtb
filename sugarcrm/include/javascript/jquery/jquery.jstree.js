@@ -339,7 +339,9 @@
 			rtl			: false,
 			load_open	: false,
 			strings		: {
-				loading		: "Loading ...",
+                // REMOVED loading : "Loading ..." so users whose trees are hidden
+                // never knew there was a tree to begin with, aka confusing message if you have no tree
+                loading		: " ",
 				new_node	: "New node",
 				multiple_selection : "Multiple selection"
 			}

@@ -8,6 +8,8 @@
 
     rendered:false,
 
+    jsTree:{},
+
     /**
      * Initialize the View
      *
@@ -33,16 +35,17 @@
 
         var self = this;
 
-        $(".jst").jstree({
+        this.jsTree = $(".jst").jstree({
             "plugins":["themes", "json_data", "ui", "crrm"],
-            "themes":{
-                "theme":"classic",
-                "dots":false,
-                "icons":true
-            },
             "json_data" : {
                 "ajax" : {
-                    "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id')
+                    "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id'),
+                    "success" : function(data)  {
+                        // IF this user has no children (is not a manager) then hide the tree
+                        if( data.children.length == 0 )  {
+                            self.jsTree.hide();
+                        }
+                    }
                 }
             }
         }).on("select_node.jstree", function(event, data){
