@@ -17,11 +17,21 @@
     <span class="fade"></span>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid">
-        <a class="span1_5th phone" href="javascript:void(0)"><i class="icon-phone"></i></a>
-        <a class="span1_5th email" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
-        <a class="span1_5th message" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
-        <a class="span1_5th link" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
-        <a class="span1_5th map" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
+        {{#if isPhoneBtn}}
+        <a class="span1_5th phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone"></i></a>
+        {{/if}}
+        {{#if isEmailBtn}}
+        <a class="span1_5th email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
+        {{/if}}
+        {{#if isMessageBtn}}
+        <a class="span1_5th message {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
+        {{/if}}
+        {{#if isUrlBtn}}
+        <a class="span1_5th link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
+        {{/if}}
+        {{#if isAddressBtn}}
+        <a class="span1_5th map {{#unless isAddressNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
+        {{/if}}
     </div>
 </div>
 <div class="container-fluid" id="detailListing">
