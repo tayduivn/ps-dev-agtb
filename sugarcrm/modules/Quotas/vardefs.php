@@ -78,15 +78,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		'source' => 'non-db',
 		'table' => 'users',
 	),
-
-	'timeperiod_id' =>
-	array (
-	  'name' => 'timeperiod_id',
-	  'vname' => 'LBL_TIMEPERIOD_ID',
-	  'type' => 'id',
-	  'required' => true,
-	  'reportable' => false,
-	),
+             
+    'timeperiod_id' =>
+        array (
+         'name' => 'timeperiod_id',
+         'vname' => 'LBL_TIMEPERIOD_ID',
+         'type' => 'enum',
+         'dbType' => 'id',
+         'function' => 'getTimePeriodsDropDownForQuotas',
+         'reportable' => true,
+        ),
 
   	'quota_type' =>
  	 array (
@@ -96,6 +97,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'len' => 100,
     	'massupdate' => false,
     	'options' => 'forecast_type_dom',
+        'reportable'=>false,
   ),
 
 	'amount' =>
@@ -104,7 +106,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	  'vname' => 'LBL_AMOUNT',
 	  'type' => 'int',
 	  'required' => true,
-	  'reportable' => false,
+	  'reportable' => true,
 	  'importable' => 'required',
 	),
 
@@ -165,18 +167,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'vname' => 'LBL_CREATED_BY',
     	'type' => 'varchar',
     	'len' => '36',
+        'reportable'=>false,
   	),
   	'date_entered' =>
   	array (
     	'name' => 'date_entered',
     	'vname' => 'LBL_DATE_ENTERED',
     	'type' => 'datetime',
+        'reportable'=>false,
   	),
 	'date_modified' =>
   	array (
     	'name' => 'date_modified',
     	'vname' => 'LBL_DATE_MODIFIED',
     	'type' => 'datetime',
+        'reportable'=>false,
   	),
 	'deleted' =>
   	array (
@@ -192,8 +197,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 	'indices' => array(
        	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id'))
-	)
+	),
 
+    'relationships' => array (
+        'user_quotas' => array(
+            'rhs_module'		=> 'Quotas',
+            'rhs_table'			=> 'quotas',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'quota_type',
+            'relationship_role_column_value'=>'Direct'
+        )
+    )
 
 );
 
