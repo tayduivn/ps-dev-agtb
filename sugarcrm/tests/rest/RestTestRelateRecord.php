@@ -110,6 +110,118 @@ class RestTestRelateRecord extends RestTestBase {
         // $this->assertEquals($this->contacts[0]->contact_role,$restReply['reply']['contact_role'],"Did not fetch the related contact's role");
     }
 
+    public function testSameNumberOfRecords() {
+        global $db;
+        $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
+        // The first element is blank, ignore it
+        array_shift($cts);
+        $ctsCount = count($cts);
+        // Make sure there is at least one page of each of the related modules
+        for ( $i = 0 ; $i < 2 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+            $this->contacts[] = $contact;
+
+        }
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+
+
+            $contactNums = array(0,1);
+
+            foreach ( $contactNums as $contactNum ) {
+                $opp->load_relationship('contacts');
+                $contact_type = $cts[($contactNum%$ctsCount)];
+                $this->contacts[$contactNum]->contact_role = $contact_type;
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
+            }
+        }
+
+        // Test normal fetch
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
+        $fetch_fields = count($restReply['reply']);
+        // create a record
+
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+        }
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts",
+                                      json_encode(array(
+                                                      'last_name'=>'TEST',
+                                                      'first_name'=>'UNIT',
+                                                      'description'=>'UNIT TEST CONTACT'
+                                      )),'POST');
+
+        $create_fields = count($restReply['reply']['related_record']);
+
+        // update a record
+
+
+        $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
+        // The first element is blank, throw it away
+        array_shift($cts);
+        $ctsCount = count($cts);
+        // Make sure there is at least two of the related modules
+        for ( $i = 0 ; $i < 2 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+
+            $this->contacts[] = $contact;
+
+            $contact_type = $cts[($i%$ctsCount)];
+            $this->contacts[$i]->contact_role = $contact_type;
+        }
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+
+            $contactNums = array(0,1);
+            $opp->load_relationship('contacts');
+            foreach ( $contactNums as $contactNum ) {
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+            }
+
+        }
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
+                                      json_encode(array(
+                                                      'last_name'=>"Test O'Chango",
+                                      )),'PUT');
+
+
+        $update_fields = count($restReply['reply']['related_record']);
+        // test fetch vs create
+        $this->assertEquals($fetch_fields, $create_fields, "Number of fields doesn't match");
+
+        // test fetch vs update
+        $this->assertEquals($fetch_fields, $update_fields, "Number of fields doesn't match");
+
+    }
+
     public function testCreateRelatedRecord() {
         global $db;
 
