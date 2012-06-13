@@ -38,6 +38,9 @@
             if (modelData.default) {
                 chosen.model.set(key, modelData.default);
             }
+            if (modelData.multiselect) {
+                chosen.def.multi = modelData.multiselect;
+            }
             chosen.def.options = modelData.options;
             chosen.setElement($chosenPlaceholder);
             chosen.render();
