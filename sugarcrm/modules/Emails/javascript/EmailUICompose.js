@@ -1856,7 +1856,7 @@ SE.composeLayout = {
         //END SUGARCRM flav=pro ONLY
 
 
-        var t = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
+        var t = SE.util.getTiny('htmleditor' + idx);
         if (t != null || typeof(t) != "undefined") {
             var html = t.getContent();
         } else {
