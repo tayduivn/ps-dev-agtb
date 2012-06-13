@@ -17,8 +17,8 @@
             self.fullName = user.full_name;
             self.render();
         });
-        this.context.on('change:selectedTimePeriod', function(context, value) {
-            self.timePeriod = value;
+        this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
+            self.timePeriod = timePeriod.label;
             self.render();
         });
     }

@@ -9,7 +9,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = this.context.model.committed;
+            model = this.context.model.forecasts.committed;
 
         model.on('change', function() {
             self.buildForecastsCommitted(this);

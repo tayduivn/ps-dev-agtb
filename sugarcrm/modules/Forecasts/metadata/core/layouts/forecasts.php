@@ -6,24 +6,14 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
             'view' => 'forecastsFilter',
             'model' => array(
                 'module' => 'Forecasts',
-                'name' => 'Filters',
-                'models' => array(
-                    'timeperiods',
-                    'stages',
-                    'probabilities'
-                )
+                'name' => 'Filters'
             )
         ),
         1 => array(
             'view' => 'chartOptions',
             'model' => array(
                 'module' => 'Forecasts',
-                'name' => 'ChartOptions',
-                'models' => array(
-                    'horizontal',
-                    'vertical',
-                    'groupby'
-                )
+                'name' => 'ChartOptions'
             )
         ),
         2 => array(
@@ -39,10 +29,7 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
             'view' => 'forecastsCommitted',
             'model' => array(
                 'module' => 'Forecasts',
-                'name' => 'Committed',
-                'models' => array(
-                    'committed',
-                )
+                'name' => 'Committed'
             ),
         ),
         6 => array(

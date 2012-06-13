@@ -13,14 +13,8 @@
             options.context = _.extend(options.context, {
                 model: models,
                 register: app.events.register,
-                selectedTimePeriod: '',
-                // keep a record of the currently selected user on context
-                selectedUser: {},
-                getGridFilters: function(){
-                    return {
-                        "assigned_user_id": this.attributes.selectedUser.id
-                    };
-                }
+                selectedTimePeriod: {},
+                selectedUser: {}
             });
 
             app.view.Layout.prototype.initialize.call(this, options);
@@ -29,7 +23,7 @@
         },
 
         fetchAllModels: function() {
-            _.each(this.context.model, function(model, key) {
+            _.each(this.context.model.forecasts, function(model, key) {
                 model.fetch();
             });
         },
@@ -40,43 +34,28 @@
                 models = {};
 
             _.each(componentsMetadata, function(component) {
-                if (component.model) {
-                    self.createModels(models, component.model);
+                var model,
+                    modelMetadata = component.model;
+
+                if (modelMetadata) {
+                    if (!models[modelMetadata.module.toLowerCase()]) {
+                        models[modelMetadata.module.toLowerCase()] = {};
+                    }
+
+                    model = self.createModel(modelMetadata.module, modelMetadata.name);
+                    models[modelMetadata.module.toLowerCase()][modelMetadata.name.toLowerCase()] = model;
                 }
             });
 
-            models.worksheet = new app.Model.Worksheet();
+            models.forecasts.worksheet = new app.Model.Worksheet(); //TODO: create model using the metadata
             return models;
         },
 
-        createModels: function(models, data) {
+        createModel: function(module, name) {
             var Model = Backbone.Model.extend({
-                url: app.config.serverUrl + '/' + data.module + '/' + data.name.toLowerCase(),
-
-                initialize: function() {
-                    this.setModelBindings()
-                },
-
-                setModelBindings: function() {
-                    var self = this;
-                    this.on('change', function() {
-                        _.each(this.attributes, function(data, key) {
-                            if (self.hasChanged(key)) {
-                                self[key].set(self.get(key));
-                            }
-                        });
-                    });
-                }
+                url: app.config.serverUrl + '/' + module + '/' + name.toLowerCase()
             });
-
-            var model = models[data.name.toLowerCase()] = new Model();
-            this.createNestedModels(model, data.models);
-        },
-
-        createNestedModels: function(model, modelsMetadata) {
-            _.each(modelsMetadata, function(name) {
-                model[name] = new Backbone.Model();
-            });
+            return new Model();
         },
 
         /**
