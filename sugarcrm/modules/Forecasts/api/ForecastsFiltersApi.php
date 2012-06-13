@@ -74,13 +74,14 @@ class ForecastsFiltersApi extends ModuleApi {
                 'default' => TimePeriod::getCurrentId(),
                 'options' => TimePeriod::get_timeperiods_dom(),
             ),
-            'stages' => array(
-                'label' => 'Sales Stage:',
-                'options' => $app_list_strings['sales_stage_dom'],
-            ),
             'probabilities' => array(
                 'label' => 'Probability (>=):',
                 'options' => $app_list_strings['sales_probability_dom'],
+            ),
+            'stages' => array(
+                'label' => 'Sales Stage:',
+                'multiselect' => true,
+                'options' => $app_list_strings['sales_stage_dom'],
             ),
         );
     }
