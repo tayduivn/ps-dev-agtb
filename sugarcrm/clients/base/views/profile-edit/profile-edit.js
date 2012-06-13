@@ -14,7 +14,7 @@
         this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
     },
     render: function() {
-        var self = this, data, currentUserAttributes;
+        var self = this, currentUserAttributes;
 
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@
             },
             error: function(xhr, error) {
                 app.alert.dismiss('fetch_edit_contact_record');
-                app.error.handleHTTPError(xhr, error, self);
+                app.error.handleHttpError(xhr, error, self);
             }
         });
     },
@@ -79,10 +79,8 @@
         }
     },
     setModel: function(data) {
-        var self = this, model;
-        model = self.context.get('model');
-        model.set(data, {silent: true});
-        model.module = 'Contacts';
+        this.model.set(data, {silent: true});
+        this.model.module = 'Contacts';
     },
     saveModel: function() {
         var self = this;
@@ -95,7 +93,7 @@
                 alert("TODO - left off here...");
                 //self.app.router.navigate('profile', {trigger:true});
             },
-            fieldsToValidate: this.getFields(this.model.module)
+            fieldsToValidate: self.getFields(this.model.module)
         });
     },
     // I assume this will eventually be in clients/base/views/profile-edit/profile-edit.php

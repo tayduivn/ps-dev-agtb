@@ -34,24 +34,30 @@
  * **Working with beans**
  *
  * <pre><code>
+ * (function(app) {
+ *
  * // Declare bean classes from metadata payload.
  * // This method should be called at application start-up and whenever the metadata changes.
- * SUGAR.App.data.declareModels(metadata);
+ * app.data.declareModels(metadata);
  * // You may now create bean instances using factory methods.
- * var opportunity = SUGAR.App.data.createBean("Opportunities", { name: "Cool opportunity" });
+ * var opportunity = app.data.createBean("Opportunities", { name: "Cool opportunity" });
  * // You can save a bean using standard Backbone.Model.save method.
  * // The save method will use data manager's sync method to communicate changes to the remote server.
  * opportunity.save();
  *
  * // Create an empty collection of contacts.
- * var contacts = SUGAR.App.data.createBeanCollection("Contacts");
+ * var contacts = app.data.createBeanCollection("Contacts");
  * // Fetch a list of contacts
  * contacts.fetch();
+ *
+ * })(SUGAR.App);
  * </code></pre>
  *
  * **Working with relationships**
  *
  * <pre><code>
+ * (function(app) {
+ *
  * var attrs = {
  *   firstName: "John",
  *   lastName: "Smith",
@@ -59,15 +65,16 @@
  *   opportunityRole: "Influencer"
  * }
  * // Create a new instance of a contact related to an existing opportunity
- * var contact = SUGAR.App.data.createRelatedBean(opportunity, null, "contacts", attrs);
+ * var contact = app.data.createRelatedBean(opportunity, null, "contacts", attrs);
  * // This will save the contact and create the relationship
  * contact.save(null, { relate: true });
  *
  * // Create an instance of contact collection related to an existing opportunity
- * var contacts = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
+ * var contacts = app.data.createRelatedCollection(opportunity, "contacts");
  * // This will fetch related contacts
  * contacts.fetch({ relate: true });
  *
+ * })(SUGAR.App);
  * </code></pre>
  *
  * @class Data.DataManager
@@ -81,7 +88,7 @@
     // Bean collection class cache
     var _collections = {};
 
-    var _dataManager = {
+    var _dataManager = _.extend({
 
         /**
          * Reference to the base bean model class. Defaults to {@link Data.Bean}.
@@ -99,7 +106,56 @@
          * @method
          */
         init: function() {
-            Backbone.sync = this.sync;
+            var sync = _.bind(this.sync, this);
+            app.Bean.prototype.sync = sync;
+            app.BeanCollection.prototype.sync = sync;
+
+            app.events.register(
+                /**
+                 * Fires when the sync operation starts.
+                 *
+                 * Two parameters are passed to the callback:
+                 *
+                 *  - operation name (`method`)
+                 *  - reference to the model/collection
+                 *  - options
+                 *
+                 * <pre><code>
+                 * (function(app) {
+                 *     app.events.on("data:sync:start", function(method, model, options) {
+                 *         app.logger.debug("Started operation " + method + " on " + model);
+                 *     });
+                 * })(SUGAR.App);
+                 * </code></pre>
+                 * @event
+                 */
+                "data:sync:start",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * Fires when the sync operation ends.
+                 *
+                 * Three parameters are passed to the callback:
+                 *
+                 *  - operation name (`method`)
+                 *  - reference to the model/collection
+                 *  - options
+                 *  - error or undefined if operation has been successful
+                 *
+                 * <pre><code>
+                 * (function(app) {
+                 *     app.events.on("data:sync:end", function(method, model, options, error) {
+                 *         app.logger.debug("Finished operation " + method + " on " + model);
+                 *     });
+                 * })(SUGAR.App);
+                 * </code></pre>
+                 * @event
+                 */
+                "data:sync:end",
+                this
+            );
         },
 
         /**
@@ -196,13 +252,18 @@
 
         /**
          * Creates instance of a bean.
-         * <pre>
+         *
+         * <pre><code>
+         * (function(app) {
+         *
          * // Create an account bean. The account's name property will be set to "Acme".
-         * var account = SUGAR.App.data.createBean("Accounts", { name: "Acme" });
+         * var account = app.data.createBean("Accounts", { name: "Acme" });
          *
          * // Create a team set bean with a given ID
-         * var teamSet = SUGAR.App.data.createBean("TeamSets", { id: "xyz" });
-         * </pre>
+         * var teamSet = app.data.createBean("TeamSets", { id: "xyz" });
+         *
+         * })(SUGAR.App);
+         * </code></pre>
          * @param {String} module Sugar module name.
          * @param attrs(optional) initial values of bean attributes, which will be set on the model.
          * @return {Data.Bean} A new instance of bean model.
@@ -213,9 +274,13 @@
 
         /**
          * Creates instance of a bean collection.
+         *
          * <pre><code>
+         * (function(app) {
          * // Create an empty collection of account beans.
-         * var accounts = SUGAR.App.data.createBeanCollection("Accounts");
+         * var accounts = app.data.createBeanCollection("Accounts");
+         *
+         * })(SUGAR.App);
          * </code></pre>
          * @param {String} module Sugar module name.
          * @param {Data.Bean[]} models(optional) initial array or collection of models.
@@ -232,13 +297,17 @@
          * Creates an instance of related {@link Data.Bean} or updates an existing bean with link information.
          *
          * <pre><code>
+         * (function(app) {
+         *
          * // Create a new contact related to the given opportunity.
-         * var contact = SUGAR.App.data.createRelatedBean(opportunity, "1", "contacts", {
+         * var contact = app.data.createRelatedBean(opportunity, "1", "contacts", {
          *    "first_name": "John",
          *    "last_name": "Smith",
          *    "contact_role": "Decision Maker"
          * });
-         * contact.save();
+         * contact.save(null, { relate: true });
+         *
+         * })(SUGAR.App);
          * </code></pre>
          *
          * @param {Data.Bean} bean1 instance of the first bean
@@ -295,9 +364,13 @@
          * Creates a new instance of related beans collection.
          *
          * <pre><code>
+         * (function(app) {
+         *
          * // Create contacts collection for an existing opportunity.
-         * var contacts = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
+         * var contacts = app.data.createRelatedCollection(opportunity, "contacts");
          * contacts.fetch({ relate: true });
+         *
+         * })(SUGAR.App);
          * </code></pre>
          *
          * The newly created collection is cached in the given bean instance.
@@ -333,7 +406,7 @@
         },
 
         /**
-         * Checks if a bean for a given module can have multiple related beans via a given link.
+         * Checks if a given module can have multiple relationships via a given link.
          * @param {String} module Name of the module to do the check for.
          * @param {String} link Relationship link name.
          * @return {Boolean} `true` if the module's link is 'many'-type relationship, `false` otherwise.
@@ -393,49 +466,73 @@
                     options.params.order_by = model.orderBy.field + ":" + model.orderBy.direction;
                 }
 
-                if (model.myItems === true) {
+                if (options.myItems === true) {
                     options.params.my_items = "1";
                 }
 
-                if (model.favorites === true) {
+                if (options.favorites === true) {
                     options.params.favorites = "1";
+                }
+
+                if (!_.isEmpty(options.query)) {
+                    options.params.q = options.query;
                 }
             }
 
             var success = function(data) {
-                if (options.success) {
-                    if ((method == "read") && (model instanceof app.BeanCollection)) {
-                        if (data.next_offset) {
-                            model.offset = data.next_offset != -1 ? data.next_offset : model.offset + (data.records || []).length;
-                            model.next_offset = data.next_offset;
-                            model.page = model.getPageNumber();
-                        }
-                        data = data.records || [];
-                    } else if ((options.relate === true) && (method != "read")) {
-                        // Reset the flag to indicate that fetched relationship(s) do exist.
-                        model.link.isNew = false;
-                        // The response for create/update/delete relationship contains updated beans
-                        if (model.link.bean) {
-                            model.link.bean.set(data.record);
-                        }
-                        data = data.related_record;
-                        // Attributes will be set automatically for create/update but not for delete
-                        // Also, break the link
-                        if (method == "delete") {
-                            model.set(data);
-                            delete model.link;
-                        }
+                if ((method == "read") && (model instanceof app.BeanCollection)) {
+                    if (data.next_offset) {
+                        model.offset = data.next_offset != -1 ? data.next_offset : model.offset + (data.records || []).length;
+                        model.next_offset = data.next_offset;
+                        model.page = model.getPageNumber();
                     }
-                    options.success(data);
+                    data = data.records || [];
+
+                    // Update collection filter/search properties on success
+                    /**
+                     * Flag indicating if a collection contains items assigned to the current user (read-only).
+                     * @member Data.BeanCollection
+                     * @property {Boolean}
+                     */
+                    model.myItems = options.myItems;
+                    /**
+                     * Flag indicating if a collection contains current user's favorite items (read-only).
+                     * @member Data.BeanCollection
+                     * @property {Boolean}
+                     */
+                    model.favorites = options.favorites;
+                    /**
+                     * Search query (read-only).
+                     * @member Data.BeanCollection
+                     * @property {String}
+                     */
+                    model.query = options.query;
+
+                } else if ((options.relate === true) && (method != "read")) {
+                    // Reset the flag to indicate that fetched relationship(s) do exist.
+                    model.link.isNew = false;
+                    // The response for create/update/delete relationship contains updated beans
+                    if (model.link.bean) {
+                        model.link.bean.set(data.record);
+                    }
+                    data = data.related_record;
+                    // Attributes will be set automatically for create/update but not for delete
+                    // Also, break the link
+                    if (method == "delete") {
+                        model.set(data);
+                        delete model.link;
+                    }
                 }
+
+                self.trigger("data:sync:end", method, model, options);
+                if (options.success) options.success(data);
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error, self);
+                app.error.handleHttpError(xhr, error, model);
 
-                if (options.error) {
-                    options.error(xhr, error);
-                }
+                self.trigger("data:sync:end", method, model, options, error);
+                if (options.error) options.error(xhr, error);
             };
 
             var callbacks = {
@@ -481,8 +578,10 @@
                 );
             }
 
+            this.trigger("data:sync:start", method, model, options);
         }
-    };
+
+    }, Backbone.Events);
 
     app.augment("data", _dataManager, false);
 

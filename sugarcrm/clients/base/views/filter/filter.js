@@ -12,11 +12,10 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
     },
-    render: function() {
-        var self = this;
-        app.view.View.prototype.render.call(self);
-        self.layout.off("list:search:toggle", null, this);
-        self.layout.on("list:search:toggle", self.toggleSearch, this);
+    _renderSelf: function() {
+        app.view.View.prototype._renderSelf.call(this);
+        this.layout.off("list:search:toggle", null, this);
+        this.layout.on("list:search:toggle", this.toggleSearch, this);
     },
     filterList: function(evt) {
         var self = this,
@@ -33,11 +32,11 @@
             
         // If user removing characters and down to 2 chars reset table to all data
         } else if(previousTerm && term.length && term.length === 2 && term.length < previousTerm.length) {
-            this.context.get('collection').fetch();
+            this.collection.fetch();
 
         // Edge case - just in case user might highlight the input and hit 'Back' to delete. 
         } else if(!term && evt.which === 8) {
-            this.context.get('collection').fetch();
+            this.collection.fetch();
         }
     },
     fireSearchRequest: function(term) {
