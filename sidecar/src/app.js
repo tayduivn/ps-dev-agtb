@@ -220,30 +220,43 @@ SUGAR.App = (function() {
                 clientID: _app.config.clientID
             });
 
-            async.series([function(callback) {
-                var syncCallback = null;
+            var self = this;
+            var syncCallback = function(metadata, error){
+                if (error) {
+                    self.trigger("app:sync:error", error);
+                    return;
+                }
+                self.initModules();
+                self.loadConfig();
+                if (opts.callback && _.isFunction(opts.callback)) {
+                    opts.callback(_app);
+                }
+            };
+
+            if (_app.config.syncConfig !== false ) {
                 var options = {
-                    public: true
+                    getPublic: true
                 };
                _app.metadata.sync(syncCallback, options);
-            }]);
-
-            this.loadConfig();
-
-            // Here we initialize all the modules;
+            } else {
+                syncCallback();
+            }
+            if (!opts.silent) {
+                _app.trigger("app:init", this);
+            }
+            return _app;
+        },
+        /**
+         * Inits app modules
+         */
+        initModules: function() {
+                    // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
                 if (_.isFunction(module.init)) {
                     module.init(this);
                 }
             }, this);
-
-
-            if (!opts.silent) {
-                _app.trigger("app:init", this);
-            }
-
-            return _app;
         },
 
         /**

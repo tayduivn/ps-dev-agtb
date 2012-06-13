@@ -6,7 +6,6 @@
     var _layoutPrefix = "l:";
     var _viewPrefix = "v:";
     var _langPrefix = "lang:";
-    var _configPrefix = "c";
 
     // TODO: Maybe just have this all in _metadata?
 

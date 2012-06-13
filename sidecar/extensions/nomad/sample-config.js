@@ -4,9 +4,9 @@
         appId: 'nomad',
         env: 'dev',
         debugSugarApi: true,
-        logLevel: app.logger.levels.DEBUG,
-        logWriter: app.logger.ConsoleWriter,
-        logFormatter: app.logger.SimpleFormatter,
+        logLevel: 'DEBUG',
+        logWriter: 'ConsoleWriter',
+        logFormatter: 'SimpleFormatter',
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
@@ -35,7 +35,8 @@
                 field: 'case_number',
                 direction: 'asc'
             }
-        }
+        },
+        syncConfig: false
 
     }, false);
 
