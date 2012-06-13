@@ -139,7 +139,7 @@
             <div class="control-group">
               <label for="date_filter" class="control-label">Forecast Period:</label>
               <div class="controls ">
-                <select id="date_filter" data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
+                <select id="date_filter" data-placeholder="Choose a account..." class="chzn-select span12" tabindex="0">
                   <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
                   <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
                   <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
@@ -150,17 +150,17 @@
             <div class="control-group">
               <label for="sales_stage_filter" class="control-label">Sales Stage:</label>
               <div class="controls">
-                <select id="sales_stage_filter" data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
-                  <option value="" selected="selected">All</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Proposal">Proposal</option>
-                  <option value="Negotiation">Negotiation</option>
-                  <option value="Qualified">Qualified</option>
+                <select id="sales_stage_filter" data-placeholder="Choose a account..." class="chzn-select span12" multiple tabindex="1">
+                  <option value=""></option>
+                  <option value="Closed" selected="selected">Closed</option>
+                  <option value="Proposal" selected="selected">Proposal</option>
+                  <option value="Negotiation" selected="selected">Negotiation</option>
+                  <option value="Qualified" selected="selected">Qualified</option>
                 </select>
               </div>
             </div>  
             <div class="control-group">
-              <label for="probability_filter" class="control-label">Probability (>=):</label>
+              <label for="probability_filter" class="control-label">Probability:</label>
               <div class="controls">
                 <select id="probability_filter" data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
                   <option value="10">10%</option>
@@ -168,8 +168,8 @@
                   <option value="30">30%</option>
                   <option value="40">40%</option>
                   <option value="50">50%</option>
-                  <option value="60" selected="selected">60%</option>
-                  <option value="70">70%</option>
+                  <option value="60">60%</option>
+                  <option value="70" selected="selected">70%</option>
                   <option value="80">80%</option>
                   <option value="90">90%</option>
                   <option value="100">100%</option>
@@ -181,41 +181,27 @@
         <div class="block">
           <h4>Chart Options</h4>
           <div class="control-group">
-            <label for="select01" class="control-label">Horizontal (x):</label>
-            <div class="controls ">
-              <select id="x-axis" data-placeholder="Choose a x-axis..." class="chzn-select span12" tabindex="2">
-                <option value="quarter">Account</option>
-                <option value="quarter">Channel</option>
-                <option value="quarter">Line Items</option>
-                <option value="month" selected="selected">Month</option>
-                <option value="quarter">Quarter</option>
-              </select>
-            </div>
-          </div>  
-          <div class="control-group">
-            <label for="select01" class="control-label">Vertical (y):</label>
-            <div class="controls">
-              <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
-                <option value="pk" selected="selected">Revenue</option> 
-                <option value="pk">Recurring</option> 
-              </select>
-            </div>
-          </div>
-          <div class="control-group">
             <label for="select01" class="control-label">Group By:</label>
             <div class="controls">
-              <select id="group_by" data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
-                <option value="revenuetype">Revenue Type</option>
-                <option value="month" selected="selected">Sales Stage</option>
+              <select data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
+                <option value="pk" selected="selected">Sales Stage</option> 
+                <option value="pk">Probability</option> 
+                <option value="pk">Forecast to Pipeline</option> 
               </select>
             </div>
           </div>
-        </div>         
-        <div class="block">
-          <h4>Team</h4>
-            <div id="people">
+          <div class="control-group">
+            <label for="select01" class="control-label">Data Set:</label>
+            <div class="controls">
+              <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
+                <option value="pk" selected="selected">All</option> 
+                <option value="pk">Best</option> 
+                <option value="pk">Likely</option> 
+                <option value="pk">Worst</option> 
+              </select>
             </div>
-        </div>        
+          </div>
+        </div>  
       </div>
     </div>
     <div id="charts" class="span10">
