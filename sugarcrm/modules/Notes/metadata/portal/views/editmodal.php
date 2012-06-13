@@ -20,21 +20,20 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Notes']['portal']['view']['editmodal'] = array(
-    'buttons' =>
-    array(
-        array(
-            'name' => 'save_button',
-            'type' => 'button',
-            'label' => 'Save',
-            'value' => 'save',
-            'primary' => true,
-        ),
+    'buttons' => array(
         array(
             'name' => 'cancel_button',
             'type' => 'button',
             'label' => 'Cancel',
             'value' => 'cancel',
             'primary' => false,
+        ), 
+        array(
+            'name' => 'save_button',
+            'type' => 'button',
+            'label' => 'Save',
+            'value' => 'save',
+            'primary' => true,
         ),
     ),
     'panels' => array(

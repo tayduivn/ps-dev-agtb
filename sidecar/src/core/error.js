@@ -290,7 +290,7 @@
          * @member Core.Error
          */
         handleStatusCodesFallback: function(xhr, error) {
-            var message = "HTTP error: " + (xhr ? xhr.statusCode : "(no-code)") +
+            var message = "HTTP error: " + (xhr ? xhr.status : "(no-code)") +
                 "\nResponse: " + (xhr ? xhr.responseText : "(empty-response)") +
                 "\n" + error;
             app.logger.error(message);

@@ -101,47 +101,6 @@ class Project extends SugarBean {
 	// METHODS
 	//////////////////////////////////////////////////////////////////
 
-	/**
-	 *
-	 */
-	function Project()
-	{
-		parent::SugarBean();
-	}
-
-	/**
-	 * overriding the base class function to do a join with users table
-	 */
-
-	/**
-	 *
-	 */
-	function fill_in_additional_detail_fields()
-	{
-	    parent::fill_in_additional_detail_fields();
-
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->team_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-		//$this->total_estimated_effort = $this->_get_total_estimated_effort($this->id);
-		//$this->total_actual_effort = $this->_get_total_actual_effort($this->id);
-	}
-
-	/**
-	 *
-	 */
-	function fill_in_additional_list_fields()
-	{
-	    parent::fill_in_additional_list_fields();
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->team_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-		//$this->total_estimated_effort = $this->_get_total_estimated_effort($this->id);
-		//$this->total_actual_effort = $this->_get_total_actual_effort($this->id);
-	}
-
     /**
     * Save changes that have been made to a relationship.
     *

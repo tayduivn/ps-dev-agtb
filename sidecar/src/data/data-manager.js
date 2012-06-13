@@ -118,10 +118,11 @@
                  *
                  *  - operation name (`method`)
                  *  - reference to the model/collection
+                 *  - options
                  *
                  * <pre><code>
                  * (function(app) {
-                 *     app.events.on("data:sync:start", function(method, model) {
+                 *     app.events.on("data:sync:start", function(method, model, options) {
                  *         app.logger.debug("Started operation " + method + " on " + model);
                  *     });
                  * })(SUGAR.App);
@@ -140,11 +141,12 @@
                  *
                  *  - operation name (`method`)
                  *  - reference to the model/collection
+                 *  - options
                  *  - error or undefined if operation has been successful
                  *
                  * <pre><code>
                  * (function(app) {
-                 *     app.events.on("data:sync:end", function(method, model, error) {
+                 *     app.events.on("data:sync:end", function(method, model, options, error) {
                  *         app.logger.debug("Finished operation " + method + " on " + model);
                  *     });
                  * })(SUGAR.App);
@@ -464,12 +466,16 @@
                     options.params.order_by = model.orderBy.field + ":" + model.orderBy.direction;
                 }
 
-                if (model.myItems === true) {
+                if (options.myItems === true) {
                     options.params.my_items = "1";
                 }
 
-                if (model.favorites === true) {
+                if (options.favorites === true) {
                     options.params.favorites = "1";
+                }
+
+                if (!_.isEmpty(options.query)) {
+                    options.params.q = options.query;
                 }
             }
 
@@ -481,6 +487,27 @@
                         model.page = model.getPageNumber();
                     }
                     data = data.records || [];
+
+                    // Update collection filter/search properties on success
+                    /**
+                     * Flag indicating if a collection contains items assigned to the current user (read-only).
+                     * @member Data.BeanCollection
+                     * @property {Boolean}
+                     */
+                    model.myItems = options.myItems;
+                    /**
+                     * Flag indicating if a collection contains current user's favorite items (read-only).
+                     * @member Data.BeanCollection
+                     * @property {Boolean}
+                     */
+                    model.favorites = options.favorites;
+                    /**
+                     * Search query (read-only).
+                     * @member Data.BeanCollection
+                     * @property {String}
+                     */
+                    model.query = options.query;
+
                 } else if ((options.relate === true) && (method != "read")) {
                     // Reset the flag to indicate that fetched relationship(s) do exist.
                     model.link.isNew = false;
@@ -497,14 +524,14 @@
                     }
                 }
 
-                self.trigger("data:sync:end", method, model);
+                self.trigger("data:sync:end", method, model, options);
                 if (options.success) options.success(data);
             };
 
             var error = function(xhr, error) {
                 app.error.handleHttpError(xhr, error, model);
 
-                self.trigger("data:sync:end", method, model, error);
+                self.trigger("data:sync:end", method, model, options, error);
                 if (options.error) options.error(xhr, error);
             };
 
@@ -551,7 +578,7 @@
                 );
             }
 
-            this.trigger("data:sync:start", method, model);
+            this.trigger("data:sync:start", method, model, options);
         }
 
     }, Backbone.Events);

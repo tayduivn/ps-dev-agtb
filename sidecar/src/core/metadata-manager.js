@@ -204,7 +204,7 @@
             }
 
             if (!metadata) {
-                app.logger.error("No view found for " + view);
+                app.logger.info("No view found for " + view);
             }
 
             return metadata;
@@ -227,7 +227,7 @@
             }
 
             if (!metadata) {
-                app.logger.error("No layout found for " + layout);
+                app.logger.info("No layout found for " + layout);
             }
 
             return metadata;

@@ -133,7 +133,6 @@ describe("BeanCollection", function() {
             moduleName = "Contacts", beans, contacts;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         beans = dm.createBeanCollection(moduleName);
-        beans.myItems = true;
 
         contacts = SugarTest.loadFixture("contacts");
 
@@ -141,7 +140,9 @@ describe("BeanCollection", function() {
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1&my_items=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
-        beans.fetch();
+        beans.fetch({
+            myItems: true
+        });
         SugarTest.server.respond();
         expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?max_num=1&my_items=1/);
         ajaxSpy.restore();
@@ -153,7 +154,6 @@ describe("BeanCollection", function() {
             moduleName = "Contacts", beans, contacts;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         beans = dm.createBeanCollection(moduleName);
-        beans.favorites = true;
 
         contacts = SugarTest.loadFixture("contacts");
 
@@ -161,9 +161,32 @@ describe("BeanCollection", function() {
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1&favorites=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
-        beans.fetch();
+        beans.fetch({
+            favorites: true
+        });
         SugarTest.server.respond();
         expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?max_num=1&favorites=1/);
+        ajaxSpy.restore();
+    });
+
+    it("should get records by search query", function() {
+        app.config.maxQueryResult = 1;
+        var ajaxSpy = sinon.spy(jQuery, 'ajax'),
+            moduleName = "Contacts", beans, contacts;
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        beans = dm.createBeanCollection(moduleName);
+
+        contacts = SugarTest.loadFixture("contacts");
+
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?max_num=1&q=Pupochkin/,
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(contacts)]);
+        beans.fetch({
+            query: "Pupochkin"
+        });
+        SugarTest.server.respond();
+        expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?max_num=1&q=Pupochkin/);
         ajaxSpy.restore();
     });
 

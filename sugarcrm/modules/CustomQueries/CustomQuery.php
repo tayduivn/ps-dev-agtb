@@ -26,15 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CustomQuery.php 54165 2010-02-01 16:55:39Z jmertic $
- * Description:
- ********************************************************************************/
-
-
-
-
-
 
 require_once('modules/DataSets/DataSet_Attribute.php');
 require_once('modules/DataSets/DataSet_Layout.php');
@@ -339,10 +330,6 @@ class CustomQuery extends SugarBean {
 
 	function fill_in_additional_list_fields(){
 		$this->fill_in_additional_detail_fields();
-	}
-
-	function fill_in_additional_detail_fields(){
-		$this->assigned_name = get_assigned_team_name($this->team_id);
 	}
 
 	function get_list_view_data(){
