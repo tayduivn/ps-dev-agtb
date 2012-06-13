@@ -32,6 +32,12 @@
  */
 class Bug44605Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp() {
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+    }
+
     /**
      * Test that each "count" column in report is represented by it's own field
      */
