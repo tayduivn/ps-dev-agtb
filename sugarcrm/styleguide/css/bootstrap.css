@@ -5308,6 +5308,18 @@ table.dataTable th:active {
 .dataTables_scrollBody {
   *margin-top: -1px;
 }
+div.column_details {
+  float: left;
+  width: 45%;
+}
+div.column_code {
+  float: left;
+  width: 54%;
+}
+div.purpose {
+  overflow: hidden;
+  height: 90px;
+}
 .colorpicker-saturation {
   width: 100px;
   height: 100px;

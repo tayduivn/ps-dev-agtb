@@ -158,10 +158,7 @@
     $("[rel=popover]").popover()
     $("[rel=popoverTop]").popover({placement: "top"})
 
-    //clickovers  
 
-    $('[rel="clickover"]').clickover()
-    $('[rel="clickoverTop"]').clickover({placement: "top"})
 
 
 }(window.jQuery)
