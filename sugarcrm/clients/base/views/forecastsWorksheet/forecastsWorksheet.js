@@ -85,8 +85,10 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
-        if(this.hasColumn("timeperiod_id"))
-            this.gTable.fnFilter({ "timeperiod_id" : params.attributes.selectedTimePeriod.id });
+        // TODO: What happens when a timeperiod is selected
+        // this is a placeholder for that functionality
+        //if(this.hasColumn("timeperiod_id"))
+        //    this.gTable.fnFilter({ "timeperiod_id" : params.attributes.selectedTimePeriod.id });
     },
 
     /**
