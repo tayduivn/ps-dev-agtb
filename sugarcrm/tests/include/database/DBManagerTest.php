@@ -2048,7 +2048,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             //echo "$size\n";
             $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
 
-            $select = "SELECT test FROM $tablename WHERE id = '$size'";
+            $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
 
             $this->assertEquals(0, mb_strpos($str, $strresult));
