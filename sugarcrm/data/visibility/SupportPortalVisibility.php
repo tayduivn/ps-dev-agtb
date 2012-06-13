@@ -78,13 +78,10 @@ class SupportPortalVisibility extends SugarVisibility
                 }
                 break;
             case 'Bugs':
-                // Bugs: Any bug that either has the portal_viewable flag set to true, or is related to the account list
-                if ( $queryType == 'from' ) {
-                    $this->bean->load_relationship('accounts');
-                    $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                // Bugs: Any bug that has the portal_viewable flag set to true
+                if ( $queryType == 'where' ) {
                 //BEGIN SUGARCRM flav=ent ONLY
-                } else if ( $queryType == 'where' ) {
-                    $queryPart = " accounts_pv.id IS NOT NULL AND $table_alias.portal_viewable = 1 ";
+                    $queryPart = " $table_alias.portal_viewable = 1 ";
                 //END SUGARCRM flav=ent ONLY
                 }
 
@@ -116,13 +113,12 @@ class SupportPortalVisibility extends SugarVisibility
                     $bugBean->load_relationship('accounts');
 
                     $queryPart .= " ".$this->bean->bugs->getJoin(array('join_table_alias'=>'bugs_pv','join_type'=>' LEFT JOIN '));
-                    $queryPart .= " ".$bugBean->accounts->getJoin(array('join_table_alias'=>'accounts_bugs_pv','right_join_table_alias'=>'bugs_pv','join_type' => ' LEFT JOIN '))." AND accounts_bugs_pv.id IN $accountIn ";
                     //BEGIN SUGARCRM flav=ent ONLY
                     $queryPart .= " AND bugs_pv.portal_viewable = 1 ";
                     //ENd SUGARCRM flav=ent ONLY
 
                 } else if ( $queryType == 'where' ) {
-                    $queryPart = " {$table_alias}.portal_flag = 1 AND ( accounts_bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
+                    $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
                 }
                 break;
             case 'Cases':

@@ -20,6 +20,7 @@
  * language governing these rights and limitations under the License.
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
+ *
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
@@ -57,6 +58,7 @@ class RestTestPortalSecurity extends RestTestBase {
         $this->opps = array();
         $this->cases = array();
         $this->bugs = array();
+        $this->notes = array();
     }
     public function tearDown()
     {
@@ -90,6 +92,11 @@ class RestTestPortalSecurity extends RestTestBase {
             $bugIds[] = $bug->id;
         }
         $bugIds = "('".implode("','",$bugIds)."')";
+        $noteIds = array();
+        foreach ( $this->notes as $note ) {
+            $noteIds[] = $note->id;
+        }
+        $noteIds = "('".implode("','",$noteIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -106,6 +113,8 @@ class RestTestPortalSecurity extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM cases_bugs WHERE bug_id IN {$bugIds}");
+        $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
+        $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
         
         parent::tearDown();
     }
@@ -271,7 +280,8 @@ class RestTestPortalSecurity extends RestTestBase {
 
             $acase->load_relationship('accounts');
             $accountNum = $i%3;
-            $acase->accounts->add(array($this->accounts[($i%3)]));
+            $acase->_accountNum = $accountNum;
+            $acase->accounts->add(array($this->accounts[$accountNum]));
 
             $acase->load_relationship('contacts');
             if ( $accountNum == 2 ) {
@@ -289,20 +299,21 @@ class RestTestPortalSecurity extends RestTestBase {
             
             $acase->contacts->add(array($this->contacts[$contactNum]));
 
-            // 2 out of 3 cases have bugs
-            if ( ($i%3) < 2 ) {
+            // 4 out of 5 cases have bugs
+            if ( ($i%5) < 4 ) {
                 $bug = new Bug();
                 $bug->name = "UNIT TEST ".($i+1)." - ".create_guid();
                 $bug->work_log = "The portal should never see this.";
                 $bug->description = "The portal can see this.";
                 
                 //BEGIN SUGARCRM flav=ent ONLY
-                if ( $i%2 == 1 ) {
+                if ( $i%2 == 1 && $acase->portal_viewable == true ) {
                     $bug->portal_viewable = true;
                 }
                 //END SUGARCRM flav=ent ONLY
 
                 $bug->save();
+                $bug->_accountNum = $accountNum;
                 $this->bugs[] = $bug;
                 
                 $bug->load_relationship('cases');
@@ -310,7 +321,33 @@ class RestTestPortalSecurity extends RestTestBase {
             }
 
         }
-        
+        // Add some Notes
+        $caseCount = count($this->cases);
+        $bugCount = count($this->bugs);
+        for ( $i=0; $i<60; $i++ ) {
+            $note = new Note();
+            $note->name = "UNIT TEST ".($i+1);
+            $note->description = "This is a unit test note.";
+            $note->save();
+            if ( $i%3 < 2 ) {
+                $linkBean = $this->cases[($i%$caseCount)];
+                if ( $i%5 < 4 ) {
+                    $note->portal_flag = true;
+                }
+            } else {
+                $linkBean = $this->bugs[($i%$bugCount)];
+                if ( $i%2 != 0 ) {
+                    $note->portal_flag = true;
+                }
+            }
+            $linkBean->load_relationship('notes');
+            $linkBean->notes->add(array($note));
+            
+            $this->notes[] = $note;
+        }
+        // Clean up any hanging related records
+        SugarRelationship::resaveRelatedBeans();
+
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
         $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
@@ -367,6 +404,21 @@ class RestTestPortalSecurity extends RestTestBase {
             $this->assertTrue($foundOne);
         }
 
+
+        $restReply = $this->_restCall("Accounts/".$this->accounts[2]->id."/link/cases");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            // We should only get cases that have the portal_viewable flag set to true
+            $this->assertEquals(1,$record['portal_viewable']);
+        }
+
+        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id."/link/bugs");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            // We should only get cases that have the portal_viewable flag set to true
+            $this->assertEquals(1,$record['portal_viewable']);
+        }
+
         // Negative test: We should not be able to fetch an Opportunity
         $restReply = $this->_restCall("Opportunities/".$this->opps[1]->id);
         $this->assertContains('ERROR',$restReply['replyRaw']);
@@ -378,6 +430,136 @@ class RestTestPortalSecurity extends RestTestBase {
         // Negative test: Should not be able to create a new Opportunity
         $restReply = $this->_restCall("Opportunities/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00')),'POST');
         $this->assertContains('ERROR',$restReply['replyRaw']);
+
+
+        // Negative test: Try and fetch a Case you shouldn't be able to see
+        $restReply = $this->_restCall("Cases/".$this->cases[0]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Negative test: Fetch a Case that is related to an account you can see, but is not portal visible
+        $restReply = $this->_restCall("Cases/".$this->cases[2]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Positive test: Fetch a Case assigned to the other account that you should be able to see
+        $restReply = $this->_restCall("Cases/".$this->cases[1]->id);
+        $this->assertEquals($this->cases[1]->id,$restReply['reply']['id']);
+
+        // Positive test: Should be able to create a new Case
+        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'portal_viewable'=>1)),'POST');
+        $this->assertNotEmpty($restReply['reply']['id']);
+        $createdCase = BeanFactory::getBean('Cases',$restReply['reply']['id']);
+        $this->cases[] = $createdCase;
+        
+        // Positive test: Should be able to fetch this new bean
+        $restReply = $this->_restCall("Cases/".$createdCase->id);
+        $this->assertEquals($restReply['reply']['id'],$createdCase->id);
+        
+        $restReply = $this->_restCall("Cases");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            // Cases should be linked to accounts[1] or accounts[2]
+            $this->assertEquals('1',$record['portal_viewable']);
+            $foundOne = ($record['account_id']==$this->accounts[1]->id)
+                ||($record['account_id']==$this->accounts[2]->id);
+            $this->assertTrue($foundOne);
+        }
+
+        $restReply = $this->_restCall("Cases/".$this->cases[1]->id."/link/bugs");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            // We should only get cases that have the portal_viewable flag set to true
+            $this->assertEquals('1',$record['portal_viewable']);
+        }
+
+        // Negative test: Try and fetch a Bug you shouldn't be able to see
+        $restReply = $this->_restCall("Bugs/".$this->bugs[0]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Positive test: Fetch a Bug that is related to an account you can see, but is not portal visible
+        $restReply = $this->_restCall("Bugs/".$this->bugs[5]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Positive test: Fetch a Bug assigned to the other account that you should be able to see
+        $restReply = $this->_restCall("Bugs/".$this->bugs[1]->id);
+        $this->assertEquals($this->bugs[1]->id,$restReply['reply']['id']);
+
+        // Positive test: Should be able to create a new Bug, as long as it is related to a case.
+        $restReply = $this->_restCall("Cases/".$this->cases[1]->id."/link/bugs/",json_encode(array('name'=>'UnitTestNew','portal_viewable'=>1)),'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id']);
+        $createdBug = BeanFactory::getBean('Bugs',$restReply['reply']['related_record']['id']);
+        $this->bugs[] = $createdBug;
+        
+        // Positive test: Should be able to fetch this new bean
+        $restReply = $this->_restCall("Bugs/".$createdBug->id);
+        $this->assertEquals($restReply['reply']['id'],$createdBug->id);
+        
+        $restReply = $this->_restCall("Bugs");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals('1',$record['portal_viewable']);
+        }
+
+        // Note debugging, to figure out which notes have what properties
+        /*
+        foreach ( $this->notes as $i => $note ) {
+            if ( $note->parent_type == 'Cases' ) {
+                $parentNum = $i%$caseCount;
+                $parent = $this->cases[$parentNum];
+            } else {
+                $parentNum = $i%$bugCount;
+                $parent = $this->bugs[$parentNum];
+            }
+            printf("%3d = %1d %10s %1d %3d %2d\n",
+                   $i,    $note->portal_flag, $note->parent_type, $parent->portal_viewable, $parentNum, $parent->_accountNum );
+        }
+        */
+
+        // Note 2: no portal_flag, related to bug #2, bug not portal visible, related to account #2
+        $restReply = $this->_restCall("Notes/".$this->notes[2]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+        
+        // Note 5: portal_flag, related to bug #5, bug not portal visible, related to account #0
+        $restReply = $this->_restCall("Notes/".$this->notes[5]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+        
+        // Note 35: portal_flag, related to bug #11, bug portal visible, related to account #1
+        $restReply = $this->_restCall("Notes/".$this->notes[35]->id);
+        $this->assertEquals($this->notes[35]->id,$restReply['reply']['id']);
+
+        // Note 17: portal_flag, related to bug #17, bug portal visible, related to account #0
+        $restReply = $this->_restCall("Notes/".$this->notes[17]->id);
+        $this->assertEquals($this->notes[17]->id,$restReply['reply']['id']);
+
+        // Note 14: no portal_flag, related to bug #14, bug portal visible, related to account #2
+        $restReply = $this->_restCall("Notes/".$this->notes[14]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Note 15: portal_flag, related to case #15, case portal visible, related to account #0
+        $restReply = $this->_restCall("Notes/".$this->notes[15]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Note 13: portal_flag, related to case #13, case portal visible, related to account #1
+        $restReply = $this->_restCall("Notes/".$this->notes[13]->id);
+        $this->assertEquals($this->notes[13]->id,$restReply['reply']['id']);
+
+        // Note 22: portal_flag, related to case #22, case not portal visible, related to account #1
+        $restReply = $this->_restCall("Notes/".$this->notes[22]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Note 49: no portal_flag, related to case #19, case portal visible, related to account #1
+        $restReply = $this->_restCall("Notes/".$this->notes[49]->id);
+        $this->assertContains('ERROR',$restReply['replyRaw']);
+
+        // Positive test: Should be able to create a new Note, as long as it is related to a case or a bug.
+        $restReply = $this->_restCall("Cases/".$this->cases[25]->id."/link/notes/",json_encode(array('name'=>'UnitTestNew','portal_flag'=>1)),'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id']);
+        $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
+        $this->notes[] = $createdNote;
+
+        $restReply = $this->_restCall("Bugs/".$this->bugs[20]->id."/link/notes/",json_encode(array('name'=>'UnitTestNew','portal_flag'=>1)),'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id']);
+        $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
+        $this->notes[] = $createdNote;
 
     }
 }
