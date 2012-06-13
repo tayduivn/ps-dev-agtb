@@ -221,6 +221,7 @@ class PdfManagerHelper {
         foreach ($fieldDef as $fieldName => $def) {
             if (!is_array($def) || $fieldName == 'deleted' || empty($def['type']))
                 continue;
+                
             //Check the studio property of the field def.
             if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
                 (isset($def['studio']['formula']) && self::isFalse($def['studio']['formula'])) ||
@@ -229,6 +230,7 @@ class PdfManagerHelper {
             {
                 continue;
             }
+            
             switch ($def['type']) {
                 case "int":
                 case "float":
@@ -247,6 +249,11 @@ class PdfManagerHelper {
                 case "encrypt":
                 case "enum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
+                    break;
+                case "relate":
+                    if (!empty($def['ext2'])) {
+                        $fieldArray[$fieldName] = array($fieldName, 'string');
+                    }
                     break;
                 case "date":
                 case "datetime":

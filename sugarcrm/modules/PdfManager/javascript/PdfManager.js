@@ -69,7 +69,18 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
 /**
  * Push var to WYSIWYG
  */
-SUGAR.PdfManager.insertField = function(fieldName) {
+SUGAR.PdfManager.insertField = function(selField, selSubField) {
+    
+    var fieldName = "";
+    
+    if ( selField && selField.value != "") {
+        fieldName += selField.value;
+        
+        if ( selSubField && selSubField.value != "") {
+            fieldName += "."+selSubField.value;
+        }
+    }
+    
     var cleanFieldName = fieldName.replace('pdfManagerRelateLink_', '');
 	var inst = tinyMCE.getInstanceById("body_html");
 	if (fieldName.length > 0 && inst) {

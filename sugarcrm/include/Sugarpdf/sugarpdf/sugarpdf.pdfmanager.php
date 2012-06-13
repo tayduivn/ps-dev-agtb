@@ -144,15 +144,15 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
  
     }
 
-    private function making_template_to_tpl($syno_pdfTemplateId) {
+    private function making_template_to_tpl($pdfTemplateId) {
         $pdfTemplate = BeanFactory::newBean('PdfManager');
 
-        if ($pdfTemplate->retrieve($syno_pdfTemplateId) !== null) {
+        if ($pdfTemplate->retrieve($pdfTemplateId) !== null) {
             
             if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls') ) { 
                 mkdir_recursive($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls'); 
             }
-            $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $syno_pdfTemplateId . '.tpl';
+            $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplateId . '.tpl';
             
             $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
             
