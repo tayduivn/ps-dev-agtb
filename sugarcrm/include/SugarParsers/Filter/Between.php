@@ -62,7 +62,25 @@ class SugarParsers_Filter_Between extends SugarParsers_Filter_AbstractFilter
      */
     public function filter($value)
     {
-        //replace between with 'greaterThenEqual' and 'lessThenEqual'
-        $this->value = array('$and' => array('$lte' => $value[1], '$gte' => $value[0]));
+        // make sure that the value is an array.
+        // if it's not make it an array
+        if (!is_array($value)) {
+            $value = array($value);
+        }
+
+        // save the array value to the keys
+        $this->value = $value;
     }
+
+    public function getValueInputs($field_name, $table_key, $operator)
+    {
+        return array(
+            "name" => $field_name,
+            "table_key" => $table_key,
+            "qualifier_name" => $operator,
+            "input_name0" => $this->value[0],
+            "input_name1" => $this->value[1]
+        );
+    }
+
 }

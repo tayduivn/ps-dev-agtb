@@ -52,7 +52,7 @@ class SugarParsers_Filter_Equal extends SugarParsers_Filter_AbstractFilter
      *
      * @var string
      */
-    protected $operator_text = "equals";
+    protected $operator_text = "is";
 
     /**
      * Not Text Operator

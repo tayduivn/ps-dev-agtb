@@ -121,7 +121,8 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
                 $key = $value->getKey();
             }
             // create a new filter
-            $filter = $this->createFilter($key, $value->getOperator(true, $this->is_not), $value->getValue());
+            $filter = $this->createFilter($key, $value);
+
             if (!empty($filter)) {
                 $this->_reportFilters[] = $filter;
             }
@@ -135,27 +136,22 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
 
     /**
      * @param string $field_name        Name of the field we are modifying
-     * @param string $operator          Operator to use.
-     * @param string $value             Value for the field
+     * @param SugarParsers_Filter_AbstractFilter $value
      * @return array
      */
-    protected function createFilter($field_name, $operator, $value)
+    protected function createFilter($field_name, $value)
     {
+        $operator = $value->getOperator(true, $this->is_not);
         // we need to check to see if the files exist
         $table_key = join(":", $this->link_path);
         /* @var $def_bean SugarBean */
         $def_bean = $this->reportBuilder->getBeanFromTableKey($table_key);
-        if ($this->checkFieldExist($def_bean, $field_name)) {
-            return array(
-                "name" => $field_name,
-                "table_key" => $table_key,
-                "qualifier_name" => $operator,
-                "input_name0" => $value
-            );
+        if ($this->checkFieldExist($def_bean, $field_name))
+        {
+            return $value->getValueInputs($field_name, $table_key, $operator);
         }
 
         return array();
-
     }
 
     /**

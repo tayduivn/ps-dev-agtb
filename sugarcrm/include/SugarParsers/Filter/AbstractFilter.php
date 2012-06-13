@@ -153,4 +153,15 @@ abstract class SugarParsers_Filter_AbstractFilter implements SugarParsers_Filter
             return $this->operator;
         }
     }
+
+
+    public function getValueInputs($field_name, $table_key, $operator)
+    {
+        return array(
+            "name" => $field_name,
+            "table_key" => $table_key,
+            "qualifier_name" => $operator,
+            "input_name0" => $this->value
+        );
+    }
 }

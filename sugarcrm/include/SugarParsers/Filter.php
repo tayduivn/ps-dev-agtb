@@ -95,6 +95,7 @@ class SugarParsers_Filter
     {
         $_filters = array();
         $stripArrayKeys = false;
+
         foreach ($array as $key => $value) {
 
             $target_module = null;
@@ -111,7 +112,7 @@ class SugarParsers_Filter
             $valueHasVariables = $this->valueArrayHasVariables($value);
 
             // if the integer is a key, it will screw up the link check, so lets get the key name from the child value
-            if (is_integer($key)) {
+            if (is_int($key)) {
                 $_key = array_shift(array_keys($value));
                 if (!is_integer($_key)) {
                     $key = $_key;
@@ -171,7 +172,9 @@ class SugarParsers_Filter
                 unset($_cvKlass, $cvKlass);
             }
 
-            if (is_array($value) && $key != '$in'&& $key != '$between')
+
+
+            if (is_array($value) && $key != '$in' && $key != '$between')
             {
                 // we need to parse this level
                 $value = $this->parseFilterArray($value);
@@ -181,9 +184,7 @@ class SugarParsers_Filter
                     // just store the filter
                     $value = $value[0];
                 }
-            }
-            elseif ($key == '$in')
-            {
+            } elseif ($key == '$in' || $key == '$between') {
                 if (!is_array($value))
                 {
                     $value = array($value);
@@ -193,19 +194,6 @@ class SugarParsers_Filter
                     // take out any keys that may be there since we don't need them
                     $value = array_values($value);
                 }
-            }
-            elseif ($key == '$between')
-            {
-                $filter = new $klass();
-                $filter->filter($value);
-                $value = $this->parseFilterArray($filter->getValue());
-                if (count($value) == 1 && isset($value[0]))
-                {
-                    // we have one filter that is not assigned to a field
-                    // just store the filter
-                    $value = $value[0];
-                }
-                $valueHasVariables = true;
             }
 
             /* @var $klass SugarParsers_Filter_AbstractFilter */
