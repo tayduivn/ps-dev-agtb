@@ -1,13 +1,17 @@
 <div class="span6">
-  Sabra Khan's<br>
+  {{fullName}}<br>
   <h2>Forecast</h2>
 </div>
 <div>
   Best (Adjusted)<br>
-  <h2>545,000</h2>
+  <h2>{{bestCase}}</h2>
 </div>
 <div>
   Likely (Adjusted)<br>
-  <h2>470,000</h2>
+  <h2>{{likelyCase}}</h2>
 </div>
 <div><a id="commit_forecast" class="btn btn-primary"><i class="icon icon-upload icon-md"></i>  Commit</a></div>
+
+<div>
+Previous Commit...
+</div>
