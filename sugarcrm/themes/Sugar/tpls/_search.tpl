@@ -26,13 +26,13 @@
 </div>
 
 <script>
-    search = '{$APP.LBL_SEARCH}';
+    var search_text = '{$APP.LBL_SEARCH}';
 {literal}
 $("#sugar_spot_search").ready(function() {
-    $("#sugar_spot_search").val(search);
+    $("#sugar_spot_search").val(search_text);
     $("#sugar_spot_search").css('color', 'grey');
     $("#sugar_spot_search").focus(function() {
-        if ($("#sugar_spot_search").val()==search) {
+        if ($("#sugar_spot_search").val()==search_text) {
             $("#sugar_spot_search").val('');
             $('#sugar_spot_search').css('color', 'black');
         }
