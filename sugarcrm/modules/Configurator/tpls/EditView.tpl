@@ -181,6 +181,20 @@
         <td colspan="2">&nbsp;</td>
     </tr>
 
+    <tr>
+        <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
+    {if isset($config.enable_action_menu) && $config.enable_action_menu != "true" }
+        {assign var='enable_action_menu' value=''}
+        {else}
+        {assign var='enable_action_menu' value='CHECKED'}
+    {/if}
+        <td>
+            <input type='hidden' name='enable_action_menu' value='false'>
+            <input name='enable_action_menu'  type="checkbox" value="true" {$enable_action_menu}>
+        </td>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
 
 
 

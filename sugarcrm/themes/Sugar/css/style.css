@@ -6442,7 +6442,7 @@ ul.clickMenu {
     *display:inline;
     *zoom:1;
 }
-ul.clickMenu form, div.action_buttons form {float:left;}
+ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6499,6 +6499,8 @@ ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
 ul.clickMenu li span.subhover {
 	cursor: pointer;
 	} /*--Hover effect for trigger--*/
+div.action_buttons .subnav-sub { display:none; }
+
 ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
