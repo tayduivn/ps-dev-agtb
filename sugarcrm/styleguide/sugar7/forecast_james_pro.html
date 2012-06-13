@@ -137,17 +137,16 @@
             <div class="control-group">
               <label for="select01" class="control-label">Sales Stage:</label>
               <div class="controls">
-                <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
-                  <option value="pk" selected="selected">All</option> 
-                  <option value="pk">Closed</option>
-                  <option value="pk">Proposal</option>
-                  <option value="pk">Negotiation</option>
-                  <option value="pk">Qualified</option>
+                <select data-placeholder="Choose a account..." class="chzn-select span12" multiple tabindex="2">
+                  <option value="pk" selected="selected">Closed</option>
+                  <option value="pk" selected="selected">Proposal</option>
+                  <option value="pk" selected="selected">Negotiation</option>
+                  <option value="pk" selected="selected">Qualified</option>
                 </select>
               </div>
             </div>  
             <div class="control-group">
-              <label for="select01" class="control-label">Probability (>=):</label>
+              <label for="select01" class="control-label">Probability:</label>
               <div class="controls">
                 <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
                   <option value="pk">10%</option>
@@ -168,58 +167,27 @@
         <div class="block">
           <h4>Chart Options</h4>
           <div class="control-group">
-            <label for="select01" class="control-label">Horizontal (x):</label>
-            <div class="controls ">
-              <select data-placeholder="Choose a x-axis..." class="chzn-select span12" tabindex="2">
-                <option value="pk">Account</option>
-                <option value="pk">Channel</option> 
-                <option value="pk">Line Items</option>
-                <option value="pk" selected="selected">Month</option> 
-                <option value="pk">Quarter</option> 
-              </select>
-            </div>
-          </div>  
-          <div class="control-group">
-            <label for="select01" class="control-label">Vertical (y):</label>
-            <div class="controls">
-              <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
-                <option value="pk" selected="selected">Revenue</option> 
-                <option value="pk">Recurring</option> 
-              </select>
-            </div>
-          </div>
-          <div class="control-group">
             <label for="select01" class="control-label">Group By:</label>
             <div class="controls">
               <select data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
-                <option value="pk">Revenue Type</option> 
                 <option value="pk" selected="selected">Sales Stage</option> 
+                <option value="pk">Probability</option> 
+                <option value="pk">Forecast to Pipeline</option> 
               </select>
             </div>
           </div>
-          <div class="control-group" id="chartType">
-            <label for="select01" class="control-label">Layout:</label>
+          <div class="control-group">
+            <label for="select01" class="control-label">Data Set:</label>
             <div class="controls">
-              <div class="btn-group">
-                <a href="" class="btn active"><i class="icon-signal"></i></a>
-                <a href="" class="btn"><i class="icon-align-left"></i></a>
-              </div>
+              <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
+                <option value="pk" selected="selected">All</option> 
+                <option value="pk">Best</option> 
+                <option value="pk">Likely</option> 
+                <option value="pk">Worst</option> 
+              </select>
             </div>
           </div>
-        </div>         
-        <div class="block">
-          <h4>Team</h4>
-          <ul class="list" >
-            <li><a href="forecast.html"><i class="icon-folder-open"></i> Sabra Khan</a>
-              <ul>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Mark Gibson</a></li>
-                <li><i class="icon-folder-open"></i> James Joplin</li>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Terrence Li</a></li>
-                <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Amy McCray</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>        
+        </div> 
       </div>
     </div>
     <div id="charts" class="span10">
