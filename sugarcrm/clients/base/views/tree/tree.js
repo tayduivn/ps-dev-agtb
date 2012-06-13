@@ -36,7 +36,7 @@
 
         var self = this;
 
-        this.jsTree = $(".jst").jstree({
+        this.jsTree = $(".jstree-sugar").jstree({
             "plugins":["themes", "json_data", "ui", "crrm"],
             "json_data" : {
                 "ajax" : {
