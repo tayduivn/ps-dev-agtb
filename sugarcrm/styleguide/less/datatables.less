@@ -13,6 +13,10 @@ table.dataTable thead th {
 	*cursor: hand;
 }
 
+table.table.dataTable tfoot tr.overall th {
+    font-weight: normal;
+}
+
 table.dataTable td.center,
 table.dataTable td.dataTables_empty {
 	text-align: center;
@@ -214,7 +218,17 @@ table.dataTable th:active {
 	outline: none;
 }
 
+table.dataTable td {
+    .border-radius(0px) !important;
+}
 
+table.dataTable tr.disabled td {
+    background-color: @grayLighter;
+    color: @grayLight;
+}
+table.dataTable tr.disabled td a {
+    color: @grayLight;
+}
 /*
  * Scrolling
  */
