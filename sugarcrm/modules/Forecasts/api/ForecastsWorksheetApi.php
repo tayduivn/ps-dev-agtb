@@ -42,14 +42,6 @@ class ForecastsWorksheetApi extends ModuleApi {
                 'shortHelp' => 'A ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
             ),
-            'forecastsCommitted' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','committed'),
-                'pathVars' => array('',''),
-                'method' => 'forecastsCommitted',
-                'shortHelp' => 'Most recent committed forecast entry',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
-            )
         );
         return $parentApi;
     }
@@ -121,19 +113,6 @@ class ForecastsWorksheetApi extends ModuleApi {
             $opps[] = $row;
         }
         return $opps;
-    }
-
-    public function forecastsCommitted($api, $args)
-    {
-        global $current_user;
-        $query = "SELECT * FROM forecasts WHERE user_id = '{$current_user->id}' AND deleted = 0 AND forecast_type='Direct' ORDER BY date_entered desc";
-        $results = $GLOBALS['db']->query($query);
-        $forecasts = array();
-        while(($row = $GLOBALS['db']->fetchByAssoc($results)))
-        {
-            $forecasts[$row['id']] = $row;
-        }
-        return array('committed' => $forecasts);
     }
 
 }

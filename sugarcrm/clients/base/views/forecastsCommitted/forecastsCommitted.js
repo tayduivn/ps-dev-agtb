@@ -24,20 +24,21 @@
 
     buildForecastsCommitted: function(model) {
         var self = this;
-        var count = 0;
-        var entries = model.get('committed');
-        _.each(entries, function(data, key)
+        var latest = model.get('latest');
+        if(latest)
         {
-            //If this is the first entry, then set the likelyCase & bestCase variables in handlebar template
-            if(++count == 1)
+            self.likelyCase = latest['likely_case'];
+            self.bestCase = latest['best_case'];
+        }
+
+        var history = model.get('history');
+        if(history)
+        {
+            _.each(history, function(data, key)
             {
-              self.likelyCase = data['likely_case'];
-              self.bestCase = data['best_case'];
-            } else {
-
-            }
-        });
-
+                console.log(data);
+            });
+        }
         //Call render again
         this.render();
     },
