@@ -5,23 +5,26 @@
  * @extends View.View
  */
 ({
-
-    /**
-     * Initialize the View
-     *
-     * @constructor
-     * @param {Object} options
-     */
     initialize:function (options) {
+        _.bindAll(this); // Don't want to worry about keeping track of "this"
+        // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
     },
 
-    /**
-     * Start the rendering of the JS Tree
-     */
-    render:function () {
+    bindDataChange: function() {
+        if (this.model.isNew()) {
+            this.model = this.context.model.forecasts.progress;
+            this.model.on('change', this.render);
+        }
+    },
+    
+    render: function () {
+        console.log("testing logs");
+        _.extend(this, this.model.toJSON());
         app.view.View.prototype.render.call(this);
     }
 
 })
+
+//@ sourceURL=views/progress/progress.js
