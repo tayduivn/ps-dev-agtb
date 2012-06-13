@@ -1246,6 +1246,9 @@ fixtures.metadata = {
                     {view: "list"}
                 ]
             }
+        },
+        "fluid": {
+            controller: "({})"
         }
-    },
+    }
 };

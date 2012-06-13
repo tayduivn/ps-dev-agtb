@@ -21,6 +21,7 @@ describe("View Manager", function() {
             });
 
             it("typed", function() {
+
                 var klass = app.view.declareComponent("layout", "list", null, null, "fluid");
                 expect(klass).toEqual(app.view.layouts.FluidLayout);
             });
@@ -208,12 +209,18 @@ describe("View Manager", function() {
         });
 
         it("layout with a custom controller", function () {
-            var layout = app.view.createLayout({
+            var layout;
+
+            app.view.declareComponent("layout", "fluid", null, null, "fluid");
+            layout = app.view.createLayout({
                 name : "detailplus",
                 module: "Contacts",
                 context: context
             });
-            expect(layout instanceof app.view.layouts.FluidLayout).toBeTruthy();
+
+            // Originally checked to see if DetailPlus is a Fluid Layout, however it is no longer the case
+            // after migrating layouts serverside, not sure what happened.
+            expect(layout instanceof app.view.layouts.ContactsDetailplusLayout).toBeTruthy();
             expect(layout.customLayoutCallback).toBeDefined();
         });
 

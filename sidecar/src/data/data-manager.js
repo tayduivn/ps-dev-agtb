@@ -458,8 +458,8 @@
                     options.params.offset = options.offset;
                 }
 
-                if (app.config && app.config.maxQueryResult) {
-                    options.params.max_num = app.config.maxQueryResult;
+                if (options.limit || (app.config && app.config.maxQueryResult)) {
+                    options.params.max_num = options.limit || app.config.maxQueryResult;
                 }
 
                 if (model.orderBy && model.orderBy.field) {

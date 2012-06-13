@@ -129,7 +129,7 @@
         addComponent: function(component, def) {
             if (!component.layout) component.layout = this;
             this._components.push(component);
-            this._placeComponent(component, def);
+            this._placeComponent(component, def); // Some implementations of placeComponent require a def
         },
 
         /**
