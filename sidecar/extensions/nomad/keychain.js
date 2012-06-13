@@ -7,7 +7,11 @@
  */
 (function(app) {
     var serviceName = "SugarCRM",
-        emptyFn = function() {};
+        emptyFn = function() {},
+        tokenMap = {
+            "AuthAccessToken": app.AUTH_ACCESS_TOKEN,
+            "AuthRefreshToken": app.AUTH_REFRESH_TOKEN
+        };
         
     var _keychain = {
         /**
@@ -19,13 +23,14 @@
         /**
          * Returns the auth token of the current user.
          *
-         * This method simply reads the global AUTH_TOKEN
-         * that was set when the native application was launched.
+         * This method simply reads the global AUTH_ACCESS_TOKEN or
+         * AUTH_REFRESH_TOKEN that was set when the native application was launched.
          *
+         * @param {String} key Item key.
          * @return {String} authentication token for the current user.
          */
-        get: function() {
-            return app.AUTH_ACCESS_TOKEN;
+        get: function(key) {
+            return tokenMap[key];
         },
 
         /**
@@ -34,7 +39,7 @@
          * @param {String} value Item to put.
          */
         set: function(key, value) {
-            this.keychainPlugin.setForKey(key, value, serviceName, emptyFn, emptyFn);
+            window.plugins.keychain.setForKey(key, value, serviceName, emptyFn, emptyFn);
         },
 
         /**
@@ -42,7 +47,7 @@
          * @param {String} key Item key.
          */
         cut: function(key) {
-            this.keychainPlugin.removeForKey(key, serviceName, emptyFn, emptyFn);
+            window.plugins.keychain.removeForKey(key, serviceName, emptyFn, emptyFn);
         }
     };
 

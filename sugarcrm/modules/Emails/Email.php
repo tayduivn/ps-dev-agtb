@@ -2306,9 +2306,6 @@ class Email extends SugarBean {
 			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',translate('LBL_ATTACHMENT', 'Emails'));
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
 		///////////////////////////////////////////////////////////////////////
 		if(empty($this->contact_id) && !empty($this->parent_id) && !empty($this->parent_type) && $this->parent_type === 'Contacts' && !empty($this->parent_name) ){
 			$this->contact_id = $this->parent_id;
@@ -2316,16 +2313,13 @@ class Email extends SugarBean {
 		}
 	}
 
-	function fill_in_additional_detail_fields() {
+	function fill_in_additional_detail_fields()
+	{
 		global $app_list_strings,$mod_strings;
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id, '');
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-		//if ($this->parent_type == 'Contacts') {
-			$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans ";
-			$query .= "WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";
+
+		$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans
+		           WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";
+
 			if(!empty($this->parent_id)){
 				$query .= " AND contacts.id= '".$this->parent_id."' ";
 			}else if(!empty($_REQUEST['record'])){
@@ -2364,8 +2358,6 @@ class Email extends SugarBean {
 				$GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
 			}
 		//}
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 
 		$this->link_action = 'DetailView';
 
@@ -2390,7 +2382,7 @@ class Email extends SugarBean {
 			$this->name = $mod_strings['LBL_NO_SUBJECT'];
 		}
 
-		$this->fill_in_additional_parent_fields();
+		parent::fill_in_additional_detail_fields();
 	}
 
 

@@ -262,8 +262,8 @@ class Meeting extends SugarBean {
 	function mark_deleted($id) {
 
 		require_once("modules/Calendar/CalendarUtils.php");
-		CalendarUtils::correctRecurrences($this, $id);		
-		
+		CalendarUtils::correctRecurrences($this, $id);
+
 		global $current_user;
 
 		parent::mark_deleted($id);
@@ -335,11 +335,7 @@ class Meeting extends SugarBean {
 
 	function fill_in_additional_detail_fields() {
 		global $locale;
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
+		parent::fill_in_additional_detail_fields();
 
 		if (!empty($this->contact_id)) {
 			$query  = "SELECT first_name, last_name FROM contacts ";
@@ -356,12 +352,6 @@ class Meeting extends SugarBean {
 				$GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
 			}
 		}
-
-
-
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
-		$this->fill_in_additional_parent_fields();
 
 		if (!isset($this->time_hour_start)) {
 			$this->time_start_hour = intval(substr($this->time_start, 0, 2));
@@ -457,7 +447,7 @@ class Meeting extends SugarBean {
 		if (empty($this->email_reminder_time)) {
 			$this->email_reminder_time = -1;
 		}
-		if(empty($this->id)){ 
+		if(empty($this->id)){
 			$reminder_t = $GLOBALS['current_user']->getPreference('email_reminder_time');
 			if(isset($reminder_t))
 		    		$this->email_reminder_time = $reminder_t;
@@ -593,7 +583,7 @@ class Meeting extends SugarBean {
 		$startdate = $timedate->fromDb($meeting->date_start);
 		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
 		$enddate = $timedate->fromDb($meeting->date_end);
-		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($enddate, $notifyUser)." ".TimeDate::userTimezoneSuffix($enddate, $notifyUser));		
+		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($enddate, $notifyUser)." ".TimeDate::userTimezoneSuffix($enddate, $notifyUser));
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
@@ -604,30 +594,30 @@ class Meeting extends SugarBean {
 
 		return $xtpl;
 	}
-	
+
 	/**
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
 		$notify_mail = parent::create_notification_email($notify_user);
-						
+
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
 		require_once("modules/vCals/vCal.php");
 		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
-				
+
 		if(file_put_contents($path,$content)){
 			$notify_mail->AddAttachment($path, 'meeting.ics', 'base64', 'text/calendar');
 		}
-		return $notify_mail;		
+		return $notify_mail;
 	}
-	
+
 	/**
 	 * Redefine method to remove ics after email is sent
 	 */
 	public function send_assignment_notifications($notify_user, $admin){
 		parent::send_assignment_notifications($notify_user, $admin);
-		
+
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 		unlink($path);
 	}

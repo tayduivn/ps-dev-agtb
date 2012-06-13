@@ -42,10 +42,11 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
  *
  */
 class MetaDataManager {
-
-    protected $modules = null;
-    protected $platform = 'base';
-    protected $typeFilter = null;
+    /**
+     * The user bean for the logged in user
+     *
+     * @var User
+     */
     protected $user;
 
     /**
@@ -348,7 +349,7 @@ class MetaDataManager {
     }
     
     /**
-     * gets sugar fields
+     * Fields accessor, gets sugar fields
      *
      * @return array array of sugarfields with a hash
      */
@@ -358,7 +359,7 @@ class MetaDataManager {
     }
 
     /**
-     * Gets client views
+     * Views accessor Gets client views
      *
      * @return array
      */
@@ -375,32 +376,16 @@ class MetaDataManager {
      */
     public function getSugarLayouts()
     {
-        $result = array();
-
-        // Gets the listing of directories to scan, by nested dir name, with full paths
-        $dirs = $this->getSugarClientFileDirs('layouts', true);
-        foreach ($dirs as $dir) {
-            // Get the client for this particular file (could be mixed)
-            preg_match('#clients/(.*)/layouts/#', $dir, $m);
-            $platform = $m[1];
-
-            // Grab our PHP files
-            $files = glob($dir . '*.php');
-            foreach ($files as $file) {
-                $filename = basename($file, '.php');
-                require_once $file;
-
-                // Only get the viewdefs if they exist for this platform and file
-                if (isset($viewdefs[$platform]['layout'][$filename])) {
-                    $result[$filename] = $viewdefs[$platform]['layout'][$filename];
-                }
-            }
-        }
-
-        $result['_hash'] = md5(serialize($result));
-        return $result;
+        return $this->getSugarClientFiles('layout');
     }
 
+    /**
+     * Gets the directories for a given path along the known platform stack
+     *
+     * @param string $path The directory within a platform
+     * @param bool $full Whether to return full paths or dirnames only
+     * @return array
+     */
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
 
@@ -436,10 +421,15 @@ class MetaDataManager {
         $allSugarFiles = $this->getSugarClientFileDirs($typePath);
 
         foreach ( $allSugarFiles as $dirname) {
-            $fileData = array('views' => array());
             // Check each platform in order of precendence to find the "best" controller
+            // Add in meta checking here as well
+            $meta = array();
             foreach ( $this->platforms as $platform ) {
-                $controller = "clients/$platform/$typePath/$dirname/$dirname.js";
+                $dir = "clients/$platform/$typePath/$dirname/";
+                $controller = $dir . "$dirname.js";
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir));
+                }
                 if ( file_exists('custom/'.$controller) ) {
                     $controller = 'custom/'.$controller;
                 }
@@ -457,6 +447,17 @@ class MetaDataManager {
                 $templateDirs[] = "clients/$platform/$typePath/$dirname/";
             }
             $fileData['templates'] = $this->fetchTemplates($templateDirs);
+            if ($meta) {
+                $fileData['meta'] = array_shift($meta); // Get the first member
+            }
+            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
+
+            // Remove empty fileData members
+            foreach ($fileData as $k => $v) {
+                if (empty($v)) {
+                    unset($fileData[$k]);
+                }
+            }
 
             $result[$dirname] = $fileData;
         }
@@ -466,10 +467,55 @@ class MetaDataManager {
     }
 
     /**
+     * Fetches all metadata from a set of directories
+     *
+     * @param array $dirs The directories to read
+     * @return array
+     */
+    protected function fetchMetadataFromDirs($dirs) {
+        $return = array();
+        foreach ($dirs as $dir) {
+            $dir = rtrim($dir, '/') . '/';
+            $cust = "custom/$dir";
+            $return = array_merge($return, $this->fetchMetadataFromDir($dir), $this->fetchMetadataFromDir($cust));
+        }
+        return $return;
+    }
+
+    /**
+     * Fetches metadata from a single directory
+     *
+     * @param string $dir
+     * @return array
+     */
+    protected function fetchMetadataFromDir($dir) {
+        $meta = array();
+        if (is_dir($dir)) {
+            // Get the client, type amd name for this particular directory
+            preg_match("#clients/(.*)/(.*)/(.*)/#", $dir, $m);
+            $platform = $m[1];
+            $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
+            $filename = $m[3];
+            $file = rtrim($dir, '/') . '/' . $filename . '.php';
+
+            if (file_exists($file)) {
+                require_once $file;
+
+                // Only get the viewdefs if they exist for this platform and file
+                if (isset($viewdefs[$platform][$type][$filename])) {
+                    $meta[$filename] = $viewdefs[$platform][$type][$filename];
+                }
+            }
+        }
+
+        return $meta;
+    }
+
+    /**
      * A method to collect templates and pass them back, shared between sugarfields, viewtemplates and per-module templates
      *
-     * @param searchDirs array A list of directories to search, custom directories will be searched automatically, ordered by least to most important
-     * @param extension string A extension to search for, defaults to ".hbt"
+     * @param $searchDirs array A list of directories to search, custom directories will be searched automatically, ordered by least to most important
+     * @param $extension string A extension to search for, defaults to ".hbt"
      * @return array An array of template file contents keyed by the template name.
      */
     protected function fetchTemplates($searchDirs,$extension='.hbt') {

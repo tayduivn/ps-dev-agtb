@@ -32,7 +32,8 @@
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.login(args, null, {error:function(){ app.alert.dismiss('login'); $('#content').show();" +
+                                            "this.app.login(args, null, {error:"+
+                                            "function(){ app.alert.dismiss('login'); $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
                                             "$(\"body\").attr(\"id\", \"\"); var app = self.app; " +
@@ -152,6 +153,18 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
+                                {     
+                                    name: "cancel_button",
+                                    type: "button",
+                                    label: "Cancel",
+                                    value: "signup",
+                                    primary: false,
+                                    events: {
+                                        click: "function(){" +
+                                            "app.router.goBack();" +
+                                            "}"
+                                    } 
+                                },
                                 {
                                     name: "signup_button",
                                     type: "button",
@@ -163,7 +176,7 @@
                                             "function(){ var self = this; " +
                                             "   if(this.model.isValid()) {" +
                                             "   $('#content').hide(); " +
-                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoclose:false}); " +
+                                            "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
                                             "   var contactData={" +
                                             "       first_name:this.model.get(\"first_name\"), " +
                                             "       last_name:this.model.get(\"last_name\")," +
@@ -189,18 +202,6 @@
                                             "       }" +
                                             "   });" +
                                             "   }" +
-                                            "}"
-                                    }
-                                },
-                                {
-                                    name: "cancel_button",
-                                    type: "button",
-                                    label: "Cancel",
-                                    value: "signup",
-                                    primary: false,
-                                    events: {
-                                        click: "function(){" +
-                                            "app.router.goBack();" +
                                             "}"
                                     }
                                 }
@@ -278,7 +279,7 @@
                         "<label class=\"hide\">{{label}}</label>" +
                         "<div class=\"controls\">\n" +
                         "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">\n  <\/div>\n" +
-                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                        "<p class=\"help-block\"></p>" +
                         "</div>"
                 }
             },
@@ -297,7 +298,7 @@
             "enum": {
                 "templates": {
                     "signupView": "<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
-                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\">{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                        "<select data-placeholder=\"{{label}}\" name=\"{{name}}\"><option value=\"\" selected></option>{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "default": ""
                 },
@@ -366,6 +367,7 @@
                         "{{#each fields}}\n" +
                         "<div>{{field ../../this ../../model}}</div>" +
                         "{{/each}}" +
+                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                         "</div>          \n" +
                         "{{/each}}" +
                         "<div class=\"modal-footer\">\n" +
@@ -381,7 +383,7 @@
             },
             "header": {
                 templates: {
-                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../currentModule}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#profile\">Profile</a></li>\n                <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n              <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n                <a href=\"#adminSearch\" class=\"pull-right advanced\" data-toggle=\"modal\" rel=\"tooltip\" title=\"Advanced Search Options\" id=\"searchAdvanced\"><i class=\"icon-cog\"></i></a>\n            </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../module}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#profile\">Profile</a></li>\n               <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n      <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n      </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
                 }
             },
             "footer": {
@@ -771,7 +773,7 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-
+        
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
@@ -792,7 +794,6 @@
         // Load the profile
         app.router.route("profile", "profile", function() {
             app.controller.loadView({
-                module: "Profile", // TODO: It's not really a module .. do we need this?
                 layout: "profile"
             });
         });
@@ -802,9 +803,53 @@
                 layout: "profileedit"
             });
         });
-
-
     });
+
+    var oRoutingBefore = app.routing.before;
+    app.routing.before = function(route, args) {
+        var dm, nonModuleRoutes;
+        nonModuleRoutes = [
+            "search",
+            "error",
+            "profile",
+            "profileedit"
+        ];
+
+        app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
+        
+        // Perform any original before checks .. if these fail return false
+        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        function alertUser(msg) {
+            // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
+            msg = msg || "At minimum, you need to have the 'Home' module enabled to use this application.";
+
+            app.alert.show("no-sidecar-access", {
+                level: "error",
+                title: "Error",
+                messages: [msg]
+            });
+        }
+
+        // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
+        if(route === 'index') {
+            dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
+            if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
+                app.router.list(dm);
+            } else if(app.acl.hasAccess('read', 'Home')) {
+                app.router.index();
+            } else {
+                alertUser();
+                return false;
+            }
+        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            app.logger.error("Module not loaded or user does not have access. ", route);
+            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            return false;
+        } 
+        return true;
+    };
 
     app.view.Field = app.view.Field.extend({
         /**
@@ -833,30 +878,33 @@
         }
     });
 
-    var oLoadView = app.controller.loadView;
-    app.controller.loadView = function(params) {
-        if (typeof(app.config) == undefined || (app.config  && app.config.appStatus == 'offline')) {
+    app.Controller = app.Controller.extend({
+        loadView: function(params) {
             var self = this;
-            var callback = function(data){
-                var params = {
-                                module: "Login",
-                                layout: "login",
-                                create: true
-                            };
-                oLoadView.call(self, params)
-                SUGAR.App.alert.show('appOffline', {
-                    level:"error",
-                    title:'Error',
-                    messages:'Sorry the application is not available at this time. Please contact the site administrator.',
-                    autoclose:false
-                });
-            };
+            // TODO: Will it ever happen: app.config == undefined?
+            // app.config should always be present because the logger depends on it
+            if (typeof(app.config) == undefined || (app.config && app.config.appStatus == 'offline')) {
+                var callback = function(data) {
+                    var params = {
+                        module: "Login",
+                        layout: "login",
+                        create: true
+                    };
+                    app.Controller.__super__.loadView.call(self, params);
+                    app.alert.show('appOffline', {
+                        level: "error",
+                        title: 'Error',
+                        messages: 'Sorry the application is not available at this time. Please contact the site administrator.',
+                        autoclose: false
+                    });
+                };
 
-            app.logout({success: callback, error:callback});
-            return;
-        };
-        return oLoadView.call(this, params);
-    };
+                app.logout({success: callback, error: callback});
+                return;
+            }
+            app.Controller.__super__.loadView.call(this, params);
+        }
+    });
 
     var _rrh = {
         /**

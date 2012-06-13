@@ -26,17 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: ReportMaker.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
-
 
 // ReportMaker is used to build advanced reports from data formats.
 class ReportMaker extends SugarBean {
@@ -58,18 +47,18 @@ class ReportMaker extends SugarBean {
 
 	//UI parameters
 	var $report_align;
-	
+
 	//variables for joining the report schedules table
 	var $schedule_id;
 	var $next_run;
 	var $active;
 	var $time_interval;
-	
+
 
 
 	//for the name of the parent if an interlocked data set
 	var $parent_name;
-	
+
 	//for related fields
 	var $query_name;
 
@@ -78,7 +67,7 @@ class ReportMaker extends SugarBean {
 	var $object_name = "ReportMaker";
 	var $rel_dataset = "data_sets";
 	var $schedules_table = "report_schedules";
-	
+
 	var $new_schema = true;
 
 
@@ -93,7 +82,7 @@ class ReportMaker extends SugarBean {
 
 	}
 
-	
+
 
 	function get_summary_text()
 	{
@@ -111,25 +100,25 @@ class ReportMaker extends SugarBean {
 
         function create_export_query(&$order_by, &$where)
         {
-			
+
 			$export_object = new CustomQuery();
 			return $export_object->create_export_query();
-						
+
 
         }
 
 	function save_relationship_changes($is_update)
     {
     }
-    
-    
+
+
     function clear_deleted($id){
 
     //first update and remove report_id's for any datasets
     		$query = "update data_sets set report_id='' where report_id='$id' and deleted=0";
-			
+
 			$this->db->query($query,true,"error removing data sets from reports: ");
-    	
+
 			$this->mark_deleted($id);
 
 	//end function clear_deleted
@@ -147,13 +136,13 @@ class ReportMaker extends SugarBean {
 
 	function fill_in_additional_detail_fields()
 	{
-		$this->assigned_name = get_assigned_team_name($this->team_id);
+		parent::fill_in_additional_detail_fields();
 		$this->get_scheduled_query();
 	}
-	
-	function get_scheduled_query(){	
-		
-		$query = "	SELECT  
+
+	function get_scheduled_query(){
+
+		$query = "	SELECT
 					$this->schedules_table.id schedule_id,
                     $this->schedules_table.active active,
                     $this->schedules_table.next_run next_run
@@ -176,23 +165,23 @@ class ReportMaker extends SugarBean {
 			$this->next_run = "";
 		}
 	//end get_scheduled_query
-	}	
-	
-	
+	}
+
+
 	function get_list_view_data(){
 		global $timedate;
 		global $app_strings, $mod_strings;
 		global $app_list_strings;
-		
+
 
 		global $current_user;
-		
+
 		if(empty($this->published)) $this->published="0";
 
 		$temp_array = parent::get_list_view_data();
 		$temp_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
 		$temp_array['ID'] = $this->id;
-		
+
 		//report scheduling
 		if(isset($this->schedule_id) && $this->active == 1){
 			$is_scheduled_img = SugarThemeRegistry::current()->getImage('scheduled_inline.png','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_SCHEDULE_EMAIL']);
@@ -201,10 +190,10 @@ class ReportMaker extends SugarBean {
 			$is_scheduled_img = SugarThemeRegistry::current()->getImage('unscheduled_inline.png','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_SCHEDULE_EMAIL']);
 			$is_scheduled = $mod_strings['LBL_NONE'];
 		}
-		
+
 		$temp_array['IS_SCHEDULED'] = $is_scheduled;
 		$temp_array['IS_SCHEDULED_IMG'] = $is_scheduled_img;
-		
+
 		return $temp_array;
 	}
 	/**
@@ -229,7 +218,7 @@ class ReportMaker extends SugarBean {
 
 
 	return $the_where;
-	
+
 	//end function
 	}
 

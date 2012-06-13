@@ -19,20 +19,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Header$
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-
-
-
-
-
-// EmailTemplate is used to store email email_template information.
+/**
+ *  EmailTemplate is used to store email email_template information.
+ */
 class EmailTemplate extends SugarBean {
 	var $field_name_map = array();
 	// Stored fields
@@ -210,23 +200,13 @@ class EmailTemplate extends SugarBean {
 		return $this->create_new_list_query($order_by, $where);
 	}
 
-	function fill_in_additional_list_fields() {
-		$this->fill_in_additional_parent_fields();
-	}
-
 	function fill_in_additional_detail_fields() {
 	    if (empty($this->body) && !empty($this->body_html))
         {
             global $sugar_config;
             $this->body = strip_tags(html_entity_decode($this->body_html, ENT_COMPAT, $sugar_config['default_charset']));
         }
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
-        $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		$this->fill_in_additional_parent_fields();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
+        parent::fill_in_additional_detail_fields();
 	}
 
 	function fill_in_additional_parent_fields() {

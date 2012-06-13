@@ -83,11 +83,12 @@
 
     app.augment("nomad", {
 
-        deviceReady: function(authToken) {
+        deviceReady: function(authAccessToken, authRefreshToken) {
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready, auth-token: " + authToken);
+            app.logger.debug("Device is ready, auth-token: " + authAccessToken);
 
-            app.AUTH_ACCESS_TOKEN = authToken;
+            app.AUTH_ACCESS_TOKEN = authAccessToken;
+            app.AUTH_REFRESH_TOKEN = authRefreshToken;
             app.config.authStore = app.isNative ? 'keychain': 'cache';
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
@@ -122,8 +123,8 @@
                     (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
                     (_.any(modules, function(module) {
-                        return (module == relationship.lhs_module) ||
-                               (module == relationship.rhs_module);
+                        return  (module == relationship.lhs_module) ||
+                                (module == relationship.rhs_module);
                     })));
             });
 

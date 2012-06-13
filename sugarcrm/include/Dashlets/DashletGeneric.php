@@ -423,7 +423,7 @@ class DashletGeneric extends Dashlet {
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows/*, $filterFields*/);
             if(in_array('CREATED_BY', array_keys($displayColumns))) { // handle the created by field
                 foreach($this->lvs->data['data'] as $row => $data) {
-                    $this->lvs->data['data'][$row]['CREATED_BY'] = get_assigned_user_name($data['CREATED_BY']);
+                    $this->lvs->data['data'][$row]['CREATED_BY'] = $data['CREATED_BY_NAME'];
                 }
             }
             // assign a baseURL w/ the action set as DisplayDashlet

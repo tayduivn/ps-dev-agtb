@@ -5,15 +5,13 @@
         'click #top': 'top'
     },
     initialize: function(options) {
-        app.events.on("app:sync:complete", function() {
-            this.render();
-        }, this);
+        app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
-    render: function() {
+    _renderSelf: function() {
         if (!app.api.isAuthenticated()) return;
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._renderSelf.call(this);
     },
     systemTour: function() {
         this.$('#systemTour').modal('show');

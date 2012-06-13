@@ -7239,6 +7239,12 @@ color: @red;
   display: inline-block;
   float: right;
 }
+#searchForm .btn {
+  margin-right: 0px;
+}
+#searchForm input.search-query {
+  min-width: 237px;
+}
 @media (max-width: 480px) {
   .nav-collapse {
     -webkit-transform: translate3d(0, 0, 0);
