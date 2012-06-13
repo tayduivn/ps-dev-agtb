@@ -71,7 +71,7 @@ $html = $SugarTiny->cleanEncodedMCEHtml($bodyHTML);
 //Check to ensure we have <html> tags in the form. Without them, IE8 will attempt to display the page as XML.
 if (stripos($html, "<html") === false) {
     $langHeader = get_language_header();
-  	$html = "<html {$langHeader}><body>$html</body></html>";
+    $html = "<html {$langHeader}><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>" . $html . "</body></html>";
 }
 file_put_contents($form_file, $html);
 
