@@ -377,6 +377,81 @@
                 date.setMinutes(min);
 
                 return date;
+            },
+
+            /**
+             * converts a UTC date to a local time date
+             * @param {Object} date javascript Date format UTC
+             * @return {Object} javascript Date() format local time
+             */
+            UTCtoLocalTime: function(date) {
+                //if not a Date return it
+                if (!(date instanceof Date)) return date;
+
+                // Push the UTC tag to convert the date into local date
+                return new Date(date.toString() +  "UTC");
+            },
+            /**
+             * converts a date object into a relative time
+             * @param {Object} date
+             * @return {Object} relative time using internationalized strings
+             */
+            getRelativeTime: function(date) {
+
+                var rightNow = new Date();
+
+                var diff = rightNow - date;
+                var second = 1000,
+                    minute = second * 60,
+                    hour = minute * 60,
+                    day = hour * 24,
+                    str,
+                    ctx;
+
+                if (isNaN(diff) || diff < 0) {
+                    return ""; // return blank string if unknown
+                }
+                if (diff < second * 2) {
+                    // within 2 seconds
+                    str = 'LBL_TIME_AGO_NOW';
+                    return app.lang.getCompiled(str);
+                }
+                if (diff < minute) {
+                    str = 'LBL_TIME_AGO_SECONDS';
+                    ctx = Math.floor(diff / second);
+                    return app.lang.getCompiled(str, ctx);
+                }
+                if (diff < minute * 2) {
+                    str = 'LBL_TIME_AGO_MINUTE';
+                    return app.lang.getCompiled(str);
+                }
+                if (diff < hour) {
+                    str = 'LBL_TIME_AGO_MINUTES';
+                    ctx = Math.floor(diff / minute);
+                    return app.lang.getCompiled(str, ctx);
+                }
+                if (diff < hour * 2) {
+                    str = 'LBL_TIME_AGO_HOUR';
+                    return app.lang.getCompiled(str);
+                }
+                if (diff < day) {
+                    str = 'LBL_TIME_AGO_HOURS';
+                    ctx = Math.floor(diff / hour);
+                    return app.lang.getCompiled(str, ctx);
+                }
+                if (diff > day && diff < day * 2) {
+                    str = 'LBL_TIME_AGO_DAY';
+                    return app.lang.getCompiled(str);
+                }
+                if (diff < day * 365) {
+                    str = 'LBL_TIME_AGO_DAYS';
+                    ctx = Math.floor(diff / day);
+                    return app.lang.getCompiled(str, ctx);
+                }
+                else {
+                    str = 'LBL_TIME_AGO_YEAR';
+                    return app.lang.getCompiled(str);
+                }
             }
         },
         cookie: {

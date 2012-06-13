@@ -23,6 +23,9 @@
         this.$("[rel=popover]").popover();
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
+        if ($.fn.timeago)
+            $("time.relativetime").timeago();
+
     };
 
     /**

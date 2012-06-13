@@ -25,6 +25,21 @@
         },
 
         /**
+         * Retrieves a string for a given key and compile it with the given context.
+         *
+         * This function searches the module strings first and falls back to the app strings.
+         *
+         * @param {String} key Key of the string to retrieve.
+         * @param {String} ctx(optional) Context to be pushed to the template.
+         * @return {String} compiled html.
+         */
+        getCompiled: function(key, ctx, module) {
+            ctx = ctx || {};
+            var tpl = app.template.compile(key, this.get(key, module));
+            return tpl(ctx);
+        },
+
+        /**
          * Retreives an application string for a given key.
          * @param {String} key Key of the string to retrieve.
          * @return {String} String for the given key or the `key` parameter if the key is not found in the language pack.

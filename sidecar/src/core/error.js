@@ -202,7 +202,7 @@
             };
             module = context.module || '';
             errorTemplate = app.lang.get(errorName2Keys[errorKey] || errorKey, module);
-            compiledTemplate = Handlebars.compile(errorTemplate);
+            compiledTemplate = app.template.compile(errorName2Keys[errorKey] || 'error_' + errorKey, errorTemplate);
 
             return compiledTemplate(context);
         },
