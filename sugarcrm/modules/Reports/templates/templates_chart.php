@@ -26,8 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry)
 $do_thousands = false;
 
 function template_chart(& $reporter, $chart_display_style, $is_dashlet = false, $id = '') {
-    $group_key = (isset($reporter->report_def['group_defs'][0]['table_key']) ? $reporter->report_def['group_defs'][0]['table_key'] : '') . 
-    ':' . 
+    $group_key = (isset($reporter->report_def['group_defs'][0]['table_key']) ? $reporter->report_def['group_defs'][0]['table_key'] : '') .
+    ':' .
     (isset($reporter->report_def['group_defs'][0]['name']) ?  $reporter->report_def['group_defs'][0]['name'] : '');
 
     if (!empty ($reporter->report_def['group_defs'][0]['qualifier'])) {
@@ -86,7 +86,7 @@ function get_row_remap(& $row, & $reporter) {
     }
     $row_remap['group_text'] = $group_text = (isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? chop($row['cells'][$reporter->chart_group_position]['val']) : '';
     $row_remap['group_key'] = ((isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? $row['cells'][$reporter->chart_group_position]['key'] : '');
-    $row_remap['count'] = $row['count'];
+    $row_remap['count'] = isset($row['count'])?$row['count']:'';
     $row_remap['group_label'] = ((isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? $reporter->chart_header_row[$reporter->chart_group_position]['label'] : '');
     $row_remap['numerical_label'] = $reporter->chart_header_row[$reporter->chart_numerical_position]['label'];
     $row_remap['numerical_key'] = $reporter->chart_header_row[$reporter->chart_numerical_position]['column_key'];
