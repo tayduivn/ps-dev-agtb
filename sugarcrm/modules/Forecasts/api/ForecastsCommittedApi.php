@@ -43,7 +43,9 @@ class ForecastsCommittedApi extends ModuleApi {
 
     public function forecastsCommitted($api, $args)
     {
-        global $current_user;
+        global $current_user, $mod_strings, $current_language;
+        $mod_strings = return_module_language($current_language, 'Forecasts');
+
         $query = "SELECT * FROM forecasts WHERE user_id = '{$current_user->id}' AND deleted = 0 AND forecast_type='Direct' ORDER BY date_entered desc";
         $results = $GLOBALS['db']->query($query);
         $forecasts = array();
@@ -54,13 +56,95 @@ class ForecastsCommittedApi extends ModuleApi {
 
         if(!empty($forecasts))
         {
+            $latest = array_shift($forecasts);
+
+            //Get the previous item
+            if(!empty($forecasts))
+            {
+                $previous = array_shift($forecasts);
+            }
+
+            //Get the remaining history items
+            if(!empty($forecasts))
+            {
+                $history = array();
+
+                //Calculate the difference between $latest and $previous
+                $history[] = $this->createHistoryLog($latest, $previous);
+
+                //Calculate the rest
+                foreach($forecasts as $forecast)
+                {
+                    $history[] = $this->createHistoryLog($forecast, $previous);
+                    $previous = $forecast;
+                }
+            }
+
             return array(
-                    'latest' => array_shift($forecasts),
-                    'history' => $forecasts,
+                'latest' => $latest,
+                'previous' => $previous,
+                'history' => $history
             );
         }
 
-        return array('latest' => array(), 'history' => array());
+        return array('latest' => array(), 'previous'=>array(), 'history' => array());
+    }
+
+    /**
+     * createHistoryLog
+     *
+     * @param $before
+     * @param $after
+     */
+    protected function createHistoryLog($current, $previous)
+    {
+        global $mod_strings;
+        $best_difference = $current['best_case'] - $previous['best_case'];
+        $best_changed = $best_difference != 0;
+        $best_direction = $best_difference > 0 ? 'LBL_UP' : ($best_difference < 0 ? 'LBL_DOWN' : '');
+
+        $likely_difference = $current['likely_case'] - $previous['likely_case'];
+        $likely_changed = $likely_difference != 0;
+        $likely_direction = $likely_difference > 0 ? 'LBL_UP' : ($likely_difference < 0 ? 'LBL_DOWN' : '');
+
+        $args = array();
+        if($best_changed && $likely_changed)
+        {
+            $args[] = $mod_strings[$best_direction];
+            $args[] = abs($best_difference);
+            $args[] = $current['best_case'];
+            $args[] = $mod_strings[$likely_direction];
+            $args[] = $abs($likely_difference);
+            $args[] = $current['likely_case'];
+            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_BOTH_CHANGED'], $args);
+        } else if (!$best_changed && $likely_changed) {
+            $args[] = $mod_strings[$likely_direction];
+            $args[] = $abs($likely_difference);
+            $args[] = $current['likely_case'];
+            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_LIKELY_CHANGED'], $args);
+        } else if ($best_changed && !$likely_changed) {
+            $args[] = $mod_strings[$best_direction];
+            $args[] = abs($best_difference);
+            $args[] = $current['best_case'];
+            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_BEST_CHANGED'], $args);
+        } else {
+            $text = $mod_strings['LBL_COMMITTED_HISTORY_NONE_CHANGED'];
+        }
+
+        $timedate = TimeDate::getInstance();
+        $current_date = $timedate->fromDb($current['date_entered']);
+        $previous_date = $timedate->fromDb($previous['date_entered']);
+        $interval = $current_date->diff($previous_date);
+
+        if($interval->m < 2)
+        {
+            $modified = string_format($mod_strings['LBL_COMMITTED_THIS_MONTH'], array($timedate->asUser($previous_date)));
+        } else {
+            $modified = string_format($mod_strings['LBL_COMMITTED_MONTHS_AGO'], array($interval['months'], $timedate->asUser($previous_date)));
+        }
+
+        return array('text'=>$text, 'modified'=>$modified);
+
     }
 
 }

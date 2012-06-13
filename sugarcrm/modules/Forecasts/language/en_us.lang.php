@@ -212,12 +212,19 @@ $mod_strings = array (
     
   'LBL_CHART_TITLE'=>'Quota vs. Committed vs. Actual',
 
-    'LBL_FORECAST' => 'Forecast',
-    'LBL_SALES_STAGE' => 'Stage',
-    'LBL_AMOUNT' => 'Amount',
-    'LBL_DATE_CLOSED' => 'Expected Close',
-    'LBL_PROBABILITY' => 'Probability',
+  'LBL_FORECAST' => 'Forecast',
+  'LBL_SALES_STAGE' => 'Stage',
+  'LBL_AMOUNT' => 'Amount',
+  'LBL_DATE_CLOSED' => 'Expected Close',
+  'LBL_PROBABILITY' => 'Probability',
+
+  //Labels for forecasting history log
+  'LBL_UP' => 'up',
+  'LBL_DOWN' => 'down',
+  'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely {3} {4} to {5}',
+  'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely stayed the same',
+  'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast best stayed the same and likely {0} {1} to {2}',
+  'LBL_COMMITTED_HISTORY_NONE_CHANGED' => 'Updated forecast best and likely stayed the same',
+  'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
+  'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
 );
-
-
-?>

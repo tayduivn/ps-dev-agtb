@@ -103,6 +103,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
             $row['id'] = $row['primaryid'];
+            $row['forecast'] = $row['opportunities_forecast'];
             $row['name'] = $row['opportunities_name'];
             $row['amount'] = $row['opportunities_amount'];
             $row['date_closed'] = $row['opportunities_date_closed'];
@@ -110,6 +111,9 @@ class ForecastsWorksheetApi extends ModuleApi {
             $row['sales_stage'] = $row['opportunities_sales_stage'];
             $row['best_case_worksheet'] = $row['OPPORTUNITIES_BEST_CAS81CC16'];
             $row['likely_case_worksheet'] = $row['OPPORTUNITIES_LIKELY_C7E6E04'];
+
+            //Should we unset the data we don't need here so as to limit data sent back?
+
             $opps[] = $row;
         }
         return $opps;
