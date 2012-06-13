@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-    viewModule: app.viewModule,
+    viewModule: {},
 
     gTable:'',
 
@@ -21,6 +21,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
+        this.viewModule = app.viewModule;
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
