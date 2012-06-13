@@ -60,4 +60,33 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         }
 
     }
+
+    protected function checkException($e)
+    {
+        $error = $e->getError();
+        switch ($error) {
+            case CURLE_UNSUPPORTED_PROTOCOL:
+            case CURLE_FAILED_INIT:
+            case CURLE_URL_MALFORMAT:
+            case CURLE_COULDNT_RESOLVE_PROXY:
+            case CURLE_COULDNT_RESOLVE_HOST:
+            case CURLE_COULDNT_CONNECT:
+            case CURLE_OPERATION_TIMEOUTED:
+                $this->disableFTS();
+                break;
+        }
+    }
+
+    protected function disableFTS()
+    {
+        // disable FTS
+        $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
+        $cfg = new Configurator();
+        $cfg->config['full_text_engine'] = '';
+        $cfg->handleOverride();
+
+        // notification
+        $cfg->config['fts_disable_notification'] = true;
+        $cfg->handleOverride();
+    }
 }

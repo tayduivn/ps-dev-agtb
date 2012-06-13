@@ -161,6 +161,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to index bean with error: {$e->getMessage()}");
+            $this->checkException($e);
         }
 
     }
@@ -180,6 +181,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to delete index: {$e->getMessage()}");
+            $this->checkException($e);
         }
     }
 
@@ -217,6 +219,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
+            $this->checkException($e);
         }
 
     }
@@ -573,6 +576,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
+            $this->checkException($e);
             return null;
         }
 
@@ -622,6 +626,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->error("Unable to create index with error: {$e->getMessage()}");
+            $this->checkException($e);
         }
 
     }

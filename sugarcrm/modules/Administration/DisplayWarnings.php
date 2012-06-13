@@ -47,6 +47,13 @@ if( is_admin($current_user) && file_exists('include/SugarSearchEngine/SugarSearc
     }
 
 }
+if (is_admin($current_user))
+{
+    if (!empty($GLOBALS['sugar_config']['fts_disable_notification']))
+    {
+        displayAdminError(translate('LBL_FTS_DISABLED', 'Administration'));
+    }
+}
 //END SUGARCRM flav=pro
 
 
