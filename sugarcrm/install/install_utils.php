@@ -875,7 +875,7 @@ function handleSugarConfig() {
                 'alert' => '#alert'
             )
         ),
-        'serverUrl' => $sugar_config['site_url'],
+        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
         'unsecureRoutes' => array("signup"),
         "clientID"=> "sugar"
     );

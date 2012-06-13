@@ -61,6 +61,11 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 'header' => array(
                     'target' => '#header'
                 )
+            ),
+            'displayModules' => array(
+                'Bugs',
+                'Cases',
+                'KBDocuments'
             )
         );
         foreach ($portalFields as $field) {
