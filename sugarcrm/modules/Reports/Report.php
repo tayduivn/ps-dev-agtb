@@ -619,6 +619,8 @@ class Report
     {
         $tmp = array();
         foreach ($this->full_table_list as $table_key => $table_data) {
+            if(!isset($table_data['module'])) continue;
+
             if(!isset($tmp[$table_data['module']]))
             {
                 $tmp[$table_data['module']] = array();
@@ -1925,7 +1927,11 @@ return str_replace(' > ','_',
     {
         $this->_load_currency();
         $get_next_row = $this->get_next_row('summary_result', 'summary_columns');
-        $this->current_summary_row_count = $get_next_row['count'];
+        if(isset($get_next_row['count'])) {
+            $this->current_summary_row_count = $get_next_row['count'];
+        } else {
+            $this->current_summary_row_count = null;
+        }
 
         return $get_next_row;
     }

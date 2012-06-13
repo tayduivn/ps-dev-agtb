@@ -67,6 +67,7 @@ class Bug44605Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             'filters_def' => array(),
+            'display_columns' => array(),
         );
 
         // add "count" field for each related module
