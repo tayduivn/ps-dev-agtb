@@ -131,11 +131,14 @@ class DownloadFile {
                     $filepath = 'upload://' . $filename;
                     $filedata = getimagesize($filepath);
 
+                    // Add in image height and width
                     return array(
                         'content-type' => $filedata['mime'],
                         'content-length' => filesize($filepath),
                         'name' => $filename,
                         'path' => $filepath,
+                        'width' => empty($filedata[0]) ? 0 : $filedata[0],
+                        'height' => empty($filedata[1]) ? 0 : $filedata[1],
                     );
                 } else {
                     // Default the file id and url

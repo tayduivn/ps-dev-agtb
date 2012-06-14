@@ -204,7 +204,7 @@ class FileApi extends SugarApi {
                 if ($def['type'] == 'file') {
                     // docType setting is throwing errors if missing
                     if (!isset($def['docType'])) {
-                        $def['docType'] = 'doc_type';
+                        $def['docType'] = 'Sugar';
                     }
 
                     // Session error handler is throwing errors if not set
@@ -251,16 +251,6 @@ class FileApi extends SugarApi {
 
                 // This isn't needed in this return
                 unset($fileinfo['path']);
-
-                // Handle edge cases with specific formatting needs
-                /*
-                if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
-                    if (!isset($args['platform']) || ($args['platform'] == 'portal')) {
-                        // @TODO: Add this string to lang vars and translate it
-                        $fileinfo = array_merge($fileinfo, $api->getHXRReturnArray('Upload successful!'));
-                    }
-                }
-                */
 
                 // This is a good return
                 return array($field => $fileinfo);
