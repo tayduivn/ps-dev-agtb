@@ -466,34 +466,10 @@
 
 
 
-          $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5"></th><th></th><th></th><th></th><th></th></tr></tfoot></table>' );
+          $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5" style="text-align: right;">Included Total</th><th></th><th></th><th></th><th></th></tr><tr class="overall"><th colspan="5" style="text-align: right;">Overall Total</th><th></th><th></th><th></th><th></th></tr></tfoot></table>' );
           var oTable = $('#example').dataTable( {
 
-              "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
 
-                  var amountTotal = 0;
-                  var bestTotal = 0;
-                  var likelyTotal = 0;
-                  for ( var i=iStart ; i<iEnd ; i++ )
-                  {
-                      amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
-                      bestTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
-                      likelyTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
-                  }
-
-                  /* Modify the footer row to match what we want */
-                  var nCells = nFoot.getElementsByTagName('th');
-                  $(nCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                  $(nCells[2]).html(bestTotal).prettynumber({delimiter : ','});
-                  $(nCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
-
-                  $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
-                  $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
-
-
-
-
-              },
 //              "bFilter": true,
               "bInfo":false,
               "bPaginate": false,
@@ -504,12 +480,12 @@
 
 
                   {
-                      "sTitle": "Included",
+                      "sTitle": "Include",
                       "bSortable": false,
                       "sClass": "tcenter",
                       "fnRender": function(obj) {
                           var sReturn = obj.aData[ obj.iDataColumn ];
-                          var ret = "  <div class='iphone-toggle-buttons'><label for='checkbox-"+sReturn+"'><input type='checkbox' name='checkbox-"+sReturn+"' id='checkbox-"+sReturn+"' /><span>checkbox 0</span></label></div>";
+                          var ret = "  <div class='iphone-toggle-buttons'><label for='checkbox-"+sReturn+"'><input type='checkbox' name='checkbox-"+sReturn+"' id='checkbox-"+sReturn+"' checked /><span>checkbox 0</span></label></div>";
                           return ret;
                       }
                   },
@@ -590,8 +566,90 @@
                           $(nTr).next().children("td").attr("colspan",colspan);
                       }
                   } );
-              },
 
+                  $('.iphone-toggle-buttons input').click(function(){
+
+                          var nTr = $(this).parents('tr')[0];
+
+                            if(!$(this).attr('checked')) {
+                                $(nTr).addClass('disabled');
+                            } else {
+                                $(nTr).removeClass('disabled');
+                            }
+
+                          var iStart = oSettings._iDisplayStart;
+                          var iEnd = oSettings._iDisplayEnd;
+                          var aiDisplay = oSettings.aiDisplay;
+                          var amountTotal = 0;
+                          var bestTotal = 0;
+                          var likelyTotal = 0;
+                          //
+
+                          $('#example tbody').children('tr').each(function(i) {
+                              var tdInclude = $(this).children('td')[0];
+                              var isChecked = $(tdInclude).find('input').attr('checked');
+                              var tdAmount =$(this).children('td')[5];
+                              var tdBest =$(this).children('td')[6];
+                              var tdLikely =$(this).children('td')[7];
+
+
+
+                              if(isChecked) {
+
+                                  amountTotal += parseFloat($(tdAmount).find('span').html().replace(/,/,""));
+                                  bestTotal += parseFloat($(tdBest).find('span').html().replace(/,/,""));
+                                  likelyTotal += parseFloat($(tdLikely).find('span').html().replace(/,/,""));
+                              }
+
+                          }) ;
+                          var foot = $(oTable).children('tfoot')[0];
+                          var trs = $(foot).children('tr');
+                          var included = $(trs)[0];
+                          var includedCells =  $(included).children('th');
+
+                          $(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                          $(includedCells[2]).html(bestTotal).prettynumber({delimiter : ','});
+                          $(includedCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
+
+                          $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
+                          $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
+
+
+                  })
+              },
+              "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
+                  var amountTotal = 0;
+                  var bestTotal = 0;
+                  var likelyTotal = 0;
+                  for ( var i=iStart ; i<iEnd ; i++ )
+                  {
+                      amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
+                      bestTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
+                      likelyTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
+                  }
+
+                  /* Modify the footer row to match what we want */
+//                  var nCells = nFoot.getElementsByTagName('th');
+                  var foot = $(oTable).children('tfoot')[0];
+                  var trs = $(foot).children('tr');
+                  var overall = $(trs)[1];
+                  var included = $(trs)[0];
+                  var overallCells =  $(overall).children('th');
+                  var includedCells =  $(included).children('th');
+//                  console.log($(overall).children('th'))
+                  $(overallCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                  $(overallCells[2]).html(bestTotal).prettynumber({delimiter : ','});
+                  $(overallCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
+                  $(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                  $(includedCells[2]).html(bestTotal).prettynumber({delimiter : ','});
+                  $(includedCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
+
+                  $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
+                  $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
+
+
+
+              },
               "fnDrawCallback": function( oSettings ) {
                   $('#example tbody td .dblclick').editable('save.php',{
                       //loadurl: "load.php",
