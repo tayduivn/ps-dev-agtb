@@ -587,10 +587,10 @@ foreach($pages as $pageNum => $page){
         $divPages[] = $pageNum;
 
     // If it's one of the default tabs (has 'pageTitleLabel' defined) pick translated value
-    if (!empty($page['pageTitleLabel'])) {
-    	$pageData[$pageNum]['pageTitle'] = htmlentities($mod_strings[$page['pageTitleLabel']], ENT_QUOTES);
+    if (!empty($page['pageTitleLabel']) && empty($page['pageTitle'])) {
+    	$pageData[$pageNum]['pageTitle'] = to_html($mod_strings[$page['pageTitleLabel']], ENT_QUOTES);
     } else {
-        $pageData[$pageNum]['pageTitle'] = htmlentities($page['pageTitle'], ENT_QUOTES);
+        $pageData[$pageNum]['pageTitle'] = to_html($page['pageTitle'], ENT_QUOTES);
 	}
 
     if($pageNum == $activePage){
