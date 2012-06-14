@@ -128,13 +128,13 @@ class ForecastsCommittedApi extends ModuleApi {
             $args[] = abs($best_difference);
             $args[] = $current['best_case'];
             $args[] = $mod_strings[$likely_direction];
-            $args[] = $abs($likely_difference);
+            $args[] = abs($likely_difference);
             $args[] = $current['likely_case'];
             $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_BOTH_CHANGED'], $args);
         } else if (!$best_changed && $likely_changed) {
             $args = array();
             $args[] = $mod_strings[$likely_direction];
-            $args[] = $abs($likely_difference);
+            $args[] = abs($likely_difference);
             $args[] = $current['likely_case'];
             $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_LIKELY_CHANGED'], $args);
         } else if ($best_changed && !$likely_changed) {
