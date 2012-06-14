@@ -41,7 +41,7 @@ $config['builds']['pro']['languages']= array(
 'sv_SE',
 'tr_TR',
 'zh_CN',
-'pt_br',
+'pt_BR',
 'ca_ES',
 'en_UK',
 'sr_RS',

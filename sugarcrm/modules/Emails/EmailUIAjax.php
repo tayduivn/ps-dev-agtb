@@ -475,8 +475,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: markEmail");
         if(isset($_REQUEST['uids']) && !empty($_REQUEST['uids']) &&
         isset($_REQUEST['type']) && !empty($_REQUEST['type']) &&
-        isset($_REQUEST['ieId']) && !empty($_REQUEST['ieId']) &&
-        isset($_REQUEST['folder']) && !empty($_REQUEST['folder'])) {
+        isset($_REQUEST['folder']) && !empty($_REQUEST['folder']) &&
+		isset($_REQUEST['ieId']) && (!empty($_REQUEST['ieId']) || (empty($_REQUEST['ieId']) && strpos($_REQUEST['folder'], 'sugar::') !== false))
+        ) {
         	$uid = $json->decode(from_html($_REQUEST['uids']));
         	$uids = array();
         	if(is_array($uid)) {
