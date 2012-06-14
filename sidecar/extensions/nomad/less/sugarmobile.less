@@ -360,6 +360,7 @@ text-decoration:none;
 
 #record-action > a > i {
   margin:16px 0 0 0;
+  width:26px;
 }
 
 .icon-sms-black {
@@ -1035,9 +1036,13 @@ color: @gray;
   width:60% !important;
 }
 
-#record-action .span1_5th {
-  float:left;
-  width:20%;
+#record-action {
+  display:inline-table;
+  width:100%;
+}
+
+#record-action > a {
+  display:table-cell;
 }
 
 #createRecord.form-horizontal .controls {
