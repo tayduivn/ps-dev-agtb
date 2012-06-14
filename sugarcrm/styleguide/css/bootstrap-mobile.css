@@ -889,27 +889,27 @@ input[type="checkbox"][readonly] {
 .control-group.error > label,
 .control-group.error .help-block,
 .control-group.error .help-inline {
-  color: #4d1e1e;
+  color: #b60000;
 }
 .control-group.error input,
 .control-group.error select,
 .control-group.error textarea {
-  color: #4d1e1e;
-  border-color: #4d1e1e;
+  color: #b60000;
+  border-color: #b60000;
 }
 .control-group.error input:focus,
 .control-group.error select:focus,
 .control-group.error textarea:focus {
-  border-color: #281010;
-  -webkit-box-shadow: 0 0 6px #963b3b;
-  -moz-box-shadow: 0 0 6px #963b3b;
-  box-shadow: 0 0 6px #963b3b;
+  border-color: #830000;
+  -webkit-box-shadow: 0 0 6px #ff1d1d;
+  -moz-box-shadow: 0 0 6px #ff1d1d;
+  box-shadow: 0 0 6px #ff1d1d;
 }
 .control-group.error .input-prepend .add-on,
 .control-group.error .input-append .add-on {
-  color: #4d1e1e;
-  background-color: #f2dede;
-  border-color: #4d1e1e;
+  color: #b60000;
+  background-color: #ffe9e9;
+  border-color: #b60000;
 }
 .control-group.success > label,
 .control-group.success .help-block,
@@ -2882,8 +2882,8 @@ input[type="submit"].btn.btn-mini {
 }
 .alert-danger,
 .alert-error {
-  background: #f2dede;
-  border-color: #c77077;
+  background: #ffe9e9;
+  border-color: #b60000;
 }
 .alert-danger,
 .alert-error,
@@ -2917,7 +2917,6 @@ input[type="submit"].btn.btn-mini {
   width: 100%;
   z-index: 1060;
   text-align: center;
-  display: none;
 }
 .alert-top .alert {
   text-align: left;
