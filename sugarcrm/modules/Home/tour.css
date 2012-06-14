@@ -1,0 +1,108 @@
+
+body 
+{ 
+	padding-top: 50px;
+	line-height: 11px;
+}
+
+form {
+	margin: 0px;	
+}
+li {
+	line-height: 15px;	
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+.close:hover {
+    font-size: 20px;
+}
+
+
+#dcmenutop {
+	height: 0px;	
+}
+
+.list tr.pagination,
+.list tr.pagination td,
+.list tr.pagination td table
+{
+    height: auto;
+}
+
+#footer img.logo {
+    height: auto;
+    width: auto;
+    background-image: none;
+}
+
+.pagination button {
+	height: 30px;
+	width: 30px;
+	
+}
+
+#zenbox_tab {
+padding-top: 9px;
+}
+
+
+.modal a, 
+.popover a {
+	text-decoration: none;
+}
+.modal-footer .btn,
+.popover-footer .btn {
+	color: #262627;
+}
+
+.modal-body   {font-size: 16px;}
+.modal-footer .btn.btn-primary, 
+.popover-footer .btn.btn-primary {
+	color: #fff;
+}
+
+
+.modal ul li {
+	line-height: 18px;	
+}
+
+.modal p {
+	margin: 0 0 9px;	
+}
+
+h3.popover-title {
+	margin-bottom: 0px;	
+}
+#tourEnd .modal-body p, 
+#tourEnd .modal-body a {
+	font-size: 18px;
+    line-height: 26px;
+}
+#tourEnd .modal-body p
+{
+	margin-top: 85px;	
+}
+
+li.icon-ok:before,i.icon-ok:before {
+	color: #3FB300;	
+}
+
+i.icon-arrow-up:before {
+    font-size: 40px;
+
+}
+
+.pointer{
+    background-image:  url(../../include/images/tour/arrow.png);
+    width: 42px;
+    height: 109px;
+
+}
+
+.pointer.down {
+      background-position: 0px 109px;
+}

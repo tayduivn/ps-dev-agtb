@@ -347,3 +347,12 @@ mySugarLoader.insert();
 				
 	
 </div>
+
+{if $view_tour}
+<link rel="stylesheet" type="text/css" href="themes/default/css/bootstrap.css" id="bootstrapCss"/>
+<link rel="stylesheet" type="text/css" href="modules/Home/tour.css" id="tourCss"/>
+<script src="include/javascript/jquery/bootstrap.min.js" type="text/javascript" id="bootstrapJs"></script>
+<script src="include/javascript/jquery/jquery.popoverext.js" type="text/javascript" id="popoverext"></script>
+<script src="include/javascript/tour.js" type="text/javascript" id="tourJs"></script>
+<script src="modules/Home/tour.js" type="text/javascript" id="whatsNewsJs"></script>
+{/if}
