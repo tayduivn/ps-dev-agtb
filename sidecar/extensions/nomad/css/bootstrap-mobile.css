@@ -3734,16 +3734,6 @@ a:hover [class^="icon-"] {
 .the-icons i:hover {
   background-color: rgba(255, 0, 0, 0.25);
 }
-#record-action .icon-phone {
-  background-size: 660%;
-  height: 22px;
-  width: 26px;
-  margin-top: 13px;
-}
-#record-action .icon-phone,
-#record-action .icon-phone:active {
-  background: url('../img/sprite.png') no-repeat 1% 0;
-}
 #record-action .icon-sms-white {
   background-size: 700%;
   height: 22px;
@@ -3767,26 +3757,6 @@ a:hover [class^="icon-"] {
 }
 #record-action > a > i {
   margin: 16px 0 0 0;
-}
-.icon-phone {
-  background: url('../img/sprite.png') no-repeat 1% -30%;
-  background-size: 740%;
-  height: 18px;
-  width: 18px;
-  margin-bottom: -20%;
-}
-.icon-phone:active {
-  background: url('../img/sprite.png') no-repeat 18% -30%;
-}
-.icon-phone-black {
-  background: url('../img/sprite.png') no-repeat 18% -30%;
-  background-size: 740%;
-  height: 18px;
-  width: 18px;
-  margin-bottom: -20%;
-}
-.icon-phone-black:active {
-  background: url('../img/sprite.png') no-repeat 1% -30%;
 }
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;

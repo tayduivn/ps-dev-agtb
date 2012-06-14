@@ -18,7 +18,7 @@
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
     <div id="record-action" class="row-fluid">
         {{#if isPhoneBtn}}
-        <a class="span1_5th phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone"></i></a>
+        <a class="span1_5th phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone icon-md"></i></a>
         {{/if}}
         {{#if isEmailBtn}}
         <a class="span1_5th email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
