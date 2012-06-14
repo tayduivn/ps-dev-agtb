@@ -37,22 +37,6 @@ class ViewSidecar extends SugarView
 
     function display()
     {
-/*****
-* BEGIN - TEMPORARY CODE FIX TO GET USER DATA TO THE VIEW TEMPLATE
-****/
-        $current_user = new User();
-        $current_user->retrieve($_SESSION['authenticated_user_id']);
-
-        $this->ss->assign("userData_id", $current_user->id);
-        $this->ss->assign("userData_full_name", $current_user->full_name);
-        $this->ss->assign("userData_user_name", $current_user->user_name);
-        $this->ss->assign("userData_timezone", $current_user->getPreference('timezone'));
-        $this->ss->assign("userData_datef", $current_user->getPreference('datef'));
-        $this->ss->assign("userData_timef", $current_user->getPreference('timef'));
-/*****
-* END - TEMPORARY CODE FIX TO GET USER DATA TO THE VIEW TEMPLATE
-****/
-
         $this->ss->assign("module", $this->module);
         $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
     }

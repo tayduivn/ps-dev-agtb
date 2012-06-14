@@ -129,23 +129,14 @@
     // should already be logged in to sugar, don't need to log in to sidecar.
     App.api.isAuthenticated = function() {
 
-/*****
- * BEGIN - TEMPORARY CODE FIX TO GET USER DATA TO THE VIEW TEMPLATE
- ****/
-        // Grab user data from smarty assigned values
-        var userData = { "id" : "{/literal}{$userData_id}{literal}",
-                         "full_name" : "{/literal}{$userData_full_name}{literal}",
-                         "user_name" : "{/literal}{$userData_user_name}{literal}",
-                         "timezone" : "{/literal}{$userData_timezone}{literal}",
-                         "datef" : "{/literal}{$userData_datef}{literal}",
-                         "timef" : "{/literal}{$userData_timef}{literal}"
-        };
+        // Grab user data
+        var userData = $.ajax(App.config.serverUrl + '/me', {
+            dataType: "json"
+        }).done(function(data){
+            //  Set current User data
+            App.user.set(data.current_user);
+        });
 
-        //  Set current User data
-        App.user.set(userData);
-/*****
-* END - TEMPORARY CODE FIX TO GET USER DATA TO THE VIEW TEMPLATE
-****/
         return true;
     };
 
