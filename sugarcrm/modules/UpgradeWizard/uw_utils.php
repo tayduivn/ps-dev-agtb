@@ -4899,18 +4899,21 @@ function rebuildSprites($fromUpgrade=true)
     }
 
      // add all theme custom image directories
- 	 if($dh = opendir('custom/themes'))
- 	 {
- 	     while (($dir = readdir($dh)) !== false)
- 	     {
- 	         //Since the custom theme directories don't require an images directory
- 	         // we check for it implicitly
- 	         if ($dir != "." && $dir != ".." && is_dir('custom/themes/'.$dir."/images")) {
- 	             $sb->addDirectory($dir, "custom/themes/{$dir}/images");
- 	         }
- 	     }
- 	     closedir($dh);
- 	 }
+    $custom_themes_dir = "custom/themes";
+    if (is_dir($custom_themes_dir)) {
+         if($dh = opendir($custom_themes_dir))
+         {
+             while (($dir = readdir($dh)) !== false)
+             {
+                 //Since the custom theme directories don't require an images directory
+                 // we check for it implicitly
+                 if ($dir != "." && $dir != ".." && is_dir('custom/themes/'.$dir."/images")) {
+                     $sb->addDirectory($dir, "custom/themes/{$dir}/images");
+                 }
+             }
+             closedir($dh);
+         }
+    }
 
     // generate the sprite goodies
     // everything is saved into cache/sprites
