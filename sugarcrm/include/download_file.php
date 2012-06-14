@@ -146,22 +146,20 @@ class DownloadFile {
                     $fileurl = '';
 
                     // Handle special cases, like Documents and KBDocumentRevisions
-                    //if (isset($bean->object_name) && $bean->object_name == 'Document') {
                     if (isset($bean->object_name)) {
                         if ($bean->object_name == 'Document') {
                             // Documents store their file information in DocumentRevisions
-                            $revision = BeanFactory::getBean('DocumentRevisions');
-                            $revision->retrieve($bean->id);
+                            $revision = BeanFactory::getBean('DocumentRevisions', $bean->id);
 
-                            if (!empty($revision->id)) {
+                            if (!empty($revision)) {
                                 $fileid  = $revision->id;
                                 $name    = $revision->filename;
                                 $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
                             } else {
                                 // The id is not a revision id, try the actual document revision id
-                                $revision->retrieve($bean->document_revision_id);
+                                $revision = BeanFactory::getBean('DocumentRevisions', $bean->document_revision_id);
 
-                                if (!empty($revision->id)) {
+                                if (!empty($revision)) {
                                     // Revision will hold the file id AND the file name
                                     $fileid = $revision->id;
                                     $name   = $revision->filename;
@@ -173,19 +171,28 @@ class DownloadFile {
                             }
                         } elseif ($bean->object_name == 'KBDocument') {
                             // Sorta the same thing with KBDocuments
-                            $revision = BeanFactory::getBean('KBDocumentRevisions');
-                            $revision->retrieve($bean->id);
+                            $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->id);
 
-                            if (!empty($revision->document_revision_id)) {
+                            if (!empty($revision)) {
                                 $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
+                                // Last change to fail, if nothing found, return false
+                                if (empty($revision)) {
+                                    return false;
+                                }
+                                
                                 $fileid = $revision->id;
                                 $name   = $revision->filename;
                                 $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
                             } else {
                                 // Try the kbdoc revision
-                                $revision->retrieve($bean->kbdocument_revision_id);
-                                if (!empty($revision->document_revision_id)) {
+                                $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->kbdocument_revision_id);
+                                if (!empty($revision)) {
                                     $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
+                                    // Last change to fail, if nothing found, return false
+                                    if (empty($revision)) {
+                                        return false;
+                                    }
+                                    
                                     $fileid = $revision->id;
                                     $name   = $revision->filename;
                                     $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
@@ -211,7 +218,7 @@ class DownloadFile {
                         if (!method_exists($this, $method)) {
                             $method = 'getFileNameFromSugarBean';
                         }
-                        $name = $this->{$method}($bean, $fileid);
+                        $name = $this->{$method}($bean);
                     }
 
                     return array(
@@ -230,28 +237,26 @@ class DownloadFile {
      * KBDocument specific file name getter
      *
      * @param KBDocument $bean The bean to get the file name for
-     * @param string $id The id of the record
      * @return string
      */
-    public function getFileNameFromKBDocument(KBDocument $bean, $id) {
+    public function getFileNameFromKBDocument(KBDocument $bean) {
         if (empty($bean->id)) {
-            $bean->retrieve($id);
+            return '';
         }
 
         // Similar process to documents
-        $revision = BeanFactory::getBean('KBDocumentRevisions');
-        $revision->retrieve($bean->id);
+        $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->id);
 
         // Start with checking if this is a KBDocRev id
-        if (!empty($revision->document_revision_id)) {
+        if (!empty($revision)) {
             $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
             if ($revision) {
-                $revision->filename;
+                return $revision->filename;
             }
         } else {
             // Try the kbdoc revision
-            $revision->retrieve($bean->kbdocument_revision_id);
-            if (!empty($revision->document_revision_id)) {
+            $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->kbdocument_revision_id);
+            if (!empty($revision)) {
                 $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
                 if ($revision) {
                     return $revision->filename;
@@ -266,26 +271,24 @@ class DownloadFile {
      * Document specific file name getter
      *
      * @param Document $bean The bean to get the file name for
-     * @param string $id The id of the record
      * @return string
      */
-    public function getFileNameFromDocument(Document $bean, $id) {
+    public function getFileNameFromDocument(Document $bean) {
         if (empty($bean->id)) {
-            $bean->retrieve($id);
+            return '';
         }
 
         // Documents store their file information in DocumentRevisions
-        $revision = BeanFactory::getBean('DocumentRevisions');
-        $revision->retrieve($bean->id);
+        $revision = BeanFactory::getBean('DocumentRevisions', $bean->id);
 
         // Check if the id was for a revision
-        if (!empty($revision->id)) {
+        if (!empty($revision)) {
             return $revision->filename;
         } else {
             // The id is not a revision id, try the actual document revision id
-            $revision->retrieve($bean->document_revision_id);
+            $revision = BeanFactory::getBean('DocumentRevisions', $bean->document_revision_id);
 
-            if (!empty($revision->id)) {
+            if ($revision) {
                 return $revision->filename;
             }
         }
@@ -294,17 +297,12 @@ class DownloadFile {
     }
 
     /**
-     * Fallback file name getter, simply gets the filename for the given bean id
+     * Fallback file name getter, simply gets the filename for the given bean
      *
      * @param SugarBean $bean The bean to get the file name for
-     * @param string $id The id of the record
      * @return string
      */
-    public function getFileNameFromSugarBean(SugarBean $bean, $id) {
-        if (empty($bean->id)) {
-            $bean->retrieve($id);
-        }
-
+    public function getFileNameFromSugarBean(SugarBean $bean) {
         return empty($bean->filename) ? '' : $bean->filename;
     }
 
