@@ -14,6 +14,8 @@
     //same as edit-view::saveModel()
     saveModel: function() {
         var self = this;
+        _.extend(this.meta, this.subnavModel.get('meta'));
+        this.fields = this.subnavModel.get('fields') || this.fields;
 
         // TODO we need to dismiss this in global error handler
         app.alert.show('save_edit_view', {level: 'process', title: 'Saving'});
@@ -22,12 +24,12 @@
                 app.alert.dismiss('save_edit_view');
                 self.app.navigate(self.context, self.model, 'detail');
             },
-            fieldsToValidate: this.getFields(this.model.module)
+            fieldsToValidate: this.getFields(this.module)
         });
     },
     bindDataChange: function() {
-        if (this.context.get('subnavModel')) {
-            this.context.get('subnavModel').on("change", this.render, this);
+        if (this.subnavModel) {
+            this.subnavModel.on("change", this.render, this);
         }
     }
 })

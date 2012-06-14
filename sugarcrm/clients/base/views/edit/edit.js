@@ -31,7 +31,8 @@
                 if (this.context.get('subnavModel')) {
                     this.context.get('subnavModel').set({
                         'title': app.lang.get('LBL_EDIT_BUTTON', this.module),
-                        'meta': this.meta
+                        'meta': this.meta,
+                        'fields': this.fields
                     });
                 }
             }, this);
@@ -39,7 +40,8 @@
             if (this.context.get('subnavModel')) {
                 this.context.get('subnavModel').set({
                     'title': app.lang.get('LBL_NEW_FORM_TITLE', this.module),
-                    'meta': this.meta
+                    'meta': this.meta,
+                    'fields': this.fields
                 });
             }
         }
