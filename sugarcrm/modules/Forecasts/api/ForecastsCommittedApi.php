@@ -103,7 +103,8 @@ class ForecastsCommittedApi extends ModuleApi {
             );
         }
 
-        return array('latest' => array(), 'previous'=>array(), 'history' => array());
+        //There is no data, return defaults
+        return array('latest' => array( 'best_case'=>0, 'likely_case'=>0), 'previous'=>array(), 'history' => array());
     }
 
     /**

@@ -58,21 +58,34 @@ class ForecastsChartApi extends ModuleApi {
         $report = new Report($report_defs['ForecastSeedReport1'][2]);
 
 
-        $testFilters = array(
-            'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
-            //'probability' => array('$between' => array('0', '70')),
-            //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
-        );
+        //Temp for now...
+        foreach($report->report_def['filters_def']['Filter_1'] as $key=>$def)
+        {
+            if(is_array($def) && isset($def['name']))
+            {
+                $name = $def['name'];
+                switch ($name)
+                {
+                    case 'probability':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = 0;
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name1'] = 70;
+                    break;
 
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
+                    case 'sales_stage':
 
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
-        $reportFilters = $filter->convert($converter);
-        $report->report_def['filters_def'] = $reportFilters;
+                    break;
+
+                    case 'timeperiod_id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array(TimePeriod::getCurrentId());
+                    break;
+
+                    case 'id':
+                    $report->report_def['filters_def']['Filter_1'][$key]['input_name0'] = array($current_user->id);
+                    break;
+                }
+
+            }
+        }
 
 
         //Get the goal marker values
@@ -106,7 +119,7 @@ class ForecastsChartApi extends ModuleApi {
 
         //This will get messy... maybe we just have to query directly?
         $values = array();
-        //_pp($report->chart_rows);
+        _pp($report->chart_rows);
         foreach($report->chart_rows as $data)
         {
             foreach($data['cells'] as $key1=>$items)
