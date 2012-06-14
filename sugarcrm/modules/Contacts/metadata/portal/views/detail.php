@@ -76,39 +76,14 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                             'colspan' => 2,
                         ),
                     ),
-                    array(
+                    array (
                         'name' => 'primary_address_street',
+                        'label' => 'LBL_PRIMARY_ADDRESS',
+                        'type' => 'address',
                         'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'primary_address_city',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'primary_address_state',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'primary_address_postalcode',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'primary_address_country',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
+                        array (
+                            //'key' => 'primary',
+                            'colspan' => 2
                         ),
                     ),
                 ),

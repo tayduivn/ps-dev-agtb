@@ -9,9 +9,8 @@
     events: {},
     initialize: function(options) {
         this.options.meta   = app.metadata.getView('Contacts', 'detail');
-        this.options.module = 'Contacts';
-
         app.view.View.prototype.initialize.call(this, options);
+        this.template = app.template.get("detail");
         this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
     render: function() {
