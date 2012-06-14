@@ -1,17 +1,42 @@
-<div class="span6">
-  {{fullName}}<br>
-  <h2>Forecast</h2>
+<div class="row-fluid">
+    <div class="span2">
+        {{fullName}}<br>
+        <h2>Forecast</h2>
+    </div>
+    <div class="span3">
+        Best<br>
+        <h2>{{bestCase}}</h2>
+    </div>
+    <div class="span3">
+        Likely<br>
+        <h2>{{likelyCase}}</h2>
+    </div>
+    <div class="span1">
+        <a href="forecast.html" class="btn btn-primary">Commit</a>
+    </div>
 </div>
-<div>
-  Best (Adjusted)<br>
-  <h2>{{bestCase}}</h2>
-</div>
-<div>
-  Likely (Adjusted)<br>
-  <h2>{{likelyCase}}</h2>
-</div>
-<div><a id="commit_forecast" class="btn btn-primary"><i class="icon icon-upload icon-md"></i>  Commit</a></div>
 
-<div>
-Previous Commit...
+{{#if previousText}}
+<div class="row-fluid">
+    <div class="span2">
+    {{previousText}}
+    </div>
+    <div class="span3">
+    {{previousBestCase}}
+    </div>
+    <div class="span3">
+    {{previousLikelyCase}}
+    </div>
+    <div class="span1">
+    -- More --
+    </div>
 </div>
+<div>
+{{#history}}
+   <div class="span6">
+   {{text}}</br>
+   {{modified}}
+   </div>
+{{/history}}
+</div>
+{{/if}}
