@@ -311,6 +311,7 @@ $mod_strings = array (
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a User Name and an Email Address.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
 
+    'LBL_QUOTA'					        => 'Quota',
 	'LBL_RECAPTCHA_NEW_CAPTCHA'         => 'Get another CAPTCHA',
 	'LBL_RECAPTCHA_SOUND'				=> 'Switch to Sound',
 	'LBL_RECAPTCHA_IMAGE'				=> 'Switch to Image',

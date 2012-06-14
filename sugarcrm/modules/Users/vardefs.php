@@ -835,6 +835,15 @@ $dictionary['User'] = array(
 			'source' => 'non-db',
 			'vname' => 'LBL_PROJECTS',
 		),
+        'quotas' =>
+        array (
+            'name' => 'quotas',
+            'type' => 'link',
+            'relationship' => 'user_quotas',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_QUOTA',
+        ),
     ) ,
     'indices' => array(
         array(
