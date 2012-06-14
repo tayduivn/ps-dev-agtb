@@ -174,7 +174,13 @@
                                     events: {
                                         click: "" +
                                             "function(){ var self = this; " +
-                                            "   if(this.model.isValid()) {" +
+                                            "var oEmail = this.model.get(\"email\");" +
+                                            "if (oEmail) {" +
+                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "}" +
+                                            "var validFlag = this.model.isValid();" +
+                                            " this.model.set({\"email\":oEmail});" +
+                                            "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
                                             "   var contactData={" +
@@ -185,7 +191,7 @@
                                             "       state:this.model.get(\"state\")," +
                                             "       country:this.model.get(\"country\")," +
                                             "       company:this.model.get(\"company\")," +
-                                            "       jobtitle:this.model.get(\"jobtitle\")" +
+                                            "       title:this.model.get(\"jobtitle\")" +
                                             "   }; " +
                                             "   this.app.api.signup(contactData, null, " +
                                             "   {" +
