@@ -163,6 +163,9 @@ class KBDocument extends SugarBean {
 		   $this->kbarticle_author_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 		   $this->created_by = $this->kbarticle_author_name;
 		}
+
+        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
+
 	}
 
 	function fill_in_additional_detail_fields() {
