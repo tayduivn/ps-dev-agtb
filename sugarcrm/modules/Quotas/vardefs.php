@@ -196,7 +196,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     		),	//ends "fields" array
 
 	'indices' => array(
-       	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id'))
+       	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id')),
+       	  array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id, timeperiod_id')),
 	),
 
     'relationships' => array (
