@@ -717,33 +717,75 @@ article:hover .actions,  tr:hover .actions {
   margin-bottom: 10px;
 }
 
-.topline .span1  {
-  padding: 10px 0;
-}
-.topline .span6,.topline .span2,.topline .span3 {
-  padding: 10px;
-}
 .topline h2 {
   padding: 0 !important;
   font-size: 20px;
+  line-height: 28px;
 }
 .topline .btn {
-  margin: 5px 0 0 -10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
+.topline .title {
+  padding: 10px 10px 0;
+}
+.topline .datapoint1 {
+  position: absolute;
+  right: 280px;
+  top: 10px;
+  width: 120px;
+}
+.topline .datapoint2 {
+  position: absolute;
+  right: 140px;
+  top: 10px;
+  width: 120px;
+}
+.topline .divider {
+  border-right: 1px solid  @grayLight;
+  height: 60px;
+  width: 1px;
+  position: absolute;
+  right: 280px;
+  top: 0;
+}
+.topline .toggle {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.topline .log {
+  background: @grayLighter;
+  position: relative;
+    overflow: hidden;
+    height: 36px;
+  border-bottom: 2px solid @grayLight;
+  color: @gray !important;
+}
+
+.topline .extend {
+  background-color: darken(@gray, 10%);
+  background-color: darken(@gray, 15%) e("\9");
+  background-image: none;
+  color: @grayLighter !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.75);
+  outline: 0;
+  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
+  padding: 16px;
+}
+
 .topline .row-fluid {
   margin: 0;  
   padding: 0;
 }
 .topline hr {
-  margin: 0 0 -1px;
+  margin: 8px 0 -1px;
   padding: 0;
   border-top: 2px solid @grayLight;
 }
 .topline table {
   margin: 0;
-}
-.topline .divider {
-  border-right: 1px solid  @grayLighter;
 }
 
 

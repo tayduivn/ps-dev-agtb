@@ -206,7 +206,7 @@
     </div>
     <div id="charts" class="span10">
       <div class="row-fluid">
-        <div class="span9">            
+        <div class="span8">            
           <div id="chart" class="tcenter">
             <div class="chartContainer">
               <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
@@ -216,7 +216,7 @@
             </div>
           </div>
         </div>
-        <div class="span3">
+        <div class="span4">
           <div class="block" id="guages">
             <h4>Projected</h4>
             <div class="row-fluid">
@@ -225,7 +225,7 @@
                   Quota
                 </div>
                 <div class="span6 tright">
-                  200,000
+                  $200,000
                 </div>
               </strong>
             </div>
@@ -257,7 +257,7 @@
                   Closed
                 </div>
                 <div class="span6 tright">
-                  200,000
+                  $200,000
                 </div>
               </strong>
             </div>
@@ -300,24 +300,40 @@
           </div>
         </div>
       </div>
-
       <div class="topline thumbnail">
-        <div class="row-fluid">
-            <div class="span6">
-                James Joplin's<br>
-                <h2>Forecast</h2>
-            </div>
-            <div class="span2 divider">
+          <div class="title">
+              James Joplin's<br>
+              <h2>Forecast</h2>
+          </div>
+            <div class="datapoint1">
                 Best<br>
                 <h2 id="best"></h2>
             </div>
-            <div class="span2">
+            <div class="divider"></div>
+            <div class="datapoint2">
                 Likely<br>
                 <h2 id="likely"></h2>
             </div>
-            <div class="span2 tcenter"><a href="forecast.html" class="btn btn-primary btn-large"><i class="icon-upload icon-md"></i> Commit</a></div>
-          </div>
+            <a href="forecast.html" class="btn btn-primary btn-large"><i class="icon-upload icon-md"></i> Commit</a>
         <hr>
+        <div class="log drawer">
+          <div class="title">
+              <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
+          </div>
+            <div class="datapoint1">
+              123,300
+            </div>
+            <div class="divider"></div>
+            <div class="datapoint2">
+              123,300
+            </div>
+          <div class="toggle">
+            <i class="icon-chevron-down"></i>
+          </div>
+        </div>
+        <div class="hide extend">
+            test
+        </div>
         <div id="dynamic"></div>
       </div>
     </div>
@@ -327,22 +343,20 @@
 
 <footer>
   <div class="row-fluid">
-    <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
+    <div class="span6">
+      <a href="" class="logo">SugarCRM</a> 
+    </div>        
     <div class="span6">
       <div class="btn-toolbar pull-right">
         <div class="btn-group">
-          <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
-          <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
-          <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
-        </div>
-        <div class="btn-group">
-          <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
+          <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+          <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a> 
+          <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
         </div>
       </div>
     </div>
   </div>
 </footer>
-
 <script src="../js/jquery-1.7.2.min.js"></script>
 <script src="../js/bootstrap-transition.js"></script>
 <script src="../js/bootstrap-alert.js"></script>

@@ -91,6 +91,19 @@
         		return false;  
       })
 
+      // toggle drawer hide
+      $('.drawer').toggle(
+        function (e) {
+      		$(this).next('.extend').removeClass('hide');
+      		$(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
+      		return false;  
+        },
+        function (e) {
+        		$(this).next('.extend').addClass('hide');
+        		$(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
+        		return false;  
+      })
+
 
       // column collapse
       $('.drawerTrig').on('click',

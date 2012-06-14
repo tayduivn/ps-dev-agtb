@@ -889,27 +889,27 @@ input[type="checkbox"][readonly] {
 .control-group.error > label,
 .control-group.error .help-block,
 .control-group.error .help-inline {
-  color: #4d1e1e;
+  color: #b60000;
 }
 .control-group.error input,
 .control-group.error select,
 .control-group.error textarea {
-  color: #4d1e1e;
-  border-color: #4d1e1e;
+  color: #b60000;
+  border-color: #b60000;
 }
 .control-group.error input:focus,
 .control-group.error select:focus,
 .control-group.error textarea:focus {
-  border-color: #281010;
-  -webkit-box-shadow: 0 0 6px #963b3b;
-  -moz-box-shadow: 0 0 6px #963b3b;
-  box-shadow: 0 0 6px #963b3b;
+  border-color: #830000;
+  -webkit-box-shadow: 0 0 6px #ff1d1d;
+  -moz-box-shadow: 0 0 6px #ff1d1d;
+  box-shadow: 0 0 6px #ff1d1d;
 }
 .control-group.error .input-prepend .add-on,
 .control-group.error .input-append .add-on {
-  color: #4d1e1e;
-  background-color: #f2dede;
-  border-color: #4d1e1e;
+  color: #b60000;
+  background-color: #ffe9e9;
+  border-color: #b60000;
 }
 .control-group.success > label,
 .control-group.success .help-block,
@@ -2734,8 +2734,8 @@ input[type="submit"].btn.btn-mini {
 }
 .alert-danger,
 .alert-error {
-  background: #f2dede;
-  border-color: #c77077;
+  background: #ffe9e9;
+  border-color: #b60000;
 }
 .alert-danger,
 .alert-error,
@@ -2769,7 +2769,6 @@ input[type="submit"].btn.btn-mini {
   width: 100%;
   z-index: 1060;
   text-align: center;
-  display: none;
 }
 .alert-top .alert {
   text-align: left;
@@ -5940,7 +5939,7 @@ footer {
   background-color: #134158;
 }
 .errorText {
-  background-color: #4d1e1e;
+  background-color: #b60000;
 }
 .successText {
   background-color: #28471c;
@@ -5952,7 +5951,7 @@ footer {
   background-color: #d9edf7;
 }
 .errorBackground {
-  background-color: #f2dede;
+  background-color: #ffe9e9;
 }
 .successBackground {
   background-color: #dff0d8;
@@ -6710,35 +6709,75 @@ tr:hover .actions {
 #guages {
   margin-bottom: 10px;
 }
-.topline .span1 {
-  padding: 10px 0;
-}
-.topline .span6,
-.topline .span2,
-.topline .span3 {
-  padding: 10px;
-}
 .topline h2 {
   padding: 0 !important;
   font-size: 20px;
+  line-height: 28px;
 }
 .topline .btn {
-  margin: 5px 0 0 -10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.topline .title {
+  padding: 10px 10px 0;
+}
+.topline .datapoint1 {
+  position: absolute;
+  right: 280px;
+  top: 10px;
+  width: 120px;
+}
+.topline .datapoint2 {
+  position: absolute;
+  right: 140px;
+  top: 10px;
+  width: 120px;
+}
+.topline .divider {
+  border-right: 1px solid #cdcccb;
+  height: 60px;
+  width: 1px;
+  position: absolute;
+  right: 280px;
+  top: 0;
+}
+.topline .toggle {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.topline .log {
+  background: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+  height: 36px;
+  border-bottom: 2px solid #cdcccb;
+  color: #58595b !important;
+}
+.topline .extend {
+  background-color: #3f4041;
+  background-color: #323334 \9;
+  background-image: none;
+  color: #f5f5f5 !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+  -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+  padding: 16px;
 }
 .topline .row-fluid {
   margin: 0;
   padding: 0;
 }
 .topline hr {
-  margin: 0 0 -1px;
+  margin: 8px 0 -1px;
   padding: 0;
   border-top: 2px solid #cdcccb;
 }
 .topline table {
   margin: 0;
-}
-.topline .divider {
-  border-right: 1px solid #f5f5f5;
 }
 #riskPreview .progress {
   position: relative;
