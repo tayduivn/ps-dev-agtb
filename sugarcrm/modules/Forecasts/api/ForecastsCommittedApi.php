@@ -54,7 +54,11 @@ class ForecastsCommittedApi extends ModuleApi {
 
         $timedate = TimeDate::getInstance();
 
-        $query = "SELECT * FROM forecasts WHERE user_id = '{$current_user->id}' AND forecast_type='Direct' AND deleted = 0 ORDER BY date_modified desc";
+        $forecast_type = 'Direct';
+        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
+        $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+
+        $query = "SELECT * FROM forecasts WHERE user_id = '{$user_id}' AND forecast_type='{$forecast_type}' AND timeperiod_id = '{$timeperiod_id}' AND deleted = 0 ORDER BY date_modified desc";
 
         //Get the last 6
         $results = $GLOBALS['db']->limitQuery($query, 0, 6);
@@ -94,8 +98,8 @@ class ForecastsCommittedApi extends ModuleApi {
 
             return array(
                 'latest' => $latest,
-                'previous' => $previous,
-                'history' => $history
+                'previous' => isset($previous) ? $previous : array(),
+                'history' => isset($history) ? $history : array()
             );
         }
 
