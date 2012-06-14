@@ -163,9 +163,9 @@ foreach ($timeperiods as $timeperiod_id=>$start_date) {
 			$forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
 			$forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
             $multiplier = mt_rand(-2,6);
-			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (multiplier * 100);
-			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (multiplier * 100);
-			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (multiplier * 100);
+			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
 			$forecast->forecast_type='Direct';
 			$forecast->date_committed = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(), time()), true);
 			$forecast->save();
