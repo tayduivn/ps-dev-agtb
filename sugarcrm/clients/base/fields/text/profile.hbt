@@ -1,4 +1,0 @@
-<div class="row-fluid">
-    <div class="span4">{{str label model.module}}</div>
-    <div class="span8" name="{{name}}">{{value}}</div>
-</div>

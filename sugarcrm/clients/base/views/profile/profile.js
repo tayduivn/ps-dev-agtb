@@ -8,17 +8,11 @@
  */
     events: {},
     initialize: function(options) {
-        this.options.meta = app.metadata.getView('Contacts', 'detail');
-        app.view.View.prototype.initialize.call(this, options);
-        //this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
+        this.options.meta   = app.metadata.getView('Contacts', 'detail');
+        this.options.module = 'Contacts';
 
-        // Explanation: So until the Contacts vardefs.php provide label mappings, etc.,
-        // (which may not happen because a lot of these fields are inherited from Person)
-        // we need to supply the label in Contacts/metadata/portal/views/detail.php. But 
-        // this causes an issue since fields defs in client/base/fields/text for example,
-        // for detail assume the label is already there. So I'm using the preview field
-        // which does something like: {{str label model.module}} 
-        this.fallbackFieldTemplate = "profile"; 
+        app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
     render: function() {
         var self = this, currentUserAttributes;
@@ -40,7 +34,7 @@
                     currentUserAttributes = {id: data.records[0].id}; // later w/be something like currentUser.id
                     self.loadCurrentUser(currentUserAttributes, function(data) {
                         if(data) {
-                            self.setModel(data);
+                            self.setModelAndContext(data);
                             app.view.View.prototype.render.call(self);
                             self.renderSubnav(data);
                         } 
@@ -75,9 +69,12 @@
     /**
      * Updates model for this contact.
      */
-    setModel: function(data) {
+    setModelAndContext: function(data) {
         this.model = app.data.createBean("Contacts", data);
-        this.model.module = 'Contacts';
+        this.context.set({
+            'model': this.model,
+            'module': 'Contacts'
+        });
     },
     renderSubnav: function(data) {
         var self = this, fullName = '', subnavModel = null;
