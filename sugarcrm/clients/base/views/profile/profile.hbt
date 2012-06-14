@@ -1,25 +1,21 @@
-<div class="card2 row-fluid">
-    <div class="container-fluid">
-        <div class="profile span7">
-            <a href="" class="pull-right">
-              {{! TODO: add image: <img src="" class="avatar" alt="avatar abcindustries"> }}
-            </a>
-            {{#each meta.panels}}
-            {{#each fields}}
-            {{#notMatch this.name "primary_address.*"}}
-            {{field ../../../this}}
-            {{/notMatch}}
-            {{/each}}
-            {{/each}}
-            <span><div class="row-fluid">
-                <div class="span2 address">{{getLabel "LBL_PRIMARY_ADDRESS" "Contacts"}}</div>
-                    <div class="span8">
-                        {{model.attributes.primary_address_street}}<br>
-                        {{model.attributes.primary_address_city}}, {{model.attributes.primary_address_state}} {{model.attributes.primary_address_postalcode}}<br>
-                        {{model.attributes.primary_address_country}}
-                    </div>
-                </div>
-            </span>
+<div class="profile span7">
+    <a href="" class="pull-right">
+      {{! TODO: add image: <img src="" class="avatar" alt="avatar abcindustries"> }}
+    </a>
+    {{#each meta.panels}}
+    {{#each fields}}
+    {{#notMatch this.name "primary_address.*"}}
+    {{field ../../../this}}
+    {{/notMatch}}
+    {{/each}}
+    {{/each}}
+    <span><div class="row-fluid">
+        <div class="span2 address">{{getLabel "LBL_PRIMARY_ADDRESS" "Contacts"}}</div>
+            <div class="span8">
+                {{model.attributes.primary_address_street}}<br>
+                {{model.attributes.primary_address_city}}, {{model.attributes.primary_address_state}} {{model.attributes.primary_address_postalcode}}<br>
+                {{model.attributes.primary_address_country}}
+            </div>
         </div>
-    </div>
+    </span>
 </div>

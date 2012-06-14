@@ -11,6 +11,7 @@
     initialize: function(options) {
         this.options.meta = app.metadata.getView('Contacts', 'edit');
         app.view.View.prototype.initialize.call(this, options);
+        this.template = app.template.get("edit");
         this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
     },
     render: function() {
