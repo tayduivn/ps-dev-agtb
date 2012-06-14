@@ -18,7 +18,7 @@
         // this causes an issue since fields defs in client/base/fields/text for example,
         // for detail assume the label is already there. So I'm using the preview field
         // which does something like: {{str label model.module}} 
-        this.fallbackFieldTemplate = "preview"; 
+        this.fallbackFieldTemplate = "profile"; 
     },
     render: function() {
         var self = this, currentUserAttributes;

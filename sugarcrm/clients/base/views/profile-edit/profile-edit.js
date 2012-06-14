@@ -5,7 +5,9 @@
  * @extends View.View
  */
 ({
-    events: {},
+    events: {
+        'click [name=save_button]': 'saveModel' // bottom save button
+    },
     initialize: function(options) {
         this.options.meta = app.metadata.getView('Contacts', 'edit');
         app.view.View.prototype.initialize.call(this, options);

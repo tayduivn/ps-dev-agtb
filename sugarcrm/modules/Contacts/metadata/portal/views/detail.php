@@ -40,7 +40,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                 array(
                     array(
                         'name' => 'first_name',
-                        'label' => 'LBL_FIRST_NAME',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -48,7 +47,7 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'last_name',
-                        'label' => 'LBL_LAST_NAME',
+                        //'label' => 'LBL_LAST_NAME',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -56,7 +55,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'title',
-                        'label' => 'LBL_TITLE',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -65,7 +63,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     array(
                         'name' => 'email',
                         'type' => 'email',
-                        'label' => 'LBL_EMAIL_ADDRESS',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -73,7 +70,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'phone_work',
-                        'label' => 'LBL_PHONE_WORK',
                         'type' => 'text',
                         'displayParams' =>
                         array(
@@ -82,7 +78,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'primary_address_street',
-                        'label' => 'LBL_PRIMARY_ADDRESS_STREET',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -90,7 +85,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'primary_address_city',
-                        'label' => 'LBL_PRIMARY_ADDRESS_CITY',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -98,7 +92,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'primary_address_state',
-                        'label' => 'LBL_PRIMARY_ADDRESS_STATE',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -106,7 +99,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'primary_address_postalcode',
-                        'label' => 'LBL_PRIMARY_ADDRESS_POSTALCODE',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -114,7 +106,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'primary_address_country',
-                        'label' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
                         'displayParams' =>
                         array(
                             'colspan' => 2,

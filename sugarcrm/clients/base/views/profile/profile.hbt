@@ -12,7 +12,7 @@
             {{/each}}
             {{/each}}
             <span><div class="row-fluid">
-                <div class="span4 address"><strong>{{getLabel "LBL_PRIMARY_ADDRESS" "Contacts"}}</strong></div>
+                <div class="span4 address">{{getLabel "LBL_PRIMARY_ADDRESS" "Contacts"}}</div>
                     <div class="span8">
                         {{model.attributes.primary_address_street}}<br>
                         {{model.attributes.primary_address_city}}, {{model.attributes.primary_address_state}} {{model.attributes.primary_address_postalcode}}<br>

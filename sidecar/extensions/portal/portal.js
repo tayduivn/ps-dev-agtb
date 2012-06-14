@@ -822,9 +822,8 @@
         ];
 
         app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
-        
-        // Perform any original before checks .. if these fail return false
-        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        if(!oRoutingBefore.call(this, route, args)) return false;
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
