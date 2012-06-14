@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestList extends RestTestBase {
+class RestTestFile extends RestTestBase {
     protected $_note;
     protected $_note_id;
     protected $_contact;

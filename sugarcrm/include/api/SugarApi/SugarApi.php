@@ -149,44 +149,19 @@ abstract class SugarApi {
     }
 
     /**
-     * Checks whether the current API user is an owner of a bean. Used in ACL
-     * checks.
-     *
-     * @param SugarBean $bean
-     * @param ServiceBase $api
-     * @return bool
-     */
-    protected function isBeanOwner($bean, $api) {
-        // Default the value
-        $isOwner = false;
-
-        // New records are always owned by creator
-        if ( !isset($bean->id) || $bean->new_with_id ) {
-            $isOwner = true;
-        } else {
-            // It's an existing record
-            if ( isset($bean->field_defs['assigned_user_id']) ) {
-                if ( $api->user->id == $bean->assigned_user_id ) {
-                    $isOwner = true;
-                }
-            }
-        }
-
-        return $isOwner;
-    }
-
-    /**
      * Verifies field level access for a bean and field for the logged in user
      *
      * @param SugarBean $bean The bean to check on
      * @param string $field The field to check on
+     * @param string $action The action to check permission on
+     * @param array $context ACL context
      * @throws SugarApiExceptionNotAuthorized
      */
-    protected function verifyFieldAccess(SugarBean $bean, $field) {
+    protected function verifyFieldAccess(SugarBean $bean, $field, $action = 'access', $context = array()) {
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!$bean->ACLFieldAccess($field)) {
+        if (!$bean->ACLFieldAccess($field, $action, $context)) {
             // @TODO Localize this exception message
-            throw new SugarApiExceptionNotAuthorized('Not allowed to edit ' . $field . ' field in ' . $bean->object_name . ' module.');
+            throw new SugarApiExceptionNotAuthorized('Not allowed to ' . $action . ' ' . $field . ' field in ' . $bean->object_name . ' module.');
         }
         //END SUGARCRM flav=pro ONLY
     }

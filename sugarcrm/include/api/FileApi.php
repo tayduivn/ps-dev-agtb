@@ -187,7 +187,7 @@ class FileApi extends SugarApi {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
-        $this->verifyFieldAccess($bean, $field);
+        $this->verifyFieldAccess($bean, $field, 'edit');
         //END SUGARCRM flav=pro ONLY
 
         // Get the defs for this field
@@ -217,8 +217,7 @@ class FileApi extends SugarApi {
                         $filesIndex .= '_file';
                     }
                 }
-                //return array('args' => $args, 'files' => $_FILES, 'post' => $_POST, 'field' => $field);
-
+                
                 // Noticed for some reason that API FILE[type] was set to application/octet-stream
                 // That breaks the uploader which is looking for very specific mime types
                 // So rather than rely on what $_FILES thinks, set it with our own methodology
@@ -254,12 +253,14 @@ class FileApi extends SugarApi {
                 unset($fileinfo['path']);
 
                 // Handle edge cases with specific formatting needs
+                /*
                 if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
                     if (!isset($args['platform']) || ($args['platform'] == 'portal')) {
                         // @TODO: Add this string to lang vars and translate it
                         $fileinfo = array_merge($fileinfo, $api->getHXRReturnArray('Upload successful!'));
                     }
                 }
+                */
 
                 // This is a good return
                 return array($field => $fileinfo);
@@ -363,7 +364,7 @@ class FileApi extends SugarApi {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
-        $this->verifyFieldAccess($bean, $field);
+        $this->verifyFieldAccess($bean, $field, 'delete');
         //END SUGARCRM flav=pro ONLY
 
         // Only remove if there is something to remove
@@ -421,11 +422,14 @@ class FileApi extends SugarApi {
                     $filepath = 'upload://' . $filename;
                     $filedata = getimagesize($filepath);
 
+                    // Add in height and width for image types
                     $info = array(
                         'content-type' => $filedata['mime'],
                         'content-length' => filesize($filepath),
                         'name' => $filename,
                         'path' => $filepath,
+                        'width' => empty($filedata[0]) ? 0 : $filedata[0],
+                        'height' => empty($filedata[1]) ? 0 : $filedata[1],
                         'uri' => $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field)),
                     );
                 } elseif ($def['type'] == 'file') {
