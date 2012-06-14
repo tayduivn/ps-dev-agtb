@@ -285,6 +285,101 @@ class PdfManagerHelper {
 
         return $v == false;
     }
+    
+    /**
+     * Make array from bean
+     *
+     * @param array   $module_instance  -- Instance of module
+     * @param boolean $recursive        -- If TRUE parse related one-to-many fields
+     * @return array                    -- key    : field Name
+     *                                     value  : field Value
+     */
+    static function parseBeanFields($module_instance, $recursive = FALSE) {
+        global $mod_strings, $sugar_config, $app_strings, $app_list_strings, $theme, $current_user;
+
+        $fields_module = array();
+        foreach ($module_instance->toArray() as $name => $value) {
+              
+            if (isset($module_instance->field_defs[$name]['type']) && 
+                ($module_instance->field_defs[$name]['type'] == 'enum' || $module_instance->field_defs[$name]['type'] == 'radio' ) &&
+                isset($module_instance->field_defs[$name]['options']) && 
+                isset($app_list_strings[$module_instance->field_defs[$name]['options']]) && 
+                isset($app_list_strings[$module_instance->field_defs[$name]['options']][$value]) 
+               ) {
+                $fields_module[$name] = $app_list_strings[$module_instance->field_defs[$name]['options']][$value];
+                $fields_module[$name] = str_replace(array('&#39;', '&#039;'), "'", $fields_module[$name]);
+            } elseif (isset($module_instance->field_defs[$name]['type']) && 
+                $module_instance->field_defs[$name]['type'] == 'multienum' &&
+                isset($module_instance->field_defs[$name]['options']) && 
+                isset($app_list_strings[$module_instance->field_defs[$name]['options']]) 
+               ) {
+                $multienums = unencodeMultienum($value);
+                $multienums_value = array();
+                foreach ($multienums as $multienum) {
+                  if (isset($app_list_strings[$module_instance->field_defs[$name]['options']][$multienum])) {
+                      $multienums_value[] = $app_list_strings[$module_instance->field_defs[$name]['options']][$multienum];
+                  } else {
+                      $multienums_value[] = $multienum;
+                  }
+                }
+                $fields_module[$name] = implode(', ', $multienums_value);
+                $fields_module[$name] = str_replace(array('&#39;', '&#039;'), "'", $fields_module[$name]);
+            } elseif ($recursive &&
+                isset($module_instance->field_defs[$name]['type']) && 
+                $module_instance->field_defs[$name]['type'] == 'link' &&
+                $module_instance->load_relationship($name) && 
+                (
+                    (isset($module_instance->field_defs[$name]['link_type']) && $module_instance->field_defs[$name]['link_type'] == 'one') ||
+                    ($module_instance->$name->_relationship->relationship_type == 'one-to-one') || 
+                    ($module_instance->$name->_relationship->relationship_type == 'one-to-many' && !$module_instance->$name->_get_bean_position()) || 
+                    ($module_instance->$name->_relationship->relationship_type == 'many-to-one' && $module_instance->$name->_get_bean_position()) ||
+                    ($module_instance->$name->_relationship->relationship_type == 'many-to-many' && !isset($module_instance->field_defs[$name]['side']) && $module_instance->$name->_get_link_table_definition($module_instance->$name->_relationship_name, 'true_relationship_type') == 'one-to-many' && !$module_instance->$name->_get_bean_position()) ||
+                    ($module_instance->$name->_relationship->relationship_type == 'many-to-many' && !isset($module_instance->field_defs[$name]['side']) && $module_instance->$name->_get_link_table_definition($module_instance->$name->_relationship_name, 'true_relationship_type') == 'many-to-one' && $module_instance->$name->_get_bean_position())
+                ) && 
+                count($module_instance->$name->get()) == 1
+               ) {
+                $related_module = $module_instance->$name->getRelatedModuleName();
+                $related_module = $GLOBALS['beanList'][$related_module];
+                $related_file   = $GLOBALS['beanFiles'][$related_module];
+                require_once $related_file;
+                $related_instance = new $related_module;
+                $related_instance_id = $module_instance->$name->get();
+                if ($related_instance->retrieve($related_instance_id[0]) === null) {
+                    $GLOBALS['log']->fatal(__FILE__ . ' Failed loading module ' . $related_module . ' with id ' . $related_instance_id[0]);
+                }
+
+                $fields_module[$name] = self::parseBeanFields($related_instance, FALSE);
+            } elseif (
+                isset($module_instance->field_defs[$name]['type']) && 
+                $module_instance->field_defs[$name]['type'] == 'currency' &&
+                !empty($module_instance->currency_id)
+               ) {
+                  global $locale;
+                  $format_number_array = array(
+                      'currency_symbol' => true,
+                      'currency_id' => $module_instance->currency_id,
+                  );
+                  $fields_module[$name] = format_number($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+            } elseif (
+                isset($module_instance->field_defs[$name]['type']) && 
+                ($module_instance->field_defs[$name]['type'] == 'decimal')
+               ) {
+                  global $locale;
+                  $format_number_array = array(
+                      'convert' => false,
+                  );
+                  $fields_module[$name] = format_number($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+            } elseif (
+                isset($module_instance->field_defs[$name]['type']) && 
+                ($module_instance->field_defs[$name]['type'] == 'image')
+               ) {
+                  $fields_module[$name] = $GLOBALS['sugar_config']['upload_dir']."/".$value;
+            } elseif (is_string($value)) {
+                $fields_module[$name] = htmlspecialchars_decode(stripslashes($value), ENT_QUOTES);
+            }
+        }
+        return $fields_module;
+    }
 }
 
 

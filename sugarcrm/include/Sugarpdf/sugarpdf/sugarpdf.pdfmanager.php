@@ -42,19 +42,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
             $this->templateLocation = $this->making_template_to_tpl($_REQUEST['pdf_template_id']);
         }        
         
-        require_once 'include/DetailView/DetailView2.php';
+        require_once 'modules/PdfManager/PdfManagerHelper.php';
         
-        $sugarView = new SugarView();
-        $sugarView->init($this->module);
-        $sugarView->type = 'detail';
-        
-        
-        $tmp_dv = new DetailView2();
-        $tmp_dv->showVCRControl = false;
-        
-        $tmp_dv->setup($this->module, $this->bean, $sugarView->getMetaDataFile());
-        $tmp_dv->process();
-        $fields = $tmp_dv->fieldDefs;
+        $fields = PdfManagerHelper::parseBeanFields($this->bean, true);
 
         
         if ($this->module == 'Quotes') {
@@ -75,13 +65,13 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
             $fields['subtotal']['value'] = format_number_sugarpdf($this->bean->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             $fields['total']['value'] = format_number_sugarpdf($this->bean->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             
-            $tmp_dv->focus->load_relationship('product_bundles');
-            $product_bundle_list = $tmp_dv->focus->get_linked_beans('product_bundles','ProductBundle');
+            $this->bean->load_relationship('product_bundles');
+            $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
             if(is_array($product_bundle_list)){
           
               $ordered_bundle_list = array();
               for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-                $index = $product_bundle_list[$cnt]->get_index($tmp_dv->focus->id);
+                $index = $product_bundle_list[$cnt]->get_index($this->bean->id);
                 $ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
               } //for
               ksort($ordered_bundle_list);
@@ -133,15 +123,12 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                 }                
                 $bundles[] = $bundle;
             }
-            // echo '<pre>';
-            // print_r($bundles);
-            // echo '</pre>';
-            // die;
+
             $this->ss->assign('product_bundles', $bundles);
         }
  
+        
          $this->ss->assign('fields', $fields);
- 
     }
 
     private function making_template_to_tpl($pdfTemplateId) {

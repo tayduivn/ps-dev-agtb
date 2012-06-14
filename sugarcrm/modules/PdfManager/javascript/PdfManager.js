@@ -85,6 +85,6 @@ SUGAR.PdfManager.insertField = function(selField, selSubField) {
 	var inst = tinyMCE.getInstanceById("body_html");
 	if (fieldName.length > 0 && inst) {
 		inst.getWin().focus();
-		inst.execCommand('mceInsertRawHTML', false, '{$fields.' + cleanFieldName + '.value}');
+		inst.execCommand('mceInsertRawHTML', false, '{$fields.' + cleanFieldName + '}');
 	}
 }
