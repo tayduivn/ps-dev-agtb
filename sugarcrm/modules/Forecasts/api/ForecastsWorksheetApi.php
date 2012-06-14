@@ -55,9 +55,6 @@ class ForecastsWorksheetApi extends ModuleApi {
      */
     public function worksheet($api, $args)
     {
-
-        $GLOBALS['log']->fatal(var_export($args, true));
-
         require_once('modules/Reports/Report.php');
         global $current_user, $mod_strings, $app_list_strings, $app_strings;
         $app_list_strings = return_app_list_strings_language('en');
@@ -69,7 +66,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         $report = new Report($report_defs['ForecastSeedReport1'][2]);
 
         $testFilters = array(
-            'timeperiod_id' => array('$is' => TimePeriod::getCurrentId()),
+            'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
             'probability' => array('$between' => array('0', '70')),
             'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
@@ -103,6 +100,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
             $row['id'] = $row['primaryid'];
+            $row['forecast'] = $row['opportunities_forecast'];
             $row['name'] = $row['opportunities_name'];
             $row['amount'] = $row['opportunities_amount'];
             $row['date_closed'] = $row['opportunities_date_closed'];
@@ -110,6 +108,9 @@ class ForecastsWorksheetApi extends ModuleApi {
             $row['sales_stage'] = $row['opportunities_sales_stage'];
             $row['best_case_worksheet'] = $row['OPPORTUNITIES_BEST_CAS81CC16'];
             $row['likely_case_worksheet'] = $row['OPPORTUNITIES_LIKELY_C7E6E04'];
+
+            //Should we unset the data we don't need here so as to limit data sent back?
+
             $opps[] = $row;
         }
         return $opps;

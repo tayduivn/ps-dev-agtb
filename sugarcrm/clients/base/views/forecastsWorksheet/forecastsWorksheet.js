@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-    viewModule: app.viewModule,
+    viewModule: {},
 
     gTable:'',
 
@@ -14,6 +14,8 @@
 
     _collection:{},
 
+    _filters:{},
+
     /**
      * Initialize the View
      *
@@ -21,6 +23,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
+        this.viewModule = app.viewModule;
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
@@ -30,7 +33,7 @@
 
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
-        this.layout.context.on("change:selectedTimePeriod", this.updateWorksheetBySelectedTimePeriod, this);
+        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
     },
 
     /**
@@ -85,10 +88,10 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
-        // TODO: What happens when a timeperiod is selected
-        // this is a placeholder for that functionality
-        //if(this.hasColumn("timeperiod_id"))
-        //    this.gTable.fnFilter({ "timeperiod_id" : params.attributes.selectedTimePeriod.id });
+        var model = this.context.model.forecasts.worksheet;
+        model.url = app.config.serverUrl + "/Forecasts/worksheet?tp=" + params.id;
+        model.fetch();
+        this.render();
     },
 
     /**

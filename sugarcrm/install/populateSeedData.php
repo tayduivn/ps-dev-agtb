@@ -162,12 +162,14 @@ foreach ($timeperiods as $timeperiod_id=>$start_date) {
 			$forecast->user_id =  $commit_type_array[0];
 			$forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
 			$forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
-			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + 500;
-			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + 500;
-			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + 500;
+            $multiplier = mt_rand(-2,6);
+			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
 			$forecast->forecast_type='Direct';
 			$forecast->date_committed = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(), time()), true);
 			$forecast->save();
+
 			$quota = new Quota();
 			$quota->timeperiod_id=$timeperiod_id;
 			$quota->user_id = $commit_type_array[0];

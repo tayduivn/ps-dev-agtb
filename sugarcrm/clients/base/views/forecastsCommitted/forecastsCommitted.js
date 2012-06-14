@@ -31,14 +31,28 @@
             self.bestCase = latest['best_case'];
         }
 
-        var history = model.get('history');
-        if(history)
+        var previous = model.get('previous');
+        if(previous)
         {
-            _.each(history, function(data, key)
+            self.previousLikelyCase = previous['likely_case'];
+            self.previousBestCase = previous['best_case'];
+            self.previousText = previous['text'];
+            self.history = new Array();
+
+            //Store history model in array so handlebar template may process this
+            var historyLog = model.get('history');
+            _.each(historyLog, function(data, key)
             {
-                console.log(data);
+                if (historyLog.hasOwnProperty(key)){
+                    self.history.push({
+                      'text' : data['text'],
+                      'modified' : data['modified']
+                    });
+                }
             });
+
         }
+
         //Call render again
         this.render();
     },

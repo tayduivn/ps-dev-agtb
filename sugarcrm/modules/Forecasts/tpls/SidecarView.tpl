@@ -97,12 +97,14 @@
                         </div>
                         <hr/>
                         <div class="topline thumbnail">
-                            <div class="row-fluid">
-                            <div class="view-forecastsCommitted"></div>
-                            <hr>
-                            <div class="view-forecastsWorksheet"></div>
-                            <div class="view-summary"></div>
-                            </div>
+                          <div class="row-fluid">
+                              <div class="view-forecastsCommitted"></div>
+                          </div>
+                          <hr>
+                          <div>
+                              <div class="view-forecastsWorksheet"></div>
+                              <div class="view-summary"></div>
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -110,6 +112,7 @@
         </div>
     </div>
 </div>
+
 <div class="content"></div>
 
 {literal}

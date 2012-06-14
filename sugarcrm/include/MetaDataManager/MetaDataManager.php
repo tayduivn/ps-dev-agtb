@@ -417,6 +417,8 @@ class MetaDataManager {
         $allSugarFiles = $this->getSugarClientFileDirs($typePath);
 
         foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
             // Check each platform in order of precendence to find the "best" controller
             // Add in meta checking here as well
             $meta = array();

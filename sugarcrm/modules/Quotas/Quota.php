@@ -549,4 +549,7 @@ class Quota extends SugarBean {
 
 }
 
+function getTimePeriodsDropDownForQuotas(){
+    return TimePeriod::get_timeperiods_dom();
+}
 ?>
