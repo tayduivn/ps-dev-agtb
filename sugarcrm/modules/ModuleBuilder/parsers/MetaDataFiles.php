@@ -90,8 +90,8 @@ class MetaDataFiles
         MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detail' ,
         MB_WIRELESSLISTVIEW       => 'list' ,
-        MB_WIRELESSBASICSEARCH    => 'search' ,
-        MB_WIRELESSADVANCEDSEARCH => 'search' ,
+        MB_WIRELESSBASICSEARCH    => 'searchdefs' ,
+        MB_WIRELESSADVANCEDSEARCH => 'searchdefs' ,
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW         => 'edit',
