@@ -55,9 +55,6 @@ class ForecastsWorksheetApi extends ModuleApi {
      */
     public function worksheet($api, $args)
     {
-
-        $GLOBALS['log']->fatal(var_export($args, true));
-
         require_once('modules/Reports/Report.php');
         global $current_user, $mod_strings, $app_list_strings, $app_strings;
         $app_list_strings = return_app_list_strings_language('en');
@@ -69,7 +66,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         $report = new Report($report_defs['ForecastSeedReport1'][2]);
 
         $testFilters = array(
-            'timeperiod_id' => array('$is' => TimePeriod::getCurrentId()),
+            'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
             'probability' => array('$between' => array('0', '70')),
             'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
