@@ -3761,7 +3761,7 @@ a:hover [class^="icon-"] {
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
   background-size: 700%;
-  height: 18px;
+  height: 17px;
   width: 16px;
   margin-bottom: -20%;
 }
