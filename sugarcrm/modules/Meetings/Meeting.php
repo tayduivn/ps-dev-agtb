@@ -470,7 +470,7 @@ class Meeting extends SugarBean {
 		}
 		$this->email_reminder_checked = $this->email_reminder_time == -1 ? false : true;
 
-		if (isset ($_REQUEST['parent_type'])) {
+		if (isset ($_REQUEST['parent_type']) && empty($this->parent_type)) {
 			$this->parent_type = $_REQUEST['parent_type'];
 		} elseif (is_null($this->parent_type)) {
 			$this->parent_type = $app_list_strings['record_type_default_key'];
