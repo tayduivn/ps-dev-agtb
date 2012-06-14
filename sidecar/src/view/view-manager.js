@@ -98,6 +98,8 @@
          */
         _createComponent: function(type, name, params, layoutType) {
             layoutType = layoutType || params.type || null;
+            // TODO: Maybe this should be done in createField? Fixes issue that base field controller wasn't actually getting used.
+            if(type==='field' && params.meta.controller) params.controller = params.meta.controller;
             var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
             var component = new Klass(params);
             component.bindDataChange();
@@ -325,7 +327,18 @@
         }
 
     };
+    
 
     app.augment("view", _viewManager, false);
+
+    // TODO: Review and possibly refactor
+    //
+    // On app:sync we're, essentially, about to make getMetadata call.
+    // We need to clear any app.views, app.fields, etc. The reason for this
+    // is because our declareComponent (see above) first checks cache[customClassName].
+    // For example, if we have a controller for the email field that was defined in 
+    // base_metadata, and then have another controller in metadata, the base_metadata
+    // controller will win. This prevents that problem.
+    app.events.on("app:sync", _viewManager.reset, app.view);
 
 })(SUGAR.App);

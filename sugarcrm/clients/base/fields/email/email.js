@@ -8,7 +8,8 @@
         'change .newEmail': 'add'
     },
     /**
-     * Adds email address to dom and mdoel
+     * Adds email address to dom and model. Note added emails only get checked
+     * upon Save button being clicked (which triggers the model validations).
      */
     add: function() {
         var newAddress = this.$('.newEmail').val(),
@@ -19,47 +20,52 @@
         }
         existingAddresses.push(newObj);
         this.model.set(this.name, existingAddresses);
+
         this.render();
     },
     /**
      * Removes email address from dom and model
      * @param {Object} event
      */
-    remove: function(event) {
-console.log("**************");
-console.log("**************");
-console.log("**************");
-console.log("GOT IN....");
-console.log("**************");
-console.log("**************");
-console.log("**************");
-console.log("**************");
-        var emailAddress = $(event.target).data('parentemail') || $(event.target).parent().data('parentemail'),
-            existingAddresses = this.model.get(this.name);
+    remove: function(evt) {
+        if(evt) {
+            var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
+                existingAddresses = this.model.get(this.name);
 
-        _.each(existingAddresses, function(emailInfo, index) {
-            if (emailInfo.email_address == emailAddress) {
-                existingAddresses[index] = false;
-            }
-        });
-
-        this.model.set(this.name, _.compact(existingAddresses));
-        this.$('[data-emailaddress="' + emailAddress + '"]').remove();
+            _.each(existingAddresses, function(emailInfo, index) {
+                if (emailInfo.email_address == emailAddress) {
+                    existingAddresses[index] = false;
+                }
+            });
+            this.model.set(this.name, _.compact(existingAddresses));
+            this.$('[data-emailaddress="' + emailAddress + '"]').remove();
+        }
     },
     /**
      * Updates true false properties on field
      * @param event
      */
-    updateExistingProperty: function(event) {
-        var emailAddress = $(event.target).parent().data('parentemail') || $(event.target).parent().parent().data('parentemail'),
-            property = $(event.target).data('emailproperty') || $(event.target).parent().data('emailproperty'),
-            existingAddresses = this.model.get(this.name);
+    updateExistingProperty: function(evt) {
+        var existingAddresses, emailAddress, parent, target, property;
+        evt.stopPropagation();
+        evt.preventDefault();
+        target = $(evt.target);
+        parent = target.parent();
+        emailAddress = parent.data('parentemail') || parent.parent().data('parentemail');
+        property = $(evt.target).data('emailproperty') || parent.data('emailproperty');
+        existingAddresses = this.model.get(this.name);
 
+        // Remove all active classes and set all with emails with this property false
         if (property == 'primary_address') {
             existingAddresses=this.massUpdateProperty(existingAddresses, property, "0");
             this.$('.is_primary').removeClass('active');
         }
 
+        // Now toggle currently clicked
+        $(target).toggleClass('active');
+        $(parent).toggleClass('active');
+
+        // Toggle property for clicked button
         _.each(existingAddresses, function(emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
                 if (existingAddresses[index][property] == "1") {
@@ -69,10 +75,8 @@ console.log("**************");
                 }
             }
         });
-
-        $(event.target).toggleClass('active');
-        $(event.target).parent().toggleClass('active');
     },
+
     /**
      * Mass updates a property for all email addresses
      * @param {Array} emails emails array off a model
@@ -90,10 +94,10 @@ console.log("**************");
      * Updates existing address that change event was fired on
      * @param {Object} event
      */
-    updateExistingAddress: function(event) {
-        if ($(event.target).val() != $(event.target).attr('id')) {
-            var oldEmail = $(event.target).attr('id');
-            var newEmail = $(event.target).val();
+    updateExistingAddress: function(evt) {
+        if ($(evt.target).val() != $(evt.target).attr('id')) {
+            var oldEmail = $(evt.target).attr('id');
+            var newEmail = $(evt.target).val();
             var existingEmails = this.model.get(this.name);
             _.each(existingEmails, function(emailInfo, index) {
                 if (emailInfo.email_address == oldEmail) {
@@ -109,7 +113,19 @@ console.log("**************");
      * @param {String} fieldName field name.
      */
     bindDomChange: function() {
-        // empty because we are handling this with the events and callbacks above
+        // Bind all tooltips on page
+        function bindAll(sel) {
+            this.$(sel).each(function(index) {
+                $(this).tooltip({
+                    placement: "bottom"
+                });
+            });
+        }
+        bindAll('.btn-edit');
+        bindAll('.addEmail');
+        bindAll('.removeEmail');
+
+        this.delegateEvents();
     },
 
     /**
