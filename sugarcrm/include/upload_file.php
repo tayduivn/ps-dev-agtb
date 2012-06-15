@@ -31,13 +31,27 @@ require_once('include/externalAPI/ExternalAPIFactory.php');
  */
 class UploadFile
 {
-	var $field_name;
-	var $stored_file_name;
-	var $original_file_name;
-	var $temp_file_location;
-	var $use_soap = false;
-	var $file;
-	var $file_ext;
+	public $field_name;
+	public $stored_file_name;
+	public $original_file_name;
+	public $temp_file_location;
+	public $use_soap = false;
+	public $file;
+	public $file_ext;
+
+    /**
+     * An error array, meant to be accessed by consumers and callers of this
+     * class for reporting status.
+     *
+     * This array will contain two members:
+     *  - code: An error code reported by the uploader
+     *  - message: The error string to report
+     *
+     * @access public
+     * @var array
+     */
+    public $error = array();
+
 	protected static $url = "upload/";
 
 	/**
@@ -117,7 +131,7 @@ class UploadFile
 	    $fullname = "upload://$bean_id.$filename";
 	    if(file_exists($fullname)) {
             if(!rename($fullname,  "upload://$bean_id")) {
-                $GLOBALS['log']->fatal("unable to rename file: $fullname => $bean_id");
+                $this->setError('fatal', "unable to rename file: $fullname => $bean_id");
             }
 	        return true;
 	    }
@@ -170,17 +184,17 @@ class UploadFile
 				if(copy($oldStyleSource, $source)) {
 					// delete the old
 					if(!unlink($oldStyleSource)) {
-						$GLOBALS['log']->error("upload_file could not unlink [ {$oldStyleSource} ]");
+                        $this->setError('error', "upload_file could not unlink [ {$oldStyleSource} ]");
 					}
 				} else {
-					$GLOBALS['log']->error("upload_file could not copy [ {$oldStyleSource} ] to [ {$source} ]");
+                    $this->setError('error', "upload_file could not copy [ {$oldStyleSource} ] to [ {$source} ]");
 				}
 			}
 		}
 
 		$destination = "upload://$new_id";
 		if(!copy($source, $destination)) {
-			$GLOBALS['log']->error("upload_file could not copy [ {$source} ] to [ {$destination} ]");
+            $this->setError('error', "upload_file could not copy [ {$source} ] to [ {$destination} ]");
 		}
 	}
 
@@ -215,26 +229,35 @@ class UploadFile
                     //log the error, the string produced will read something like:
                     //ERROR: There was an error during upload. Error code: 1 - UPLOAD_ERR_INI_SIZE - The uploaded file exceeds the upload_max_filesize directive in php.ini. upload_maxsize is 16
                     $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT_SIZEINFO'],array($_FILES['filename_file']['error'], self::$filesError[$_FILES['filename_file']['error']],$sugar_config['upload_maxsize']));
-                    $GLOBALS['log']->fatal($errMess);
+                    $this->setError('fatal', $errMess, $_FILES['filename_file']['error']);
                 }else{
                     //log the error, the string produced will read something like:
                     //ERROR: There was an error during upload. Error code: 3 - UPLOAD_ERR_PARTIAL - The uploaded file was only partially uploaded.
                     $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT'],array($_FILES['filename_file']['error'], self::$filesError[$_FILES['filename_file']['error']]));
-                    $GLOBALS['log']->fatal($errMess);
+                    $this->setError('fatal', $errMess, $_FILES['filename_file']['error']);
                 }
 		    }
 		    return false;
 		}
 
-		if(!is_uploaded_file($_FILES[$this->field_name]['tmp_name'])) {
-			return false;
-		} elseif($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
-		    $GLOBALS['log']->fatal("ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
-			return false;
-		}
+        // Added Sugar API Override flag to FILES to allow PUT API hits to work
+		//if(!is_uploaded_file($_FILES[$this->field_name]['tmp_name']) || !isset($_FILES[$this->field_name]['_SUGAR_API_UPLOAD']) || $_FILES[$this->field_name]['_SUGAR_API_UPLOAD'] !== true) {
+		//	return false;
+		//} elseif($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
+		//    $GLOBALS['log']->fatal("ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
+		//	return false;
+		//}
+        if (is_uploaded_file($_FILES[$this->field_name]['tmp_name']) || (isset($_FILES[$this->field_name]['_SUGAR_API_UPLOAD']) && $_FILES[$this->field_name]['_SUGAR_API_UPLOAD'] === true)) {
+            if($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
+                $this->setError('fatal', "ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
+                return false;
+            }
+        } else {
+            return false;
+        }
 
 		if(!UploadStream::writable()) {
-		    $GLOBALS['log']->fatal("ERROR: cannot write to upload directory");
+		    $this->setError('fatal', "ERROR: cannot write to upload directory");
 			return false;
 		}
 
@@ -352,13 +375,23 @@ class UploadFile
 	    }
         if($this->use_soap) {
         	if(!file_put_contents($destination, $this->file)){
-        	    $GLOBALS['log']->fatal("ERROR: can't save file to $destination");
+        	    $this->setError('fatal', "ERROR: can't save file to $destination");
                 return false;
         	}
 		} else {
 			if(!UploadStream::move_uploaded_file($_FILES[$this->field_name]['tmp_name'], $destination)) {
-			    $GLOBALS['log']->fatal("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
-                return false;
+                if (isset($_FILES[$this->field_name]['_SUGAR_API_UPLOAD']) && $_FILES[$this->field_name]['_SUGAR_API_UPLOAD'] === true) {
+                    // Try to move it manually
+                    if (copy($_FILES[$this->field_name]['tmp_name'], $destination)) {
+                        unlink($_FILES[$this->field_name]['tmp_name']);
+                    } else {
+                        $this->setError('fatal', "ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
+                        return false;
+                    }
+                } else {
+                    $this->setError('fatal', "ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
+                    return false;
+                }
 			}
 		}
 		return true;
@@ -479,6 +512,41 @@ class UploadFile
             $path = substr($path, 9);
         }
         return $path;
+    }
+
+    /**
+     * Gets the last reported error. Optionally will return just the error message.
+     *
+     * @param bool $messageOnly
+     * @return array|null
+     */
+    public function getError($messageOnly = false) {
+        return $messageOnly ? $this->getErrorMessage() : $this->error;
+    }
+
+    /**
+     * Gets just the error message from the last reported error.
+     *
+     * @return string|null
+     */
+    public function getErrorMessage() {
+        return empty($this->error['message']) ? null : $this->error['message'];
+    }
+
+    /**
+     * Sets an error message and optional error code
+     *
+     * @param string $type
+     * @param string $message
+     * @param int $code
+     */
+    protected function setError($type, $message, $code = 0) {
+        // Read it into the error array
+        $this->error['message'] = $message;
+        $this->error['code'] = $code;
+
+        // Send it to the log
+        $GLOBALS['log']->$type($message);
     }
 }
 
