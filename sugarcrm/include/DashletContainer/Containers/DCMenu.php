@@ -95,7 +95,7 @@ class DCMenu extends DashletContainer
                 $class = "";
             }
 
-            $image = '<a href="#" ><span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span></a>';
+            $image = '<span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span>';
 		}
         else
         {
