@@ -324,7 +324,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             'user_id'=>$user_id,
             'expires'=>$expires,
         );
-        $GLOBALS['log']->fatal("IKEA: The session (".session_id()."/$oauth_token)is: ".print_r($_SESSION,true));
         return true;
     }
 
