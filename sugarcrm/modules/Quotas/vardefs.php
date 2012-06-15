@@ -190,7 +190,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'type' => 'bool',
     	'reportable'=>false,
   	),
-
+    'name' =>
+    array (
+       'name' => 'name',
+       'type' => 'id',
+       'source'=>'non-db',
+    ),
 
 
     		),	//ends "fields" array
