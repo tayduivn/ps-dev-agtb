@@ -45,7 +45,6 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
                     'name' => 'name',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 35,
                     'required' => true
                 ),
@@ -54,7 +53,6 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
                     'name' => 'description',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 35,
                     'required' => true
                 )

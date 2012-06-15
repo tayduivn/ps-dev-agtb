@@ -53,7 +53,6 @@ $viewdefs['Leads']['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
-                    'sorting' => true,
                     'width' => 49
                 ),
                 1 =>
@@ -62,7 +61,6 @@ $viewdefs['Leads']['portal']['view']['list'] = array(
                     'label' => 'Status',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 13
                 ),
                 2 =>
@@ -71,7 +69,6 @@ $viewdefs['Leads']['portal']['view']['list'] = array(
                     'label' => 'Modifed Date',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 17
                 ),
             ),
