@@ -297,13 +297,6 @@ class SugarBean
         $this->db = DBManagerFactory::getInstance();
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
-            // We can disable team security for this module
-            $this->disable_row_level_security =true;
-        }
-        //END SUGARCRM flav=pro ONLY
         if((false == $this->disable_vardefs && empty($loaded_defs[$this->object_name])) || !empty($GLOBALS['reload_vardefs']))
         {
             //BEGIN SUGARCRM flav=int ONLY
@@ -378,6 +371,14 @@ class SugarBean
                 $this->optimistic_lock=true;
             }
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
+        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+        	// We can disable team security for this module
+        	$this->disable_row_level_security =true;
+        }
+        //END SUGARCRM flav=pro ONLY
 
         if($this->bean_implements('ACL') && !empty($GLOBALS['current_user'])){
             $this->acl_fields = (isset($dictionary[$this->object_name]['acl_fields']) && $dictionary[$this->object_name]['acl_fields'] === false)?false:true;
@@ -4982,7 +4983,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($where_clause)) {
             return "WHERE $where_clause AND deleted=0";
         } else {
-            return "WHERE deteled=0";
+            return "WHERE deleted=0";
         }
     }
 
