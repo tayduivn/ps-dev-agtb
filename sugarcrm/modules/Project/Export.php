@@ -100,7 +100,11 @@ for ($i = 1; $i <= count($contacts); $i++) {
 }
  
 // (60) Task Table Definition
-$mpx .= "60,Outline Level,Unique ID,ID,Name,Milestone,Start,Constraint Date,Constraint Type,Duration,% Complete,Actual Start,Predecessors\n";
+$mpx .= "60,Outline Level,Unique ID,ID,Name,Milestone,Start,Finish,Constraint Date,Constraint Type,Duration,% Complete,Actual Start,Predecessors\n";
+
+// (61) Numeric Task Table Definition
+$mpx .= "61,3,98,90,1,81,50,51,68,91,40,44,58,70\n";
+
 
 // (70) Task Information
 $projectTasks = $focus->getAllProjectTasks();
@@ -148,6 +152,9 @@ for ($i = 0; $i < count($projectTasks); $i++){
 	
 	// start
 	$mpx .= $projectTasks[$i]->date_start . ",";
+
+    // finish
+    $mpx .= $projectTasks[$i]->date_finish . ",";
 	
 	// constraint date
 	$mpx .= $projectTasks[$i]->date_start . ",";
@@ -163,11 +170,11 @@ for ($i = 0; $i < count($projectTasks); $i++){
 	$mpx .= $projectTasks[$i]->percent_complete ."%,";
 	
 	// actual start
-	$mpx .= $projectTasks[$i]->date_start;
+	$mpx .= $projectTasks[$i]->date_start . ',';
 	
 	// predecessors
 	if ($projectTasks[$i]->predecessors != ''){
-		$mpx .= ",\"" . $projectTasks[$i]->predecessors . "\"";
+		$mpx .= "\"" . $projectTasks[$i]->predecessors . "\"";
 	}
 	
 	$mpx .= "\n";
