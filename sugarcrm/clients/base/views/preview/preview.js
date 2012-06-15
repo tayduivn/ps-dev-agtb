@@ -5,62 +5,14 @@
  * @alias SUGAR.App.view.views.PreviewView
  * @extends View.View
  */
-    _meta: {
-        "panels": [
-            {
-                "label": "Preview",
-                "fields": [
-                    {
-                        "name": "name",
-                        "default": true,
-                        "enabled": true,
-                        "width": 35,
-                        "type": "text",
-                        "label": "LBL_SUBJECT"
-                    },
-                    {
-                        "name": "description",
-                        "default": true,
-                        "enabled": true,
-                        "width": 35,
-                        "type": "textarea",
-                        "label":"LBL_DESCRIPTION"
-                    },
-                    {
-                        "name": "date_entered",
-                        "default": true,
-                        "enabled": true,
-                        "width": 35,
-                        "type": "datetime",
-                        "label": "LBL_DATE_ENTERED"
-                    },
-                    {
-                        "name": "created_by_name",
-                        "default": true,
-                        "enabled": true,
-                        "width": 35,
-                        "type": "relate",
-                        "label": "LBL_CREATED"
-                    },
-                    {
-                        "name": "modified_by_name",
-                        "default": true,
-                        "enabled": true,
-                        "width": 35,
-                        "type": "relate",
-                        "label": "LBL_MODIFIED_NAME"
-                    }
-                ]
-            }
-        ]
-    },
     events: {
         'click .closeSubdetail': 'closePreview'
     },
     initialize: function(options) {
-        this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = "detail";
     },
+    
     _render: function() {
         // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
         this.layout.layout.off("search:preview", null, this);
@@ -68,10 +20,26 @@
 
         this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
     },
+    _renderSelf: function() {
+        var fieldsArray, that;
+        app.view.View.prototype._renderSelf.call(this);
+    },
+    
     togglePreview: function(model) {
+        var fieldsToDisplay = app.config.fieldsToDisplay || 5;
         if(model) {
             this.model.set(model);
             this.model.module = this.model.get('_module');
+            this.context.set({
+                'model': this.model,
+                'module': this.model.module
+            });
+            // Get the corresponding view meta
+            this.meta = app.metadata.getView(this.model.module, 'detail') || {};
+
+            // Clip meta panel fields to first <N> fields
+            this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
+
             // in turn calls _renderSelf, but also populates our fields via _renderField
             app.view.View.prototype._render.call(this);
         }

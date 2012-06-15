@@ -37,6 +37,15 @@
             _set(prefix + property, meta[property]);
         }
     }
+    
+    function _setLoadedModules() {
+        var loadedModuleList = _.toArray(_getMeta(_app, "moduleList", "")) || [];
+        if (loadedModuleList && app.config && app.config.displayModules) {
+            loadedModuleList = _.intersection(loadedModuleList, app.config.displayModules);
+            _set("app:loadedModuleList", loadedModuleList);
+        }
+        return loadedModuleList;
+    }
 
     function _getMeta(container, property, prefix, deleteHash) {
         if (!container[property]) {
@@ -180,6 +189,18 @@
         },
 
         /**
+         * Gets loaded modules for this application.
+         * @return {Array} Modules loaded for app.
+         */
+        getLoadedModulesList: function() {
+            if(app.cache.has('app:loadedModuleList')) {
+                return app.cache.get('app:loadedModuleList');
+            } else {
+                return _setLoadedModules();
+            }
+        },
+
+        /**
          * Gets field widget metadata.
          * @param {Object} type Field type.
          * @return {Object} Metadata for the specified field type.
@@ -253,11 +274,16 @@
         /**
          * Gets module list as delimited string
          * @param {String} The delimiter to use.
+         * @param {Boolean} true if only wants modules loaded by this application. 
          * @return {Object}
          */
-        getDelimitedModuleList: function(delimiter) {
+        getDelimitedModuleList: function(delimiter, loadedModulesOnly) {
             if(!delimiter) return null;
-            return _.toArray(this.getModuleList()).join(delimiter);
+            if(loadedModulesOnly) {
+                return this.getLoadedModulesList().join(delimiter);
+            } else {
+                return _.toArray(this.getModuleList()).join(delimiter);
+            }
         },
 
         /**
@@ -332,6 +358,7 @@
             }
 
             _setMeta(_app, "moduleList", "", data);
+            _setLoadedModules();
 
             _setMeta(_lang, "appListStrings", _langPrefix, data);
             _setMeta(_lang, "appStrings", _langPrefix, data);

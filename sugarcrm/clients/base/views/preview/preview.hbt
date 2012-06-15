@@ -5,7 +5,7 @@
             <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
             <h4>{{str "LBL_MODULE_NAME" ../model.attributes._module}}: {{../model.attributes.name}}</h4>
             {{#each fields}}
-            {{field ../../this ../../model}}
+            {{field ../../this}}
             {{/each}}
         </div>
     </div>

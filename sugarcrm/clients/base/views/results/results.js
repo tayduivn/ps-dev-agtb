@@ -69,7 +69,7 @@
      */
     fireSearchRequest: function (cb, offset) {
         var mlist = '', self = this, params;
-        mlist = app.metadata.getDelimitedModuleList(',');
+        mlist = app.metadata.getDelimitedModuleList(',', true);
         params = {query: self.lastQuery, moduleList: mlist, maxNum: app.config.maxQueryResult};
         if (offset) params.offset = offset;
 
