@@ -22,13 +22,13 @@
         },
         
         /**
-         * Where the store has a key and the key has a value.
+         * Whether the store has a key and the key has a value.
          *
          * @param {String} key Item key.
          * @return {Boolean} True if the key is in the store and has a value.
          */
         has: function(key) {
-            return (cache[key] === undefined) ? false : true;
+            return (_.isUndefined(cache[key])) ? false : true;
         },
         
         /**
@@ -43,6 +43,7 @@
         
         /**
          * Returns all items.
+         * @return {Object}
          */
         getAll: function() {
             return cache;
@@ -81,7 +82,6 @@
         
         /**
          * Removes all items from the native store.
-         * @param {String} key Item key.
          */
         cutAll: function() {
             this.nativeStorePlugin.removeAll(emptyFn, emptyFn);
