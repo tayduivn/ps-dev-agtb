@@ -4922,9 +4922,10 @@ function save_relationship_changes($is_update, $exclude=array())
     /**
      * Construct where clause from a list of name-value pairs.
      * @param array $fields_array Name/value pairs for column checks
+     * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      * @return string The WHERE clause
      */
-    function get_where($fields_array)
+    function get_where($fields_array, $deleted=true)
     {
         $where_clause = "";
         foreach ($fields_array as $name=>$value)
@@ -4937,9 +4938,13 @@ function save_relationship_changes($is_update, $exclude=array())
             $where_clause .= "$name = ".$this->db->quoted($value,false);
         }
         if(!empty($where_clause)) {
-            return "WHERE $where_clause AND deleted=0";
+            if($deleted) {
+                return "WHERE $where_clause AND deleted=0";
+            } else {
+                return "WHERE $where_clause";
+            }
         } else {
-            return "WHERE deteled=0";
+            return "";
         }
     }
 
@@ -4950,11 +4955,12 @@ function save_relationship_changes($is_update, $exclude=array())
      * Internal function, do not override.
      * @param array @fields_array  array of name value pairs used to construct query.
      * @param boolean $encode Optional, default true, encode fetched data.
+     * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      * @return object Instance of this bean with fetched data.
      */
-    function retrieve_by_string_fields($fields_array, $encode=true)
+    function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
-        $where_clause = $this->get_where($fields_array);
+        $where_clause = $this->get_where($fields_array, $deleted);
         if(isset($this->custom_fields))
         $custom_join = $this->custom_fields->getJOIN();
         else $custom_join = false;
