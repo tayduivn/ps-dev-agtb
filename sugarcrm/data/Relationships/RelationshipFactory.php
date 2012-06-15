@@ -127,6 +127,15 @@ class SugarRelationshipFactory {
         return $this->relationships[$relationshipName];
     }
 
+    /**
+     * This function returns an array of every relationship in the system
+     * @return array An array of relationships, indexed by the relationship name
+     */
+    public function getRelationshipDefs()
+    {
+        // The relationships are loaded in the constructor
+        return $this->relationships;
+    }
 
     protected function loadRelationships()
     {

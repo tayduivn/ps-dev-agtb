@@ -216,10 +216,32 @@ class MetaDataManager {
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
-        //FIXME: Need more relationshp data (all relationship data)
-        $data['relationships'] = $vardefs['relationships'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
+
+        $md5 = serialize($data);
+        $md5 = md5($md5);
+        $data["_hash"] = $md5;
+
+        return $data;
+    }
+
+    /**
+     * The collector method for relationships.
+     *
+     * @return array An array of relationships, indexed by the relationship name
+     */
+    public function getRelationshipData() {
+        require_once('data/Relationships/RelationshipFactory.php');
+        $relFactory = SugarRelationshipFactory::getInstance();
+        
+        $data = $relFactory->getRelationshipDefs();
+        foreach ( $data as $relKey => $relData ) {
+            unset($data[$relKey]['table']);
+            unset($data[$relKey]['fields']);
+            unset($data[$relKey]['indices']);
+            unset($data[$relKey]['relationships']);
+        }
 
         $md5 = serialize($data);
         $md5 = md5($md5);
