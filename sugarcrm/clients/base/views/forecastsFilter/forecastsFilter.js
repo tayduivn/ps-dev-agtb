@@ -46,14 +46,20 @@
             chosen.render();
 
             if (key === 'timeperiods') {
-                self.setupTimePeriodActions($chosenPlaceholder, modelData);
+                self.handleTimePeriodEvents($chosenPlaceholder);
             } else if (key === 'category') {
-                self.setupCategoryActions($chosenPlaceholder, modelData);
+                self.handleCategoryEvents($chosenPlaceholder);
+            }
+
+            if (modelData.default) {
+                $chosenPlaceholder.find('select').trigger('change', {
+                    selected: modelData.default
+                });
             }
         });
     },
 
-    setupCategoryActions: function($multiselect, modelData) {
+    handleCategoryEvents: function($multiselect) {
         var self = this;
         $multiselect.on('change', 'select', function(event, data) {
             //Get the selected category
@@ -69,20 +75,13 @@
         });
     },
 
-    setupTimePeriodActions: function($dropdown, modelData) {
+    handleTimePeriodEvents: function($dropdown) {
         var self = this;
-
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
             self.context.set('selectedTimePeriod', {"id": id, "label": label});
         });
-
-        if (modelData.default) {
-            $dropdown.find('select').trigger('change', {
-                selected: modelData.default
-            });
-        }
     }
 
 })
