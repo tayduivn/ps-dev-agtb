@@ -364,7 +364,7 @@ direction: rtl;
 float: left;
 }
 #sugar_spot_search_div { float:right; }
-#close_spot_search { left:20px;}
+#close_spot_search { left:50px;}
 #glblSearchBtn {
 float: left;
  left: 10px;
@@ -388,7 +388,14 @@ float: right;
 }
 
 #sugar_spot_search {
-    direction: rtl;    
+    direction: rtl;
+    padding:1px 5px 0px 40px;
+}
+#glblSearchBtn .searchicon {
+    left:2px;
+}
+#glblSearchBtn {
+    left: 17px;
 }
 
 #notificationsDivider {
