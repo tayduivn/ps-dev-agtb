@@ -37,7 +37,7 @@
         var self = this;
 
         this.jsTree = $(".jstree-sugar").jstree({
-            "plugins":["themes", "json_data", "ui", "crrm"],
+            "plugins":["json_data", "ui", "crrm", "types", "themes"],
             "json_data" : {
                 "ajax" : {
                     "url" : app.api.serverUrl + "/Forecasts/reportees/" + app.user.get('id'),
@@ -48,9 +48,38 @@
                         }
                     }
                 }
+            },
+            "types" : {
+                "types" : {
+                    "types" : {
+                        "parent_link" : {
+
+                        },
+                        "manager" : {
+
+                        },
+                        "my_opportunities" : {
+
+                        },
+                        "rep" : {
+
+                        }
+                    }
+                }
             }
         }).on("select_node.jstree", function(event, data){
                 jsData = data.inst.get_json();
+
+                // if user clicked on a "My Opportunities" node
+                // set this flag true
+                if(jsData[0].attr.rel == "my_opportunities") {
+                    self.context.set("showManagerOpportunities", true);
+                } else if( self.context.attributes.showManagerOpportunities ) {
+                    // resets back to false if user clicks  non-My-Opportunities node
+                    // and showManagerOpportunities was previously set to true
+                    // so we dont unnecessarily change the context when we dont need to
+                    self.context.set("showManagerOpportunities", false);
+                }
 
                 var selectedUser = {
                     'id' : jsData[0].metadata.id,

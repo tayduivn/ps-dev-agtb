@@ -35,6 +35,16 @@
         this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
         this.layout.context.on("change:selectedStages", function(context, stages) { self.updateWorksheetBySelectedStages(stages); });
+
+        //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
+        this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
+    },
+
+    /***
+     * TEMPORARY FUNCTION just to show flag toggle in console
+     */
+    updateWorksheetByMgrOpps: function(){
+        console.log("Worksheet's context.showManagerOpportunites has changed");
     },
 
     /**

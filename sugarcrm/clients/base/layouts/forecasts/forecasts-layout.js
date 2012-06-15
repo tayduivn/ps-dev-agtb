@@ -15,7 +15,8 @@
                 register: app.events.register,
                 selectedTimePeriod: {},
                 selectedSalesStage: {},
-                selectedUser: {}
+                selectedUser: {},
+                showManagerOpportunities: false
             });
 
             app.view.Layout.prototype.initialize.call(this, options);
