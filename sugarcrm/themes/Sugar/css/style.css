@@ -6830,7 +6830,7 @@ ul.clickMenu.show {
 	height: 43px;
 	width: 50px;
 }
-
+#globalLinksModule ul.clickMenu li:hover span,
 #quickCreate ul.clickMenu > li:hover {
 	background-color: #276499;
 }
