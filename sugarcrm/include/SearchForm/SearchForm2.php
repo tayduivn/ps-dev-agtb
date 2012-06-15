@@ -818,7 +818,6 @@ require_once('include/EditView/EditView2.php');
                          global $current_user;
                          $field_value = $db->quote($current_user->id);
                          $operator = '=' ;
-                         $where .= ' AND ';
                      }
                  } else if(!empty($parms['closed_values']) && is_array($parms['closed_values'])) {
                      if( $parms['value'] == false ) {
@@ -987,7 +986,6 @@ require_once('include/EditView/EditView2.php');
                          if ( preg_match("/favorites_only.*/", $field) ) {
                              if ( $field_value == '1' ) {
                                  $field_value = $GLOBALS['current_user']->id;
-                                 $where .= " AND ";
                              }
                              else {
                                  continue 2;

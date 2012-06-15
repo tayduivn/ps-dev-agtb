@@ -142,6 +142,11 @@ class RestTestList extends RestTestBase {
         // Test My Items
         $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
         $this->assertEquals(10,count($restReply['reply']['records']));
+        
+        // validate each is actually my item
+        foreach($restReply['reply']['records'] AS $record) {
+            $this->assertEquals($record['assigned_user_id'], $GLOBALS['current_user']->id, "A Record isn't assigned to me");
+        }
 
         // Test Favorites & My Items
         $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
@@ -217,7 +222,20 @@ class RestTestList extends RestTestBase {
         // Then searching without specific fields broke
         $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST"));
         $this->assertGreaterThan(0,count($restReply['reply']['records']));
-        
+
+        // add a search field
+        $GLOBALS['dictionary']['Cases']['fields']['status']['unified_search'] = true;
+        $restReply = $this->_restCall("Cases/?q=New");
+        foreach($restReply['reply']['records'] AS $record) {
+            $status = trim($record['status']);
+            $name = trim($record['name']);
+            $status = substr($status, 0, 2);
+            $name = substr($status, 0, 2);
+            // this may not be the best way to do this but I can't figure out a better way right now
+            $test = array( ucwords($status), ucwords($name) );
+            $this->assertContains('New', $test, "New does not start either name or status");
+        }
+            
     }
 
 
