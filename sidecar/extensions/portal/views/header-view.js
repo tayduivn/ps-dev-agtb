@@ -114,7 +114,7 @@
         setModuleInfo: function() {
             var self = this;
             this.createListLabels = [];
-            this.moduleList = app.metadata.getLoadedModulesList();
+            this.moduleList = app.metadata.getModuleList({visible: true});
         },
 
         /**

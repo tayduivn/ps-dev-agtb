@@ -28,19 +28,20 @@
     togglePreview: function(model) {
         var fieldsToDisplay = app.config.fieldsToDisplay || 5;
         if(model) {
-            this.model.set(model);
-            this.model.module = this.model.get('_module');
+            // Create a corresponding Bean and Context for clicked search result. It
+            // might be a Case, a Bug, etc...we don't know, so we build dynamically.
+            this.model = app.data.createBean(model.get('_module'), model.toJSON());
             this.context.set({
                 'model': this.model,
                 'module': this.model.module
             });
-            // Get the corresponding view meta
+
+            // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'detail') || {};
 
-            // Clip meta panel fields to first <N> fields
+            // Clip meta panel fields to first N number of fields per the spec
             this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
 
-            // in turn calls _renderSelf, but also populates our fields via _renderField
             app.view.View.prototype._render.call(this);
         }
     },
