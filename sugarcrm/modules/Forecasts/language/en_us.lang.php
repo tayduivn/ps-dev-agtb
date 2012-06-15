@@ -228,4 +228,7 @@ $mod_strings = array (
   'LBL_COMMITTED_HISTORY_NONE_CHANGED' => 'Updated forecast best and likely stayed the same',
   'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
   'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
+
+  // Labels for jsTree implementation
+  'LBL_TREE_MY_OPPORTUNITIES' => 'My Opportunities',
 );

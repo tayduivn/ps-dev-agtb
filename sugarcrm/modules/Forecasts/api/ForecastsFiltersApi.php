@@ -125,9 +125,6 @@ class ForecastsFiltersApi extends ModuleApi {
      * @return string
      */
     public function getReportees($api, $args) {
-        // TEMPORARY SOLUTION to lack of setting limits on recursive SQL function
-        $maxLevel = 2;
-
         $id = $args['userId'];
 
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
@@ -142,42 +139,84 @@ class ForecastsFiltersApi extends ModuleApi {
         $flatUsers = array();
         while($row = $GLOBALS['db']->fetchByAssoc($result))
         {
-            if( $row['_level'] <= $maxLevel )
+            if(empty($users[$row['_level']]))  {
+                $users[$row['_level']] = array();
+            }
+
+            $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
+
+            $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
+
+            $user = array(
+                'data' => $fullName,
+                'children' => array(),
+                'metadata' => array(
+                    "id" => $row['id'],
+                    "full_name" => $fullName,
+                    "first_name" => $row['first_name'],
+                    "last_name" => $row['last_name'],
+                    "reports_to_id" => $row['reports_to_id'],
+                    "level" => $row['_level']
+                ),
+                'state' => $openClosed,
+                'attr' => array(
+                    // set all users to rep by default
+                    'rel' => 'rep'
+                )
+            );
+
+            // Set the main user id as the root for treeData
+            if($user['metadata']['id'] == $id)
             {
-                if(empty($users[$row['_level']]))  {
-                    $users[$row['_level']] = array();
-                }
-
-                $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
-
-                $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
-
-                $user = array(
-                    'data' => $fullName,
-                    'children' => array(),
-                    'metadata' => array(
-                        "id" => $row['id'],
-                        "full_name" => $fullName,
-                        "first_name" => $row['first_name'],
-                        "last_name" => $row['last_name'],
-                        "reports_to_id" => $row['reports_to_id']
-                    ),
-                    'state' => $openClosed
-                );
-
-                // Set the main user id as the root for treeData
-                if($user['metadata']['id'] == $id)
-                {
-                    $treeData = $user;
-                } else {
-                    $flatUsers[] = $user;
-                }
+                $user['attr']['rel'] = 'manager';
+                $treeData = $user;
+            } else {
+                $flatUsers[] = $user;
             }
         }
 
+        // TEMPORARY SOLUTION to lack of setting limits on recursive SQL function
+        // Maximum depth of children to return
+        // 2 = direct children of the parent are returned, children of those children are not
+        $maxLevel = 2;
+
         // if this is empty, something is really wrong
         if(!empty($treeData))
-            $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers );
+            $treeData['children'] = $this->getChildren( $treeData['metadata']['id'], $flatUsers, $maxLevel );
+
+        // Check to see if root user has children
+        // if no children, the user tree will be hidden anyways, so don't bother getting Opportunities
+        // if so, we want to grab any Opportunities the user might have
+        if(!empty($treeData['children'])) {
+            $result = $GLOBALS['db']->query("SELECT count(id) ct FROM opportunities WHERE assigned_user_id = '{$id}' ");
+            $row = $GLOBALS['db']->fetchByAssoc($result);
+
+            if($row['ct'] > 0) {
+                global $current_language;
+                //grab language defs
+                $current_module_strings = return_module_language($current_language, 'Forecasts');
+
+                $myOpp = array(
+                    'data' => $current_module_strings['LBL_TREE_MY_OPPORTUNITIES'],
+                    'children' => array(),
+                    // Give myOpp the same metadata as the root Manager user
+                    'metadata' => array(
+                        "id" => $treeData['metadata']['id'],
+                        "full_name" => $treeData['metadata']['full_name'],
+                        "first_name" => $treeData['metadata']['first_name'],
+                        "last_name" => $treeData['metadata']['last_name'],
+                        "reports_to_id" => $treeData['metadata']['reports_to_id'],
+                        "level" => "1"
+                    ),
+                    'state' => 'closed',
+                    'attr' => array(
+                        'rel' => 'my_opportunities'
+                    )
+                );
+                // add myOpp to the beginning of children
+                array_unshift($treeData['children'], $myOpp);
+            }
+        }
 
         return $treeData;
     }
@@ -187,13 +226,23 @@ class ForecastsFiltersApi extends ModuleApi {
      * given a list of $users
      * @param $id {int} ID value of the parent user
      * @param $users {Array} of users
+     * @param $maxLevel {int} max level a user can be before not being included in tree data
      * @return array of child users
      */
-    public function getChildren( $id, $users ) {
+    public function getChildren( $id, $users, $maxLevel ) {
         $retChildren = array();
         foreach( $users as $user ) {
             if( $user['metadata']['reports_to_id'] == $id ) {
-                $user['children'] = $this->getChildren( $user['metadata']['id'] , $users );
+                $user['children'] = $this->getChildren( $user['metadata']['id'] , $users, $maxLevel );
+
+                // we want to set users as 'managers' if they have children
+                if(!empty($user['children']))
+                    $user['attr']['rel'] = 'manager';
+
+                //but if their level is at/over our maxLevel, DO NOT WANT KIDS
+                if($user['metadata']['level'] >= $maxLevel)
+                    $user['children'] = array();
+
                 $retChildren[] = $user;
             }
         }
