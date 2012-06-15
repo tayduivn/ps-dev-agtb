@@ -6667,7 +6667,9 @@ ul.clickMenu li ul.subnav li input {
 	/*width: 170px;*/
 	width:100%	
 }
-ul.SugarActionMenuIESub li a:hover,
+td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
+
+ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu > li > a:hover, ul.clickMenu.SugarActionMenu > li > span.subhover:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 background-color: #355b7e;
 color: #fff;
