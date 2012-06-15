@@ -80,6 +80,13 @@
                 }
             });
         }
+
+        $.fn.dataTableExt.afnFiltering.push(
+            function(oSettings, aData, iDataIndex)
+            {
+                return ($.inArray($(aData[3]).html(), self._filters['stages']) !== -1) ? true : false;
+            }
+        );
     },
 
     /**
@@ -99,7 +106,9 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedStages:function (params) {
-        console.log(params);
+        this._filters['stages'] = params;
+        this.render();
+
     },
 
     /**

@@ -37,28 +37,42 @@
                 models = {};
 
             _.each(componentsMetadata, function(component) {
-                var model,
-                    modelMetadata = component.model;
+                var module, name,
+                    modelMetadata = component.model,
+                    collectionMetadata = component.collection;
 
                 if (modelMetadata) {
-                    if (!models[modelMetadata.module.toLowerCase()]) {
-                        models[modelMetadata.module.toLowerCase()] = {};
-                    }
+                    module = modelMetadata.module.toLowerCase();
+                    name = modelMetadata.name.toLowerCase();
 
-                    model = self.createModel(modelMetadata.module, modelMetadata.name);
-                    models[modelMetadata.module.toLowerCase()][modelMetadata.name.toLowerCase()] = model;
+                    self.namespace(models, module);
+                    models[module][name] = self.createModel(modelMetadata);
+                }
+
+                if (collectionMetadata) {
+                    module = collectionMetadata.module.toLowerCase();
+                    name = collectionMetadata.name.toLowerCase();
+
+                    self.namespace(models, module);
+                    models[module][name] = self.createCollection(collectionMetadata);
                 }
             });
 
-            models.forecasts.worksheet = new app.Model.Worksheet(); //TODO: create model using the metadata
             return models;
         },
 
-        createModel: function(module, name) {
+        createModel: function(modelMetadata) {
             var Model = Backbone.Model.extend({
-                url: app.config.serverUrl + '/' + module + '/' + name.toLowerCase()
+                url: app.config.serverUrl + '/' + modelMetadata.module + '/' + modelMetadata.name.toLowerCase()
             });
             return new Model();
+        },
+
+        createCollection: function(collectionMetadata) {
+            var Collection = Backbone.Collection.extend({
+                url: app.config.serverUrl + '/' + collectionMetadata.module + '/' + collectionMetadata.name.toLowerCase()
+            });
+            return new Collection();
         },
 
         initializeDrawer: function() {
@@ -74,6 +88,12 @@
                 $('#drawer').toggleClass('span2');
                 $('#charts').toggleClass('span10').toggleClass('span12');
             });
+        },
+
+        namespace: function(target, namespace) {
+            if (!target[namespace]) {
+                target[namespace] = {};
+            }
         },
 
         /**

@@ -38,6 +38,10 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         6 => array(
             'view' => 'forecastsWorksheet',
+            'collection' => array(
+                'module' => 'Forecasts',
+                'name' => 'Worksheet',
+            ),
         ),
         7 => array(
             'view' => 'forecastsSubnav',
