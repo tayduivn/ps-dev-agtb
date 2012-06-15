@@ -5852,12 +5852,22 @@ top:0px;
 
 #glblSearchBtn {
     display:block;
-    float: right;
-    position: relative;
-    left: -10px;
+    position: absolute;
+    right: 19px;
     top: 1px;
+    width:32px;
 }
-
+#glblSearchBtn .searchIconLink {
+    width:32px;
+    overflow:hidden;
+    display:block;
+    position:relative;
+    cursor:pointer;
+}
+#glblSearchBtn .searchicon {
+    position: relative;
+    right:2px;
+}
 
 #dcmenuwrap{
 margin-left: auto;
@@ -5874,8 +5884,14 @@ span.dcmenuitem:hover{
 }
 
 
-#dcmenuSugarCube {
+#dcmenuSugarCube{
 float: right;
+padding: 0px 0px 0 2px;
+height: 43px;
+}
+
+#dcmenuUserIcon {
+float: left;
 padding: 0px 0px 0 2px;
 height: 43px;
 }
@@ -5889,22 +5905,22 @@ float: right;
 margin-right: 0px;	
 }
 
-#dcmenuSugarCube a{
+#dcmenuUserIcon a{
 width: 36px;
 height: 43px;
 background-repeat:no-repeat;
-padding: 0px 0 0 10px;
 margin: 0 0 0 0;
 text-decoration: none;
 display: block;
 text-align: center;
+cursor:default;
 }
 
 #dcmenuSugarCube.none a.notice
 {
 cursor: default;
 }
-#dcmenuSugarCube .dc_notif_icon{
+#dcmenuSugarCube .dc_notif_icon, #dcmenuUserIcon .dc_notif_icon{
 	width:24px;
 	height:24px;
 	border:0px;
@@ -5919,15 +5935,20 @@ cursor: default;
 
 #dcmenuSugarCube .notifCount{
     font-weight:bold;
-    font-size:9px !important;
+    font-size:11px !important;
     color:#FFFFFF;
-    position: relative; bottom: 20px; left: 5px;
+    position: relative;
 	text-align: center;
 	background-color: #CC0000;
     border-radius: 2px;
     width: 16px;
     cursor: pointer;
     padding: 1px;
+    width: 24px;
+    height:18px;
+    padding-top:6px;
+    top:8px;  
+    margin:0px 5px;  
 }
 
 
@@ -6076,6 +6097,7 @@ color: #0B578F;
 	margin-top: 8px;
 	height: 35px;
     width: 275px;
+    position:relative;
 }
 
 table.dcListView th,table.dcListView td {
@@ -6113,16 +6135,16 @@ margin-left:10px;
 		
 #sugar_spot_search_div {
 	height: 26px;
-	width: 240px;
+	width: 270px;
 	display: inline-block;
 	position: relative;
     float: left;
 }
 #sugar_spot_search {
 	border: 0;
-	width:215px;
+	width:210px;
 	font-size: 12px;
-    padding:1px 5px 0px 5px;
+    padding:1px 40px 0px 5px;
     height: 23px;
     margin-top: 1px;
     border-radius: 2px;
@@ -6268,7 +6290,7 @@ margin-top: 14px;
 #close_spot_search {
 display: block;
 position: absolute;
-right: 20px;
+right: 50px;
 top: 8px;
 display: none;
 cursor: pointer;
@@ -6645,7 +6667,9 @@ ul.clickMenu li ul.subnav li input {
 	/*width: 170px;*/
 	width:100%	
 }
-ul.SugarActionMenuIESub li a:hover,
+td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
+
+ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu > li > a:hover, ul.clickMenu.SugarActionMenu > li > span.subhover:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 background-color: #355b7e;
 color: #fff;
