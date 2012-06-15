@@ -1196,8 +1196,6 @@ require_once('include/EditView/EditView2.php');
              }
          }
 
-         var_dump($where_clauses);
-
          return $where_clauses;
      }
 
