@@ -4982,7 +4982,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($where_clause)) {
             return "WHERE $where_clause AND deleted=0";
         } else {
-            return "WHERE deteled=0";
+            return "WHERE deleted=0";
         }
     }
 

@@ -1,42 +1,43 @@
-<div class="row-fluid">
-    <div class="span2">
-        {{fullName}}<br>
+<div class="topline thumbnail">
+    <div class="title">
+        {{fullName}}'s<br>
         <h2>Forecast</h2>
     </div>
-    <div class="span3">
+    <div class="datapoint1">
         Best<br>
-        <h2>{{bestCase}}</h2>
+        <h2 id="best">{{bestCase}}</h2>
     </div>
-    <div class="span3">
+    <div class="divider"></div>
+    <div class="datapoint2">
         Likely<br>
-        <h2>{{likelyCase}}</h2>
+        <h2 id="likely">{{likelyCase}}</h2>
     </div>
-    <div class="span1">
-        <a href="forecast.html" class="btn btn-primary">Commit</a>
-    </div>
-</div>
-
+    <a href="forecast.html" class="btn btn-primary">
+    <i class="icon-upload icon-md"></i> Commit</a>
+    <hr>
 {{#if previousText}}
-<div class="row-fluid">
-    <div class="span2">
-    {{previousText}}
+<div class="log drawer">
+    <div class="title">
+    <strong>{{previousText}}</strong>
     </div>
-    <div class="span3">
+    <div class="datapoint1">
     {{previousBestCase}}
     </div>
-    <div class="span3">
+    <div class="divider"></div>
+    <div class="datapoint2">
     {{previousLikelyCase}}
     </div>
-    <div class="span1">
-    -- More --
+    <div class="toggle">
+        <i class="icon-chevron-up"></i>
     </div>
 </div>
-<div>
+<div class="hide extend">
 {{#history}}
    <div class="span6">
-   {{text}}</br>
+   <strong>{{text}}</strong></br>
    {{modified}}
    </div>
 {{/history}}
 </div>
 {{/if}}
+</div>

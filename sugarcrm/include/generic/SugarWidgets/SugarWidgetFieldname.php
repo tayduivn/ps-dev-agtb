@@ -269,18 +269,22 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
             $input_name0 = $current_user->id;
         }
 
+        return SugarWidgetFieldid::_get_column_select($layout_def)." IN (SELECT id FROM users WHERE reports_to_id = ". $this->reporter->db->quoted($input_name0). " AND deleted=0)\n";
+
+        /*
         $user = new User();
         $user->retrieve($input_name0);
         $ids = $user->get_reports_to_hierarchy();
 
         //Use in select syntax if we have more than one user.  This may be Mysql specific as other DBs may
-        //be able to handle a direct recursive query.
+        //be able to handle a direct recursive query
         if(count($ids) > 1)
         {
            return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", $ids) ."')\n";
         }
 
         return SugarWidgetFieldid::_get_column_select($layout_def)."=".$this->reporter->db->quoted($input_name0)."\n";
+        */
    	}
 
 	function &queryGroupBy($layout_def)

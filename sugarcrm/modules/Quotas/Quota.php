@@ -92,15 +92,25 @@ class Quota extends SugarBean {
 		
 		$ret_array['select'] = "SELECT users.first_name as name, users.last_name, users.id users_id, quotas.* ";
 				
-		$ret_array['from'] = " FROM users, quotas"; 		
-		$where_query = " WHERE ";
-		if (isset($where)) $where_query .= " ".$where. " AND ";
+		$ret_array['from'] = " FROM users, quotas ";
+
+        $where_query = ' WHERE ';
+
+		if (trim($where) != '')
+        {
+            $where_query .= $where. " AND ";
+        }
+
 		$where_query .= " users.id = quotas.user_id";
-		if($retrieve_created_by){
+
+        if($retrieve_created_by)
+        {
 		  $where_query .= " AND quotas.created_by = '" . $current_user->id . "'";
 	    }
-		$where_query .= " AND (users.reports_to_id = '" . $current_user->id . "'";
-		if($retrieve_created_by){
+
+        $where_query .= " AND (users.reports_to_id = '" . $current_user->id . "'";
+
+        if($retrieve_created_by){
 			$where_query .= " OR (quotas.quota_type = 'Direct'" .
 				      " AND users.id = '" . $current_user->id . "'))";
 		}else{
@@ -220,9 +230,10 @@ class Quota extends SugarBean {
 		
 		if($row != null){
 			$user_full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+            return $user_full_name;
 		}
 		
-		return $user_full_name;
+		return null;
 	}
 
 /**
