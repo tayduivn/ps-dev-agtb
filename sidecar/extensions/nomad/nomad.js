@@ -90,6 +90,7 @@
             app.AUTH_ACCESS_TOKEN = authAccessToken;
             app.AUTH_REFRESH_TOKEN = authRefreshToken;
             app.config.authStore = app.isNative ? 'keychain': 'cache';
+            app.cache.store = app.isNative ? app.nativestore : stash;
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
