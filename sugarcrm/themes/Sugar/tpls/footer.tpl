@@ -45,11 +45,12 @@
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
         title="{$STATISTICS}" border="0"/> <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
     <div id="partner">
-    {foreach from=$DYNAMICDCACTIONS item=action}
-        {$action.script} {$action.image} 
-    {/foreach}
-
-     </div>
+        <div id="integrations" style="min-width: 20px;">
+            {foreach from=$DYNAMICDCACTIONS item=action}
+                {$action.script} {$action.image}
+            {/foreach}
+        </div>
+    </div>
 <script>
  	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
 </script>       
