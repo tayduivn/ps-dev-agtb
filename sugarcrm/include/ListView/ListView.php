@@ -483,7 +483,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 'id' => $tempid,
                 'buttons' => $button_contents,
                 'class' => 'clickMenu subpanel records fancymenu button',
-                'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
+                'flat' => false //assign flat value as false to display dropdown menu at any other preferences.
             ), $this->xTemplate);
             $this->xTemplate->assign('CLASS', "inlineButtons");
             $this->xTemplate->assign('CELL_COUNT', ++$count);
@@ -1309,7 +1309,8 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 $select_link = smarty_function_sugar_action_menu(array(
                     'class' => 'clickMenu selectmenu',
                     'id' => 'selectLink',
-                    'buttons' => $menuItems
+                    'buttons' => $menuItems,
+                    'flat' => false,
                 ),$this->xTemplate);
 
             } else {
