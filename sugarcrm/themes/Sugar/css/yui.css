@@ -5659,7 +5659,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 .yui-navset-top .yui-nav,.yui-navset-bottom .yui-nav {
-	padding-top:4px;
+    margin-top:2px;
     width: auto;
 }
 
@@ -5704,9 +5704,9 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 
 .yui-navset .yui-nav li,.yui-navset .yui-navset-top .yui-nav li,.yui-navset .yui-navset-bottom .yui-nav li
     {
+    display: inline;
     display: inline-block;
     display: -moz-inline-stack;
-    display: inline;
     vertical-align: bottom;
     cursor: pointer;
     zoom: 1;
@@ -5768,16 +5768,14 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 {
 	background:#DDD url('../../../../index.php?entryPoint=getImage&imageName=sugar-yui-sprites-grey.png') repeat-x scroll 0 0;   
     zoom: 1;
-    white-space: nowrap;
     overflow-x:hidden;
-    white-space:nowrap;
 }
 
  .yui-navset .yui-nav li, .yui-navset .yui-navset-top .yui-nav li
     {
     margin:0px 1px 0 0;
     overflow: hidden;
-    height: 18px;
+    height: 24px;
     zoom: 1;
 
 }
@@ -5795,7 +5793,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     color: #000;
     position: relative;
     text-decoration: none;
-    height:18px;
+    height:24px;
 }
 
  .yui-navset .yui-nav a em, .yui-navset .yui-navset-top .yui-nav a em

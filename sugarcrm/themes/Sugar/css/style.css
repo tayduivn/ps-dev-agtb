@@ -5222,7 +5222,7 @@ font-size: 13px;
 }
 
 .yui-navset .yui-nav li, .yui-navset .yui-navset-top .yui-nav li {
-margin: 0 4px 0 0;
+margin: 2px 4px 0 0;
 *height: 24px; /* ie 7 hack */
 }
 
@@ -5235,9 +5235,13 @@ margin: 0 4px 0 0;
 }
 
 
-.yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav, .yui-layout .yui-layout-hd {
+.yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav {
+    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-tab-bg.png'); 
+    border-color: #c3c3c3;
+}
 
-    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png') repeat-x scroll 0 0; 
+.yui-layout .yui-layout-hd {
+    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png'); 
     border-color: #c3c3c3;
 }
 
@@ -6705,8 +6709,6 @@ ul#globalLinks.clickMenu > li > a {
 	font-size: 14px;
     padding: 14px 7px !important;	
 }
-
-#contentTable .yui-nav, #contentTable .yui-nav * { position:static; }
 
 ul#selectLink.clickMenu {
 	height: 22px;
