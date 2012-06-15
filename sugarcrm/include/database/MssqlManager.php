@@ -798,6 +798,11 @@ class MssqlManager extends DBManager
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
 
+        // If there is no ordering direction (ASC/DESC), use ASC by default
+        if (strpos($orig_order_match, " ") === false) {
+        	$orig_order_match .= " ASC";
+        }
+            
         //grab first space in order by
         $firstSpace = strpos($orig_order_match, " ");
 
