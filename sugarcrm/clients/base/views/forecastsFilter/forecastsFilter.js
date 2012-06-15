@@ -47,25 +47,25 @@
 
             if (key === 'timeperiods') {
                 self.setupTimePeriodActions($chosenPlaceholder, modelData);
-            } else if (key == 'stages') {
-                self.setupStageActions($chosenPlaceholder, modelData);
+            } else if (key === 'category') {
+                self.setupCategoryActions($chosenPlaceholder, modelData);
             }
         });
     },
 
-    setupStageActions: function($multiselect, modelData) {
+    setupCategoryActions: function($multiselect, modelData) {
         var self = this;
         $multiselect.on('change', 'select', function(event, data) {
-            //Get the selected stages
-            var selected = new Array();
-            $('select[name="stages"]').children(':selected').each(function() {
+            //Get the selected category
+            var selected = [];
+            $('select[name="category"]').children(':selected').each(function() {
                 var value = $(this).val();
                 if(trim(value) != '')
                 {
                     selected.push(value);
                 }
             });
-            self.context.set('selectedStages', selected);
+            self.context.set('selectedCategory', selected);
         });
     },
 

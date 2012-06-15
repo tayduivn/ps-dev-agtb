@@ -14,7 +14,7 @@
                 model: models,
                 register: app.events.register,
                 selectedTimePeriod: {},
-                selectedSalesStage: {},
+                selectedCategory: {},
                 selectedUser: {}
             });
 
