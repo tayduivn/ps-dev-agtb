@@ -474,18 +474,20 @@ SE.accounts = {
             document.getElementById("mail_smtpuser_label").innerHTML = mod_strings.LBL_YAHOOMAIL_SMTPUSER;
             break;
         case "gmail":
-            document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
-            document.getElementById("mail_smtpport").value = '587';
-            document.getElementById("mail_smtpauth_req").checked = true;
-            var ssl = document.getElementById("mail_smtpssl");
-            for(var j=0;j<ssl.options.length;j++) {
-                if(ssl.options[j].text == 'TLS') {
-                    ssl.options[j].selected = true;
-                    break;
+            if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
+                document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
+                document.getElementById("mail_smtpport").value = '587';
+                document.getElementById("mail_smtpauth_req").checked = true;
+                var ssl = document.getElementById("mail_smtpssl");
+                for(var j=0;j<ssl.options.length;j++) {
+                    if(ssl.options[j].text == 'TLS') {
+                        ssl.options[j].selected = true;
+                        break;
+                    }
                 }
             }
-            document.getElementById("mailsettings1").style.display = 'none';
-            document.getElementById("mailsettings2").style.display = 'none';
+            //document.getElementById("mailsettings1").style.display = 'none';
+            //document.getElementById("mailsettings2").style.display = 'none';
             document.getElementById("mail_smtppass_label").innerHTML = mod_strings.LBL_GMAIL_SMTPPASS;
             document.getElementById("mail_smtpuser_label").innerHTML = mod_strings.LBL_GMAIL_SMTPUSER;
             break;
