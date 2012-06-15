@@ -65,4 +65,7 @@ if ( !empty($connector) && $connector->propertyExists('oauth_consumer_key') && $
             );
         }
     }
+    
+    // Display alert if not connected
+    $_SESSION['display_lotuslive_alert'] = empty($eapmBean);
 }
