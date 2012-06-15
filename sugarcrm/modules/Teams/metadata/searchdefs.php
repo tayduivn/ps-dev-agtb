@@ -39,7 +39,7 @@
                            ),
                     'layout' => array(  					
 						'basic_search' => array(
-						    'name' => array('name' => 'name', 'label' => 'LBL_NAME',),
+						    array('name'=>'search_name','label' =>'LBL_NAME', 'type' => 'name'),
 						 	),
 						'advanced_search' => array(),
 					),
