@@ -34,6 +34,7 @@
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
+        this.layout.context.on("change:selectedStages", function(context, stages) { self.updateWorksheetBySelectedStages(stages); });
     },
 
     /**
@@ -80,6 +81,15 @@
         // TODO: What happens when a user is selected
         // this is a placeholder for that functionality
         //this.gTable.fnFilter({ "assigned_user_id" : params.attributes.selectedUser.id });
+    },
+
+    /**
+     * Event Handler for updating the worksheet by a selected stage
+     *
+     * @param params is always a context
+     */
+    updateWorksheetBySelectedStages:function (params) {
+        console.log(params);
     },
 
     /**
