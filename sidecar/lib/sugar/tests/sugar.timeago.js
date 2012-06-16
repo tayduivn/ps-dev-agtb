@@ -6,15 +6,24 @@ describe("timeago", function() {
         var origValue = $time.text();
         SUGAR = {};
         SUGAR.App = {};
-        SUGAR.App.logger = {};
         SUGAR.App.utils = {};
         SUGAR.App.utils.date = {};
+        SUGAR.App.logger = {};
+        SUGAR.App.logger.debug = function(msg) { console.log(msg); };
         SUGAR.App.utils.date.parse = function(date) { return new Date(date); };
         SUGAR.App.utils.date.format = function(date) { return new Date(date); };
-        SUGAR.App.logger.debug = function(msg) { console.log(msg); };
         SUGAR.App.utils.date.UTCtoLocalTime = function(date) { return new Date(date); };
-        SUGAR.App.utils.date.getRelativeTime = function(date) { return 'LABEL'; };
-        $time.timeago();
+        SUGAR.App.utils.date.getRelativeTimeLabel = function(date) { return { str: 'LABEL', value: undefined } };
+        SUGAR.App.template = {};
+        SUGAR.App.template.compile = function(msg) { return function(msg) { return msg; }; };
+        SUGAR.App.lang = {};
+        SUGAR.App.lang.get = function(msg) { return msg; };
+        $time.timeago({
+            logger: SUGAR.App.logger,
+            date: SUGAR.App.utils.date,
+            lang: SUGAR.App.lang,
+            template: SUGAR.App.template
+        });
 
         expect($time.text()).not.toEqual(origValue);
     });

@@ -394,9 +394,9 @@
             /**
              * converts a date object into a relative time
              * @param {Object} date
-             * @return {Object} relative time using internationalized strings
+             * @return {Object} object containing relative time key string and value to push to the template
              */
-            getRelativeTime: function(date) {
+            getRelativeTimeLabel: function(date) {
 
                 var rightNow = new Date();
 
@@ -405,52 +405,51 @@
                     minute = second * 60,
                     hour = minute * 60,
                     day = hour * 24,
-                    str,
-                    ctx;
+                    ctx = { str : "", value: undefined};
 
                 if (isNaN(diff) || diff < 0) {
-                    return ""; // return blank string if unknown
+                    return ctx; // return blank string if unknown
                 }
                 if (diff < second * 2) {
                     // within 2 seconds
-                    str = 'LBL_TIME_AGO_NOW';
-                    return app.lang.getCompiled(str);
+                    ctx.str = 'LBL_TIME_AGO_NOW';
+                    return ctx;
                 }
                 if (diff < minute) {
-                    str = 'LBL_TIME_AGO_SECONDS';
-                    ctx = Math.floor(diff / second);
-                    return app.lang.getCompiled(str, ctx);
+                    ctx.str = 'LBL_TIME_AGO_SECONDS';
+                    ctx.value = Math.floor(diff / second);
+                    return ctx;
                 }
                 if (diff < minute * 2) {
-                    str = 'LBL_TIME_AGO_MINUTE';
-                    return app.lang.getCompiled(str);
+                    ctx.str = 'LBL_TIME_AGO_MINUTE';
+                    return ctx;
                 }
                 if (diff < hour) {
-                    str = 'LBL_TIME_AGO_MINUTES';
-                    ctx = Math.floor(diff / minute);
-                    return app.lang.getCompiled(str, ctx);
+                    ctx.str = 'LBL_TIME_AGO_MINUTES';
+                    ctx.value = Math.floor(diff / minute);
+                    return ctx;
                 }
                 if (diff < hour * 2) {
-                    str = 'LBL_TIME_AGO_HOUR';
-                    return app.lang.getCompiled(str);
+                    ctx.str = 'LBL_TIME_AGO_HOUR';
+                    return ctx;
                 }
                 if (diff < day) {
-                    str = 'LBL_TIME_AGO_HOURS';
-                    ctx = Math.floor(diff / hour);
-                    return app.lang.getCompiled(str, ctx);
+                    ctx.str = 'LBL_TIME_AGO_HOURS';
+                    ctx.value = Math.floor(diff / hour);
+                    return ctx;
                 }
                 if (diff > day && diff < day * 2) {
-                    str = 'LBL_TIME_AGO_DAY';
-                    return app.lang.getCompiled(str);
+                    ctx.str = 'LBL_TIME_AGO_DAY';
+                    return ctx;
                 }
                 if (diff < day * 365) {
-                    str = 'LBL_TIME_AGO_DAYS';
-                    ctx = Math.floor(diff / day);
-                    return app.lang.getCompiled(str, ctx);
+                    ctx.str = 'LBL_TIME_AGO_DAYS';
+                    ctx.value = Math.floor(diff / day);
+                    return ctx;
                 }
                 else {
-                    str = 'LBL_TIME_AGO_YEAR';
-                    return app.lang.getCompiled(str);
+                    ctx.str = 'LBL_TIME_AGO_YEAR';
+                    return ctx;
                 }
             }
         },

@@ -259,15 +259,16 @@ describe("utils", function() {
                 LBL_TIME_AGO_DAYS       = new Date(ts - 200000*1000),
                 LBL_TIME_AGO_YEAR       = new Date(ts - 400*84600*1000);
 
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_NOW)).toEqual("LBL_TIME_AGO_NOW");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_SECONDS)).toEqual("LBL_TIME_AGO_SECONDS");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_MINUTE)).toEqual("LBL_TIME_AGO_MINUTE");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_MINUTES)).toEqual("LBL_TIME_AGO_MINUTES");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_HOUR)).toEqual("LBL_TIME_AGO_HOUR");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_HOURS)).toEqual("LBL_TIME_AGO_HOURS");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_DAY)).toEqual("LBL_TIME_AGO_DAY");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_DAYS)).toEqual("LBL_TIME_AGO_DAYS");
-            expect(utils.date.getRelativeTime(LBL_TIME_AGO_YEAR)).toEqual("LBL_TIME_AGO_YEAR");
+            console.log(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_SECONDS).str);
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_NOW).str).toEqual("LBL_TIME_AGO_NOW");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_SECONDS).str).toEqual("LBL_TIME_AGO_SECONDS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_MINUTE).str).toEqual("LBL_TIME_AGO_MINUTE");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_MINUTES).str).toEqual("LBL_TIME_AGO_MINUTES");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_HOUR).str).toEqual("LBL_TIME_AGO_HOUR");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_HOURS).str).toEqual("LBL_TIME_AGO_HOURS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_DAY).str).toEqual("LBL_TIME_AGO_DAY");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_DAYS).str).toEqual("LBL_TIME_AGO_DAYS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_YEAR).str).toEqual("LBL_TIME_AGO_YEAR");
         });
    });
    

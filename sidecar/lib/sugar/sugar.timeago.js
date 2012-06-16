@@ -3,11 +3,49 @@ $(function() {
     /**
      * Timeago plugin is a jQuery/Zepto plugin for sidecar that converts a date into a relative time with a timer
      * to keep it relative to now.
+     *
+     * Example initialization of plugin:
+     *
+     * $('time.relativetime').timeago({
+     *     logger:  SUGAR.App.logger,
+     *     date: SUGAR.App.utils.date
+     * });
      */
     var relativeTimeInterval;
     $.fn.extend({
-        timeago: function() {
+        timeago: function(options) {
             var self = this;
+
+            options = options || {};
+
+            // required
+            if (!options.date || !options.logger || !options.template || !options.lang) return;
+
+            var SugarDate = options.date,
+                SugarLog = options.logger,
+                SugarTemplate = options.template,
+                SugarLang = options.lang;
+
+
+            /**
+             * This function pulls the date from the 'datetime' attribute of the element,
+             * converts it in a local date, then gets the relative time and display it.
+             */
+            var refresh = function() {
+                var $this = $(this),
+                    UTCDate = SugarDate.parse($this.attr('datetime')),
+                    localDate = SugarDate.UTCtoLocalTime(UTCDate),
+                    relativeTimeObj = SugarDate.getRelativeTimeLabel(localDate);
+
+                if (relativeTimeObj.str) {
+                    var relativeTimeTpl = SugarLang.get(relativeTimeObj.str),
+                    relativeTime = SugarTemplate.compile(relativeTimeObj.str, relativeTimeTpl),
+                    hour = SugarDate.format(localDate, 'H:i');
+                    $this.text(relativeTime(relativeTimeObj.value) + " at " + hour);
+                }
+                return this;
+            };
+
             // Convert all dates
             self.each(refresh);
 
@@ -15,7 +53,7 @@ $(function() {
             if (self.length > 0) {
                 // Check if a timer is already set
                 if (!relativeTimeInterval) {
-                    SUGAR.App.logger.debug('(relative time) Starting a timer to convert ' + self.length + ' date');
+                    SugarLog.debug('(relative time) Starting a timer to convert ' + self.length + ' date');
                 } else {
                     clearInterval(relativeTimeInterval);
                 }
@@ -26,7 +64,7 @@ $(function() {
             } else {
                 // Remove the timer if no more date elements is in the DOM
                 if (relativeTimeInterval) {
-                    SUGAR.App.logger.debug('(relative time) Stopping the timer as there is no more date to convert');
+                    SugarLog.debug('(relative time) Stopping the timer as there is no more date to convert');
                     clearInterval(relativeTimeInterval);
                     relativeTimeInterval = undefined;
                 }
@@ -34,22 +72,4 @@ $(function() {
             return self;
         }
     });
-
-    /**
-     * This function pulls the date from the 'datetime' attribute of the element,
-     * converts it in a local date, then gets the relative time and display it.
-     */
-    var refresh = function() {
-        var $this = $(this),
-            SugarDate = SUGAR.App.utils.date,
-            UTCDate = SugarDate.parse($this.attr('datetime')),
-            localDate = SugarDate.UTCtoLocalTime(UTCDate);
-
-        txt = SugarDate.getRelativeTime(localDate) || false;
-        if (txt) {
-            var time = SugarDate.format(localDate, 'H:i');
-            $this.text(txt + " at " + time);
-        }
-        return this;
-    };
-})(window.jQuery || window.Zepto);
+});
