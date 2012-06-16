@@ -882,6 +882,7 @@
 			visible : false,
 			modal : true,
 			close : true,
+			y : 1,			
 			zIndex : 10
 		});
 		var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.editDialog.cancel();} } );
