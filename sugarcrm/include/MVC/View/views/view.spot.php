@@ -100,7 +100,7 @@ class ViewSpot extends ViewAjax
             if($countRemaining > 0)
             {
                 $displayMoreForModule[$m] = array('query'=>$trimmedQuery,
-                    'offset'=>$data['pageData']['offsets']['next']++,
+                    'offset'=>++$data['pageData']['offsets']['next'],
                     'countRemaining'=>$countRemaining);
             }
 
