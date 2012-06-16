@@ -4081,7 +4081,7 @@ SUGAR.reports = function() {
             if (!moduleTree) {
 				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_RELATED_MODULES_PANEL_HELP_DESC') +"\");'></span></h3>";
 				var moduleTree = new YAHOO.widget.Module("module_tree_panel", { visible: false });
-				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:230px; width:200px; overflow:auto;\"></div>";
+				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:215px; width:200px; overflow:auto;\"></div>";
 				moduleTree.setHeader(title);
 				moduleTree.setBody(moduletreePanelHTML);
 				moduleTree.render();
