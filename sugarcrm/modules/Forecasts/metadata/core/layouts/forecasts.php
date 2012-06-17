@@ -31,7 +31,7 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
         ),
         5 => array(
             'view' => 'forecastsCommitted',
-            'model' => array(
+            'collection' => array(
                 'module' => 'Forecasts',
                 'name' => 'Committed'
             ),

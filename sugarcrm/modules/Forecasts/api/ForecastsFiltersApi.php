@@ -76,7 +76,6 @@ class ForecastsFiltersApi extends ModuleApi {
             ),
             'category' => array(
                 'label' => 'Forecast Category:',
-                'multiselect' => true,
                 'default' => 'Committed',
                 'options' => array(
                     'Committed' => 'Committed',
@@ -125,6 +124,9 @@ class ForecastsFiltersApi extends ModuleApi {
      * @return string
      */
     public function getReportees($api, $args) {
+        global $app_list_strings, $current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
+
         $id = $args['userId'];
 
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',

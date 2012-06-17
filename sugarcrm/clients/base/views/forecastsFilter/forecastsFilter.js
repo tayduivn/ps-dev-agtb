@@ -59,19 +59,12 @@
         });
     },
 
-    handleCategoryEvents: function($multiselect) {
+    handleCategoryEvents: function($dropdown) {
         var self = this;
-        $multiselect.on('change', 'select', function(event, data) {
-            //Get the selected category
-            var selected = [];
-            $('select[name="category"]').children(':selected').each(function() {
-                var value = $(this).val();
-                if(trim(value) != '')
-                {
-                    selected.push(value);
-                }
-            });
-            self.context.set('selectedCategory', selected);
+        $dropdown.on('change', 'select', function(event, data) {
+            var label = $(this).find('option:[value='+data.selected+']').text();
+            var id = $(this).find('option:[value='+data.selected+']').val();
+            self.context.set('selectedCategory', {"id": id, "label": label});
         });
     },
 

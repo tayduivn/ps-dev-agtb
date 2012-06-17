@@ -67,8 +67,8 @@ class ForecastsWorksheetApi extends ModuleApi {
 
         $testFilters = array(
             'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
-            'probability' => array('$between' => array('0', '70')),
-            'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
+            'probability' => array('$between' => array('0', '100')),
+            //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
 
         require_once('include/SugarParsers/Filter.php');

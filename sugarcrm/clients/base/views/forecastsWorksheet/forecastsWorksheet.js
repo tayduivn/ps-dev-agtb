@@ -14,8 +14,6 @@
 
     _collection:{},
 
-    _filters:{},
-
     /**
      * Initialize the View
      *
@@ -27,6 +25,8 @@
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
+        this.category = 'Committed',
+
         app.view.View.prototype.initialize.call(this, options);
 
         this._collection = this.context.model.forecasts.worksheet;
@@ -34,7 +34,7 @@
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
-        this.layout.context.on("change:selectedStages", function(context, stages) { self.updateWorksheetBySelectedStages(stages); });
+        this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
 
         //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
         this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
@@ -81,12 +81,21 @@
             });
         }
 
-        $.fn.dataTableExt.afnFiltering.push(
-            function(oSettings, aData, iDataIndex)
-            {
-                return ($.inArray($(aData[3]).html(), self._filters['stages']) !== -1) ? true : false;
-            }
-        );
+        //Only filter for forecast == 1 or forecast == -1 and probability >= 70 if searching for Committed
+        if(this.category == 'Committed')
+        {
+            $.fn.dataTableExt.afnFiltering.push(
+                function(oSettings, aData, iDataIndex)
+                {
+                    var forecast = parseInt($(aData[0]).html());
+                    var probability = parseInt($(aData[4]).html());
+                    return (forecast === 1 || (forecast === -1 && probability >= 70));
+                }
+            );
+        } else {
+            $.fn.dataTableExt.afnFiltering = [];
+        }
+
     },
 
     /**
@@ -101,14 +110,13 @@
     },
 
     /**
-     * Event Handler for updating the worksheet by a selected stage
+     * Event Handler for updating the worksheet by a selected category
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedStages:function (params) {
-        this._filters['stages'] = params;
+    updateWorksheetBySelectedCategory:function (params) {
+        this.category = params.id;
         this.render();
-
     },
 
     /**

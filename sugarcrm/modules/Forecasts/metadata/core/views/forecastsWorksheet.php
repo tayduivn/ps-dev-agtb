@@ -10,7 +10,6 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'forecast',
                     'label' => 'LBL_FORECAST',
-                    'type' => 'include',
                     'default' => true,
                     'enabled' => true,
                 ),

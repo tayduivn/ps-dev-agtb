@@ -2236,6 +2236,47 @@ EOQ;
         }
     }
 
+    /**
+     * @static
+     * This function to determine if a given user id is a manager.  A manager is defined as someone who has direct reports
+     *
+     * @param String user_id The id of the user to check
+     * @param boolean include_deleted Boolean value indicating whether or not to include deleted records (defaults to FALSE)
+     * @return boolean TRUE if user id is a manager; FALSE otherwise
+     */
+    public static function isManager($user_id, $include_deleted=false)
+    {
+        $query = 'SELECT count(id) as total FROM users WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id));
+        if(!$include_deleted)
+        {
+            $query .= " AND deleted=0";
+        }
+        $count = $GLOBALS['db']->getOne($query);
+        return $count > 0;
+    }
+
+
+    /**
+     * @static
+     * This function is used to determine if a given user id is a top level manager.  A top level manager is defined as someone
+     * who has direct reports, but does not have to report to anyone (reports_to_id is null).
+     *
+     * This is functionally equivalent to User::isManager($user->id) && empty($user->reports_to_id)
+     *
+     * @param String user_id The id of the user to check
+     * @param boolean include_deleted Boolean value indicating whether or not to include deleted records of reportees (defaults to FALSE)
+     * @return boolean TRUE if user id is a top level manager; FALSE otherwise
+     */
+    public static function isTopLevelManager($user_id, $include_deleted=false)
+    {
+        if(User::isManager($user_id, $include_deleted))
+        {
+            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
+            $reports_to_id = $GLOBALS['db']->getOne($query);
+            return !is_null($reports_to_id);
+        }
+        return false;
+    }
 
     //BEGIN SUGARCRM flav=pro ONLY
     /**

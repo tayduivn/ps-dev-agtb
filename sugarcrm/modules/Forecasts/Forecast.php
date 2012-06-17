@@ -148,7 +148,24 @@ class Forecast extends SugarBean {
 		return $query;		
 	}
 
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+
+    /**
+     * Return the list query used by the list views and export button. Next generation of create_new_list_query function.
+     *
+     * Override this function to return a custom query.
+     *
+     * @param string $order_by custom order by clause
+     * @param string $where custom where clause
+     * @param array $filter Optional (not implemented)
+     * @param array $params Optional (not implemented)
+     * @param int $show_deleted Optional, default 0, show deleted records is set to 1.
+     * @param string $join_type (not implemented)
+     * @param boolean $return_array Optional, default false, response as array
+     * @param object $parentbean creating a sub-query for this bean (not implemented)
+     * @param boolean $singleSelect Optional, default false (not implemented)
+     * @return String select query string, optionally an array value will be returned if $return_array= true.
+     */
+    function create_new_list_query($order_by, $where, $filter=array(),$params=array(), $show_deleted = 0, $join_type='', $return_array = false, $parentbean=null, $singleSelect = false)
     {
         global $current_user;
         $ret_array=array();

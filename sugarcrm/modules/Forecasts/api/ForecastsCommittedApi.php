@@ -33,7 +33,7 @@ class ForecastsCommittedApi extends ModuleApi {
                 'path' => array('Forecasts','committed'),
                 'pathVars' => array('',''),
                 'method' => 'forecastsCommitted',
-                'shortHelp' => 'Most recent committed forecast entry',
+                'shortHelp' => 'A list of forecasts entries',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
             )
         );
@@ -55,117 +55,55 @@ class ForecastsCommittedApi extends ModuleApi {
         $timedate = TimeDate::getInstance();
 
         $forecast_type = 'Direct';
-        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-        $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        if(isset($args['forecast_type']))
+        {
+           $forecast_type = clean_string($args['forecast_type']);
+        }
 
-        $query = "SELECT * FROM forecasts WHERE user_id = '{$user_id}' AND forecast_type='{$forecast_type}' AND timeperiod_id = '{$timeperiod_id}' AND deleted = 0 ORDER BY date_modified desc";
+        $user_id = $current_user->id;
+        if(isset($args['user_id']) && $args['user_id'] != $current_user->id)
+        {
+           $user_id = clean_string($args['user_id']);
+           if(!User::isManager($current_user->id))
+           {
+               $GLOBALS['log']->error(string_format($mod_strings['LBL_ERROR_NOT_MANAGER'], array($current_user->id, $user_id)));
+               return array();
+           }
+        }
 
-        //Get the last 6
-        $results = $GLOBALS['db']->limitQuery($query, 0, 6);
+        $timeperiod_id = TimePeriod::getCurrentId();
+        if(isset($args['timeperiod_id']))
+        {
+           $timeperiod_id = clean_string($args['timeperiod_id']);
+        }
+
+        $include_deleted = false;
+        if(isset($args['show_deleted']) && $args['show_deleted'] === true)
+        {
+           $included_deleted = true;
+        }
+
+        $where = "forecasts.user_id = '{$user_id}' AND forecasts.forecast_type='{$forecast_type}' AND forecasts.timeperiod_id = '{$timeperiod_id}'";
+
+        //$where =  "forecasts.forecast_type='{$forecast_type}' AND forecasts.timeperiod_id = '{$timeperiod_id}'";
+
+        $order_by = 'forecasts.date_entered DESC';
+        if(isset($args['order_by']))
+        {
+            $order_by = clean_string($args['order_by']);
+        }
+
+        $bean = new Forecast();
+        $query = $bean->create_new_list_query($order_by, $where, array(), array(), $include_deleted);
+        $results = $GLOBALS['db']->query($query);
+
         $forecasts = array();
         while(($row = $GLOBALS['db']->fetchByAssoc($results)))
         {
-            $forecasts[$row['id']] = $row;
+            $forecasts[] = $row;
         }
 
-        if(!empty($forecasts))
-        {
-            $latest = array_shift($forecasts);
-
-            //Get the previous item
-            if(!empty($forecasts))
-            {
-                $previous = array_shift($forecasts);
-                $previous['text'] = string_format($mod_strings['LBL_PREVIOUS_COMMIT'], array($timedate->asUser($timedate->fromDb($previous['date_entered']))));
-            }
-
-            //Get the remaining history items
-            if(!empty($forecasts))
-            {
-                $history = array();
-
-                //Calculate the difference between $latest and $previous
-                $history[] = $this->createHistoryLog($latest, $previous);
-
-                $last = $previous;
-                //Calculate the rest
-                foreach($forecasts as $forecast)
-                {
-                    $history[] = $this->createHistoryLog($forecast, $last);
-                    $last = $forecast;
-                }
-            }
-
-            return array(
-                'latest' => $latest,
-                'previous' => isset($previous) ? $previous : array(),
-                'history' => isset($history) ? $history : array()
-            );
-        }
-
-        //There is no data, return defaults
-        return array('latest' => array( 'best_case'=>0, 'likely_case'=>0), 'previous'=>array(), 'history' => array());
-    }
-
-    /**
-     * createHistoryLog
-     *
-     * @param $current Array The row entry representing the updated forecast
-     * @param $previous Array The row entry representing the forecast entry prior to the updated entry
-     * @return Array An array entry containing text and modified keys with text representing the text label and modified the timestamp label
-     */
-    protected function createHistoryLog($current, $previous)
-    {
-        global $mod_strings;
-        $best_difference = $current['best_case'] - $previous['best_case'];
-        $best_changed = $best_difference != 0;
-        $best_direction = $best_difference > 0 ? 'LBL_UP' : ($best_difference < 0 ? 'LBL_DOWN' : '');
-
-        $likely_difference = $current['likely_case'] - $previous['likely_case'];
-        $likely_changed = $likely_difference != 0;
-        $likely_direction = $likely_difference > 0 ? 'LBL_UP' : ($likely_difference < 0 ? 'LBL_DOWN' : '');
-
-
-        if($best_changed && $likely_changed)
-        {
-            $args = array();
-            $args[] = $mod_strings[$best_direction];
-            $args[] = abs($best_difference);
-            $args[] = $current['best_case'];
-            $args[] = $mod_strings[$likely_direction];
-            $args[] = abs($likely_difference);
-            $args[] = $current['likely_case'];
-            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_BOTH_CHANGED'], $args);
-        } else if (!$best_changed && $likely_changed) {
-            $args = array();
-            $args[] = $mod_strings[$likely_direction];
-            $args[] = abs($likely_difference);
-            $args[] = $current['likely_case'];
-            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_LIKELY_CHANGED'], $args);
-        } else if ($best_changed && !$likely_changed) {
-            $args = array();
-            $args[] = $mod_strings[$best_direction];
-            $args[] = abs($best_difference);
-            $args[] = $current['best_case'];
-            $text = string_format($mod_strings['LBL_COMMITTED_HISTORY_BEST_CHANGED'], $args);
-        } else {
-            $text = $mod_strings['LBL_COMMITTED_HISTORY_NONE_CHANGED'];
-        }
-
-        $timedate = TimeDate::getInstance();
-        $current_date = $timedate->fromDb($current['date_modified']);
-        $previous_date = $timedate->fromDb($previous['date_modified']);
-        $interval = $current_date->diff($previous_date);
-
-        if($interval->m < 2)
-        {
-            $modified = string_format($mod_strings['LBL_COMMITTED_THIS_MONTH'], array($timedate->asUser($previous_date)));
-        } else {
-            $modified = string_format($mod_strings['LBL_COMMITTED_MONTHS_AGO'], array($interval['months'], $timedate->asUser($previous_date)));
-        }
-
-        return array('text'=>$text, 'modified'=>$modified);
-
+        return $forecasts;
     }
 
 }

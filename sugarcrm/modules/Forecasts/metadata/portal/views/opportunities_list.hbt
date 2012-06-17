@@ -1,4 +1,3 @@
-Hello!
 {{#each meta.panels}}
 	<ul>
 	{{#each fields}}
