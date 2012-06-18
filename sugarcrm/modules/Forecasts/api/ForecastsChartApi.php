@@ -76,9 +76,7 @@ class ForecastsChartApi extends ModuleApi {
         $filter->parse($testFilters);
         $converter = new SugarParsers_Converter_Report($rb);
         $reportFilters = $filter->convert($converter);
-        return $reportFilters;
         $report->report_def['filters_def'] = $reportFilters;
-        return $report->report_def['filters_def'];
 
 
         //Get the goal marker values
