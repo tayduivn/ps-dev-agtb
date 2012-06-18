@@ -93,7 +93,10 @@ class Configurator {
 
 		//print_r($overrideArray);
         //Bug#53013: Clean the tpl cache if action menu style has been changed.
-        if( isset($overrideArray['enable_action_menu']) && isset($this->previous_sugar_override_config_array['enable_action_menu']) && $overrideArray['enable_action_menu'] != $this->previous_sugar_override_config_array['enable_action_menu'] ) {
+        if( isset($overrideArray['enable_action_menu']) &&
+                ( !isset($this->previous_sugar_override_config_array['enable_action_menu']) ||
+                    $overrideArray['enable_action_menu'] != $this->previous_sugar_override_config_array['enable_action_menu'] )
+        ) {
             require_once('modules/Administration/QuickRepairAndRebuild.php');
             $repair = new RepairAndClear;
             $repair->module_list = array();
