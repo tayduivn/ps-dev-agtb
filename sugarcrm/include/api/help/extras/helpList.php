@@ -29,41 +29,61 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 <head>
 <title>SugarCRM Auto Generated API Help</title>
 <style type="text/css">
-.hidden {
-display: none;
-}
-.endpointMain {
-background: #eeeeee;
-}
-code {
-white-space: pre;
-height: 150px;
-overflow-x: scroll;
-display: inline-block;
-background: #eeeeff;
-}
-.params table, .params table td, .params table th {
-border: 1px solid #000000;
-border-spacing: 0px;
-}
-.codesample .note {
-background: #ffffff;
-font-style: italic;
-}
+    table#endpointList {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .hidden {
+        display: none;
+    }
+    .endpointMain {
+        background: #eeeeee;
+    }
+    code {
+        white-space: pre;
+        height: 150px;
+        overflow-x: scroll;
+        display: inline-block;
+        background: #eeeeff;
+    }
+    .params table, .params table td, .params table th {
+        border: 1px solid #000000;
+        border-collapse: collapse;
+    }
+    .params table {
+        empty-cells: show;
+    }
+    .params table th {
+        background-color: #efefef;
+    }
+    .params table th, .params table td {
+        padding: 2px 4px;
+    }
+    .codesample .note {
+        background: #ffffff;
+        font-style: italic;
+    }
+    .showHide {
+        cursor: pointer;
+        padding: 0 3px;
+        text-align: center;
+        width: 20px;
+    }
+
 </style>
-<script type="text/javascript" src="../../include/javascript/jquery/jquery.js"></script>
+<script type="text/javascript" src="<?= SugarConfig::get('site_url') ?>/include/javascript/jquery/jquery.js"></script>
 </head>
 
 <body>
 <h1>SugarCRM API</h1>
 
-<table id="endpointList" border=1 cellspacing=0 cellpadding=2>
+<table id="endpointList" border="1" cellspacing="0" cellpadding="2">
 <?php
   foreach ( $endpointList as $i => $endpoint ) {
       if ( empty($endpoint['shortHelp']) ) { continue; }
 ?>
   <tr id="endpoint_<?= $i ?>" class="endpointMain">
-    <td class="showHide"><a onclick="showHideAction(this); return false;">+</a></td>
+    <td class="showHide" id="showHide<?= $i ?>">+</td>
     <td class="reqType"><?= htmlspecialchars($endpoint['reqType']) ?></td>
     <td class="fullPath"><?= htmlspecialchars($endpoint['fullPath']) ?></td>
     <td class="shortHelp"><?= htmlspecialchars($endpoint['shortHelp']) ?></td>
@@ -89,11 +109,14 @@ font-style: italic;
 ?>
 </table>
 <script type="text/javascript">
-function showHideAction(elem) {
-var showHideParent = $(elem).closest('.endpointMain')[0];
-var elementId = showHideParent.id.split("_")[1];
-
-$("#endpoint_"+elementId+"_full").toggle();
-}
+    $(function() {
+        $('.showHide').click(function() {
+            var id = $(this).attr('id').replace('showHide', '');
+            var currentSign = $(this).text();
+            var newSign = currentSign == '+' ? '-' : '+';
+            $('#endpoint_' + id + '_full').toggle();
+            $(this).text(newSign);
+        });
+    });
 </script>
 </body> </html>

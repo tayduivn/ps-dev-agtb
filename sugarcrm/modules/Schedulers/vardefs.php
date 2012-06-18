@@ -134,13 +134,6 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 	),
 	'indices' => array (
 		array(
-			'name' =>'schedulerspk',
-			'type' =>'primary',
-			'fields' => array(
-				'id'
-			)
-		),
-		array(
 		'name' =>'idx_schedule',
 		'type'=>'index',
 		'fields' => array(
