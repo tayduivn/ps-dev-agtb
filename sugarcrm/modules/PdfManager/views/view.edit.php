@@ -30,18 +30,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/MVC/View/views/view.edit.php');
+require_once 'include/MVC/View/views/view.edit.php';
 
-class PdfManagerViewEdit extends ViewEdit {
-
-    function PdfManagerViewEdit(){
+class PdfManagerViewEdit extends ViewEdit
+{
+    public function PdfManagerViewEdit()
+    {
         parent::ViewEdit();
     }
-    
-    function display() {
-    
+
+    public function display()
+    {
         // Load TinyMCE
-        require_once('include/SugarTinyMCE.php');
+        require_once 'include/SugarTinyMCE.php';
         $tiny = new SugarTinyMCE();
         $tiny->defaultConfig['apply_source_formatting']=true;
         $tiny->defaultConfig['cleanup_on_startup']=true;
@@ -49,12 +50,12 @@ class PdfManagerViewEdit extends ViewEdit {
         $tiny->defaultConfig['convert_urls']=false;
         $ed = $tiny->getInstance('body_html');
         $this->ss->assign('tiny_script', $ed);
-        
+
         // Load Fields for main module
         if (empty($this->bean->base_module)) {
             $modulesList = PdfManagerHelper::getAvailableModules();
             $this->bean->base_module = key($modulesList);
-        }      
+        }
         $fieldsForSelectedModule = PdfManagerHelper::getFields($this->bean->base_module, true);
 
         $this->ss->assign('fieldsForSelectedModule', $fieldsForSelectedModule);

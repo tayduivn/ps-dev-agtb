@@ -30,17 +30,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/MVC/View/views/view.list.php');
+require_once 'include/MVC/View/views/view.list.php';
 
 class PdfManagerViewList extends ViewList
 {
- 	public function preDisplay()
- 	{
- 		parent::preDisplay();
- 		$this->lv->quickViewLinks = false;
+    public function preDisplay()
+    {
+        parent::preDisplay();
+        $this->lv->quickViewLinks = false;
         $this->lv->export = false;
         $this->lv->mergeduplicates = 0;
- 		$this->lv->showMassupdateFields = false;
-
- 	}
+        $this->lv->showMassupdateFields = false;
+    }
 }

@@ -30,55 +30,60 @@
 
 require_once 'modules/PdfManager/PdfManagerHelper.php';
 
-class PdfManager extends Basic {
-    var $new_schema = true;
-    var $module_dir = 'PdfManager';
-    var $object_name = 'PdfManager';
-    var $table_name = 'pdfmanager';
-    var $importable = false;
-    var $id;
-    var $name;
-    var $date_entered;
-    var $date_modified;
-    var $modified_user_id;
-    var $modified_by_name;
-    var $created_by;
-    var $created_by_name;
-    var $description;
-    var $deleted;
-    var $created_by_link;
-    var $modified_user_link;
-    var $team_id;
-    var $team_set_id;
-    var $team_count;
-    var $team_name;
-    var $team_link;
-    var $team_count_link;
-    var $teams;
-    var $assigned_user_id;
-    var $assigned_user_name;
-    var $assigned_user_link;
-    var $base_module;
-    var $published;
-    var $field;
-    var $body_html;
-    var $header_image;
-    var $title;
-    var $subject;
-    var $keywords;
-    
-    function PdfManager_sugar(){    
+class PdfManager extends Basic
+{
+    public $new_schema = true;
+    public $module_dir = 'PdfManager';
+    public $object_name = 'PdfManager';
+    public $table_name = 'pdfmanager';
+    public $importable = false;
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $description;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+    public $team_id;
+    public $team_set_id;
+    public $team_count;
+    public $team_name;
+    public $team_link;
+    public $team_count_link;
+    public $teams;
+    public $assigned_user_id;
+    public $assigned_user_name;
+    public $assigned_user_link;
+    public $base_module;
+    public $published;
+    public $field;
+    public $body_html;
+    public $header_image;
+    public $title;
+    public $subject;
+    public $keywords;
+
+    public function PdfManager_sugar()
+    {
         parent::Basic();
     }
-    
-    function bean_implements($interface){
-        switch($interface){
+
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
             case 'ACL': return true;
         }
+
         return false;
     }
-    
-    public function isFavoritesEnabled(){
+
+    public function isFavoritesEnabled()
+    {
         return false;
     }
 }

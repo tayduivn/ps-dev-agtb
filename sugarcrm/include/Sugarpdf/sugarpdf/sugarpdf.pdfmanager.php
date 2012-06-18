@@ -31,17 +31,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=pro ONLY
 
 require_once 'include/Sugarpdf/sugarpdf/sugarpdf.smarty.php';
- 
-class SugarpdfPdfmanager extends SugarpdfSmarty {
 
+class SugarpdfPdfmanager extends SugarpdfSmarty
+{
     protected $pdfFilename;
 
-    function preDisplay(){
-        
+    public function preDisplay()
+    {
         parent::preDisplay();
 
         if (!empty($_REQUEST['pdf_template_id'])) {
-        
+
             $pdfTemplate = BeanFactory::newBean('PdfManager');
             if ($pdfTemplate->retrieve($_REQUEST['pdf_template_id']) !== null) {
                 $this->SetCreator(PDF_CREATOR);
@@ -50,32 +50,29 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                 $this->SetSubject($pdfTemplate->subject);
                 $this->SetKeywords($pdfTemplate->keywords);
                 $this->templateLocation = $this->buildTemplateFile($pdfTemplate);
-                
+
                 $filenameParts = array();
                 if (!empty($this->bean) && !empty($this->bean->name)) {
                     $filenameParts[] = $this->bean->name;
                 }
                 if (!empty($this->bean->name)) {
                     $filenameParts[] = $pdfTemplate->name;
-        }        
-        
+        }
+
                 $cr = array(' ',"\r", "\n","/");
-                $this->pdfFilename = str_replace($cr, '_', implode("_", $filenameParts ).".pdf"); 
+                $this->pdfFilename = str_replace($cr, '_', implode("_", $filenameParts ).".pdf");
             }
-        }        
-        
-        
-        
+        }
+
         require_once 'modules/PdfManager/PdfManagerHelper.php';
-        
+
         $fields = PdfManagerHelper::parseBeanFields($this->bean, true);
 
-        
         if ($this->module == 'Quotes') {
             global $locale;
-            require_once('modules/Quotes/Quote.php');
-            require('modules/Quotes/config.php');
-            require_once('modules/Currencies/Currency.php');
+            require_once 'modules/Quotes/Quote.php';
+            require 'modules/Quotes/config.php';
+            require_once 'modules/Currencies/Currency.php';
             $currency = new Currency();
             ////    settings
             $format_number_array = array(
@@ -88,15 +85,15 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
             $fields['currency_iso']['value'] = $currency->iso4217;
             $fields['subtotal']['value'] = format_number_sugarpdf($this->bean->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             $fields['total']['value'] = format_number_sugarpdf($this->bean->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
-            
+
             $this->bean->load_relationship('product_bundles');
             $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-            if(is_array($product_bundle_list)){
-          
+            if (is_array($product_bundle_list)) {
+
               $ordered_bundle_list = array();
               for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
                 $index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-                $ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
+                $ordered_bundle_list[(int) $index[0]['bundle_index']] = $product_bundle_list[$cnt];
               } //for
               ksort($ordered_bundle_list);
             } //if
@@ -109,8 +106,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                 $bundle['name']['value'] = $ordered_bundle->name;
                 $bundle['subtotal']['value'] = format_number_sugarpdf($ordered_bundle->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
                 $bundle['total']['value'] = format_number_sugarpdf($ordered_bundle->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
-                
-                
+
                 $bundle['products'] = array();
                 $product_bundle_line_items = $ordered_bundle->get_product_bundle_line_items();
                 foreach ($product_bundle_line_items as $product_bundle_line_item) {
@@ -119,7 +115,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                         $bundle['products'][$count]['quantity']['value'] = format_number_sugarpdf($product_bundle_line_item->quantity, 0, 0);
                         $bundle['products'][$count]['mft_part_num']['value'] = $product_bundle_line_item->mft_part_num;
                         $bundle['products'][$count]['name']['value'] = stripslashes($product_bundle_line_item->name);
-                        if(!empty($product_bundle_line_item->description)){
+                        if (!empty($product_bundle_line_item->description)) {
                             $bundle['products'][$count]['name']['value'] .= "\n" . nl2br(stripslashes($product_bundle_line_item->description));
                         }
 
@@ -127,8 +123,8 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                         $bundle['products'][$count]['discount_usdollar']['value'] = format_number_sugarpdf($product_bundle_line_item->discount_usdollar, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
                         $bundle['products'][$count]['ext_price']['value'] = format_number_sugarpdf($product_bundle_line_item->discount_usdollar * $product_bundle_line_item->quantity, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
                         $bundle['products'][$count]['discount_amount']['value'] = "";
-                        if(format_number($ordered_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())!= 0.00){
-                            if($product_bundle_line_item->discount_select){
+                        if (format_number($ordered_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())!= 0.00) {
+                            if ($product_bundle_line_item->discount_select) {
                                 $bundle['products'][$count]['discount_amount']['value'] = format_number($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision())."%";
                             } else {
                                 $bundle['products'][$count]['discount_amount']['value'] = format_number_sugarpdf($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => false)));
@@ -142,72 +138,72 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                         $bundle['products'][$count]['discount_usdollar']['value'] = "";
                         $bundle['products'][$count]['ext_price'] = "";
                         $bundle['products'][$count]['discount_amount']['value'] = "";
-                    }                
+                    }
                     $count++;
-                }                
+                }
                 $bundles[] = $bundle;
             }
 
             $this->ss->assign('product_bundles', $bundles);
         }
- 
-        
+
          $this->ss->assign('fields', $fields);
     }
 
-    private function buildTemplateFile($pdfTemplate) {
-
+    private function buildTemplateFile($pdfTemplate)
+    {
         if (!empty($pdfTemplate)) {
-            
-            if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls') ) { 
-                mkdir_recursive($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls'); 
+
+            if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls') ) {
+                mkdir_recursive($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls');
             }
             $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplate->id . '.tpl';
-            
+
             $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
-            
+
             if ($pdfTemplate->base_module == 'Quotes') {
 
                 $pdfTemplate->body_html = str_replace(
-                    '$fields.product_bundles', 
+                    '$fields.product_bundles',
                     '$bundle',
                     $pdfTemplate->body_html
                 );
 
                 $pdfTemplate->body_html = str_replace(
-                    '$fields.products', 
+                    '$fields.products',
                     '$product',
                     $pdfTemplate->body_html
-                );                
-            
+                );
+
                 $pdfTemplate->body_html = str_replace(
-                    '<p>{START_BUNDLE::P}</p>', 
+                    '<p>{START_BUNDLE::P}</p>',
                     '{foreach from=$product_bundles item="bundle"}',
                     $pdfTemplate->body_html
                 );
                 $pdfTemplate->body_html = str_replace(
-                    '<p>{END_BUNDLE::P}</p>', 
+                    '<p>{END_BUNDLE::P}</p>',
                     '{/foreach}',
                     $pdfTemplate->body_html
                 );
-            
+
                 $pdfTemplate->body_html = str_replace(
-                    "<tr>\r\n<td width=\"60%\">{START_PRODUCT::TR}", 
+                    "<tr>\r\n<td width=\"60%\">{START_PRODUCT::TR}",
                     '{foreach from=$bundle.products item="product"}<tr><td width="60%">',
                     $pdfTemplate->body_html
                 );
                 $pdfTemplate->body_html = str_replace(
-                    "{END_PRODUCT::TR}</td>\r\n</tr>", 
+                    "{END_PRODUCT::TR}</td>\r\n</tr>",
                     '</td></tr>{/foreach}',
                     $pdfTemplate->body_html
                 );
             }
-            
+
             sugar_file_put_contents($tpl_filename, $pdfTemplate->body_html);
 
             return $tpl_filename;
         }
-        return '';        
+
+        return '';
     }
 
     /**
@@ -215,13 +211,14 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
      *
      * @see TCPDF::Output()
      */
-    public function Output($name="doc.pdf", $dest='I') {
+    public function Output($name="doc.pdf", $dest='I')
+    {
         if (!empty($this->pdfFilename)) {
             $name = $this->pdfFilename;
         }
-        return parent::Output($name,$dest);
+
+        return parent::Output($name, 'D');
     }
 
 }
 
-?>

@@ -34,7 +34,7 @@ $dictionary['PdfManager'] = array(
     'audited'=>false,
     'duplicate_merge'=>true,
     'fields'=>array (
-        'base_module' => 
+        'base_module' =>
         array (
             'required' => true,
             'name' => 'base_module',
@@ -59,7 +59,7 @@ $dictionary['PdfManager'] = array(
             'studio' => false,
             'dependency' => false,
         ),
-        'published' => 
+        'published' =>
         array (
             'required' => false,
             'name' => 'published',
@@ -83,7 +83,7 @@ $dictionary['PdfManager'] = array(
             'studio' => false,
             'dependency' => false,
         ),
-        'field' => 
+        'field' =>
         array (
             'required' => false,
             'name' => 'field',
@@ -107,7 +107,7 @@ $dictionary['PdfManager'] = array(
             'studio' => false,
             'dependency' => 'not(equal($base_module, "Reports"))',
         ),
-        'body_html' => 
+        'body_html' =>
         array (
             'required' => false,
             'name' => 'body_html',
@@ -130,7 +130,7 @@ $dictionary['PdfManager'] = array(
             'cols' => '20',
             'dependency' => 'not(equal($base_module, "Reports"))',
         ),
-        'header_image' => 
+        'header_image' =>
         array (
             'required' => false,
             'name' => 'header_image',
@@ -154,9 +154,9 @@ $dictionary['PdfManager'] = array(
             'border' => '',
             'width' => '120',
             'height' => '',
-            'dependency' => 'equal($base_module, "Reports")',    
+            'dependency' => 'equal($base_module, "Reports")',
         ),
-        'author' => 
+        'author' =>
         array (
             'required' => true,
             'name' => 'author',
@@ -176,7 +176,7 @@ $dictionary['PdfManager'] = array(
             'len' => '255',
             'size' => '20',
         ),
-        'title' => 
+        'title' =>
         array (
             'required' => false,
             'name' => 'title',
@@ -196,7 +196,7 @@ $dictionary['PdfManager'] = array(
             'len' => '255',
             'size' => '20',
         ),
-        'subject' => 
+        'subject' =>
         array (
             'required' => false,
             'name' => 'subject',
@@ -216,7 +216,7 @@ $dictionary['PdfManager'] = array(
             'len' => '255',
             'size' => '20',
         ),
-        'keywords' => 
+        'keywords' =>
         array (
             'required' => false,
             'name' => 'keywords',
@@ -242,7 +242,7 @@ $dictionary['PdfManager'] = array(
     'unified_search'=>true,
 );
 
-if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+if (!class_exists('VardefManager')) {
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('PdfManager','PdfManager', array('basic','team_security','assignable'));

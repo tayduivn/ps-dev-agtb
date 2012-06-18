@@ -29,19 +29,19 @@
 //FILE SUGARCRM flav=pro ONLY
 
 $module_name = 'PdfManager';
-$searchdefs[$module_name] = 
+$searchdefs[$module_name] =
 array (
-  'layout' => 
+  'layout' =>
   array (
-    'basic_search' => 
+    'basic_search' =>
     array (
-      'name' => 
+      'name' =>
       array (
         'name' => 'name',
         'default' => true,
         'width' => '10%',
       ),
-      'base_module' => 
+      'base_module' =>
       array (
         'type' => 'enum',
         'default' => true,
@@ -50,7 +50,7 @@ array (
         'width' => '10%',
         'name' => 'base_module',
       ),
-      'team_name' => 
+      'team_name' =>
       array (
         'type' => 'relate',
         'link' => true,
@@ -61,14 +61,14 @@ array (
         'name' => 'team_name',
       ),
     ),
-    'advanced_search' => 
+    'advanced_search' =>
     array (),
   ),
-  'templateMeta' => 
+  'templateMeta' =>
   array (
     'maxColumns' => '3',
     'maxColumnsBasic' => '4',
-    'widths' => 
+    'widths' =>
     array (
       'label' => '10',
       'field' => '30',

@@ -34,14 +34,13 @@ require_once 'modules/ExpressionEngine/formulaHelper.php';
 
 class ViewGetFields extends SugarView
 {
-    var $vars = array("baseModule", "baseLink");
+    public $vars = array("baseModule", "baseLink");
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
-        
-        foreach($this->vars as $var)
-        {
+
+        foreach ($this->vars as $var) {
             if (!isset($_REQUEST[$var])) {
                 sugar_die("Required paramter $var not set");
             }
@@ -49,14 +48,14 @@ class ViewGetFields extends SugarView
         }
     }
 
-    function display() {
-    
+    public function display()
+    {
         $fieldsForSelectedModule = PdfManagerHelper::getFields($this->baseModule, true);
         $selectedField = $fieldsForSelectedModule;
         $fieldsForSubModule = array();
 
         if (!empty($this->baseLink) && strpos($this->baseLink, 'pdfManagerRelateLink_') === 0) {
-        
+
             $selectedField = $this->baseLink;
             $linkName = substr($this->baseLink, strlen('pdfManagerRelateLink_'));
             $focus = BeanFactory::newBean($this->baseModule);
@@ -66,11 +65,11 @@ class ViewGetFields extends SugarView
                 $fieldsForSubModule = PdfManagerHelper::getFields($focus->$linkName->getRelatedModuleName());
             }
         }
-        
+
         $this->ss->assign('fieldsForSelectedModule', $fieldsForSelectedModule);
         $this->ss->assign('selectedField', $selectedField);
         $this->ss->assign('fieldsForSubModule', $fieldsForSubModule);
-        
+
         $this->ss->display('modules/PdfManager/tpls/getFields.tpl');
     }
 }
