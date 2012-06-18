@@ -214,7 +214,6 @@ class MetadataApi extends SugarApi {
                         && !in_array($relData['lhs_module'],$moduleFilter)) {
                         unset($data['relationships'][$relName]);
                     }
-                    else { $data['relationships'][$relName]['checked'] = 1; }
                 }
             }
 
