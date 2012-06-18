@@ -42,6 +42,7 @@ class ChartApi extends SugarApi
                 'method' => 'chartData',
                 'shortHelp' => 'Return Chart Data for a given module',
                 'longHelp' => 'include/api/help/getModuleChart.html',
+                'jsonParams' => array('filter')
             ),
             'savedreport' => array(
                 'reqType' => 'GET',
@@ -50,6 +51,7 @@ class ChartApi extends SugarApi
                 'method' => 'chartData',
                 'shortHelp' => 'Return Chart Data for a given module',
                 'longHelp' => 'include/api/help/getModuleChart.html',
+                'jsonParams' => array('filter')
             )
         );
     }
