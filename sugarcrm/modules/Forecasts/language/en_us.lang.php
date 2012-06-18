@@ -232,4 +232,5 @@ $mod_strings = array (
 
   // Labels for jsTree implementation
   'LBL_TREE_MY_OPPORTUNITIES' => 'My Opportunities',
+  'LBL_TREE_PARENT' => 'Parent',
 );
