@@ -449,11 +449,21 @@ class ChartDisplay
         return $sugarChart;
     }
 
+    /**
+     * Generate the xml string from the SugarChart Object
+     *
+     * @return string
+     */
     public function generateXML()
     {
         return $this->getSugarChart()->generateXML();
     }
 
+    /**
+     * Generate JSON
+     *
+     * @return mixed|string
+     */
     public function generateJson()
     {
         $json = $this->getSugarChart()->buildJson($this->generateXML());
