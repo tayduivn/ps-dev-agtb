@@ -159,6 +159,27 @@
     });
 
     /**
+     * We require sortable to be the default if not defined in either field viewdef or vardefs. Otherwise, 
+     * we use whatever is provided in either field vardefs or field's viewdefs where the view def has more
+     * specificity.
+     * @method has
+     * @param {String} module name
+     * @param {Object} the field view defintion (e.g. looping through meta.panels.field it will be 'this')
+     * @return {String} Result of the `block` execution if sortable, otherwise empty string. 
+     */
+    Handlebars.registerHelper('isSortable', function(module, fieldViewdef, block) {
+        if (!block) return "";
+        
+        var fieldVardef = app.metadata.getModule(module).fields[fieldViewdef.name];
+
+        if(!_.isUndefined(fieldViewdef.sortable) ? fieldViewdef.sortable : (!_.isUndefined(fieldVardef.sortable) ? fieldVardef.sortable : true)) {
+            return block(this);
+        } else {
+            return '';
+        }
+    });
+
+    /**
      * Executes a given block if a given values are equal.
      * @method eq
      * @param {String} val1 first value to compare

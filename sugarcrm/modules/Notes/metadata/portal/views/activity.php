@@ -39,7 +39,6 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
                     'name' => 'name',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' =>  8
                 ),
                 1 =>
@@ -47,7 +46,6 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
                     'name' => 'description',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 13
                 ),
                 2 =>
@@ -55,7 +53,6 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
                     'name' => 'date_entered',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 13
                 ),
                 3 =>
@@ -63,7 +60,6 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
                     'name' => 'created_by_name',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
                     'width' => 13
                 ),
             ),

@@ -30,8 +30,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'width' => '45%',
                     'label' => 'LBL_NAME',
                     'link' => true,
-                    'sortable' => false,
-                    'sorting' => true,
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -40,7 +38,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'label' => 'LBL_DOC_ACTIVE_DATE',
                     'enabled' => true,
                     'width' => '10%',
-                    'sorting' => true,
                     'default' => true,
                 ),
                 array (
@@ -48,7 +45,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'label' => 'LBL_DOC_EXP_DATE',
                     'enabled' => true,
                     'width' => '10%',
-                    'sorting' => true,
                     'default' => true,
                 ),
                 array (
@@ -56,7 +52,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'width' => '10%',
-                    'sorting' => true,
                     'default' => true,
                 ),
                 array (
@@ -64,7 +59,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'label' => 'LBL_KBDOCUMENT_REVISION_NUMBER',
                     'enabled' => true,
                     'width' => '10%',
-                    'sorting' => true,
                     'default' => true,
                 ),
             ),
