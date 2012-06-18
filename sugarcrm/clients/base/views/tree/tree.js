@@ -115,8 +115,17 @@
                     switch(nodeType) {
                         case "parent_link":
                             console.log("TreeNode selected: Parent -- reloading tree for root: " + selectedUser.full_name);
+                            var returnParentSuffix = '';
 
-                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + '/1';
+                            // selectedUser has the metadata of the currently-selected-user's parent
+                            // if the currently-Logged-in user is going to be fetched next, do not return a parent link
+                            // as we just want the currently-Logged-in user and who they report to but no parent link.
+                            // Go no further up the tree
+                            if(app.user.get('id') != selectedUser.id)  {
+                                returnParentSuffix = '/1'
+                            }
+
+                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + returnParentSuffix;
                             console.log("CurrentTreeUrl changed, re-rendering with URL: " , self.currentTreeUrl);
                             self.rendered = false;
                             self.render();
