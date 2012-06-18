@@ -60,6 +60,7 @@ class ForecastsChartApi extends ModuleApi {
 
         $testFilters = array(
             'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
+            'assigned_user_link' => array('id' => 'seed_chris_id'),
             //'probability' => array('$between' => array('0', '70')),
             //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
@@ -68,17 +69,44 @@ class ForecastsChartApi extends ModuleApi {
         require_once("include/SugarParsers/Converter/Report.php");
         require_once("include/SugarCharts/ReportBuilder.php");
 
+        $rb = new ReportBuilder("Opportunities");
+        $rb->setDefaultReport($report_defs['ForecastSeedReport1'][2]);
+
         $filter = new SugarParsers_Filter(new Opportunity());
         $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
+        $converter = new SugarParsers_Converter_Report($rb);
         $reportFilters = $filter->convert($converter);
+        return $reportFilters;
         $report->report_def['filters_def'] = $reportFilters;
+        return $report->report_def['filters_def'];
 
 
         //Get the goal marker values
         require_once("include/SugarCharts/ChartDisplay.php");
         $chartDisplay = new ChartDisplay();
         $chartDisplay->setReporter($report);
+
+        if ($chartDisplay->canDrawChart() === false) {
+            // no chart to display, so lets just kick back the error message
+            global $current_language;
+            $mod_strings = return_module_language($current_language, 'Reports');
+            return $mod_strings['LBL_NO_CHART_DRAWN_MESSAGE'];
+        }
+
+        $chart = $chartDisplay->getSugarChart();
+        $json = $chart->buildJson($chart->generateXML());
+        // fix-up the json since it builds it wrong for the php parser
+        $json = str_replace(array("\t", "\n"), "", $json);
+        $json = str_replace("'", '"', $json);
+
+        $dataArray = json_decode($json, true);
+
+        $dataArray['properties']['goal_market_type'] = array('group', 'group');
+        $dataArray['properties']['goal_marker_color'] = array('#3FB300', '#444444');
+        $dataArray['properties']['goal_market_label'] = array('Quota', 'Likely');
+
+        return $dataArray;
+
 
         //$report->chart_rows gives us the data
         //$report->chart_rows
