@@ -305,7 +305,7 @@ class PdfManagerHelper
      */
     public static function parseBeanFields($module_instance, $recursive = FALSE)
     {
-        global $mod_strings, $sugar_config, $app_strings, $app_list_strings, $theme, $current_user;
+        global $app_list_strings;
 
         $fields_module = array();
         foreach ($module_instance->toArray() as $name => $value) {
