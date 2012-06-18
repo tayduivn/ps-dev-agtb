@@ -174,7 +174,6 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         if (isset($bean->field_defs[$field]) && $bean->field_defs[$field]['type'] != "link") {
             return true;
         }
-        error_log($bean->module_name . ' -- ' . $field);
         return false;
     }
 
