@@ -31,8 +31,10 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'sales_stage',
                     'label' => 'LBL_SALES_STAGE',
+                    'options' => 'sales_stage_dom',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true
                 ),
 
                 array(
@@ -46,8 +48,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                     'name' => 'amount',
                     'label' => 'LBL_AMOUNT',
                     'default' => true,
-                    'enabled' => true,
-                    'clickToEdit' => true,
+                    'enabled' => true
                 ),
 
                 array(
@@ -55,7 +56,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_BEST_CASE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true,
+                    'clickToEdit' => true
                 ),
 
                 array(
@@ -63,7 +64,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_LIKELY_CASE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true,
+                    'clickToEdit' => true
                 ),
             ),
         ),
