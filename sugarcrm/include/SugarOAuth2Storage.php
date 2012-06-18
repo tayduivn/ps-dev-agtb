@@ -71,7 +71,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             return $this->portalApiUser;
         }
 
-        $portalApiUser = BeanFactory::getBean('Users');
+        $portalApiUser = BeanFactory::newBean('Users');
 
         // Find the Portal API user
         // FIXME: What to do if they have more than one portal user?
@@ -213,6 +213,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             }
         }
         session_id($oauth_token);
+        // Disable cookies
+        ini_set("session.use_cookies",false);
         session_start();
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
@@ -249,13 +251,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         }
 
         if ( $clientInfo['client_type'] != 'support_portal' ) {
-            $userBean = BeanFactory::getBean('Users');
+            $userBean = BeanFactory::getBean('Users',$user_id);
 
-            if ( isset($this->userBean) && $this->userBean->id == $user_id ) {
-                $userBean = $this->userBean;
-            } else {
-                $userBean = $userBean->retrieve($user_id);
-            }
             if ( $userBean == null ) {
                 return false;
             }
@@ -272,7 +269,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             if ( isset($this->contactBean) && $this->contactBean->id == $user_id ) {
                 $contactBean = $this->contactBean;
             } else {
-                $contactBean = BeanFactory::getBean('Contacts');
+                $contactBean = BeanFactory::newBean('Contacts');
                 //BEGIN SUGARCRM flav=pro ONLY
                 // Need to disable the row-level security because this user probably doesn't have access to much of anything
                 $contactBean->disable_row_level_security = true;
@@ -285,16 +282,17 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             }
         }
 
-        if ( session_id() != '' ) {
-            // There is already a session, let's see if it's the same one
-            if ( session_id() != $oauth_token ) {
-                // Oh, we are in trouble, we have a session and it's the wrong one.
-                // Let's close this session and start a new one with the correct ID.
-                session_write_close();
-            }
+        if ( session_id() != '' && session_id() != $oauth_token ) {
+            // Oh, we are in trouble, we have a session and it's the wrong one.
+            // Let's close this session and start a new one with the correct ID.
+            session_write_close();
         }
         session_id($oauth_token);
+        // Disable cookies
+        ini_set("session.use_cookies",false);
         session_start();
+        // Clear out the old session data
+        $_SESSION = array();
 
         // Since we have to setup the session for oauth2 here, we might as well set up the rest of the session
         $GLOBALS['current_user'] = $userBean;
@@ -326,7 +324,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             'user_id'=>$user_id,
             'expires'=>$expires,
         );
-        
         return true;
     }
 
@@ -470,6 +467,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
     {
         $tokenSeed = BeanFactory::newBean('OAuthTokens');
         $token = $tokenSeed->load($refresh_token,'oauth2');
+        if ( empty($token) ) {
+            return null;
+        }
 
         if ( $token->consumer_obj->client_type == 'support_portal' ) {
             $portalApiUser = $this->findPortalApiUser($token->consumer_obj->c_key);
@@ -487,9 +487,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 $authBean = null;
             }
         } else {
-            $user = BeanFactory::newBean('Users');
-            $authBean = $user->retrieve($token->assigned_user_id);
-            if ( $authBean->status == 'Inactive' ) {
+            $authBean = BeanFactory::getBean('Users',$token->assigned_user_id);
+            if ( $authBean == null || $authBean->status == 'Inactive' ) {
                 $authBean = null;
             }
         }
@@ -501,6 +500,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 'refresh_token'=>$token->id,
                 'client_id'=>$token->consumer_obj->c_key,
                 'expires'=>$token->expire_ts,
+                'user_id'=>$authBean->id,
             );
         }
     }
