@@ -1,4 +1,30 @@
 {
+    "relationships": {
+        "opportunities_contacts": {
+            "lhs_module": "Opportunities",
+            "lhs_link": "contacts",
+            "rhs_module": "Contacts",
+            "rhs_link": "opportunities",
+            "relationship_type": "many-to-many"
+        },
+        "accounts_opportunities": {
+            "lhs_module": "Accounts",
+            "lhs_table": "accounts",
+            "lhs_link": "opportunities",
+            "rhs_module": "Opportunities",
+            "rhs_table": "opportunities",
+            "rhs_link": "opportunities",
+            "relationship_type": "one-to-many"
+        },
+        "opportunity_calls": {
+            "lhs_module": "Opportunities",
+            "lhs_link": "calls",
+            "rhs_module": "Calls",
+            "rhs_link": "opportunities",
+            "relationship_type": "one-to-many"
+        }
+
+    },
     "modules": {
         "Teams": {
             "fields": {}
@@ -59,32 +85,6 @@
                     "relationship": "opportunity_calls"
                 }
 
-            },
-            "relationships": {
-                "opportunities_contacts": {
-                    "lhs_module": "Opportunities",
-                    "lhs_link": "contacts",
-                    "rhs_module": "Contacts",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "many-to-many"
-                },
-                "accounts_opportunities": {
-                    "lhs_module": "Accounts",
-                    "lhs_table": "accounts",
-                    "lhs_link": "opportunities",
-                    "rhs_module": "Opportunities",
-                    "rhs_table": "opportunities",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "one-to-many"
-                },
-                "opportunity_calls": {
-                    "lhs_module": "Opportunities",
-                    "lhs_link": "calls",
-                    "rhs_module": "Calls",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "one-to-many"
-                }
-
             }
         },
         "Contacts": {
@@ -103,9 +103,6 @@
                     "name": "field_0",
                     "default": 100
                 }
-
-            },
-            "relationships": {
 
             },
             "views": {
