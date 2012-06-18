@@ -47,7 +47,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'last_name',
-                        //'label' => 'LBL_LAST_NAME',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -82,7 +81,6 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                         'type' => 'address',
                         'displayParams' =>
                         array (
-                            //'key' => 'primary',
                             'colspan' => 2
                         ),
                     ),
