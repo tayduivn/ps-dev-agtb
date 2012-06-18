@@ -30,17 +30,18 @@ class RestService extends ServiceBase {
     public $user;
 
     /**
+     * The leading portion of the URI for building request URIs with in the API
+     * @var
+     */
+    protected $resourceURIBase;
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute() {
         try {
-            if ( !empty($_REQUEST['__sugar_url']) ) {
-                $rawPath = $_REQUEST['__sugar_url'];
-            } else if ( !empty($_SERVER['PATH_INFO']) ) {
-                $rawPath = $_SERVER['PATH_INFO'];
-            } else {
-                $rawPath = '/';
-            }
+            $rawPath = $this->getRawPath();
+
             list($version,$path) = $this->parsePath($rawPath);
             $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD']);
             
@@ -119,45 +120,108 @@ class RestService extends ServiceBase {
             
             $output = $apiClass->$apiMethod($this,$argArray);
 
-            // TODO: gzip, and possibly XML based output
-            if ( isset($route['rawReply']) && $route['rawReply']) {
-                echo $output;
-            } else {
-                if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
-                    $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
-                }
-                if( headers_sent() || empty($httpAccept) ) {
-                    $encoding = false;
-                } else if( strpos($httpAccept,'x-gzip') !== false ) {
-                    $encoding = 'x-gzip';
-                } else if( strpos($httpAccept,'gzip') !== false ) {
-                    $encoding = 'gzip';
-                } else {
-                    $encoding = false;
-                }
-                $encoding = false;
-                // header('Content-Type: application/json');
-                if ( $encoding !== false ) {
-                    header('Content-Encoding: '.$encoding);
-                    $gzData = gzencode(json_encode($output));
-                    header('Content-Length: '.strlen($gzData));
-                    echo $gzData;
-                } else {
-                    echo json_encode($output);
-                }
-            }
+            $this->respond($output, $route, $argArray);
 
-        } catch ( Exception $e ) {
+        } catch ( SugarApiException $e ) {
             $this->handleException($e);
+        } catch ( Exception $e ) {
+            // Unknown exception
+            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
+            $this->handleException($apiException);
         }
     }
 
+    /**
+     * Gets the raw path of the request
+     *
+     * @return string
+     */
+    public function getRawPath() {
+        if ( !empty($_REQUEST['__sugar_url']) ) {
+            $rawPath = $_REQUEST['__sugar_url'];
+        } else if ( !empty($_SERVER['PATH_INFO']) ) {
+            $rawPath = $_SERVER['PATH_INFO'];
+        } else {
+            $rawPath = '/';
+        }
+
+        return $rawPath;
+    }
+
+    /**
+     * Gets the leading portion of the URI for a resource
+     *
+     * @param array|string $resource The resource to fetch a URI for as an array
+     *                               of path parts or as a string
+     * @return string The path to the resource
+     */
+    public function getResourceURI($resource) {
+        if (empty($this->resourceURIBase)) {
+            $this->setResourceURIBase();
+        }
+
+        // Empty resources are simply the URI for the current request
+        if (empty($resource)) {
+            $siteUrl = SugarConfig::get('site_url');
+            return $siteUrl . $_SERVER['REQUEST_URI'];
+        }
+
+        if (is_string($resource)) {
+            $parts = explode('/', $resource);
+            return $this->getResourceURI($parts);
+        } elseif (is_array($resource)) {
+            // Logic here is, if we find a GET route for this resource then it
+            // should be valid. In most cases, where there is a POST|PUT|DELETE
+            // route that does not have a GET, we're not going to be handing that
+            // URI out anyway, so this is a safe validation assumption.
+            list($version,) = $this->parsePath($this->getRawPath());
+            $route = $this->findRoute($resource, $version, 'GET');
+            if ($route != false) {
+                return $this->resourceURIBase . implode('/', $resource);
+            }
+        }
+    }
+
+    /**
+     * For cases in which HTML is the requested response type but json is the
+     * intended body content, this returns an array of status code and message.
+     * This will also be used by the exception handler when dispatching exceptions
+     * under the same requested response type conditions.
+     *
+     * @param string $message
+     * @param int $code
+     * @return array
+     */
+    public function getHXRReturnArray($message, $code = 200) {
+        return array(
+            'xhr' => array(
+                'code' => $code,
+                'message' => $message,
+            ),
+        );
+    }
+
+    /**
+     * Attempts to find the route for this request, API version and request method
+     *
+     * @param array $path The request path
+     * @param int $version The API version number
+     * @param string $requestType The request method
+     * @return mixed
+     */
     protected function findRoute($path, $version, $requestType) {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
         return $this->dict->lookupRoute($path, $version, $requestType);
     }
 
+    /**
+     * Maps the route path with the request path to set variables from the request
+     *
+     * @param array $path The request path
+     * @param array $route The route for this request
+     * @return array
+     */
     protected function getPathVars($path,$route) {
         $outputVars = array();
         foreach ( $route['pathVars'] as $i => $varName ) {
@@ -169,6 +233,11 @@ class RestService extends ServiceBase {
         return $outputVars;
     }
 
+    /**
+     * Handles exception responses
+     *
+     * @param Exception $exception
+     */
     protected function handleException(Exception $exception) {
         if ( is_a($exception,"SugarApiException") ) {
             $httpError = $exception->errorCode;
@@ -182,10 +251,25 @@ class RestService extends ServiceBase {
         $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
         
         // TODO: Translate error messages
-        echo("ERROR: ".$exception->getMessage());
+        $reply = "ERROR: ".$exception->getMessage();
+
+        // For edge cases when an HTML response is needed as a wrapper to JSON
+        if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
+            if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
+                $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $exception->errorCode)));
+            }
+        }
+        echo($reply);
         die();
     }
 
+    /**
+     * Parses the request uri or request path as well as fetching the API request
+     * version
+     *
+     * @param string $rawPath
+     * @return array
+     */
     protected function parsePath($rawPath) {
         $pathBits = explode('/',trim($rawPath,'/'));
         
@@ -197,6 +281,11 @@ class RestService extends ServiceBase {
         
     }
 
+    /**
+     * Handles authentication of the current user
+     *
+     * @throws SugarApiExceptionNeedLogin
+     */
     protected function authenticateUser() {
         $valid = false;
         
@@ -220,8 +309,8 @@ class RestService extends ServiceBase {
             }
         }
 
-
         if ( $valid === false ) {
+            // @TODO Localize exception strings
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
 
@@ -234,4 +323,109 @@ class RestService extends ServiceBase {
         $this->user = $GLOBALS['current_user'];
     }
 
+    /**
+     * Sends the proper Content-Type header for the response based on either a
+     * 'format' request arg or an Accept header.
+     *
+     * @TODO Handle Accept header parsing to determine content type
+     * @access protected
+     * @param array $args The request arguments
+     */
+    protected function sendContentTypeHeader($args) {
+        if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
+            header('Content-Type: text/html');
+        } else {
+            // @TODO: Handle other response types here
+            header('Content-Type: application/json');
+        }
+    }
+
+    /**
+     * Sends the content to the client
+     *
+     * @TODO Handle proper content disposition based on response content type
+     * @access protected
+     * @param mixed $content
+     * @param string $encoding
+     * @param array $args The request arguments
+     */
+    protected function sendContent($content, $encoding, $args) {
+        // @TODO: Handle other content types for rendering
+        if ( $encoding !== false ) {
+            header('Content-Encoding: '.$encoding);
+            $gzData = gzencode(json_encode($content));
+            header('Content-Length: '.strlen($gzData));
+            echo $gzData;
+        } else {
+            $response = json_encode($content);
+            if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
+                $response = htmlentities($response);
+            }
+            echo $response;
+        }
+    }
+
+    /**
+     * Sets the leading portion of any request URI for this API instance
+     *
+     * @access protected
+     */
+    protected function setResourceURIBase() {
+        // Only do this if it hasn't been done already
+        if (empty($this->resourceURIBase)) {
+            // Default the base part of the request URI
+            $apiBase = '/api/rest.php/';
+
+            // Check rewritten URLs AND request uri vs script name
+            if (isset($_REQUEST['__sugar_url']) && strpos($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']) === false) {
+                // This is a forwarded rewritten URL
+                $apiBase = '/rest/';
+            }
+
+            // Get our version
+            preg_match('#v(?>\d+)/#', $_SERVER['REQUEST_URI'], $m);
+            if (isset($m[0])) {
+                $apiBase .= $m[0];
+            }
+
+            // This is for our URI return value
+            $siteUrl = SugarConfig::get('site_url');
+
+            // Get the file uri bas
+            $this->resourceURIBase = $siteUrl . $apiBase;
+        }
+    }
+
+    /**
+     * Handles the response
+     *
+     * @param array|string $output The output to send
+     * @param array $route The route for this request
+     * @param array $args The request arguments
+     */
+    protected function respond($output, $route, $args) {
+        // TODO: gzip, and possibly XML based output
+        if (!empty($route['rawReply'])) {
+            echo $output;
+        } else {
+            if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
+                $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
+            }
+            if( headers_sent() || empty($httpAccept) ) {
+                $encoding = false;
+            } else if( strpos($httpAccept,'x-gzip') !== false ) {
+                $encoding = 'x-gzip';
+            } else if( strpos($httpAccept,'gzip') !== false ) {
+                $encoding = 'gzip';
+            } else {
+                $encoding = false;
+            }
+
+            // Handle content type header sending
+            $this->sendContentTypeHeader($args);
+
+            // Send the content
+            $this->sendContent($output, $encoding, $args);
+        }
+    }
 }

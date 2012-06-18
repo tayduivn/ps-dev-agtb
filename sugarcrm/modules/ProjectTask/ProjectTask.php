@@ -29,17 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: ProjectTask.php 55444 2010-03-17 18:30:25Z jmertic $
-
-
-
-
-
-
-
-
-
-
 class ProjectTask extends SugarBean {
 	// database table columns
 	var $id;
@@ -88,7 +77,7 @@ class ProjectTask extends SugarBean {
 		'email_id' => 'emails',
 	);
 
-	
+
 	//////////////////////////////////////////////////////////////////
 	// METHODS
 	//////////////////////////////////////////////////////////////////
@@ -136,7 +125,7 @@ class ProjectTask extends SugarBean {
         {
             $this->project_task_id = $this->getNumberOfTasksInProject($this->project_id) + 1;
         }
-        
+
         $id = parent::save($check_notify);
         $this->updateParentProjectTaskPercentage();
         return $id;
@@ -151,24 +140,11 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_detail_fields()
    {
-      $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->team_name = get_assigned_team_name($this->team_id);
-        $this->resource_name = $this->getResourceName();
-		//END SUGARCRM flav=pro ONLY
-      $this->project_name = $this->_get_project_name($this->project_id);
-		/*
-        $this->depends_on_name = $this->_get_depends_on_name($this->depends_on_id);
-		if(empty($this->depends_on_name))
-		{
-			$this->depends_on_id = '';
-		}
-		$this->parent_name = $this->_get_parent_name($this->parent_id);
-		if(empty($this->parent_name))
-		{
-			$this->parent_id = '';
-		}
-        */
+       parent::fill_in_additional_detail_fields();
+       $this->project_name = $this->_get_project_name($this->project_id);
+      //BEGIN SUGARCRM flav=pro ONLY
+       $this->resource_name = $this->getResourceName();
+      //END SUGARCRM flav=pro ONLY
    }
 
 	/*
@@ -176,12 +152,7 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_list_fields()
    {
-      //BEGIN SUGARCRM flav=pro ONLY
-      $this->resource_name = $this->getResourceName();
-      //END SUGARCRM flav=pro ONLY
-      $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-      //$this->parent_name = $this->_get_parent_name($this->parent_id);
-      $this->project_name = $this->_get_project_name($this->project_id);
+      $this->fill_in_additional_detail_fields();
    }
 
 	/*
@@ -588,15 +559,15 @@ class ProjectTask extends SugarBean {
 
 		return $projectTasksBeans;
 	}
-	
-	
+
+
 	/**
 	 * getNumberOfTasksInProject
-	 * 
+	 *
 	 * Returns the count of project_tasks for the given project_id
-	 * 
+	 *
 	 * This is a private helper function to get the number of project tasks for a given project_id.
-	 * 
+	 *
 	 * @param $project_id integer value of the project_id associated with this ProjectTask instance
 	 * @return total integer value of the count of project tasks, 0 if none found
 	 */
@@ -616,7 +587,7 @@ class ProjectTask extends SugarBean {
 	        }
     	}
         return 0;
-    }	
+    }
 }
 
 function getUtilizationDropdown($focus, $field, $value, $view) {

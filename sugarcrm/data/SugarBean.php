@@ -297,13 +297,6 @@ class SugarBean
         $this->db = DBManagerFactory::getInstance();
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
-            // We can disable team security for this module
-            $this->disable_row_level_security =true;
-        }
-        //END SUGARCRM flav=pro ONLY
         if((false == $this->disable_vardefs && empty($loaded_defs[$this->object_name])) || !empty($GLOBALS['reload_vardefs']))
         {
             //BEGIN SUGARCRM flav=int ONLY
@@ -378,6 +371,14 @@ class SugarBean
                 $this->optimistic_lock=true;
             }
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
+        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+        	// We can disable team security for this module
+        	$this->disable_row_level_security =true;
+        }
+        //END SUGARCRM flav=pro ONLY
 
         if($this->bean_implements('ACL') && !empty($GLOBALS['current_user'])){
             $this->acl_fields = (isset($dictionary[$this->object_name]['acl_fields']) && $dictionary[$this->object_name]['acl_fields'] === false)?false:true;
@@ -2384,6 +2385,15 @@ function save_relationship_changes($is_update, $exclude=array())
 
     }
 
+    protected function getUsersJoin($field, $alias)
+    {
+        return array(
+            ", users_$alias.first_name as {$alias}_first_name, users_$alias.last_name as {$alias}_last_name",
+            " LEFT JOIN users users_$alias ON users_$alias.id = {$this->table_name}.$field"
+        );
+    }
+
+
     /**
      * Function fetches a single row of data given the primary key value.
      *
@@ -2413,28 +2423,52 @@ function save_relationship_changes($is_update, $exclude=array())
         else
             $custom_join = false;
 
+        $query_select = "{$this->table_name}.*";
+        $query_from = $this->table_name;
+        $where = " WHERE $this->table_name.id = ".$this->db->quoted($id);
+        if ($deleted) $where .= " AND $this->table_name.deleted=0";
+
         if($custom_join)
         {
-            $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name ";
+            $query_select .= " ".$custom_join['select'];
+            $query_from .= ' '.$custom_join['join'];
         }
-        else
-        {
-            $query = "SELECT $this->table_name.* FROM $this->table_name ";
+
+        // Add user names
+        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_id'])) {
+            list($usel, $ufrom) = $this->getUsersJoin("assigned_user_id", 'au');
+            $query_select .= $usel;
+            $query_from .= $ufrom;
         }
+        if(!empty($this->field_defs['created_by_name']) && !empty($this->field_defs['created_by'])) {
+            list($usel, $ufrom) = $this->getUsersJoin("created_by", 'cbu');
+            $query_select .= $usel;
+            $query_from .= $ufrom;
+        }
+        if(!empty($this->field_defs['modified_by_name']) && !empty($this->field_defs['modified_user_id'])) {
+        	list($usel, $ufrom) = $this->getUsersJoin("modified_user_id", 'mbu');
+        	$query_select .= $usel;
+        	$query_from .= $ufrom;
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
+            $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
+            $query_from .= " LEFT JOIN teams teams_tn ON teams_tn.id = {$this->table_name}.team_id";
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
         {
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
-            $this->add_team_security_where_clause($query);
+            $this->addVisibilityFrom($query);
+            // TODO: should we also do addVisibilityWhere ?
         }
         //END SUGARCRM flav=pro ONLY
 
-        if($custom_join)
-        {
-            $query .= ' ' . $custom_join['join'];
-        }
-        $query .= " WHERE $this->table_name.id = ".$this->db->quoted($id);
-        if ($deleted) $query .= " AND $this->table_name.deleted=0";
+        $query .= $where;
+
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))
@@ -4398,19 +4432,26 @@ function save_relationship_changes($is_update, $exclude=array())
     */
     function fill_in_additional_detail_fields()
     {
-        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->assigned_user_id)){
-
-            $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-
+        global $locale;
+        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->assigned_user_id) && empty($this->assigned_user_name) && !empty($this->fetched_row['au_last_name'])){
+             $this->assigned_user_name = $locale->getLocaleFormattedName($this->fetched_row['au_first_name'],$this->fetched_row['au_last_name']);
         }
+ 		if(!empty($this->field_defs['created_by_name']) && !empty($this->created_by) && !empty($this->fetched_row['cbu_last_name'])) {
+ 		    $this->created_by_name = $locale->getLocaleFormattedName($this->fetched_row['cbu_first_name'],$this->fetched_row['cbu_last_name']);
+ 		}
+ 		if(!empty($this->field_defs['modified_by_name']) && !empty($this->modified_user_id) && !empty($this->fetched_row['mbu_last_name'])) {
+ 		    $this->modified_by_name = $locale->getLocaleFormattedName($this->fetched_row['mbu_first_name'],$this->fetched_row['mbu_last_name']);
+ 		}
+
         //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name))
-            $this->team_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-		if(!empty($this->field_defs['created_by']) && !empty($this->created_by))
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		if(!empty($this->field_defs['modified_user_id']) && !empty($this->modified_user_id))
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
+        if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name) && !empty($this->fetched_row['tn_name'])) {
+            if(!empty($GLOBALS['current_user']) && $GLOBALS['current_user']->showLastNameFirst()) {
+		        $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name_2'] . ' ' . $this->fetched_row['tn_name']);
+		    } else {
+		      $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name'] . ' ' . $this->fetched_row['tn_name_2']);
+		    }
+        }
+ 		//END SUGARCRM flav=pro ONLY
 
 		if(!empty($this->field_defs['parent_name'])){
 			$this->fill_in_additional_parent_fields();
@@ -4909,10 +4950,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 }else{
                     $return_array[$cache[$field]] = $this->$field;
                 }
-                // handle "Assigned User Name"
-                if($field == 'assigned_user_name'){
-                    $return_array['ASSIGNED_USER_NAME'] = get_assigned_user_name($this->assigned_user_id);
-                }
             }
         }
         return $return_array;
@@ -4946,7 +4983,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($where_clause)) {
             return "WHERE $where_clause AND deleted=0";
         } else {
-            return "WHERE deteled=0";
+            return "WHERE deleted=0";
         }
     }
 
@@ -5108,6 +5145,11 @@ function save_relationship_changes($is_update, $exclude=array())
         // We need to confirm that the user is a member of the team of the item.
 
         global $current_user;
+
+        if(empty($current_user) || empty($current_user->id))
+        {
+            return;
+        }
 
         // The user either has to be an admin, or be assigned to the team that owns the data
         $team_table_alias = 'team_memberships';

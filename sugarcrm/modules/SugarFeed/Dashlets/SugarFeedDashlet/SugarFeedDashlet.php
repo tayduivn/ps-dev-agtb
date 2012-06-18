@@ -243,6 +243,7 @@ var $myFavoritesOnly = false;
                                     'description',
                                     'date_entered',
                                     'created_by',
+                                    'created_by_name',
                                     'related_module',
 //BEGIN SUGARCRM flav=pro ONLY
                                     'team_id',
@@ -254,7 +255,7 @@ var $myFavoritesOnly = false;
 
             foreach($this->lvs->data['data'] as $row => $data) {
 
-                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['CREATED_BY']),$data['NAME']);
+                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY_NAME'],$data['NAME']);
 
                 //Translate the SugarFeeds labels if necessary.
                 preg_match('/\{([^\^ }]+)\.([^\}]+)\}/', $this->lvs->data['data'][$row]['NAME'] ,$modStringMatches );
@@ -617,12 +618,8 @@ EOQ;
 		$ss->assign('LBL_IS', translate('LBL_IS', 'SugarFeed'));
 		$ss->assign('id', $this->id);
 		//BEGIN SUGARCRM flav=pro ONLY
-        if ( !empty($current_user) ) {
-            $team_id = $current_user->default_team;
-        } else {
-            $team_id = 1;
-        }
-		$team_name =   get_assigned_team_name($team_id);
+        $team_id = $current_user->default_team;
+		$team_name =  $current_user->team_name;
 		$ss->assign('team_id', $team_id);
 		$ss->assign('team_name', $team_name);
 		//END SUGARCRM flav=pro ONLY

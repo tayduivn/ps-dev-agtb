@@ -19,15 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Quote.php 56786 2010-06-02 18:29:56Z jenny $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 global $beanFiles;
-
 
 require_once($beanFiles['Contact']);
 require_once($beanFiles['Task']);
@@ -225,10 +217,6 @@ class Quote extends SugarBean {
 	function fill_in_additional_detail_fields() {
 
         parent::fill_in_additional_detail_fields();
-        if(!empty($this->team_id) && empty($this->team_name)){
-	        $this->assigned_name = get_assigned_team_name($this->team_id);
-			$this->team_name = $this->assigned_name;
-        }
         if(!empty($this->id)) {
     		$this->set_account();
     		$this->set_contact();

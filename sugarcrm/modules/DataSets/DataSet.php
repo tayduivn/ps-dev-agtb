@@ -26,18 +26,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: DataSet.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-
-
-
-
 
 require_once('include/ListView/ReportListView.php');
-
 require_once('modules/DataSets/DataSet_Layout.php');
 
 // DataSet is used to store data formatting for CSQL queries.
@@ -164,12 +154,11 @@ class DataSet extends SugarBean {
 
 	function fill_in_additional_detail_fields()
 	{
-
+        parent::fill_in_additional_detail_fields();
 		$this->get_custom_query();
 		$this->get_parent_dataset();
 		$this->get_report_name();
 		$this->get_child_dataset();
-		$this->assigned_name = get_assigned_team_name($this->team_id);
 	}
 
 

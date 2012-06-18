@@ -19,16 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: TeamNotice.php 55484 2010-03-19 14:56:16Z jmertic $
- * Description:  TODO: To be written.
- ********************************************************************************/
-
-
-
-
-
-
 
 // ProductType is used to store customer information.
 class TeamNotice extends SugarBean {
@@ -68,8 +58,8 @@ class TeamNotice extends SugarBean {
 		parent::SugarBean();
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
-		}		
-		
+		}
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY
@@ -94,14 +84,8 @@ class TeamNotice extends SugarBean {
 				$this->url_title = $this->url;
 			}
 		}
-		$this->assigned_name = get_assigned_team_name($this->team_id);
 		$this->status = ( isset($mod_strings['dom_status'][$this->status]) ? $mod_strings['dom_status'][$this->status] : '');
 		$this->fill_in_additional_detail_fields();
-	}
-
-	function fill_in_additional_detail_fields()
-	{
-		$this->assigned_name = get_assigned_team_name($this->team_id);
 	}
 
 	function get_list_view_data(){
@@ -112,7 +96,7 @@ class TeamNotice extends SugarBean {
       $this->load_relationship('teams');
       require_once('modules/Teams/TeamSetManager.php');
       $teams = TeamSetManager::getTeamsFromSet($this->team_set_id);
-      
+
       if(count($teams) > 1) {
       	 $temp_array['TEAM_NAME'] .= "<span id='div_{$this->id}_teams'>
 						<a href=\"#\" onMouseOver=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}&team_id={$this->team_id}');\"  onFocus=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}');\" id='more_feather' class=\"utilsLink\">

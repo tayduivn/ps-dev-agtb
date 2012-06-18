@@ -83,18 +83,17 @@
         this.model.module = 'Contacts';
     },
     saveModel: function() {
-        var self = this;
+        var self = this, options;
         app.alert.show('save_profile_edit_view', {level: 'process', title: 'Saving'});
-// TODO: ---- Create an api.contact since this isn't going to behave like the rest 
-// of our modules/records .. will still need to utilize bean isValid, etc.
-        this.model.save(null, {
-            success: function() {
-                app.alert.dismiss('save_profile_edit_view');
-                alert("TODO - left off here...");
-                //self.app.router.navigate('profile', {trigger:true});
-            },
-            fieldsToValidate: self.getFields(this.model.module)
-        });
+        options = {
+                success: function() {
+                    app.alert.dismiss('save_profile_edit_view');
+                    alert('TODO: redirect to profile...');
+                },
+                fieldsToValidate: self.getFields(this.model.module)
+        };
+        this.model.url = app.api.buildURL("Contacts", "update", this.model.attributes);
+        Backbone.Model.prototype.save.call(this.model, null, options);
     },
     // I assume this will eventually be in clients/base/views/profile-edit/profile-edit.php
     _meta: {
