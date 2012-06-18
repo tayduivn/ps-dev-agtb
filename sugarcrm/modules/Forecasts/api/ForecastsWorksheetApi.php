@@ -67,7 +67,7 @@ class ForecastsWorksheetApi extends ModuleApi {
 
         $testFilters = array(
             'timeperiod_id' => isset($args['timeperiod_id']) ? $args['timeperiod_id'] : array('$is' => TimePeriod::getCurrentId()),
-            'id' => isset($args['user_id']) ? $args['user_id'] : $current_user->id
+            //'id' => isset($args['user_id']) ? $args['user_id'] : $current_user->id
         );
 
 
