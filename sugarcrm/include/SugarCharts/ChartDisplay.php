@@ -89,7 +89,7 @@ class ChartDisplay
         // and run the queries
         $this->reporter->is_saved_report = true;
         // only run if the chart_rows variable is empty
-        if(empty($this->reporter->chart_rows)) {
+        if (empty($this->reporter->chart_rows)) {
             $this->reporter->get_total_header_row();
             $this->reporter->run_chart_queries();
         }
@@ -223,8 +223,7 @@ class ChartDisplay
             $chart_groupings[$row_remap['group_base_text']] = true; // store all the groupingstem
             if (empty($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']])) {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']] = $row_remap;
-            }
-            else {
+            } else {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
         }
@@ -335,8 +334,7 @@ class ChartDisplay
                     $row_remap['group_base_text'] = $cell['val'];
                 }
             }
-        }
-        else { // single group by
+        } else { // single group by
             $row_remap['group_base_text'] = $row['cells'][0]['val'];
         }
 
@@ -449,5 +447,21 @@ class ChartDisplay
         }
 
         return $sugarChart;
+    }
+
+    public function generateXML()
+    {
+        return $this->getSugarChart()->generateXML();
+    }
+
+    public function generateJson()
+    {
+        $json = $this->getSugarChart()->buildJson($this->generateXML());
+
+        // fix-up the json since it builds it wrong for the php parser
+        $json = str_replace(array("\t", "\n"), "", $json);
+        $json = str_replace("'", '"', $json);
+
+        return $json;
     }
 }
