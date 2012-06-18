@@ -73,6 +73,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                 backgroundColor: 'rgb(255,255,255)',
                                 colorStop1: 'rgba(255,255,255,.8)',
                                 colorStop2: 'rgba(255,255,255,0)',
+                                dataPointSize: chartConfig["dataPointSize"],
                                 shadow: {
                                     enable: false,
                                     size: 2

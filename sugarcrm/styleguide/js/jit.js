@@ -11631,6 +11631,7 @@ Options.BarChart = {
   orientation: 'horizontal',
   showAggregates: true,
   showLabels: true,
+  dataPointSize: 10,
   Ticks: {
 	enable: false,
 	segments: 4,
@@ -11666,6 +11667,7 @@ $jit.ST.Plot.NodeTypes.implement({
           linkArray = node.getData('linkArray'),
           goalMarkerLabel = node.getData('goalMarkerLabel'),
           goalMarker = node.getData('goalMarker'),
+          goalMarkerNext = node.getData('goalMarkerNext'),
           goalMarkerColor = node.getData('goalMarkerColor'),
           goalMarkerType = node.getData('goalMarkerType'),
           gvl = node.getData('gvl'),
@@ -11686,7 +11688,8 @@ $jit.ST.Plot.NodeTypes.implement({
           label = config.Label,
           margin = config.Margin,
           chartDim = node.getData('chartDim'),
-          maxTickValue = node.getData('maxTickValue');
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
 
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
@@ -11794,20 +11797,23 @@ $jit.ST.Plot.NodeTypes.implement({
           for (var i=0; i<goalMarker.length; i++){
               ctx.strokeStyle = goalMarkerColor[i];
               ctx.lineWidth   = 4;
+
+              var goalMarkerDim = chartDim/maxTickValue * goalMarker[i],
+                  goalMarkerNextDim = chartDim/maxTickValue * goalMarkerNext[i];
               if(horz) {
                   if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
 
                       var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
                           y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
-                          x1 = x + (chartDim/maxTickValue * goalMarker[i]),
-                          x2 = x + (chartDim/maxTickValue * goalMarker[i]);
+                          x1 = x + goalMarkerDim,
+                          x2 = x + goalMarkerDim;
                       ctx.beginPath();
                       $.dashedLine(ctx,x1, y1, x2, y2);
                       ctx.closePath();
                       ctx.stroke();
                   } else if(goalMarkerType[i] == 'individual') {
                       ctx.beginPath();
-                      $.dashedLine(ctx,x + (chartDim/maxTickValue * goalMarker[i]), y, x + (acum/valAcum * goalMarker[i]), y + height);
+                      $.dashedLine(ctx,x + goalMarkerDim, y, x + (acum/valAcum * goalMarker[i]), y + height);
                       ctx.closePath();
                       ctx.stroke();
                   }
@@ -11815,8 +11821,8 @@ $jit.ST.Plot.NodeTypes.implement({
                   if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
                       var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
                           x2 = canvasSize.width/2 - margin.right,
-                          y1 = y - (chartDim/maxTickValue * goalMarker[i]),
-                          y2 = y - (chartDim/maxTickValue * goalMarker[i]);
+                          y1 = y - goalMarkerDim,
+                          y2 = y - goalMarkerDim;
                       ctx.beginPath();
                       //console.log(x1, y1, x2, y2)
                       $.dashedLine(ctx,x1, y1, x2, y2);
@@ -11824,9 +11830,35 @@ $jit.ST.Plot.NodeTypes.implement({
                       ctx.stroke();
                   } else if(goalMarkerType[i] == 'individual') {
                       ctx.beginPath();
-                      $.dashedLine(ctx,x, y - (chartDim/maxTickValue * goalMarker[i]), x + width, y - (acum/valAcum * goalMarker[i]));
+                      $.dashedLine(ctx,x, y - goalMarkerDim, x + width, y - (acum/valAcum * goalMarker[i]));
                       ctx.closePath();
                       ctx.stroke();
+                  } else if(goalMarkerType[i] == 'pareto') {
+                      ctx.fillStyle = ctx.strokeStyle;
+                      ctx.lineWidth = 4;
+                      ctx.lineCap = "round";
+
+                      if(nodeIndex < nodeCount -1  ) {
+
+                          ctx.save();
+                          //render line segment, dimarray[i][0] is the curent datapoint, dimarrya[i][1] is the next datapoint, we need both in the current iteration to draw the line segment
+//                          console.log(node)
+                          ctx.beginPath();
+                          ctx.moveTo(pos.x, y  - goalMarkerDim + (dataPointSize/2));
+                          ctx.lineTo(pos.x + this.config.siblingOffset + width, y - goalMarkerNextDim + (dataPointSize/2));
+                          ctx.stroke();
+                          ctx.restore();
+                      }
+                      //render data point
+
+                      ctx.beginPath();
+                      ctx.arc(pos.x - (dataPointSize/2), y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
+                      ctx.closePath();
+                      ctx.fill();
+
+
+                      ctx.fillRect(pos.x - (dataPointSize/2), pos.y - goalMarkerDim,dataPointSize,dataPointSize);
+
                   }
               }
           }
@@ -11965,7 +11997,8 @@ $jit.ST.Plot.NodeTypes.implement({
           margin = config.Margin,
           canvasSize = this.viz.canvas.getSize(),
           chartDim = node.getData('chartDim'),
-          maxTickValue = node.getData('maxTickValue');
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
 
 	     //console.log("mx:" + mpos.x + " x1:" + x1 + " x2:" + x2);
 	    // console.log("my:" + mpos.y + " y1:" + y1);
@@ -11973,16 +12006,17 @@ $jit.ST.Plot.NodeTypes.implement({
 		//check for goal marker line
         if(goalMarker != undefined)   {
             for (var i=0; i<goalMarker.length; i++){
+                var goalMarkerDim = chartDim/maxTickValue * goalMarker[i];
                 if(horz) {
 
                     if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1 ) {
-                        var x1 = (x + chartDim/maxTickValue * goalMarker[i]) - 2,
-                            x2 = (x + chartDim/maxTickValue * goalMarker[i]) + 2,
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
                             y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
                             y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
                     } else if(goalMarkerType[i] == 'individual') {
-                        var x1 = (x + chartDim/maxTickValue * goalMarker[i]) - 2,
-                            x2 = (x + chartDim/maxTickValue * goalMarker[i]) + 2,
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
                             y1 = y,
                             y2 = y + height;
 
@@ -12000,13 +12034,19 @@ $jit.ST.Plot.NodeTypes.implement({
                     if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
                         var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
                             x2 = canvasSize.width/2 - margin.right,
-                            y1 = (y - chartDim/maxTickValue * goalMarker[i]) - 2,
-                            y2 = (y - chartDim/maxTickValue * goalMarker[i]) + 2;
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
                     } else if(goalMarkerType[i] == 'individual') {
                         var x1 = x,
                             x2 = x + width,
-                            y1 = (y - chartDim/maxTickValue * goalMarker[i]) - 2,
-                            y2 = (y - chartDim/maxTickValue * goalMarker[i]) + 2;
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
+                    } else if(goalMarkerType[i] == 'pareto') {
+                        var x1 = pos.x - (dataPointSize),
+                            x2 = pos.x + (dataPointSize),
+                            y1 = (pos.y - goalMarkerDim) ,
+                            y2 = (pos.y - goalMarkerDim) + (dataPointSize);
+
                     }
 
 
@@ -12864,7 +12904,7 @@ $jit.BarChart = new Class({
         marginHeight = (title.text? title.size + title.offset : 0) + (subtitle.text? subtitle.size + subtitle.offset : 0) + margin.top + margin.bottom,
         horz = config.orientation == 'horizontal',
         fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
-        fixedDim = (fixedDim > 40) ? 40 : fixedDim;
+        fixedDim = (fixedDim > 40) ? 40 : fixedDim,
         whiteSpace = size.width - (marginWidth + (fixedDim * l));
         //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
         if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
@@ -12873,7 +12913,8 @@ $jit.BarChart = new Class({
         if(!grouped && !horz) {
         	st.config.siblingOffset = whiteSpace/(l+1);
         }
-        
+
+
         
         
 	//Bars offset
@@ -12893,11 +12934,13 @@ $jit.BarChart = new Class({
 		st.config.offsetX = (margin.right - margin.left)/2;
 	  }
     }
+
     this.st = st;
     this.canvas = this.st.canvas;
+
   },
-  
- 
+
+
   
   renderTitle: function() {
   	var canvas = this.canvas,
@@ -13216,11 +13259,15 @@ $jit.BarChart = new Class({
       var linkArray = $.splat(values[i].links);
       var titleArray = $.splat(values[i].titles);
       var barTotalValue = valArray.sum();
-      var acum = 0;
+      var acum = 0,
+          n = i+1;
 
 
       if(properties['goal_marker_type'] != undefined) {
+
+//          console.log(values[n].goalmarkervalue)
           var goalMarker = values[i].goalmarkervalue,
+              goalMarkerNext = (i < l-1) ? values[i+1].goalmarkervalue : "",
               goalMarkerValueLabel = values[i].goalmarkervaluelabel,
               goalMarkerLabel = properties['goal_marker_label'],
               goalMarkerColor = properties['goal_marker_color'],
@@ -13244,6 +13291,7 @@ $jit.BarChart = new Class({
           'value': valArray,
           '$linkArray': linkArray,
           '$goalMarker': goalMarker,
+          '$goalMarkerNext': goalMarkerNext,
           '$goalMarkerLabel': goalMarkerLabel,
           '$goalMarkerValueLabel': goalMarkerValueLabel,
           '$goalMarkerColor': goalMarkerColor,

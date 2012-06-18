@@ -168,8 +168,8 @@
                   <option value="30">30%</option>
                   <option value="40">40%</option>
                   <option value="50">50%</option>
-                  <option value="60">60%</option>
-                  <option value="70" selected="selected">70%</option>
+                  <option value="60" selected="selected">60%</option>
+                  <option value="70">70%</option>
                   <option value="80">80%</option>
                   <option value="90">90%</option>
                   <option value="100">100%</option>
@@ -385,6 +385,7 @@
       chartConfig["showNodeLabels"] = false;
       chartConfig["showAggregates"] = false;
       chartConfig["saveImageTo"] = "";
+      chartConfig["dataPointSize"] = 5;
 
       var forecast = null;
       forecast = new loadSugarChart(chartId,'forecast-json-month.js',css,chartConfig);
@@ -452,7 +453,7 @@
 
 
 
-          $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5" style="text-align: right;">Included Total</th><th></th><th></th><th></th><th></th></tr><tr class="overall"><th colspan="5" style="text-align: right;">Overall Total</th><th></th><th></th><th></th><th></th></tr></tfoot></table>' );
+          $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5" style="text-align: right;">Included Total</th><th></th><th></th><th></th></tr><tr class="overall"><th colspan="5" style="text-align: right;">Overall Total</th><th></th><th></th><th></th></tr></tfoot></table>' );
           var oTable = $('#example').dataTable( {
 
 
@@ -519,7 +520,7 @@
               },
               "fnInitComplete": function(oSettings, json) {
 
-
+                  /* for line items
                   var nCloneTh = document.createElement( 'th' );
 
                   $('#example thead tr').each( function () {
@@ -538,13 +539,13 @@
                       var nTr = $(this).parents('tr')[0];
                       if ( oTable.fnIsOpen(nTr) )
                       {
-                          /* This row is already open - close it */
+                          // This row is already open - close it *
                           $(this).attr("class","icon-plus-sign");
                           oTable.fnClose( nTr );
                       }
                       else
                       {
-                          /* Open this row */
+                          //Open this row
                           $(this).attr("class","icon-minus-sign");
                           var colspan = $(nTr).children('td').length;
 
@@ -552,6 +553,7 @@
                           $(nTr).next().children("td").attr("colspan",colspan);
                       }
                   } );
+      */
 
                   $('.iphone-toggle-buttons input').click(function(){
 

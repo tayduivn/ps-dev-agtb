@@ -19,12 +19,12 @@
 ,
 		'goal_marker_type': [
             'group',
-            'group'
+            'pareto'
             ]
 ,
 		'goal_marker_color': [
             '#3FB300',
-            '#444444'
+            '#7D12B2'
            ]
 ,       'goal_marker_label' : [
         'Quota',
@@ -111,8 +111,8 @@
 		'sales_stage': ["Qualified","Proposal","Negotiation","Closed"],
 		'close_date': ["2012-01-01","2012-01-01","2012-01-01","2012-01-01"],
 		'links': ['','',''],
-		'goalmarkervalue' : [200,190],
-		'goalmarkervaluelabel' : ['200K','190K']
+		'goalmarkervalue' : [200,100],
+		'goalmarkervaluelabel' : ['200K','100K']
 	}
 ,
 	{
@@ -128,17 +128,38 @@
         'links': ['','',''],
 		'goalmarkervalue' : [
             200,
-            190
+            70
             ],
 		'goalmarkervaluelabel' : [
             '200k',
-            '190K'
+            '70K'
             ]
 
 	}
 ,
 	{
 		'label': 'March',
+		'gvalue': '50',
+		'gvaluelabel': '50K',
+		'values': [0,0,0,50],
+		'valuelabels': ['0','0','0','50K'],
+        'sales_stage': ["Qualified","Proposal","Negotiation","Closed"],
+        'close_date': ["2012-03-01","2012-03-01","2012-03-01","2012-03-01"],
+        'probability': [0,0,0,100],
+		'links': ['','',''],
+		'goalmarkervalue' : [
+            200,
+            190
+            ],
+		'goalmarkervaluelabel' : [
+            '200K',
+            '190k'
+            ]
+
+	}
+,
+	{
+		'label': 'April',
 		'gvalue': '50',
 		'gvaluelabel': '50K',
 		'values': [0,0,0,50],
