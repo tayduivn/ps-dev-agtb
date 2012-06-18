@@ -98,8 +98,6 @@
          */
         _createComponent: function(type, name, params, layoutType) {
             layoutType = layoutType || params.type || null;
-            // TODO: Maybe this should be done in createField? Fixes issue that base field controller wasn't actually getting used.
-            if(type==='field' && params.meta.controller) params.controller = params.meta.controller;
             var Klass = this.declareComponent(type, name, params.module, params.controller, layoutType);
             var component = new Klass(params);
             component.bindDataChange();
@@ -269,6 +267,7 @@
         createField: function(params) {
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
+            if(params.meta && params.meta.controller) params.controller = params.meta.controller;
             params.context = params.context || params.view.context || app.controller.context;
             params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
@@ -309,9 +308,11 @@
          * @param {String} module(optional) Module name.
          * @param {String} controller(optional) Controller source code string.
          * @param {String} layoutType(optional) Layout type. For example, fluid, rows, columns.
+         * @param {Boolean} overwrite(optional) Will overwrite if duplicate custom class or layout is cached. Note, 
+         * if no controller passed, overwrite is ignored since we can't create a meaningful component without a controller.
          * @return {Function} Component class.
          */
-        declareComponent: function(type, name, module, controller, layoutType) {
+        declareComponent: function(type, name, module, controller, layoutType, overwrite) {
             var ucType                  = app.utils.capitalize(type),
                 className               = app.utils.capitalizeHyphenated(name) + ucType,
                 customClassName         = (module || "") + className,
@@ -320,6 +321,11 @@
                 cache                   = app.view[type + "s"],
                 baseClass               = cache[className] || cache[layoutClassName] || app.view[ucType];
 
+            if(overwrite && controller) {
+                if(cache[customLayoutClassName]) delete cache[customLayoutClassName];
+                if(cache[customClassName]) delete cache[customClassName];
+            }
+
             return  cache[customClassName] ||
                     cache[customLayoutClassName] ||
                     _extendClass(cache, baseClass, customClassName, controller) ||
@@ -327,18 +333,7 @@
         }
 
     };
-    
 
     app.augment("view", _viewManager, false);
-
-    // TODO: Review and possibly refactor
-    //
-    // On app:sync we're, essentially, about to make getMetadata call.
-    // We need to clear any app.views, app.fields, etc. The reason for this
-    // is because our declareComponent (see above) first checks cache[customClassName].
-    // For example, if we have a controller for the email field that was defined in 
-    // base_metadata, and then have another controller in metadata, the base_metadata
-    // controller will win. This prevents that problem.
-    app.events.on("app:sync", _viewManager.reset, app.view);
 
 })(SUGAR.App);
