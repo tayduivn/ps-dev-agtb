@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_BTN_INSERT' => 'Insert',
   'LBL_FIELDS_LIST' => 'Fields',
   'LBL_LINK_LIST' => 'Links',
+  'LBL_PREVIEW' => 'Preview',
 );

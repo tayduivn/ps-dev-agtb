@@ -44,12 +44,19 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
         
             $pdfTemplate = BeanFactory::newBean('PdfManager');
             if ($pdfTemplate->retrieve($_REQUEST['pdf_template_id']) !== null) {
+            
+                $previewMode = FALSE;
+                if (!empty($_REQUEST['pdf_preview']) && $_REQUEST['pdf_preview'] == 1) {
+                    $previewMode = true;
+                    $this->bean = BeanFactory::newBean($pdfTemplate->base_module);
+                }
+                
                 $this->SetCreator(PDF_CREATOR);
                 $this->SetAuthor($pdfTemplate->author);
                 $this->SetTitle($pdfTemplate->title);
                 $this->SetSubject($pdfTemplate->subject);
                 $this->SetKeywords($pdfTemplate->keywords);
-                $this->templateLocation = $this->buildTemplateFile($pdfTemplate);
+                $this->templateLocation = $this->buildTemplateFile($pdfTemplate, $previewMode);
                 
                 $filenameParts = array();
                 if (!empty($this->bean) && !empty($this->bean->name)) {
@@ -155,7 +162,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
          $this->ss->assign('fields', $fields);
     }
 
-    private function buildTemplateFile($pdfTemplate) {
+    private function buildTemplateFile($pdfTemplate, $previewMode = FALSE) {
 
         if (!empty($pdfTemplate)) {
             
@@ -166,7 +173,12 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
             
             $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
             
-            if ($pdfTemplate->base_module == 'Quotes') {
+            if ($previewMode !== FALSE) {
+                $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplate->id . '_preview.tpl';
+                $pdfTemplate->body_html = str_replace(array('{', '}'), array('&#123;', '&#125;'), $pdfTemplate->body_html);
+            }
+            
+            if ($pdfTemplate->base_module == 'Quotes' && $previewMode == FALSE) {
 
                 $pdfTemplate->body_html = str_replace(
                     '$fields.product_bundles', 

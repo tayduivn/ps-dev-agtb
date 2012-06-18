@@ -43,6 +43,7 @@ array (
           1 => 'DUPLICATE',
           2 => 'DELETE',
           3 => 'FIND_DUPLICATES',
+          4 => array('customCode' => '<input type="button" value="{$MOD.LBL_PREVIEW}" name="pdf_preview" onclick="document.location=\'index.php?module=PdfManager&record={$fields.id.value}&action=sugarpdf&sugarpdf=pdfmanager&pdf_template_id={$fields.id.value}&pdf_preview=1\'" class="button" title="{$MOD.LBL_PREVIEW}" id="pdf_preview">'),
         ),
         'hideAudit' => true,
       ),
@@ -108,6 +109,7 @@ array (
             'name' => 'body_html',
             'studio' => 'visible',
             'label' => 'LBL_BODY_HTML',
+            'customCode' => '{$fields.body_html.value|from_html}',
           ),
         ),
         5 => 
