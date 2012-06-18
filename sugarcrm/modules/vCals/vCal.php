@@ -138,7 +138,7 @@ class vCal extends SugarBean {
 	}
 
         // return a freebusy vcal string
-        function get_vcal_freebusy($user_focus,$cached=false)
+        function get_vcal_freebusy($user_focus,$cached=true)
         {
            global $locale, $timedate;
            $str = "BEGIN:VCALENDAR\n";
@@ -152,6 +152,7 @@ class vCal extends SugarBean {
            // get current date for the user
             if (!empty($_REQUEST['datestart'])) {
                 $now_date_time = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$_REQUEST['datestart']." 00:00");
+                $cached=false;
             } else {
                 $now_date_time = $timedate->getNow(true);
             }
