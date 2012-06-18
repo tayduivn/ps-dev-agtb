@@ -146,6 +146,16 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         $table_key = join(":", $this->link_path);
         /* @var $def_bean SugarBean */
         $def_bean = $this->reportBuilder->getBeanFromTableKey($table_key);
+
+        // make sure the field_name comes from the actual filter not the table key (links are screwy), also ignore
+        // any keys are contain a $ variable
+        if($field_name !== $value->getKey()) {
+            $tmpKey = $value->getKey();
+            if(strstr($tmpKey, '$') === false) {
+                $field_name = $tmpKey;
+            }
+        }
+
         if ($this->checkFieldExist($def_bean, $field_name))
         {
             return $value->getValueInputs($field_name, $table_key, $operator);
@@ -164,7 +174,6 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         if (isset($bean->field_defs[$field]) && $bean->field_defs[$field]['type'] != "link") {
             return true;
         }
-
         return false;
     }
 

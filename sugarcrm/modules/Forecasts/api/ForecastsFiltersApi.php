@@ -58,6 +58,14 @@ class ForecastsFiltersApi extends ModuleApi {
                 'shortHelp' => 'Gets reportees to a user by id',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
             ),
+            'reporteesWithParentLink' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'reportees', '?', '?'),
+                'pathVars' => array('','','userId','returnParent'),
+                'method' => 'getReportees',
+                'shortHelp' => 'Gets reportees to a user by id',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
+            ),
         );
         return $parentApi;
     }
@@ -127,7 +135,13 @@ class ForecastsFiltersApi extends ModuleApi {
         global $app_list_strings, $current_language;
         $app_list_strings = return_app_list_strings_language($current_language);
 
-        $id = $args['userId'];
+        $id = clean_string($args['userId']);
+
+        // Boolean do we want to return a Parent link with the result set
+        $returnParent = false;
+        // if returnParent is not set, or it is anything other than '1', ignore it
+        if(!empty($args['returnParent']) && $args['returnParent'] == '1')
+            $returnParent = true;
 
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
             false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
@@ -147,7 +161,7 @@ class ForecastsFiltersApi extends ModuleApi {
 
             $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
 
-            $fullName = (empty($row['last_name'])) ? $row['first_name'] : $row['first_name'] . ' ' . $row['last_name'];
+            $fullName = $this->getFullName($row['first_name'], $row['last_name']);
 
             $user = array(
                 'data' => $fullName,
@@ -218,6 +232,37 @@ class ForecastsFiltersApi extends ModuleApi {
                 // add myOpp to the beginning of children
                 array_unshift($treeData['children'], $myOpp);
             }
+
+            // Since user has children,
+            // handle if user clicked a manager and we need to return a Parent link in the set
+            if($returnParent)  {
+                $parentUser = new User();
+                $parentUser->retrieve($treeData['metadata']['reports_to_id']);
+
+                if(!empty($parentUser->id)) {
+                    $parentNode = array(
+                        'data' => $current_module_strings['LBL_TREE_PARENT'],
+                        'children' => array(),
+                        // Give myOpp the same metadata as the root Manager user
+                        'metadata' => array(
+                            "id" => $parentUser->id,
+                            "full_name" => $parentUser->full_name,
+                            "first_name" => $parentUser->first_name,
+                            "last_name" => $parentUser->last_name,
+                            "reports_to_id" => $parentUser->reports_to_id,
+                            "level" => "1"
+                        ),
+                        'state' => 'closed',
+                        'attr' => array(
+                            'rel' => 'parent_link'
+                        )
+                    );
+
+                    // add parentNode to the beginning of treeData and put previous treeData
+                    // as an element of the treeData array
+                    $treeData = array($parentNode,$treeData);
+                }
+            }
         }
 
         return $treeData;
@@ -249,6 +294,17 @@ class ForecastsFiltersApi extends ModuleApi {
             }
         }
         return $retChildren;
+    }
+
+    /***
+     * Simple function that returns a full name based on first name and last name
+     *
+     * @param $first
+     * @param $last
+     * @return string
+     */
+    function getFullName($first, $last) {
+        return (empty($last)) ? $first : $first . ' ' . $last;
     }
 
 }
