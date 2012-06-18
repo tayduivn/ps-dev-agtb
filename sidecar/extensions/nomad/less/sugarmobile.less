@@ -335,15 +335,6 @@ a:hover [class^="icon-"]{
   background-color: rgba(255,0,0,.25);
 }
 
-#record-action .icon-phone {
-  background-size: 660%;
-  height: 22px;
-  width: 26px;
-  margin-top: 13px;
-  &, &:active {
-    background: url('../img/sprite.png') no-repeat 1% 0;
-  }
-}
 
 #record-action .icon-sms-white {
   background-size: 700%;
@@ -369,35 +360,16 @@ text-decoration:none;
 
 #record-action > a > i {
   margin:16px 0 0 0;
-}
-
-
-.icon-phone {
-  background: url('../img/sprite.png') no-repeat 1% -30%;
-  background-size: 740%;
-  height: 18px;
-  width: 18px;
-  margin-bottom: -20%;
-  &:active {
-    background: url('../img/sprite.png') no-repeat 18% -30%;
-  }
-}
-
-.icon-phone-black {
-  background: url('../img/sprite.png') no-repeat 18% -30%;
-  background-size: 740%;
-  height: 18px;
-  width: 18px;
-  margin-bottom: -20%;
-  &:active {
-    background: url('../img/sprite.png') no-repeat 1% -30% ;
+  width:26px;
+  &.icon-sms-white {
+    margin-bottom:-4px;
   }
 }
 
 .icon-sms-black {
   background: url('../img/sprite.png') no-repeat 57% 0;
   background-size: 700%;
-  height: 18px;
+  height: 17px;
   width: 16px;
   margin-bottom: -20%;
   &:active {
@@ -916,7 +888,7 @@ text-shadow: 0 -1px 0 @black;
     background-color:transparent !important; /*override lesscss logic for non compliant browsers*/
     display: inline-block;
     height: 20px;
-    width: 100%;
+    width: 102%;
     margin-left: -16px;
     position: absolute;
     bottom: 52px;
@@ -1067,9 +1039,13 @@ color: @gray;
   width:60% !important;
 }
 
-#record-action .span1_5th {
-  float:left;
-  width:20%;
+#record-action {
+  display:inline-table;
+  width:100%;
+}
+
+#record-action > a {
+  display:table-cell;
 }
 
 #createRecord.form-horizontal .controls {
