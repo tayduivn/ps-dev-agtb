@@ -22,13 +22,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/ModuleApi.php');
 
+require_once('Modules/Forecasts/ForecastOpportunities.php');
+
 class ForecastsProgressApi extends ModuleApi {
 
     public function __construct()
     {
 
     }
-
+	
+	// All requests will need to be filtered by time period, forecasts, and direct (true/false)
     public function registerApiRest()
     {
         $parentApi = parent::registerApiRest();
@@ -47,10 +50,11 @@ class ForecastsProgressApi extends ModuleApi {
     }
 
     public function progress($api, $args) {
+		
         // Just a placeholder for now
         $progressData = array(
 			"quota" => array(
-				"total" => 123,
+				"total" => $this->getQuota($api, $args),
 				"likely" => array(
 					"percent" => 0.7,
 					"current" => 123000,
@@ -78,5 +82,16 @@ class ForecastsProgressApi extends ModuleApi {
 		
 		return $progressData;
     }
+	
+	public function getQuota($api, $args) {
+		$user_id = ( array_key_exists("userId", $args) ? $args["userId"] : $GLOBALS["current_user"]->id );
+		$timeperiod_id = ( array_key_exists("timePeriodId", $args) ? $args["timePeriodId"] : TimePeriod::getCurrentId() );
+		$should_rollup = ( array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : 1 );
+		$should_rollup = $should_rollup == 1 ? TRUE : FALSE;
+		
+		$quota = new Quota();
+		$data = $quota->getRollupQuota($timeperiod_id, $user_id, $should_rollup);
+		return $data["amount"];
+	}
 
 }
