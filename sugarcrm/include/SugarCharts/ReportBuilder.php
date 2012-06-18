@@ -96,28 +96,26 @@ class ReportBuilder
         $this->loadSavedReport($saved_report_id);
     }
 
+    /**
+     * Load a saved report from the db
+     *
+     * @param $saved_report_id
+     * @return bool
+     */
     public function loadSavedReport($saved_report_id)
     {
-        if(is_guid($saved_report_id)) {
+        if (is_guid($saved_report_id)) {
             // we have a guid, lest try and load the saved report
             /* @var $saved_report SavedReport */
             $saved_report = BeanFactory::getBean('Reports', $saved_report_id);
 
-            if($saved_report !== false && $saved_report->module == $this->defaultReport['module']) {
+            if ($saved_report !== false && $saved_report->module == $this->defaultReport['module']) {
                 // we have a loaded report and it matches the base module for report builder
                 // lets process it and break it up so we can add stuff to it.
                 // now load up a report bean to convert the report since that is where all the code exist
                 $report = new Report($saved_report->content);
 
-                $this->defaultReport = $report->report_def;
-
-                foreach($this->defaultReport['full_table_list'] as $key => $table_def) {
-                    $this->table_keys[$key] = array('module' => $table_def['module'], 'key' => $key);
-
-                    if(isset($table_def['link_def'])) {
-                        $this->link_keys[$table_def['link_def']['name']] = $key;
-                    }
-                }
+                $this->setDefaultReport($report->report_def);
 
                 // success, return true
                 return true;
@@ -126,6 +124,41 @@ class ReportBuilder
 
         // we did not load a report, return false.
         return false;
+    }
+
+    /**
+     * Set a default report from an array or a json string.
+     *
+     * @param $report_def
+     * @return bool
+     */
+    public function setDefaultReport($report_def)
+    {
+        if (!is_array($report_def)) {
+            $report_def = json_decode($report_def, true);
+        }
+
+        $this->defaultReport = $report_def;
+
+        foreach ($this->defaultReport['full_table_list'] as $key => $table_def) {
+            $this->table_keys[$key] = array('module' => $table_def['module'], 'key' => $key);
+
+            if (isset($table_def['link_def'])) {
+                $this->link_keys[$table_def['link_def']['name']] = $key;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the array that is the default report
+     *
+     * @return array
+     */
+    public function getDefaultReport()
+    {
+        return $this->defaultReport;
     }
 
     /**
@@ -250,7 +283,7 @@ class ReportBuilder
             }
 
             if (!isset($this->defaultReport['full_table_list'][$key])) {
-                $parent = $this->findParentTableKey($bean_rel->getRelatedModuleName(), $key, $field);
+                $parent = $this->findParentTableKey($bean->module_name, $key, $field);
 
                 $arrLink = array(
                     'name' => $bean->module_dir . ' > ' . $link['module'],
@@ -399,20 +432,25 @@ class ReportBuilder
      */
     public function addFilter($filter)
     {
-        if(isset($filter['Filter_1'])) {
+        if (isset($filter['Filter_1'])) {
             $filter = $filter['Filter_1'];
         }
 
-        // make sure all filters are int he proper format
-        foreach($this->defaultReport['filters_def']['Filter_1'] as $key => $f) {
-            if(!is_integer($key)) continue;
+        // make sure all filters are in the proper format
+        foreach ($this->defaultReport['filters_def']['Filter_1'] as $key => $f) {
+            if (!is_integer($key)) continue;
 
-            if(!isset($f['operator'])) {
+            if (!isset($f['operator'])) {
                 $this->defaultReport['filters_def']['Filter_1'][$key] = array('operator' => 'AND', $f);
             }
         }
 
         $this->defaultReport['filters_def']['Filter_1'][] = $filter;
+
+        if(count($this->defaultReport['filters_def']['Filter_1']) == 1) {
+            // move it up
+            $this->defaultReport['filters_def']['Filter_1'] = array_shift($this->defaultReport['filters_def']['Filter_1']);
+        }
     }
 
     /**
@@ -549,7 +587,7 @@ class ReportBuilder
     {
         $validCharts = array('hBarF', 'vBarF', 'pieF', 'lineF', 'funnelF');
 
-        if(in_array($chartType, $validCharts)) {
+        if (in_array($chartType, $validCharts)) {
             $this->defaultReport['chart_type'] = $chartType;
         } else {
             $this->defaultReport['chart_type'] = 'hBarF';
