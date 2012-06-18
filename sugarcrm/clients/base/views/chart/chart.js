@@ -38,7 +38,7 @@
                 "saveImageTo":"index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1"
             };
         app.view.View.prototype.render.call(this);
-        forecast = new loadSugarChart(chartId, 'clients/base/views/chart/forecast-json-month.js', css, chartConfig);
+        forecast = new loadSugarChart(chartId, 'rest/v10/Forecasts/chart', css, chartConfig);
     }
 
 })
