@@ -126,7 +126,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         var model = this.context.model.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheet?tp=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheet?timeperiod_id=" + params.id;
         model.fetch();
         this.render();
     },
