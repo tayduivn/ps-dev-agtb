@@ -16,23 +16,25 @@
     </div>
     <span class="fade"></span>
     <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
-    <div id="record-action" class="row-fluid">
-        {{#if isPhoneBtn}}
-        <a class="phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone icon-md"></i></a>
-        {{/if}}
-        {{#if isEmailBtn}}
-        <a class="email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
-        {{/if}}
-        {{#if isMessageBtn}}
-        <a class="message {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
-        {{/if}}
-        {{#if isUrlBtn}}
-        <a class="link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
-        {{/if}}
-        {{#if isAddressBtn}}
-        <a class="map {{#unless isAddressNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
-        {{/if}}
-    </div>
+    {{#if isActions}}
+        <div id="record-action" class="row-fluid">
+            {{#if isPhoneBtn}}
+            <a class="phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone icon-md"></i></a>
+            {{/if}}
+            {{#if isEmailBtn}}
+            <a class="email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
+            {{/if}}
+            {{#if isMessageBtn}}
+            <a class="message {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
+            {{/if}}
+            {{#if isUrlBtn}}
+            <a class="link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
+            {{/if}}
+            {{#if isAddressBtn}}
+            <a class="map {{#unless isAddressNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
+            {{/if}}
+        </div>
+    {{/if}}
 </div>
 <div class="container-fluid" id="detailListing">
     <div class="row-fluid">
