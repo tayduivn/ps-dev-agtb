@@ -6266,6 +6266,11 @@ article p:last-child {
 article:nth-child(even) {
   background-color: #f8f8f8;
 }
+.results article:nth-child(even),
+.results article:nth-child(odd) {
+  background-color: transparent;
+  border-bottom-color: #313130;
+}
 #sActivity article {
   padding: 10px 45px 10px 0;
   position: relative !important;
@@ -6975,7 +6980,6 @@ tr:hover .actions {
   -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
   -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
   box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
-  padding: 16px;
 }
 .topline .row-fluid {
   margin: 0;
