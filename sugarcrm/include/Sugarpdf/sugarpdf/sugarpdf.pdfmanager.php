@@ -34,13 +34,37 @@ require_once 'include/Sugarpdf/sugarpdf/sugarpdf.smarty.php';
  
 class SugarpdfPdfmanager extends SugarpdfSmarty {
 
+    protected $pdfFilename;
+
     function preDisplay(){
         
         parent::preDisplay();
 
         if (!empty($_REQUEST['pdf_template_id'])) {
-            $this->templateLocation = $this->making_template_to_tpl($_REQUEST['pdf_template_id']);
+        
+            $pdfTemplate = BeanFactory::newBean('PdfManager');
+            if ($pdfTemplate->retrieve($_REQUEST['pdf_template_id']) !== null) {
+                $this->SetCreator(PDF_CREATOR);
+                $this->SetAuthor($pdfTemplate->author);
+                $this->SetTitle($pdfTemplate->title);
+                $this->SetSubject($pdfTemplate->subject);
+                $this->SetKeywords($pdfTemplate->keywords);
+                $this->templateLocation = $this->buildTemplateFile($pdfTemplate);
+                
+                $filenameParts = array();
+                if (!empty($this->bean) && !empty($this->bean->name)) {
+                    $filenameParts[] = $this->bean->name;
+                }
+                if (!empty($this->bean->name)) {
+                    $filenameParts[] = $pdfTemplate->name;
         }        
+        
+                $cr = array(' ',"\r", "\n","/");
+                $this->pdfFilename = str_replace($cr, '_', implode("_", $filenameParts ).".pdf"); 
+            }
+        }        
+        
+        
         
         require_once 'modules/PdfManager/PdfManagerHelper.php';
         
@@ -131,15 +155,14 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
          $this->ss->assign('fields', $fields);
     }
 
-    private function making_template_to_tpl($pdfTemplateId) {
-        $pdfTemplate = BeanFactory::newBean('PdfManager');
+    private function buildTemplateFile($pdfTemplate) {
 
-        if ($pdfTemplate->retrieve($pdfTemplateId) !== null) {
+        if (!empty($pdfTemplate)) {
             
             if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls') ) { 
                 mkdir_recursive($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls'); 
             }
-            $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplateId . '.tpl';
+            $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplate->id . '.tpl';
             
             $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
             
@@ -180,13 +203,23 @@ class SugarpdfPdfmanager extends SugarpdfSmarty {
                 );
             }
             
-            
             sugar_file_put_contents($tpl_filename, $pdfTemplate->body_html);
 
             return $tpl_filename;
         }
-
         return '';        
+    }
+
+    /**
+     * Set the file name.
+     *
+     * @see TCPDF::Output()
+     */
+    public function Output($name="doc.pdf", $dest='I') {
+        if (!empty($this->pdfFilename)) {
+            $name = $this->pdfFilename;
+        }
+        return parent::Output($name,$dest);
     }
 
 }
