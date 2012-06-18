@@ -31,10 +31,16 @@
 
 SUGAR.PdfManager = {}; 
 
+SUGAR.PdfManager.fieldInserted = false;
 /**
  * Returns a list of fields for a module
  */ 
 SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
+
+    if (SUGAR.PdfManager.fieldInserted && linkName.length == 0) {
+        alert(SUGAR.language.get('PdfManager', 'LBL_ALERT_SWITCH_BASE_MODULE'));
+    }
+
     if (moduleName.length > 0 && moduleName.indexOf('Reports') == 0) {
         return true;
     }
@@ -70,6 +76,8 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
  * Push var to WYSIWYG
  */
 SUGAR.PdfManager.insertField = function(selField, selSubField) {
+    
+    SUGAR.PdfManager.fieldInserted = true;
     
     var fieldName = "";
     

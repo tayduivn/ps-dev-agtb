@@ -79,4 +79,5 @@ $mod_strings = array (
   'LBL_FIELDS_LIST' => 'Fields',
   'LBL_LINK_LIST' => 'Links',
   'LBL_PREVIEW' => 'Preview',
+  'LBL_ALERT_SWITCH_BASE_MODULE' => 'WARNING: If you really want to change the main module, all previous fields added to template must be deleted.',  
 );
