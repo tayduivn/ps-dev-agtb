@@ -14,6 +14,9 @@
                 );
                 this.render();
                 this.$('.modal').modal('show');
+                this.context.get('createModel').on("error:validation", function() {
+                    this.resetButton();
+                }, this);
             }, this);
         }
     },
@@ -58,7 +61,7 @@
                 }
             },
             error: function() {
-                self.$el.find('[name=save_button]').button();
+                self.resetButton();
             }
         });
     },
@@ -70,8 +73,11 @@
         //reset the form
         this.$('.modal').modal('hide').find('form').get(0).reset();
         //reset the `Save` button
-        this.$('[name=save_button]').button();
+        this.resetButton();
         //add the new model to the collection
         this.collection.fetch({relate:true});
+    },
+    resetButton: function() {
+        this.$('[name=save_button]').button('reset');
     }
 })
