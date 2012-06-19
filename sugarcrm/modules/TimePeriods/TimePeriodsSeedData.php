@@ -45,96 +45,96 @@ public static function populateSeedData()
     $timedate->tzUser($now); // use local TZ to calculate dates
     $timeperiods=array();
 
-    $timeperiod = new TimePeriod();
+    $timeperiod1 = new TimePeriod();
     $year = $timedate->getNow()->format('Y');
-    $timeperiod->name = "Year ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-    $timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-    $timeperiod->is_fiscal_year =1;
-    $fiscal_year_id=$timeperiod->save();
+    $timeperiod1->name = "Year ".$year;
+    $timeperiod1->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
+    $timeperiod1->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
+    $timeperiod1->is_fiscal_year =1;
+    $fiscal_year_id=$timeperiod1->save();
 
     //create a time period record for the first quarter.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q1 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod2 = new TimePeriod();
+    $timeperiod2->name = "Q1 ".$year;
+    $timeperiod2->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
+    $timeperiod2->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
+    $timeperiod2->is_fiscal_year =0;
+    $timeperiod2->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod2->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod2;
     //create a timeperiod record for the 2nd quarter.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q2 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod3 = new TimePeriod();
+    $timeperiod3->name = "Q2 ".$year;
+    $timeperiod3->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
+    $timeperiod3->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
+    $timeperiod3->is_fiscal_year =0;
+    $timeperiod3->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod3->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod3;
     //create a timeperiod record for the 3rd quarter.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q3 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod4 = new TimePeriod();
+    $timeperiod4->name = "Q3 ".$year;
+    $timeperiod4->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
+    $timeperiod4->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
+    $timeperiod4->is_fiscal_year =0;
+    $timeperiod4->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod4->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod4;
     //create a timeperiod record for the 4th quarter.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q4 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod5 = new TimePeriod();
+    $timeperiod5->name = "Q4 ".$year;
+    $timeperiod5->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
+    $timeperiod5->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
+    $timeperiod5->is_fiscal_year =0;
+    $timeperiod5->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod5->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod5;
 
     //Create another set of timeperiod records for the following year
     $year = $timedate->getNow()->modify('+1 year')->format('Y');
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Year ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-    $timeperiod->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-    $timeperiod->is_fiscal_year =1;
-    $fiscal_year_id=$timeperiod->save();
+    $timeperiod6 = new TimePeriod();
+    $timeperiod6->name = "Year ".$year;
+    $timeperiod6->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
+    $timeperiod6->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
+    $timeperiod6->is_fiscal_year =1;
+    $fiscal_year_id=$timeperiod6->save();
 
     //create a time period record for the first quarter next year.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q1 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod7 = new TimePeriod();
+    $timeperiod7->name = "Q1 ".$year;
+    $timeperiod7->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
+    $timeperiod7->end_date =  $timedate->asDbDate($now->get_day_end(31, 3, $year));
+    $timeperiod7->is_fiscal_year =0;
+    $timeperiod7->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod7->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod7->start_date;
     //create a timeperiod record for the 2nd quarter next year.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q2 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod8 = new TimePeriod();
+    $timeperiod8->name = "Q2 ".$year;
+    $timeperiod8->start_date = $timedate->asDbDate($now->get_day_begin(1, 4, $year));
+    $timeperiod8->end_date =  $timedate->asDbDate($now->get_day_end(30, 6, $year));
+    $timeperiod8->is_fiscal_year =0;
+    $timeperiod8->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod8->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod8;
     //create a timeperiod record for the 3rd quarter next year.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q3 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod9 = new TimePeriod();
+    $timeperiod9->name = "Q3 ".$year;
+    $timeperiod9->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
+    $timeperiod9->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
+    $timeperiod9->is_fiscal_year =0;
+    $timeperiod9->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod9->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod9;
     //create a timeperiod record for the 4th quarter next year.
-    $timeperiod = new TimePeriod();
-    $timeperiod->name = "Q4 ".$year;
-    $timeperiod->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
-    $timeperiod->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
-    $timeperiod->is_fiscal_year =0;
-    $timeperiod->parent_id=$fiscal_year_id;
-    $current_timeperiod_id = $timeperiod->save();
-    $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
+    $timeperiod10 = new TimePeriod();
+    $timeperiod10->name = "Q4 ".$year;
+    $timeperiod10->start_date = $timedate->asDbDate($now->get_day_begin(1, 10, $year));
+    $timeperiod10->end_date =  $timedate->asDbDate($now->get_day_end(31, 12, $year));
+    $timeperiod10->is_fiscal_year =0;
+    $timeperiod10->parent_id=$fiscal_year_id;
+    $current_timeperiod_id = $timeperiod10->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod10;
     return $timeperiods;
 }
 

@@ -130,101 +130,12 @@ $replacements[] = '';
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
 require_once('modules/TimePeriods/TimePeriodsSeedData.php');
+
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
 
-//build a collection of users
-$query = "SELECT id from users";
-$result = $db->query($query, false,"error fetching users collection:");
-$comm = new Common();
-$commit_order=$comm->get_forecast_commit_order();
-
-foreach ($timeperiods as $timeperiod_id=>$start_date) {
-	foreach($commit_order as $commit_type_array) {
-		//create forecast schedule for this timeperiod record and user.
-		//create forecast schedule using this record becuse there will be one
-		//direct entry per user, and some user will have a Rollup entry too.
-		if ($commit_type_array[1] == 'Direct') {
-			$fcst_schedule = new ForecastSchedule();
-			$fcst_schedule->timeperiod_id=$timeperiod_id;
-			$fcst_schedule->user_id=$commit_type_array[0];
-			$fcst_schedule->cascade_hierarchy=0;
-			$fcst_schedule->forecast_start_date=$start_date;
-			$fcst_schedule->status='Active';
-			$fcst_schedule->save();
-			//commit a direct forecast for this user and timeperiod.
-			$forecastopp = new ForecastOpportunities();
-			$forecastopp->current_timeperiod_id = $timeperiod_id;
-			$forecastopp->current_user_id = $commit_type_array[0];
-			$opp_summary_array= $forecastopp->get_opportunity_summary(false);
-			$forecast = new Forecast();
-			$forecast->timeperiod_id=$timeperiod_id;
-			$forecast->user_id =  $commit_type_array[0];
-			$forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
-			$forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
-            $multiplier = mt_rand(-2,6);
-			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-			$forecast->forecast_type='Direct';
-			$forecast->date_committed = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(), time()), true);
-			$forecast->save();
-
-			$quota = new Quota();
-			$quota->timeperiod_id=$timeperiod_id;
-			$quota->user_id = $commit_type_array[0];
-			$quota->quota_type='Direct';
-			$quota->currency_id=-99;
-			$quota->amount=500;
-			$quota->amount_base_currency=500;
-			$quota->committed=1;
-			$quota->set_created_by = false;
-			if ($commit_type_array[0] == 'seed_sarah_id' || $commit_type_array[0] == 'seed_will_id' || $commit_type_array[0] == 'seed_jim_id')
-				$quota->created_by = 'seed_jim_id';
-			else if ($commit_type_array[0] == 'seed_sally_id' || $commit_type_array[0] == 'seed_max_id')
-				$quota->created_by = 'seed_sarah_id';
-			else if ($commit_type_array[0] == 'seed_chris_id')
-				$quota->created_by = 'seed_will_id';
-
-			$quota->save();
-		} else {
-			//create where clause....
-			$where  = " users.deleted=0 ";
-			$where .= " AND (users.id = '$commit_type_array[0]'";
-			$where .= " or users.reports_to_id = '$commit_type_array[0]')";
-			//Get the forecasts created by the direct reports.
-			$DirReportsFocus = new ForecastDirectReports();
-			$DirReportsFocus->current_user_id=$commit_type_array[0];
-			$DirReportsFocus->current_timeperiod_id=$timeperiod_id;
-			$DirReportsFocus->compute_rollup_totals('',$where,false);
-
-			$forecast = new Forecast();
-			$forecast->timeperiod_id=$timeperiod_id;
-			$forecast->user_id =  $commit_type_array[0];
-			$forecast->opp_count= $DirReportsFocus->total_opp_count;
-			$forecast->opp_weigh_value=$DirReportsFocus->total_weigh_value_number;
-			$forecast->likely_case=$DirReportsFocus->total_weigh_value_number + 500;
-			$forecast->best_case=$DirReportsFocus->total_weigh_value_number + 500;
-			$forecast->worst_case=$DirReportsFocus->total_weigh_value_number + 500;
-			$forecast->forecast_type='Rollup';
-			$forecast->date_committed = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(), time()), true);
-			$forecast->save();
-
-			$quota = new Quota();
-			$quota->timeperiod_id=$timeperiod_id;
-			$quota->user_id = $commit_type_array[0];
-			$quota->quota_type='Rollup';
-			$quota->currency_id=-99;
-			$quota->amount=$quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-			if (!isset($quota->amount)) $quota->amount = 0;
-			$quota->amount_base_currency=$quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-			if (!isset($quota->amount_base_currency)) $quota->amount_base_currency = 0;
-			$quota->committed=1;
-			$quota->save();
-		}
-	}
-}
-
+require_once('modules/Forecasts/ForecastsSeedData.php');
+ForecastsSeedData::populateSeedData($timeperiods);
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	ACCOUNTS

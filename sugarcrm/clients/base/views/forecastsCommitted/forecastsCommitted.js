@@ -85,22 +85,23 @@
         var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
         var args = Array();
         var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
+
         if(best_changed && likely_changed)
         {
-            args[0] = SUGAR.language.get(best_direction, 'Forecasts');
+            args[0] = App.lang.get(best_direction, 'Forecasts');
             args[1] = Math.abs(best_difference);
             args[2] = current.get('best_case');
-            args[3] = SUGAR.language.get(likely_direction, 'Forecasts');
+            args[3] = App.lang.get(likely_direction, 'Forecasts');
             args[4] = Math.abs(likely_difference);
             args[5] = current.get('likely_case');
             text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
         } else if (!best_changed && likely_changed) {
-            args[0] = SUGAR.language.get(likely_direction, 'Forecasts');
+            args[0] = App.lang.get(likely_direction, 'Forecasts');
             args[1] = Math.abs(likely_difference);
             args[2] = current.get('likely_case');
             text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
         } else if (best_changed && !likely_changed) {
-            args[0] = SUGAR.language.get(best_direction, 'Forecasts');
+            args[0] = App.lang.get(best_direction, 'Forecasts');
             args[1] = Math.abs(best_difference);
             args[2] = current.get('best_case');
             text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
@@ -110,9 +111,26 @@
         var hb = Handlebars.compile("{{str_format key module args}}");
         var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
-        //Compile the language string for the date modified portion
-        //TODO
-        return text;
+        var current_date = new Date(current.get('date_entered'));
+        var previous_date = new Date(previous.get('date_entered'));
+
+        var yearDiff = current_date.getYear() - previous_date.getYear();
+        var monthsDiff = current_date.getMonth() - previous_date.getMonth();
+
+        var text2 = '';
+
+        if(yearDiff == 0 && monthsDiff < 2)
+        {
+          hb = Handlebars.compile("{{str_format key module args}}");
+          args = [previous_date.toString()];
+          text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+        } else {
+          hb = Handlebars.compile("{{str_format key module args}}");
+          args = [monthsDiff, previous_date.toString()];
+          text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
+        }
+
+        return {'text' : text, 'text2' : text2};
 
     },
 
