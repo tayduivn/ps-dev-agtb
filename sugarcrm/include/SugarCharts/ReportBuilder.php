@@ -436,6 +436,11 @@ class ReportBuilder
             $filter = $filter['Filter_1'];
         }
 
+        // make sure that something is set so we don't throw a notice
+        if(!isset($this->defaultReport['filters_def']['Filter_1'])) {
+            $this->defaultReport['filters_def'] = array('Filter_1' => array());
+        }
+
         // make sure all filters are in the proper format
         foreach ($this->defaultReport['filters_def']['Filter_1'] as $key => $f) {
             if (!is_integer($key)) continue;
