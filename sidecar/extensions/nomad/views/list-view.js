@@ -98,7 +98,7 @@
                     _.each(items, function (item) {
                         var model = this.collection.get(item.id);
                         models.push(model);
-                        this.removeOne(model);
+                        this.onItemRemoved(model);
                         this.collection.remove(model, {silent: true});
                     }, this);
 
@@ -109,7 +109,7 @@
                     if (this.collection.length > this.getMaxPageSize()) {
                         while (this.collection.length > this.getMaxPageSize()) {
                             var model = this.collection.pop({silent: true});
-                            this.removeOne(model);
+                            this.onItemRemoved(model);
                         }
                     }
 
@@ -132,7 +132,7 @@
 
                         while (this.collection.length > this.getMaxPageSize()) {
                             var model = this.collection.shift({silent: true});
-                            this.removeOne(model);
+                            this.onItemRemoved(model);
                         }
 
                     }

@@ -65,7 +65,7 @@ class SugarACL
         if($module) {
             unset(self::$acls[$module]);
         } else {
-            self::$acls[$module] = array();
+            self::$acls = array();
         }
     }
 
