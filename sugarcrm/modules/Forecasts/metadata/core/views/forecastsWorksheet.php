@@ -17,6 +17,13 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
+                    'link' => true,
+                    'route' =>
+                    array(
+                        'module'=>'Opportunities',
+                        'action'=>'DetailView',
+                        'recordID'=>'primaryid'
+                    ),
                     'default' => true,
                     'enabled' => true,
                 ),
