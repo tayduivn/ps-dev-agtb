@@ -107,7 +107,6 @@
      * @private
      */
     _renderClickToEditField: function(field) {
-        app.logger.debug('forecastsWorksheet.js: _renderClickToEditField - ' + field.toString());
         this._initCTETypes();
         var outerElement = this.$("span[sfuuid='" + field.sfId + "']");
 
