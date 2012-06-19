@@ -100,11 +100,12 @@
             var route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
             route += "/" + id + "/link/" + link;
 
-            if (relatedId && action) {
-                route += "/" + relatedId + "/" + action;
-            }
-            else if (relatedId) {
+            if (relatedId) {
                 route += "/" + relatedId;
+            }
+
+            if (action) {
+                route += "/" + action;
             }
 
             return route;
