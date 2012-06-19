@@ -363,7 +363,6 @@ SUGAR.append(SUGAR.themes, {
             _ie_adjustment = 10,
             menuItems = currentModuleList.children("li"),
             menuLength = menuItems.length;
-        console.log(typeof SUGAR.themes.menuItemsWidth);
         if($.browser.msie) {
             menuItemsWidth = 0;
             menuItems.each(function(){
