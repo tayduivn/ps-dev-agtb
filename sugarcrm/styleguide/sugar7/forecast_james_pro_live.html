@@ -402,7 +402,8 @@
           $.fn.dataTableExt.afnFiltering.push(
                   function( oSettings, aData, iDataIndex ) {
                       var probability = parseFloat(aData[4].replace(/<div style='position:relative;'><span class='dblclick'>/,'').replace(/<\/span><\/div>/,''));
-                      var probability_select = $('#probability_filter')[0].value;
+                      var probability_select = 0;
+//                      var probability_select = $('#probability_filter')[0].value;
 
 
                      //date filters
