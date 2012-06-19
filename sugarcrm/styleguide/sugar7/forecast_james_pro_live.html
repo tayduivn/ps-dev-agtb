@@ -606,6 +606,10 @@
 
 
                   })
+
+
+                  $('[rel="clickover"]').clickover() ;
+                  $('[rel="clickoverTop"]').clickover({placement: "top"}) ;
               },
               "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
                   var amountTotal = 0;
@@ -689,6 +693,7 @@
                   $('span.span2').remove();
               }
           });
+
 
 
 
@@ -888,8 +893,7 @@
   $("#x-axis").chosen().change(function(data){
     forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
   });
-    $('[rel="clickover"]').clickover()
-    $('[rel="clickoverTop"]').clickover({placement: "top"})
+
 });
 </script>  
 </body>
