@@ -127,6 +127,19 @@
     });
 
     /**
+     * Builds a model route.
+     * @method modelRoute
+     * @param {Data.Bean} model
+     * @param {String} action(optional)
+     * @return {String}
+     */
+    Handlebars.registerHelper('modelRoute', function(model, action) {
+        action = _.isString(action) ? action : null;
+        var id = action == "create" ? "" : model.id;
+        return new Handlebars.SafeString(app.router.buildRoute(model.module, id, action));
+    });
+
+    /**
      * Extracts bean field value.
      * @method getFieldValue
      * @param {Data.Bean} bean Bean instance.
