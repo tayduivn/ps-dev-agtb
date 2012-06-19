@@ -97,30 +97,22 @@ class ForecastsFiltersApi extends ModuleApi {
         // placeholder for filters
         // todo: really make this work
         return array(
-            'horizontal' => array(
-                'label' => 'Horizontal (x):',
-                'options' => array(
-                    'x0' => 'Team Members',
-                    'x1' => 'Account',
-                    'x2' => 'Channel',
-                    'x3' => 'Line Items',
-                    'x4' => 'Month',
-                ),
-            ),
-            'vertical' => array(
-                'label' => 'Vertical (y):',
-                'options' => array(
-                    'y0' => 'Revenue',
-                    'y1' => 'Number of Units',
-                ),
-            ),
             'groupby' => array(
                 'label' => 'Group By:',
                 'options' => array(
-                    'y0' => 'Sales Stage',
-                    'y1' => 'Revenue Type',
+                    'y0' => 'Forecast Category',
+                    'y1' => 'Sales Stage',
+                    'y2' => 'Probability'
                 ),
             ),
+            'dataset' => array(
+                'label' => 'Data Set:',
+                'options' => array(
+                    'x0' => 'Likely',
+                    'x1' => 'Best',
+                    'x2' => 'Worst'
+                ),
+            )
         );
     }
 
