@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 listing fav filtered" id="listing-{{module}}">
+        <div class="span12 listing fav filtered list-container" id="listing-{{module}}">
             {{#each meta.panels}}
             <article class="nav show-more-top-btn" style="display: none">
                 <div>

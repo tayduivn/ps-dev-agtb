@@ -238,7 +238,8 @@
             app.controller.loadView({
                 module: "Login",
                 layout: "login",
-                create: true
+                create: true,
+                disableCache:true
             });
         },
 
