@@ -51,6 +51,9 @@
         var count = 0;
         var previous;
 
+        //Reset the history log
+        self.historyLog = [];
+
         _.each(self._collection.models, function(model)
         {
             //Get the first entry
