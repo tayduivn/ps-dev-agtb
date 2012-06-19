@@ -3,19 +3,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-/*********************************************************************************
- * $Id: Delete.php,v 1.22 2006/01/17 22:50:52 majed Exp $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- *********************************************************************************/
-
 require_once("include/ytree/Tree.php");
 require_once("include/ytree/ExtNode.php");
 require_once("include/SugarFolders/SugarFolders.php");
 
-
-
+/**
+ * Email GUI class
+ */
 class EmailUI {
 	var $db;
 	var $folder; // place holder for SugarFolder object
@@ -413,7 +407,8 @@ eoq;
 		$lang = "var app_strings = new Object();\n";
 		foreach($app_strings as $k => $v) {
 			if(strpos($k, 'LBL_EMAIL_') !== false) {
-				$lang .= "app_strings.{$k} = '{$v}';\n";
+			    $jv = json_encode($v);
+				$lang .= "app_strings.{$k} = {$jv};\n";
 			}
 		}
 		//Get the email mod strings but don't use the global variable as this may be overridden by

@@ -19,29 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Bug.php 51719 2009-10-22 17:18:00Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Bug is used to store customer information.
+// Bug report bean
 class Bug extends SugarBean {
         var $field_name_map = array();
 	// Stored fields
@@ -83,13 +62,13 @@ class Bug extends SugarBean {
 	//END SUGARCRM flav=pro ONLY
 
 	//BEGIN Additional fields being added to Bug Tracker
-	
+
 	var $fixed_in_release;
 	var $work_log;
 	var $source;
 	var $product_category;
 	//END Additional fields being added to Bug Tracker
-	
+
 	var $module_dir = 'Bugs';
 	var $table_name = "bugs";
 	var $rel_account_table = "accounts_bugs";
@@ -107,7 +86,7 @@ class Bug extends SugarBean {
 
 	function Bug() {
 		parent::SugarBean();
-		
+
 
 		$this->setupCustomFields('Bugs');
 
@@ -120,9 +99,9 @@ class Bug extends SugarBean {
 
 	var $new_schema = true;
 
-	
 
-	
+
+
 
 	function get_summary_text()
 	{
@@ -130,14 +109,11 @@ class Bug extends SugarBean {
 	}
 
 	function create_list_query($order_by, $where, $show_deleted = 0)
-	{		
-		// Fill in the assigned_user_name
-//		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-
+	{
 		$custom_join = $this->custom_fields->getJOIN();
-		
+
                 $query = "SELECT ";
-                
+
 		$query .= "
                                bugs.*
 
@@ -149,7 +125,7 @@ class Bug extends SugarBean {
                                		 $query .= $custom_join['select'];
                                 }
                                 $query .= " FROM bugs ";
-                               
+
 
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
@@ -169,9 +145,9 @@ class Bug extends SugarBean {
 			if($show_deleted == 0){
             	$where_auto = " $this->table_name.deleted=0 ";
 			}else if($show_deleted == 1){
-				$where_auto = " $this->table_name.deleted=1 ";	
+				$where_auto = " $this->table_name.deleted=1 ";
 			}
-          
+
 
 		if($where != "")
 			$query .= "where $where AND ".$where_auto;
@@ -234,41 +210,19 @@ class Bug extends SugarBean {
 
                 return $query;
         }
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-		// Fill in the assigned_user_name
-		//$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-//		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-		
-//	   $this->set_fixed_in_release();
-	}
 
 	function fill_in_additional_detail_fields()
-	{   
-		
-	    /*
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-        $this->team_name=$this->assigned_name;        
-		//END SUGARCRM flav=pro ONLY
-        */
+	{
         parent::fill_in_additional_detail_fields();
-		//$this->created_by_name = get_assigned_user_name($this->created_by);
-		//$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 		$this->set_release();
 		$this->set_fixed_in_release();
 	}
 
 
-	public function set_release() 
+	public function set_release()
 	{
 	    static $releases;
-	    
+
 	    if ( empty($this->found_in_release) ) {
 	        return;
 	    }
@@ -276,7 +230,7 @@ class Bug extends SugarBean {
 	        $this->release_name = $releases[$this->found_in_release];
 	        return;
 	    }
-	    
+
 		$query = "SELECT r1.name from releases r1, $this->table_name i1 where r1.id = i1.found_in_release and i1.id = '$this->id' and i1.deleted=0 and r1.deleted=0";
         $result = $this->db->query($query,true," Error filling in additional detail fields: ");
 
@@ -291,15 +245,15 @@ class Bug extends SugarBean {
         {
             $this->release_name = '';
         }
-        
+
         $releases[$this->found_in_release] = $this->release_name;
 	}
 
-	
-	public function set_fixed_in_release() 
+
+	public function set_fixed_in_release()
 	{
 	    static $releases;
-	    
+
 	    if ( empty($this->fixed_in_release) ) {
 	        return;
 	    }
@@ -307,15 +261,15 @@ class Bug extends SugarBean {
 	        $this->fixed_in_release_name = $releases[$this->fixed_in_release];
 	        return;
 	    }
-	    
+
         $query = "SELECT r1.name from releases r1, $this->table_name i1 where r1.id = i1.fixed_in_release and i1.id = '$this->id' and i1.deleted=0 and r1.deleted=0";
         $result = $this->db->query($query,true," Error filling in additional detail fields: ");
 
         // Get the id and the name.
         $row = $this->db->fetchByAssoc($result);
 
-        
-        
+
+
         if($row != null)
         {
             $this->fixed_in_release_name = $row['name'];
@@ -324,12 +278,12 @@ class Bug extends SugarBean {
         {
             $this->fixed_in_release_name = '';
         }
-			
+
         $releases[$this->fixed_in_release] = $this->fixed_in_release_name;
-			
+
 	}
-	
-	
+
+
 	function get_list_view_data(){
 		global $current_language;
 		$the_array = parent::get_list_view_data();
@@ -337,23 +291,23 @@ class Bug extends SugarBean {
 		$mod_strings = return_module_language($current_language, 'Bugs');
 
 		$this->set_release();
-	    
+
         // The new listview code only fetches columns that we're displaying and not all
-        // the columns so we need these checks. 
+        // the columns so we need these checks.
 	   $the_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
         if (!empty($this->priority))
     	   $the_array['PRIORITY'] = $app_list_strings['bug_priority_dom'][$this->priority];
-        if (!empty($this->status))           
+        if (!empty($this->status))
     	   $the_array['STATUS'] =$app_list_strings['bug_status_dom'][$this->status];
 	   $the_array['RELEASE']= $this->release_name;
-        if (!empty($this->type))           
+        if (!empty($this->type))
         	$the_array['TYPE']=  $app_list_strings['bug_type_dom'][$this->type];
 	   $the_array['BUG_NUMBER'] = $this->bug_number;
 	   $the_array['ENCODED_NAME']=$this->name;
     	//BEGIN SUGARCRM flav=pro ONLY
     	$the_array['BUG_NUMBER'] = format_number_display($this->bug_number,$this->system_id);
     	//END SUGARCRM flav=pro ONLY
-    			
+
     	return  $the_array;
 	}
 
@@ -394,19 +348,19 @@ class Bug extends SugarBean {
 		$xtpl->assign("BUG_BUG_NUMBER", $bug->bug_number);
 		return $xtpl;
 	}
-	
+
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;
 		}
 		return false;
 	}
-	
+
 	function save($check_notify = FALSE){
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id))
 		{
-			
+
 			$admin = new Administration();
 			$admin->retrieveSettings();
 			$system_id = $admin->settings['system_system_id'];

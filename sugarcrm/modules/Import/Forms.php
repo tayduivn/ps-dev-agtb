@@ -51,57 +51,57 @@ function getControl(
     )
 {
     global $current_language, $app_strings, $dictionary, $app_list_strings, $current_user;
-    
+
     // use the mod_strings for this module
     $mod_strings = return_module_language($current_language,$module);
-    
+
  	// set the filename for this control
     $file = create_cache_directory('modules/Import/') . $module . $fieldname . '.tpl';
 
     if ( !is_file($file)
             || inDeveloperMode()
             || !empty($_SESSION['developerMode']) ) {
-        
+
         if ( !isset($vardef) ) {
             $focus = loadBean($module);
             $vardef = $focus->getFieldDefinition($fieldname);
         }
-        
+
         // if this is the id relation field, then don't have a pop-up selector.
-        if( $vardef['type'] == 'relate' && $vardef['id_name'] == $vardef['name']) { 
-            $vardef['type'] = 'varchar'; 
+        if( $vardef['type'] == 'relate' && $vardef['id_name'] == $vardef['name']) {
+            $vardef['type'] = 'varchar';
         }
-        
+
         // create the dropdowns for the parent type fields
         if ( $vardef['type'] == 'parent_type' ) {
             $vardef['type'] = 'enum';
         }
-        
+
         // remove the special text entry field function 'getEmailAddressWidget'
-        if ( isset($vardef['function']) 
-                && ( $vardef['function'] == 'getEmailAddressWidget' 
+        if ( isset($vardef['function'])
+                && ( $vardef['function'] == 'getEmailAddressWidget'
                     || $vardef['function']['name'] == 'getEmailAddressWidget' ) )
             unset($vardef['function']);
-        
+
         // load SugarFieldHandler to render the field tpl file
         static $sfh;
-        
+
         if(!isset($sfh)) {
             require_once('include/SugarFields/SugarFieldHandler.php');
             $sfh = new SugarFieldHandler();
         }
-        
+
         $displayParams = array();
-        $displayParams['formName'] = 'importstep3';  
+        $displayParams['formName'] = 'importstep3';
 
         $contents = $sfh->displaySmarty('fields', $vardef, 'ImportView', $displayParams);
-        
+
         // Remove all the copyright comments
         $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
-        
+
         // hack to disable one of the js calls in this control
-        if ( isset($vardef['function']) 
-                && ( $vardef['function'] == 'getCurrencyDropDown' 
+        if ( isset($vardef['function'])
+                && ( $vardef['function'] == 'getCurrencyDropDown'
                     || $vardef['function']['name'] == 'getCurrencyDropDown' ) )
         $contents .= "{literal}<script>function CurrencyConvertAll() { return; }</script>{/literal}";
 
@@ -111,10 +111,10 @@ function getControl(
             fclose($fh);
         }
     }
-    
+
     // Now render the template we received
     $ss = new Sugar_Smarty();
-    
+
     // Create Smarty variables for the Calendar picker widget
     global $timedate;
     $time_format = $timedate->get_user_time_format();
@@ -129,14 +129,14 @@ function getControl(
     $t23 = strpos($time_format, '23') !== false ? '%H' : '%I';
     if(!isset($match[2]) || $match[2] == '') {
         $ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M");
-    } 
+    }
     else {
         $pm = $match[2] == "pm" ? "%P" : "%p";
         $ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
     }
 
     $ss->assign('CALENDAR_FDOW', $current_user->get_first_day_of_week());
- 
+
     // populate the fieldlist from the vardefs
     $fieldlist = array();
     if ( !isset($focus) || !($focus instanceof SugarBean) )
@@ -176,7 +176,7 @@ function getControl(
         elseif($fieldname == 'assigned_user_name' && empty($value))
         {
             $fieldlist['assigned_user_id']['value'] = $GLOBALS['current_user']->id;
-            $value = get_assigned_user_name($GLOBALS['current_user']->id);
+            $value = $GLOBALS['current_user']->full_name;
         }
         elseif($fieldname == 'team_name' && empty($value))
         {
@@ -187,7 +187,7 @@ function getControl(
     $ss->assign("fields",$fieldlist);
     $ss->assign("form_name",'importstep3');
     $ss->assign("bean",$focus);
-    
+
     // add in any additional strings
     $ss->assign("MOD", $mod_strings);
     $ss->assign("APP", $app_strings);

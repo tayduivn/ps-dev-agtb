@@ -19,22 +19,46 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  *********************************************************************************/
+
 $viewdefs['KBDocuments']['portal']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-                array(
+                 array (
                     'name' => 'kbdocument_name',
-                    'width' => '45',
+                    'width' => '45%',
                     'label' => 'LBL_NAME',
                     'link' => true,
-                    'sortable' => false,
                     'enabled' => true,
                     'default' => true,
                 ),
-                array(
-                    'name' => 'date_modified',
+                array (
+                    'name' => 'active_date',
+                    'label' => 'LBL_DOC_ACTIVE_DATE',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'exp_date',
+                    'label' => 'LBL_DOC_EXP_DATE',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'date_entered',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'kbdocument_revision_number',
+                    'label' => 'LBL_KBDOCUMENT_REVISION_NUMBER',
+                    'enabled' => true,
+                    'width' => '10%',
                     'default' => true,
                 ),
             ),

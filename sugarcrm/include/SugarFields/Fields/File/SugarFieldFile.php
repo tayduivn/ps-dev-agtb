@@ -71,6 +71,8 @@ class SugarFieldFile extends SugarFieldBase {
 		}
 		
 		$move=false;
+        // In case of failure midway, we need to reset the values of the bean
+        $originalvals = array('value' => $bean->$field, 'mime' => $bean->file_mime_type, 'ext' => isset($bean->file_ext) ? $bean->file_ext : '');
 		if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload())
 		{
     		$bean->$field = $upload_file->get_stored_file_name();
@@ -110,8 +112,20 @@ class SugarFieldFile extends SugarFieldBase {
         }
 
 		if ($move) {
-            $upload_file->final_move($bean->id);
-            $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $upload_file->mime_type);
+            // Added checking of final move to capture errors that might occur
+            if ($upload_file->final_move($bean->id)) {
+                // This fixes an undefined index warning being thrown
+                $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
+                $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
+            } else {
+                // Reset the bean back to original
+                $bean->$field = $originalvals['value'];
+                $bean->file_mime_type = $originalvals['mime'];
+                $bean->file_ext = $originalvals['ext'];
+
+                // Report the error
+                $this->error = $upload_file->getErrorMessage();
+            }
         } else if ( ! empty($old_id) ) {
             // It's a duplicate, I think
 
