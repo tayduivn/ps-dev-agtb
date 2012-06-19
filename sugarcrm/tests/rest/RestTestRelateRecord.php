@@ -248,7 +248,7 @@ class RestTestRelateRecord extends RestTestBase {
         // Save it here so it gets deleted later
         $this->contacts[] = $contact;
 
-        $this->assertTrue(isset($restReply['reply']['related_record']['date_entered']), "Date Entered was not set on the creat retrun of the related record");
+        $this->assertTrue(!empty($restReply['reply']['related_record']['date_entered']), "Date Entered was not set on the creat retrun of the related record");
 
 
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."'");
@@ -300,7 +300,7 @@ class RestTestRelateRecord extends RestTestBase {
                                                       'last_name'=>"Test O'Chango",
                                       )),'PUT');
 
-        $this->assertTrue(isset($restReply['reply']['related_record']['date_entered']), "Date Entered was not set in the Update related record reply");
+        $this->assertTrue(!empty($restReply['reply']['related_record']['date_entered']), "Date Entered was not set in the Update related record reply");
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Changed the related ID when it shouldn't have");
         $this->assertEquals("Test O'Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
         // FIXME: Need to wait for this to be repaired in link2.php
