@@ -3368,6 +3368,7 @@ $app_strings = array (
     'LBL_TIME_AGO_DAY' => 'yesterday',
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
+    'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

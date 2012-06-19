@@ -12,10 +12,10 @@ describe("timeago", function() {
         SUGAR.App.logger.debug = function(msg) { console.log(msg); };
         SUGAR.App.utils.date.parse = function(date) { return new Date(date); };
         SUGAR.App.utils.date.format = function(date) { return new Date(date); };
-        SUGAR.App.utils.date.UTCtoLocalTime = function(date) { return new Date(date); };
+        SUGAR.App.utils.date.UTCtoLocalTime = function(date) { return new Date(date + ' UTC'); };
         SUGAR.App.utils.date.getRelativeTimeLabel = function(date) { return { str: 'LABEL', value: undefined } };
         SUGAR.App.template = {};
-        SUGAR.App.template.compile = function(msg) { return function(msg) { return msg; }; };
+        SUGAR.App.template.compile = function(key, tpl) { return Handlebars.compile(key, tpl); };
         SUGAR.App.lang = {};
         SUGAR.App.lang.get = function(msg) { return msg; };
         $time.timeago({

@@ -52,8 +52,15 @@ $(function() {
                 if (relativeTimeObj.str) {
                     var relativeTimeTpl = SugarLang.get(relativeTimeObj.str),
                         relativeTime = SugarTemplate.compile(relativeTimeObj.str, relativeTimeTpl),
-                        hour = SugarDate.format(localDate, 'H:i');
-                    $this.text(relativeTime(relativeTimeObj.value) + " at " + hour);
+                        date = SugarDate.format(localDate, 'Y/m/d'),
+                        time = SugarDate.format(localDate, 'H:i'),
+                        ctx = {
+                            date: date,
+                            time: time,
+                            relativetime: relativeTime(relativeTimeObj.value)
+                        },
+                        template = SugarTemplate.compile('LBL_TIME_RELATIVE', SugarLang.get('LBL_TIME_RELATIVE'));
+                    $this.text(template(ctx));
                 }
                 return this;
             };
