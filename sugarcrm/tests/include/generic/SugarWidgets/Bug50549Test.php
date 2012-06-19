@@ -32,11 +32,17 @@ class Bug50549Test extends Sugar_PHPUnit_Framework_TestCase {
     var $field;
 
     public function setUp() {
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
+
         $this->field = new SugarWidgetFieldMultiEnum(new Bug50549MockReporter());
     }
 
     public function tearDown() {
-        
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
     /**
