@@ -14,7 +14,6 @@
                         "name": "name",
                         "default": true,
                         "enabled": true,
-                        "sorting": true,
                         "width": 35,
                         "type": "text",
                         "label": "LBL_SUBJECT"
@@ -23,7 +22,6 @@
                         "name": "description",
                         "default": true,
                         "enabled": true,
-                        "sorting": true,
                         "width": 35,
                         "type": "textarea",
                         "label":"LBL_DESCRIPTION"
@@ -32,7 +30,6 @@
                         "name": "date_entered",
                         "default": true,
                         "enabled": true,
-                        "sorting": true,
                         "width": 35,
                         "type": "datetime",
                         "label": "LBL_DATE_ENTERED"
@@ -41,7 +38,6 @@
                         "name": "created_by_name",
                         "default": true,
                         "enabled": true,
-                        "sorting": true,
                         "width": 35,
                         "type": "relate",
                         "label": "LBL_CREATED"
@@ -50,7 +46,6 @@
                         "name": "modified_by_name",
                         "default": true,
                         "enabled": true,
-                        "sorting": true,
                         "width": 35,
                         "type": "relate",
                         "label": "LBL_MODIFIED_NAME"
