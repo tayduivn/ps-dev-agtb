@@ -7,9 +7,21 @@ $(function() {
      * Example initialization of plugin:
      *
      * $('time.relativetime').timeago({
-     *     logger:  SUGAR.App.logger,
-     *     date: SUGAR.App.utils.date
+     *   logger: SUGAR.App.logger,
+     *   date: SUGAR.App.utils.date,
+     *   lang: SUGAR.App.lang,
+     *   template: SUGAR.App.template
      * });
+     *
+     * This plugin has a hard dependency with SideCar functions. Anyway, if you want to use your own on top of this
+     * plugin, make sure that you will have defined:
+     *   logger.debug()
+     *   date.parse()
+     *   date.format()
+     *   date.UTCToLocalTime()
+     *   date.getRelativeTimeLabel()
+     *   lang.get()
+     *   template.compile()
      */
     var relativeTimeInterval;
     $.fn.extend({
@@ -39,8 +51,8 @@ $(function() {
 
                 if (relativeTimeObj.str) {
                     var relativeTimeTpl = SugarLang.get(relativeTimeObj.str),
-                    relativeTime = SugarTemplate.compile(relativeTimeObj.str, relativeTimeTpl),
-                    hour = SugarDate.format(localDate, 'H:i');
+                        relativeTime = SugarTemplate.compile(relativeTimeObj.str, relativeTimeTpl),
+                        hour = SugarDate.format(localDate, 'H:i');
                     $this.text(relativeTime(relativeTimeObj.value) + " at " + hour);
                 }
                 return this;
@@ -61,13 +73,10 @@ $(function() {
                 relativeTimeInterval = setInterval(function() {
                     self.each(refresh);
                 }, 60 * 1000);
-            } else {
-                // Remove the timer if no more date elements is in the DOM
-                if (relativeTimeInterval) {
-                    SugarLog.debug('(relative time) Stopping the timer as there is no more date to convert');
-                    clearInterval(relativeTimeInterval);
-                    relativeTimeInterval = undefined;
-                }
+            } else if (relativeTimeInterval) {
+                SugarLog.debug('(relative time) Stopping the timer as there is no more date to convert');
+                clearInterval(relativeTimeInterval);
+                relativeTimeInterval = undefined;
             }
             return self;
         }
