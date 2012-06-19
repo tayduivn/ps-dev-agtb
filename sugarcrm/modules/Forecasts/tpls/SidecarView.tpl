@@ -119,9 +119,11 @@
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;
+
     var App = SUGAR.App.init({
         el: "#core",
         contentEl: ".content"
+
     });
 
 
@@ -131,7 +133,7 @@
     App.api.isAuthenticated = function() {
 
         // Grab user data
-        var userData = $.ajax(App.config.serverUrl + '/me', {
+        var userData = $.ajax(App.config.serverUrl + '/Forecasts/me', {
             dataType: "json"
         }).done(function(data){
             //  Set current User data
