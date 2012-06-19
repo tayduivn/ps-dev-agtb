@@ -1961,7 +1961,10 @@
 		var cal_width = document.getElementById("cal-width-helper").offsetWidth;
 		
 		if (CAL.print) {
-			cal_width = 800;
+            if (CAL.view == "day")
+			    cal_width = 720;
+            else
+                cal_width = 800;
 		}
 			
 		var left_width = 80;
