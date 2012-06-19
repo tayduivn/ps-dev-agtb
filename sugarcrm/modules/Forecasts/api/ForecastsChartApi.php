@@ -74,6 +74,10 @@ class ForecastsChartApi extends ChartApi {
         // add the filter to the report builder
         $rb->addFilter($reportFilters);
 
+        if(isset($args['ct'])) {
+            $rb->setChartType($args['ct']);
+        }
+
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
 
