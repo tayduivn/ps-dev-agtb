@@ -4,6 +4,9 @@
         events: {
             "click .call": function () {
                 app.nomad.callPhone(this.value);
+            },
+            "click .sms": function () {
+                app.nomad.sendSms(this.value);
             }
         }
 
