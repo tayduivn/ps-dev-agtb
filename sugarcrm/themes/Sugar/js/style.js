@@ -363,7 +363,7 @@ SUGAR.append(SUGAR.themes, {
             _ie_adjustment = 10,
             menuItems = currentModuleList.children("li"),
             menuLength = menuItems.length;
-        if(isRTL && $.browser.msie && !SUGAR.themes.menuItemsWidth) {
+        if($.browser.msie) {
             menuItemsWidth = 0;
             menuItems.each(function(){
                 menuItemsWidth += $(this).width();

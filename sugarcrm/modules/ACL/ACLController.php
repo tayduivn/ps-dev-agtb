@@ -82,8 +82,7 @@ class ACLController {
 			}else{
 				unset($moduleList['Calendar']);
 			}
-			if(isset($compList['Activities']) &&
-				!( ACLController::checkModuleAllowed('Notes', $actions) || ACLController::checkModuleAllowed('Notes', $actions))){
+			if(isset($compList['Activities']) && !ACLController::checkModuleAllowed('Notes', $actions)){
 				if($by_value){
 					unset($moduleList[$compList['Activities']]);
 				}else{

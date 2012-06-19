@@ -1090,6 +1090,9 @@ function create_default_users(){
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
+    //Bug#53793: Keep default current user in the global variable in order to store 'created_by' info as default user
+    //           while installation is proceed.
+    $GLOBALS['current_user'] = $user;
 
 
     if( $create_default_user ){

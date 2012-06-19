@@ -661,6 +661,9 @@ class SugarView
                 )
                     $ftsAutocompleteEnable = FALSE;
 
+            if (isSearchEngineDown()) {
+                $ftsAutocompleteEnable = false;
+            }
             $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
 			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
 			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
