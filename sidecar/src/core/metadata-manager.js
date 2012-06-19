@@ -83,7 +83,6 @@
             text: "textarea",
             decimal: "float",
             currency: "text",
-            image: "file",
             // viewdefs use "link" type to denote the fact the field is actually a url instead of using type "url" from vardefs
             // in the main product there are identical templates for both url and link
             // note that if someone puts a "real" link field (relationship link) on a view, it'll break the mapping
