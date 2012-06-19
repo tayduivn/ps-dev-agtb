@@ -809,6 +809,9 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
  * As you touch the code above, migrate the code to use the pattern below.
  */
 (function($) {
+    if (!SUGAR) {
+        SUGAR = {};
+    }
     SUGAR.charts = {
         /**
          * Calls the server to retrieve chart data
