@@ -191,7 +191,7 @@
                                             "       state:this.model.get(\"state\")," +
                                             "       country:this.model.get(\"country\")," +
                                             "       company:this.model.get(\"company\")," +
-                                            "       title:this.model.get(\"jobtitle\")" +
+                                            "       jobtitle:this.model.get(\"jobtitle\")" +
                                             "   }; " +
                                             "   this.app.api.signup(contactData, null, " +
                                             "   {" +
