@@ -50,9 +50,15 @@ class ForecastsChartApi extends ChartApi {
         $report_defs = array();
         $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF');
 
+
+        if(!isset($args['user']) || empty($args['user'])) {
+            global $current_user;
+            $args['user'] = $current_user->id;
+        }
+
         $testFilters = array(
             'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
-            'assigned_user_link' => array('id' => 'seed_sarah_id'),
+            'assigned_user_link' => array('id' => $args['user']),
             //'probability' => array('$between' => array('0', '70')),
             //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
@@ -74,8 +80,8 @@ class ForecastsChartApi extends ChartApi {
         // add the filter to the report builder
         $rb->addFilter($reportFilters);
 
-        if(isset($args['ct'])) {
-            $rb->setChartType($args['ct']);
+        if(isset($args['ct']) && !empty($args['ct'])) {
+            $rb->setChartType($this->mapChartType($args['ct']));
         }
 
         // create the json for the reporting engine to use
@@ -103,6 +109,7 @@ class ForecastsChartApi extends ChartApi {
         $dataArray = json_decode($json, true);
 
         // add the goal marker stuff
+        $dataArray['properties']['subtitle'] = $args['user'];
         $dataArray['properties']['goal_market_type'] = array('group', 'group');
         $dataArray['properties']['goal_marker_color'] = array('#3FB300', '#444444');
         $dataArray['properties']['goal_market_label'] = array('Quota', 'Likely');
