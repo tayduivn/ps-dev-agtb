@@ -11852,12 +11852,12 @@ $jit.ST.Plot.NodeTypes.implement({
                       //render data point
 
                       ctx.beginPath();
-                      ctx.arc(pos.x - (dataPointSize/2), y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
+                      ctx.arc(pos.x - (dataPointSize/2), pos.y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
                       ctx.closePath();
                       ctx.fill();
 
 
-                      ctx.fillRect(pos.x - (dataPointSize/2), pos.y - goalMarkerDim,dataPointSize,dataPointSize);
+//                      ctx.fillRect(pos.x - (dataPointSize/2), pos.y - goalMarkerDim,dataPointSize,dataPointSize);
 
                   }
               }
@@ -12036,28 +12036,48 @@ $jit.ST.Plot.NodeTypes.implement({
                             x2 = canvasSize.width/2 - margin.right,
                             y1 = (y - goalMarkerDim) - 2,
                             y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
                     } else if(goalMarkerType[i] == 'individual') {
                         var x1 = x,
                             x2 = x + width,
                             y1 = (y - goalMarkerDim) - 2,
                             y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+
+
                     } else if(goalMarkerType[i] == 'pareto') {
-                        var x1 = pos.x - (dataPointSize),
-                            x2 = pos.x + (dataPointSize),
-                            y1 = (pos.y - goalMarkerDim) ,
-                            y2 = (pos.y - goalMarkerDim) + (dataPointSize);
+
+                        var x1 = pos.x - (dataPointSize/2),
+                            y1 = (pos.y - goalMarkerDim) + 2;
+                        var r = dataPointSize*1.4;
+                        if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
+
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
 
                     }
 
 
-                    if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
-                         return {
-                            'name': goalMarkerLabel[i],
-                            'value':goalMarker[i],
-                            'valuelabel':goalMarkerValueLabel[i],
-                            'type': 'marker'
-                          }
-                     }
+
                 }
             }
         }
