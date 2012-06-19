@@ -382,6 +382,13 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function run($module)
     {
+        if (isSearchEngineDown())
+        {
+            $GLOBALS['log']->fatal('FTS Server is down, postponing the job for full index.');
+            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+            return true;
+        }
+
         $GLOBALS['log']->info("Going to index all records in module {$module} ");
         $startTime = microtime(true);
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);

@@ -521,7 +521,7 @@ class SugarController{
     {
         //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine = SugarSearchEngineFactory::getInstance('', array(), true);
         //Default db search will be handled by the spot view, everything else by fts.
         if($searchEngine instanceOf SugarSearchEngine)
         {

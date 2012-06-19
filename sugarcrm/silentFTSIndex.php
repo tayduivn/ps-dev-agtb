@@ -29,6 +29,11 @@ chdir(dirname(__FILE__));
 
 require_once('include/entryPoint.php');
 
+if (isSearchEngineDown())
+{
+    sugar_die('cache/fts/fts_down exists, is full fts server down?'."\n");
+}
+
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     sugar_die("silentFTSIndex.php is CLI only.");
