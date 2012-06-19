@@ -105,6 +105,10 @@ class ForecastsChartApi extends ChartApi {
         // lets get some json!
         $json = $chartDisplay->generateJson();
 
+        if($json == "No Data") {
+            return '';
+        }
+
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
 

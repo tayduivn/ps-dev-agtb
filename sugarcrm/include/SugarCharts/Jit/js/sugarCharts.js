@@ -53,7 +53,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 			switch(chartConfig["chartType"]) {
 			case "barChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data"){
+                    if(data !== undefined && data != "No Data" && data != "\"\"" ){
                         var json = eval('('+data+')');
 
                         var properties = $jit.util.splat(json.properties)[0];
