@@ -214,6 +214,69 @@ describe("Handlebars Helpers", function() {
             expect(Handlebars.helpers.match(val1, greedy, returnCb)).toEqual(returnTrue);
         });
     });
+
+    describe("isSortable", function() {
+        it("should return block if isSortable is true in field viewdef", function() {
+            var returnVal = 'Yup',
+                block = function() {return returnVal; },
+                module = "Cases", 
+                fieldViewdef = { 
+                    name: 'text',
+                    sortable: true,
+                },
+                getModuleStub = sinon.stub(app.metadata, 'getModule', function() { 
+                    return {
+                        fields: {
+                            text: { 
+                                sortable:false
+                            }
+                        }
+                    };
+                });
+            expect(Handlebars.helpers.isSortable(module, fieldViewdef, block)).toEqual(returnVal);
+            getModuleStub.restore();
+        });
+
+        it("should not return block if isSortable is false in field viewdef but true in vardef", function() {
+            var returnVal = 'Yup',
+                block = function() {return returnVal; },
+                module = "Cases", 
+
+                fieldViewdef = { 
+                    name: 'text',
+                    sortable: false,
+                },
+                getModuleStub = sinon.stub(app.metadata, 'getModule', function() { 
+                    return {
+                        fields: {
+                            text: { 
+                                sortable: true
+                            }
+                        }
+                    };
+                });
+            expect(Handlebars.helpers.isSortable(module, fieldViewdef, block)).not.toEqual(returnVal);
+            getModuleStub.restore();
+        });
+        it("should return block if isSortable not defined in either field viewdef or vardef", function() {
+            var returnVal = 'Yup',
+                block = function() {return returnVal; },
+                module = "Cases", 
+                fieldViewdef = { 
+                    name: 'text'
+                },
+                getModuleStub = sinon.stub(app.metadata, 'getModule', function() { 
+                    return {
+                        fields: {
+                            text: {} 
+                        }
+                    };
+                });
+            expect(Handlebars.helpers.isSortable(module, fieldViewdef, block)).toEqual(returnVal);
+            getModuleStub.restore();
+        });
+    });
+    
     describe("getLabel", function() {
         it("should get a label", function() {
             var lang = SugarTest.app.lang;

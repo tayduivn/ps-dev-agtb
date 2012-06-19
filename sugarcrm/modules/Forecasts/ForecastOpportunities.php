@@ -200,7 +200,7 @@ class ForecastOpportunities extends SugarBean {
         return $ret_array;
     }
 
-    //get oppotunity forecast summary
+    //get opportunity forecast summary
     function get_opportunity_summary($currency_format=true) {
 
         $abc = array();

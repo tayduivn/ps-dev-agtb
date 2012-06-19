@@ -34,7 +34,8 @@
 <div>
 {{#each historyLog}}
    <div class="span6">
-   <strong>{{this}}</strong></br>
+   <strong>{{this.text}}</strong></br>
+   {{this.text2}}
    </div>
 {{/each}}
 </div>

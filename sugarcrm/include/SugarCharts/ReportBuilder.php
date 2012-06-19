@@ -283,7 +283,7 @@ class ReportBuilder
             }
 
             if (!isset($this->defaultReport['full_table_list'][$key])) {
-                $parent = $this->findParentTableKey($bean_rel->getRelatedModuleName(), $key, $field);
+                $parent = $this->findParentTableKey($bean->module_name, $key, $field);
 
                 $arrLink = array(
                     'name' => $bean->module_dir . ' > ' . $link['module'],
@@ -436,7 +436,7 @@ class ReportBuilder
             $filter = $filter['Filter_1'];
         }
 
-        // make sure all filters are int he proper format
+        // make sure all filters are in the proper format
         foreach ($this->defaultReport['filters_def']['Filter_1'] as $key => $f) {
             if (!is_integer($key)) continue;
 
@@ -446,6 +446,11 @@ class ReportBuilder
         }
 
         $this->defaultReport['filters_def']['Filter_1'][] = $filter;
+
+        if(count($this->defaultReport['filters_def']['Filter_1']) == 1) {
+            // move it up
+            $this->defaultReport['filters_def']['Filter_1'] = array_shift($this->defaultReport['filters_def']['Filter_1']);
+        }
     }
 
     /**

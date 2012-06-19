@@ -37,7 +37,6 @@
                 $(this).append(selEl);
                 var hidden = $('<input type="hidden">');
                 $(this).append(hidden);
-                $(this).find('.cteSelect');
                 return(hidden);
             },
 
@@ -67,6 +66,7 @@
      * renders clickToEdit field
      */
     _render:function() {
+        debugger;
         this.app.view.Field.prototype._render.call(this);
 
         var self = this;

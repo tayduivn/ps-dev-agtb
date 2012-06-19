@@ -179,11 +179,7 @@ class ChartApi extends SugarApi
             return $mod_strings['LBL_NO_CHART_DRAWN_MESSAGE'];
         }
 
-        $chart = $chartDisplay->getSugarChart();
-        $json = $chart->buildJson($chart->generateXML());
-        // fix-up the json
-        $json = str_replace(array("\t", "\n"), "", $json);
-        $json = str_replace("'", '"', $json);
+        $json = $chartDisplay->generateJson();
 
         $dataArray = json_decode($json, true);
 
