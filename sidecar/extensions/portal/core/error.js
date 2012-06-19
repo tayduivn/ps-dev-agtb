@@ -66,8 +66,23 @@
      * @param {String} error string 
      */
     app.error.handleNotFoundError = function(xhr, error) {
-        // TODO - redirect to 404 page
         app.router.navigate('error/404', {trigger: true});
+    };
+
+    /**
+     * 500 Internal server error handler. 
+     * @param {Object} xhr object
+     * @param {String} error string 
+     */
+    app.error.handleServerError = function(xhr, error) {
+        // Since we can get a 500 before app synced we 
+        // may not have stared backbone history.
+        if(!Backbone.History.started) {
+            window.location.href = '#error/500';
+            app.router.start();
+        } else { 
+            app.router.navigate('error/500', {trigger: true});
+        }
     };
 
     /**
