@@ -57,6 +57,8 @@
 
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
+<script src='../sidecar/extensions/modules/Forecasts/hbt-helpers.js'></script>
+
 <script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/base/views/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/base/views/tree/tree.js'></script>
