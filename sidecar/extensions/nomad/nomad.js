@@ -89,12 +89,22 @@
 
             app.AUTH_ACCESS_TOKEN = authAccessToken;
             app.AUTH_REFRESH_TOKEN = authRefreshToken;
-            app.config.authStore = app.isNative ? 'keychain': 'cache';
-            app.cache.store = app.isNative ? app.nativestore : stash;
-            app.init({el: "#nomad" });
-            app.api.debug = app.config.debugSugarApi;
-            app.start();
-            app.logger.debug('App started');
+            
+            var startApp = function() {
+                app.init({el: "#nomad" });
+                app.api.debug = app.config.debugSugarApi;
+                app.start();
+                app.logger.debug('App started');
+            };
+            
+            if(app.isNative) {
+                app.config.authStore = 'keychain';
+                app.cache.store = app.nativestore;
+                startApp();
+                app.cache.store.load(startApp);
+            } else {
+                startApp();
+            }
         },
 
         buildLinkRoute: function(moduleOrContext, id, link, relatedId, action) {

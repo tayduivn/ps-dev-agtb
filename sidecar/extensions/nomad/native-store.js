@@ -15,9 +15,13 @@
          */
         init: function() {
             this.nativeStorePlugin = window.plugins.nativestore;
-            this.nativeStorePlugin.getAll(function(keysAndValues) {
-                keysAndValues = JSON.parse(keysAndValues);
-                cache = keysAndValues;
+        },
+        
+        load: function(callback) {
+            this.nativeStorePlugin.getAll(function(metadata) {
+                metadata = JSON.parse(metadata);
+                cache = metadata;
+                if(callback) callback();
             }, emptyFn);
         },
         
@@ -55,9 +59,8 @@
          * @param {String} value Item to put.
          */
         set: function(key, value) {
-            this.nativeStorePlugin.setForKey(key, JSON.stringify(value), function() {
-                cache[key] = value;
-            }, emptyFn);
+            this.nativeStorePlugin.setForKey(key, JSON.stringify(value), emptyFn, emptyFn);
+            cache[key] = value;
         },
         
         /**
@@ -74,10 +77,9 @@
          * @param {String} key Item key.
          */
         cut: function(key) {
-            this.nativeStorePlugin.removeForKey(key, function() {
-                cache[key] = null;
-                delete cache[key];
-            }, emptyFn);
+            this.nativeStorePlugin.removeForKey(key, emptyFn, emptyFn);
+            cache[key] = null;
+            delete cache[key];
         },
         
         /**
