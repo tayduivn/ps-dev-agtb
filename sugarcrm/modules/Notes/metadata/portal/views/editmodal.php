@@ -64,7 +64,7 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
                     'enabled' => true,
                     'sorting' => true,
                     'width' => 35,
-                )
+                ),
             )
         )
     )

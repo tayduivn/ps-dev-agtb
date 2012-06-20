@@ -30,39 +30,19 @@
         // portal_flag is a required field for Notes
         createModel.set('portal_flag', true);
 
-        // We don't need the filename attribute, the upload is done later
-        createModel.unset('filename', {silent: true});
-
         // saves the related bean
         createModel.save(null, {
             relate: true,
             fieldsToValidate: this.getFields(this.module),
             success: function() {
-                //check if there are attachments
-                var $files = this.$(":file[name=filename]");
-                $files = _.filter($files, function(file) {
-                    return $(file).val() ? $(file).val() !== "" : false;
+                self.checkFileFieldsAndProcessUpload(createModel, {
+                    success: function() { self.saveComplete(); }
                 });
-
-                if ($files.length == 0) {
-                    self.saveComplete();
-                } else {
-                    app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
-
-                    createModel.uploadAttachment(self.module, "filename", $files, {
-                        success: function() {
-                            app.alert.dismiss('upload');
-                            self.saveComplete();
-                        },
-                        error: function(xhr, responseText) {
-                            app.alert.show('upload', {level: 'error', title: 'File upload error', messages: [responseText], autoclose: false});
-                        }
-                    });
-                }
             },
             error: function() {
                 self.resetButton();
             }
+
         });
     },
     cancelButton: function() {
