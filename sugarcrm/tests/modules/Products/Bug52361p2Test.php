@@ -57,6 +57,9 @@ class Bug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+
         $user = $GLOBALS['current_user'];
         parent::setUp();
 
