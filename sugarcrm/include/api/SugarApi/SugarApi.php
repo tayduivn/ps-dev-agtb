@@ -123,7 +123,7 @@ abstract class SugarApi {
         if(is_array($data) || is_object($data)) {
             $this->htmlDecodeReturn($data);
         }
-        else {
+        elseif(!empty($data)) {
             $data = html_entity_decode($data);
         }
 
@@ -138,7 +138,7 @@ abstract class SugarApi {
             if(is_array($value) && !empty($value)) {
                 $this->htmlDecodeReturn($value);
             }
-            else {
+            elseif(!empty($data) && !empty($value)) {
                 $data[$key] = html_entity_decode($value);
             }
         }
