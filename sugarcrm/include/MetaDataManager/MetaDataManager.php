@@ -48,8 +48,6 @@ class MetaDataManager {
      * @var User
      */
     protected $user;
-    // you are always going to get noauth
-    protected $auth_dirs = array( 'public' );
 
     /**
      * The constructor for the class.
@@ -66,10 +64,6 @@ class MetaDataManager {
         $this->user = $user;
         $this->platforms = $platforms;
 
-        // if we need auth add it to the array
-        if($public === FALSE) {
-            $this->auth_dirs[] = 'private';
-        }
     }
 
     /**
@@ -396,19 +390,17 @@ class MetaDataManager {
      */
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
-        foreach($this->auth_dirs AS $auth_dir) {
-            foreach ( $this->platforms as $platform ) {
-                $basedir  = "clients/{$platform}/{$auth_dir}/{$path}/";
-                $custdir  = "custom/$basedir";
-                $basedirs = glob($basedir."*", GLOB_ONLYDIR);
-                $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
-                $alldirs  = array_merge($basedirs, $custdirs);
+        foreach ( $this->platforms as $platform ) {
+            $basedir  = "clients/{$platform}/{$path}/";
+            $custdir  = "custom/$basedir";
+            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
+            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
+            $alldirs  = array_merge($basedirs, $custdirs);
 
-                foreach ($alldirs as $dir) {
-                    // To prevent doing the work twice, let's sort this out by basename
-                    $dirname = basename($dir);
-                    $dirs[$dirname] = $full ? $dir . '/' : $dirname;
-                }
+            foreach ($alldirs as $dir) {
+                // To prevent doing the work twice, let's sort this out by basename
+                $dirname = basename($dir);
+                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
             }
         }
 
@@ -429,48 +421,48 @@ class MetaDataManager {
 
         $allSugarFiles = $this->getSugarClientFileDirs($typePath);
 
-        foreach($this->auth_dirs AS $auth_dir) {
-            foreach ( $allSugarFiles as $dirname) {
-                // Check each platform in order of precendence to find the "best" controller
-                // Add in meta checking here as well
-                $meta = array();
-                foreach ( $this->platforms as $platform ) {
-                    $dir = "clients/$platform/{$auth_dir}/$typePath/$dirname/";
-                    $controller = $dir . "$dirname.js";
-                    if (empty($meta)) {
-                        $meta = $this->fetchMetadataFromDirs(array($dir));
-                    }
-                    if ( file_exists('custom/'.$controller) ) {
-                        $controller = 'custom/'.$controller;
-                    }
-                    if ( file_exists($controller) ) {
-                        $fileData['controller'] = file_get_contents($controller);
-                        // We found a controller, let's get out of here!
-                        break;
-                    }
+        foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            // Check each platform in order of precendence to find the "best" controller
+            // Add in meta checking here as well
+            $meta = array();
+            foreach ( $this->platforms as $platform ) {
+                $dir = "clients/$platform/$typePath/$dirname/";
+                $controller = $dir . "$dirname.js";
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir));
                 }
-
-                // Reverse the platform order so that "better" templates override worse ones
-                $backwardsPlatforms = array_reverse($this->platforms);
-                $templateDirs = array();
-                foreach ( $backwardsPlatforms as $platform ) {
-                    $templateDirs[] = "clients/$platform/$auth_dir/$typePath/$dirname/";
+                if ( file_exists('custom/'.$controller) ) {
+                    $controller = 'custom/'.$controller;
                 }
-                $fileData['templates'] = $this->fetchTemplates($templateDirs);
-                if ($meta) {
-                    $fileData['meta'] = array_shift($meta); // Get the first member
+                if ( file_exists($controller) ) {
+                    $fileData['controller'] = file_get_contents($controller);
+                    // We found a controller, let's get out of here!
+                    break;
                 }
-                //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
-
-                // Remove empty fileData members
-                foreach ($fileData as $k => $v) {
-                    if (empty($v)) {
-                        unset($fileData[$k]);
-                    }
-                }
-
-                $result[$dirname] = $fileData;
             }
+
+            // Reverse the platform order so that "better" templates override worse ones
+            $backwardsPlatforms = array_reverse($this->platforms);
+            $templateDirs = array();
+            foreach ( $backwardsPlatforms as $platform ) {
+                $templateDirs[] = "clients/$platform/$typePath/$dirname/";
+            }
+            $fileData['templates'] = $this->fetchTemplates($templateDirs);
+            if ($meta) {
+               $fileData['meta'] = array_shift($meta); // Get the first member
+            }
+            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
+
+            // Remove empty fileData members
+            foreach ($fileData as $k => $v) {
+                if (empty($v)) {
+                    unset($fileData[$k]);
+                }
+            }
+
+            $result[$dirname] = $fileData;
         }
 
         $result['_hash'] = md5(serialize($result));
@@ -503,11 +495,10 @@ class MetaDataManager {
         $meta = array();
         if (is_dir($dir)) {
             // Get the client, type amd name for this particular directory
-            preg_match("#clients/(.*)/(.*)/(.*)/(.*)/#", $dir, $m);
+            preg_match("#clients/(.*)/(.*)/(.*)/#", $dir, $m);
             $platform = $m[1];
-            $auth = $m[2];
-            $type = substr_replace($m[3], '', -1); // Pluck the 's' from the type
-            $filename = $m[4];
+            $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
+            $filename = $m[3];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
 
             if (file_exists($file)) {
@@ -566,11 +557,9 @@ class MetaDataManager {
     public function getViewTemplates() {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
-        foreach($this->auth_dirs AS $auth_dir) {
-            foreach ( $backwardsPlatforms as $platform ) {
-                $moreTemplates = glob("clients/${platform}/${auth_dir}/views/*",GLOB_ONLYDIR);
-                $templateDirs = array_merge($templateDirs,$moreTemplates);
-            }
+        foreach ( $backwardsPlatforms as $platform ) {
+            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
+            $templateDirs = array_merge($templateDirs,$moreTemplates);
         }
         $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));

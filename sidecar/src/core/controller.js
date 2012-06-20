@@ -81,9 +81,6 @@
                 context: this.context
             });
 
-            //A context needs to have a primary layout to render to the page
-            this.context.set("layout", this.layout);
-
             // Render the layout to the main element
             app.$contentEl.html(this.layout.$el);
 
@@ -93,7 +90,7 @@
             app.trigger("app:view:change", params.layout, params);
 
             // Fetch the data, the layout will be rendered when fetch completes
-            this.context.loadData();
+            this.layout.loadData();
         },
 
         /**

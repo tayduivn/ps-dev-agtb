@@ -54,10 +54,10 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
     }
     
     public function testMetadataViewTemplatesHbt() {
-        $filesToCheck = array('clients/portal/public/views/edit/edit.hbt',
-                              'clients/base/public/views/edit/edit.hbt',
-                              'custom/clients/portal/public/views/edit/edit.hbt',
-                              'custom/clients/base/public/views/edit/edit.hbt',
+        $filesToCheck = array('clients/portal/views/edit/edit.hbt',
+                              'clients/base/views/edit/edit.hbt',
+                              'custom/clients/portal/views/edit/edit.hbt',
+                              'custom/clients/base/views/edit/edit.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -68,10 +68,10 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/portal/public/views/edit',
-                            'clients/base/public/views/edit',
-                            'custom/clients/portal/public/views/edit',
-                            'custom/clients/base/public/views/edit',
+        $dirsToMake = array('clients/portal/views/edit',
+                            'clients/base/views/edit',
+                            'custom/clients/portal/views/edit',
+                            'custom/clients/base/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -82,35 +82,35 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
         
         // Make sure we get it when we ask for portal
         file_put_contents($filesToCheck[0],'PORTAL CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates&platform=portal');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't get portal code when that was the direct option");
 
 
         // Make sure we get it when we ask for portal, even though there is base code there
         file_put_contents($filesToCheck[1],'BASE CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates&platform=portal');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't get portal code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't get base code when it was the direct option");
 
 
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck[0]);
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates&platform=portal');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates&platform=portal');
         $this->assertEquals('BASE CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't fall back to base code when portal code wasn't there.");
 
 
         // Make sure the portal code is loaded before the non-custom base code
         file_put_contents($filesToCheck[2],'CUSTOM PORTAL CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates&platform=portal');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't use the custom portal code.");
 
         // Make sure custom base code works
         file_put_contents($filesToCheck[3],'CUSTOM BASE CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=viewTemplates');
+        $restReply = $this->_restCall('metadata/public?typeFilter=viewTemplates');
         $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['viewTemplates']['edit'],"Didn't use the custom base code.");
 
     }

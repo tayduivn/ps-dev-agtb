@@ -237,8 +237,17 @@
          * Gets module list
          * @return {Object}
          */
-        getModuleList: function() {
-            return _getMeta(_app, "moduleList", "", true) || {};
+        getModuleList: function(opts) {
+            var meta = _getMeta(_app, "moduleList", "", true) || {};
+
+            /**
+             * @cfg {Boolean} opts.visible Set true if you want to return only module lists that the user has access to.
+             */
+            if (opts && opts.visible && app.config && app.config.displayModules) {
+                meta = _.intersection(_.toArray(meta), app.config.displayModules);
+            }
+
+            return meta
         },
 
         /**

@@ -54,10 +54,10 @@ class RestTestMetadataViewTemplates extends RestTestBase {
     }
     
     public function testMetadataViewTemplatesHbt() {
-        $filesToCheck = array('clients/portal/private/views/edit/edit.hbt',
-                              'clients/base/private/views/edit/edit.hbt',
-                              'custom/clients/portal/private/views/edit/edit.hbt',
-                              'custom/clients/base/private/views/edit/edit.hbt',
+        $filesToCheck = array('clients/portal/views/edit/edit.hbt',
+                              'clients/base/views/edit/edit.hbt',
+                              'custom/clients/portal/views/edit/edit.hbt',
+                              'custom/clients/base/views/edit/edit.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -68,10 +68,10 @@ class RestTestMetadataViewTemplates extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/portal/private/views/edit',
-                            'clients/base/private/views/edit',
-                            'custom/clients/portal/private/views/edit',
-                            'custom/clients/base/private/views/edit',
+        $dirsToMake = array('clients/portal/views/edit',
+                            'clients/base/views/edit',
+                            'custom/clients/portal/views/edit',
+                            'custom/clients/base/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
