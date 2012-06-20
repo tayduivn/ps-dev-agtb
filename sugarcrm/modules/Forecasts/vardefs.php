@@ -394,14 +394,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
   ),
-  'forecast' =>
-  array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'bool',
-    'default' => '-1',
-    'comment' => 'Boolean indicating whether or not record should be included in forecast'
-  ),
  'timeperiod_name'=>
    array(
 		'name'=>'timeperiod_name',
@@ -589,6 +581,14 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'default' => '0',
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
+  ),
+  'forecast' =>
+  array (
+    'name' => 'forecast',
+    'vname' => 'LBL_FORECAST',
+    'type' => 'bool',
+    'default' => '-1',
+    'comment' => 'Boolean indicating whether or not record should be included in forecast'
   ),
  ),
  'indices' => array (
