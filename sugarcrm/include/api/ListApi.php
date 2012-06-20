@@ -86,7 +86,7 @@ class ListApi extends SugarApi {
             $userFields = explode(",", $args["fields"]);
             
             foreach ( $userFields as $field ) {
-                if ( !SugarACL::checkField($seed->module_dir,$field,'access',array()) || !isset($seed->field_defs[$field]) ) {
+                if ( !$seed->ACLFieldAccess($field,'list') || !isset($seed->field_defs[$field]) ) {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
                 }
             }
@@ -121,7 +121,7 @@ class ListApi extends SugarApi {
                     $column = $order;
                     $direction = 'ASC';
                 }
-                if ( !SugarACL::checkField($seed->module_dir,$column,'access',array()) || !isset($seed->field_defs[$column]) ) {
+                if ( !$seed->ACLFieldAccess($column,'list') || !isset($seed->field_defs[$column]) ) {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
                 }
                 
@@ -184,7 +184,7 @@ class ListApi extends SugarApi {
 
         // Load up a seed bean
         $seed = BeanFactory::getBean($args['module']);
-        if ( ! ACLController::checkAccess($args['module'],'view',$seed->isOwner($GLOBALS['current_user']->id)) ) {
+        if ( ! $seed->ACLAccess('list') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
         
