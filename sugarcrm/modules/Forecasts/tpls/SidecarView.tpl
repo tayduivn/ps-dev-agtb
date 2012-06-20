@@ -128,13 +128,26 @@
 <script language="javascript">
     var syncResult, view, layout, html;
 
-    SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
+    //SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
 
-    var App = SUGAR.App.init({
-        el: "#core",
-        contentEl: ".content"
+    (function(app) {
+         app.augment("forecasts", {
+            initForecast: function(authAccessToken) {
+                app.AUTH_ACCESS_TOKEN = authAccessToken;
+                app.AUTH_REFRESH_TOKEN = authAccessToken;
+                app.init({
+                    el: "core",
+                    contentEl: ".content",
+                    keyValueStore: app.sugarAuthStore //override the keyValueStore
+                });
+                return app;
+            }
+         });
+     })(SUGAR.App);
 
-    });
+     //Call initForecast with the session id as token
+     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
+
 
     App.viewModule = {/literal}'{$module}';{literal}
 
