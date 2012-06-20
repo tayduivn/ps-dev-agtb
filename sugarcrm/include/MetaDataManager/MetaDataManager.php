@@ -321,19 +321,23 @@ class MetaDataManager {
                         case ACL_READ_OWNER_WRITE:
                             // $outputAcl['fields'][$field]['read'] = 'yes';
                             $outputAcl['fields'][$field]['write'] = 'owner';
+                            $outputAcl['fields'][$field]['create'] = 'owner';
                             break;
                         case ACL_READ_ONLY:
                             // $outputAcl['fields'][$field]['read'] = 'yes';
                             $outputAcl['fields'][$field]['write'] = 'no';
+                            $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                         case ACL_OWNER_READ_WRITE:
                             $outputAcl['fields'][$field]['read'] = 'owner';
                             $outputAcl['fields'][$field]['write'] = 'owner';
+                            $outputAcl['fields'][$field]['create'] = 'owner';
                             break;
                         case ACL_ALLOW_NONE:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';
+                            $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                     }
                 }
@@ -417,6 +421,8 @@ class MetaDataManager {
         $allSugarFiles = $this->getSugarClientFileDirs($typePath);
 
         foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
             // Check each platform in order of precendence to find the "best" controller
             // Add in meta checking here as well
             $meta = array();

@@ -5,7 +5,7 @@
             <div>
                 {{#each items}}
                 <article class="picker-list-row">
-                    <a href="#{{buildLinkRoute ../context ../model this.name ../action}}?depth=2">
+                    <a href="#{{linkRoute ../context this.name ../action}}?depth=2">
                         {{this.name}}
                     </a>
                 </article>

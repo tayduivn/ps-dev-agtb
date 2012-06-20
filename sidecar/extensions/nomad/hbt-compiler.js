@@ -1,9 +1,12 @@
+var nowatch = process.argv.indexOf("--nowatch") > -1; // Allow --nowatch flag to only do compilation
 var src_path = "./extensions/nomad/templates"; // directory of handlebars templates are stored with .hbt file extension
 var compiled_path = "./extensions/nomad/compiled/"; // directory where the compiled .js files should be saved to
 
 var fs = require('fs');
 var handlebars = require('handlebars');
-var watcher = require('watch-tree-maintained').watchTree(src_path, {'sample-rate': 500})
+if (!nowatch) {
+    var watcher = require('watch-tree-maintained').watchTree(src_path, {'sample-rate': 500})
+}
 var fstools = require('fs-tools');
 
 fstools.walk(src_path, '\.hbt$',
@@ -16,9 +19,11 @@ fstools.walk(src_path, '\.hbt$',
         }
     });
 
-watcher.on('fileModified', function(path, stats) {
-    compileTemplate(path);
-});
+if (watcher) {
+    watcher.on('fileModified', function(path, stats) {
+        compileTemplate(path);
+    });
+}
 
 var start =
     "(function() {\n" +

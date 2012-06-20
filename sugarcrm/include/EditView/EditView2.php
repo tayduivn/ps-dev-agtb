@@ -134,6 +134,7 @@ class EditView
 
             $this->focus->fill_in_additional_detail_fields();
             $this->focus->assigned_user_id = $current_user->id;
+            $this->focus->assigned_user_name = $current_user->full_name;
         }
     }
 
@@ -381,20 +382,15 @@ class EditView
         {
             global $current_user;
 
-            if (!empty($this->focus->assigned_user_id))
-            {
-                $this->focus->assigned_user_name = get_assigned_user_name($this->focus->assigned_user_id);
-            }
-
             //BEGIN SUGARCRM flav=pro ONLY
             if (empty($this->focus->team_id)) {
                 $this->focus->team_id = $current_user->default_team;
+                $this->focus->team_name = $current_user->default_team_name;
+            } else {
+                if(empty($this->focus->team_name)) {
+                    $this->focus->team_name = Team::getTeamName($this->focus->team_id);
+                }
             }
-
-            $this->focus->team_name = (empty($this->focus->team_name) && !empty($this->focus->team_id))
-                ? Team::getTeamName($this->focus->team_id)
-                : $current_user->default_team_name;
-
             //END SUGARCRM flav=pro ONLY
             foreach ($this->focus->toArray() as $name => $value)
             {

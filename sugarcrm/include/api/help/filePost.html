@@ -1,0 +1,46 @@
+<div class="longHelpTitle">Attaches a file to a field in a record</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    <p>This endpoint takes a file or image and saves it to a record.</p>
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+    <table>
+        <tr><th>Param</th><th>Description</th><th>Optional</th></tr>
+        <tr><td>file</td><td>The local file path to upload</td><td>Required</td></tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+        POST /rest/v10/Notes/abcd-1234/file/field/ HTTP/1.1
+        Host: localhost
+        Connection: keep-alive
+        Content-Length: 10263
+        Cache-Control: max-age=0
+        Content-Type: multipart/form-data; boundary=---WebKitFormBoundarybThnfMCVqnkSxLCl
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Encoding: gzip
+        Accept-Language: en-US,en;q=0.8
+
+        ------WebKitFormBoundarybThnfMCVqnkSxLCl
+        Content-Disposition: form-data; name="file"; filename="my-awesome-document.xyz"
+        Content-Type: application/document-xyz
+
+        ...<span class="note">This is where the bin data would be</span>
+
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+          "field": {
+            "content-type": "application/document-xyz",
+            "content-length": "657483",
+            "name": "my-awesome-document.xyz",
+            "uri": "http://your.sugarcrm.install/rest/v10//Notes/abc-1234/file/field"
+          }
+        }
+    </code>
+</div>

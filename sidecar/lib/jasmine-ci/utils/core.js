@@ -23,7 +23,8 @@ utils.core.waitfor = function(check, onTestPass, onTimeout, timeoutMs, freqMs) {
     // TODO: Had to hack this from 3 second which was original setting!!!
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
-    var timeoutMs = timeoutMs || 20000,     //< Default Timeout is 20s
+    var timeoutMs = timeoutMs || 90000,     //< Default Timeout is 1.5 minutes 
+
         freqMs = freqMs || 250,             //< Default Freq is 250ms
         start = Date.now(),
         condition = false,

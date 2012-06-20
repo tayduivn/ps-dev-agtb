@@ -24,8 +24,13 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 
 abstract class SugarApi {
-    // This class intentionally left blank.
-    // It primarialy serves as a way to flag which classes could be called from externally facing API's
+    /**
+     * Handles validation of required arguments for a request
+     *
+     * @param array $args
+     * @param array $requiredFields
+     * @throws SugarApiExceptionMissingParameter
+     */
     function requireArgs(&$args,$requiredFields = array()) {
         foreach ( $requiredFields as $fieldName ) {
             if ( !isset($args[$fieldName]) ) {
@@ -44,9 +49,6 @@ abstract class SugarApi {
     protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
 
         $sfh = new SugarFieldHandler();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
@@ -65,7 +67,7 @@ abstract class SugarApi {
         $data = array();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$GLOBALS['current_user']->id,$isOwner) < 1 ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
                 // No read access to this field, skip it.
                 continue;
             }
@@ -131,17 +133,34 @@ abstract class SugarApi {
     protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
 
         $bean = BeanFactory::getBean($args['module'],$args['record']);
-        
+
         if ( $bean == FALSE ) {
             // Couldn't load the bean
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
         if (!$bean->ACLAccess($aclToCheck)) {
-            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$args['module']);
+            throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);
         }
-        
+
         return $bean;
     }
 
+    /**
+     * Verifies field level access for a bean and field for the logged in user
+     *
+     * @param SugarBean $bean The bean to check on
+     * @param string $field The field to check on
+     * @param string $action The action to check permission on
+     * @param array $context ACL context
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function verifyFieldAccess(SugarBean $bean, $field, $action = 'access', $context = array()) {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!$bean->ACLFieldAccess($field, $action, $context)) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionNotAuthorized('Not allowed to ' . $action . ' ' . $field . ' field in ' . $bean->object_name . ' module.');
+        }
+        //END SUGARCRM flav=pro ONLY
+    }
 }

@@ -20,27 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Case.php 53116 2009-12-10 01:24:37Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-
-
-
-
-
-
-
-
-
-
-
-
-// Case is used to store customer information.
+// aCase is used to store case information.
 class aCase extends Basic {
         var $field_name_map = array();
 	// Stored fields
@@ -160,32 +141,9 @@ class aCase extends Basic {
 		$this->contacts->add($contact_id,array('contact_role'=>$default));
 	}
 
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-		/*// Fill in the assigned_user_name
-		//$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
-
-		$account_info = $this->getAccount($this->id);
-		$this->account_name = $account_info['account_name'];
-		$this->account_id = $account_info['account_id'];*/
-	}
-
 	function fill_in_additional_detail_fields()
 	{
 		parent::fill_in_additional_detail_fields();
-		// Fill in the assigned_user_name
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-        $this->team_name=$this->assigned_name;
-		//END SUGARCRM flav=pro ONLY
-
-		$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 
         if(!empty($this->id)) {
 		    $account_info = $this->getAccount($this->id);
@@ -198,10 +156,7 @@ class aCase extends Basic {
 
 
 	/** Returns a list of the associated contacts
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
-	*/
+	 */
 	function get_contacts()
 	{
 		$this->load_relationship('contacts');

@@ -127,6 +127,19 @@
     });
 
     /**
+     * Builds a model route.
+     * @method modelRoute
+     * @param {Data.Bean} model
+     * @param {String} action(optional)
+     * @return {String}
+     */
+    Handlebars.registerHelper('modelRoute', function(model, action) {
+        action = _.isString(action) ? action : null;
+        var id = action == "create" ? "" : model.id;
+        return new Handlebars.SafeString(app.router.buildRoute(model.module, id, action));
+    });
+
+    /**
      * Extracts bean field value.
      * @method getFieldValue
      * @param {Data.Bean} bean Bean instance.
@@ -156,6 +169,27 @@
         }
 
         return _.include(array, val) ? block(this) : block.inverse(this);
+    });
+
+    /**
+     * We require sortable to be the default if not defined in either field viewdef or vardefs. Otherwise, 
+     * we use whatever is provided in either field vardefs or field's viewdefs where the view def has more
+     * specificity.
+     * @method has
+     * @param {String} module name
+     * @param {Object} the field view defintion (e.g. looping through meta.panels.field it will be 'this')
+     * @return {String} Result of the `block` execution if sortable, otherwise empty string. 
+     */
+    Handlebars.registerHelper('isSortable', function(module, fieldViewdef, block) {
+        if (!block) return "";
+        
+        var fieldVardef = app.metadata.getModule(module).fields[fieldViewdef.name];
+
+        if(!_.isUndefined(fieldViewdef.sortable) ? fieldViewdef.sortable : (!_.isUndefined(fieldVardef.sortable) ? fieldVardef.sortable : true)) {
+            return block(this);
+        } else {
+            return '';
+        }
     });
 
     /**

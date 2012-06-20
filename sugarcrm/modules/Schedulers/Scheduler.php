@@ -982,12 +982,6 @@ class Scheduler extends SugarBean {
 	/**
 	 * function overrides the one in SugarBean.php
 	 */
-	function fill_in_additional_detail_fields() {
-    }
-
-	/**
-	 * function overrides the one in SugarBean.php
-	 */
 	function get_list_view_data()
 	{
 		global $mod_strings;
@@ -999,8 +993,6 @@ class Scheduler extends SugarBean {
         if($this->date_time_end == '2020-12-31 23:59' || $this->date_time_end == '') {
         	$temp_array['DATE_TIME_END'] = $mod_strings['LBL_PERENNIAL'];
         }
-    	$this->created_by_name = get_assigned_user_name($this->created_by);
-		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
     	return $temp_array;
 
 	}

@@ -116,7 +116,7 @@ class Employee extends Person {
 		$result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 
 		$row = $this->db->fetchByAssoc($result);
-		$GLOBALS['log']->debug("additional detail query results: $row");
+		$GLOBALS['log']->debug("additional detail query results: ".var_export($row, true));
 
 		if($row != null)
 		{
@@ -126,6 +126,7 @@ class Employee extends Person {
 		{
 			$this->reports_to_name = '';
 		}
+		parent::fill_in_additional_detail_fields();
 	}
 
 	function retrieve_employee_id($employee_name)

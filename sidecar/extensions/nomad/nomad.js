@@ -84,12 +84,17 @@
     app.augment("nomad", {
 
         deviceReady: function(authAccessToken, authRefreshToken) {
+            app.logger.debug("Device is ready");
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready, auth-token: " + authAccessToken);
 
-            app.AUTH_ACCESS_TOKEN = authAccessToken;
-            app.AUTH_REFRESH_TOKEN = authRefreshToken;
-            app.config.authStore = app.isNative ? 'keychain': 'cache';
+            if (app.isNative) {
+                app.logger.debug("access/refresh tokens: " + authAccessToken + "/" + authRefreshToken);
+                app.OAUTH = {};
+                app.OAUTH["AuthAccessToken"] = authAccessToken;
+                app.OAUTH["AuthRefreshToken"] = authRefreshToken;
+                app.config.authStore = "keychain";
+            }
+
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
@@ -100,11 +105,12 @@
             var route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
             route += "/" + id + "/link/" + link;
 
-            if (relatedId && action) {
-                route += "/" + relatedId + "/" + action;
-            }
-            else if (relatedId) {
+            if (relatedId) {
                 route += "/" + relatedId;
+            }
+
+            if (action) {
+                route += "/" + action;
             }
 
             return route;
@@ -122,10 +128,8 @@
                 return ((field.type == "link") &&
                     (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
-                    (_.any(modules, function(module) {
-                        return  (module == relationship.lhs_module) ||
-                                (module == relationship.rhs_module);
-                    })));
+                    _.has(modules, relationship.lhs_module) &&
+                    _.has(modules, relationship.rhs_module));
             });
 
         },

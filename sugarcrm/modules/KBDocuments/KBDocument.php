@@ -19,12 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
-/*********************************************************************************
- * $Id: KBDocument.php 18595 2007-02-28 00:18:41 +0000 (Wed, 28 Feb 2007) vineet $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
  ********************************************************************************/
 // User is used to store Forecast information.
 class KBDocument extends SugarBean {
@@ -169,6 +163,9 @@ class KBDocument extends SugarBean {
 		   $this->kbarticle_author_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 		   $this->created_by = $this->kbarticle_author_name;
 		}
+
+        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
+
 	}
 
 	function fill_in_additional_detail_fields() {
@@ -178,9 +175,6 @@ class KBDocument extends SugarBean {
 
 		parent::fill_in_additional_detail_fields();
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->assigned_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
 		$mod_strings = return_module_language($current_language, 'KBDocuments');
 
 		$query = "SELECT filename,revision,file_ext FROM kbdocument_revisions WHERE id='$this->kbdocument_revision_id'";

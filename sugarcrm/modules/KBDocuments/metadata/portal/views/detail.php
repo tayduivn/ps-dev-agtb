@@ -38,13 +38,52 @@ $viewdefs['KBDocuments']['portal']['view']['detail'] = array(
     'panels' =>
     array(
         array(
-            'label' => 'Details',
+            'label' => 'default',
             'fields' => array(
-                'name',
-                'body',
-                'date_entered',
-                'date_modified',
-                'exp_date',
+                array (
+                    'name' => 'name',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                ),
+                array (
+                    'name' => 'body',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                ),
+                array (
+                    'name' => 'active_date',
+                    'label' => 'LBL_DOC_ACTIVE_DATE',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                ),
+                array (
+                    'name' => 'date_modified',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                ),
+                array (
+                    'name' => 'exp_date',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                ),
+                array (
+                    'name' => 'description',
+                    'label' => 'LBL_DESCRIPTION',
+                    'displayParams' =>
+                    array (
+                        'colspan' => 2,
+                    ),
+                )
             )
         )
     ),
