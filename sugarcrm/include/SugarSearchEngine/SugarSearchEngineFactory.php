@@ -42,8 +42,13 @@ class SugarSearchEngineFactory
      * @static
      * @return SugarSearchEngineInterface
      */
-    public static function getInstance($name = '', $config = array())
+    public static function getInstance($name = '', $config = array(), $useDefaultWhenFTSDown = false)
     {
+        if ($useDefaultWhenFTSDown && isSearchEngineDown())
+        {
+            $name = 'SugarSearchEngine';
+        }
+
        if (!isset(self::$_instance[$name]))
        {
            self::$_instance[$name] = self::setupEngine($name, $config);

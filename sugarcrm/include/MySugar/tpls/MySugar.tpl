@@ -200,12 +200,12 @@ mySugarLoader.insert();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"  alt=""{/capture}
+			{capture assign=img_attr} border="0"  alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0" alt=""{/capture}
+			{capture assign=img_attr} border="0" alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
 			<!--//END SUGARCRM flav=pro ONLY -->
@@ -347,12 +347,3 @@ mySugarLoader.insert();
 				
 	
 </div>
-
-{if $view_tour}
-<link rel="stylesheet" type="text/css" href="themes/default/css/bootstrap.css" id="bootstrapCss"/>
-<link rel="stylesheet" type="text/css" href="modules/Home/tour.css" id="tourCss"/>
-<script src="include/javascript/jquery/bootstrap.min.js" type="text/javascript" id="bootstrapJs"></script>
-<script src="include/javascript/jquery/jquery.popoverext.js" type="text/javascript" id="popoverext"></script>
-<script src="include/javascript/tour.js" type="text/javascript" id="tourJs"></script>
-<script src="modules/Home/tour.js" type="text/javascript" id="whatsNewsJs"></script>
-{/if}

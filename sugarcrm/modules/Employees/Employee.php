@@ -291,6 +291,14 @@ class Employee extends Person {
         //return parent method, specifying for array to be returned
         return parent::create_new_list_query($order_by, $where, $filter,$params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
     }
+
+    /*
+     * Overwrite Sugar bean which returns the current objects custom fields.  Lets return User custom fields instead
+     */
+    function hasCustomFields()
+    {
+        return !empty($GLOBALS['dictionary']['User']['custom_fields']);
+    }
 }
 
 ?>

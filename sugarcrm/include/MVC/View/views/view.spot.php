@@ -53,7 +53,7 @@ class ViewSpot extends ViewAjax
 
         $options = array('current_module' => $this->module, 'modules' => $modules);
 
-        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine = SugarSearchEngineFactory::getInstance('', array(), true);
 
         $trimmed_query = trim($_REQUEST['q']);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
@@ -100,7 +100,7 @@ class ViewSpot extends ViewAjax
             if($countRemaining > 0)
             {
                 $displayMoreForModule[$m] = array('query'=>$trimmedQuery,
-                    'offset'=>$data['pageData']['offsets']['next']++,
+                    'offset'=>++$data['pageData']['offsets']['next'],
                     'countRemaining'=>$countRemaining);
             }
 

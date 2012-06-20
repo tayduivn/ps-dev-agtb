@@ -35,12 +35,6 @@ class ProductTemplatesViewPopup extends ViewPopup {
  	function ProductTemplatesViewPopup(){
  		parent::ViewPopup();
  	}
- 	
- 	function display() {
-		require_once('modules/ProductTemplates/Popup_picker.php');
-		$popup = new Popup_Picker();
-		echo $popup->process_page();
- 	}
 }
 
 ?>
