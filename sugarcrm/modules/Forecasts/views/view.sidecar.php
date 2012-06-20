@@ -37,6 +37,9 @@ class ViewSidecar extends SugarView
 
     function display()
     {
+        global $current_user;
+        $this->ss->assign("isManager", User::isManager($current_user->id));
+        $this->ss->assign("token", $_REQUEST[session_name()]);
         $this->ss->assign("module", $this->module);
         $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
     }

@@ -69,7 +69,7 @@
 <script src='clients/base/views/chart/chart.js'></script>
 
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
-
+<script src='include/javascript/sugarAuthStore.js'></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/Jit/jit.js"></script>
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
 
@@ -103,8 +103,16 @@
                           </div>
                           <hr>
                           <div>
-                              <div class="view-forecastsWorksheet"></div>
-                              <div class="view-summary"></div>
+                              <div id="view-sales-rep">
+                                  <div class="view-forecastsWorksheet"></div>
+                                  <div class="view-summary"></div>
+                              </div>
+                              {if $isManager === true}
+                              <div id="view-manager" style="visibility:hidden;">
+                                  <div class="view-forecastsWorksheet"></div>
+                                  <div class="view-summary"></div>
+                              </div>
+                              {/if}
                           </div>
                         </div>
                     </div>
@@ -120,14 +128,15 @@
 <script language="javascript">
     var syncResult, view, layout, html;
 
+    SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
+
     var App = SUGAR.App.init({
         el: "#core",
         contentEl: ".content"
 
     });
 
-
-    App.viewModule = "{/literal}{$module}{literal}";
+    App.viewModule = {/literal}'{$module}';{literal}
 
     // should already be logged in to sugar, don't need to log in to sidecar.
     App.api.isAuthenticated = function() {
@@ -142,6 +151,7 @@
 
         return true;
     };
+
 
     App.api.debug = App.config.debugSugarApi;
     App.start();

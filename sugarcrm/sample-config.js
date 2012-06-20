@@ -110,6 +110,12 @@
          */
         clientID: "sugar"
 
+        /**
+          * Override the authentication storage
+          */
+        //,authStore:"sugarAuthStore"
+
+
     }, false);
 
 })(SUGAR.App);
