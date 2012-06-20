@@ -391,7 +391,7 @@ class MetaDataManager {
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
         foreach ( $this->platforms as $platform ) {
-            $basedir  = "clients/{$platform}/{$auth_dir}/{$path}/";
+            $basedir  = "clients/{$platform}/{$path}/";
             $custdir  = "custom/$basedir";
             $basedirs = glob($basedir."*", GLOB_ONLYDIR);
             $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
@@ -427,7 +427,7 @@ class MetaDataManager {
             // Add in meta checking here as well
             $meta = array();
             foreach ( $this->platforms as $platform ) {
-                $dir = "clients/$platform/{$auth_dir}/$typePath/$dirname/";
+                $dir = "clients/$platform/$typePath/$dirname/";
                 $controller = $dir . "$dirname.js";
                 if (empty($meta)) {
                     $meta = $this->fetchMetadataFromDirs(array($dir));
@@ -446,7 +446,7 @@ class MetaDataManager {
             $backwardsPlatforms = array_reverse($this->platforms);
             $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "clients/$platform/$auth_dir/$typePath/$dirname/";
+                $templateDirs[] = "clients/$platform/$typePath/$dirname/";
             }
             $fileData['templates'] = $this->fetchTemplates($templateDirs);
             if ($meta) {
@@ -557,7 +557,7 @@ class MetaDataManager {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
         foreach ( $backwardsPlatforms as $platform ) {
-            $moreTemplates = glob("clients/${platform}/${auth_dir}/views/*",GLOB_ONLYDIR);
+            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
             $templateDirs = array_merge($templateDirs,$moreTemplates);
         }
         $templates = $this->fetchTemplates($templateDirs);
