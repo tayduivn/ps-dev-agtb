@@ -573,6 +573,9 @@ class SugarSpot
                         $ret_array['from'] .= $custom_from;
                     }
                     if(!empty($custom_where)) {
+                        if(!empty($ret_array['where'])) {
+                            $ret_array['where'] .= " AND ";
+                        }
                         $ret_array['where'] .= $custom_where;
                     }
 
@@ -603,6 +606,9 @@ class SugarSpot
                     $ret_array['from'] .= $custom_from;
                 }
                 if(!empty($custom_where)) {
+                    if(!empty($ret_array['where'])) {
+                        $ret_array['where'] .= " AND ";
+                    }
                     $ret_array['where'] .= $custom_where;
                 }
 
