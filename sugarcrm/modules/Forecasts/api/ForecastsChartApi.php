@@ -120,21 +120,35 @@ class ForecastsChartApi extends ChartApi
         $dataArray = json_decode($json, true);
 
         // add the goal marker stuff
-        $dataArray['properties']['subtitle'] = $args['user'];
-        $dataArray['properties']['goal_market_type'] = array('group', 'group');
-        $dataArray['properties']['goal_marker_color'] = array('#3FB300', '#444444');
-        $dataArray['properties']['goal_market_label'] = array('Quota', 'Likely');
+        $dataArray['properties'][0]['subtitle'] = $args['user'];
+        $dataArray['properties'][0]['goal_marker_type'] = array('group', 'pareto');
+        $dataArray['properties'][0]['goal_marker_color'] = array('#3FB300', '#7D12B2');
+        $dataArray['properties'][0]['goal_marker_label'] = array('Quota', 'Likely');
+        $dataArray['properties'][0]['label_name'] = 'Sales Stage';
+        $dataArray['properties'][0]['value_name'] = 'Amount';
 
         foreach ($dataArray['values'] as $key => $value) {
 
             $likely = 0;
             $likely_label = 0;
 
+            //$dataArray['values'][$key]['sales_stage'] = $dataArray['label'];
+
+            // format the value labels
+            foreach($value['valuelabels'] as $vl_key => $vl_val) {
+                // ignore the empties
+                if(empty($vl_val)) continue;
+
+                $dataArray['values'][$key]['valuelabels'][$vl_key] = format_number($vl_val, null, null, array('currency_symbol' => true));
+            }
+
+            // extract the values to variables
             if (isset($likely_values[$value['label']])) {
                 list($likely, $likely_label) = array_values($likely_values[$value['label']]);
             }
 
-            $dataArray['values'][$key]['goalmarkervalue'] = array($quota['amount'], $likely);
+            // set the variables
+            $dataArray['values'][$key]['goalmarkervalue'] = array(intval($quota['amount']), intval($likely));
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
 
