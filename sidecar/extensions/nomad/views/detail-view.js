@@ -25,6 +25,9 @@
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
                 app.nomad.openAddress(addressObj);
+            },
+            "click .card": function (e) {
+                this.$('div').find('a').first().trigger('click');
             }
         },
 
