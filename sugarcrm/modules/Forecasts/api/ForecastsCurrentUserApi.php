@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Users/User.php');
+require_once('include/api/CurrentUserApi.php');
 
 class ForecastsCurrentUserApi extends CurrentUserApi {
     public function registerApiRest() {
@@ -45,9 +47,8 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
     public function retrieveCurrentUser($api, $args) {
 
         $data = parent::retrieveCurrentUser($api, $args);
-
-        // do custom stuff here
-
+        global $current_user;
+        $data['current_user']['isManager'] = User::isManager($current_user->id);
         return $data;
 
     }
