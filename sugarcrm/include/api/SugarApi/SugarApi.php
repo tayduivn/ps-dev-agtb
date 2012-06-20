@@ -95,8 +95,6 @@ abstract class SugarApi {
                     }
                 }
             }
-            // decode it to pass it back as per Story Id: 30925015 [https://www.pivotaltracker.com/story/show/30925015]
-            $data[$fieldName] = html_entity_decode($data[$fieldName]);
         }
 
         if (isset($bean->field_defs['email']) &&
@@ -120,7 +118,21 @@ abstract class SugarApi {
                 }
                 $data['email'] = $emails;
         }
+
+        $this->htmlDecodeReturn($data);
+
         return $data;
+    }
+
+    protected function htmlDecodeReturn(&$data) {
+        foreach($data AS $key => $value) {
+            if(is_array($value) && !empty($value)) {
+                $this->htmlDecodeReturn($value);
+            }
+            else {
+                $data[$key] = html_entity_decode($value);
+            }
+        }
     }
 
     /**
