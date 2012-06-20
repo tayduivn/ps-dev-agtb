@@ -177,7 +177,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $pdfTemplate->body_html = str_replace(array('{', '}'), array('&#123;', '&#125;'), $pdfTemplate->body_html);
             }
 
-            if ($pdfTemplate->base_module == 'Quotes' && $previewMode == FALSE) {
+            if ($pdfTemplate->base_module == 'Quotes') {
 
                 $pdfTemplate->body_html = str_replace(
                     '$fields.product_bundles',
@@ -191,27 +191,17 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                     $pdfTemplate->body_html
                 );
 
-                $pdfTemplate->body_html = str_replace(
-                    '<p>{START_BUNDLE::P}</p>',
-                    '{foreach from=$product_bundles item="bundle"}',
-                    $pdfTemplate->body_html
-                );
-                $pdfTemplate->body_html = str_replace(
-                    '<p>{END_BUNDLE::P}</p>',
-                    '{/foreach}',
-                    $pdfTemplate->body_html
-                );
+                $pattern = '/\{START_BUNDLE::[^}]+\}/U';
+                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{foreach from=$product_bundles item="bundle"}', TRUE);
 
-                $pdfTemplate->body_html = str_replace(
-                    "<tr>\r\n<td width=\"60%\">{START_PRODUCT::TR}",
-                    '{foreach from=$bundle.products item="product"}<tr><td width="60%">',
-                    $pdfTemplate->body_html
-                );
-                $pdfTemplate->body_html = str_replace(
-                    "{END_PRODUCT::TR}</td>\r\n</tr>",
-                    '</td></tr>{/foreach}',
-                    $pdfTemplate->body_html
-                );
+                $pattern = '/\{START_PRODUCT::[^}]+\}/U';
+                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{foreach from=$bundle.products item="product"}', TRUE);
+
+                $pattern = '/\{END_PRODUCT::[^}]+\}/U';
+                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{/foreach}', FALSE);
+
+                $pattern = '/\{END_BUNDLE::[^}]+\}/U';
+                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{/foreach}', FALSE);
             }
 
             sugar_file_put_contents($tpl_filename, $pdfTemplate->body_html);
@@ -236,4 +226,43 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         return parent::Output($name, 'D');
     }
 
+    static function replace_patern($pattern, &$string, $replacement, $before) {
+
+        preg_match_all($pattern, $string, $matches, PREG_OFFSET_CAPTURE);
+
+        if (count($matches) > 0 && count($matches[0]) > 0) {
+
+            $matchItem = $matches[0][0][0];
+            $matchPosition = $matches[0][0][1];
+
+            // Identify HTML tag
+            preg_match('/::([^}]+)\}/U', $matchItem, $subMatches, PREG_OFFSET_CAPTURE);
+            if (count($subMatches) != 2) {
+                return FALSE;
+            }
+            $htmlTag = $subMatches[1][0];
+
+            // Replace HTML tag by $replacement
+            if ($before) {
+                $position = strripos($string, '<' . $htmlTag, -(strlen($string)-$matchPosition));
+            } else {
+                $position = stripos($string, '</' . $htmlTag . '>', $matchPosition);
+                if ($position !== FALSE) {
+                    $position += strlen('</' . $htmlTag . '>');
+                }
+            }
+            if ($position !== FALSE) {
+                $string = substr_replace($string, $replacement, $position, 0);
+            }            
+
+            // Replace main tag by empty
+            $string = str_replace($matchItem, '', $string);
+
+            SugarpdfPdfmanager::replace_patern($pattern, $string, $replacement, $before);
+        }
+
+        return TRUE;
+
+    }
+    
 }
