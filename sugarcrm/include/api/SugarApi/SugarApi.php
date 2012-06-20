@@ -118,8 +118,30 @@ abstract class SugarApi {
                 }
                 $data['email'] = $emails;
         }
+        
+        // if data is an array or object we need to decode each element, if not just decode data and pass it back
+        if(is_array($data) || is_object($data)) {
+            $this->htmlDecodeReturn($data);
+        }
+        else {
+            $data = html_entity_decode($data);
+        }
 
         return $data;
+    }
+    /**
+     * Recursively runs html entity decode for the reply
+     * @param $data array The bean the API is returning
+     */
+    protected function htmlDecodeReturn(&$data) {
+        foreach($data AS $key => $value) {
+            if(is_array($value) && !empty($value)) {
+                $this->htmlDecodeReturn($value);
+            }
+            else {
+                $data[$key] = html_entity_decode($value);
+            }
+        }
     }
 
     /**
