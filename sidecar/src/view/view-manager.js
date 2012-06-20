@@ -267,6 +267,7 @@
         createField: function(params) {
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
+            if(params.meta && params.meta.controller) params.controller = params.meta.controller;
             params.context = params.context || params.view.context || app.controller.context;
             params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
@@ -307,9 +308,11 @@
          * @param {String} module(optional) Module name.
          * @param {String} controller(optional) Controller source code string.
          * @param {String} layoutType(optional) Layout type. For example, fluid, rows, columns.
+         * @param {Boolean} overwrite(optional) Will overwrite if duplicate custom class or layout is cached. Note, 
+         * if no controller passed, overwrite is ignored since we can't create a meaningful component without a controller.
          * @return {Function} Component class.
          */
-        declareComponent: function(type, name, module, controller, layoutType) {
+        declareComponent: function(type, name, module, controller, layoutType, overwrite) {
             var ucType                  = app.utils.capitalize(type),
                 className               = app.utils.capitalizeHyphenated(name) + ucType,
                 customClassName         = (module || "") + className,
@@ -317,6 +320,11 @@
                 customLayoutClassName   = layoutType ? ((module || "") + app.utils.capitalize(layoutType) + ucType) : null,
                 cache                   = app.view[type + "s"],
                 baseClass               = cache[className] || cache[layoutClassName] || app.view[ucType];
+
+            if(overwrite && controller) {
+                if(cache[customLayoutClassName]) delete cache[customLayoutClassName];
+                if(cache[customClassName]) delete cache[customClassName];
+            }
 
             return  cache[customClassName] ||
                     cache[customLayoutClassName] ||

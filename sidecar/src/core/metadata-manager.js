@@ -55,7 +55,7 @@
                     app.template.setView(name, moduleName, def.template, true);
                 }
                 if (def.controller) { // Both layouts and views can have controllers
-                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type);
+                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type, true);
                 }
             });
         });
@@ -306,7 +306,7 @@
                     _fields[type] = entry;
                     _set(_fieldPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("field", type, null, entry.controller);
+                        app.view.declareComponent("field", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -316,7 +316,7 @@
                     _views[type] = entry;
                     _set(_viewPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("view", type, null, entry.controller);
+                        app.view.declareComponent("view", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -326,7 +326,7 @@
                     _layouts[type] = layout;
                     _set(_layoutPrefix + type, layout);
                     if (layout.controller) {
-                        app.view.declareComponent("layout", type, null, layout.controller);
+                        app.view.declareComponent("layout", type, null, layout.controller, null, true);
                     }
                 });
             }

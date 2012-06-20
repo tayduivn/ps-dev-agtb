@@ -32,7 +32,7 @@ class CurrentUserApi extends SugarApi {
                 'pathVars' => array(),
                 'method' => 'retrieveCurrentUser',
                 'shortHelp' => 'Returns current user',
-                'longHelp' => 'include/api/html/me.html',
+                'longHelp' => 'include/api/help/me.html',
             ),
         );
     }
@@ -46,21 +46,29 @@ class CurrentUserApi extends SugarApi {
      */
     public function retrieveCurrentUser($api, $args) {
         global $current_user;
-        $data = array();
-
-      // TODO: add support for contacts and getting their current user info
-        $data = array(
-            'current_user' => array(
-                'id' => $current_user->id,
-                'full_name' => $current_user->full_name,
-                'user_name' => $current_user->user_name,
-                'timezone' => $current_user->getPreference('timezone'),
-                'datepref' => $current_user->getPreference('datef'),
-                'timepref' => $current_user->getPreference('timef'),
-            )
+        $user_data = array(
+            'timezone' => $current_user->getPreference('timezone'),
+            'datepref' => $current_user->getPreference('datef'),
+            'timepref' => $current_user->getPreference('timef'),
         );
 
-        return $data;
+
+
+        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+            $user_data['type'] = 'support_portal';
+            $user_data['user_id'] = $current_user->id;
+            $user_data['user_name'] = $current_user->user_name;
+            $user_data['id'] = $_SESSION['contact_id'];
+            $user_data['account_ids'] = $_SESSION['account_ids'];
+            $user_data['full_name'] = $contact->full_name;
+        } else {
+            $user_data['type'] = 'user';
+            $user_data['id'] = $current_user->id;
+            $user_data['full_name'] = $current_user->full_name;
+            $user_data['user_name'] = $current_user->user_name;
+        }
+        return $data = array('current_user'=>$user_data);
 
     }
 
