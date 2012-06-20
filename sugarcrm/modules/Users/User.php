@@ -552,11 +552,14 @@ class User extends Person {
 
 		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
 		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
-		if(!empty($this->team_id)){
-			$this->default_team = $this->team_id;
-		}else{
-			$this->team_id = $this->default_team;
-		}
+        if(!$this->is_admin) {
+            //Bug#53249: Prevent admin user set non-member team as a primary team
+            if(!empty($this->team_id)){
+                $this->default_team = $this->team_id;
+            }else{
+                $this->team_id = $this->default_team;
+            }
+        }
 
 		//END SUGARCRM flav=pro ONLY
 

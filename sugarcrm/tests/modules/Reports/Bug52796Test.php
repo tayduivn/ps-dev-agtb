@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -41,7 +42,8 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		// Change default currency to check conversion
-		global $sugar_config;
+		global $sugar_config, $beanList, $beanFiles;
+        require('include/modules.php');
 		$this->saved['currency'] = $sugar_config['currency'];
 		$currency = new Currency();
 		$sugar_config['currency'] = $currency->retrieveIDBySymbol('€');
@@ -54,6 +56,8 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 		$sugar_config['currency'] = $this->saved['currency'];
 		$this->reportInstance = null;
 		$this->saved = null;
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
 	}
 
 	/**

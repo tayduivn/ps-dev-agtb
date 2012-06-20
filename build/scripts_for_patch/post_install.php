@@ -466,8 +466,8 @@ function post_install() {
             // not found - create
             $job->name               = translate('LBL_OOTB_CLEANUP_QUEUE', 'Schedulers');
             $job->job                = 'function::cleanJobQueue';
-            $job->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
-            $job->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
+            $job->date_time_start    = "2012-01-01 00:00:01";
+            $job->date_time_end      = "2030-12-31 23:59:59";
             $job->job_interval       = '0::5::*::*::*';
             $job->status             = 'Active';
             $job->created_by         = '1';
