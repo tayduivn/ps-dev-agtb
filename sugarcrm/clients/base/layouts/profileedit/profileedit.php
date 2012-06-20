@@ -10,13 +10,14 @@ $viewdefs['base']['layout']['profileedit'] = array(
         1 => array(
             'layout' =>
             array(
-                'type' => 'columns',
+                'type' => 'fluid',
                 'components' =>
                 array(
                     0 => array(
                         'layout' =>
                         array(
-                            'type' => 'leftside',
+                            'type' => 'simple',
+                            'span' => 7,
                             'components' =>
                             array(
                                 0 => array(
