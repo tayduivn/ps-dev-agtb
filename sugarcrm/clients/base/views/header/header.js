@@ -113,11 +113,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.moduleList = _.toArray(app.metadata.getModuleList());
-
-        if (app.config && app.config.displayModules) {
-            this.moduleList = _.intersection(this.moduleList, app.config.displayModules)
-        };
+        this.moduleList = _.toArray(app.metadata.getModuleList({visible: true}));
     },
 
     /**
