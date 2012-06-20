@@ -122,12 +122,8 @@ class RestService extends ServiceBase {
 
             $this->respond($output, $route, $argArray);
 
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
         } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
-            $this->handleException($apiException);
+            $this->handleException($e);
         }
     }
 
@@ -240,26 +236,49 @@ class RestService extends ServiceBase {
      */
     protected function handleException(Exception $exception) {
         if ( is_a($exception,"SugarApiException") ) {
-            $httpError = $exception->errorCode;
+            $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getErrorLabel();
+            $description = $exception->getDescription();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
             $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getMessage();
+            $description = $exception->getDescription();
         } else {
             $httpError = 500;
+            $errorLabel = 'unknown_error';
+            $description = $exception->getMessage();
         }
         header("HTTP/1.1 {$httpError}");
 
-        $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
+        $GLOBALS['log']->error('An unknown exception happened: ('.$errorLabel.')'.$description);
         
         // TODO: Translate error messages
-        $reply = "ERROR: ".$exception->getMessage();
+        $reply = "ERROR: ".$description;
 
+        $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
                 $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $exception->errorCode)));
+                $crazyEncoding = true;
             }
         }
-        echo($reply);
+        if ( $crazyEncoding ) {
+            echo($reply);
+            die();
+        }
+        
+        // Send proper headers
+        header("Content-Type: application/json");
+        header("Cache-Control: no-store");
+
+        $replyData = array(
+            'error'=>$errorLabel,
+        );
+        if ( !empty($description) ) {
+            $replyData['error_description'] = $description;
+        }
+        echo(json_encode($replyData));
         die();
     }
 
