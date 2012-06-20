@@ -33,6 +33,7 @@ class RestTestList extends RestTestBase {
         $this->opps = array();
         $this->contacts = array();
         $this->cases = array();
+        $this->bugs = array();
     }
     
     public function tearDown()
@@ -57,7 +58,13 @@ class RestTestList extends RestTestBase {
             $caseIds[] = $aCase->id;
         }
         $caseIds = "('".implode("','",$caseIds)."')";
-        
+
+        $bugIds = array();
+        foreach( $this->bugs AS $bug ) {
+            $bugIds[] = $bug->id;
+        }
+        $bugIds = "('" . implode( "','", $bugIds) . "')";
+
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
@@ -69,6 +76,8 @@ class RestTestList extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
+        $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
+        $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -166,6 +175,18 @@ class RestTestList extends RestTestBase {
             }
         }
 
+    }
+
+    public function testBugSearch() {
+        $bug = new Bug();
+        $bug->name = "UNIT TEST " . count($this->bugs) . " - " . create_guid();
+        $bug->description = $bug->name;
+        $bug->save();
+        $this->bugs[] = $bug;
+        
+        $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
+        $tmp = array_keys($restReply['reply']['records']);
+        $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
     }
 
     public function testCaseSearch() {
