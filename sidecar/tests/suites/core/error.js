@@ -78,7 +78,7 @@ describe("Error module", function() {
         app.error.handleInvalidGrantError = function() {};
         spyHandleInvalidGrantError = sinon.spy(app.error, 'handleInvalidGrantError');
         xhr = {
-            responseText: '{ERROR: "invalid_grant"}',
+            responseText: '{"error": "invalid_grant", "error_description": "some desc"}',
             status: '400'
         };
         app.error.handleHttpError(xhr);
@@ -98,7 +98,7 @@ describe("Error module", function() {
         app.error.handleInvalidClientError = function() {};
         spyHandleInvalidClientError = sinon.spy(app.error, 'handleInvalidClientError');
         xhr = {
-            responseText: '{ERROR: "invalid_client"}',
+            responseText: '{"error": "invalid_client", "error_description": "some desc"}',
             status: '400'
         };
         app.error.handleHttpError(xhr);
@@ -120,7 +120,7 @@ describe("Error module", function() {
         spyHandleUnauthorizedError = sinon.spy(app.error, 'handleUnauthorizedError');
         xhr = {
             status: '401',
-            responseText: '{foo:"bar"}'
+            responseText: '{"error":"fubar"}'
         };
         app.error.handleHttpError(xhr);
         expect(spyHandleUnauthorizedError.called).toBeTruthy();
@@ -140,7 +140,7 @@ describe("Error module", function() {
         spyHandleForbiddenError = sinon.spy(app.error, 'handleForbiddenError');
         xhr = {
             status: '403',
-            responseText: '{foo:"bar"}'
+            responseText: '{"error":"fubar"}'
         };
         app.error.handleHttpError(xhr);
         expect(spyHandleForbiddenError.called).toBeTruthy();

@@ -103,6 +103,75 @@
                     }
                 }
             },
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template":  
+                            "<div class='container-fluid'>" +
+                                    "<div class='row-fluid'>" +
+                                        "<div class='span7'>" +
+                                            "<div class='card2'>" +
+                                                "<div class='row-fluid'>" +
+                                                    "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                                    "<div class='span8'>" +
+                                                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                        "{{ this.model.attributes.message }}</p>" +
+                                                    "</div>" +
+                                                "</div>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>",
+                        controller: "{" +
+                            "initialize: function(options) { " +
+                                "app.view.View.prototype.initialize.call(this, options);" +
+                            "}," +
+                            "render: function(data) { " +
+                                "var self = this, attributes = {};" +
+                                "if(this.context.get('errorType')) {" +
+                                    "attributes = this.getErrorAttributes(); " +
+                                    "this.model.set(attributes); " +
+                                "}" +
+                                "app.view.View.prototype.render.call(this);" +
+                            "}," +
+                            "getErrorAttributes: function() {" +
+                                "var attributes = {}; "+
+                                "if(this.context.get('errorType') ==='404') {" +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 404 Not Found'," +
+                                        "type: '404'," +
+                                        "message: \"We're sorry but the resource you asked for cannot be found.\"" +
+                                    "};" +
+                                "} else if(this.context.get('errorType') ==='500') { " +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 500 Internal Server Error'," + 
+                                        "type: '500'," +
+                                        "message: 'There was an error on the server. Please contact technical support.'" +
+                                    "};" +
+                                "} else {" +
+                                    "attributes = { " +
+                                        "title: 'Unknown Error', " +
+                                        "type: 'Unknown'," +
+                                        "message: 'Unknown error.'" +
+                                    "};" +
+                                "} " +
+                                "return attributes;" +
+                            "}" +
+                        "}"
+                    }
+                },
+                "layouts": {
+                    "error": {
+                        "meta": {
+                            "type": "simple",
+                            "components": [
+                                {view: "errorView"}
+                            ]
+                        }
+                    }
+                }
+            },
             "Signup": {
                 "fields": {
                     "first_name": {
@@ -471,6 +540,25 @@
                         "{{/each}}" +
                         "</div>" +
                         "</div>" +
+                        "</div>"
+                }
+            },
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
+                            "<div class='row-fluid'>" +
+                                "<div class='span7'>" +
+                                    "<div class='card2'>" +
+                                        "<div class='row-fluid'>" +
+                                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                            "<div class='span8'>" +
+                                                "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                "{{ this.model.attributes.message }}</p>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
                         "</div>"
                 }
             }
