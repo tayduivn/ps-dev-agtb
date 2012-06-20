@@ -111,8 +111,8 @@
 		'sales_stage': ["Qualified","Proposal","Negotiation","Closed"],
 		'close_date': ["2012-01-01","2012-01-01","2012-01-01","2012-01-01"],
 		'links': ['','',''],
-		'goalmarkervalue' : [200,100],
-		'goalmarkervaluelabel' : ['200K','100K']
+		'goalmarkervalue' : [200,50],
+		'goalmarkervaluelabel' : ['200K','50K']
 	}
 ,
 	{
@@ -128,11 +128,11 @@
         'links': ['','',''],
 		'goalmarkervalue' : [
             200,
-            70
+            50
             ],
 		'goalmarkervaluelabel' : [
             '200k',
-            '70K'
+            '50K'
             ]
 
 	}
@@ -149,32 +149,11 @@
 		'links': ['','',''],
 		'goalmarkervalue' : [
             200,
-            190
+            90
             ],
 		'goalmarkervaluelabel' : [
             '200K',
-            '190k'
-            ]
-
-	}
-,
-	{
-		'label': 'April',
-		'gvalue': '50',
-		'gvaluelabel': '50K',
-		'values': [0,0,0,50],
-		'valuelabels': ['0','0','0','50K'],
-        'sales_stage': ["Qualified","Proposal","Negotiation","Closed"],
-        'close_date': ["2012-03-01","2012-03-01","2012-03-01","2012-03-01"],
-        'probability': [0,0,0,100],
-		'links': ['','',''],
-		'goalmarkervalue' : [
-            200,
-            190
-            ],
-		'goalmarkervaluelabel' : [
-            '200K',
-            '190k'
+            '90k'
             ]
 
 	}

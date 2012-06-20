@@ -667,9 +667,13 @@
 
                           var likely = $('h2#likely').html().replace(/,/,"")
                           var json =  forecast.chartObject.json;
+
+
                           $(json.values).each( function(i) {
-                              this.goalmarkervalue[1] =  likely/1000;
-                              this.goalmarkervaluelabel[1] =  likely/1000+"K";
+                              if(rowIndex == i) {
+                                  this.goalmarkervalue[1] =  val/1000;
+                                  this.goalmarkervaluelabel[1] =  val/1000+"K";
+                              }
                           });
 
                           updateChart(forecast.chartObject);

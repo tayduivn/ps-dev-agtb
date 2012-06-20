@@ -364,7 +364,7 @@ $.each = function(iterable, fn) {
       fn(iterable[key], key);
   } else {
     for ( var i = 0, l = iterable.length; i < l; i++)
-      fn(iterable[i], i);
+      fn(iterable[i], i, iterable[i+1]);
   }
 };
 
@@ -11713,7 +11713,7 @@ $jit.ST.Plot.NodeTypes.implement({
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
           if(gradient) {
             var linear;
-            
+
 
           //drawing bar segements with background colors
             if(horz) {
@@ -11730,6 +11730,8 @@ $jit.ST.Plot.NodeTypes.implement({
             linear.addColorStop(0.7, colorArray[i % colorLength]);
             linear.addColorStop(1, color);
             ctx.fillStyle = linear;
+
+
           }
 
           if (horz)
@@ -11746,7 +11748,10 @@ $jit.ST.Plot.NodeTypes.implement({
               chartBarWidth = width;
               chartBarHeight = dimArray[i];
           }
+
+          ctx.globalCompositeOperation = "destination-over";
           ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
+          ctx.globalCompositeOperation = "source-over";
 
           // add labels inside bar with rounded filled background
           if (chartBarHeight > 0)
@@ -11791,7 +11796,7 @@ $jit.ST.Plot.NodeTypes.implement({
           } else {
               acumValueLabel = valAcum;
           }
-      //draw gloal line
+      //draw watermark
       //  console.log(goalMarker);
       if(goalMarkerType != undefined) {
           for (var i=0; i<goalMarker.length; i++){
@@ -11838,8 +11843,8 @@ $jit.ST.Plot.NodeTypes.implement({
                       ctx.lineWidth = 4;
                       ctx.lineCap = "round";
 
-                      if(nodeIndex < nodeCount -1  ) {
 
+                      if(nodeIndex < nodeCount -1  ) {
                           ctx.save();
                           //render line segment, dimarray[i][0] is the curent datapoint, dimarrya[i][1] is the next datapoint, we need both in the current iteration to draw the line segment
 //                          console.log(node)
@@ -13279,8 +13284,7 @@ $jit.BarChart = new Class({
       var linkArray = $.splat(values[i].links);
       var titleArray = $.splat(values[i].titles);
       var barTotalValue = valArray.sum();
-      var acum = 0,
-          n = i+1;
+      var acum = 0;
 
 
       if(properties['goal_marker_type'] != undefined) {
@@ -13427,18 +13431,20 @@ $jit.BarChart = new Class({
     var that = this;
     var horz = this.config.orientation == 'horizontal',
         properties = $.splat(json.properties)[0];
-    $.each(values, function(v) {
+    $.each(values, function(v,i,f) {
       var n = graph.getByName(v.label);
       if(n) {
         n.setData('valueArray', $.splat(v.values));
         if(json.label) {
           n.setData('stringArray', $.splat(json.label));
         }
-          if(v.goalmarkervalue != undefined)   {
-
-              n.setData('goalMarker', v.goalmarkervalue);
-              n.setData('goalMarkerValueLabel', v.goalmarkervaluelabel);
-          }
+      if(v.goalmarkervalue != undefined)   {
+          var goalMarkerNext = (i < values.length-1) ? f.goalmarkervalue : "";
+//          console.log(v)
+          n.setData('goalMarker', v.goalmarkervalue);
+          n.setData('goalMarkerNext', goalMarkerNext);
+          n.setData('goalMarkerValueLabel', v.goalmarkervaluelabel);
+      }
 
       }
     });
