@@ -141,6 +141,9 @@ abstract class SugarApi {
             elseif(!empty($data) && !empty($value)) {
                 $data[$key] = html_entity_decode($value);
             }
+            else {
+                $data[$key] = $value;
+            }
         }
     }
 
