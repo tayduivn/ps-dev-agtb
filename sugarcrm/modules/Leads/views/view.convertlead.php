@@ -98,6 +98,13 @@ class ViewConvertLead extends SugarView
         $qsd->setFormName("ConvertLead");
 
         $this->contact = new Contact();
+        // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
+        if (!empty($this->focus->account_name))
+        {
+            $smarty->assign('displayParams', array(
+                'initial_filter' => '&name_advanced=' . urlencode($this->focus->account_name))
+            );
+        }
         $smarty->assign("contact_def", $this->contact->field_defs);
         $smarty->assign("form_name", "ConvertLead");
         $smarty->assign("form_id", "ConvertLead");

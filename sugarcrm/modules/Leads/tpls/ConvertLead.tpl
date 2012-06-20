@@ -75,7 +75,7 @@
         <span class="required">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
     {/if}
 </td><td id ="select{{$module}}">
-{{sugar_field parentFieldArray='contact_def' vardef=$contact_def[$def.select] displayType='EditView' formName=$form_name call_back_function='set_return_lead_conv'}}
+{{sugar_field parentFieldArray='contact_def' vardef=$contact_def[$def.select] displayType='EditView' displayParams=$displayParams formName=$form_name call_back_function='set_return_lead_conv'}}
 <script>
 if (typeof(sqs_objects) == "undefined") sqs_objects = [];
 sqs_objects['{{$form_name}}_{{$def.select}}'] = {ldelim}
