@@ -1,16 +1,16 @@
 /**
- * Keychain store manager.
- *
- * @class Nomad.Keychain
  * @singleton
- * @alias SUGAR.App.keychain
+ * @alias SUGAR.App.sugarAuthStore
  */
 (function(app) {
     var serviceName = "SugarCRM",
-        emptyFn = function() {};
-        
-    var _keychain = {
+        emptyFn = function() {},
+        tokenMap = {
+            "AuthAccessToken" : app.AUTH_ACCESS_TOKEN,
+            "AuthRefreshToken" : app.AUTH_REFRESH_TOKEN
+        };
 
+    var _keychain = {
         /**
          * Returns the auth token of the current user.
          *
@@ -21,7 +21,7 @@
          * @return {String} authentication token for the current user.
          */
         get: function(key) {
-            return app.OAUTH[key];
+            return tokenMap[key];
         },
 
         /**
@@ -30,7 +30,7 @@
          * @param {String} value Item to put.
          */
         set: function(key, value) {
-            window.plugins.keychain.setForKey(key, value, serviceName, emptyFn, emptyFn);
+            tokenMap[key] = value;
         },
 
         /**
@@ -38,10 +38,10 @@
          * @param {String} key Item key.
          */
         cut: function(key) {
-            window.plugins.keychain.removeForKey(key, serviceName, emptyFn, emptyFn);
+            tokenMap.splice(key, 1);
         }
     };
 
-    app.augment("keychain", _keychain);
+    app.augment("sugarAuthStore", _keychain);
 
 })(SUGAR.App);

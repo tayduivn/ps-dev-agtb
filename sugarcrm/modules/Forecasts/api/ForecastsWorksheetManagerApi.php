@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/ModuleApi.php');
 
-class ForecastsWorksheetApi extends ModuleApi {
+class ForecastsWorksheetManagerApi extends ModuleApi {
 
     public function __construct()
     {
@@ -34,13 +34,13 @@ class ForecastsWorksheetApi extends ModuleApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'worksheet' => array(
+            'worksheetManager' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','worksheet'),
+                'path' => array('Forecasts','worksheetManager'),
                 'pathVars' => array('',''),
-                'method' => 'worksheet',
-                'shortHelp' => 'A ping',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
+                'method' => 'worksheetManager',
+                'shortHelp' => 'Worksheet for manager view',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#ping',
             ),
         );
         return $parentApi;
@@ -53,11 +53,30 @@ class ForecastsWorksheetApi extends ModuleApi {
      * @param $args
      * @return array
      */
-    public function worksheet($api, $args)
+    public function worksheetManager($api, $args)
     {
         require_once('modules/Reports/Report.php');
-        global $app_list_strings,$current_language;
-        $app_list_strings = return_app_list_strings_language($current_language);
+        global $current_user, $mod_strings, $app_list_strings, $app_strings;
+
+
+        if(isset($args['user_id']))
+        {
+            $user = new User();
+            $user->retrieve($args['user_id']);
+        } else {
+            $user = $current_user;
+        }
+
+
+        if(!User::isManager($user->id))
+        {
+           //Error
+           return array();
+        }
+
+        $app_list_strings = return_app_list_strings_language('en');
+        $app_strings = return_application_language('en');
+        $mod_strings = return_module_language('en', 'Opportunities');
         $report_defs = array();
         $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}', 'detailed_summary', 'vBarF');
 
@@ -82,6 +101,8 @@ class ForecastsWorksheetApi extends ModuleApi {
         $filter->parse($testFilters);
         $converter = new SugarParsers_Converter_Report($rb);
         $reportFilters = $filter->convert($converter);
+        //_pp($reportFilters);
+        //die();
         // add the filter to the report builder
         $rb->addFilter($reportFilters);
 

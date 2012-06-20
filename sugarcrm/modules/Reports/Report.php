@@ -872,7 +872,8 @@ class Report
     function register_field_for_query(&$layout_def)
     {
         if (!$this->is_layout_def_valid($layout_def)) {
-            global $mod_strings;
+            global $current_language;
+            $mod_strings = return_module_language($current_language, $this->module_dir);
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 
@@ -1089,8 +1090,15 @@ class Report
     function getFieldDefFromLayoutDef(&$layout_def)
     {
         $field = null;
-        $relModules = explode('_', $layout_def['table_key']);
-        $module = $relModules[count($relModules) - 1];
+        // when table key is construct like "self:assigned_user_link"
+        // then replace self with original table name
+        $relModules = explode(':', $layout_def['table_key']);
+        if ((count($relModules) > 1) && ($relModules[0] == 'self'))
+        {
+            $relModules[0] = $this->module;
+            $layout_def['table_key'] = implode(':', $relModules);
+        }
+        //$module = $relModules[count($relModules) - 1];
         if (!empty($this->all_fields[$this->_get_full_key($layout_def)])) {
             $field = $this->all_fields[$this->_get_full_key($layout_def)];
         }
