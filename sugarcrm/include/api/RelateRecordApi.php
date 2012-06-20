@@ -176,11 +176,12 @@ class RelateRecordApi extends ModuleApi {
 
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
-        // Reload the related record so that it has all the latest data similar to what we do in the create and update
-        $relatedBean->retrieve($id);
-
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
+
+        // Reload the related record so that it has all the latest data similar to what we do in the create and update
+        // This needs to be done after the resaveRelatedBeans not before.  This will allow the relationship to stick.
+        $relatedBean->retrieve($id);
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
     }
