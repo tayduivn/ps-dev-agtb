@@ -111,12 +111,10 @@ class RestTestRelateRecord extends RestTestBase {
 
         // Test fetch where the opp id is not there
         $restReply = $this->_restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
-        print_r($restReply);
         $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Test fetch where the opp id is there, but the contact ID isn't
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/UNIT_TEST_THIS_IS_NOT_A_REAL_ID");
-        print_r($restReply);
         $this->assertEquals('not_found',$restReply['reply']['error']);
 
     }
