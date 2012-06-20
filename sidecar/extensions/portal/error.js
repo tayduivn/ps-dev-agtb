@@ -6,10 +6,8 @@
 
     function backToLogin(bDismiss) {
         if(bDismiss) app.alert.dismissAll();
-        app.api.logout();
         app.router.login();
     }
-
     
     /**
      * This is caused by attempt to login with invalid creds. 
