@@ -80,14 +80,14 @@ class RestService extends ServiceBase {
             }
             
 
-            if ( count($_POST) > 0 ) {
-                // They have normal post arguments
-                $postVars = array();
-            } else if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
                 $postVars = array();
+            } else if ( count($_POST) > 0 ) {
+                // They have normal post arguments
+                $postVars = securexss($_POST);
             } else {
                 $postContents = null;
                 if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
@@ -111,7 +111,7 @@ class RestService extends ServiceBase {
             }
             
             // I know this looks a little weird, overriding post vars with get vars, but 
-            // in the case of REST, get vars ar fairly uncommon and pretty explicit, where
+            // in the case of REST, get vars are fairly uncommon and pretty explicit, where
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
