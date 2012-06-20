@@ -69,9 +69,6 @@ class ModuleApi extends SugarApi {
      */
     protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
         $sfh = new SugarFieldHandler();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
@@ -95,7 +92,7 @@ class ModuleApi extends SugarApi {
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->user->id,$isOwner) < 2 ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
                 // No write access to this field, but they tried to edit it
                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
             }

@@ -286,6 +286,8 @@ SUGAR.App = (function() {
             var self = this;
 
             async.waterfall([function(callback) {
+                self.isSynced = false;
+                self.trigger("app:sync");
                 _app.metadata.sync(callback);
             }, function(callback) {
                 _app.data.declareModels();
