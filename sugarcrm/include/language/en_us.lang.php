@@ -2705,6 +2705,7 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_TIPS' => "Type ahead to perform wildcard search. hit Enter/Return key or click search icon to perform exact search.<br>Example:<br>Typing \"pacific\" will return both \"pacific\" and \"pacifica\".<br>Typing \"pacific\" followed by Enter key will only return \"pacific\".",
     'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
