@@ -11,7 +11,7 @@
     }
 
     /**
-     * This is caused by invalid user creds. 
+     * This is caused by expired or invalid token. 
      * @param {Object} xhr object
      * @param {String} error string 
      */
@@ -46,7 +46,7 @@
      */
     app.error.handleUnauthorizedError = function(xhr, error) {
         backToLogin(true);
-        app.alert.show("invalid_request_error", {level: "error", messages: "We're sorry, but it appears you are unauthorized to access this resource.", title:"HTTP Error: 401 Unauthorized", autoClose: true});
+        app.alert.show("unauthorized_request_error", {level: "error", messages: "We're sorry, but it appears you are unauthorized to access this resource.", title:"HTTP Error: 401 Unauthorized", autoClose: true});
     };
 
     /**
@@ -56,7 +56,7 @@
      */
     app.error.handleForbiddenError = function(xhr, error) {
         backToLogin(true);
-        app.alert.show("invalid_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
+        app.alert.show("forbidden_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
     };
 
     
@@ -69,6 +69,29 @@
         app.router.navigate('error/404', {trigger: true});
     };
 
+    /**
+     * 405 Method not allowed handler.
+     * @param {Object} xhr object
+     * @param {String} error string 
+     */
+    app.error.handleMethodNotAllowedError = function(xhr, error) {
+        backToLogin(true);
+        app.alert.show("not_allowed_error", {level: "error", messages: "HTTP method not allowed for this resource. Please contact technical support.", title:"HTTP Error: 405 Method Not Allowed", autoClose: true});
+    };
+
+    /**
+     * 412 Precondtion failure error.
+     *
+     * @param {Object} xhr object
+     * @param {String} error string 
+     */
+    app.error.handlePreconditionFailureError = function(xhr, error) {
+        backToLogin(true);
+        // TODO: For finer grained control we could sniff the {error: <code>} in the response text (JSON) for one of:
+        // missing_parameter, invalid_parameter, request_failure
+        app.alert.show("precondtion_failure_error", {level: "error", messages: "Request failure, or, missing/invalid parameter. Please contact technical support", title:"HTTP Error: 412", autoClose: true});
+    };
+       
     /**
      * 500 Internal server error handler. 
      * @param {Object} xhr object
@@ -85,24 +108,5 @@
         }
     };
 
-    /**
-     * 405 Method not allowed handler.
-     * @param {Object} xhr object
-     * @param {String} error string 
-     */
-    app.error.handleMethodNotAllowedError = function(xhr, error) {
-        backToLogin(true);
-        app.alert.show("invalid_request_error", {level: "error", messages: "HTTP method not allowed for this resource. Please contact technical support.", title:"HTTP Error: 405 Method Not Allowed", autoClose: true});
-    };
-
-    /**
-     * 500 Internal Server error handler.
-     * @param {Object} xhr object
-     * @param {String} error string 
-     */
-    app.error.handleMethodNotAllowedError = function(xhr, error) {
-        // TODO - redirect to 500 page
-        app.router.navigate('error/500', {trigger: true});
-    };
 })(SUGAR.App);
 

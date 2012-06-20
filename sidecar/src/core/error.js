@@ -43,6 +43,69 @@
                 this.handleStatusCodesFallback(xhr, error);
             }
         },
+    
+        /**
+         * Authentication error.
+         *
+         * OAuth2 uses 400 as a sort of catch all; see:
+         * http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-5.2
+         *
+         * Provide the following custom handlers:
+         *
+         * **handleInvalidGrantError**
+         *
+         * The provided authorization grant is invalid, expired, revoked, does
+         * not match the redirection URI used in the authorization request, or
+         * was issued to another client.
+         *
+         * This happens when logging in with improper user/pass.
+         *
+         * **handleInvalidClientError**
+         *
+         * Client authentication failed (e.g. unknown client, no client
+         * authentication included, multiple client authentications included,
+         * or unsupported authentication method).
+         *
+         * **handleInvalidRequestError**
+         *
+         * The request is missing a required parameter, includes an unsupported
+         * parameter or parameter value, repeats a parameter, includes multiple
+         * credentials, utilizes more than one mechanism for authenticating the
+         * client, or is otherwise malformed.
+         *
+         * **handleUnauthorizedClientError**
+         *
+         * The authenticated client is not authorized to use this authorization grant type.
+         *
+         * **handleUnsupportedGrantTypeError**
+         *
+         * The authorization grant type is not supported by the authorization server.
+         *
+         * **handleInvalidScopeError**
+         *
+         * The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
+         *
+         * @param xhr 
+         * @param error 
+         * @param alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
+         * called (if provided). 
+         * @method
+         */
+        _handleOAuthError: function (xhr, error, alternativeCallback) {
+            var s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
+            var match = _.find(_.keys(this.statusCodes._authHandlerMap), function(oAuthCode) {
+                return s.error == oAuthCode;
+            });
+
+            var handler = match ? this.statusCodes._authHandlerMap[match] : null;
+            if (handler && this[handler]) {
+                this[handler].call(this, xhr, error);
+            } else if (alternativeCallback) {
+                this._callCustomHandler(xhr, error, alternativeCallback);
+            } else {
+                this.handleStatusCodesFallback(xhr, error)
+            }
+        },
 
         /**
          * An object of status code error handlers. If custom handler is defined by extending
@@ -55,82 +118,45 @@
         statusCodes: {
 
             _authHandlerMap: {
-                ".*invalid_grant.*":            "handleInvalidGrantError",
-                ".*invalid_client.*":           "handleInvalidClientError",
-                ".*invalid_request.*":          "handleInvalidRequestError",
-                ".*unauthorized_client.*":      "handleUnauthorizedClientError",
-                ".*unsupported_grant_type.*":   "handleUnsupportedGrantTypeError",
-                ".*invalid_scope.*":            "handleInvalidScopeError"
+                "invalid_grant":            "handleInvalidGrantError",
+                "invalid_client":           "handleInvalidClientError",
+                "invalid_request":          "handleInvalidRequestError",
+                "unauthorized_client":      "handleUnauthorizedClientError",
+                "unsupported_grant_type":   "handleUnsupportedGrantTypeError",
+                "invalid_scope":            "handleInvalidScopeError"
+                /* TODO: Add any other oauth codes we care about here */
             },
-
 
             /**
              * Authentication error.
              *
-             * OAuth2 uses 400 as a sort of catch all; see:
-             * http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-5.2
+             * Since oauth server implementation might throw 401 (as well as 400)
+             * we route this to the handleOAuthError. If no match for oauth error
+             * than handleOAuthError will try to use handleUnauthorizedError if 
+             * supplied.
              *
-             * Provide the following custom handlers:
-             *
-             * **handleInvalidGrantError**
-             *
-             * The provided authorization grant is invalid, expired, revoked, does
-             * not match the redirection URI used in the authorization request, or
-             * was issued to another client.
-             *
-             * This happens when logging in with improper user/pass.
-             *
-             * **handleInvalidClientError**
-             *
-             * Client authentication failed (e.g. unknown client, no client
-             * authentication included, multiple client authentications included,
-             * or unsupported authentication method).
-             *
-             * **handleInvalidRequestError**
-             *
-             * The request is missing a required parameter, includes an unsupported
-             * parameter or parameter value, repeats a parameter, includes multiple
-             * credentials, utilizes more than one mechanism for authenticating the
-             * client, or is otherwise malformed.
-             *
-             * **handleUnauthorizedClientError**
-             *
-             * The authenticated client is not authorized to use this authorization grant type.
-             *
-             * **handleUnsupportedGrantTypeError**
-             *
-             * The authorization grant type is not supported by the authorization server.
-             *
-             * **handleInvalidScopeError**
-             *
-             * The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
-             *
+             * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
             "400": function(xhr, error) {
-
-                var s = xhr && xhr.responseText ? xhr.responseText : "";
-                var match = _.find(_.keys(this.statusCodes._authHandlerMap), function(regexStr) {
-                    return (new RegExp(regexStr)).test(s);
-                });
-
-                var handler = match ? this.statusCodes._authHandlerMap[match] : null;
-                if (handler && this[handler]) {
-                    this[handler].call(this, xhr, error);
-                }
-                else {
-                    this.handleStatusCodesFallback(xhr, error)
-                }
+                this._handleOAuthError(xhr, error);
             },
 
             /**
              * Unauthorized.
              *
+             * Since oauth server implementation might throw 401 (as well as 400)
+             * we route this to the handleOAuthError. If no match for oauth error
+             * than handleOAuthError will try to use handleUnauthorizedError if 
+             * supplied.
+             *
              * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
             "401": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleUnauthorizedError);
+                // If this is NOT an oauth error our handleUnauthorizedError will be
+                // used (if defined).
+                this._handleOAuthError(xhr, error, this.handleUnauthorizedError);
             },
 
             /**
@@ -161,6 +187,20 @@
              */
             "405": function(xhr, error) {
                 this._callCustomHandler(xhr, error, this.handleMethodNotAllowedError);
+            },
+
+            /**
+             * Precondition failure.
+             *
+             * Clients can optionally sniff the error property in JSON for finer grained 
+             * determination; the following values may be:
+             * missing_parameter, invalid_parameter, request_failure
+             *
+             * Provide custom `handlePreconditionFailureError` handler.
+             * @method
+             */
+            "412": function(xhr, error) {
+                this._callCustomHandler(xhr, error, this.handlePreconditionFailureError);
             },
 
             /**
