@@ -192,7 +192,6 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
-
         return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
     }
 
