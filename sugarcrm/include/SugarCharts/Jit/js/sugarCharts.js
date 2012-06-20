@@ -34,37 +34,25 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                     return false;
                 }
 
-				var labelType, useGradients, nativeTextSupport, animate;		    	
-				(function() {
-				  var ua = navigator.userAgent,
-					  typeOfCanvas = typeof HTMLCanvasElement,
-					  nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-					  textSupport = nativeCanvasSupport 
-						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-				  labelType = 'Native';
-				  nativeTextSupport = labelType == 'Native';
-				  useGradients = false;
-				  animate = false;
-				})();
-
-            var that = this,
-                params = params ? params : {};
+    var labelType = 'Native',
+        useGradients = false,
+        animate = false,
+        that = this;
+    params = params ? params : {};
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data" && data != "\"\"" ){
-                        var json = eval('('+data+')');
-
-                        var properties = $jit.util.splat(json.properties)[0];
-                        var marginBottom = (chartConfig["orientation"] == 'vertical' && json.values.length > 8) ? 20*4 : 20;
+                    if(SUGAR.charts.isDataEmpty(data)){
+                        var properties = $jit.util.splat(data.properties)[0];
+                        var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
                         //init BarChart
                         var barChart = new $jit.BarChart({
                             //id of the visualization container
                             injectInto: chartId,
                             //whether to add animations
-                            animate: false,
-                            nodeCount: json.values.length,
+                            animate: animate,
+                            nodeCount: data.values.length,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
@@ -160,7 +148,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             }
                         });
                         //load JSON data.
-                        barChart.loadJSON(json);
+                        barChart.loadJSON(data);
 
                         //dynamically add legend to list
                         var list = $jit.id('legend'+chartId);
@@ -229,7 +217,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
 
-                        SUGAR.charts.trackWindowResize(barChart, chartId, json);
+                        SUGAR.charts.trackWindowResize(barChart, chartId, data);
                         that.chartObject = barChart;
 
                     }
@@ -239,16 +227,14 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 				
 			case "lineChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data"){
-                        var json = eval('('+data+')');
-
-                        var properties = $jit.util.splat(json.properties)[0];
+                    if(SUGAR.charts.isDataEmpty(data)){
+                        var properties = $jit.util.splat(data.properties)[0];
                         //init Linecahrt
                         var lineChart = new $jit.LineChart({
                             //id of the visualization container
                             injectInto: chartId,
                             //whether to add animations
-                            animate: false,
+                            animate: animate,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
@@ -333,7 +319,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             }
                         });
                         //load JSON data.
-                        lineChart.loadJSON(json);
+                        lineChart.loadJSON(data);
                         //end
 
                         /*
@@ -385,7 +371,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
-                        SUGAR.charts.trackWindowResize(lineChart, chartId, json);
+                        SUGAR.charts.trackWindowResize(lineChart, chartId, data);
                         that.chartObject = lineChart;
                     }
                 });
@@ -394,16 +380,15 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 
 			case "pieChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data"){
-                        var json = eval('('+data+')');
-                        var properties = $jit.util.splat(json.properties)[0];
+                    if(SUGAR.charts.isDataEmpty(data)){
+                        var properties = $jit.util.splat(data.properties)[0];
 
                         //init BarChart
                         var pieChart = new $jit.PieChart({
                             //id of the visualization container
                             injectInto: chartId,
                             //whether to add animations
-                            animate: false,
+                            animate: animate,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
@@ -471,7 +456,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             }
                         });
                         //load JSON data.
-                        pieChart.loadJSON(json);
+                        pieChart.loadJSON(data);
                         //end
                         //dynamically add legend to list
                         var list = $jit.id('legend'+chartId);
@@ -509,7 +494,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
-                        SUGAR.charts.trackWindowResize(pieChart, chartId, json);
+                        SUGAR.charts.trackWindowResize(pieChart, chartId, data);
                         that.chartObject = pieChart;
                     }
                 });
@@ -518,17 +503,15 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 
 			case "funnelChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data"){
-                        var json = eval('('+data+')');
-
-                        var properties = $jit.util.splat(json.properties)[0];
+                    if(SUGAR.charts.isDataEmpty(data)){
+                        var properties = $jit.util.splat(data.properties)[0];
 
                         //init Funnel Chart
                         var funnelChart = new $jit.FunnelChart({
                             //id of the visualization container
                             injectInto: chartId,
                             //whether to add animations
-                            animate: false,
+                            animate: animate,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
@@ -601,7 +584,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             }
                         });
                         //load JSON data.
-                        funnelChart.loadJSON(json);
+                        funnelChart.loadJSON(data);
                         //end
 
                         /*
@@ -652,7 +635,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
-                        SUGAR.charts.trackWindowResize(funnelChart, chartId, json);
+                        SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
                         that.chartObject = funnelChart;
                     }
                 });
@@ -661,16 +644,15 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 
 			case "gaugeChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
-                    if(data !== undefined && data != "No Data"){
-                        var json = eval('('+data+')');
-                        var properties = $jit.util.splat(json.properties)[0];
+                    if(SUGAR.charts.isDataEmpty(data)){
+                        var properties = $jit.util.splat(data.properties)[0];
 
                         //init Gauge Chart
                         var gaugeChart = new $jit.GaugeChart({
                             //id of the visualization container
                             injectInto: chartId,
                             //whether to add animations
-                            animate: false,
+                            animate: animate,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
@@ -737,7 +719,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             }
                         });
                         //load JSON data.
-                        gaugeChart.loadJSON(json);
+                        gaugeChart.loadJSON(data);
 
 
                         var list = $jit.id('legend'+chartId);
@@ -775,7 +757,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
-                        SUGAR.charts.trackWindowResize(gaugeChart, chartId, json);
+                        SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
                         that.chartObject = gaugeChart;
                     }
                 });
@@ -788,10 +770,9 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 function updateChart(jsonFilename, chart, params) {
     params = params ? params : {};
     SUGAR.charts.get(jsonFilename, params, function(data) {
-        if(data !== undefined && data != "No Data"){
-            var json = eval('('+data+')');
+        if(SUGAR.charts.isDataEmpty(data)){
             chart.busy = false;
-            chart.updateJSON(json);
+            chart.updateJSON(data);
         }
     });
 }
@@ -829,10 +810,24 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             $.ajax({
                 url: url,
                 data: data,
-                dataType: 'text',
+                dataType: 'json',
                 async: false,
                 success: success
             });
+        },
+
+        /**
+         * Is data returned from the server empty?
+         *
+         * @param data
+         * @return {Boolean}
+         */
+        isDataEmpty: function(data) {
+            if (data !== undefined && data !== "No Data" && data !== "") {
+                return true;
+            } else {
+                return false;
+            }
         },
 
         /**
