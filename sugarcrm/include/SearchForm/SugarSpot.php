@@ -415,7 +415,10 @@ class SugarSpot
             // Add an extra search filter for my items
             // Verify the bean has assigned_user_id before we blindly assume it does
             if (!empty($options['my_items']) && $options['my_items'] == true && isset($GLOBALS['dictionary'][$class]['fields']['assigned_user_id'])) {
-                $custom_where .= " AND {$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+                if(!empty($custom_where)) {
+                    $custom_where .= " AND ";
+                }
+                $custom_where .= "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}'";
                 $allowBlankSearch = true;
             }
             // If we are just searching by favorites, add a no-op query parameter so we still search
@@ -530,6 +533,10 @@ class SugarSpot
                         $ret_array['from'] .= $custom_from;
                     }
                     if(!empty($custom_where)) {
+                        if(!empty($ret_array['where'])) {
+                            $ret_array['where'] .= " AND ";
+                        }
+
                         $ret_array['where'] .= $custom_where;
                     }
                    
