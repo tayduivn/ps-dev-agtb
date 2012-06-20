@@ -1,0 +1,50 @@
+<div class="longHelpTitle">
+    Attaches a file to a field in a record that currently contains an existing
+    attachment
+</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    <p>
+        This endpoint takes a file or image and saves it to a record that already
+        contains an attachment in the specificed field.
+    </p>
+    <p>
+        <strong>NOTE</strong>: The PUT method is very similar to the POST method
+        but differs slightly in how the request is constructed. PUT requests should
+        send the file data as the body of the request. Optionally, a filename
+        query param can be sent with the request.
+    </p>
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+    <table>
+        <tr><th>Param</th><th>Description</th><th>Optional</th></tr>
+        <tr><td>filename</td><td>Filename to save the document as</td><td>Optional</td></tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+        PUT /rest/v10/Notes/abcd-1234/file/field/ HTTP/1.1
+        Host: localhost
+        Connection: keep-alive
+        Content-Length: 23456
+        Content-Type: application/document-doc
+
+        ...<span class="note">This is where the bin data would be</span>
+
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+          "field": {
+            "content-type": "application/document-doc",
+            "content-length": "657483",
+            "name": "yourfilename.doc",
+            "uri": "http://your.sugarcrm.install/rest/v10//Notes/abc-1234/file/field"
+          }
+        }
+    </code>
+</div>

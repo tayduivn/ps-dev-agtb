@@ -16,12 +16,26 @@
 <div class="output">
   <h2>Output Example:</h2>
 <code class="codesample">
-{
+{"current_user": {
+    "type":"user",
     "id":"1",
     "full_name":"Administrator",
     "timepref":"h:ia",
-    "tiemzone":"America/Logs_Angles",
+    "timezone":"America/Los_Angles",
     "user_name":"admin"
-}
+}}
 </code>
+  Or, for portal users:
+<code class="codesample">
+{"current_user": {
+    "type":"support_portal",
+    "id":"1234-567",
+    "user_id":"abcd-123",
+    "full_name":"Bill Williamson",
+    "timepref":"h:ia",
+    "timezone":"America/Denver",
+    "user_name":"SupportPortalApi"
+}}
+</code>
+  
 </div>

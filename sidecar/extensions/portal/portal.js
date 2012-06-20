@@ -23,7 +23,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "Log In",
-                                    class: "login-submit",
+                                    'class': "login-submit",
                                     value: "login",
                                     primary: true,
                                     events: {
@@ -51,7 +51,7 @@
                                     type: "button",
                                     label: "Sign Up",
                                     value: "signup",
-                                    class: 'pull-left',
+                                    'class': 'pull-left',
                                     events: {
                                         click: "function(){ " +
                                             "app.router.navigate('#signup');" +
@@ -153,6 +153,18 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
+                                {     
+                                    name: "cancel_button",
+                                    type: "button",
+                                    label: "Cancel",
+                                    value: "signup",
+                                    primary: false,
+                                    events: {
+                                        click: "function(){" +
+                                            "app.router.goBack();" +
+                                            "}"
+                                    } 
+                                },
                                 {
                                     name: "signup_button",
                                     type: "button",
@@ -162,7 +174,13 @@
                                     events: {
                                         click: "" +
                                             "function(){ var self = this; " +
-                                            "   if(this.model.isValid()) {" +
+                                            "var oEmail = this.model.get(\"email\");" +
+                                            "if (oEmail) {" +
+                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "}" +
+                                            "var validFlag = this.model.isValid();" +
+                                            " this.model.set({\"email\":oEmail});" +
+                                            "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
                                             "   var contactData={" +
@@ -190,18 +208,6 @@
                                             "       }" +
                                             "   });" +
                                             "   }" +
-                                            "}"
-                                    }
-                                },
-                                {
-                                    name: "cancel_button",
-                                    type: "button",
-                                    label: "Cancel",
-                                    value: "signup",
-                                    primary: false,
-                                    events: {
-                                        click: "function(){" +
-                                            "app.router.goBack();" +
                                             "}"
                                     }
                                 }
@@ -279,7 +285,7 @@
                         "<label class=\"hide\">{{label}}</label>" +
                         "<div class=\"controls\">\n" +
                         "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">\n  <\/div>\n" +
-                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                        "<p class=\"help-block\"></p>" +
                         "</div>"
                 }
             },
@@ -350,9 +356,6 @@
             }
         },
         'views': {
-            "alert": {
-                controller: "\\\"\/**\n * View that displays errors.\n * @class View.Views.AlertView\n * @extends View.View\n *\/\n\n({\n    initialize: function(options) {\n        app.view.View.prototype.initialize.call(this, options);\n    },\n    \/**\n     * Displays an alert message and returns alert instance.\n     * @param {Object} options\n     * @return {Backbone.View} Alert instance\n     * @method\n     *\/\n    show: function(options) {\n        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;\n        if (!options) {\n            return false;\n        }\n\n        level = options.level ? options.level : \\'info\\';\n        title = options.title ? options.title : null;\n        msg = (_.isString(options.messages)) ? [options.messages] : options.messages;\n        autoClose = options.autoClose ? options.autoClose : false;\n\n        \/\/ \\\"process\\\" is the loading indicator .. I didn\\'t name it ;=)\n        alertClass = (level === \\\"process\\\" || level === \\\"success\\\" || level === \\\"warning\\\" || level === \\\"info\\\" || level === \\\"error\\\") ? \\\"alert-\\\" + level : \\\"\\\";\n\n        ctx = {\n            alertClass: alertClass,\n            title: title,\n            messages: msg,\n            autoClose: autoClose\n        };\n        try {\n            AlertView = Backbone.View.extend({\n                events: {\n                    \\'click .close\\': \\'close\\'\n                },\n                template: \\\"<div class=\\\\\\\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{\/if}}\\\\\\\">\\\" +\n                    \\\"<a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>{{#if title}}<strong>{{title}}<\/strong>{{\/if}}\\\" +\n                    \\\"{{#each messages}}<p>{{this}}<\/p>{{\/each}}<\/div>\\\",\n                loadingTemplate: \\\"<div class=\\\\\\\"alert {{alertClass}}\\\\\\\">\\\" +\n                    \\\"<strong>{{title}}<\/strong>\u2026<\/div><a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>\\\",\n                initialize: function() {\n                    this.render();\n                },\n                close: function() {\n                    this.$el.remove();\n                },\n                render: function() {\n                    var tpl = (level === \\'process\\') ?\n                        Handlebars.compile(this.loadingTemplate) :\n                        Handlebars.compile(this.template);\n\n                    this.$el.html(tpl(ctx));\n                }\n            });\n            thisAlert = new AlertView();\n            this.$el.prepend(thisAlert.el);\n\n            if (autoClose) {\n                setTimeout(function() {\n                    $(\\'.timeten\\').fadeOut().remove();\n                }, 9000);\n            }\n            return thisAlert;\n\n        } catch (e) {\n            app.logger.error(\\\"Failed to render \\'\\\" + this.name + \\\"\\' view.\\\\n\\\" + e.message);\n            return null;\n            \/\/ TODO: trigger app event to render an error message\n        }\n    }\n})\n\\\""
-            },
             "loginView": {
                 templates: {
                     "loginView": "<form name='{{name}}'>" +
@@ -367,6 +370,7 @@
                         "{{#each fields}}\n" +
                         "<div>{{field ../../this ../../model}}</div>" +
                         "{{/each}}" +
+                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                         "</div>          \n" +
                         "{{/each}}" +
                         "<div class=\"modal-footer\">\n" +
@@ -382,7 +386,7 @@
             },
             "header": {
                 templates: {
-                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" data-original-title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../module}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#profile\">Profile</a></li>\n               <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n      <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n      </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
+                    "header": "<div class=\"navbar navbar-fixed-top\">\n    <div class=\"navbar-inner\">\n      <div class=\"container-fluid\">\n        <a class=\"cube\" href=\"#\" rel=\"tooltip\" title=\"Dashboard\"></a>\n        <div class=\"nav-collapse\">\n          <ul class=\"nav\" id=\"moduleList\">\n              {{#each moduleList}}\n              <li {{#eq this ../module}}class=\"active\"{{/eq}}>\n                <a href=\"#{{this}}\">{{this}}</a>\n              </li>\n              {{/each}}\n          </ul>\n          <ul class=\"nav pull-right\" id=\"userList\">\n            <li class=\"divider-vertical\"></li>\n            <li class=\"dropdown\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Current User <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                <li><a href=\"#profile\">Profile</a></li>\n               <li><a href=\"#logout\">Log Out</a></li>\n              </ul>\n            </li>\n            <li class=\"divider-vertical\"></li>\n     <li class=\"dropdown\" id=\"createList\">\n              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"icon-plus icon-md\"></i> <b class=\"caret\"></b></a>\n              <ul class=\"dropdown-menu\">\n                  {{#each createListLabels}}\n                                <li>\n                                  <a href=\"#{{this.module}}/create\">{{this.label}}</a>\n                                </li>\n                                {{/each}}\n              </ul>\n            </li>\n          </ul>\n          <div id=\"searchForm\">\n            <form class=\"navbar-search pull-right\" action=\"\">\n      <input type=\"text\" class=\"search-query span3\" placeholder=\"Search\" data-provide=\"typeahead\" data-items=\"10\" >\n              <a href=\"\" class=\"btn\"><i class=\"icon-search\"></i></a>\n      </form>\n\n          </div>\n        </div><!-- /.nav-collapse -->\n      </div>\n    </div><!-- /navbar-inner -->\n  </div>"
                 }
             },
             "footer": {
@@ -772,28 +776,6 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-
-        var origRoutingBefore = app.routing.before;
-        app.routing.before = function(route, args) {
-            var module;
-
-            // First make sure we pass all original routing before tests.
-            if(origRoutingBefore(route, args)) {
-
-                // Check list and record routes module is defined or 404.
-                if(route === 'list' || route === 'record') {
-                    module = args[0] ? args[0] : null;
-
-                    if (!module || !_.has(app.metadata.getModules(), module)) {
-                        app.router.navigate('error/404', {trigger: true});
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-            return true;
-        };
         
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
@@ -828,10 +810,17 @@
 
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
-        var dm;
+        var dm, nonModuleRoutes;
+        nonModuleRoutes = [
+            "search",
+            "error",
+            "profile",
+            "profileedit"
+        ];
 
-        // Perform any original before checks .. if these fail return false
-        if (!oRoutingBefore.call(this, route, args)) return false;
+        app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
+
+        if(!oRoutingBefore.call(this, route, args)) return false;
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
@@ -855,8 +844,8 @@
                 alertUser();
                 return false;
             }
-        // If route is NOT index check if module loaded and user has access to it.
-        } else if (!app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
             alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
             return false;

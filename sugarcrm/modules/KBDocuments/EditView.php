@@ -19,15 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: EditView.php 18976 2007-02-28 00:48:48 +0000 (Wed, 28 Feb 2007) vineet $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
 
 require_once('include/ytree/Tree.php');
 require_once('include/ytree/Node.php');
@@ -320,8 +311,7 @@ if (empty($focus->team_id)) {
 	$xtpl->assign("TEAM_ID", $current_user->default_team);
 }
 else {
-	$focus->assigned_name = get_assigned_team_name($focus->team_id);
-	$xtpl->assign("TEAM_NAME", $focus->assigned_name);
+	$xtpl->assign("TEAM_NAME", $focus->team_name);
 	$xtpl->assign("TEAM_ID", $focus->team_id);
 }
 //save default team name/id for external check/uncheck

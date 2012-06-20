@@ -19,20 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: SavedSearch.php 51719 2009-10-22 17:18:00Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('include/templates/TemplateGroupChooser.php');
 
-
 class SavedSearch extends SugarBean {
-	var $db;
-    var $field_name_map;
-
 	// Stored fields
 	var $id;
 	var $date_entered;
@@ -67,10 +56,6 @@ class SavedSearch extends SugarBean {
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
 		}
-
-		//BEGIN SUGARCRM flav=pro ONLY
-		//$this->team_id = 1; // make the item globally accessible
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	// Saved Search Form
@@ -342,13 +327,8 @@ class SavedSearch extends SugarBean {
 		global $app_list_strings;
 		// Fill in the assigned_user_name
 		$this->search_module = $app_list_strings['moduleList'][$this->contents['search_module']];
-		$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-
-		//BEGIN SUGARCRM flav=pro ONLY
-			$this->team_name = get_assigned_team_name($this->team_id);
-		//END SUGARCRM flav=pro ONLY
+		$this->fill_in_additional_detail_fields();
 	}
-
 
     function retrieveSavedSearch($id) {
         parent::retrieve($id);

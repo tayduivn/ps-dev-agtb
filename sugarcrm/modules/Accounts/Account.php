@@ -66,15 +66,15 @@ class Account extends Company {
 	var $shipping_address_state;
 	var $shipping_address_country;
 	var $shipping_address_postalcode;
-    
+
     var $shipping_address_street_2;
     var $shipping_address_street_3;
     var $shipping_address_street_4;
-    
+
 //BEGIN SUGARCRM flav!=sales ONLY
     var $campaign_id;
 //END SUGARCRM flav!=sales ONLY
-    
+
 	var $sic_code;
 	var $ticker_symbol;
 	var $account_type;
@@ -139,7 +139,7 @@ class Account extends Company {
 
         $this->setupCustomFields('Accounts');
 
-		foreach ($this->field_defs as $field) 
+		foreach ($this->field_defs as $field)
 		{
 			if(isset($field['name']))
 			{
@@ -241,20 +241,6 @@ class Account extends Company {
 		*/
 	}
 
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-	// Fill in the assigned_user_name
-	//	$this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-
-//BEGIN SUGARCRM flav=pro ONLY
-        if (!empty($this->team_id) && empty($this->team_name)) {
-		    $this->assigned_name = get_assigned_team_name($this->team_id);
-            $this->team_name=$this->assigned_name;
-        }
-//END SUGARCRM flav=pro ONLY
-	}
-
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
@@ -276,25 +262,24 @@ class Account extends Company {
 			{
 				$this->parent_name = '';
 			}
-        }		
-        
+        }
+
 //BEGIN SUGARCRM flav!=sales ONLY
         // Set campaign name if there is a campaign id
 		if( !empty($this->campaign_id)){
-			
+
 			$camp = new Campaign();
 		    $where = "campaigns.id='{$this->campaign_id}'";
 		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 		    $this->campaign_name = $campaign_list[0]->name;
 		}
-//END SUGARCRM flav!=sales ONLY        
+//END SUGARCRM flav!=sales ONLY
 	}
 
 	function get_list_view_data(){
 		global $system_config,$current_user;
 		$temp_array = $this->get_list_view_array();
 		$temp_array["ENCODED_NAME"]=$this->name;
-//		$temp_array["ENCODED_NAME"]=htmlspecialchars($this->name, ENT_QUOTES);
 		if(!empty($this->billing_address_state))
 		{
 			$temp_array["CITY"] = $this->billing_address_city . ', '. $this->billing_address_state;
@@ -305,7 +290,7 @@ class Account extends Company {
 		}
 		$temp_array["BILLING_ADDRESS_STREET"]  = $this->billing_address_street;
 		$temp_array["SHIPPING_ADDRESS_STREET"] = $this->shipping_address_street;
-    	
+
     		$temp_array["EMAIL1"] = $this->emailAddress->getPrimaryAddress($this);
 		$this->email1 = $temp_array['EMAIL1'];
 		$temp_array["EMAIL1_LINK"] = $current_user->getEmailLink('email1', $this, '', '', 'ListView');

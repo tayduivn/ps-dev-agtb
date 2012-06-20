@@ -56,7 +56,7 @@
                     app.template.setView(name, moduleName, def.template, true);
                 }
                 if (def.controller) { // Both layouts and views can have controllers
-                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type);
+                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type, true);
                 }
             });
         });
@@ -205,7 +205,7 @@
             }
 
             if (!metadata) {
-                app.logger.error("No view found for " + view);
+                app.logger.info("No view found for " + view);
             }
 
             return metadata;
@@ -228,7 +228,7 @@
             }
 
             if (!metadata) {
-                app.logger.error("No layout found for " + layout);
+                app.logger.info("No layout found for " + layout);
             }
 
             return metadata;
@@ -307,7 +307,7 @@
                     _fields[type] = entry;
                     _set(_fieldPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("field", type, null, entry.controller);
+                        app.view.declareComponent("field", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -317,7 +317,7 @@
                     _views[type] = entry;
                     _set(_viewPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("view", type, null, entry.controller);
+                        app.view.declareComponent("view", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -327,7 +327,7 @@
                     _layouts[type] = layout;
                     _set(_layoutPrefix + type, layout);
                     if (layout.controller) {
-                        app.view.declareComponent("layout", type, null, layout.controller);
+                        app.view.declareComponent("layout", type, null, layout.controller, null, true);
                     }
                 });
             }

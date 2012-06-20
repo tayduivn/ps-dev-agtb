@@ -33,6 +33,8 @@ class HelpApi extends SugarApi {
                 'shortHelp' => 'Shows Help information',
                 'longHelp' => 'include/api/help/getHelp.html',
                 'rawReply' => true,
+                // Everyone needs some help sometimes.
+                'noLoginRequired' => true,
             ),
         );
     }
@@ -48,7 +50,15 @@ class HelpApi extends SugarApi {
 
         // Add in the full endpoint paths, so we can sort by them
         foreach ( $endpointList as $idx => $endpoint ) {
-            $endpointList[$idx]['fullPath'] = '/'.implode('/',$endpoint['path']);
+            $fullPath = '';
+            foreach ( $endpoint['path'] as $pathIdx => $pathPart ) {
+                if ( $pathPart == '?' ) {
+                    // pull in the path variable in here so the documentation is readable
+                    $pathPart = ':'.$endpoint['pathVars'][$pathIdx];
+                }
+                $fullPath .= '/'.$pathPart;
+            }
+            $endpointList[$idx]['fullPath'] = $fullPath;
         }
         // Sort the endpoint list
         usort($endpointList,array('HelpApi','cmpEndpoints'));

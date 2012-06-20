@@ -37,7 +37,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function tearDown() 
+    public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
@@ -71,20 +71,22 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
 
-    protected function _restCall($urlPart,$postBody='',$httpAction='')
+    protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
 
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
-        
+
         $ch = curl_init($urlBase.$urlPart);
         if (!empty($postBody)) {
             if (empty($httpAction)) {
                 $httpAction = 'POST';
+                curl_setopt($ch, CURLOPT_POST, 1); // This sets the POST array
+                $requestMethodSet = true;
             }
-            curl_setopt($ch, CURLOPT_POST, 1);
+
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
         } else {
             if (empty($httpAction)) {
@@ -93,16 +95,34 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         }
         
         if ( !empty($this->authToken) && $this->authToken != 'LOGGING_IN' ) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('oauth_token: '.$this->authToken));
+            //curl_setopt($ch, CURLOPT_HTTPHEADER, array('oauth_token: '.$this->authToken));
+            $addedHeaders[] = 'oauth_token: '.$this->authToken;
         }
 
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
+        // Only set a custom request for not POST with a body
+        // This affects the server and how it sets its superglobals
+        if (empty($requestMethodSet)) {
+            if ($httpAction == 'PUT' && empty($postBody) ) {
+                curl_setopt($ch, CURLOPT_PUT, 1);
+            } else {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
+            }
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $addedHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 
+        if (is_array($addedOpts) && !empty($addedOpts)) {
+            // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
+            foreach ($addedOpts as $opt => $val) {
+                curl_setopt($ch, $opt, $val);
+            }
+        }
+
         $httpInfo = curl_getinfo($ch); 
         $httpReply = curl_exec($ch);
+        $httpError = $httpReply === false ? curl_error($ch) : null;
 
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply);
+        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
 }
