@@ -55,12 +55,12 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
     }
     
     public function testMetadataSugarViewsController() {
-        $filesToCheck = array('clients/mobile/public/views/address/address.js',
-                              'clients/portal/public/views/address/address.js',
-                              'clients/base/public/views/address/address.js',
-                              'custom/clients/mobile/public/views/address/address.js',
-                              'custom/clients/portal/public/views/address/address.js',
-                              'custom/clients/base/public/views/address/address.js',
+        $filesToCheck = array('clients/mobile/views/address/address.js',
+                              'clients/portal/views/address/address.js',
+                              'clients/base/views/address/address.js',
+                              'custom/clients/mobile/views/address/address.js',
+                              'custom/clients/portal/views/address/address.js',
+                              'custom/clients/base/views/address/address.js',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -71,12 +71,12 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/mobile/public/views/address',
-                            'clients/portal/public/views/address',
-                            'clients/base/public/views/address',
-                            'custom/clients/mobile/public/views/address',
-                            'custom/clients/portal/public/views/address',
-                            'custom/clients/base/public/views/address',
+        $dirsToMake = array('clients/mobile/views/address',
+                            'clients/portal/views/address',
+                            'clients/base/views/address',
+                            'custom/clients/mobile/views/address',
+                            'custom/clients/portal/views/address',
+                            'custom/clients/base/views/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -86,54 +86,54 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
         }
         
         // Make sure we get it when we ask for mobile
-        file_put_contents('clients/mobile/public/views/address/address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('clients/mobile/views/address/address.js','MOBILE CODE');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
-        file_put_contents('clients/base/public/views/address/address.js','BASE CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('clients/base/views/address/address.js','BASE CODE');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get base code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to base
-        unlink('clients/mobile/public/views/address/address.js');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        unlink('clients/mobile/views/address/address.js');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['address']['controller'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
-        file_put_contents('custom/clients/mobile/public/views/address/address.js','CUSTOM MOBILE CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('custom/clients/mobile/views/address/address.js','CUSTOM MOBILE CODE');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
-        file_put_contents('custom/clients/portal/public/views/address/address.js','CUSTOM PORTAL CODE');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=portal');
+        file_put_contents('custom/clients/portal/views/address/address.js','CUSTOM PORTAL CODE');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['views']['address']['controller'],"Didn't use the custom portal code.");
 
     }
 
     public function testMetadataSugarViewsTemplates() {
         $filesToCheck = array(
-            'clients/mobile/public/views/address/editView.hbt',
-            'clients/mobile/public/views/address/detailView.hbt',
-            'clients/portal/public/views/address/editView.hbt',
-            'clients/portal/public/views/address/detailView.hbt',
-            'clients/base/public/views/address/editView.hbt',
-            'clients/base/public/views/address/detailView.hbt',
-            'custom/clients/mobile/public/views/address/editView.hbt',
-            'custom/clients/mobile/public/views/address/detailView.hbt',
-            'custom/clients/portal/public/views/address/editView.hbt',
-            'custom/clients/portal/public/views/address/detailView.hbt',
-            'custom/clients/base/public/views/address/editView.hbt',
-            'custom/clients/base/public/views/address/detailView.hbt',
+            'clients/mobile/views/address/editView.hbt',
+            'clients/mobile/views/address/detailView.hbt',
+            'clients/portal/views/address/editView.hbt',
+            'clients/portal/views/address/detailView.hbt',
+            'clients/base/views/address/editView.hbt',
+            'clients/base/views/address/detailView.hbt',
+            'custom/clients/mobile/views/address/editView.hbt',
+            'custom/clients/mobile/views/address/detailView.hbt',
+            'custom/clients/portal/views/address/editView.hbt',
+            'custom/clients/portal/views/address/detailView.hbt',
+            'custom/clients/base/views/address/editView.hbt',
+            'custom/clients/base/views/address/detailView.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -144,12 +144,12 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/mobile/public/views/address',
-                            'clients/portal/public/views/address',
-                            'clients/base/public/views/address',
-                            'custom/clients/mobile/public/views/address',
-                            'custom/clients/portal/public/views/address',
-                            'custom/clients/base/public/views/address',
+        $dirsToMake = array('clients/mobile/views/address',
+                            'clients/portal/views/address',
+                            'clients/base/views/address',
+                            'custom/clients/mobile/views/address',
+                            'custom/clients/portal/views/address',
+                            'custom/clients/base/views/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -159,36 +159,36 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
         }
 
         // Make sure we get it when we ask for mobile
-        file_put_contents('clients/mobile/public/views/address/editView.hbt','MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
-        file_put_contents('clients/base/public/views/address/editView.hbt','BASE EDITVIEW');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('clients/base/views/address/editView.hbt','BASE EDITVIEW');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=base');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to base
-        unlink('clients/mobile/public/views/address/editView.hbt');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        unlink('clients/mobile/views/address/editView.hbt');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
-        file_put_contents('custom/clients/mobile/public/views/address/editView.hbt','CUSTOM MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=mobile');
+        file_put_contents('custom/clients/mobile/views/address/editView.hbt','CUSTOM MOBILE EDITVIEW');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom mobile code.");
 
         // Make sure custom base code works
-        file_put_contents('custom/clients/base/public/views/address/editView.hbt','CUSTOM BASE EDITVIEW');
-        $restReply = $this->_restCall('metadata/public/?typeFilter=views&platform=base');
+        file_put_contents('custom/clients/base/views/address/editView.hbt','CUSTOM BASE EDITVIEW');
+        $restReply = $this->_restCall('metadata/public?typeFilter=views&platform=base');
         $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom base code.");
     }
 

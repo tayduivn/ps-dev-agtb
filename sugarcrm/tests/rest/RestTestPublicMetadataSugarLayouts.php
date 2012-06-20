@@ -26,12 +26,12 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     protected $_testPaths = array(
-        'wiggle' => 'clients/base/public/layouts/wiggle/wiggle.php',
-        'woggle' => 'custom/clients/base/public/layouts/woggle/woggle.php',
-        'bizzle' => 'clients/portal/public/layouts/bizzle/bizzle.php',
-        'bozzle' => 'custom/clients/portal/public/layouts/bozzle/bozzle.php',
-        'pizzle' => 'clients/mobile/public/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
-        'pozzle' => 'custom/clients/mobile/public/layouts/pozzle/pozzle.php',
+        'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
+        'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
+        'bizzle' => 'clients/portal/layouts/bizzle/bizzle.php',
+        'bozzle' => 'custom/clients/portal/layouts/bozzle/bozzle.php',
+        'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
+        'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
     );
     
     protected $_testFilesCreated = array();
@@ -45,8 +45,8 @@ class RestTestPublicMetadataSugarLayouts extends RestTestBase {
         $GLOBALS['current_user'] = $this->_user;
 
         foreach ($this->_testPaths as $file) {
-            preg_match('#clients/(.*)/(.*)/layouts/#', $file, $m);
-            $platform = $m[1];
+            preg_match('#clients/(.*)/layouts/#', $file, $m);
+            $platform = $m[0];
             $filename = basename($file, '.php');
             $contents = "<?php\n\$viewdefs['$platform']['layout']['$filename'] = array('test' => 'foo');\n";
             if (file_exists($file)) {
