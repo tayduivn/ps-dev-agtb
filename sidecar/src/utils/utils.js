@@ -388,8 +388,16 @@
                 //if not a Date return it
                 if (!(date instanceof Date)) return date;
 
+                var year = date.getFullYear(),
+                    month = date.getMonth(),
+                    day = date.getDate(),
+                    hours = date.getHours(),
+                    minutes = date.getMinutes(),
+                    seconds = date.getSeconds(),
+                    milliseconds = date.getMilliseconds();
+
                 // Push the UTC tag to convert the date into local date
-                return new Date(date.toString() +  "UTC");
+                return new Date(Date.UTC(year, month, day, hours, minutes, seconds, milliseconds));
             },
             /**
              * converts a date object into a relative time
