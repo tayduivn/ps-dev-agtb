@@ -123,7 +123,10 @@ abstract class SugarApi {
 
         return $data;
     }
-
+    /**
+     * Recursively runs html entity decode for the reply
+     * @param $data array The bean the API is returning
+     */
     protected function htmlDecodeReturn(&$data) {
         foreach($data AS $key => $value) {
             if(is_array($value) && !empty($value)) {
