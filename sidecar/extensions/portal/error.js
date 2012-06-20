@@ -10,6 +10,17 @@
         app.router.login();
     }
 
+    
+    /**
+     * This is caused by attempt to login with invalid creds. 
+     * @param {Object} xhr object
+     * @param {String} error string 
+     */
+    app.error.handleNeedsLoginError = function(xhr, error) {
+        backToLogin(true);
+        app.alert.show("needs_login_error", {level: "error", messages: "The username/password combination provided is incorrect, please try again.", title:"Invalid Credentials", autoClose: true});
+    };
+
     /**
      * This is caused by expired or invalid token. 
      * @param {Object} xhr object
@@ -17,7 +28,7 @@
      */
     app.error.handleInvalidGrantError = function(xhr, error) {
         backToLogin(true);
-        app.alert.show("invalid_grant_error", {level: "error", messages: "The username/password combination provided is incorrect, please try again.", title:"Invalid Credentials", autoClose: true});
+        app.alert.show("invalid_grant_error", {level: "error", messages: "Your token is invalid or has expired. Please login again.", title:"Token Expired", autoClose: true});
     };
 
     /**

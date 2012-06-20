@@ -56,9 +56,16 @@
          *
          * The provided authorization grant is invalid, expired, revoked, does
          * not match the redirection URI used in the authorization request, or
-         * was issued to another client.
+         * was issued to another client. Note that the server implementation
+         * will override invalid_grant as needs_login as a special case (see below).
          *
-         * This happens when logging in with improper user/pass.
+         * **handleNeedsLoginError**
+         *
+         * The server shall use this in place of invalid_grant to tell client to handle 
+         * error specifically as caused due to invalid credentials being supplied. The 
+         * reason server needs to use this is because an invalid_grant oauth error may 
+         * also be caused by invalid or expired token. Using needs_login allows all 
+         * clients to provide proper messaging to end user without the need for extra logic.
          *
          * **handleInvalidClientError**
          *
@@ -85,19 +92,20 @@
          *
          * The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
          *
+         *
          * @param xhr 
          * @param error 
          * @param alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
          * called (if provided). 
          * @method
          */
-        _handleOAuthError: function (xhr, error, alternativeCallback) {
+        _handleFineGrainedError: function (xhr, error, alternativeCallback) {
             var s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
-            var match = _.find(_.keys(this.statusCodes._authHandlerMap), function(oAuthCode) {
+            var match = _.find(_.keys(this.statusCodes._customHandlersMap), function(oAuthCode) {
                 return s.error == oAuthCode;
             });
 
-            var handler = match ? this.statusCodes._authHandlerMap[match] : null;
+            var handler = match ? this.statusCodes._customHandlersMap[match] : null;
             if (handler && this[handler]) {
                 this[handler].call(this, xhr, error);
             } else if (alternativeCallback) {
@@ -117,14 +125,15 @@
          */
         statusCodes: {
 
-            _authHandlerMap: {
-                "invalid_grant":            "handleInvalidGrantError",
-                "invalid_client":           "handleInvalidClientError",
-                "invalid_request":          "handleInvalidRequestError",
-                "unauthorized_client":      "handleUnauthorizedClientError",
-                "unsupported_grant_type":   "handleUnsupportedGrantTypeError",
-                "invalid_scope":            "handleInvalidScopeError"
-                /* TODO: Add any other oauth codes we care about here */
+            _customHandlersMap: {
+                "invalid_grant":           "handleInvalidGrantError",
+                "invalid_client":          "handleInvalidClientError",
+                "invalid_request":         "handleInvalidRequestError",
+                "unauthorized_client":     "handleUnauthorizedClientError",
+                "unsupported_grant_type":  "handleUnsupportedGrantTypeError",
+                "invalid_scope":           "handleInvalidScopeError",
+                "need_login":              "handleNeedsLoginError"
+                /* TODO: Add any other oauth or custom codes we care about here */
             },
 
             /**
@@ -139,7 +148,7 @@
              * @method
              */
             "400": function(xhr, error) {
-                this._handleOAuthError(xhr, error);
+                this._handleFineGrainedError(xhr, error);
             },
 
             /**
@@ -156,7 +165,7 @@
             "401": function(xhr, error) {
                 // If this is NOT an oauth error our handleUnauthorizedError will be
                 // used (if defined).
-                this._handleOAuthError(xhr, error, this.handleUnauthorizedError);
+                this._handleFineGrainedError(xhr, error, this.handleUnauthorizedError);
             },
 
             /**
