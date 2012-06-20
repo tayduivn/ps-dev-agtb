@@ -23,7 +23,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "Log In",
-                                    class: "login-submit",
+                                    'class': "login-submit",
                                     value: "login",
                                     primary: true,
                                     events: {
@@ -51,7 +51,7 @@
                                     type: "button",
                                     label: "Sign Up",
                                     value: "signup",
-                                    class: 'pull-left',
+                                    'class': 'pull-left',
                                     events: {
                                         click: "function(){ " +
                                             "app.router.navigate('#signup');" +
