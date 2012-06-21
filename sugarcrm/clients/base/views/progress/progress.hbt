@@ -7,33 +7,57 @@
 		<tr>
 			<td>Quota</td>
 			<td></td>
-			<td>{{formatNumber quota.total}}</td>
+			<td>{{formatNumber quota.amount}}</td>
 		</tr>
 		<tr>
-			<td>Likely to Quota</td>
-			<td>{{formatPercentage quota.likely.percent}}</td>
-			<td>{{formatNumber quota.likely.current}}</td>
+			<td>
+				{{#if quota.likely_case.above}}
+					Distance Above: Likely from Quota
+				{{else}}
+					Distance Left: Likely to Quota
+				{{/if}}
+			</td>
+			<td>{{formatPercentage quota.likely_case.percent}}</td>
+			<td>{{formatNumber quota.likely_case.amount}}</td>
 		</tr>
 		<tr>
-			<td>Best to Quota</td>
-			<td>{{formatPercentage quota.best.percent}}</td>
-			<td>{{formatNumber quota.best.current}}</td>
+			<td>
+				{{#if quota.best_case.above}}
+					Distance Above: Best from Quota
+				{{else}}
+					Distance Left: Best to Quota
+				{{/if}}
+			</td>
+			<td>{{formatPercentage quota.best_case.percent}}</td>
+			<td>{{formatNumber quota.best_case.amount}}</td>
 		</tr>
 
 		<tr>
 			<th>Closed</th>
 			<th></th>
-			<th>{{formatNumber closed.total}}</th>
+			<th>{{formatNumber closed.amount}}</th>
 		</tr>
 		<tr>
-			<td>Closed to Likely</td>
-			<td>{{formatPercentage closed.likely.percent}}</td>
-			<td>{{formatNumber closed.likely.current}}</td>
+			<td>
+				{{#if closed.likely_case.above}}
+					Distance Above: Likely from Closed
+				{{else}}
+					Distance Left: Likely to Closed
+				{{/if}}
+			</td>
+			<td>{{formatPercentage closed.likely_case.percent}}</td>
+			<td>{{formatNumber closed.likely_case.amount}}</td>
 		</tr>
 		<tr>
-			<td>Closed to Best</td>
-			<td>{{formatPercentage closed.best.percent}}</td>
-			<td>{{formatNumber closed.best.current}}</td>
+			<td>
+				{{#if closed.best_case.above}}
+					Distance Above: Best from Closed
+				{{else}}
+					Distance Left: Best to Closed
+				{{/if}}
+			</td>
+			<td>{{formatPercentage closed.best_case.percent}}</td>
+			<td>{{formatNumber closed.best_case.amount}}</td>
 		</tr>
 	</tbody>
 	<tfoot>

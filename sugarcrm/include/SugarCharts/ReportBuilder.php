@@ -274,6 +274,12 @@ class ReportBuilder
                 $key = join(":", $key);
             }
 
+            if (strpos($key, "self:") === 0) {
+                // replace self with the module name for the self module
+                $self_bean = $this->getBean($this->self_module);
+                $key = preg_replace("#self:#", $self_bean->module_name . ":", $key, 1);
+            }
+
             //$child_bean = $this->getBean($link['module']);
             $this->table_keys[$key] = array('module' => $link['module'], 'key' => $key);
             //$this->table_keys[$link['module']] = $key;
@@ -300,7 +306,7 @@ class ReportBuilder
                     ),
                     'dependents' => array(),
                     'module' => $link['module'],
-                    'label' => $link['vname']
+                    'label' => $this->getLabel($link['vname'], $link['module'])
                 );
 
                 $this->defaultReport['full_table_list'][$key] = $arrLink;
@@ -363,15 +369,52 @@ class ReportBuilder
 
             $this->defaultReport['group_defs'][] = array(
                 'name' => $field,
-                'label' => $bean_field['vname'],
+                'label' => $this->getLabel($bean_field['vname'], $bean->module_name),
                 'table_key' => $this->findParentTableKey($bean->module_dir, $key, $field),
                 'type' => $bean_field['type'],
             );
 
-            $this->addSummaryColumn($field, $bean, $key);
+            $this->addSummaryColumn($field, $bean, $key, array('group_function' => 'sum'));
         }
 
         return $this;
+    }
+
+    /**
+     * Return the group_defs from the list
+     *
+     * @param string $field         we should just look for a field, if found return just that field otherwise return the full list
+     * @return mixed
+     */
+    public function getGroupBy($field = null)
+    {
+        if (!empty($field)) {
+            foreach ($this->defaultReport['group_defs'] as $column) {
+                if ($column['name'] == $field) {
+                    return $column;
+                }
+            }
+        }
+
+        return $this->defaultReport['group_defs'];
+    }
+
+    /**
+     * Remove a Group By Def from the report Definition
+     *
+     * @param array $group_def          The GroupBy Def to remove
+     * @return bool
+     */
+    public function removeGroupBy($group_def)
+    {
+        foreach ($this->defaultReport['group_defs'] as $key => $gdef) {
+            if ($gdef == $group_def) {
+                unset($this->defaultReport['group_defs'][$key]);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -380,9 +423,12 @@ class ReportBuilder
      * @param string $field         Which field to add
      * @param string|null $module   Which module does the field belong to
      * @param string|null $key      Potential Key that we are working with
+     * @param array $params         Additional params that can be added to summary columns
+     *                               - group_function   - How do we want to group the field
+     *                               - qualifier        - How is the field parsed in the reporting engine
      * @return ReportBuilder
      */
-    public function addSummaryColumn($field, $module = null, $key = null)
+    public function addSummaryColumn($field, $module = null, $key = null, $params = array())
     {
         if (!($module instanceof SugarBean)) {
             if (empty($module)) {
@@ -397,14 +443,131 @@ class ReportBuilder
         if (isset($bean->field_defs[$field])) {
             $bean_field = $bean->field_defs[$field];
 
-            $this->defaultReport['summary_columns'][] = array(
+            $field_label = $this->getLabel($bean_field['vname'], $bean->module_name);
+            if(isset($params['group_function'])) {
+                $field_label = strtoupper($params['group_function']) . ": " . $field_label;
+            } elseif(isset($params['qualifier'])) {
+                $field_label = strtoupper($params['qualifier']) . ": " . $field_label;
+            }
+
+            // create the new summary record
+            $new_summary = array_merge(array(
                 'name' => $field,
-                'label' => $bean_field['vname'],
+                'label' => $field_label,
+                'field_type' => $bean_field['type'],
                 'table_key' => $this->findParentTableKey($module, $key, $field),
-            );
+            ), $params);
+
+            // since we only want one of each in the summary if one exist with the same label, lets just dump out instead
+            // of adding a new one
+            $summaries = $this->getSummaryColumns();
+            foreach($summaries as $summary) {
+                if($summary == $new_summary) {
+                    // we have a summary already set, so return false
+                    return $this;
+                }
+            }
+
+            // so we don't have one set yet, lets add it
+            $this->defaultReport['summary_columns'][] = $new_summary;
         }
 
         return $this;
+    }
+
+    /**
+     * Get the Summary Columns
+     *
+     * @param null|string $field            Field to return, if no field is found or specified, the full list will be returned
+     * @return mixed
+     */
+    public function getSummaryColumns($field = null)
+    {
+        if (!empty($field)) {
+            // todo: support for multiple summaries with the same field name but different group_functions or qualifiers
+            foreach ($this->defaultReport['summary_columns'] as $column) {
+                if ($column['name'] == $field) {
+                    return $column;
+                }
+            }
+        }
+
+        return $this->defaultReport['summary_columns'];
+    }
+
+    /**
+     * Remove a summary column
+     *
+     * @param array $summary_column             Which column to remove
+     * @return bool
+     */
+    public function removeSummaryColumn($summary_column)
+    {
+        foreach ($this->defaultReport['summary_columns'] as $key => $sdef) {
+            if ($sdef == $summary_column) {
+                unset($this->defaultReport['summary_columns'][$key]);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Set the numerical_chart_column from a summary column
+     *
+     * @param string|array      $summary_column     The field we want to have being the chart column
+     * @return boolean          True on success and false if the field is not found or doesn't contain a group_function definition
+     */
+    public function setChartColumn($summary_column)
+    {
+        // if it's just string try and find the column
+        if (!is_array($summary_column)) {
+            // try and find the field
+            $summary_column = $this->getSummaryColumns($summary_column);
+        }
+
+        if (!isset($summary_column['name'])) {
+            // field not found
+            return false;
+        }
+
+        // we have a valid file so let set it up
+        if (!isset($summary_column['group_function'])) {
+            // no group by function
+            return false;
+        }
+
+        $name = $summary_column['table_key'] . ":" . $summary_column['name'];
+        if ($summary_column['name'] != "count") {
+            $name .= ":" . $summary_column['group_function'];
+        }
+
+        $this->defaultReport['numerical_chart_column'] = $name;
+        $this->defaultReport['numerical_chart_column_type'] = $summary_column['field_type'];
+
+        // success!
+        return true;
+    }
+
+    /**
+     * Return the current set chart column
+     *
+     * @return mixed
+     */
+    public function getChartColumn()
+    {
+        return $this->defaultReport['numerical_chart_column'];
+    }
+
+    /**
+     * Return the current set chart column type
+     *
+     * @return mixed
+     */
+    public function getChartColumnType()
+    {
+        return $this->defaultReport['numerical_chart_column_type'];
     }
 
     /**
@@ -437,7 +600,7 @@ class ReportBuilder
         }
 
         // make sure that something is set so we don't throw a notice
-        if(!isset($this->defaultReport['filters_def']['Filter_1'])) {
+        if (!isset($this->defaultReport['filters_def']['Filter_1'])) {
             $this->defaultReport['filters_def'] = array('Filter_1' => array());
         }
 
@@ -452,7 +615,7 @@ class ReportBuilder
 
         $this->defaultReport['filters_def']['Filter_1'][] = $filter;
 
-        if(count($this->defaultReport['filters_def']['Filter_1']) == 1) {
+        if (count($this->defaultReport['filters_def']['Filter_1']) == 1) {
             // move it up
             $this->defaultReport['filters_def']['Filter_1'] = array_shift($this->defaultReport['filters_def']['Filter_1']);
         }
@@ -607,5 +770,24 @@ class ReportBuilder
     public function getChartType()
     {
         return $this->defaultReport['chart_type'];
+    }
+
+    /**
+     * Handler for returning a parsed label value
+     *
+     * @param string $label     The label we want to find
+     * @param string|null $module       Override the default ReportBuilder Module
+     * @return mixed
+     */
+    protected function getLabel($label, $module = null)
+    {
+        global $current_language;
+
+        if(empty($module)) {
+            $module = $this->getDefaultModule();
+        }
+        $mod_strings = return_module_language($current_language, $module);
+
+        return get_label($label, $mod_strings);
     }
 }

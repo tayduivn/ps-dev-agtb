@@ -144,20 +144,26 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         $operator = $value->getOperator(true, $this->is_not);
         // we need to check to see if the files exist
         $table_key = join(":", $this->link_path);
+
+        if (strpos($table_key, "self:") === 0) {
+            // replace self with the module name for the self module
+            $self_bean = $this->reportBuilder->getBeanFromTableKey('self');
+            $table_key = preg_replace("#self:#", $self_bean->module_name . ":", $table_key, 1);
+        }
+
         /* @var $def_bean SugarBean */
         $def_bean = $this->reportBuilder->getBeanFromTableKey($table_key);
 
         // make sure the field_name comes from the actual filter not the table key (links are screwy), also ignore
         // any keys are contain a $ variable
-        if($field_name !== $value->getKey()) {
+        if ($field_name !== $value->getKey()) {
             $tmpKey = $value->getKey();
-            if(strstr($tmpKey, '$') === false) {
+            if (strstr($tmpKey, '$') === false) {
                 $field_name = $tmpKey;
             }
         }
 
-        if ($this->checkFieldExist($def_bean, $field_name))
-        {
+        if ($this->checkFieldExist($def_bean, $field_name)) {
             return $value->getValueInputs($field_name, $table_key, $operator);
         }
 

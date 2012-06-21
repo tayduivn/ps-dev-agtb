@@ -36,7 +36,7 @@
         var klass = null, evaledController = null;
         if (controller) {
             try {
-                evaledController = eval("[" + controller + "][0]");
+                evaledController = eval("[" + controller + "][0]\n//@ sourceURL=" + className);
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + className + ": " + e + ":\n" + controller);
             }

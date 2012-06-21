@@ -68,12 +68,13 @@
             chartConfig = {
                 "orientation":"vertical",
                 "barType":"stacked",
-                "tip":"label",
+                "tip":"name",
                 "chartType":"barChart",
                 "imageExportType":"png",
                 "showNodeLabels":false,
                 "showAggregates":false,
-                "saveImageTo":"index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1"
+                "saveImageTo":"",
+                "dataPointSize":"5"
             };
         app.view.View.prototype.render.call(this);
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, {

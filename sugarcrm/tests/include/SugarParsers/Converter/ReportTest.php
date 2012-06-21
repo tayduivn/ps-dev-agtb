@@ -288,13 +288,13 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
             'operator' => 'AND',
             0 => array(
                 'name' => 'billing_address_state',
-                'table_key' => 'self:member_of',
+                'table_key' => 'Accounts:member_of',
                 'qualifier_name' => 'is',
                 'input_name0' => 'UT'
             ),
             1 => array(
                 'name' => 'billing_address_country',
-                'table_key' => 'self:member_of',
+                'table_key' => 'Accounts:member_of',
                 'qualifier_name' => 'is',
                 'input_name0' => 'USA'
             )
@@ -321,7 +321,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
             'operator' => 'AND',
             0 => array(
                 'name' => 'user_name',
-                'table_key' => 'self:assigned_user_link',
+                'table_key' => 'Accounts:assigned_user_link',
                 'qualifier_name' => 'reports_to',
                 'input_name0' => array('seed_chris_id')
             ),
@@ -339,7 +339,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $obj = json_decode('{"contacts": {"assigned_user_link":{ "id" : "seed_chris_id"} } }');
         $this->filter->parse($obj);
         $actual = $this->filter->convert($this->converter);
-        $this->assertEquals('self:contacts:assigned_user_link', $actual['Filter_1'][0]['table_key']);
+        $this->assertEquals('Accounts:contacts:assigned_user_link', $actual['Filter_1'][0]['table_key']);
 
     }
 
@@ -370,7 +370,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
             1 =>
             array (
               'name' => 'user_name',
-              'table_key' => 'self:assigned_user_link',
+              'table_key' => 'Accounts:assigned_user_link',
               'qualifier_name' => 'reports_to',
               'input_name0' =>
               array (

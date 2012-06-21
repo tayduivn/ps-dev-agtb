@@ -186,6 +186,9 @@ $mod_strings = array (
   'LBL_QC_COMMIT_BEST_CASE'=>'Commit Amount (Best Case):',
   'LBL_QC_COMMIT_LIKELY_CASE'=>'Commit Amount (Likely Case):',
   'LBL_QC_COMMIT_WORST_CASE'=>'Commit Amount (Worst Case):',
+  'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
+  'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
+  'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
   
   'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
   'LBL_FMT_ROLLUP_FORECAST'=>'(Rollup)',
