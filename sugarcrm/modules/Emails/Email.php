@@ -2576,6 +2576,7 @@ class Email extends SugarBean {
 
 		//Perform a count query needed for pagination.
 		$countQuery = $this->create_list_count_query($fullQuery);
+		
 		$count_rs = $this->db->query($countQuery, false, 'Error executing count query for imported emails search');
 		$count_row = $this->db->fetchByAssoc($count_rs);
 		$total_count = ($count_row != null) ? $count_row['c'] : 0;
@@ -2663,14 +2664,16 @@ class Email extends SugarBean {
         //Handle from and to addr joins
         if( !empty($_REQUEST['from_addr']) )
         {
+            $from_addr = $this->db->quote(strtolower($_REQUEST['from_addr']));
             $query['joins'] .= "INNER JOIN emails_email_addr_rel er_from ON er_from.email_id = emails.id AND er_from.deleted = 0 INNER JOIN email_addresses ea_from ON ea_from.id = er_from.email_address_id
-                                AND er_from.address_type='from' AND ea_from.email_address='" . strtolower($_REQUEST['from_addr']) . "'";
+                                AND er_from.address_type='from' AND ea_from.email_address LIKE '%" . $from_addr . "%'";
         }
 
         if( !empty($_REQUEST['to_addrs'])  )
         {
+            $to_addrs = $this->db->quote(strtolower($_REQUEST['to_addrs']));
             $query['joins'] .= "INNER JOIN emails_email_addr_rel er_to ON er_to.email_id = emails.id AND er_to.deleted = 0 INNER JOIN email_addresses ea_to ON ea_to.id = er_to.email_address_id
-                                    AND er_to.address_type='to' AND ea_to.email_address='" . strtolower($_REQUEST['to_addrs']) . "'";
+                                    AND er_to.address_type='to' AND ea_to.email_address LIKE '%" . $to_addrs . "%'";
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -2689,7 +2692,7 @@ class Email extends SugarBean {
              $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
-
+        
         return $fullQuery;
     }
         /**
@@ -2705,8 +2708,8 @@ class Email extends SugarBean {
             unset($_REQUEST['assigned_user_id']);
 
         $availableSearchParam = array('name' => array('table_name' =>'emails'),
-                                        'data_parent_id_search' => array('table_name' =>'emails','db_key' => 'parent_id','opp' => '='),
-                                        'assigned_user_id' => array('table_name' => 'emails', 'opp' => '=') );
+                                      'data_parent_id_search' => array('table_name' =>'emails','db_key' => 'parent_id','opp' => '='),
+                                      'assigned_user_id' => array('table_name' => 'emails', 'opp' => '=') );
 
 		$additionalWhereClause = array();
 		foreach ($availableSearchParam as $key => $properties)
@@ -2714,15 +2717,17 @@ class Email extends SugarBean {
 		      if( !empty($_REQUEST[$key]) )
 		      {
 		          $db_key =  isset($properties['db_key']) ? $properties['db_key'] : $key;
-		          $searchValue = $_REQUEST[$key];
+                  $searchValue = $this->db->quote($_REQUEST[$key]);
 
 		          $opp = isset($properties['opp']) ? $properties['opp'] : 'like';
 		          if($opp == 'like')
-		              $searchValue = $searchValue . "%";
+		              $searchValue = "%" . $searchValue . "%";
 
 		          $additionalWhereClause[] = "{$properties['table_name']}.$db_key $opp '$searchValue' ";
 		      }
         }
+        
+        
 
         $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);

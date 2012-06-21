@@ -3961,6 +3961,7 @@ SUGAR.reports = function() {
 	        					myColumnDefs, myDataSource, 
 	        					{height : "270px", width: "200px"}
 	        );
+            myDataTable.sortColumn(myDataTable.getColumn(0), YAHOO.widget.DataTable.CLASS_ASC);
 	        /*
 	        myDataTable.subscribe("rowClickEvent", myDataTable.onEventSelectRow);
 	        myDataTable.subscribe("rowSelectEvent", SUGAR.reports.gridRowClickHandler);
