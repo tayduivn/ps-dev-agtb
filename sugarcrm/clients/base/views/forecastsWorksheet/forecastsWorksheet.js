@@ -42,9 +42,7 @@
         this.layout.context.on("change:selectedUser", function(context, selectedUser) { self.updateWorksheetBySelectedUser(selectedUser); });
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
         this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
-
-        //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
-        //this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
+        this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
     },
 
     createURL:function() {
@@ -69,13 +67,6 @@
             url += '?' + params.substr(1);
         }
         return url;
-    },
-
-    /***
-     * TEMPORARY FUNCTION just to show flag toggle in console
-     */
-    updateWorksheetByMgrOpps: function(){
-        console.log("Worksheet's context.showManagerOpportunities has changed");
     },
 
     /**
@@ -274,6 +265,17 @@
         model.url = this.createURL();
         model.fetch();
         this.render();
+    },
+
+    /***
+     * Event Handler for showing a manager's opportunities
+     *
+     * @param params
+     */
+    updateWorksheetByMgrOpportunities: function(params){
+        //console.log("Worksheet's context.showManagerOpportunities has changed");
+        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
+        // on the user tree
     },
 
     /**
