@@ -21,19 +21,22 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('tests/rest/RestTestBase.php');
 
-class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
+class RestTestLogin extends RestTestBase
 {
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        // Start out with a fake auth token to prevent _restCall from auto logging in
+        $this->authToken = 'LOGGING_IN';
+        
+        parent::setUp();
     }
-    
+
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
+
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
         if ( isset($this->contact->id) ) {
@@ -46,33 +49,6 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    protected function _restCall($urlPart,$postBody,$httpAction='')
-    {
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
-        
-        $ch = curl_init($urlBase.$urlPart);
-        if (!empty($postBody)) {
-            if (empty($httpAction)) {
-                curl_setopt($ch, CURLOPT_POST, 1);
-                $httpAction = 'POST';
-            }
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
-        } else {
-            if (empty($httpAction)) {
-                $httpAction = 'GET';
-            }
-        }
-        
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-        $httpInfo = curl_getinfo($ch); 
-        $httpReply = curl_exec($ch);
-
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply);
-    }
-    
     public function testRestLoginUser()
     {
         $args = array(
@@ -82,13 +58,16 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
             'client_id' => 'sugar',
             'client_secret' => '',
         );
-        
+
         $reply = $this->_restCall('oauth2/token',json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
-                                                          
+        
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
     }
 
     public function testRestLoginUserAutocreateKey()
@@ -108,7 +87,10 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($reply['reply']['refresh_token']);
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
-                                                          
+        
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
     }
 
 
@@ -137,7 +119,10 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($reply['reply']['refresh_token']);
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
-                                                          
+        
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
     }
 
     public function testRestLoginRefresh()
@@ -156,6 +141,10 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
         
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+
         $refreshToken = $reply['reply']['refresh_token'];
 
         
@@ -166,6 +155,8 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
             'client_secret' => '',
         );
         
+        // Prevents _restCall from automatically logging in
+        $this->authToken = 'LOGGING_IN';
         $reply2 = $this->_restCall('oauth2/token',json_encode($args));
         // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
         $this->assertNotEmpty($reply2['reply']['access_token']);
@@ -175,6 +166,9 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply2['reply']['token_type']);
         
+        $this->authToken = $reply2['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
     }
 
     public function testRestLoginSupportPortal()
@@ -217,6 +211,9 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply['reply']['token_type']);
 
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
 
         $refreshToken = $reply['reply']['refresh_token'];
 
@@ -228,6 +225,8 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
             'client_secret' => '',
         );
         
+        // Prevents _restCall from automatically logging in
+        $this->authToken = 'LOGGING_IN';
         $reply2 = $this->_restCall('oauth2/token',json_encode($args));
         // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
         $this->assertNotEmpty($reply2['reply']['access_token']);
@@ -237,7 +236,39 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
         $this->assertEquals('bearer',$reply2['reply']['token_type']);
         
+        $this->authToken = $reply2['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
                                                           
     }
 
+    function testLoginFromRegularSession() {
+        // Kill the session
+        session_regenerate_id();
+        session_start();
+
+        // We have the technology, we can rebuild it
+        $_SESSION = array();
+        $_SESSION['is_valid_session'] = true;
+        $_SESSION['ip_address'] = '127.0.0.1';
+        $_SESSION['user_id'] = $this->_user->id;
+        $_SESSION['type'] = 'user';
+        $_SESSION['authenticated_user_id'] = $this->_user->id;
+        $_SESSION['unique_key'] = $GLOBALS['sugar_config']['unique_key'];
+        
+        $generatedSession = session_id();
+        session_write_close();
+
+        // Try using a normal session as the oauth_token
+        $this->authToken = $generatedSession;
+        
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+
+        // Now try passing the oauth_token in as a GET variable
+        $this->authToken = 'LOGGING_IN';
+        $replyPing = $this->_restCall('ping?oauth_token='.$generatedSession);
+        $this->assertEquals('pong',$replyPing['reply']);
+        
+    }
 }
