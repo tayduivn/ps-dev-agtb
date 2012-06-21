@@ -62,7 +62,7 @@
             </td>
             <td colspan='1' nowrap>
 
-                <input class='portalProperty portalField' id='detailFieldCount' name='detailFieldCount' value='{$detailFieldCount}' size=4>
+                <input class='portalProperty portalField' id='detailFieldCount' name='detailFieldCount' value='{$fieldsToDisplay}' size=4>
             </td>
         </tr>
 

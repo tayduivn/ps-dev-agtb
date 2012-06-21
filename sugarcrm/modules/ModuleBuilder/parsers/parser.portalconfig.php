@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'detailFieldCount');
+        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay');
         $portalConfig = array(
             'platform' => 'portal',
             'env' => 'dev',

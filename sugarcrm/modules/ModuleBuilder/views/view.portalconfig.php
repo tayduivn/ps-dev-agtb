@@ -50,10 +50,14 @@ class ViewPortalConfig extends SugarView
 	{
 	}
 
+    /**
+     * This function loads portal config vars from db and sets them for the view
+     * @see SugarView::display() for more info
+   	 */
 	function display() 
 	{
         $portalFields = array('on'=>'0', 'logoURL'=>
-        '', 'maxQueryResult'=>'20', 'detailFieldCount'=>'5');
+        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5');
         $admin = new Administration();
        	$admin->retrieveSettings();
 
