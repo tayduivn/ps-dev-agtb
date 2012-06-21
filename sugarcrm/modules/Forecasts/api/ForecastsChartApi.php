@@ -77,7 +77,7 @@ class ForecastsChartApi extends ChartApi
         );
 
         // generate the report builder instance
-        $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters);
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters, $args);
 
         if (isset($args['ct']) && !empty($args['ct'])) {
             $rb->setChartType($this->mapChartType($args['ct']));
@@ -113,7 +113,7 @@ class ForecastsChartApi extends ChartApi
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
         $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user']);
-        $likely_values = $this->getLikelyValues($testFilters);
+        $likely_values = $this->getLikelyValues($testFilters, $args);
 
 
         // decode the data to add stuff to the properties
@@ -135,11 +135,13 @@ class ForecastsChartApi extends ChartApi
             //$dataArray['values'][$key]['sales_stage'] = $dataArray['label'];
 
             // format the value labels
-            foreach($value['valuelabels'] as $vl_key => $vl_val) {
-                // ignore the empties
-                if(empty($vl_val)) continue;
+            if ($rb->getChartColumnType() == "currency") {
+                foreach ($value['valuelabels'] as $vl_key => $vl_val) {
+                    // ignore the empties
+                    if (empty($vl_val)) continue;
 
-                $dataArray['values'][$key]['valuelabels'][$vl_key] = format_number($vl_val, null, null, array('currency_symbol' => true));
+                    $dataArray['values'][$key]['valuelabels'][$vl_key] = format_number($vl_val, null, null, array('currency_symbol' => true));
+                }
             }
 
             // extract the values to variables
@@ -160,15 +162,18 @@ class ForecastsChartApi extends ChartApi
      * Run a report to generate the likely values for the main report
      *
      * @param array $arrFilters     Which filters to apply to the report
+     * @param array $args           Service Arguments
      * @return array                The likely values from the system.
      */
-    protected function getLikelyValues($arrFilters)
+    protected function getLikelyValues($arrFilters, $args)
     {
         // base report
         $report_base = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test Goal Marker Report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}';
 
         // generate a report builder instance
-        $rb = $this->generateReportBuilder("Opportunities", $report_base, $arrFilters);
+        // ignore any group by for this method
+        unset($args['gb']);
+        $rb = $this->generateReportBuilder("Opportunities", $report_base, $arrFilters, $args);
 
         // run the report
         $report = new Report($rb->toJson());
@@ -188,7 +193,7 @@ class ForecastsChartApi extends ChartApi
             // key is the same that would be used for the main report
             $results[$row['cells'][0]['val']] = array(
                 'amount' => $sum, // use the unformatted number for the value in the chart
-                'amount_formatted' => format_number($sum, null, null, array('currency_symbol' => true))  // format the number for the label
+                'amount_formatted' => format_number($sum, null, null, array('currency_symbol' => true)) // format the number for the label
             );
         }
 
@@ -202,11 +207,11 @@ class ForecastsChartApi extends ChartApi
      * @param string|SugarBean $module      Which module are we basing this off of
      * @param string $report_base           The base report to start with in a json string
      * @param array $filters                What filters to apply
+     * @param array $args                   Service Arguments
      * @return ReportBuilder
      */
-    protected function generateReportBuilder($module, $report_base, $filters)
+    protected function generateReportBuilder($module, $report_base, $filters, $args = array())
     {
-
         // make sure module is a string and not a sugar bean
         if ($module instanceof SugarBean) {
             $module = $module->module_dir;
@@ -226,7 +231,42 @@ class ForecastsChartApi extends ChartApi
         // add the filter to the report builder
         $rb->addFilter($reportFilters);
 
+        // handle any group by if it is set
+        $this->processGroupBy($rb, $args);
+
         // return the report builder
+        return $rb;
+    }
+
+    /**
+     * Handle any group by arguments in the code
+     *
+     * @param ReportBuilder $rb         ReportBuilder Instance
+     * @param array $args               Service Arguments
+     * @return ReportBuilder
+     */
+    protected function processGroupBy($rb, $args)
+    {
+        if (isset($args['gb']) && !empty($args['gb'])) {
+            // get the current group by
+            $group_by = $rb->getGroupBy();
+
+            // if we have more than one, remove all but the date_closed
+            if (count($group_by) > 1) {
+                // remove anyone that is not the date_closed column
+                foreach ($group_by as $gb) {
+                    if ($gb['name'] != "date_closed") {
+                        $rb->removeGroupBy($gb);
+                    }
+                }
+            }
+            // now lets add the new gb
+            $rb->addGroupBy($args['gb']);
+
+            // add a count column just in case.
+            $rb->addSummaryCount();
+        }
+
         return $rb;
     }
 
