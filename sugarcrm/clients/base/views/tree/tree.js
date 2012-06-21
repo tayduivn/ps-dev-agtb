@@ -114,7 +114,6 @@
                     // Handle different types of nodes
                     switch(nodeType) {
                         case "parent_link":
-                            console.log("TreeNode selected: Parent -- reloading tree for root: " + selectedUser.full_name);
                             var returnParentSuffix = '';
 
                             // selectedUser has the metadata of the currently-selected-user's parent
@@ -126,29 +125,23 @@
                             }
 
                             self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + returnParentSuffix;
-                            console.log("CurrentTreeUrl changed, re-rendering with URL: " , self.currentTreeUrl);
                             self.rendered = false;
                             self.render();
                             break;
 
                         case "manager":
-                            console.log("TreeNode selected: Manager -- reloading tree for root: " + selectedUser.full_name);
-
                             // add /1 to end of url to hit the reporteesWithParent endpoint
                             self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + '/1';
-                            console.log("CurrentTreeUrl changed, re-rendering with URL: " , self.currentTreeUrl);
                             self.rendered = false;
                             self.render();
                             break;
 
                         case "my_opportunities":
-                            console.log("TreeNode selected: My Opportunites -- loading opportunities for: " + selectedUser.full_name);
-
+                            // Anything special for My Opportunities
                             break;
 
                         case "rep":
-                            console.log("TreeNode selected: Rep -- loading rep view for: " + selectedUser.full_name);
-
+                            // Anything special for the Rep
                             break;
                     }
                 }

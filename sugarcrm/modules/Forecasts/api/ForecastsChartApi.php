@@ -280,11 +280,12 @@ class ForecastsChartApi extends ChartApi
      */
     protected function processDataset($rb, $args)
     {
-        error_log('Process DataSet');
+        // make sure something is set
         if (!isset($args['ds']) || empty($args['ds'])) {
             $args['ds'] = "likely";
         }
 
+        // switch around it
         switch (strtolower($args['ds'])) {
             case 'best_case':
             case 'best':
@@ -305,6 +306,7 @@ class ForecastsChartApi extends ChartApi
 
         }
 
+        // return!
         return $rb;
     }
 
