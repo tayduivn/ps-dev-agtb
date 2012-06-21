@@ -131,14 +131,14 @@
 
                 callbacks = {
                     success: function(){
-                        app.router.start();
                         self.refreshingLogin = false;
+                        app.router.start();
                     },
                     error: function(){
+                        self.refreshingLogin = false;
                         // Note that these are the xhr and error from original 401 since we don't want the xhr
                         // and error from the refresh http call!
                         cb(originalXhr, originalError);
-                        self.refreshingLogin = false;
                     }
                 };
                 app.api.login({},{refresh:true},callbacks);
