@@ -228,6 +228,9 @@ SUGAR.App = (function() {
                 }
                 self.initModules();
                 self.loadConfig();
+                if (!opts.silent) {
+                    _app.trigger("app:init", self);
+                }
                 if (opts.callback && _.isFunction(opts.callback)) {
                     opts.callback(_app);
                 }
@@ -241,9 +244,7 @@ SUGAR.App = (function() {
             } else {
                 syncCallback();
             }
-            if (!opts.silent) {
-                _app.trigger("app:init", this);
-            }
+
             return _app;
         },
         /**
