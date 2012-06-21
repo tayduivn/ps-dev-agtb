@@ -166,7 +166,8 @@
                 /* TODO: Add any other oauth or custom codes we care about here */
             },
 
-            _firstAttemptRefresh: [ "need_login", "invalid_grant" ],
+            // Unless one of these, 401's will always attempt to refresh token before falling back to generic 401 handling.
+            _dontAttemptRefresh: ["invalid_client", "invalid_request", "unauthorized_client", "unsupported_grant_type", "invalid_scope"],
             
             /**
              * Authentication error.
@@ -197,9 +198,9 @@
             "401": function(xhr, error) {
                 var self = this, callbacks, s;
 
-                // First look in our array of error types that "should" try token refresh first.
+                // First check that it is not an error that we do NOT refresh on
                 s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
-                if(s.error && $.inArray(s.error, self.statusCodes._firstAttemptRefresh) > -1) {
+                if(s.error && $.inArray(s.error, self.statusCodes._dontAttemptRefresh) === -1) {
 
                     self.attemptRefresh(xhr, error, function() {
 
