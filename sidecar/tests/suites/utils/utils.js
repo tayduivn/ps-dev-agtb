@@ -235,6 +235,41 @@ describe("utils", function() {
             expect(result.getMinutes()).toEqual(0);
             expect(result.getHours()).toEqual(11);
         });
+
+        it("should convert a UTC date into a local date", function() {
+            var date     = new Date("April 1, 2012 10:31:50"),
+                offset   = date.getTimezoneOffset(),
+                UTC     = new Date("April 1, 2012 10:31:50 UTC");
+
+            if (offset !== 0) {
+                expect(date.toString()).not.toEqual(UTC.toString());
+                expect(utils.date.UTCtoLocalTime(UTC).toString()).not.toEqual(date.toString());
+            }
+        });
+
+        it("should convert into relative time", function() {
+            var ts                      = new Date().getTime(),
+                LBL_TIME_AGO_NOW        = new Date(ts - 1*1000),
+                LBL_TIME_AGO_SECONDS    = new Date(ts - 10*1000),
+                LBL_TIME_AGO_MINUTE     = new Date(ts - 70*1000),
+                LBL_TIME_AGO_MINUTES    = new Date(ts - 130*1000),
+                LBL_TIME_AGO_HOUR       = new Date(ts - 3610*1000),
+                LBL_TIME_AGO_HOURS      = new Date(ts - 7230*1000),
+                LBL_TIME_AGO_DAY        = new Date(ts - 90000*1000),
+                LBL_TIME_AGO_DAYS       = new Date(ts - 200000*1000),
+                LBL_TIME_AGO_YEAR       = new Date(ts - 400*84600*1000);
+
+            console.log(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_SECONDS).str);
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_NOW).str).toEqual("LBL_TIME_AGO_NOW");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_SECONDS).str).toEqual("LBL_TIME_AGO_SECONDS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_MINUTE).str).toEqual("LBL_TIME_AGO_MINUTE");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_MINUTES).str).toEqual("LBL_TIME_AGO_MINUTES");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_HOUR).str).toEqual("LBL_TIME_AGO_HOUR");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_HOURS).str).toEqual("LBL_TIME_AGO_HOURS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_DAY).str).toEqual("LBL_TIME_AGO_DAY");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_DAYS).str).toEqual("LBL_TIME_AGO_DAYS");
+            expect(utils.date.getRelativeTimeLabel(LBL_TIME_AGO_YEAR).str).toEqual("LBL_TIME_AGO_YEAR");
+        });
    });
    
     describe("cookie", function() {

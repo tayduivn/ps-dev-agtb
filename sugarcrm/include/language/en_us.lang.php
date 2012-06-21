@@ -3358,6 +3358,17 @@ $app_strings = array (
     'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
+
+    'LBL_TIME_AGO_NOW' => 'right now',
+    'LBL_TIME_AGO_SECONDS' => 'less than a minute ago',
+    'LBL_TIME_AGO_MINUTE' => 'about 1 minute ago',
+    'LBL_TIME_AGO_MINUTES' => '{{this}} minutes ago',
+    'LBL_TIME_AGO_HOUR' => 'about a hour ago',
+    'LBL_TIME_AGO_HOURS' => '{{this}} hours ago',
+    'LBL_TIME_AGO_DAY' => 'yesterday',
+    'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
+    'LBL_TIME_AGO_YEAR' => 'over a year ago',
+    'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
