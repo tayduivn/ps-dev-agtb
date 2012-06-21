@@ -306,7 +306,7 @@ class ReportBuilder
                     ),
                     'dependents' => array(),
                     'module' => $link['module'],
-                    'label' => $link['vname']
+                    'label' => $this->getLabel($link['vname'], $link['module'])
                 );
 
                 $this->defaultReport['full_table_list'][$key] = $arrLink;
@@ -369,7 +369,7 @@ class ReportBuilder
 
             $this->defaultReport['group_defs'][] = array(
                 'name' => $field,
-                'label' => $bean_field['vname'],
+                'label' => $this->getLabel($bean_field['vname'], $bean->module_name),
                 'table_key' => $this->findParentTableKey($bean->module_dir, $key, $field),
                 'type' => $bean_field['type'],
             );
@@ -443,12 +443,33 @@ class ReportBuilder
         if (isset($bean->field_defs[$field])) {
             $bean_field = $bean->field_defs[$field];
 
-            $this->defaultReport['summary_columns'][] = array_merge(array(
+            $field_label = $this->getLabel($bean_field['vname'], $bean->module_name);
+            if(isset($params['group_function'])) {
+                $field_label = strtoupper($params['group_function']) . ": " . $field_label;
+            } elseif(isset($params['qualifier'])) {
+                $field_label = strtoupper($params['qualifier']) . ": " . $field_label;
+            }
+
+            // create the new summary record
+            $new_summary = array_merge(array(
                 'name' => $field,
-                'label' => $bean_field['vname'],
+                'label' => $field_label,
                 'field_type' => $bean_field['type'],
                 'table_key' => $this->findParentTableKey($module, $key, $field),
             ), $params);
+
+            // since we only want one of each in the summary if one exist with the same label, lets just dump out instead
+            // of adding a new one
+            $summaries = $this->getSummaryColumns();
+            foreach($summaries as $summary) {
+                if($summary == $new_summary) {
+                    // we have a summary already set, so return false
+                    return $this;
+                }
+            }
+
+            // so we don't have one set yet, lets add it
+            $this->defaultReport['summary_columns'][] = $new_summary;
         }
 
         return $this;
@@ -463,6 +484,7 @@ class ReportBuilder
     public function getSummaryColumns($field = null)
     {
         if (!empty($field)) {
+            // todo: support for multiple summaries with the same field name but different group_functions or qualifiers
             foreach ($this->defaultReport['summary_columns'] as $column) {
                 if ($column['name'] == $field) {
                     return $column;
@@ -511,13 +533,13 @@ class ReportBuilder
         }
 
         // we have a valid file so let set it up
-        if(!isset($summary_column['group_function'])) {
+        if (!isset($summary_column['group_function'])) {
             // no group by function
             return false;
         }
 
         $name = $summary_column['table_key'] . ":" . $summary_column['name'];
-        if($summary_column['name'] != "count") {
+        if ($summary_column['name'] != "count") {
             $name .= ":" . $summary_column['group_function'];
         }
 
@@ -733,5 +755,24 @@ class ReportBuilder
     public function getChartType()
     {
         return $this->defaultReport['chart_type'];
+    }
+
+    /**
+     * Handler for returning a parsed label value
+     *
+     * @param string $label     The label we want to find
+     * @param string|null $module       Override the default ReportBuilder Module
+     * @return mixed
+     */
+    protected function getLabel($label, $module = null)
+    {
+        global $current_language;
+
+        if(empty($module)) {
+            $module = $this->getDefaultModule();
+        }
+        $mod_strings = return_module_language($current_language, $module);
+
+        return get_label($label, $mod_strings);
     }
 }

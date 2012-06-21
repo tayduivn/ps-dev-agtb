@@ -113,7 +113,7 @@ class ForecastsChartApi extends ChartApi
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
         $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user']);
-        $likely_values = $this->getLikelyValues($testFilters, $args);
+        $likely_values = $this->getDataSetValues($testFilters, $args);
 
 
         // decode the data to add stuff to the properties
@@ -165,7 +165,7 @@ class ForecastsChartApi extends ChartApi
      * @param array $args           Service Arguments
      * @return array                The likely values from the system.
      */
-    protected function getLikelyValues($arrFilters, $args)
+    protected function getDataSetValues($arrFilters, $args)
     {
         // base report
         $report_base = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test Goal Marker Report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}';
@@ -234,6 +234,9 @@ class ForecastsChartApi extends ChartApi
         // handle any group by if it is set
         $this->processGroupBy($rb, $args);
 
+        // handle the dataset
+        $this->processDataset($rb, $args);
+
         // return the report builder
         return $rb;
     }
@@ -265,6 +268,41 @@ class ForecastsChartApi extends ChartApi
 
             // add a count column just in case.
             $rb->addSummaryCount();
+        }
+
+        return $rb;
+    }
+
+    /**
+     * @param ReportBuilder $rb
+     * @param $args
+     * @return ReportBuilder
+     */
+    protected function processDataset($rb, $args)
+    {
+        error_log('Process DataSet');
+        if (!isset($args['ds']) || empty($args['ds'])) {
+            $args['ds'] = "likely";
+        }
+
+        switch (strtolower($args['ds'])) {
+            case 'best_case':
+            case 'best':
+                $rb->addSummaryColumn('best_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('best_case_worksheet');
+                break;
+            case 'worst_case':
+            case 'worst':
+                $rb->addSummaryColumn('worst_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('worst_case');
+                break;
+            case 'likely_case':
+            case 'likely':
+            default:
+                $rb->addSummaryColumn('likely_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('likely_case_worksheet');
+                break;
+
         }
 
         return $rb;
