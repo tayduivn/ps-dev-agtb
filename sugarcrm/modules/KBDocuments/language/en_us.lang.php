@@ -44,6 +44,7 @@ $mod_strings = array (
 	'LBL_SELECT_TAG_BUTTON_TITLE' => 'Select',
 	'LBL_ATTACHMENTS' => 'Attachments:',
 	'LBL_EMBEDED_IMAGES' => 'Embedded Images:',
+	'LBL_SHOW_ARTICLES' => 'Show More Articles',
 	'LBL_SHOW_ARTICLE_DETAILS' => 'Show More Details',
 	'LBL_HIDE_ARTICLE_DETAILS' => 'Hide Details',
 	'LBL_TAGS' => 'Tags:',

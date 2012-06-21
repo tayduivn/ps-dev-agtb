@@ -59,6 +59,7 @@ $mod_strings = array (
   'LBL_RELEASE' => 'Release:',
   'LNK_NEW_BUG' => 'Report Bug',
   'LNK_BUG_LIST' => 'View Bugs',
+  'LBL_SHOW_BUGS' => 'Show More Bugs',
   'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this contact from the bug?',
   'NTC_REMOVE_ACCOUNT_CONFIRMATION' => 'Are you sure you want to remove this bug from this account?',
   'ERR_DELETE_RECORD' => 'You must specify a record number in order to delete the bug.',
