@@ -596,6 +596,34 @@ class Opportunity extends SugarBean
 	}
 
 
+	public function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL )
+	{
+		global $current_user;
+
+		if ( is_null($user_id) ) {
+			$user_id = $current_user->id;
+		}
+		if ( is_null($timeperiod_id) ) {
+			$timeperiod_id = TimePeriod::getCurrentId();
+		}
+
+		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
+				. " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
+				. " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
+				. " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
+				. " AND opportunities.deleted = 0";
+
+		$query = $this->create_list_query(NULL, $where);
+		$query = $this->create_list_count_query($query);
+		
+		$result = $this->db->query($query);
+		$row = $this->db->fetchByAssoc($result);
+		$opportunitiesCount = $row['c'];
+		
+		return $opportunitiesCount;
+	}
+
+
 	/**
 	 * Get the total revenue for the given user and timeperiod.  Defaults to the current user
 	 * and current timeperiod.
@@ -603,7 +631,7 @@ class Opportunity extends SugarBean
 	 * @param null $user_id
 	 * @param null $timeperiod_id
 	 */
-	public function getRevenue( $user_id = NULL, $timeperiod_id = NULL )
+	public function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL )
 	{
 		global $current_user;
 		$revenue = 0;
@@ -618,12 +646,11 @@ class Opportunity extends SugarBean
 		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
 		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
 		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
-		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST);
+		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
+		       . " AND opportunities.deleted = 0";
 		
 		$query  = $this->create_list_query(NULL, $where);
-		
-		$GLOBALS['log']->log('DEBUG', $query);
-		
+
 		$result = $this->db->query($query);
 
 		while ( $row = $this->db->fetchByAssoc($result) ) {

@@ -33,10 +33,11 @@ class ForecastsProgressApi extends ModuleApi
 	
 	protected $closed;
 	protected $forecastData;
+	protected $opportunitiesInPipeline;
 	protected $user_id;
 	protected $user;
 	protected $timeperiod_id;
-	protected $revenue;
+	protected $revenueInPipeline;
 	protected $should_rollup;
 	protected $quotaData;
 	protected $_loaded;
@@ -97,7 +98,8 @@ class ForecastsProgressApi extends ModuleApi
 
 		$opportunity = new Opportunity();
 		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id);
-		$this->revenue     = $opportunity->getRevenue($this->user_id, $this->timeperiod_id);
+		$this->revenueInPipeline = $opportunity->getPipelineRevenue($this->user_id, $this->timeperiod_id);
+		$this->opportunitiesInPipeline = $opportunity->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id);
 	}
 
 
@@ -213,8 +215,7 @@ class ForecastsProgressApi extends ModuleApi
 	{
 		$this->loadProgressData($args);
 
-		$opportunities = 0;
-		return $opportunities;
+		return $this->opportunitiesInPipeline;
 	}
 
 
@@ -222,7 +223,7 @@ class ForecastsProgressApi extends ModuleApi
 	{
 		$this->loadProgressData($args);
 
-		return $this->revenue;
+		return $this->revenueInPipeline;
 	}
 
 
