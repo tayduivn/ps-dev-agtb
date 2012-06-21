@@ -24,7 +24,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testConstructorSetsModule()
     {
@@ -37,7 +37,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testConstructorSetsSelfTable()
     {
@@ -55,7 +55,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testToJson()
     {
@@ -67,7 +67,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testToArray()
     {
@@ -77,7 +77,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddModuleWithKey()
     {
@@ -96,7 +96,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetTableKeyWithModuleReturnsString()
     {
@@ -106,7 +106,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetTableKeyWithNotModuleReturnsArray()
     {
@@ -116,7 +116,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetBeanReturnsAccountSugarBeanFromCache()
     {
@@ -126,7 +126,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetBeanReturnsContactSugarBeanAfterCreate()
     {
@@ -136,7 +136,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetDefaultModuleAsString()
     {
@@ -146,7 +146,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetDefaultModuleAsAccountBean()
     {
@@ -156,7 +156,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddSummaryCount()
     {
@@ -176,7 +176,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddSummaryColumnWithoutModule()
     {
@@ -195,7 +195,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddSummaryColumnWithModuleAsString()
     {
@@ -214,7 +214,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddSummaryColumnWithModuleAsSugarBean()
     {
@@ -233,7 +233,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddGroupByWithModule()
     {
@@ -252,7 +252,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddGroupByWithoutModule()
     {
@@ -271,7 +271,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddLinkSetsTableInList()
     {
@@ -285,7 +285,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddLinkSetsFieldInSummaryColumns()
     {
@@ -299,7 +299,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddLinkSetsFieldInGroupDefs()
     {
@@ -313,7 +313,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddLinkToAccountModule()
     {
@@ -327,7 +327,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testAddFilter()
     {
@@ -352,7 +352,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetBeanFromTableKeyReturnsFalse()
     {
@@ -364,7 +364,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetBeanFromTableKeyReturnsAccountBean()
     {
@@ -376,7 +376,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetLinkTableReturnsArrayWhenLinkDoesntExist()
     {
@@ -388,7 +388,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testGetLinkTableReturnsStringWhenLinkExist()
     {
@@ -401,7 +401,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testMultiLevelLink()
     {
@@ -413,7 +413,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testSetSetValidChartType()
     {
@@ -425,7 +425,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testSetInvalidChartTypeEqualshBarF()
     {
@@ -437,7 +437,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testLoadSavedReportReturnsFalseWithNonValidGuid()
     {
@@ -449,7 +449,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testLoadSavedReportReturnsFalseWhenSavedReportModuleDoesntMatchParentModule()
     {
@@ -465,7 +465,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testLoadSavedReportReturnsTrue()
     {
@@ -481,7 +481,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testLoadSavedReportWithAdditionalFiltersContainsDefaultFilter()
     {
@@ -520,7 +520,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group ReportBuilder
-     * @gruop SugarCharts
+     * @group SugarCharts
      */
     public function testLoadSavedReportWithAdditionalFiltersContainsNewFilter()
     {
@@ -545,6 +545,240 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($filter['Filter_1'], $filters['Filter_1'][1]);
 
         $this->removeTestReport($saved_report->id);
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testGetGroupByReturnsFullList()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->addGroupBy('name', 'Accounts');
+        $rb->addGroupBy('billing_address_city', 'Accounts');
+
+        $actual = $rb->getGroupBy();
+
+        $expected = array(
+            array(
+                'name' => 'name',
+                'label' => 'Name:',
+                'table_key' => 'self',
+                'type' => 'name',
+            ),
+            array(
+                'name' => 'billing_address_city',
+                'label' => 'Billing City:',
+                'table_key' => 'self',
+                'type' => 'varchar',
+            ),
+        );
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testGetGroupByWithFieldReturnsField()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->addGroupBy('name', 'Accounts');
+        $rb->addGroupBy('billing_address_city', 'Accounts');
+
+        $actual = $rb->getGroupBy('billing_address_city');
+
+        $expected = array(
+            'name' => 'billing_address_city',
+            'label' => 'Billing City:',
+            'table_key' => 'self',
+            'type' => 'varchar',
+        );
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testRemoveGroupByReturnsTrue()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->addGroupBy('name', 'Accounts');
+        $rb->addGroupBy('billing_address_city', 'Accounts');
+
+        $group_by = array(
+            'name' => 'billing_address_city',
+            'label' => 'Billing City:',
+            'table_key' => 'self',
+            'type' => 'varchar',
+        );
+
+        $this->assertTrue($rb->removeGroupBy($group_by));
+
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testRemoveGroupByReturnsFalseWithInvalidGroupByDef()
+    {
+        $rb = new ReportBuilder('Accounts');
+        $rb->addGroupBy('name', 'Accounts');
+        $rb->addGroupBy('billing_address_city', 'Accounts');
+
+        $this->assertFalse($rb->removeGroupBy('billing_address_city'));
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testGetSummaryColumns()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $expected = array(
+            array(
+                'name' => 'likely_case',
+                'label' => 'Likely case',
+                'field_type' => 'currency',
+                'table_key' => 'self',
+            ),
+            array(
+                'name' => 'best_case',
+                'label' => 'SUM: Best case',
+                'field_type' => 'currency',
+                'table_key' => 'self',
+                'group_function' => 'sum',
+            ),
+        );
+
+        $this->assertSame($expected, $rb->getSummaryColumns());
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testGetSummaryColumnByFieldName()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $expected = array(
+            'name' => 'best_case',
+            'label' => 'SUM: Best case',
+            'field_type' => 'currency',
+            'table_key' => 'self',
+            'group_function' => 'sum',
+        );
+
+        $this->assertSame($expected, $rb->getSummaryColumns('best_case'));
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testRemoveSummaryColumnReturnsTrue()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $summary = array(
+            'name' => 'best_case',
+            'label' => 'SUM: Best case',
+            'field_type' => 'currency',
+            'table_key' => 'self',
+            'group_function' => 'sum',
+        );
+
+        $this->assertTrue($rb->removeSummaryColumn($summary));
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testRemoveSummaryColumnDoesntExist()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $expected = array(
+            array(
+                'name' => 'likely_case',
+                'label' => 'Likely case',
+                'field_type' => 'currency',
+                'table_key' => 'self',
+            )
+        );
+
+        $remove = array(
+            'name' => 'best_case',
+            'label' => 'SUM: Best case',
+            'field_type' => 'currency',
+            'table_key' => 'self',
+            'group_function' => 'sum',
+        );
+
+        $rb->removeSummaryColumn($remove);
+
+        $this->assertSame($expected, $rb->getSummaryColumns());
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testSetChartColumnViaFieldName()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $rb->setChartColumn('best_case');
+
+        $this->assertEquals('self:best_case:sum', $rb->getChartColumn());
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testSetChartColumnViaSummaryColumn()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $rb->setChartColumn($rb->getSummaryColumns('best_case'));
+
+        $this->assertEquals('self:best_case:sum', $rb->getChartColumn());
+    }
+
+    /**
+     * @group ReportBuilder
+     * @group SugarCharts
+     */
+    public function testGetChartColumnType()
+    {
+        $rb = new ReportBuilder('Opportunities');
+        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
+
+        $rb->setChartColumn('best_case');
+
+        $this->assertEquals('currency', $rb->getChartColumnType());
     }
 
     /**

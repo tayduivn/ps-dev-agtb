@@ -33,7 +33,6 @@
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
-        this.category = 'Committed';
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -202,20 +201,6 @@
             });
         }
 
-        if(self.category == "Committed")
-        {
-            $.fn.dataTableExt.afnFiltering.push (
-                function(oSettings, aData, iDataIndex)
-                {
-                    var val = $(aData[0]).html();
-                    return /checked/.test(val);
-                }
-            );
-        } else {
-            //Remove the filters
-            $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-        }
-
     },
 
     /**
@@ -235,7 +220,20 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedCategory:function (params) {
-        this.category = params.id;
+        // Set the filters for the datatable then re-render
+        if(params.id == "Committed")
+        {
+            $.fn.dataTableExt.afnFiltering.push (
+                function(oSettings, aData, iDataIndex)
+                {
+                    var val = $(aData[0]).html();
+                    return /checked/.test(val);
+                }
+            );
+        } else {
+            //Remove the filters
+            $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+        }
         this.render();
     },
 
