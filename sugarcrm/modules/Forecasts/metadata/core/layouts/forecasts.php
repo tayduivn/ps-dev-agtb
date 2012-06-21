@@ -51,9 +51,9 @@ $viewdefs['Forecasts']['core']['layout']['forecasts'] = array(
                 'name' => 'WorksheetManager',
             ),
         ),
+        */
         8 => array(
             'view' => 'forecastsSubnav',
         )
-        */
     )
 );
