@@ -39,12 +39,36 @@
         this._collection = this.context.model.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
+        this.layout.context.on("change:selectedUser", function(context, selectedUser) { self.updateWorksheetBySelectedUser(selectedUser); });
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
         this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
 
         //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
-        this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
+        //this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
+    },
+
+    createURL:function() {
+        var url = app.config.serverUrl + "/Forecasts/worksheet";
+        var args = {};
+        if(this.timePeriod) {
+           args['timeperiod_id'] = this.timePeriod;
+        }
+
+        if(this.selectedUser)
+        {
+           args['user_id'] = this.selectedUser;
+        }
+
+        var params = '';
+        _.each(args, function (value, key) {
+            params += '&' + key + '=' + encodeURIComponent(value);
+        });
+
+        if(params)
+        {
+            url += '?' + params.substr(1);
+        }
+        return url;
     },
 
     /***
@@ -208,10 +232,12 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedUser:function (params) {
-        // TODO: What happens when a user is selected
-        // this is a placeholder for that functionality
-        //this.gTable.fnFilter({ "assigned_user_id" : params.attributes.selectedUser.id });
+    updateWorksheetBySelectedUser:function (selectedUser) {
+        this.selectedUser = selectedUser.id;
+        var model = this.context.model.forecasts.worksheet;
+        model.url = this.createURL();
+        model.fetch();
+        this.render();
     },
 
     /**
@@ -243,8 +269,9 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
+        this.timePeriod = params.id;
         var model = this.context.model.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheet?timeperiod_id=" + params.id;
+        model.url = this.createURL();
         model.fetch();
         this.render();
     },
