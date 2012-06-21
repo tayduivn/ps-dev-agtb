@@ -868,8 +868,7 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard",
-                module: app.config.defaultModule
+                layout: "dashboard"
             });
         });
 
