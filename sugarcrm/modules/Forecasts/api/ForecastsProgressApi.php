@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if ( !defined('sugarEntry') || !sugarEntry ) {
+	die('Not A Valid Entry Point');
+}
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -24,74 +26,222 @@ require_once('include/api/ModuleApi.php');
 
 require_once('Modules/Forecasts/ForecastOpportunities.php');
 
-class ForecastsProgressApi extends ModuleApi {
-
-    public function __construct()
-    {
-
-    }
+class ForecastsProgressApi extends ModuleApi
+{
+	protected $api;
+	protected $args;
 	
-	// All requests will need to be filtered by time period, forecasts, and direct (true/false)
-    public function registerApiRest()
-    {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
-        $parentApi= array (
-            'chart' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','progress'),
-                'pathVars' => array('',''),
-                'method' => 'progress',
-                'shortHelp' => 'Progress data',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
-            ),
-        );
-        return $parentApi;
-    }
+	protected $closed;
+	protected $forecastData;
+	protected $user_id;
+	protected $user;
+	protected $timeperiod_id;
+	protected $should_rollup;
+	protected $quotaData;
+	public $_loaded;
 
-    public function progress($api, $args) {
-		
-        // Just a placeholder for now
-        $progressData = array(
-			"quota" => array(
-				"total" => $this->getQuota($api, $args),
-				"likely" => array(
-					"percent" => 0.7,
-					"current" => 123000,
-				),
-				"best" => array(
-					"percent" => 0.3,
-					"current" => 700000,
-				),
-			),
-			"closed" => array(
-				"total" => 123,
-				"likely" => array(
-					"percent" => 0.7,
-					"current" => 123000,
-				),
-				"best" => array(
-					"percent" => 0.3,
-					"current" => 700000,
-				),
-			),
-			"opportunities" => 123,
-			"revenue" => 321,
-			"pipelineSize" => 2,
-		);
-		
-		return $progressData;
-    }
-	
-	public function getQuota($api, $args) {
-		$user_id = ( array_key_exists("userId", $args) ? $args["userId"] : $GLOBALS["current_user"]->id );
-		$timeperiod_id = ( array_key_exists("timePeriodId", $args) ? $args["timePeriodId"] : TimePeriod::getCurrentId() );
-		$should_rollup = ( array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : 1 );
-		$should_rollup = $should_rollup == 1 ? TRUE : FALSE;
-		
-		$quota = new Quota();
-		$data = $quota->getRollupQuota($timeperiod_id, $user_id, $should_rollup);
-		return $data["amount"];
+
+	public function __construct()
+	{
 	}
 
+
+	// All requests will need to be filtered by time period, forecasts, and direct (true/false)
+	public function registerApiRest()
+	{
+		$parentApi = parent::registerApiRest();
+
+		//Extend with test method
+		$parentApi = array(
+			'progress' => array(
+				'reqType'   => 'GET',
+				'path'      => array('Forecasts', 'progress'),
+				'pathVars'  => array('', ''),
+				'method'    => 'progress',
+				'shortHelp' => 'Progress data',
+				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
+			),
+		);
+		return $parentApi;
+	}
+
+
+	/**
+	 * Load data for API request.
+	 *
+	 * @param $args
+	 *
+	 * @return mixed
+	 */
+	protected function loadProgressData( $args )
+	{
+		if ( $this->_loaded ) {
+			return;
+		}
+		$this->_loaded = true;
+
+		$this->user_id = (array_key_exists("userId", $args) ? $args["userId"] : $GLOBALS["current_user"]->id);
+
+		$this->timeperiod_id = (array_key_exists("timePeriodId", $args) ? $args["timePeriodId"] : TimePeriod::getCurrentId());
+		$this->should_rollup = (array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : User::isManager($this->user_id));
+		if ( !is_bool($this->should_rollup) ) {
+			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
+		}
+		
+		$forecast           = new Forecast();
+		$this->forecastData = $forecast->getForecastForUser($this->user_id, $this->timeperiod_id, $this->should_rollup);
+
+		$quota           = new Quota();
+		$this->quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id, $this->should_rollup);
+
+		$opportunity = new Opportunity();
+		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id);
+	}
+
+
+	/**
+	 * Formats the return values for bestToLikely, closedToBest, etc.
+	 * 
+	 * @param $caseValue
+	 * @param $stageValue
+	 *
+	 * @return array
+	 */
+	protected function formatCaseToStage($caseValue, $stageValue)
+	{
+		$percent = 0;
+		
+		if ( $caseValue <= $stageValue ) {
+			$amount = $stageValue - $caseValue;
+			$isAbove = false;
+			
+			if ( !is_null($caseValue) ) {
+				$percent = $stageValue != 0 ? $caseValue / $stageValue : 0;
+			}
+		}
+		else {
+			$amount = $caseValue - $stageValue;
+			$isAbove = true;
+			
+			if ( !is_null($caseValue) ) {
+				$percent = $caseValue != 0 ? $stageValue / $caseValue : 0;
+			}
+		}
+
+		return array(
+			"amount"  => $amount,
+			"percent" => $percent,
+			"above"   => $isAbove,
+		);
+	}
+
+
+	public function progress( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$progressData = array(
+			"quota"         => array(
+				"amount"      => $this->getQuota($api, $args),
+				"likely_case" => $this->getLikelyToQuota($api, $args),
+				"best_case"   => $this->getBestToQuota($api, $args),
+			),
+			"closed"        => array(
+				"amount"      => $this->getClosed($api, $args),
+				"likely_case" => $this->getLikelyToClose($api, $args),
+				"best_case"   => $this->getBestToClose($api, $args),
+			),
+			"opportunities" => $this->getOpportunities($api, $args),
+			"revenue"       => $this->getRevenue($api, $args),
+			"pipelineSize"  => $this->getPipelineSize($api, $args),
+		);
+
+		return $progressData;
+	}
+
+
+	public function getQuota( $api, $args )
+	{
+		$this->loadProgressData($args);
+		return $this->quotaData["amount"];
+	}
+
+
+	public function getLikelyToQuota( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$likely = $this->forecastData["likely_case"];
+		$quota  = $this->getQuota($api, $args);
+
+		return $this->formatCaseToStage($likely, $quota);
+	}
+
+
+	public function getBestToQuota( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$best  = $this->forecastData["best_case"];
+		$quota = $this->getQuota($api, $args);
+
+		return $this->formatCaseToStage($best, $quota);
+	}
+
+
+	public function getLikelyToClose( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$likely = $this->forecastData["likely_case"];
+		$closed = $this->getClosed($api, $args);
+
+		return $this->formatCaseToStage($likely, $closed);
+	}
+
+
+	public function getBestToClose( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$best = $this->forecastData["best_case"];
+		$closed = $this->getClosed($api, $args);
+
+		return $this->formatCaseToStage($best, $closed);
+	}
+
+
+	public function getOpportunities( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$opportunities = 0;
+		return $opportunities;
+	}
+
+
+	public function getRevenue( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$revenue = 0;
+		return $revenue;
+	}
+
+
+	public function getPipelineSize( $api, $args )
+	{
+		$this->loadProgressData($args);
+
+		$pipelineSize = 0;
+		return $pipelineSize;
+	}
+
+
+	public function getClosed( $api, $args )
+	{
+		$this->loadProgressData($args);
+		
+		return $this->closed;
+	}
 }

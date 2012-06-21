@@ -294,7 +294,9 @@ class Quota extends SugarBean
 		return $options;
 	}
 
-	function getTimePeriod($id) {
+
+	function getTimePeriod( $id )
+	{
 
 		$qry = "SELECT id, name FROM timeperiods where id = '" . $id . "'";
 
@@ -305,54 +307,66 @@ class Quota extends SugarBean
 		return $row['name'];
 	}
 
-    /**
-     * Find a users assigned quota for a given time period and return it.  The method will default to the current user
-     * if no user is passed in.
-     *
-     * @param string $timeperiod_id
-     * @param null|string|User $user
-     * @return array
-     */
-    function getCurrentUserQuota($timeperiod_id, $user = null)
-    {
 
-        if (empty($user)) {
-            global $current_user;
-            $user = $current_user->id;
-        } else if ($user instanceof User) {
-            $user = $user->id;
-        }
+	/**
+	 * Find a users assigned quota for a given time period and return it.  The method will default to the current user
+	 * if no user is passed in.
+	 *
+	 * @param string           $timeperiod_id
+	 * @param null|string|User $user
+	 *
+	 * @return array
+	 */
+	function getCurrentUserQuota( $timeperiod_id, $user = NULL )
+	{
 
-        $qry = "SELECT quotas.currency_id, quotas.amount, timeperiods.name as timeperiod_name " .
-            "FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods " .
-            "WHERE quotas.timeperiod_id = timeperiods.id " .
-            "AND quotas.user_id = '" . $user . "' " .
-            "AND (quotas.created_by <> '" . $user . "' " .
-            "OR (users.reports_to_id IS NULL AND quotas.quota_type = 'Rollup')) " . //for top-level manager
-            "AND timeperiods.id = '" . $timeperiod_id . "' " .
-            "AND quotas.committed = 1";
+		if ( empty($user) ) {
+			global $current_user;
+			$user = $current_user->id;
+		}
+		else {
+			if ( $user instanceof User ) {
+				$user = $user->id;
+			}
+		}
 
-        $result = $this->db->query($qry, true, 'Error retrieving Current User Quota Information: ');
+		$qry = "SELECT quotas.currency_id, quotas.amount, timeperiods.name as timeperiod_name " .
+				"FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods " .
+				"WHERE quotas.timeperiod_id = timeperiods.id " .
+				"AND quotas.user_id = '" . $user . "' " .
+				"AND (quotas.created_by <> '" . $user . "' " .
+				"OR (users.reports_to_id IS NULL AND quotas.quota_type = 'Rollup')) " . //for top-level manager
+				"AND timeperiods.id = '" . $timeperiod_id . "' " .
+				"AND quotas.committed = 1";
 
-        $row = $this->db->fetchByAssoc($result);
-        if (!empty($row)) {
-            if ($row['currency_id'] == -99) // print the default currency
-                $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
-            else // print the foreign currency, must retrieve currency symbol
-                $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
-        }
+		$result = $this->db->query($qry, true, 'Error retrieving Current User Quota Information: ');
 
-        return $row;
-    }
+		$row = $this->db->fetchByAssoc($result);
+		if ( !empty($row) ) {
+			if ( $row['currency_id'] == -99 ) // print the default currency
+			{
+				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
+			}
+			else // print the foreign currency, must retrieve currency symbol
+			{
+				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
+			}
+		}
 
-/**
- * function getGroupQuota. Function to retrieve the total quota for a manager's
- * entire group.  
- * @param $timeperiod_id
- * @param $formatted - boolean to test if output should be formatted
- * @param $id - to pass in an user_id in case it is necessary
- */	
-	function getGroupQuota($timeperiod_id, $formatted = true, $id=NULL){
+		return $row;
+	}
+
+
+	/**
+	 * function getGroupQuota. Function to retrieve the total quota for a manager's
+	 * entire group.
+	 *
+	 * @param $timeperiod_id
+	 * @param $formatted - boolean to test if output should be formatted
+	 * @param $id        - to pass in an user_id in case it is necessary
+	 */
+	function getGroupQuota( $timeperiod_id, $formatted = true, $id = NULL )
+	{
 		global $current_user;
 		if ( $id == NULL ) {
 			$id = $current_user->id;
@@ -383,38 +397,38 @@ class Quota extends SugarBean
 	/**
 	 * Retrieve a user's quota using the rollup value, if available.  This method is useful for
 	 * fetching user quota data when you're unsure about whether or not the given user is a manager.
-	 * If you would like to force a direct quota, pass a false value to $should_rollup. 
-	 * 
+	 * If you would like to force a direct quota, pass a false value to $should_rollup.
+	 *
 	 * @param      $timeperiod_id
 	 * @param      $user_id
 	 * @param bool $should_rollup
 	 *
 	 * @return array [currency_id => int, amount => number, timeperiod_name => String, formatted_amount => String]
 	 */
-	function getRollupQuota($timeperiod_id, $user_id=NULL, $should_rollup=FALSE)
+	function getRollupQuota( $timeperiod_id, $user_id = NULL, $should_rollup = FALSE )
 	{
 		global $current_user;
 		$rollup_filter = '';
-		
+
 		if ( is_null($user_id) ) {
 			$user_id = $current_user->id;
 		}
-		
+
 		if ( $should_rollup ) {
 			$rollup_filter = "AND quotas.quota_type = 'Rollup' ";
 		}
-		
+
 		$qry = "SELECT quotas.currency_id, quotas.amount, timeperiods.name as timeperiod_name "
-		     . "FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods "
-		     . "WHERE quotas.timeperiod_id = timeperiods.id "
-		     . "AND quotas.user_id = '" . $user_id . "' " 
-		     . $rollup_filter   
-		     . "AND timeperiods.id = '" . $timeperiod_id . "' "
-		     . "AND quotas.deleted = 0";
-		
+				. "FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods "
+				. "WHERE quotas.timeperiod_id = timeperiods.id "
+				. "AND quotas.user_id = '" . $user_id . "' "
+				. $rollup_filter
+				. "AND timeperiods.id = '" . $timeperiod_id . "' "
+				. "AND quotas.deleted = 0";
+
 		$result = $this->db->query($qry, true, 'Error retrieving user quota information: ');
-		$row = $this->db->fetchByAssoc($result);
-		
+		$row    = $this->db->fetchByAssoc($result);
+
 		if ( !empty($row) ) {
 			if ( $row['currency_id'] == -99 ) { // print the default currency
 				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
@@ -426,6 +440,7 @@ class Quota extends SugarBean
 
 		return $row;
 	}
+
 
 	function resetGroupQuota( $timeperiod_id )
 	{
@@ -512,57 +527,66 @@ class Quota extends SugarBean
 		return $options;
 	}
 
-/**
- * function isManager. The purpose of this function is to determine whether
- * the given user is a manager  
- * @param $id - id of the user in question
- */		
-	
-	function isManager($id)
+
+	/**
+	 * function isManager. The purpose of this function is to determine whether
+	 * the given user is a manager
+	 *
+	 * @param $id - id of the user in question
+	 */
+
+	function isManager( $id )
 	{
 		global $current_user;
-		
+
 		$qry = "SELECT * " .
-			   "FROM users " .
-			   "WHERE reports_to_id = '" . $id . "'";
-		
-		$result = $this->db->query($this->create_list_count_query($qry),true, 'Error retrieving row count from quotas: ');	
-		$row = $this->db->fetchByAssoc($result);
-		
-		if ($row['c'] > 0)
+				"FROM users " .
+				"WHERE reports_to_id = '" . $id . "'";
+
+		$result = $this->db->query($this->create_list_count_query($qry), true, 'Error retrieving row count from quotas: ');
+		$row    = $this->db->fetchByAssoc($result);
+
+		if ( $row['c'] > 0 ) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 
-/**
- * function isTopLevelManager. Function to determine whether the current
- * logged in user is a top level manager (ie, a manager in which he/she
- * does not report to anyone)  
- */		
+
+	/**
+	 * function isTopLevelManager. Function to determine whether the current
+	 * logged in user is a top level manager (ie, a manager in which he/she
+	 * does not report to anyone)
+	 */
 	function isTopLevelManager()
 	{
 		global $current_user;
-		
+
 		$qry = "SELECT * FROM users WHERE reports_to_id IS NULL AND id = '" . $current_user->id . "'";
-		
+
 		$result = $this->db->query($qry, true, 'Error retrieving top level manager information for quotas: ');
-		$row = $this->db->fetchByAssoc($result);
-		
-		if (!empty($row))
+		$row    = $this->db->fetchByAssoc($result);
+
+		if ( !empty($row) ) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 
-/**
- * function getTopLevelRecord. For the current user, get the record
- * id of the rollup quota that has been assigned. This is used in 
- * the Save.php file when a top level manager needs his/her own 
- * rollup quota value updated.
- * @param $timeperiod_id
- */		
-	function getTopLevelRecord($timeperiod_id)
+
+	/**
+	 * function getTopLevelRecord. For the current user, get the record
+	 * id of the rollup quota that has been assigned. This is used in
+	 * the Save.php file when a top level manager needs his/her own
+	 * rollup quota value updated.
+	 *
+	 * @param $timeperiod_id
+	 */
+	function getTopLevelRecord( $timeperiod_id )
 	{
 		global $current_user;
 
