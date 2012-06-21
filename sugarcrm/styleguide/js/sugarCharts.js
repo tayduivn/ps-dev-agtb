@@ -197,7 +197,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             for(var i=0;i<wmrows;i++) {
                                 table += "<tr>";
                                 for(var i=0;i<legend['wmlegend']['name'].length;i++) {
-                                    table += "<td valign='top' rowspan><div class='waterMark' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
+                                    table += "<td valign='top' rowspan><div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
                                     table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
                                 }
                                 table += "</tr>";

@@ -13532,6 +13532,7 @@ $jit.BarChart = new Class({
     var color = new Array();
     var wmname = new Array();
     var wmcolor = new Array();
+    var wmtype = new Array();
     var n;
     this.st.graph.getNode(this.st.root).eachAdjacency(function(adj) {
       n = adj.nodeTo;
@@ -13545,7 +13546,7 @@ $jit.BarChart = new Class({
 
     var wmcolors = n.getData('goalMarkerColor'),
         wmlen = wmcolors.length;
-
+    var wmtype = n.getData('goalMarkerType');
     $.each(n.getData('goalMarkerLabel'), function(s, i) {
       wmcolor[i] = wmcolors[i % wmlen];
       wmname[i] = s;
@@ -13554,6 +13555,7 @@ $jit.BarChart = new Class({
 	legend['color'] = color;
     wmlegend['name'] = wmname;
     wmlegend['color'] = wmcolor;
+    wmlegend['type'] = wmtype;
     legend['wmlegend'] = wmlegend;
     return legend;
   },
