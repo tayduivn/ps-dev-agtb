@@ -17,7 +17,7 @@
         maxQueryResult: 20,
         platform: "mobile",
         defaultModule: "Accounts",
-        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
+        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules", "relationships"],
         additionalComponents: {
             "header": {
                 target: '#header'
