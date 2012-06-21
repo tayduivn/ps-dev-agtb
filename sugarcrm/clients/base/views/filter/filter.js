@@ -1,5 +1,7 @@
 /**
- * View that displays a list of models pulled from the context's collection.
+ * View that displays a Bar with module name and filter toggles for per module
+ * search and module creation.
+ *
  * @class View.Views.FilterView
  * @alias SUGAR.App.layout.FilterView
  * @extends View.View
@@ -57,13 +59,24 @@
         }
     },
     toggleSearch: function() {
-        var previousTerm = this.getPreviousTerm(this.module);
+        var isOpened, 
+            previousTerm = this.getPreviousTerm(this.module);
+
         this.$('.dataTables_filter').toggle();
-        if(previousTerm) {
-            this.$('.dataTables_filter input').val(previousTerm).focus();
-        } else {
-            this.$('.dataTables_filter input').focus();
-        }
+
+        // Trigger toggled event. Presently, this is for the list-bottom view.
+        // If the 'Show More' button is clicked and filter is opened, 
+        // list-bottom adds q:term to pagination call. 
+        isOpened = this.$('.dataTables_filter').is(':visible');
+        this.layout.trigger('list:filter:toggled', isOpened);
+
+        // Always clear last search term
+        this.$('.dataTables_filter input').val('').focus();
+
+        // If toggling filters closed, return to full "unfiltered" records 
+        if(!isOpened) {
+            this.collection.fetch({limit: this.context.get('limit') || null });
+        }            
         return false;
     }
 })

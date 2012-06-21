@@ -18,10 +18,14 @@
         this.layout.off("list:paginate:success", null, this);
         this.layout.on("list:search:fire", this.fireSearch, this);
         this.layout.on("list:paginate:success", this.render, this);
+
+        // Dashboard layout injects shared context with limit: 5. 
+        // Otherwise, we don't set so fetches will use max query in config.
+        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
     },
     fireSearch: function(term) {
         var options = {
-            limit: this.context.get('limit') || null,
+            limit: this.limit || null,
             params: { 
                 q: term
             },
@@ -35,9 +39,10 @@
      * @param {Object} event jquery event object
      */
     setOrderBy: function(event) {
-        var orderMap, collection, fieldName, nOrder; 
+        var orderMap, collection, fieldName, nOrder, options,
+            self = this;
         //set on this obj and not the prototype
-        this.orderBy = this.orderBy || {};
+        self.orderBy = self.orderBy || {};
 
         //mapping for css
         orderMap = {
@@ -46,8 +51,8 @@
         };
 
         //TODO probably need to check if we can sort this field from metadata
-        collection = this.collection;
-        fieldName = this.$(event.target).data('fieldname');
+        collection = self.collection;
+        fieldName = self.$(event.target).data('fieldname');
 
         if (!collection.orderBy) {
             collection.orderBy = {
@@ -70,11 +75,22 @@
         }
 
         // set it on the view
-        this.orderBy.field = fieldName;
-        this.orderBy.direction = orderMap[collection.orderBy.direction];
+        self.orderBy.field = fieldName;
+        self.orderBy.direction = orderMap[collection.orderBy.direction];
 
+        // If injected context with a limit (dashboard) then fetch only that 
+        // amount. Also, add true will make it append to already loaded records.
+        options = {
+            limit: self.limit || null,
+            success: function() {
+                self.render();
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+            // error handled upstream ;=)
+        };
+        
         // refetch the collection
-        collection.fetch();
+        collection.fetch(options);
     },
 
     showActions: function(e) {
