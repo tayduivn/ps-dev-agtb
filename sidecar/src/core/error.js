@@ -341,7 +341,7 @@
         handleStatusCodesFallback: function(xhr, error) {
             var message = "HTTP error: " + (xhr ? xhr.status : "(no-code)") +
                 "\nResponse: " + (xhr ? xhr.responseText : "(empty-response)") +
-                "\n" + error;
+                (error != "error" ? "\n" + error : "");
             app.logger.error(message);
         },
 
