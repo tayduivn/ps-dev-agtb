@@ -113,39 +113,26 @@
      * @param {String} fieldName field name.
      */
     bindDomChange: function() {
-        // Bind all tooltips on page
-        function bindAll(sel) {
-            this.$(sel).each(function(index) {
-                $(this).tooltip({
-                    placement: "bottom"
+        // This condition allows you to create a custom edit template for the `email` field, and let it behave as a
+        // generic `text` field. You should attach a `textField` class to the input element, and on 'save' action
+        // format the email as an array with sugar parameters.
+
+        if (this.$el.find(this.fieldTag).length === 1 && this.$el.find(this.fieldTag).hasClass('textField')) {
+            this.app.view.Field.prototype.bindDomChange.call(this);
+        } else {
+            // Bind all tooltips on page
+            function bindAll(sel) {
+                this.$(sel).each(function(index) {
+                    $(this).tooltip({
+                        placement: "bottom"
+                    });
                 });
-            });
+            }
+            bindAll('.btn-edit');
+            bindAll('.addEmail');
+            bindAll('.removeEmail');
+
+            this.delegateEvents();
         }
-        bindAll('.btn-edit');
-        bindAll('.addEmail');
-        bindAll('.removeEmail');
-
-        this.delegateEvents();
-    },
-
-    /**
-     * Handles how validation errors are displayed on fields
-     *
-     * This method should be implemented in the extension dir per platform
-     *
-     * @param {Object} errors hash of validation errors
-     */
-    handleValidationError: function(errors) {
-        var self = this;
-        _.each(errors,function(emailAddress){
-            this.$('[data-emailaddress="' + emailAddress + '"]').addClass("error");
-        });
-
-        this.$('.help-block').html("");
-        this.$('.help-group').addClass("error");
-        _.each(errors, function(errorContext, errorName) {
-            self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
-        });
     }
-
 })
