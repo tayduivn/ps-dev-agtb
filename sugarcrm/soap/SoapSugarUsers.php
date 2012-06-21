@@ -1380,13 +1380,13 @@ function handle_set_relationship($set_relationship_value, $session='')
     	$mod->load_relationship($key);
     	$mod->$key->add($module2_id);
     }
-    else if ($module1 == 'Contacts' && $module2 == 'Notes' && !empty($session)){
+    else if ($module1 == 'Contacts' && ($module2 == 'Notes' || $module2 == 'Calls' || $module2 == 'Meetings' || $module2 == 'Tasks') && !empty($session)){
         $mod->$key = $module2_id;
         $mod->save_relationship_changes(false);
         if (!empty($mod->account_id)) {
-            // when setting a relationship from a Contact to a Note, if the Contacts is related to an Account,
-            // we want to associate that Account to the Note as well
-            $ret = set_relationship($session, array('module1'=>'Accounts', 'module1_id'=>$mod->account_id, 'module2'=>'Notes', 'module2_id'=>$module2_id));
+            // when setting a relationship from a Contact to these activities, if the Contacts is related to an Account,
+            // we want to associate that Account to the activity as well
+            $ret = set_relationship($session, array('module1'=>'Accounts', 'module1_id'=>$mod->account_id, 'module2'=>$module2, 'module2_id'=>$module2_id));
         }
     }
     else{
