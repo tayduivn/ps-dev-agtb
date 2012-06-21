@@ -33,6 +33,8 @@ class RestTestList extends RestTestBase {
         $this->opps = array();
         $this->contacts = array();
         $this->cases = array();
+        $this->bugs = array();
+        $this->files = array();
     }
     
     public function tearDown()
@@ -57,7 +59,13 @@ class RestTestList extends RestTestBase {
             $caseIds[] = $aCase->id;
         }
         $caseIds = "('".implode("','",$caseIds)."')";
-        
+
+        $bugIds = array();
+        foreach( $this->bugs AS $bug ) {
+            $bugIds[] = $bug->id;
+        }
+        $bugIds = "('" . implode( "','", $bugIds) . "')";
+
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
@@ -69,9 +77,15 @@ class RestTestList extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
+        $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
+        $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        foreach($this->files AS $file) {
+            unlink($file);
+        }
     }
 
     public function testModuleSearch() {
@@ -142,6 +156,11 @@ class RestTestList extends RestTestBase {
         // Test My Items
         $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
         $this->assertEquals(10,count($restReply['reply']['records']));
+        
+        // validate each is actually my item
+        foreach($restReply['reply']['records'] AS $record) {
+            $this->assertEquals($record['assigned_user_id'], $GLOBALS['current_user']->id, "A Record isn't assigned to me");
+        }
 
         // Test Favorites & My Items
         $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
@@ -161,6 +180,18 @@ class RestTestList extends RestTestBase {
             }
         }
 
+    }
+
+    public function testBugSearch() {
+        $bug = new Bug();
+        $bug->name = "UNIT TEST " . count($this->bugs) . " - " . create_guid();
+        $bug->description = $bug->name;
+        $bug->save();
+        $this->bugs[] = $bug;
+        
+        $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
+        $tmp = array_keys($restReply['reply']['records']);
+        $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
     }
 
     public function testCaseSearch() {
@@ -217,7 +248,45 @@ class RestTestList extends RestTestBase {
         // Then searching without specific fields broke
         $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST"));
         $this->assertGreaterThan(0,count($restReply['reply']['records']));
+
+        // add a search field
+        // create a new custom metadata vardef for unified search on status
         
+        $metadata = '<?php $dictionary["Case"]["fields"]["status"]["unified_search"] = true; ?>';
+        $metadata_dir = 'custom/Extension/modules/Cases/Ext/Vardefs';
+        $metadata_file = 'case_status_unified_search.php';
+        if(!is_dir($metadata_dir)) {
+            mkdir("{$metadata_dir}", 0777, true);
+        }
+        
+        file_put_contents( $metadata_dir . '/' . $metadata_file, $metadata );
+        $user = new User();
+
+        // save old user
+        $old_user = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $user->getSystemUser();
+        $this->files[] = $metadata_dir . '/' . $metadata_file;
+        
+        // run repair and rebuild
+        $_REQUEST['repair_silent']=1;
+        $rc = new RepairAndClear();
+        $rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Cases"),  false, false);
+        
+        // switch back to the user
+        $GLBOALS['current_user'] = $old_user;
+
+        $restReply = $this->_restCall("Cases/?q=New");
+
+        foreach($restReply['reply']['records'] AS $record) {
+            $status = trim($record['status']);
+            $name = trim($record['name']);
+            $status = substr($status, 0, 3);
+            $name = substr($status, 0, 3);
+            // this may not be the best way to do this but I can't figure out a better way right now
+            $test = array( ucwords($status), ucwords($name) );
+            $this->assertContains('New', $test, "New does not start either name or status");
+        }
+            
     }
 
 
