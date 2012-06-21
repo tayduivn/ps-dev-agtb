@@ -80,10 +80,10 @@
     },
 
     createHistoryLog: function(current, previous) {
-        var best_difference = current.get('best_case') - previous.get('best_case');
+        var best_difference = previous.get('best_case') - current.get('best_case');
         var best_changed = best_difference != 0;
         var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
-        var likely_difference = current.get('likely_case') - previous.get('likely_case');
+        var likely_difference = previous.get('likely_case') - current.get('likely_case');
         var likely_changed = likely_difference != 0;
         var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
         var args = Array();
