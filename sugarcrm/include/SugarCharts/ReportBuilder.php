@@ -550,6 +550,21 @@ class ReportBuilder
         return true;
     }
 
+    /**
+     * Return the current set chart column
+     *
+     * @return mixed
+     */
+    public function getChartColumn()
+    {
+        return $this->defaultReport['numerical_chart_column'];
+    }
+
+    /**
+     * Return the current set chart column type
+     *
+     * @return mixed
+     */
     public function getChartColumnType()
     {
         return $this->defaultReport['numerical_chart_column_type'];
