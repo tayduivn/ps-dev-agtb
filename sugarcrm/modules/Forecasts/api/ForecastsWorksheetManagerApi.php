@@ -21,8 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
+require_once('modules/Forecasts/api/ForecastsChartApi.php');
 
-class ForecastsWorksheetManagerApi extends ModuleApi {
+class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
     public function __construct()
     {
@@ -56,7 +57,9 @@ class ForecastsWorksheetManagerApi extends ModuleApi {
     public function worksheetManager($api, $args)
     {
         require_once('modules/Reports/Report.php');
-        global $current_user, $mod_strings, $app_list_strings, $app_strings;
+        require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
+
+        global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
 
 
         if(isset($args['user_id']))
@@ -74,60 +77,55 @@ class ForecastsWorksheetManagerApi extends ModuleApi {
            return array();
         }
 
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
-        $mod_strings = return_module_language('en', 'Opportunities');
-        $report_defs = array();
-        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}', 'detailed_summary', 'vBarF');
+        $app_list_strings = return_app_list_strings_language($current_language);
+
+        $mgr = ChartAndWorksheetManager::getInstance();
+        $report_defs = $mgr->getWorksheetDefintion('manager', 'opportunities');
+
+        $timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
         $testFilters = array(
-            'timeperiod_id' => isset($args['timeperiod_id']) ? $args['timeperiod_id'] : array('$is' => TimePeriod::getCurrentId()),
-            //'assigned_user_link' => array('id' => 'seed_chris_id'),
-            //'id' => isset($args['user_id']) ? $args['user_id'] : $current_user->id
+            'timeperiod_id' => array('$is' => $timeperiod_id),
+            //'assigned_user_link' => array('$reports' => $user_id)
         );
 
+        // generate the report builder instance
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters);
 
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
-
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs['ForecastSeedReport1'][2]);
-
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        //_pp($reportFilters);
-        //die();
-        // add the filter to the report builder
-        $rb->addFilter($reportFilters);
+        if (isset($args['ct']) && !empty($args['ct'])) {
+            $rb->setChartType($this->mapChartType($args['ct']));
+        }
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
 
-        $report = new Report($chart_contents);
+        //Get the goal marker values
+        require_once("include/SugarCharts/ChartDisplay.php");
+        // create the chart display engine
+        $chartDisplay = new ChartDisplay();
+        // set the reporter with the chart contents from the report builder
+        $chartDisplay->setReporter(new Report($chart_contents));
 
-        $report->clear_group_by();
-        $report->create_order_by();
-        $report->create_select();
-        $report->create_where();
-        $report->create_group_by(false);
-        $report->create_from();
-        $report->create_query();
-        $limit = false;
-        if ($report->report_type == 'tabular' && $report->enable_paging) {
-            $report->total_count = $report->execute_count_query();
-            $limit = true;
+        return $chartDisplay->getReporter()->chart_rows;
+
+
+        // lets get some json!
+        $json = $chartDisplay->generateJson();
+
+        // if we have no data return an empty string
+        if ($json == "No Data") {
+            return '';
         }
+
+
+
         $result = $GLOBALS['db']->query($report->query);
 
         $opps = array();
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
+            /*
             $row['id'] = $row['primaryid'];
             $row['forecast'] = $row['opportunities_forecast'];
             $row['name'] = $row['opportunities_name'];
@@ -137,7 +135,7 @@ class ForecastsWorksheetManagerApi extends ModuleApi {
             $row['sales_stage'] = $row['opportunities_sales_stage'];
             $row['best_case_worksheet'] = $row['OPPORTUNITIES_BEST_CAS81CC16'];
             $row['likely_case_worksheet'] = $row['OPPORTUNITIES_LIKELY_C7E6E04'];
-
+            */
             //Should we unset the data we don't need here so as to limit data sent back?
 
             $opps[] = $row;

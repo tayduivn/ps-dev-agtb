@@ -107,7 +107,7 @@
                                   <div class="view-forecastsWorksheet"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {if $isManager === true}
+                              {if $isManager === true && false}
                               <div id="view-manager" style="visibility:hidden;">
                                   <div class="view-forecastsWorksheet"></div>
                                   <div class="view-summary"></div>

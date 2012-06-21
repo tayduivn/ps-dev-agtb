@@ -42,6 +42,7 @@ class ForecastsApi extends ModuleApi {
                 'shortHelp' => 'forecast ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastsApi.html#ping',
             ),
+
         );
         return $parentApi;
     }

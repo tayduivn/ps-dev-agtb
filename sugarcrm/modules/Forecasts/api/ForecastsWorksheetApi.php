@@ -63,7 +63,7 @@ class ForecastsWorksheetApi extends ModuleApi {
 
         $testFilters = array(
             'timeperiod_id' => isset($args['timeperiod_id']) ? $args['timeperiod_id'] : array('$is' => TimePeriod::getCurrentId()),
-            //'assigned_user_link' => array('id' => 'seed_chris_id'),
+            'assigned_user_link' => array('id' => 'seed_chris_id'),
             //'id' => isset($args['user_id']) ? $args['user_id'] : $current_user->id
         );
 
@@ -108,7 +108,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
             $row['id'] = $row['primaryid'];
-            $row['forecast'] = $row['opportunities_forecast'];
+            $row['forecast'] = ($row['opportunities_forecast'] == 1) ? true : false;
             $row['name'] = $row['opportunities_name'];
             $row['amount'] = $row['opportunities_amount'];
             $row['date_closed'] = $row['opportunities_date_closed'];
