@@ -30,7 +30,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $rb = new ReportBuilder('Accounts');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertEquals('Accounts', $actual['module']);
     }
@@ -43,7 +43,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $rb = new ReportBuilder('Accounts');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array('self' => array(
             'value' => 'Accounts',
@@ -84,7 +84,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addModule('Contacts', 'contacts');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'value' => 'Contacts',
@@ -163,7 +163,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addSummaryCount();
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => 'count',
@@ -183,11 +183,12 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addSummaryColumn('name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => "name",
-            'label' => "LBL_NAME",
+            'label' => "Name:",
+            'field_type' => 'name',
             'table_key' => "self",
         ), $actual['summary_columns'][0]);
     }
@@ -201,11 +202,12 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addSummaryColumn('name', 'Accounts');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => "name",
-            'label' => "LBL_NAME",
+            'label' => "Name:",
+            'field_type' => 'name',
             'table_key' => "self",
         ), $actual['summary_columns'][0]);
     }
@@ -219,11 +221,12 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addSummaryColumn('name', $rb->getBean('Accounts'));
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => "name",
-            'label' => "LBL_NAME",
+            'label' => "Name:",
+            'field_type' => 'name',
             'table_key' => "self",
         ), $actual['summary_columns'][0]);
     }
@@ -237,11 +240,11 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addGroupBy('name', 'Accounts');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => "name",
-            'label' => "LBL_NAME",
+            'label' => "Name:",
             'table_key' => "self",
             'type' => 'name',
         ), $actual['group_defs'][0]);
@@ -256,11 +259,11 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addGroupBy('name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame(array(
             'name' => "name",
-            'label' => "LBL_NAME",
+            'label' => "Name:",
             'table_key' => "self",
             'type' => 'name',
         ), $actual['group_defs'][0]);
@@ -275,7 +278,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addLink('contacts', 'name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertTrue(isset($actual['full_table_list']['Accounts:contacts']));
     }
@@ -289,7 +292,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addLink('contacts', 'name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertEquals('Accounts:contacts', $actual['summary_columns'][0]['table_key']);
     }
@@ -303,7 +306,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addLink('contacts', 'name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertEquals('Accounts:contacts', $actual['group_defs'][0]['table_key']);
     }
@@ -317,7 +320,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addLink('member_of', 'name');
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertEquals('Accounts:member_of', $actual['group_defs'][0]['table_key']);
     }
@@ -342,7 +345,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         $rb = new ReportBuilder('Accounts');
         $rb->addFilter($filter);
         $actual_json = $rb->toJson();
-        $actual = $this->objectToArray(json_decode($actual_json));
+        $actual = json_decode($actual_json, true);
 
         $this->assertSame($filter['Filter_1'], $actual['filters_def']['Filter_1'][0]);
     }
@@ -562,27 +565,5 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     protected function removeTestReport($report_id)
     {
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name IN ('" . $report_id . "')");
-    }
-
-    protected function objectToArray($d)
-    {
-        if (is_object($d)) {
-            // Gets the properties of the given object
-            // with get_object_vars function
-            $d = get_object_vars($d);
-        }
-
-        if (is_array($d)) {
-            /**
-             * Return array converted to object
-             * Using __FUNCTION__ (Magic constant)
-             * for recursive call
-             */
-            return array_map(array(__CLASS__, __FUNCTION__), $d);
-        }
-        else {
-            // Return array
-            return $d;
-        }
     }
 }
