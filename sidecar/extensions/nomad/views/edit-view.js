@@ -28,24 +28,16 @@
                     this.model.set(relateField.id_name, parentId);
                 }
             }
-       },
+        },
 
         saveRecord: function () {
             var self = this;
-            app.alert.show('save_process', {level: 'general', messages: 'Saving...', autoClose: true});
-
             this.model.save(null, {
                 relate: !!this.context.get('link'),
                 fieldsToValidate: this.getFields(),
                 success: function (model, resp) {
-                    app.alert.dismiss('save_process');
-                    app.alert.show('save_success', {level: 'success', messages: 'Saved successfully.', autoClose: true});
                     var depth = parseInt(self.context.get("depth")) || 1;
                     app.router.go(-depth);
-                },
-                error: function (model, resp, options) {
-                    app.alert.dismiss('save_process');
-                    app.alert.show('save_error', {level: 'error', messages: 'Save error!', autoClose: true});
                 }
             });
         },
