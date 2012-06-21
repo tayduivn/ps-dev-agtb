@@ -5902,6 +5902,12 @@ div.purpose {
   color: silver;
   cursor: default;
 }
+.jstree-sugar li[rel="parent_link"] > ins::before {
+    content: "\f062";
+}
+.jstree-sugar li[rel="rep"] > ins::before {
+    content: "\f007";
+}
 #vakata-contextmenu.jstree-sugar-context,
 #vakata-contextmenu.jstree-sugar-context li ul {
   background: #f0f0f0;
