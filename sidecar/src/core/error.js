@@ -6,6 +6,7 @@
      * @singleton
      */
     var module = {
+        refreshingLogin: false,
         /**
          * Setups the params for error module
          * @param opts
@@ -116,6 +117,35 @@
         },
 
         /**
+         * Attempts to refresh the token.
+         * @param originalXhr if refresh fails we want to use the original xhr and error (not xhr from refresh http call) 
+         * @param originalError
+         * @param cb optional callback if refresh fails
+         *
+         */
+        attemptRefresh: function(originalXhr, originalError, cb) {
+            var callbacks, self = this;
+
+            if (!this.refreshingLogin) {
+                this.refreshingLogin = true;
+
+                callbacks = {
+                    success: function(){
+                        self.refreshingLogin = false;
+                        app.router.start();
+                    },
+                    error: function(){
+                        self.refreshingLogin = false;
+                        // Note that these are the xhr and error from original 401 since we don't want the xhr
+                        // and error from the refresh http call!
+                        cb(originalXhr, originalError);
+                    }
+                };
+                app.api.login({},{refresh:true},callbacks);
+            }
+        },
+
+        /**
          * An object of status code error handlers. If custom handler is defined by extending
          * module, corresponding status code handler will attemp to use that, otherwise,
          * handleStatusCodesFallback is used as a fallback just logging the error.
@@ -127,15 +157,18 @@
 
             _customHandlersMap: {
                 "invalid_grant":           "handleInvalidGrantError",
+                "need_login":              "handleNeedsLoginError",
                 "invalid_client":          "handleInvalidClientError",
                 "invalid_request":         "handleInvalidRequestError",
                 "unauthorized_client":     "handleUnauthorizedClientError",
                 "unsupported_grant_type":  "handleUnsupportedGrantTypeError",
                 "invalid_scope":           "handleInvalidScopeError",
-                "need_login":              "handleNeedsLoginError"
                 /* TODO: Add any other oauth or custom codes we care about here */
             },
 
+            // Unless one of these, 401's will always attempt to refresh token before falling back to generic 401 handling.
+            _dontAttemptRefresh: ["invalid_client", "invalid_request", "unauthorized_client", "unsupported_grant_type", "invalid_scope"],
+            
             /**
              * Authentication error.
              *
@@ -163,9 +196,20 @@
              * @method
              */
             "401": function(xhr, error) {
-                // If this is NOT an oauth error our handleUnauthorizedError will be
-                // used (if defined).
-                this._handleFineGrainedError(xhr, error, this.handleUnauthorizedError);
+                var self = this, callbacks, s;
+
+                // First check that it is not an error that we do NOT refresh on
+                s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
+                if(s.error && $.inArray(s.error, self.statusCodes._dontAttemptRefresh) === -1) {
+
+                    self.attemptRefresh(xhr, error, function() {
+
+                        // This callback will only be called if refresh fails so we fallback.
+                        self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                    });
+                } else {
+                    self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                }
             },
 
             /**
