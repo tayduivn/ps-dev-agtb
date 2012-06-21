@@ -1224,7 +1224,11 @@ $mod_strings = array (
     'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a system index for full-text searching to work for the enabled modules and module fields.',
 	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A system index operation has been scheduled to run within the next several minutes.',
     'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
-    'LBL_FTS_PAGE_DESC' => 'To enable full text searching, select the search engine that will be used and enter the host and port of the search engine. To complete the setup, connect to the engine and perform a full system index.',
+    'LBL_FTS_PAGE_DESC' => 'To enable full text searching:<br>
+1) Select the search engine that will be used<br>
+2) Enter the host and port of the search engine<br>
+3) Click Test to make sure Sugar can connect to the search engine<br>
+4) Click Schedule System Index. Make sure that crontab is set up to run cron.php. This will handle indexing as well as the fallback mechanism when the connection to the search engine is interrupted.',
     'LBL_FTS_DISABLED' => 'Full Text Search has been disabled because the system is not able to connect to the search engine.',
     'LBL_FTS_CONNECTION_INVALID' => 'The Full Text Search Settings you have entered are invalid and may slow down system performance.  Please change or clear your settings.'
 );
