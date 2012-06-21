@@ -45,15 +45,9 @@
         this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
 
         //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
-        this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpps, this );
+        this.layout.context.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
     },
 
-    /***
-     * TEMPORARY FUNCTION just to show flag toggle in console
-     */
-    updateWorksheetByMgrOpps: function(){
-        console.log("Worksheet's context.showManagerOpportunities has changed");
-    },
 
     /**
      * Initializes clickToEdit field types (chosen, datepicker, etc...)
@@ -62,6 +56,7 @@
     _initCTETypes: function() {
         $.editable.addInputType('enum', {
             element: function(settings, original) {
+//                debugger;
                 var selEl = $('<select class="cteSelect">');
                 _.each(app.lang.getAppListStrings(settings.field.def.options), function (value, key) {
                     var option = $("<option>").val(key).append(value);
@@ -83,7 +78,9 @@
                 self.passedSettings = settings;
                 self.passedOriginal = original;
                 $("select", this).filter(".cteSelect").chosen().change(self, function(e){
-                    $(this).parent().submit();
+//                    debugger;
+//                    e.data.submit(e.data.passedSettings, e.data.passedOriginal);
+                    e.data.passedSettings.field.$el.html($(this).val());
                 });
             },
 
@@ -93,6 +90,7 @@
              * @param original
              */
             submit: function(settings, original) {
+//                debugger;
                 $("input", this).val($("select", this).filter(".cteSelect").val());
             }
         });
@@ -103,47 +101,17 @@
      * @private
      */
     _renderClickToEditField: function(field) {
-        var self = this;
         this._initCTETypes();
         var outerElement = this.$("span[sfuuid='" + field.sfId + "']");
-        var icon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; top: 20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-        outerElement.before(icon);
 
-        outerElement.editable(function(value, settings){
-                return value;
-            },
+        outerElement.editable(function(value, settings){return value;},
             {
-                type: this._name_type_map[field.name] || 'text',
+                type: field.def.type || this._name_type_map[field.name] || 'text',
                 select: true,
                 field: field,
-                view: self,
-                onedit:function(settings, original){
-                    // hold value for use later in case user enters a +/- percentage
-                    if (settings.field.type == "int"){
-                        settings.field.holder = $(original).html();
-                    }
-                    console.log("onedit");
-                },
-                onreset:function(settings, original){
-                    console.log("onreset");
-                },
-                onsubmit:function(settings, original){
-                    console.log("onsubmit");
-                },
                 callback: function(value, settings) {
                     try{
-                        // if it's an int, and the user entered a +/- percentage, calculate it
-                        if(settings.field.type == "int"){
-                            orig = settings.field.holder;
-                            if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
-                                value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
-                            } else if (!value.match(/^[0-9]*$/)) {
-                                value = orig;
-                            }
-                        }
-
-                        settings.field.model.set(settings.field.name, value);
-//                        settings.field.model.save(settings.field.name, value);
+                        settings.field.model.save(settings.field.name, value);
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
                     }
@@ -163,7 +131,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit) {
+        if (field.viewName !="edit" && field.def.clickToEdit){
             this._renderClickToEditField(field);
         }
     },
@@ -202,21 +170,33 @@
             });
         }
 
-        if(self.category == "Committed")
+        //Only filter for forecast == 1 or forecast == -1 and probability >= 70 if searching for Committed
+        if(this.category == 'Committed')
         {
-            $.fn.dataTableExt.afnFiltering.push (
+            $.fn.dataTableExt.afnFiltering.push(
                 function(oSettings, aData, iDataIndex)
                 {
-                    var val = $(aData[0]).html();
-                    return /checked/.test(val);
+                    var forecast = parseInt($(aData[0]).html());
+                    var probability = parseInt($(aData[4]).html());
+                    return (forecast === 1 || (forecast === -1 && probability >= 70));
                 }
             );
         } else {
-            //Remove the filters
-            $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+            $.fn.dataTableExt.afnFiltering = [];
         }
 
     },
+
+
+    /***
+     * TEMPORARY FUNCTION just to show flag toggle in console
+     */
+    updateWorksheetByMgrOpps: function(params){
+        var model = this.context.model.forecasts.worksheet;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
+        this.render();
+    },
+
 
     /**
      * Event Handler for updating the worksheet by a selected user
@@ -246,9 +226,15 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         var model = this.context.model.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheet?timeperiod_id=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
         model.fetch();
         this.render();
+    },
+
+    createURL:function()
+    {
+        var url = app.config.serverUrl + "/Forecasts/worksheetManager";
+        return url;
     },
 
     /**

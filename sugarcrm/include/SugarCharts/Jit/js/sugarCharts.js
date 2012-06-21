@@ -54,6 +54,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             animate: animate,
                             nodeCount: data.values.length,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+                            dataPointSize: chartConfig["dataPointSize"],
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
                             colorStop2: 'rgba(255,255,255,0)',
@@ -196,7 +197,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             for(var i=0;i<wmrows;i++) {
                                 table += "<tr>";
                                 for(var i=0;i<legend['wmlegend']['name'].length;i++) {
-                                    table += "<td valign='top' rowspan><div class='waterMark' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
+                                    table += "<td valign='top' rowspan><div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
                                     table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
                                 }
                                 table += "</tr>";
@@ -790,7 +791,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
  * As you touch the code above, migrate the code to use the pattern below.
  */
 (function($) {
-    if (!SUGAR) {
+
+    if (typeof SUGAR == "undefined" || !SUGAR) {
         SUGAR = {};
     }
     SUGAR.charts = {
