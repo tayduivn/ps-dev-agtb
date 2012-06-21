@@ -341,6 +341,25 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                     '$product',
                     $pdfTemplate->body_html
                 );
+                
+                $pdfTemplate->body_html = str_replace(
+                    '<!--{START_BUNDLE_LOOP}-->',
+                    '{foreach from=$product_bundles item="bundle"}',
+                    $pdfTemplate->body_html
+                );
+                
+                $pdfTemplate->body_html = str_replace(
+                    '<!--{START_PRODUCT_LOOP}-->',
+                    '{foreach from=$bundle.products item="product"}',
+                    $pdfTemplate->body_html
+                );
+                
+                $pdfTemplate->body_html = str_replace(
+                    array("<!--{END_PRODUCT_LOOP}-->", "<!--{END_BUNDLE_LOOP}-->"),
+                    '{/foreach}',
+                    $pdfTemplate->body_html
+                );
+                
             }
 
             sugar_file_put_contents($tpl_filename, $pdfTemplate->body_html);
