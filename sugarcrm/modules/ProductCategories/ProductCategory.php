@@ -519,7 +519,7 @@ if (empty($parent_node_id)) $parent_node_id=0;
 
         // check if this product category already stores in forecast_tree table
         $isUpdate = false;
-        $id = $this->db->getOne("SELECT id FROM forecasting_tree WHERE id = '$this->id'");
+        $id = $this->db->getOne("SELECT id FROM forecast_tree WHERE id = '$this->id'");
         if ($id == $this->id)
         {
             $isUpdate = true;

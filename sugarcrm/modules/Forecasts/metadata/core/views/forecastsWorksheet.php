@@ -9,11 +9,11 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
             array(
                 array(
                     'name' => 'forecast',
+                    'type' => 'toggle',
                     'label' => 'LBL_FORECAST',
                     'default' => true,
                     'enabled' => true,
                 ),
-
                 array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
@@ -61,6 +61,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'best_case_worksheet',
                     'label' => 'LBL_BEST_CASE',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -69,6 +70,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'likely_case_worksheet',
                     'label' => 'LBL_LIKELY_CASE',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true

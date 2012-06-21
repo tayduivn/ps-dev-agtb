@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,18 +21,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ChartApi.php');
+require_once('include/SugarParsers/Filter.php');
+require_once("include/SugarParsers/Converter/Report.php");
+require_once("include/SugarCharts/ReportBuilder.php");
 
-class ForecastsChartApi extends ChartApi {
-
+class ForecastsChartApi extends ChartApi
+{
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
-        $parentApi= array (
+        $parentApi = array(
             'forecasts_chart' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','chart'),
-                'pathVars' => array('',''),
+                'path' => array('Forecasts', 'chart'),
+                'pathVars' => array('', ''),
                 'method' => 'chart',
                 'shortHelp' => 'forecast chart',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastChartApi.html#chart',
@@ -41,7 +42,15 @@ class ForecastsChartApi extends ChartApi {
         return $parentApi;
     }
 
-    public function chart($api, $args) {
+    /**
+     * Build out the chart for the sales rep view in the forecast module
+     *
+     * @param ServiceBase $api      The Api Class
+     * @param array $args           Service Call Arguments
+     * @return mixed
+     */
+    public function chart($api, $args)
+    {
         require_once('modules/Reports/Report.php');
         global $mod_strings, $app_list_strings, $app_strings;
         $app_list_strings = return_app_list_strings_language('en');
@@ -50,37 +59,27 @@ class ForecastsChartApi extends ChartApi {
         $report_defs = array();
         $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF');
 
-
-        if(!isset($args['user']) || empty($args['user'])) {
+        if (!isset($args['user']) || empty($args['user'])) {
             global $current_user;
             $args['user'] = $current_user->id;
         }
 
+        $timeperiod = TimePeriod::getCurrentId();
+        if (isset($args['tp']) && !empty($args['tp'])) {
+            $timeperiod = $args['tp'];
+        }
+
         $testFilters = array(
-            'timeperiod_id' => isset($args['tp']) ? $args['tp'] : array('$is' => TimePeriod::getCurrentId()),
+            'timeperiod_id' => array('$is' => $timeperiod),
             'assigned_user_link' => array('id' => $args['user']),
             //'probability' => array('$between' => array('0', '70')),
             //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
 
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
+        // generate the report builder instance
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters);
 
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs['ForecastSeedReport1'][2]);
-
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        // add the filter to the report builder
-        $rb->addFilter($reportFilters);
-
-        if(isset($args['ct']) && !empty($args['ct'])) {
+        if (isset($args['ct']) && !empty($args['ct'])) {
             $rb->setChartType($this->mapChartType($args['ct']));
         }
 
@@ -105,9 +104,17 @@ class ForecastsChartApi extends ChartApi {
         // lets get some json!
         $json = $chartDisplay->generateJson();
 
-        if($json == "No Data") {
+        // if we have no data return an empty string
+        if ($json == "No Data") {
             return '';
         }
+
+        // since we have data let get the quota line
+        /* @var $quota_bean Quota */
+        $quota_bean = BeanFactory::getBean('Quotas');
+        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user']);
+        $likely_values = $this->getLikelyValues($testFilters);
+
 
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
@@ -118,8 +125,95 @@ class ForecastsChartApi extends ChartApi {
         $dataArray['properties']['goal_marker_color'] = array('#3FB300', '#444444');
         $dataArray['properties']['goal_market_label'] = array('Quota', 'Likely');
 
+        foreach ($dataArray['values'] as $key => $value) {
+
+            $likely = 0;
+            $likely_label = 0;
+
+            if (isset($likely_values[$value['label']])) {
+                list($likely, $likely_label) = array_values($likely_values[$value['label']]);
+            }
+
+            $dataArray['values'][$key]['goalmarkervalue'] = array($quota['amount'], $likely);
+            $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
+        }
+
         // return the data now
         return $dataArray;
+    }
+
+    /**
+     * Run a report to generate the likely values for the main report
+     *
+     * @param array $arrFilters     Which filters to apply to the report
+     * @return array                The likely values from the system.
+     */
+    protected function getLikelyValues($arrFilters)
+    {
+        // base report
+        $report_base = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test Goal Marker Report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}';
+
+        // generate a report builder instance
+        $rb = $this->generateReportBuilder("Opportunities", $report_base, $arrFilters);
+
+        // run the report
+        $report = new Report($rb->toJson());
+        $report->run_chart_queries();
+
+        $results = array();
+        $sum = 0;
+
+        // lets build a usable arary
+        foreach ($report->chart_rows as $row) {
+            // ignore the total line
+            if (count($row['cells']) != 2) continue;
+
+            // keep a running total of the values
+            $sum += unformat_number($row['cells'][1]['val']);
+
+            // key is the same that would be used for the main report
+            $results[$row['cells'][0]['val']] = array(
+                'amount' => $sum, // use the unformatted number for the value in the chart
+                'amount_formatted' => format_number($sum, null, null, array('currency_symbol' => true))  // format the number for the label
+            );
+        }
+
+        // return the array
+        return $results;
+    }
+
+    /**
+     * Common code to generate the report builder
+     *
+     * @param string|SugarBean $module      Which module are we basing this off of
+     * @param string $report_base           The base report to start with in a json string
+     * @param array $filters                What filters to apply
+     * @return ReportBuilder
+     */
+    protected function generateReportBuilder($module, $report_base, $filters)
+    {
+
+        // make sure module is a string and not a sugar bean
+        if ($module instanceof SugarBean) {
+            $module = $module->module_dir;
+        }
+
+        // create the a report builder instance
+        $rb = new ReportBuilder($module);
+        // load the default report into the report builder
+        $rb->setDefaultReport($report_base);
+
+        // create the filter parser with the base module
+        $filter = new SugarParsers_Filter(BeanFactory::getBean($module));
+        $filter->parse($filters);
+        // convert the filters into a reporting engine format
+        $converter = new SugarParsers_Converter_Report($rb);
+        $reportFilters = $filter->convert($converter);
+        // add the filter to the report builder
+        $rb->addFilter($reportFilters);
+
+        // return the report builder
+        return $rb;
     }
 
 }

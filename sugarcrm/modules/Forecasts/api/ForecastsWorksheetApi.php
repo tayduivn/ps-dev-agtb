@@ -56,16 +56,14 @@ class ForecastsWorksheetApi extends ModuleApi {
     public function worksheet($api, $args)
     {
         require_once('modules/Reports/Report.php');
-        global $current_user, $mod_strings, $app_list_strings, $app_strings;
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
-        $mod_strings = return_module_language('en', 'Opportunities');
+        global $app_list_strings,$current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
         $report_defs = array();
         $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}', 'detailed_summary', 'vBarF');
 
         $testFilters = array(
             'timeperiod_id' => isset($args['timeperiod_id']) ? $args['timeperiod_id'] : array('$is' => TimePeriod::getCurrentId()),
-            //'assigned_user_link' => array('id' => 'seed_chris_id'),
+            'assigned_user_link' => array('id' => 'seed_chris_id'),
             //'id' => isset($args['user_id']) ? $args['user_id'] : $current_user->id
         );
 
@@ -110,7 +108,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
             $row['id'] = $row['primaryid'];
-            $row['forecast'] = $row['opportunities_forecast'];
+            $row['forecast'] = ($row['opportunities_forecast'] == 1) ? true : false;
             $row['name'] = $row['opportunities_name'];
             $row['amount'] = $row['opportunities_amount'];
             $row['date_closed'] = $row['opportunities_date_closed'];

@@ -872,7 +872,8 @@ class Report
     function register_field_for_query(&$layout_def)
     {
         if (!$this->is_layout_def_valid($layout_def)) {
-            global $mod_strings;
+            global $current_language;
+            $mod_strings = return_module_language($current_language, $this->module_dir);
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 

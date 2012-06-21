@@ -1,0 +1,4 @@
+<div class="iphone-toggle-buttons">
+<input type="checkbox" name="{{name}}" {{#if value}}checked="true"{{/if}}>
+<span>checkbox {{value}}</span>
+</div>

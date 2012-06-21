@@ -21,6 +21,12 @@
 
             app.view.Layout.prototype.initialize.call(this, options);
 
+            //If it's a manager, switch to the manager view
+            if(app.user.get('isManager'))
+            {
+                //$('#view-sales-rep').hide();
+                //$('#view-manager').show();
+            }
             this.fetchAllModels();
             this.initializeDrawer();
         },
@@ -32,6 +38,9 @@
         },
 
         initializeAllModels: function() {
+
+
+
             var self = this,
                 componentsMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.components,
                 models = {};
