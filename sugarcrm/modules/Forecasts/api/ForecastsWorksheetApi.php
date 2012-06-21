@@ -66,7 +66,7 @@ class ForecastsWorksheetApi extends ModuleApi {
 
         $testFilters = array(
             'timeperiod_id' => array('$is' => $timeperiod_id),
-            'assigned_user_link' => array('$is' => $user_id),
+            'assigned_user_link' => array('id' => $user_id),
         );
 
         require_once('include/SugarParsers/Filter.php');
