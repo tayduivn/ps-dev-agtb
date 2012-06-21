@@ -839,10 +839,28 @@ $dictionary['User'] = array(
         array (
             'name' => 'quotas',
             'type' => 'link',
-            'relationship' => 'user_quotas',
+            'relationship' => 'users_quotas',
             'source'=>'non-db',
             'link_type'=>'one',
-            'vname'=>'LBL_QUOTA',
+            'vname'=>'LBL_QUOTAS',
+        ),
+        'forecasts' =>
+        array (
+            'name' => 'forecasts',
+            'type' => 'link',
+            'relationship' => 'users_forecasts',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_FORECASTS',
+        ),
+        'worksheets' =>
+        array (
+            'name' => 'worksheets',
+            'type' => 'link',
+            'relationship' => 'users_worksheets',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_WORKSHEETS',
         ),
     ) ,
     'indices' => array(
@@ -932,7 +950,43 @@ $dictionary['User'] = array(
 	   array('lhs_module'=> 'Teams', 'lhs_table'=> 'teams', 'lhs_key' => 'id',
 	    'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'default_team',
 	   'relationship_type'=>'one-to-many'),
-	   //END SUGARCRM flav=pro ONLY
+
+        'users_forecasts' => array(
+            'rhs_module'		=> 'Forecasts',
+            'rhs_table'			=> 'forecasts',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'forecast_type',
+            'relationship_role_column_value'=>'Rollup'
+        ),
+
+        'users_quotas' => array(
+            'rhs_module'		=> 'Quotas',
+            'rhs_table'			=> 'quotas',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'quota_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
+
+        'users_worksheets' => array(
+            'rhs_module'		=> 'Worksheet',
+            'rhs_table'			=> 'worksheet',
+            'rhs_key'			=> 'related_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'related_forecast_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
+	//END SUGARCRM flav=pro ONLY
     ),
 
 
