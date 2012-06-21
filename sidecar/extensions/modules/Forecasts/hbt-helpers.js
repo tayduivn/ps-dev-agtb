@@ -26,16 +26,13 @@
        if (typeof percent === "undefined" || percent === null) {
            percent = 0;
        }
-
-       if (percent > 1) {
-           throw new Error("[formatPercentage] Invalid number passed to helper");
-       } else if (percent < 1) {
-           percent = percent.toString().split(".")[1];
-           percent = parseInt(percent, 10);
-           percent = Math.round(percent*10)/10; // Round to two decimal places.
+       
+       percent = percent * 100;
+       percent = Math.round(percent*10)/10; // Round to two decimal places.
+       if ( percent > 1 ) {
+            percent = parseInt(percent, 10) || 0; // then, round to a whole number.
        }
-
-       return (parseInt(percent, 10) || 0) + '%';
+       return percent + '%';
    });
 
     /**
@@ -52,7 +49,6 @@
      * @method debugger
      */
     Handlebars.registerHelper("debugger", function() {
-        console.log("debugger");
         debugger;
     });
 

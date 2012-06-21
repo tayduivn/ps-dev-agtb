@@ -29,7 +29,8 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
-	const STAGE_CLOSED = 'Closed Won';
+	const STAGE_CLOSED_WON  = 'Closed Won';
+	const STAGE_CLOSED_LOST = 'Closed Lost';
 
 	var $field_name_map;
 	// Stored fields
@@ -561,7 +562,7 @@ class Opportunity extends SugarBean
 	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL )
 	{
 		$amountSum = 0;
-		$where     = "opportunities.sales_stage='" . Opportunity::STAGE_CLOSED . "'";
+		$where     = "opportunities.sales_stage='" . Opportunity::STAGE_CLOSED_WON . "'";
 
 		if ( !is_null($user_id) ) {
 			$where .= " AND opportunities.assigned_user_id='$user_id'";
@@ -594,6 +595,43 @@ class Opportunity extends SugarBean
 		return $this->get_linked_beans('products', new Product());
 	}
 
+
+	/**
+	 * Get the total revenue for the given user and timeperiod.  Defaults to the current user
+	 * and current timeperiod.
+	 *
+	 * @param null $user_id
+	 * @param null $timeperiod_id
+	 */
+	public function getRevenue( $user_id = NULL, $timeperiod_id = NULL )
+	{
+		global $current_user;
+		$revenue = 0;
+
+		if ( is_null($user_id) ) {
+			$user_id = $current_user->id;
+		}
+		if ( is_null($timeperiod_id) ) {
+			$timeperiod_id = TimePeriod::getCurrentId();
+		}
+		
+		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
+		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
+		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
+		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST);
+		
+		$query  = $this->create_list_query(NULL, $where);
+		
+		$GLOBALS['log']->log('DEBUG', $query);
+		
+		$result = $this->db->query($query);
+
+		while ( $row = $this->db->fetchByAssoc($result) ) {
+			$revenue += $row['amount'];
+		}
+
+		return $revenue;
+	}
 
 	/**
 	 * deleteProducts

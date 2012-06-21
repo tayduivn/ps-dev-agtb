@@ -24,7 +24,7 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
 
 require_once('include/api/ModuleApi.php');
 
-require_once('Modules/Forecasts/ForecastOpportunities.php');
+require_once('modules/Forecasts/ForecastOpportunities.php');
 
 class ForecastsProgressApi extends ModuleApi
 {
@@ -36,9 +36,10 @@ class ForecastsProgressApi extends ModuleApi
 	protected $user_id;
 	protected $user;
 	protected $timeperiod_id;
+	protected $revenue;
 	protected $should_rollup;
 	protected $quotaData;
-	public $_loaded;
+	protected $_loaded;
 
 
 	public function __construct()
@@ -96,6 +97,7 @@ class ForecastsProgressApi extends ModuleApi
 
 		$opportunity = new Opportunity();
 		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id);
+		$this->revenue     = $opportunity->getRevenue($this->user_id, $this->timeperiod_id);
 	}
 
 
@@ -114,20 +116,16 @@ class ForecastsProgressApi extends ModuleApi
 		if ( $caseValue <= $stageValue ) {
 			$amount = $stageValue - $caseValue;
 			$isAbove = false;
-			
-			if ( !is_null($caseValue) ) {
-				$percent = $stageValue != 0 ? $caseValue / $stageValue : 0;
-			}
 		}
 		else {
 			$amount = $caseValue - $stageValue;
 			$isAbove = true;
-			
-			if ( !is_null($caseValue) ) {
-				$percent = $caseValue != 0 ? $stageValue / $caseValue : 0;
-			}
 		}
 
+		if ( !is_null($stageValue) ) {
+			$percent = $stageValue != 0 ? $caseValue / $stageValue : 0;
+		}
+		
 		return array(
 			"amount"  => $amount,
 			"percent" => $percent,
@@ -224,8 +222,7 @@ class ForecastsProgressApi extends ModuleApi
 	{
 		$this->loadProgressData($args);
 
-		$revenue = 0;
-		return $revenue;
+		return $this->revenue;
 	}
 
 
