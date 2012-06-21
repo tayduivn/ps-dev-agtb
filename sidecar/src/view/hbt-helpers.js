@@ -299,9 +299,10 @@
      * @return {String} the relative time like `10 minutes ago`.
      */
     Handlebars.registerHelper("timeago", function(dateString) {
-        var wrapper = "<span title=\"" + dateString + "\"><time class=\"relativetime\" datetime=\"" + dateString + "\">" +
+        // TODO: Replace `span` with a `time` element. It was removed because impossible to do innerHTML on a `time` element in IE8
+        var wrapper = "<span class=\"relativetime\" title=\"" + dateString + "\">" +
             dateString +
-            "</time></span>";
+            "</span>";
 
         return new Handlebars.SafeString(wrapper);
     });

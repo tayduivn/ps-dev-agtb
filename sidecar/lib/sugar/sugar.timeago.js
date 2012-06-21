@@ -6,7 +6,7 @@ $(function() {
      *
      * Example initialization of plugin:
      *
-     * $('time.relativetime').timeago({
+     * $('span.relativetime').timeago({
      *   logger: SUGAR.App.logger,
      *   date: SUGAR.App.utils.date,
      *   lang: SUGAR.App.lang,
@@ -40,12 +40,12 @@ $(function() {
 
 
             /**
-             * This function pulls the date from the 'datetime' attribute of the element,
+             * This function pulls the date from the 'title' attribute of the element,
              * converts it in a local date, then gets the relative time and display it.
              */
             var refresh = function() {
                 var $this = $(this),
-                    UTCDate = SugarDate.parse($this.attr('datetime')),
+                    UTCDate = SugarDate.parse($this.attr('title')),
                     localDate = SugarDate.UTCtoLocalTime(UTCDate),
                     relativeTimeObj = SugarDate.getRelativeTimeLabel(localDate);
 

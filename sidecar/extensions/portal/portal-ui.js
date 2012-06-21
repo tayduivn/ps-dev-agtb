@@ -24,7 +24,7 @@
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
         if ($.fn.timeago)
-            $("time.relativetime").timeago({
+            $("span.relativetime").timeago({
                 logger: SUGAR.App.logger,
                 date: SUGAR.App.utils.date,
                 lang: SUGAR.App.lang,
