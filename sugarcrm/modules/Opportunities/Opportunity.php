@@ -89,6 +89,7 @@ class Opportunity extends SugarBean {
     var $worst_case;
     var $likely_case;
     var $timeperiod_id;
+    var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
 
 	var $importable = true;
@@ -397,6 +398,13 @@ $query .= 			"LEFT JOIN users
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
+        //if forecast value equals to -1, set it to 0 or 1 based on probability
+        global $sugar_config;
+        if ($this->forecast == -1)
+        {
+            $this->forecast = ($this->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
+        }
+
         //Set the timeperiod_id value
         global $timedate;
 

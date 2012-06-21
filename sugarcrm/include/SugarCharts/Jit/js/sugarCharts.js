@@ -54,6 +54,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             animate: animate,
                             nodeCount: data.values.length,
                             renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+                            dataPointSize: chartConfig["dataPointSize"],
                             backgroundColor: 'rgb(255,255,255)',
                             colorStop1: 'rgba(255,255,255,.8)',
                             colorStop2: 'rgba(255,255,255,0)',
