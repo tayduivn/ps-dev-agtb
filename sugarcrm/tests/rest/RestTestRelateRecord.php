@@ -54,13 +54,13 @@ class RestTestRelateRecord extends RestTestBase {
         $contactIds = "('".implode("','",$contactIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id IN {$accountIds}");
+        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id IN {$oppIds}");
+        $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}'");
+        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
 
         parent::tearDown();
@@ -108,6 +108,15 @@ class RestTestRelateRecord extends RestTestBase {
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
         // FIXME: Need to wait for this to be repaired in link2.php
         // $this->assertEquals($this->contacts[0]->contact_role,$restReply['reply']['contact_role'],"Did not fetch the related contact's role");
+
+        // Test fetch where the opp id is not there
+        $restReply = $this->_restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
+        // Test fetch where the opp id is there, but the contact ID isn't
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/UNIT_TEST_THIS_IS_NOT_A_REAL_ID");
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
     }
 
     public function testSameNumberOfRecords() {
@@ -297,12 +306,12 @@ class RestTestRelateRecord extends RestTestBase {
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
                                       json_encode(array(
                                                       'contact_role'=>'Primary Decision Maker',
-                                                      'last_name'=>"Test O'Chango",
+                                                      'last_name'=>"Test O Chango",
                                       )),'PUT');
 
         $this->assertTrue(!empty($restReply['reply']['related_record']['date_entered']), "Date Entered was not set in the Update related record reply");
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Changed the related ID when it shouldn't have");
-        $this->assertEquals("Test O'Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
+        $this->assertEquals("Test O Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
         // FIXME: Need to wait for this to be repaired in link2.php
         // $this->assertEquals($this->contacts[1]->contact_role,$restReply['reply']['related_record']['contact_role'],"Did not fetch the related contact's role");
 

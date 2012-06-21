@@ -810,7 +810,7 @@ require_once('include/EditView/EditView2.php');
                  if(!isset($parms['db_field'])) {
                      $parms['db_field'] = array($field);
                  }
-
+                $where = '';
                  //This if-else block handles the shortcut checkbox selections for "My Items" and "Closed Only"
                  if(!empty($parms['my_items'])) {
                      if( $parms['value'] == false ) {
@@ -834,7 +834,6 @@ require_once('include/EditView/EditView2.php');
                      }
                  }
 
-                 $where = '';
                  $itr = 0;
 
                  if($field_value != '' || $operator=='isnull') {

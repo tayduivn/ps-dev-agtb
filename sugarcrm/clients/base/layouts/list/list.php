@@ -1,6 +1,6 @@
 <?php
 $viewdefs['base']['layout']['list'] = array(
-    'type' => 'rows',
+    'type' => 'fluid',
     'components' =>
     array(
         0 =>

@@ -56,4 +56,37 @@
         debugger;
     });
 
+
+    // todo:  putting in here, for now.  This should go back into core sidecar once we merge back into toffee
+    /**
+     * Retrieves a string by key.
+     *
+     * The helper queries {@link Core.LanguageHelper} module to retrieve an i18n-ed string.
+     * @method str_format
+     * @param {String} key Key of the label.
+     * @param {String} module(optional) Module name.
+     * @param Mixed args String or Array of arguments to substitute into string
+     * @return {String} The string for the given label key.
+     */
+    Handlebars.registerHelper("str_format", function(key, module, args) {
+        module = _.isString(module) ? module : null;
+        var label = app.lang.get(key, module);
+
+        if ((typeof args == 'String') || args.length == 1)
+        {
+            args = (typeof args == 'String') ? args : args[0];
+            return label.replace('{0}', args);
+        }
+
+        var len = args.length;
+        for(var x=0; x < len; x++)
+        {
+            label = label.replace('{' + x + '}', args[x]);
+        }
+        return label;
+    });
+
+
+
+
 })(SUGAR.App);

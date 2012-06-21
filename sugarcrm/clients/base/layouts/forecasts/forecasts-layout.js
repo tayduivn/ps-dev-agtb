@@ -27,8 +27,20 @@
                 //$('#view-sales-rep').hide();
                 //$('#view-manager').show();
             }
-            this.fetchAllModels();
             this.initializeDrawer();
+        },
+
+        /**
+         * Fetches data for layout's model or collection.
+         *
+         * The default implementation first calls the {@link Core.Context#loadData} method for the layout's context
+         * and then iterates through the components and calls their {@link View.Component#loadData} method.
+         * This method sets context's `fields` property beforehand.
+         *
+         * Override this method to provide custom fetch algorithm.
+         */
+        loadData: function() {
+            this.fetchAllModels();
         },
 
         fetchAllModels: function() {
