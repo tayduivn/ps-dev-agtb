@@ -161,6 +161,157 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
          $this->ss->assign('fields', $fields);
     }
 
+    /**
+     * Build the Email with the attachement
+     *
+     * @param $file_name
+     * @param $focus
+     * @return $email_id
+     */
+    private function buildEmail ($file_name, $focus) {
+        
+        global $mod_strings;
+        global $current_user;
+
+        //First Create e-mail draft
+        $email_object = BeanFactory::newBean("Emails");
+        // set the id for relationships
+        $email_object->id = create_guid();
+        $email_object->new_with_id = true;
+
+        //subject
+        $email_object->name = $focus->name;
+        //body
+        $email_object->description_html = sprintf(translate('LBL_EMAIL_PDF_DEFAULT_DESCRIPTION', "PdfManager"), $file_name);
+        $email_object->description = html_entity_decode($email_object->description_html,ENT_COMPAT,'UTF-8');
+
+        //parent type, id
+        $email_object->parent_type = $focus->module_name;
+        $email_object->parent_id = $focus->id;
+        //type is draft
+        $email_object->type = "draft";
+        $email_object->status = "draft";
+
+        $email_object->to_addrs_ids = $focus->id;
+        $email_object->to_addrs_names = $focus->name.";";
+
+        if (isset($focus->emailAddress)) {
+            $to_addrs = $focus->emailAddress->getPrimaryAddress($focus);
+            $email_object->to_addrs_emails = $to_addrs.";";
+            $email_object->to_addrs = $focus->name." <".$to_addrs.">";
+        }
+        elseif( $focus->module_name == "Quotes" ) {
+            // link the sent pdf to the relevant account
+            if(isset($focus->billing_account_id) && !empty($focus->billing_account_id)) {
+                $email_object->load_relationship('accounts');
+                $email_object->accounts->add($focus->billing_account_id);
+            }
+
+            //check to see if there is a billing contact associated with this quote
+            if(!empty($focus->billing_contact_id) && $focus->billing_contact_id!="") {
+                $contact = BeanFactory::newBean("Contacts");
+                $contact->retrieve($focus->billing_contact_id);
+
+                if(!empty($contact->email1) || !empty($contact->email2)) {
+                    //contact email is set
+                    $email_object->to_addrs_ids = $focus->billing_contact_id;
+                    $email_object->to_addrs_names = $focus->billing_contact_name.";";
+
+                    if(!empty($contact->email1)){
+                        $email_object->to_addrs_emails = $contact->email1.";";
+                        $email_object->to_addrs = $focus->billing_contact_name." <".$contact->email1.">";
+                    } elseif(!empty($contact->email2)){
+                        $email_object->to_addrs_emails = $contact->email2.";";
+                        $email_object->to_addrs = $focus->billing_contact_name." <".$contact->email2.">";
+                    }
+
+                    // create relationship b/t the email(w/pdf) and the contact
+                    $contact->load_relationship('emails');
+                    $contact->emails->add($email_object->id);
+                }//end if contact name is set
+            } elseif(isset($focus->billing_account_id) && !empty($focus->billing_account_id)) {
+                $acct = BeanFactory::newBean("Accounts");
+                $acct->retrieve($focus->billing_account_id);
+
+                if(!empty($acct->email1) || !empty($acct->email2)) {
+                    //acct email is set
+                    $email_object->to_addrs_ids = $focus->billing_account_id;
+                    $email_object->to_addrs_names = $focus->billing_account_name.";";
+
+                    if(!empty($acct->email1)){
+                        $email_object->to_addrs_emails = $acct->email1.";";
+                        $email_object->to_addrs = $focus->billing_account_name." <".$acct->email1.">";
+                    } elseif(!empty($acct->email2)){
+                        $email_object->to_addrs_emails = $acct->email2.";";
+                        $email_object->to_addrs = $focus->billing_account_name." <".$acct->email2.">";
+                    }
+
+                    // create relationship b/t the email(w/pdf) and the acct
+                    $acct->load_relationship('emails');
+                    $acct->emails->add($email_object->id);
+                }//end if acct name is set
+            }
+        }
+
+        if (isset($email_object->team_id)) {
+            $email_object->team_id  = $current_user->getPrivateTeamID();
+        }
+        if (isset($email_object->team_set_id)) {
+            $teamSet = new TeamSet();
+            $teamIdsArray = array($current_user->getPrivateTeamID());
+            $email_object->team_set_id = $teamSet->addTeams($teamIdsArray);
+        }
+
+        $email_object->assigned_user_id = $current_user->id;
+
+        //Save the email object
+        global $timedate;
+        $email_object->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $email_object->save(FALSE);
+        $email_id = $email_object->id;
+        
+        $email_object->save(FALSE);
+        $email_id = $email_object->id;
+
+        //Handle PDF Attachment
+        $note = BeanFactory::newBean("Notes");
+        $note->filename = $file_name;
+        $note->file_mime_type = $email_object->email2GetMime($GLOBALS['sugar_config']['upload_dir'].$file_name);
+        $note->name = translate('LBL_EMAIL_ATTACHMENT', "Quotes").$file_name;
+
+        $note->parent_id = $email_object->id;
+        $note->parent_type = $email_object->module_name;
+        
+        //teams
+        $note->team_id = $current_user->getPrivateTeamID();
+        $noteTeamSet = new TeamSet();
+        $noteteamIdsArray = array($current_user->getPrivateTeamID());
+        $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
+        
+        $note->save();
+        $note_id = $note->id;
+
+	    $source = $GLOBALS['sugar_config']['upload_dir'].$file_name;
+	    $destination = $GLOBALS['sugar_config']['upload_dir'].$note_id;
+        
+        if (!copy($source, $destination)){
+            $msg = str_replace('$destination', $destination, translate('LBL_RENAME_ERROR', "Quotes"));
+            die($msg);
+        }
+
+        @unlink($source);
+
+        //return the email id
+        return $email_id;
+    }
+    
+    /**
+     * Build the template file for smarty to parse
+     *
+     * @param $pdfTemplate
+     * @param $previewMode
+     * @return $tpl_filename
+     */
     private function buildTemplateFile($pdfTemplate, $previewMode = FALSE)
     {
         if (!empty($pdfTemplate)) {
@@ -190,18 +341,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                     '$product',
                     $pdfTemplate->body_html
                 );
-
-                $pattern = '/\{START_BUNDLE::[^}]+\}/U';
-                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{foreach from=$product_bundles item="bundle"}', TRUE);
-
-                $pattern = '/\{START_PRODUCT::[^}]+\}/U';
-                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{foreach from=$bundle.products item="product"}', TRUE);
-
-                $pattern = '/\{END_PRODUCT::[^}]+\}/U';
-                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{/foreach}', FALSE);
-
-                $pattern = '/\{END_BUNDLE::[^}]+\}/U';
-                SugarpdfPdfmanager::replace_patern($pattern, $pdfTemplate->body_html, '{/foreach}', FALSE);
             }
 
             sugar_file_put_contents($tpl_filename, $pdfTemplate->body_html);
@@ -213,7 +352,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
     }
 
     /**
-     * Set the file name.
+     * Set the file name and manage the email attachement output
      *
      * @see TCPDF::Output()
      */
@@ -223,46 +362,33 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             $name = $this->pdfFilename;
         }
 
-        return parent::Output($name, 'D');
-    }
+        // This case is for "email as PDF"
+        if (isset($_REQUEST['to_email']) && $_REQUEST['to_email']=="1") {
+            // After the output the object is destroy
+            
+            $bean = $this->bean;
 
-    static function replace_patern($pattern, &$string, $replacement, $before) {
-
-        preg_match_all($pattern, $string, $matches, PREG_OFFSET_CAPTURE);
-
-        if (count($matches) > 0 && count($matches[0]) > 0) {
-
-            $matchItem = $matches[0][0][0];
-            $matchPosition = $matches[0][0][1];
-
-            // Identify HTML tag
-            preg_match('/::([^}]+)\}/U', $matchItem, $subMatches, PREG_OFFSET_CAPTURE);
-            if (count($subMatches) != 2) {
-                return FALSE;
+            $tmp = parent::Output('','S');
+            $badoutput = ob_get_contents();
+            if(strlen($badoutput) > 0) {
+                ob_end_clean();
             }
-            $htmlTag = $subMatches[1][0];
+            file_put_contents($GLOBALS['sugar_config']['upload_dir'].$name, ltrim($tmp));
 
-            // Replace HTML tag by $replacement
-            if ($before) {
-                $position = strripos($string, '<' . $htmlTag, -(strlen($string)-$matchPosition));
+            $email_id = $this->buildEmail($name, $bean);
+
+            //redirect
+            if($email_id=="") {
+                //Redirect to quote, since something went wrong
+                echo "There was an error with your request";
+                exit; //end if email id is blank
             } else {
-                $position = stripos($string, '</' . $htmlTag . '>', $matchPosition);
-                if ($position !== FALSE) {
-                    $position += strlen('</' . $htmlTag . '>');
-                }
+                SugarApplication::redirect("index.php?module=Emails&action=Compose&record=".$email_id."&replyForward=true&reply=");
             }
-            if ($position !== FALSE) {
-                $string = substr_replace($string, $replacement, $position, 0);
-            }            
 
-            // Replace main tag by empty
-            $string = str_replace($matchItem, '', $string);
-
-            SugarpdfPdfmanager::replace_patern($pattern, $string, $replacement, $before);
+            parent::Output($name,'D');
         }
 
-        return TRUE;
-
+        parent::Output($name, 'D');
     }
-    
 }

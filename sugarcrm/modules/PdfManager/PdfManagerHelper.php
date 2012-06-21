@@ -378,6 +378,10 @@ class PdfManagerHelper
                   $format_number_array = array(
                       'convert' => false,
                   );
+                  if (!isset($module_instance->$name)) {
+                    $module_instance->$name = 0;
+                  }
+                  
                   $fields_module[$name] = format_number($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
