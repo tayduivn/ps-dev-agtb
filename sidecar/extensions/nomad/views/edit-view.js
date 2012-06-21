@@ -11,33 +11,33 @@
             app.view.View.prototype.initialize.call(this, options);
             this.backupModel();
 
-            var haveTexareaFields = false;
             _.each(this.meta.panels, function (panel, panelIndex) {
                 _.each(panel.fields, function (field, fieldIndex) {
                     if (field.name.indexOf("email") == 0) field.type = "singleemail";
                 });
             });
-       },
+
+            var link = this.context.get("link");
+            if (link) {
+                // Pre-populate relate field
+                var parentModule = this.model.link.bean.module;
+                var parentId = this.model.link.bean.id;
+                var relateField = app.data.getRelateField(parentModule, link);
+                if (relateField) {
+                    this.relateField = relateField.name;
+                    this.model.set(relateField.id_name, parentId);
+                }
+            }
+        },
 
         saveRecord: function () {
-            var source = this;
-            app.alert.show('save_process', {level: 'general', messages: 'Saving...', autoClose: true});
-
-            var model = this.context.get("model"),
-                module = model.module;
-
-            model.save(null, {
+            var self = this;
+            this.model.save(null, {
                 relate: !!this.context.get('link'),
                 fieldsToValidate: this.getFields(),
                 success: function (model, resp) {
-                    app.alert.dismiss('save_process');
-                    app.alert.show('save_success', {level: 'success', messages: 'Saved successfully.', autoClose: true});
-                    var depth = parseInt(source.context.get("depth")) || 1;
+                    var depth = parseInt(self.context.get("depth")) || 1;
                     app.router.go(-depth);
-                },
-                error: function (model, resp, options) {
-                    app.alert.dismiss('save_process');
-                    app.alert.show('save_error', {level: 'error', messages: 'Save error!', autoClose: true});
                 }
             });
         },

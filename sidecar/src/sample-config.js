@@ -73,7 +73,7 @@
          * A list of routes that don't require authentication (in addition to `login`).
          * @cfg {Array}
          */
-        unsecureRoutes: ["signup"],
+        unsecureRoutes: ["signup", "error"],
 
         /**
          * Platform name.

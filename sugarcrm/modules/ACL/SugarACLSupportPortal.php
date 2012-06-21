@@ -57,7 +57,8 @@ class SugarACLSupportPortal extends SugarACLStatic
                 $bean->load_relationship('contacts');
                 $rows = $bean->contacts->query(array(
                                                    'where'=>array(
-                                                       'lhs_field'=>'contact.id',
+                                                       // query adds the prefix so we don't need contact.id
+                                                       'lhs_field'=>'id',
                                                        'operator'=>'=',
                                                        'rhs_value'=>$GLOBALS['db']->quote($_SESSION['contact_id']),
                                                        )));

@@ -102,7 +102,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Only set a custom request for not POST with a body
         // This affects the server and how it sets its superglobals
         if (empty($requestMethodSet)) {
-            if ($httpAction == 'PUT') {
+            if ($httpAction == 'PUT' && empty($postBody) ) {
                 curl_setopt($ch, CURLOPT_PUT, 1);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);

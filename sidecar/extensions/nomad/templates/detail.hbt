@@ -14,7 +14,9 @@
             {{/with}}
         {{/each}}
     </div>
-    <span class="fade"></span>
+    {{#if isActions}}
+        <span class="fade"></span>
+    {{/if}}
     <a href="#{{#if viewObj.model.link}}{{relatedRoute viewObj.model "edit"}}{{else}}{{modelRoute viewObj.model "edit"}}{{/if}}"><i class="icon-chevron-right more"></i></a>
     {{#if isActions}}
         <div id="record-action" class="row-fluid">
@@ -25,7 +27,7 @@
             <a class="email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
             {{/if}}
             {{#if isMessageBtn}}
-            <a class="message {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
+            <a class="message sms {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-comment icon-md"></i><span></span></a>
             {{/if}}
             {{#if isUrlBtn}}
             <a class="link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>

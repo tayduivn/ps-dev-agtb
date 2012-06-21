@@ -13,7 +13,7 @@
                                 <a>{{attributes.name}}</a>
                                 <br>
                                 <date class="date">
-                                    Posted on {{attributes.date_entered}}
+                                    {{timeago attributes.date_entered}}
                                 </date>
                             </p>
                             <div class="actions">

@@ -339,6 +339,19 @@ class SugarSpot
 
             foreach($searchFields[$moduleName] as $k=>$v)
             {
+                /*
+                 * Restrict Bool searches from free-form text searches.
+                 * Reasoning: cases.status is unified_search = true
+                 * searching for New will all open_only cases due to open_only being set as well
+                 * see: modules/Cases/metadata/Searchform.php
+                 * This would cause incorrect search results due to the open only returning more than only status like New%
+                 */
+
+                if(isset($v['type']) && !empty($v['type']) && $v['type'] == 'bool') {
+                    unset($searchFields[$moduleName][$k]);
+                    continue;
+                }
+
                 $keep = false;
                 $searchFields[$moduleName][$k]['value'] = $query;
                 if(!empty($searchFields[$moduleName][$k]['force_unifiedsearch']))
@@ -391,11 +404,21 @@ class SugarSpot
                     unset($searchFields[$moduleName][$k]);
 				}
 			} //foreach
-            
+            // setup the custom query options
+            // reset these each time so we don't append my_items calls for tables not in the query
+            // this would happen in global search
+            $custom_select = isset($options['custom_select']) ? $options['custom_select'] : '';
+            $custom_from = isset($options['custom_from']) ? $options['custom_from'] : '';
+            $custom_where = isset($options['custom_where']) ? $options['custom_where'] : '';
+
             $allowBlankSearch = false;
             // Add an extra search filter for my items
-            if (!empty($options['my_items']) && $options['my_items'] == true ) {
-                $searchFields[$moduleName]['assigned_user_id']['value'] = $GLOBALS['current_user']->id;
+            // Verify the bean has assigned_user_id before we blindly assume it does
+            if (!empty($options['my_items']) && $options['my_items'] == true && isset($GLOBALS['dictionary'][$class]['fields']['assigned_user_id'])) {
+                if(!empty($custom_where)) {
+                    $custom_where .= " AND ";
+                }
+                $custom_where .= "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}'";
                 $allowBlankSearch = true;
             }
             // If we are just searching by favorites, add a no-op query parameter so we still search
@@ -502,7 +525,22 @@ class SugarSpot
             {
                 if ( $allowBlankSearch ) {
                     $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
-                    $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
+                    
+                    if(!empty($custom_select)) {
+                        $ret_array['select'] .= $custom_select;
+                    }
+                    if(!empty($custom_from)) {
+                        $ret_array['from'] .= $custom_from;
+                    }
+                    if(!empty($custom_where)) {
+                        if(!empty($ret_array['where'])) {
+                            $ret_array['where'] .= " AND ";
+                        }
+
+                        $ret_array['where'] .= $custom_where;
+                    }
+                   
+                   $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
                 } else {
                     continue;
                 }
@@ -528,6 +566,19 @@ class SugarSpot
                     }
                     // Individual UNION's don't allow order by
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
+                    if(!empty($custom_select)) {
+                        $ret_array_start['select'] .= $custom_select;
+                    }
+                    if(!empty($custom_from)) {
+                        $ret_array['from'] .= $custom_from;
+                    }
+                    if(!empty($custom_where)) {
+                        if(!empty($ret_array['where'])) {
+                            $ret_array['where'] .= " AND ";
+                        }
+                        $ret_array['where'] .= $custom_where;
+                    }
+
                     $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'];
                 }
                 // So we add it to the output of all of the unions
@@ -545,10 +596,24 @@ class SugarSpot
                         $return_fields[$k] = $seed->field_defs[$k];
                     }
                 }
+
                 $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
+
+                if(!empty($custom_select)) {
+                    $ret_array['select'] .= $custom_select;
+                }
+                if(!empty($custom_from)) {
+                    $ret_array['from'] .= $custom_from;
+                }
+                if(!empty($custom_where)) {
+                    if(!empty($ret_array['where'])) {
+                        $ret_array['where'] .= " AND ";
+                    }
+                    $ret_array['where'] .= $custom_where;
+                }
+
                 $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
             }
-
             $totalCount = null;
             if($limit < -1)
             {
@@ -586,6 +651,9 @@ class SugarSpot
                 $temp = clone $seed;
                 $temp->setupCustomFields($temp->module_dir);
                 $temp->loadFromRow($row);
+                // need to reload the seed because not all the fields will be filled in, for instance in bugs, all fields are wanted but the query does
+                // not contain description, so the loadFromRow will not load it
+                $temp->retrieve($temp->id);
                 if ( isset($options['return_beans']) && $options['return_beans'] ) {
                     $data[] = $temp;
                 } else {

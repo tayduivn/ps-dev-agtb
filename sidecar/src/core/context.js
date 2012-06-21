@@ -42,8 +42,13 @@
             this.id = this.cid;
             this.parent = null;
             this.children = [];
+            this._dataFetched = false;
         },
 
+        /**
+         * Clears context's attributes and calls {@link Core.Context#resetLoadFlag} method.
+         * @param options(optional) Standard Backbone.Model options.
+         */
         clear: function(options) {
             _.each(this.children, function(child) {
                 child.clear(options);
@@ -52,17 +57,21 @@
             this.children = [];
             this.parent = null;
             Backbone.Model.prototype.clear.call(this, options);
+            this.resetLoadFlag();
         },
 
-        // TODO: Do we need this?
-//        /**
-//         * Changes the focus of the context. Fires the context:focus event.
-//         * @param {Object} focus The model / bean to change the focus to
-//         * @method
-//         */
-//        focus: function(focus) {
-//            this.trigger("context:focus", focus);
-//        }
+        /**
+         * Resets "load-data" state for this context and its child contexts.
+         *
+         * The {@link Core.Context#loadData} method sets an internal boolean flag
+         * to prevent multiple identical requests to the server. This method resets this flag.
+         */
+        resetLoadFlag: function() {
+            this._dataFetched = false;
+            _.each(this.children, function(child) {
+                child.resetLoadFlag();
+            });
+        },
 
         /**
          * Gets a related context.
@@ -206,9 +215,12 @@
 
         /**
          * Loads data (calls fetch on either model or collection).
+         *
+         * This method sets an internal boolean flag to prevent consecutive fetch operations.
+         * Call {@link Core.Context#resetLoadFlag} to reset the context's state.
          */
         loadData: function() {
-            if (this.get("create") === true) return;
+            if (this._dataFetched || this.get("create") === true) return;
 
             var objectToFetch, options = {},
                 modelId = this.get("modelId"),
@@ -234,21 +246,21 @@
                 if (this.get("link")) {
                     options.relate = true;
                 }
-                if (this.get("layout")) {
-                    options.fields = this.get("layout").getFieldNames();
-                } else if (this.get("view")) {
-                    options.fields = this.get("view").getFieldNames();
+
+                if (this.get("fields")) {
+                    options.fields = this.get("fields");
+                }
+
+                if (this.get("limit")) {
+                    options.limit = this.get("limit");
                 }
 
                 objectToFetch.fetch(options);
+
+                this._dataFetched = true;
             } else {
                 app.logger.warn("Skipping fetch because model is not Bean, Bean Collection, or it is not defined, module: " + this.get("module"));
             }
-
-
-            _.each(this.children, function(child) { //TODO optimize for batch
-                child.loadData();
-            });
         }
 
     });

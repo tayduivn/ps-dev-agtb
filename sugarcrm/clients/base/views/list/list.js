@@ -21,6 +21,7 @@
     },
     fireSearch: function(term) {
         var options = {
+            limit: this.context.get('limit') || null,
             params: { 
                 q: term
             },

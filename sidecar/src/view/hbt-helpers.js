@@ -161,7 +161,7 @@
      */
     Handlebars.registerHelper('has', function(val, array, block) {
         if (!block) return "";
-        
+
         // Since we need to check both just val = val 2 and also if val is in an array, we cast
         // non arrays into arrays
         if (!_.isArray(array) && !_.isObject(array)) {
@@ -217,8 +217,8 @@
     });
 
     /**
-     * Same as eq helper but second value is a {String} regex expression. Unfortunately, we have to do this because the 
-     * Handlebar's parser gets confused by regex literals like /foo/ 
+     * Same as eq helper but second value is a {String} regex expression. Unfortunately, we have to do this because the
+     * Handlebar's parser gets confused by regex literals like /foo/
      * @method match
      * @param {String} val1 first value to compare
      * @param {String} val2 A String representing a RegExp constructor argument. So if RegExp('foo.*') is the desired regex,
@@ -229,7 +229,7 @@
         var re;
         if (!block) return "";
         re = new RegExp(val2);
-        if(re.test(val1)) {
+        if (re.test(val1)) {
             return block(this);
         } else {
             return block.inverse(this);
@@ -237,7 +237,7 @@
     });
 
     /**
-     * Same as notEq helper but second value is a {String} regex expression. 
+     * Same as notEq helper but second value is a {String} regex expression.
      * @method notMatch
      * @param {String} val1 first value to compare
      * @param {String} val2 A String representing a RegExp constructor argument. So if RegExp('foo.*') is the desired regex,
@@ -248,13 +248,13 @@
         var re;
         if (!block) return "";
         re = new RegExp(val2);
-        if(!re.test(val1)) {
+        if (!re.test(val1)) {
             return block(this);
         } else {
             return block.inverse(this);
         }
     });
-    
+
     /**
      * Logs a value.
      * @method log
@@ -287,6 +287,24 @@
     Handlebars.registerHelper("str", function(key, module) {
         module = _.isString(module) ? module : null;
         return app.lang.get(key, module);
+    });
+
+    /**
+     * Wrap the date into a time element
+     * This helper allows to implement a plugin that will parse each time element and
+     * convert the date into a relative time with a timer.
+     *
+     * @method timeago
+     * @param {String} dateString like `YYYY-MM-DD hh:mm:ss`.
+     * @return {String} the relative time like `10 minutes ago`.
+     */
+    Handlebars.registerHelper("timeago", function(dateString) {
+        // TODO: Replace `span` with a `time` element. It was removed because impossible to do innerHTML on a `time` element in IE8
+        var wrapper = "<span class=\"relativetime\" title=\"" + dateString + "\">" +
+            dateString +
+            "</span>";
+
+        return new Handlebars.SafeString(wrapper);
     });
 
 })(SUGAR.App);
