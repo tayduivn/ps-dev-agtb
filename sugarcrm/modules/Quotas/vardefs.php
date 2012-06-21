@@ -204,21 +204,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
        	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id')),
        	  array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id, timeperiod_id')),
 	),
-
-    'relationships' => array (
-        'user_quotas' => array(
-            'rhs_module'		=> 'Quotas',
-            'rhs_table'			=> 'quotas',
-            'rhs_key'			=> 'user_id',
-            'lhs_module'		=> 'Users',
-            'lhs_table'			=> 'users',
-            'lhs_key'			=> 'id',
-            'relationship_type'	=> 'one-to-many',
-            'relationship_role_column'=>'quota_type',
-            'relationship_role_column_value'=>'Direct'
-        )
-    )
-
 );
 
 ?>

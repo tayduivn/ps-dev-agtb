@@ -213,4 +213,7 @@ class Forecast extends SugarBean {
 	}
 	
 }
+function getTimePeriodsDropDownForForecasts(){
+    return TimePeriod::get_timeperiods_dom();
+}
 ?>

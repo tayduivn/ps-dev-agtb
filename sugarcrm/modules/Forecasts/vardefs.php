@@ -302,7 +302,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'vname' => 'LBL_FORECAST_ID',
     'type' => 'id',
     'required'=>true,
-    'reportable'=>true,
+    'reportable'=>false,
     'comment' => 'Unique identifier',
   ),
 
@@ -310,8 +310,10 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_FORECAST_TIME_ID',
-    'type' => 'id',
-    'reportable'=>false,
+    'type' => 'enum',
+    'dbType' => 'id',
+    'reportable'=>true,
+    'function' => 'getTimePeriodsDropDownForForecasts',
 	'comment' => 'ID of the associated time period for this forecast',
    ),
 
@@ -394,7 +396,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
   ),
- 'timeperiod_name'=>
+ /*'timeperiod_name'=>
    array(
 		'name'=>'timeperiod_name',
 		'rname'=>'name',
@@ -406,7 +408,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 		'module'=>'TimePeriods',
 		'massupdate'=>false,
 		'source'=>'non-db'
-		),
+		),*/
  'user_name'=>
    array(
 		'name'=>'user_name',
@@ -479,7 +481,8 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 
 ),
  'indices' => array (
-       array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id'))
+       array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id, timeperiod_id')),
        )
 );
 
@@ -505,8 +508,10 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_WK_TIMEPERIOD_ID',
-    'type' => 'id',
-    'reportable'=>false,
+    'type' => 'enum',
+    'dbType' => 'id',
+    'reportable'=> true,
+    'function' => 'getTimePeriodsDropDownForForecasts',
     'comment' => 'ID of the associated time period for this worksheet',
   ),
   //worksheet is for this forecast type.
@@ -535,26 +540,27 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   	'vname'=>'LBL_WK_FORECAST_TYPE',
   	'type'=>'varchar',
   	'len' => 100,
+    'reportable' => false,
   	'comment' => 'Direct or rollup, or null if related_id is an Opportunity',
   ),
   'best_case' =>
   array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_CASE_VALUE',
+    'vname' => 'LBL_BEST_CASE_VALUE',
     'type' => 'long',
     'comment' => 'Best case worksheet amount',
   ),
   'likely_case' =>
   array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY_VALUE',
+    'vname' => 'LBL_LIKELY_CASE_VALUE',
     'type' => 'long',
     'comment' => 'Likely case worksheet amount',
   ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_CASE_VALUE',
+    'vname' => 'LBL_WORST_CASE_VALUE',
     'type' => 'long',
     'comment' => 'Worst case worksheet amount',
   ),
