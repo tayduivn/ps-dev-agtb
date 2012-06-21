@@ -876,12 +876,12 @@ function handleSugarConfig() {
             )
         ),
         'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-        'unsecureRoutes' => array("signup"),
+        'unsecureRoutes' => array('signup', 'error'),
         "clientID"=> "sugar"
     );
     $configString = json_encode($portalConfig, true);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents('portal/config.js', $portalJSConfig);
+    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
 //END SUGARCRM flav=ent ONLY
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
