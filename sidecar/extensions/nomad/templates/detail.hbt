@@ -14,7 +14,9 @@
             {{/with}}
         {{/each}}
     </div>
-    <span class="fade"></span>
+    {{#if isActions}}
+        <span class="fade"></span>
+    {{/if}}
     <a href="#{{#if viewObj.model.link}}{{relatedRoute viewObj.model "edit"}}{{else}}{{modelRoute viewObj.model "edit"}}{{/if}}"><i class="icon-chevron-right more"></i></a>
     {{#if isActions}}
         <div id="record-action" class="row-fluid">
