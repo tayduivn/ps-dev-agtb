@@ -40,12 +40,13 @@ $buildFiles = array(
             'lib/stash/stash.js',
             'lib/async/async.js',
             'lib/chosen/chosen.jquery.js',
-            'lib/searchahead/jquery.searchahead.js',
+            'lib/sugar/sugar.searchahead.js',
+            'lib/sugar/sugar.timeago.js',
         )
     ),
     'portal' => array(
         'toMinifyAndConcat' => array(
-            'extensions/portal/core/error.js',
+            'extensions/portal/error.js',
             'extensions/portal/views/header-view.js',
             'extensions/portal/views/alert-view.js',
             'extensions/portal/views/footer-view.js',

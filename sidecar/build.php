@@ -1,11 +1,19 @@
 <?php
 /**
- * This script is used to build out the javascript associated to the sidecar framework
+ * This script is used to built the javascript associated to the sidecar framework
  *
- * It will concatenate and minify any files specified in an array in src/include-manifest.php
+ * It will concatenate and minify any files specified in an array in src/include-manifest.php. It will
+ * also build documentation for the framework if the appropriate library is available.
  *
- * The variable $buildFiles consists of an array of the format below.
  *
+ * REQUIREMENTS:
+ *  nodejs
+ *  uglifyjs
+ *  jshint
+ *  jsduck (ruby gem)
+ *
+ *
+ * The variable $buildFiles is specified in src/inlcude-mainifest.php and consists of an array of the format below.
  * $buildFiles = array(
  *                      'outputFileName' => array(
  *                                                  'file1.js',
@@ -15,11 +23,11 @@
  *
  **/
 
-// require('../build/rome/Rome.php');
 require('src/include-manifest.php');
 
 // Set Build directory
-$outputDir = "build";
+$outputDir = "minified";
+$errors='';
 
 // Create build directory if it doesn't exist
 if (!file_exists($outputDir)) {
@@ -80,8 +88,8 @@ if ($buildFiles) {
 $docs = shell_exec('jsduck src lib/sugarapi --output docs 2>&1');
 
 // Aserts
-if (file_exists("build/sidecar.js") &&
-    file_exists("build/sidecar.min.js")
+if (file_exists("minified/sidecar.js") &&
+    file_exists("minified/sidecar.min.js")
 ) {
     exit(0);
 } else {
