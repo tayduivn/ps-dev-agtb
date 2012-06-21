@@ -113,25 +113,53 @@ describe("Error module", function() {
         spyFallbackHandler.restore();
     });
 
-    
-    it("should call handleUnauthorizedError callback on 401 if available, or, resort to fallback", function() {
-        var spyHandleUnauthorizedError, spyFallbackHandler, xhr;
+    it("should attempt refresh if appropriate, otherwise handleUnauthorizedError callback on 401, or lastly, resort to generic fallback", function() {
+        var spyHandleUnauthorizedError, spyFallbackHandler, spyAttemptRefresh, xhr;
         app.error.handleUnauthorizedError = function() {};
         spyHandleUnauthorizedError = sinon.spy(app.error, 'handleUnauthorizedError');
+        spyAttemptRefresh = sinon.spy(app.error, 'attemptRefresh');
+
         xhr = {
             status: '401',
-            responseText: '{"error":"fubar"}'
+            responseText: '{"error": "invalid_grant", "error_description": "some desc"}',
         };
+        SugarTest.server.respondWith("GET", /.*\/sugarcrm\/rest\/v10\/oauth2\/token\//,
+            [401, {  "Content-Type": "application/json"},
+                JSON.stringify("")]);
         app.error.handleHttpError(xhr);
-        expect(spyHandleUnauthorizedError.called).toBeTruthy();
+        SugarTest.server.respond();
+        expect(spyAttemptRefresh).toHaveBeenCalled();
+        expect(spyHandleUnauthorizedError).toHaveBeenCalled();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleUnauthorizedError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
         app.error.handleHttpError(xhr);
+        SugarTest.server.respond();
         expect(spyHandleUnauthorizedError).not.toHaveBeenCalledTwice();
-        expect(spyFallbackHandler.called).toBeTruthy();
+        expect(spyFallbackHandler).toHaveBeenCalled();
         spyFallbackHandler.restore();
+        spyAttemptRefresh.restore();
+    });
+
+    it("should NOT call attempt refresh if not refreshable error code on 401", function() {
+        var spyHandleUnauthorizedError, spyFallbackHandler, spyAttemptRefresh, xhr;
+        app.error.handleUnauthorizedError = function() {};
+        spyHandleUnauthorizedError = sinon.spy(app.error, 'handleUnauthorizedError');
+        spyAttemptRefresh = sinon.spy(app.error, 'attemptRefresh');
+
+        xhr = {
+            status: '401',
+            responseText: '{"error": "invalid_request", "error_description": "some desc"}',
+        };
+        SugarTest.server.respondWith("GET", /.*\/sugarcrm\/rest\/v10\/oauth2\/token\//,
+            [401, {  "Content-Type": "application/json"},
+                JSON.stringify("")]);
+        app.error.handleHttpError(xhr);
+        SugarTest.server.respond();
+        expect(spyAttemptRefresh).not.toHaveBeenCalled();
+        expect(spyHandleUnauthorizedError).toHaveBeenCalled();
+        spyAttemptRefresh.restore();
     });
 
     it("should call handleForbiddenError callback on 403 if available, or, resort to fallback", function() {
