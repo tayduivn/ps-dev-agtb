@@ -31,6 +31,8 @@ $buildFiles = array(
             'src/view/layouts/list-layout.js',
             'src/view/layouts/fluid-layout.js',
             'src/view/alert.js',
+            'lib/sugar/sugar.searchahead.js',
+            'lib/sugar/sugar.timeago.js',
         ),
         'toConcat' => array(
             'lib/jquery/jquery.min.js',
@@ -40,8 +42,6 @@ $buildFiles = array(
             'lib/stash/stash.js',
             'lib/async/async.js',
             'lib/chosen/chosen.jquery.js',
-            'lib/sugar/sugar.searchahead.js',
-            'lib/sugar/sugar.timeago.js',
         )
     ),
     'portal' => array(
