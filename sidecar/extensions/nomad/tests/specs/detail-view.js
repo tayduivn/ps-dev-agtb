@@ -23,14 +23,15 @@ describe ("Detail View", function () {
         initModuleSummaryView("Accounts");
 
         var links = app.nomad.getLinks(view.model);
-        expect(links.length).toEqual(5);
+        expect(links.length).toEqual(6);
 
         var names = _.pluck(links, "name"); //map link names
-        expect(_.include(names, "cases")).toEqual(true);
-        expect(_.include(names, "tasks")).toEqual(true);
-        expect(_.include(names, "meetings")).toEqual(true);
-        expect(_.include(names, "calls")).toEqual(true);
-        expect(_.include(names, "leads")).toEqual(true);
+        expect(_.include(names, "cases")).toBeTruthy();
+        expect(_.include(names, "tasks")).toBeTruthy();
+        expect(_.include(names, "meetings")).toBeTruthy();
+        expect(_.include(names, "calls")).toBeTruthy();
+        expect(_.include(names, "leads")).toBeTruthy();
+        expect(_.include(names, "opportunities")).toBeTruthy();
     });
 
     it("should be able to filter fields of needed types and check them", function() {
