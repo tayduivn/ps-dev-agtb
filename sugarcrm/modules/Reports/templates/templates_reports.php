@@ -352,11 +352,69 @@ EOD
     }
     //END SUGARCRM flav=pro ONLY
     if ($report_export_access) {
-        $buttons[] = <<<EOD
-        <input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings['LBL_VIEW_PDF_BUTTON_KEY']}" value="{$app_strings['LBL_VIEW_PDF_BUTTON_LABEL']}" title="{$app_strings['LBL_VIEW_PDF_BUTTON_TITLE']}"
-               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
-EOD
-        ;
+                $record = '{$fields.id.value}';
+                $pdfManager = BeanFactory::newBean('PdfManager');
+                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="Reports" AND published = "yes"');
+                
+                $output = '';
+                if (!empty($pdfManagerList)) {
+                    if(SugarThemeRegistry::current()->name != "Classic") {
+                        $output = '
+                            <script type="text/javascript">
+                                function doReportsPdfTemplateOnClick(tplId) {
+                                    var menuForm = YAHOO.util.Dom.get("EditView");
+                                    menuForm.save_report.value="";
+                                    menuForm.to_csv.value="";
+                                    menuForm.to_pdf.value="on";
+                                    menuForm.pdf_template_id.value=tplId;
+                                    menuForm.submit();
+                                }
+                            </script>
+                            <input id="pdfview_tpl_id" name="pdf_template_id" value="" type="hidden" />
+                            <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
+                            $pdfItems = array();
+                            foreach($pdfManagerList as $pdfTemplate){
+                                $pdfItems[] = array(    'html'  =>  '
+                                <a href="#" onclick="doReportsPdfTemplateOnClick(\''.$pdfTemplate->id.'\')">' . $pdfTemplate->name . '</a>', 
+                                                        'items' => array(),
+                                                    );
+                            }
+                            require_once('include/Smarty/plugins/function.sugar_menu.php');
+                            $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
+                                                                            'items'                 => $pdfItems,
+                                                                            'htmlOptions'           => array( 'class' => 'subnav-sub',),
+                                                                            'itemOptions'           => array(),
+                                                                            'submenuHtmlOptions'    => array(),
+                                                                        )
+                                                                    , $smarty);
+                    } else {
+                        $output = '
+                            <input id="pdfview_tpl_id" name="pdf_template_id" value="" type="hidden" />
+                            <script type="text/javascript">
+
+                                function doReportsPdfTemplateOnClick(tplId) {
+                                    var menuForm = YAHOO.util.Dom.get("EditView");
+                                    menuForm.save_report.value="";
+                                    menuForm.to_csv.value="";
+                                    menuForm.to_pdf.value="on";
+                                    menuForm.pdf_template_id.value=tplId;
+                                    menuForm.submit();
+                                }
+                                function display_pdf_list(el) {
+                                    var menu = \'';
+                                foreach($pdfManagerList as $pdfTemplate){   
+                                    $output .= '<a href="#" onclick="doReportsPdfTemplateOnClick(\\\''.$pdfTemplate->id.'\\\')">' . $pdfTemplate->name . '</a>';
+                                }
+                                $output .= '\';
+                                SUGAR.util.showHelpTips(el,menu);
+                                }
+                            </script>
+                            <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_VIEW') . '</a>
+                          ';               
+                        }
+                    }
+    
+        $buttons[] = $output;
     }
     if ($isExportAccess) {
         $buttons[] = <<<EOD

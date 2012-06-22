@@ -99,7 +99,11 @@ if ( isset($_REQUEST['id'])) {
 }
 
 if(! empty($_REQUEST['to_pdf']) && empty($_REQUEST['search_form_only'])){
-	template_handle_pdf($args['reporter']);
+    $pdf_template_id = '';
+    if (!empty($_REQUEST['pdf_template_id'])) {
+        $pdf_template_id = $_REQUEST['pdf_template_id'];
+    }
+	template_handle_pdf($args['reporter'], $pdf_template_id);
 	return;
 }
 if(! empty($_REQUEST['to_csv'])){

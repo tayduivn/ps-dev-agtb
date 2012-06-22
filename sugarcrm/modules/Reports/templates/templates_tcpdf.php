@@ -62,7 +62,9 @@ function process($pdf, $reportname, $stream){
 /**
  * @return stream or string
  */
-function template_handle_pdf(&$reporter, $stream = true) {
+function template_handle_pdf(&$reporter, $stream = true, $pdf_template_id = '') {
+    global $app_list_strings, $locale, $timedate;
+    
     $reporter->enable_paging = false;
     $reporter->plain_text_output = true;
 
@@ -85,5 +87,32 @@ function template_handle_pdf(&$reporter, $stream = true) {
     }
 
     $pdf=preprocess($type, $reporter);
+    
+    //manage metadata & header image for the selected template
+    $pdfTemplate = BeanFactory::newBean('PdfManager');
+    if (!empty($pdf_template_id) && $pdfTemplate->retrieve($pdf_template_id) !== null) {
+        $pdf->tplHeaderData = array();
+        if (!empty($pdfTemplate->header_image)) {
+            $tplImage = $GLOBALS['sugar_config']['upload_dir'].$pdfTemplate->header_image;
+            $tplTargetImage = K_PATH_CUSTOM_IMAGES.$pdfTemplate->header_image.".".$pdfTemplate->header_image_ext;
+
+            sugar_mkdir(K_PATH_CUSTOM_IMAGES, 0755, true);
+            $tpl_filename = $pdfTemplate->header_image.".".$pdfTemplate->header_image_ext;
+            if (    !file_exists($tplTargetImage) || 
+                    (file_exists($tplTargetImage) && filesize($tplTargetImage) != filesize($tplImage)) 
+                ) {
+                if (!copy($tplImage, $tplTargetImage)){
+                    $tpl_filename = "";
+                }
+            }
+            if (!empty($tpl_filename)) {
+                $pdf->tplHeaderData['logo'] = $tpl_filename;
+            }
+        }
+        $pdf->tplHeaderData['author'] = $pdfTemplate->author;
+        $pdf->tplHeaderData['title'] = $pdfTemplate->title;
+        $pdf->tplHeaderData['subject'] = $pdfTemplate->subject;
+        $pdf->tplHeaderData['keywords'] = $pdfTemplate->keywords;
+    }
     return process($pdf, $reporter->name, $stream);
 }

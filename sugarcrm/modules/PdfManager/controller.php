@@ -40,4 +40,12 @@ class PdfManagerController extends SugarController
         $this->view = 'getFields';
     }
 
+    public function action_save()
+    {
+        if (!empty($_FILES['header_image'])) {
+            $this->bean->header_image_ext = substr(strrchr($_FILES['header_image']['name'], '.'), 1);
+        }
+        
+        parent::action_save();
+    }
 }
