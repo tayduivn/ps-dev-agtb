@@ -172,6 +172,6 @@
         }
     });
 
-    app.augment("NomadController", NomadController, false);
+    //app.augment("NomadController", NomadController, false);
 
 })(SUGAR.App);
