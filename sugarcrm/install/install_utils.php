@@ -863,6 +863,7 @@ function handleSugarConfig() {
 //BEGIN SUGARCRM flav=ent ONLY
     $portalConfig = array(
         'appId'=>'SupportPortal',
+        'env'=>'dev',
         'platform' => 'portal',
         'additionalComponents' => array(
             'header' => array(

@@ -48,7 +48,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay');
         $portalConfig = array(
             'platform' => 'portal',
-            'env' => 'dev',
             'debugSugarApi' => true,
             'logLevel' => array(
                 'name' => 'DEBUG',
