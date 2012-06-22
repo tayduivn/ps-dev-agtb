@@ -214,29 +214,7 @@
             {
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
-                "bPaginate":false,
-                "fnFooterCallback":function(nFoot, aaData, iStart, iEnd, aiDisplay)
-                {
-                    self.includedAmount = 0;
-                    self.includedBest = 0;
-                    self.includedLikely = 0;
-                    self.overallAmount = 0;
-                    self.overallBest = 0;
-                    self.overallLikely = 0;
-
-                    for (var i=iStart; i<iEnd; i++)
-                    {
-                        var included = /checked/.test(aaData[i][columnKeys['forecast']]);
-                        var amount = $(aaData[i][columnKeys['amount']]).html();
-                        //var likely = $(aaData[i][columnKeys['likely_case_worksheet']]).html();
-                        //var best = $(aaData[i][columnKeys['best_case_worksheet']]).html();
-                        if(included)
-                        {
-                            self.includedAmount += parseFloat(amount);
-                        }
-                        self.overallAmount += parseFloat(amount);
-                    }
-                }
+                "bPaginate":false
             }
         );
 
@@ -254,15 +232,47 @@
     },
 
     /**
+     *
+     * @param selectedUser
+     */
+    calculateTotals: function() {
+        var self = this;
+        self.includedAmount = 0;
+        self.includedBest = 0;
+        self.includedLikely = 0;
+        self.overallAmount = 0;
+        self.overallBest = 0;
+        self.overallLikely = 0;
+
+        _.each(self._collection.models, function (model) {
+            var included = model.get('forecast');
+            var amount = parseFloat(model.get('amount'));
+            var likely = parseFloat(model.get('likely_case_worksheet'));
+            var best = parseFloat(model.get('best_case_worksheet'));
+
+            if(included)
+            {
+                self.includedAmount += amount;
+                self.includedLikely += likely;
+                self.includedBest += best;
+            }
+            self.overallAmount += amount;
+            self.overallLikely += likely;
+            self.overallBest += best;
+        });
+    },
+
+    /**
      * Event Handler for updating the worksheet by a selected user
      *
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser.id;
-        var model = this.context.model.forecasts.worksheet;
-        model.url = this.createURL();
-        model.fetch();
+        this._collection = this.context.model.forecasts.worksheet;
+        this._collection.url = this.createURL();
+        this._collection.fetch();
+        this.calculateTotals();
         this.render();
     },
 
@@ -286,6 +296,7 @@
             //Remove the filters
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
         }
+        this.calculateTotals();
         this.render();
     },
 
@@ -296,9 +307,10 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        var model = this.context.model.forecasts.worksheet;
-        model.url = this.createURL();
-        model.fetch();
+        this._collection = this.context.model.forecasts.worksheet;
+        this._collection.url = this.createURL();
+        this._collection.fetch();
+        this.calculateTotals();
         this.render();
     },
 

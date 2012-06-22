@@ -19,6 +19,18 @@
                 showManagerOpportunities: false
             });
 
+            // Initialize the user on the model
+            var selectedUser = {
+                'id'            : app.user.get('id'),
+                'full_name'     : app.user.get('full_name'),
+                // first and last name are not passed through /Forecasts/me
+                'first_name'    : '',
+                'last_name'     : ''
+            };
+
+            //set the current user with the logged in user
+            this.options.context.set("selectedUser", selectedUser);
+
             app.view.Layout.prototype.initialize.call(this, options);
 
             //If it's a manager, switch to the manager view

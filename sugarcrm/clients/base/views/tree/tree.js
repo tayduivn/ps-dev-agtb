@@ -26,10 +26,6 @@
         this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
         this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
 
-        // empty user to originally set/reset the context param
-        var initUser = {'id': '','full_name': '','first_name': '','last_name': ''};
-        this.context.set( "selectedUser" , initUser);
-
         // Hide the whole tree view until jsTree gets it's data back
         // if current user has reportees, then we'll show the tree view
         $('.view-tree').hide();

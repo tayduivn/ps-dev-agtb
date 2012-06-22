@@ -558,6 +558,10 @@ class JsChart extends SugarChart {
 				$content .= $this->buildDataBarChartStacked($xmlstr);
 			}
 			$content .= "\n}";
+
+            // fix-up the json since it's not valid json for JS or PHP
+            $content = str_replace(array("\t", "\n", "'"), array("","",'"'), $content);
+
 			return $content;
 		} else {
 			return "No Data";
