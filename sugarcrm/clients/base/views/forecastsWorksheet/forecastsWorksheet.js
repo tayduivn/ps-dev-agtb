@@ -54,6 +54,12 @@
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
         this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
         this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
+
+        // INIT tree with logged-in user
+        var selectedUser = {
+            'id' : app.user.get('id')
+        }
+        this.updateWorksheetBySelectedUser(selectedUser);
     },
 
     createURL:function() {

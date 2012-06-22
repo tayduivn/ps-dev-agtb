@@ -52,9 +52,16 @@
                         // IF this user has children (is a manager/has reportees) then show the tree view
                         // 1st if line is true if Parent link has been returned
                         // 2nd if line is true if no Parent link has been returned
-                        if( ( data instanceof Array && data[1].children.length > 0 ) ||
-                            ( data.hasOwnProperty('children') && data.children.length > 0 ) ) {
+                        if( (data instanceof Array && data[1].children.length > 0) ||
+                            (data.hasOwnProperty('children') && data.children.length > 0)) {
                             $('.view-tree').show();
+
+                            //get id of current root user
+                            if(data instanceof Array) {
+                                self.rootUserId = data[1].metadata.id;
+                            } else {
+                                self.rootUserId = data.metadata.id;
+                            }
                         }
                     }
                 }
@@ -72,6 +79,9 @@
 
                         },
                         "rep" : {
+
+                        },
+                        "root" : {
 
                         }
                     }
@@ -109,25 +119,13 @@
 
                     // Handle different types of nodes
                     switch(nodeType) {
-                        case "parent_link":
-                            var returnParentSuffix = '';
-
-                            // selectedUser has the metadata of the currently-selected-user's parent
-                            // if the currently-Logged-in user is going to be fetched next, do not return a parent link
-                            // as we just want the currently-Logged-in user and who they report to but no parent link.
-                            // Go no further up the tree
-                            if(app.user.get('id') != selectedUser.id)  {
-                                returnParentSuffix = '/1'
-                            }
-
-                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + returnParentSuffix;
-                            self.rendered = false;
-                            self.render();
+                        case "root":
+                            // If user clicks on the root node, we do not need to re-render tree
                             break;
 
+                        case "parent_link":
                         case "manager":
-                            // add /1 to end of url to hit the reporteesWithParent endpoint
-                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id + '/1';
+                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id;
                             self.rendered = false;
                             self.render();
                             break;

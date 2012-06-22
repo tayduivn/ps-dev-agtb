@@ -57,15 +57,7 @@ class ForecastsFiltersApi extends ModuleApi {
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
-            ),
-            'reporteesWithParentLink' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', 'reportees', '?', '?'),
-                'pathVars' => array('','','userId','returnParent'),
-                'method' => 'getReportees',
-                'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
-            ),
+            )
         );
         return $parentApi;
     }
@@ -124,16 +116,13 @@ class ForecastsFiltersApi extends ModuleApi {
      * @return string
      */
     public function getReportees($api, $args) {
-        global $app_list_strings, $current_language;
+        global $app_list_strings, $current_language, $current_user;
         $app_list_strings = return_app_list_strings_language($current_language);
 
         $id = clean_string($args['userId']);
 
         // Boolean do we want to return a Parent link with the result set
         $returnParent = false;
-        // if returnParent is not set, or it is anything other than '1', ignore it
-        if(!empty($args['returnParent']) && $args['returnParent'] == '1')
-            $returnParent = true;
 
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
             false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
@@ -174,10 +163,19 @@ class ForecastsFiltersApi extends ModuleApi {
             );
 
             // Set the main user id as the root for treeData
-            if($user['metadata']['id'] == $id)
-            {
+            // Set the main user id as the root for treeData
+            if($user['metadata']['id'] == $current_user->id) {
+                $user['attr']['rel'] = 'root';
+                $treeData = $user;
+            } else if($user['metadata']['id'] == $id) {
+                // if this is the user requested in the URL,
+                // but not the currently-logged-in user
+
                 $user['attr']['rel'] = 'manager';
                 $treeData = $user;
+
+                // we want a parent node added to the return set
+                $returnParent = true;
             } else {
                 $flatUsers[] = $user;
             }

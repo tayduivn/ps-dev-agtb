@@ -219,7 +219,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
 
                         SUGAR.charts.trackWindowResize(barChart, chartId, data);
-                        barChart.json = json;
+                        //barChart.json = json;
                         that.chartObject = barChart;
 
                     }
