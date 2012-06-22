@@ -12,7 +12,7 @@
         {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
         <h2 id="likely">{{likelyCase}}</h2>
     </div>
-    <a href="forecast.html" class="btn btn-primary">
+    <a class="btn btn-primary" id="commit_forecast">
     <i class="icon-upload icon-md"></i> {{str "LBL_QC_COMMIT_BUTTON" "Forecasts"}}</a>
     <hr>
 {{#if previousText.length}}
@@ -28,16 +28,31 @@
     {{previousLikelyCase}}
     </div>
     <div class="toggle">
-        <i class="icon-chevron-up"></i>
+        <i class="icon-chevron-down"></i>
     </div>
 </div>
-<div>
+<div class="hide extend log">
 {{#each historyLog}}
-   <div class="span6">
-   <strong>{{this.text}}</strong></br>
-   {{this.text2}}
-   </div>
+   <article>
+   {{this.text}}
+   <br>
+   <date>{{this.text2}}</date>
+   </article>
 {{/each}}
 </div>
 {{/if}}
 </div>
+
+<script type="text/javascript">
+    $('.drawer').toggle(
+      function (e) {
+    		$(this).next('.extend').removeClass('hide');
+    		$(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
+    		return false;
+      },
+      function (e) {
+      		$(this).next('.extend').addClass('hide');
+      		$(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
+      		return false;
+    })
+</script>
