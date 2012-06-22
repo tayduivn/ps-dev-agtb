@@ -5,6 +5,7 @@
         app.router.login();
     }
 
+    var _origHandleStatusCodesFallback = app.error.handleStatusCodesFallback;
     app.error = _.extend(app.error, {
 
         _alertUnauthorized: function() {
@@ -15,10 +16,10 @@
             });
         },
 
-        _alertSystemError: function() {
+        _alertSystemError: function(code) {
             app.alert.show("system_error", {
                 level: "error",
-                messages: "Internal error. Please try again later.",
+                messages: "Internal error (" + code + "). Please try again later.",
                 autoClose: true
             });
         },
@@ -27,7 +28,7 @@
         // OAuth2 errors
         // --------------------------------------------------------
 
-        handleInvalidGrantError: function(xhr, error) {
+        handleNeedsLoginError: function() {
             app.alert.show("auth_error", {
                 level: "error",
                 messages: "Invalid username or password",
@@ -36,31 +37,20 @@
             _login();
         },
 
-        // This is actually invalid client ID (app ID) -- it shouldn't ever happen
-        handleInvalidClientError: function(xhr, error) {
-            this._alertUnauthorized();
+        handleInvalidGrantError: function() {
+            app.alert.show("auth_error", {
+                level: "error",
+                messages: "Your session has been expired.",
+                autoClose: true
+            });
             _login();
         },
 
-        handleUnauthorizedClientError: function(xhr, error) {
-            this._alertUnauthorized(xhr, error);
-            _login();
-        },
-
-        handleInvalidRequestError: function(xhr, error) {
-            this._alertSystemError();
-            _login();
-        },
-
-        handleUnsupportedGrantTypeError: function(xhr, error) {
-            this._alertSystemError();
-            _login();
-        },
-
-        handleInvalidScopeError: function(xhr, error) {
-            this._alertSystemError();
-            _login();
-        },
+//        handleInvalidClientError:
+//        handleUnauthorizedClientError:
+//        handleInvalidRequestError:
+//        handleUnsupportedGrantTypeError:
+//        handleInvalidScopeError:
 
         // --------------------------------------------------------
         // Other errors
@@ -84,15 +74,16 @@
             });
         },
 
-        handleMethodNotAllowedError: function(xhr, error) {
-            app.logger.warn("Server error: " + error);
-            this._alertSystemError();
-        },
+//        handleMethodNotAllowedError:
+//        handleServerError:
 
-        handleServerError: function(xhr, error) {
-            app.logger.warn("Server error: " + error);
-            this._alertSystemError();
+        handleStatusCodesFallback: function(xhr, error) {
+            _origHandleStatusCodesFallback(xhr, error);
+            var code = xhr ? xhr.status : "N/A";
+            this._alertSystemError(code);
+            if (code == "400") _login();
         }
+
 
     });
 

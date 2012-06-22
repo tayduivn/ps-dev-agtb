@@ -127,6 +127,19 @@
     });
 
     /**
+     * Builds a model route.
+     * @method modelRoute
+     * @param {Data.Bean} model
+     * @param {String} action(optional)
+     * @return {String}
+     */
+    Handlebars.registerHelper('modelRoute', function(model, action) {
+        action = _.isString(action) ? action : null;
+        var id = action == "create" ? "" : model.id;
+        return new Handlebars.SafeString(app.router.buildRoute(model.module, id, action));
+    });
+
+    /**
      * Extracts bean field value.
      * @method getFieldValue
      * @param {Data.Bean} bean Bean instance.
@@ -148,7 +161,7 @@
      */
     Handlebars.registerHelper('has', function(val, array, block) {
         if (!block) return "";
-        
+
         // Since we need to check both just val = val 2 and also if val is in an array, we cast
         // non arrays into arrays
         if (!_.isArray(array) && !_.isObject(array)) {
@@ -156,6 +169,27 @@
         }
 
         return _.include(array, val) ? block(this) : block.inverse(this);
+    });
+
+    /**
+     * We require sortable to be the default if not defined in either field viewdef or vardefs. Otherwise, 
+     * we use whatever is provided in either field vardefs or field's viewdefs where the view def has more
+     * specificity.
+     * @method has
+     * @param {String} module name
+     * @param {Object} the field view defintion (e.g. looping through meta.panels.field it will be 'this')
+     * @return {String} Result of the `block` execution if sortable, otherwise empty string. 
+     */
+    Handlebars.registerHelper('isSortable', function(module, fieldViewdef, block) {
+        if (!block) return "";
+        
+        var fieldVardef = app.metadata.getModule(module).fields[fieldViewdef.name];
+
+        if(!_.isUndefined(fieldViewdef.sortable) ? fieldViewdef.sortable : (!_.isUndefined(fieldVardef.sortable) ? fieldVardef.sortable : true)) {
+            return block(this);
+        } else {
+            return '';
+        }
     });
 
     /**
@@ -183,8 +217,8 @@
     });
 
     /**
-     * Same as eq helper but second value is a {String} regex expression. Unfortunately, we have to do this because the 
-     * Handlebar's parser gets confused by regex literals like /foo/ 
+     * Same as eq helper but second value is a {String} regex expression. Unfortunately, we have to do this because the
+     * Handlebar's parser gets confused by regex literals like /foo/
      * @method match
      * @param {String} val1 first value to compare
      * @param {String} val2 A String representing a RegExp constructor argument. So if RegExp('foo.*') is the desired regex,
@@ -195,7 +229,7 @@
         var re;
         if (!block) return "";
         re = new RegExp(val2);
-        if(re.test(val1)) {
+        if (re.test(val1)) {
             return block(this);
         } else {
             return block.inverse(this);
@@ -203,7 +237,7 @@
     });
 
     /**
-     * Same as notEq helper but second value is a {String} regex expression. 
+     * Same as notEq helper but second value is a {String} regex expression.
      * @method notMatch
      * @param {String} val1 first value to compare
      * @param {String} val2 A String representing a RegExp constructor argument. So if RegExp('foo.*') is the desired regex,
@@ -214,13 +248,13 @@
         var re;
         if (!block) return "";
         re = new RegExp(val2);
-        if(!re.test(val1)) {
+        if (!re.test(val1)) {
             return block(this);
         } else {
             return block.inverse(this);
         }
     });
-    
+
     /**
      * Logs a value.
      * @method log
@@ -253,6 +287,24 @@
     Handlebars.registerHelper("str", function(key, module) {
         module = _.isString(module) ? module : null;
         return app.lang.get(key, module);
+    });
+
+    /**
+     * Wrap the date into a time element
+     * This helper allows to implement a plugin that will parse each time element and
+     * convert the date into a relative time with a timer.
+     *
+     * @method timeago
+     * @param {String} dateString like `YYYY-MM-DD hh:mm:ss`.
+     * @return {String} the relative time like `10 minutes ago`.
+     */
+    Handlebars.registerHelper("timeago", function(dateString) {
+        // TODO: Replace `span` with a `time` element. It was removed because impossible to do innerHTML on a `time` element in IE8
+        var wrapper = "<span class=\"relativetime\" title=\"" + dateString + "\">" +
+            dateString +
+            "</span>";
+
+        return new Handlebars.SafeString(wrapper);
     });
 
 })(SUGAR.App);

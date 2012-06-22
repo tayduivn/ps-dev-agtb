@@ -20,12 +20,88 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class SugarApiException extends Exception { public $errorCode = 500; }
-class SugarApiExceptionError extends SugarApiException { public $errorCode = 500; }
-class SugarApiExceptionNeedLogin extends SugarApiException { public $errorCode = 401; }
-class SugarApiExceptionNotAuthorized extends SugarApiException { public $errorCode = 403; }
-class SugarApiExceptionNoMethod extends SugarApiException { public $errorCode = 404; }
-class SugarApiExceptionNotFound extends SugarApiException { public $errorCode = 404; }
-class SugarApiExceptionMissingParameter extends SugarApiException { public $errorCode = 412; }
-class SugarApiExceptionInvalidParameter extends SugarApiException { public $errorCode = 415; }
-class SugarApiExceptionRequestMethodFailure extends SugarApiException {public $errorCode = 417; }
+class SugarApiException extends Exception
+{ 
+    public $httpCode = 400; 
+    public $description = "An unknown exception happened.";
+    public $errorLabel = 'unknown_exception';
+
+    function __construct($description = null, $httpCode = 0, $errorLabel = null)
+    {
+        if (isset($description)) {
+            $this->description = $description;
+        }
+
+
+        if (isset($errorLabel)) {
+            $this->errorLabel = $this->errorLabel;
+        }
+        
+        if ($httpCode != 0) {
+            $this->httpCode = $httpCode;
+        }
+
+        parent::__construct($this->description);
+    }
+
+    public function getHttpCode()
+    {
+        return $this->httpCode;
+    }
+    public function getDescription()
+    {
+        return $this->description;
+    }
+    public function getErrorLabel()
+    {
+        return $this->errorLabel;
+    }
+}
+class SugarApiExceptionError extends SugarApiException 
+{ 
+    public $httpCode = 500; 
+    public $errorLabel = 'fatal_error';
+    public $description = "A fatal error happened."; 
+}
+class SugarApiExceptionNeedLogin extends SugarApiException 
+{ 
+    public $httpCode = 401; 
+    public $errorLabel = 'need_login';
+    public $description = "The user needs to be logged in to perform this action";
+}
+class SugarApiExceptionNotAuthorized extends SugarApiException 
+{ 
+    public $httpCode = 403; 
+    public $errorLabel = 'not_authorized';
+    public $description = "This action is not authorized for the current user.";
+}
+class SugarApiExceptionNoMethod extends SugarApiException 
+{
+    public $httpCode = 404;
+    public $errorLabel = 'no_method';
+    public $description = "Could not find a method for this path.";
+}
+class SugarApiExceptionNotFound extends SugarApiException
+{
+    public $httpCode = 404;
+    public $errorLabel = 'not_found';
+    public $description = "Could not find a handler for this path.";
+}
+class SugarApiExceptionMissingParameter extends SugarApiException
+{
+    public $httpCode = 412;
+    public $errorLabel = 'missing_parameter';
+    public $description = "A required parameter for this request is missing.";
+}
+class SugarApiExceptionInvalidParameter extends SugarApiException
+{
+    public $httpCode = 412;
+    public $errorLabel = 'invalid_parameter';
+    public $description = "A parameter for this request is invalid.";
+}
+class SugarApiExceptionRequestMethodFailure extends SugarApiException
+{
+    public $httpCode = 412;
+    public $errorLabel = 'request_failure';
+    public $description = "The requested method failed.";
+}

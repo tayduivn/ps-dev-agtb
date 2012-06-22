@@ -3368,6 +3368,17 @@ $app_strings = array (
     'LBL_PDF_VIEW' => 'Download PDF',
     'LBL_PDF_EMAIL' => 'Email PDF',
     //END SUGARCRM flav=pro ONLY
+
+    'LBL_TIME_AGO_NOW' => 'right now',
+    'LBL_TIME_AGO_SECONDS' => 'less than a minute ago',
+    'LBL_TIME_AGO_MINUTE' => 'about 1 minute ago',
+    'LBL_TIME_AGO_MINUTES' => '{{this}} minutes ago',
+    'LBL_TIME_AGO_HOUR' => 'about a hour ago',
+    'LBL_TIME_AGO_HOURS' => '{{this}} hours ago',
+    'LBL_TIME_AGO_DAY' => 'yesterday',
+    'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
+    'LBL_TIME_AGO_YEAR' => 'over a year ago',
+    'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

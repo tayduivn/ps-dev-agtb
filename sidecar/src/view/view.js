@@ -198,6 +198,19 @@
         },
 
         /**
+         * Fetches data for view's model or collection.
+         *
+         * This method calls view's context {@link Core.Context#loadData} method
+         * and sets context's `fields` property beforehand.
+         *
+         * Override this method to provide custom fetch algorithm.
+         */
+        loadData: function() {
+            this.context.set("fields", this.getFieldNames());
+            this.context.loadData();
+        },
+
+        /**
          * Extracts the field names from the metadata for directly related views/panels.
          * @param {String} module(optional) Module name.
          * @return {Array} List of fields used on this view

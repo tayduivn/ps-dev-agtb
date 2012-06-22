@@ -81,15 +81,64 @@
         app.logger.debug('REST URL: ' + app.api.serverUrl);
     });
 
+    app.events.on("data:sync:start", function(method, model, options) {
+        var message;
+        if (method == "read") {
+             // We don't want to show the alert when paginating because we show "Loading..." message on the button itself
+            if (_.isUndefined(options.offset)) message = "Loading...";
+        }
+        else if (method == "delete") {
+            // options.relate means we are breaking a relationship between two records, not actually deleting a record
+            message = options.relate === true ? "Unlinking..." : "Deleting...";
+        }
+        else {
+            message = "Saving...";
+        }
+
+        if (message) {
+            app.alert.show('data_syncing', {
+                level: 'general',
+                messages: message,
+                autoClose: true
+            });
+        }
+
+    }).on("data:sync:end", function(method, model, options, error) {
+            app.alert.dismiss('data_syncing');
+            // Error module will display proper message
+            if (error) return;
+
+            var message;
+            if (method == "delete") {
+                message = options.relate === true ? "Unlinked successfully." : "Deleted successfully.";
+            }
+            else if (method != "read") {
+                message = "Saved successfully.";
+            }
+
+            if (message) {
+                app.alert.show('data_sync_success', {
+                    level: 'success',
+                    messages: message,
+                    autoClose: true
+                });
+            }
+    });
+
     app.augment("nomad", {
 
         deviceReady: function(authAccessToken, authRefreshToken) {
+            app.logger.debug("Device is ready");
             app.isNative = !_.isUndefined(window.cordova);
-            app.logger.debug("Device is ready, auth-token: " + authAccessToken);
 
-            app.AUTH_ACCESS_TOKEN = authAccessToken;
-            app.AUTH_REFRESH_TOKEN = authRefreshToken;
-            app.config.authStore = app.isNative ? 'keychain': 'cache';
+            if (app.isNative) {
+                app.logger.debug("access/refresh tokens: " + authAccessToken + "/" + authRefreshToken);
+                app.OAUTH = {};
+                app.OAUTH["AuthAccessToken"] = authAccessToken;
+                app.OAUTH["AuthRefreshToken"] = authRefreshToken;
+                app.config.authStore = "keychain";
+            }
+
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
             app.start();
@@ -100,11 +149,12 @@
             var route = (_.isString(moduleOrContext)) ? moduleOrContext : moduleOrContext.get("module");
             route += "/" + id + "/link/" + link;
 
-            if (relatedId && action) {
-                route += "/" + relatedId + "/" + action;
-            }
-            else if (relatedId) {
+            if (relatedId) {
                 route += "/" + relatedId;
+            }
+
+            if (action) {
+                route += "/" + action;
             }
 
             return route;
@@ -120,28 +170,12 @@
             return _.filter(model.fields, function (field) {
                 var relationship;
                 return ((field.type == "link") &&
-                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    (relationship = app.metadata.getRelationship([field.relationship])) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
-                    (_.any(modules, function(module) {
-                        return  (module == relationship.lhs_module) ||
-                                (module == relationship.rhs_module);
-                    })));
+                    _.has(modules, relationship.lhs_module) &&
+                    _.has(modules, relationship.rhs_module));
             });
 
-        },
-
-        /**
-         * Shows loading notification.
-         */
-        showLoading: function () {
-            app.alert.show("data_loading", {level:'general', messages:'Loading...'});
-        },
-
-        /**
-         * Hides loading notification.
-         */
-        hideLoading: function () {
-            app.alert.dismiss("data_loading");
         },
 
         /**

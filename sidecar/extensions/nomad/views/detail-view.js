@@ -25,6 +25,9 @@
             "click #record-action .map": function () {
                 var addressObj = this.getFieldsDataHash(this.addressFields);
                 app.nomad.openAddress(addressObj);
+            },
+            "click .card": function (e) {
+                this.$('div').find('a').first().trigger('click');
             }
         },
 
@@ -63,15 +66,15 @@
             var linkFields = app.nomad.getLinks(this.model);
 
             //save founded fields
-            this.headerField = headerField;
-            this.imageField = image;
-            this.linkFields = linkFields;
-            this.otherFields = fields;
+            this.headerField =   headerField;
+            this.imageField =    image;
+            this.linkFields =    linkFields;
+            this.otherFields =   fields;
 
             this.addressFields = addressFields;
-            this.emailFields = emails;
-            this.phoneFields = phones;
-            this.urlFields = urls;
+            this.emailFields =   emails;
+            this.phoneFields =   phones;
+            this.urlFields =     urls;
 
         },
 
@@ -82,25 +85,32 @@
          * @protected
          */
         _renderSelf: function () {
+            var isPhoneBtn =    !!this.phoneFields.length,
+                isEmailBtn =    !!this.emailFields.length,
+                isUrlBtn =      !!this.urlFields.length,
+                isAddressBtn =  !!this.addressFields.length,
+                isActions =     isPhoneBtn || isEmailBtn || isUrlBtn || isAddressBtn;
+
             //create custom data object
             var data = {
-                    viewObj: this,
-                    headerField: this.headerField,
-                    image: this.imageField,
-                    fields: this.otherFields,
-                    links: this.linkFields,
+                    viewObj:        this,
+                    headerField:    this.headerField,
+                    image:          this.imageField,
+                    fields:         this.otherFields,
+                    links:          this.linkFields,
 
                     //action buttons settings
-                    isPhoneBtn: !!this.phoneFields.length,
-                    isPhoneNotEmpty: this.isDataDefined(this.phoneFields),
-                    isEmailBtn: !!this.emailFields.length,
-                    isEmailNotEmpty: this.isDataDefined(this.emailFields),
-                    isMessageBtn: !!this.phoneFields.length,
-                    isMessageNotEmpty: this.isDataDefined(this.phoneFields),
-                    isUrlBtn: !!this.urlFields.length,
-                    isUrlNotEmpty: this.isDataDefined(this.urlFields),
-                    isAddressBtn: !!this.addressFields.length,
-                    isAddressNotEmpty: this.isDataDefined(this.addressFields)
+                    isPhoneBtn:         isPhoneBtn,
+                    isPhoneNotEmpty:    this.isDataDefined(this.phoneFields),
+                    isEmailBtn:         isEmailBtn,
+                    isEmailNotEmpty:    this.isDataDefined(this.emailFields),
+                    isMessageBtn:       isPhoneBtn,
+                    isMessageNotEmpty:  this.isDataDefined(this.phoneFields),
+                    isUrlBtn:           isUrlBtn,
+                    isUrlNotEmpty:      this.isDataDefined(this.urlFields),
+                    isAddressBtn:       isAddressBtn,
+                    isAddressNotEmpty:  this.isDataDefined(this.addressFields),
+                    isActions:          isActions
                 };
 
             //pass custom data object as the context

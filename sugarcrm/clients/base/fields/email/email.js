@@ -8,7 +8,8 @@
         'change .newEmail': 'add'
     },
     /**
-     * Adds email address to dom and mdoel
+     * Adds email address to dom and model. Note added emails only get checked
+     * upon Save button being clicked (which triggers the model validations).
      */
     add: function() {
         var newAddress = this.$('.newEmail').val(),
@@ -19,39 +20,52 @@
         }
         existingAddresses.push(newObj);
         this.model.set(this.name, existingAddresses);
+
         this.render();
     },
     /**
      * Removes email address from dom and model
      * @param {Object} event
      */
-    remove: function(event) {
-        var emailAddress = $(event.target).data('parentemail') || $(event.target).parent().data('parentemail'),
-            existingAddresses = this.model.get(this.name);
+    remove: function(evt) {
+        if(evt) {
+            var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
+                existingAddresses = this.model.get(this.name);
 
-        _.each(existingAddresses, function(emailInfo, index) {
-            if (emailInfo.email_address == emailAddress) {
-                existingAddresses[index] = false;
-            }
-        });
-
-        this.model.set(this.name, _.compact(existingAddresses));
-        this.$('[data-emailaddress="' + emailAddress + '"]').remove();
+            _.each(existingAddresses, function(emailInfo, index) {
+                if (emailInfo.email_address == emailAddress) {
+                    existingAddresses[index] = false;
+                }
+            });
+            this.model.set(this.name, _.compact(existingAddresses));
+            this.$('[data-emailaddress="' + emailAddress + '"]').remove();
+        }
     },
     /**
      * Updates true false properties on field
      * @param event
      */
-    updateExistingProperty: function(event) {
-        var emailAddress = $(event.target).parent().data('parentemail') || $(event.target).parent().parent().data('parentemail'),
-            property = $(event.target).data('emailproperty') || $(event.target).parent().data('emailproperty'),
-            existingAddresses = this.model.get(this.name);
+    updateExistingProperty: function(evt) {
+        var existingAddresses, emailAddress, parent, target, property;
+        evt.stopPropagation();
+        evt.preventDefault();
+        target = $(evt.target);
+        parent = target.parent();
+        emailAddress = parent.data('parentemail') || parent.parent().data('parentemail');
+        property = $(evt.target).data('emailproperty') || parent.data('emailproperty');
+        existingAddresses = this.model.get(this.name);
 
+        // Remove all active classes and set all with emails with this property false
         if (property == 'primary_address') {
             existingAddresses=this.massUpdateProperty(existingAddresses, property, "0");
             this.$('.is_primary').removeClass('active');
         }
 
+        // Now toggle currently clicked
+        $(target).toggleClass('active');
+        $(parent).toggleClass('active');
+
+        // Toggle property for clicked button
         _.each(existingAddresses, function(emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
                 if (existingAddresses[index][property] == "1") {
@@ -61,10 +75,8 @@
                 }
             }
         });
-
-        $(event.target).toggleClass('active');
-        $(event.target).parent().toggleClass('active');
     },
+
     /**
      * Mass updates a property for all email addresses
      * @param {Array} emails emails array off a model
@@ -82,10 +94,10 @@
      * Updates existing address that change event was fired on
      * @param {Object} event
      */
-    updateExistingAddress: function(event) {
-        if ($(event.target).val() != $(event.target).attr('id')) {
-            var oldEmail = $(event.target).attr('id');
-            var newEmail = $(event.target).val();
+    updateExistingAddress: function(evt) {
+        if ($(evt.target).val() != $(evt.target).attr('id')) {
+            var oldEmail = $(evt.target).attr('id');
+            var newEmail = $(evt.target).val();
             var existingEmails = this.model.get(this.name);
             _.each(existingEmails, function(emailInfo, index) {
                 if (emailInfo.email_address == oldEmail) {
@@ -101,27 +113,26 @@
      * @param {String} fieldName field name.
      */
     bindDomChange: function() {
-        // empty because we are handling this with the events and callbacks above
-    },
+        // This condition allows you to create a custom edit template for the `email` field, and let it behave as a
+        // generic `text` field. You should attach a `textField` class to the input element, and on 'save' action
+        // format the email as an array with sugar parameters.
 
-    /**
-     * Handles how validation errors are displayed on fields
-     *
-     * This method should be implemented in the extension dir per platform
-     *
-     * @param {Object} errors hash of validation errors
-     */
-    handleValidationError: function(errors) {
-        var self = this;
-        _.each(errors,function(emailAddress){
-            this.$('[data-emailaddress="' + emailAddress + '"]').addClass("error");
-        });
+        if (this.$el.find(this.fieldTag).length === 1 && this.$el.find(this.fieldTag).hasClass('textField')) {
+            this.app.view.Field.prototype.bindDomChange.call(this);
+        } else {
+            // Bind all tooltips on page
+            function bindAll(sel) {
+                this.$(sel).each(function(index) {
+                    $(this).tooltip({
+                        placement: "bottom"
+                    });
+                });
+            }
+            bindAll('.btn-edit');
+            bindAll('.addEmail');
+            bindAll('.removeEmail');
 
-        this.$('.help-block').html("");
-        this.$('.help-group').addClass("error");
-        _.each(errors, function(errorContext, errorName) {
-            self.$('.help-block').append("<br>"+app.error.getErrorString(errorName,errorContext));
-        });
+            this.delegateEvents();
+        }
     }
-
 })

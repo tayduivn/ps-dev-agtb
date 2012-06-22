@@ -20,14 +20,15 @@
  *        "fields": {
  *            "name": { ... },
  *            ...
- *        },
- *        "relationships": {
- *             "opportunities_contacts": { ... },
- *             ...
  *        }
  *      },
  *      "Contacts": { ... }
  *    }
+ *    "relationships": {
+ *        "opportunities_contacts": { ... },
+ *         ...
+ *    }
+ *
  * }
  * </code></pre>
  *
@@ -184,7 +185,6 @@
             this.reset(moduleName);
 
             var fields = module.fields;
-            var relationships = module.relationships;
             var defaults = null;
 
             _.each(_.values(fields), function(field) {
@@ -209,13 +209,7 @@
                  * @member Data.Bean
                  * @property {Object}
                  */
-                fields: fields,
-                /**
-                 * Relationships metadata.
-                 * @member Data.Bean
-                 * @property {Object}
-                 */
-                relationships: relationships
+                fields: fields
             });
 
             _collections[moduleName] = this.beanCollection.extend({
@@ -414,10 +408,48 @@
         canHaveMany: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
             var t = relationship.relationship_type.split("-");
             var type = module === relationship.rhs_module ? t[0] : t[2];
             return type === "many";
+        },
+
+        /**
+         * Gets a field of type `relate` for a link.
+         *
+         * Suppose a module `parentModule` has a link field named `link`.
+         * For example, `Accounts` module has a link field `cases`.
+         * It is one-to-many relationship: an account may have many related cases,
+         * however a case can have only one associated account and this association is
+         * made via a `relate` field called `Cases.account_name`.
+         *
+         * So, for the above example the following call:
+         * <pre><code>
+         * var relateField = app.data.getRelateField("Accounts", "cases");
+         * </code></pre>
+         * would return definition of `Cases.account_name` field.
+         *
+         * @param {String} parentModule Name of the module that has a link field named `link`.
+         * @param {String} link Link name.
+         * @return {Object} Definition of the `relate` field if found or `null` if not found.
+         */
+        getRelateField: function(parentModule, link) {
+            var relationship = app.metadata.getModule(parentModule).fields[link].relationship;
+            var relatedModule = this.getRelatedModule(parentModule, link);
+            var fields = app.metadata.getModule(relatedModule).fields;
+
+            // Find the opposite link field on related module
+            var f = _.find(fields, function(field) {
+                return field.type == "link" && field.relationship == relationship;
+            });
+
+            if (f) {
+                f = _.find(fields, function(field) {
+                    return field.type == "relate" && field.link == f.name;
+                });
+            }
+
+            return f;
         },
 
         /**
@@ -429,7 +461,7 @@
         getRelatedModule: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
 
             return module === relationship.rhs_module ?
                 relationship.lhs_module : relationship.rhs_module;
@@ -458,8 +490,8 @@
                     options.params.offset = options.offset;
                 }
 
-                if (app.config && app.config.maxQueryResult) {
-                    options.params.max_num = app.config.maxQueryResult;
+                if (options.limit || (app.config && app.config.maxQueryResult)) {
+                    options.params.max_num = options.limit || app.config.maxQueryResult;
                 }
 
                 if (model.orderBy && model.orderBy.field) {
@@ -508,19 +540,24 @@
                      */
                     model.query = options.query;
 
-                } else if ((options.relate === true) && (method != "read")) {
-                    // Reset the flag to indicate that fetched relationship(s) do exist.
+                }
+
+                if (options.relate === true) {
+                    // Reset the flag to indicate that relationship(s) do exist.
                     model.link.isNew = false;
-                    // The response for create/update/delete relationship contains updated beans
-                    if (model.link.bean) {
-                        model.link.bean.set(data.record);
-                    }
-                    data = data.related_record;
-                    // Attributes will be set automatically for create/update but not for delete
-                    // Also, break the link
-                    if (method == "delete") {
-                        model.set(data);
-                        delete model.link;
+
+                    if (method != "read") {
+                        // The response for create/update/delete relationship contains updated beans
+                        if (model.link.bean) {
+                            model.link.bean.set(data.record);
+                        }
+                        data = data.related_record;
+                        // Attributes will be set automatically for create/update but not for delete
+                        // Also, break the link
+                        if (method == "delete") {
+                            model.set(data);
+                            delete model.link;
+                        }
                     }
                 }
 

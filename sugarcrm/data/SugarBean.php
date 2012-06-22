@@ -419,7 +419,7 @@ class SugarBean
      */
     public static function getDefaultACL()
     {
-        return self::$default_acl;
+        return self::$default_acls;
     }
 
     /**
@@ -428,7 +428,7 @@ class SugarBean
      */
     public static function setDefaultACL($data)
     {
-        self::$default_acl = $data;
+        self::$default_acls = $data;
     }
 
     /**
@@ -2463,12 +2463,15 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
             $this->addVisibilityFrom($query);
-            // TODO: should we also do addVisibilityWhere ?
         }
         //END SUGARCRM flav=pro ONLY
 
         $query .= $where;
-
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(!$this->disable_row_level_security) {
+            $this->addVisibilityWhere($query);
+        }
+        //END SUGARCRM flav=pro ONLY
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))

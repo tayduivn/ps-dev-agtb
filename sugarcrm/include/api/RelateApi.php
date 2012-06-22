@@ -44,6 +44,9 @@ class RelateApi extends ListApi {
         // Load up the bean
         $record = BeanFactory::getBean($args['module'], $args['record']);
 
+        if ( empty($record) ) {
+            throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
+        }
         if ( ! $record->ACLAccess('view') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
