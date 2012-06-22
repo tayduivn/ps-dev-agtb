@@ -25,6 +25,22 @@ class ServiceDictionary {
         $this->cacheDir = sugar_cached('include/api/SugarApi/');
     }
 
+    public function clearCache($thedir = 'include/api/SugarApi', $extension='php') {
+        if ($current = @opendir(sugar_cached($thedir))) {
+            while (false !== ($children = readdir($current))) {
+                if ($children != "." && $children != "..") {
+                    if (is_dir($thedir . "/" . $children)) {
+                        $this->_clearCache($thedir . "/" . $children, $extension);
+                    }
+                    elseif (is_file($thedir . "/" . $children) && (substr_count($children, $extension))) {
+                        unlink($thedir . "/" . $children);
+                    }
+                }
+            }
+        }
+    }
+
+
     protected function loadDictionaryFromStorage($apiType) {
         $dictFile = $this->cacheDir.'ServiceDictionary.'.$apiType.'.php';
         if ( ! file_exists($dictFile) ) {
