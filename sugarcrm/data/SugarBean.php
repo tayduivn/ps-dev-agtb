@@ -289,12 +289,11 @@ class SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
         if(!empty($current_user->id) &&
-                    $this->bean_implements('ACL') &&
-                    !is_admin($current_user) &&
-                    ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
-            == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN || ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN_DEV))
+                (is_admin($current_user) ||
+                ($this->bean_implements('ACL') && (ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
+                == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
+                == ACL_ALLOW_ADMIN || ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
+                == ACL_ALLOW_ADMIN_DEV)))))
         {
             $this->disable_row_level_security =true;
         }
@@ -5100,7 +5099,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $table_alias = $this->table_name;
         }
 
-        if ( ( (!empty($current_user) && !$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
+        if ( !($current_user->isAdminForModule($this->module_dir) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
