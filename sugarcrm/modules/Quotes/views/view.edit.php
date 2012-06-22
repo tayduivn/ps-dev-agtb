@@ -278,8 +278,8 @@ class QuotesViewEdit extends ViewEdit
 							$add_row[] = "quotesManager.addRow('','$line_item->quantity','$line_item->product_template_id','$line_item->name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
-											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'";
-							$add_row[] =  ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name',
+											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'" 
+							    . ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name',
 								'$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)
 							    ."', '".js_escape(br2nl($line_item->description))."', '"
 							    . $line_item->type_id ."','"
