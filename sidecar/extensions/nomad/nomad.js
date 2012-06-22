@@ -170,7 +170,7 @@
             return _.filter(model.fields, function (field) {
                 var relationship;
                 return ((field.type == "link") &&
-                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    (relationship = app.metadata.getRelationship([field.relationship])) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
                     _.has(modules, relationship.lhs_module) &&
                     _.has(modules, relationship.rhs_module));
