@@ -88,6 +88,20 @@ describe("Relationships", function() {
             expect(dm.getRelatedModule("Opportunities", "calls")).toEqual("Calls");
             expect(dm.getRelatedModule("Opportunities", "accounts")).toEqual("Accounts");
         });
+
+        it("should be able to get a related field", function() {
+            var relatedField = dm.getRelateField("Accounts", "cases");
+            expect(relatedField).toBeDefined();
+            expect(relatedField.name).toEqual("account_name");
+        });
+
+        it("should be able to get relationship fields", function() {
+            var fields = dm.getRelationshipFields("Opportunities", "contacts");
+            expect(fields).toBeDefined();
+            expect(fields.length).toEqual(1);
+            expect(fields[0]).toEqual("opportunity_role");
+        });
+
     });
 
     describe("CRUD", function() {

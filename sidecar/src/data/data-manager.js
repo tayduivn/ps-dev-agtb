@@ -453,6 +453,63 @@
         },
 
         /**
+         * Gets relationship fields for a complex relationship.
+         *
+         * Some relationships have custom fields.
+         * For example, the `opporutnities_contacts` relationship has a custom field `contact_role`.
+         * The `Contacts` module has a field called `opportunity_role` that corresponds to the `contact_role`
+         * relationship field:
+         * <pre><code>
+         * // ['opportunity_role']
+         * var relationshipFields = app.data.getRelationshipFields("Opportunities", "contacts");
+         * </code></pre>
+         *
+         * Use this method to determine a list of relationship fields that should be rendered
+         * on views for related record(s). In the above use case, the edit view for a contact related
+         * to an opportunity should display a drop-down field for the opportunity role.
+         * The list view and detail view should also display this field.
+         *
+         * @param {String} parentModule Name of the module that has a link field called `link`.
+         * @param {String} link Link name.
+         * @return {Array} Relationship fields.
+         */
+        getRelationshipFields: function(parentModule, link) {
+            var ff = null;
+            var linkField = app.metadata.getModule(parentModule).fields[link];
+            if (linkField.rel_fields) {
+                var relationship = linkField.relationship;
+                var relatedModule = this.getRelatedModule(parentModule, link);
+                var fields = app.metadata.getModule(relatedModule).fields;
+
+                // Find the opposite link field on related module
+                var f = _.find(fields, function(field) {
+                    return field.type == "link" && field.relationship == relationship;
+                });
+
+                // Find relationship_info field
+                if (f) {
+                    f = _.find(fields, function(field) {
+                        return field.link == f.name && field.link_type == "relationship_info";
+                    });
+                }
+
+                // Extract relationship fields
+                if (f && f.relationship_fields) {
+                    var fieldNames = _.keys(linkField.rel_fields);
+                    _.each(f.relationship_fields, function(field, name) {
+                        if (_.include(fieldNames, name)) {
+                            if (!ff) ff = [];
+                            ff.push(field);
+                        }
+                    });
+                }
+            }
+
+            return ff;
+
+        },
+
+        /**
          * Gets related module name.
          * @param {String} module Name of the parent module.
          * @param {String} link Relationship link name.
