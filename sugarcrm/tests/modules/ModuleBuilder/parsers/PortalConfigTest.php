@@ -28,7 +28,7 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
         'appName' => 'testApp',
         'serverUrl' => 'testURL',
         'maxQueryResult' => '5',
-        'detailFieldCount' => '5'
+        'fieldsToDisplay' => '5'
     );
 
 
