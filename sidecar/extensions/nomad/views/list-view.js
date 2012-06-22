@@ -28,6 +28,15 @@
             app.view.View.prototype.initialize.call(this, options);
 
             this.activeArticle = null;
+
+            this.unlinkVisible = true;
+            // We must not allow a user to break a one-to-many relationship,
+            // if the relate field is required for the relationship.
+            var link = this.context.get("link");
+            if (link) {
+                var relatedField = app.data.getRelateField(this.context.get("parentModule"), link);
+                this.unlinkVisible = relatedField && relatedField.required === true ? false : true;
+            }
         },
 
         _renderSelf: function () {
