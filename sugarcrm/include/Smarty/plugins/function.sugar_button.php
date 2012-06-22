@@ -444,6 +444,7 @@ function smarty_function_sugar_button($params, &$smarty)
                         $output = '
                             <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
                             $pdfItems = array();
+                            if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
                                 $urlParams = array(
                                     'module' => $module,                                    
@@ -456,6 +457,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                 $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>', 
                                                         'items' => array(),
                                                     );
+                            }
                             }
                             //quote legacy templates
                             if($module == "Quotes") {
@@ -487,6 +489,7 @@ function smarty_function_sugar_button($params, &$smarty)
                             <script type="text/javascript">
                                 function display_pdf_list(el) {
                                     var menu = \'';
+                                if (!empty($pdfManagerList)) {
                                 foreach($pdfManagerList as $pdfTemplate){   
                                     $urlParams = array(
                                         'module' => $module,                                    
@@ -497,6 +500,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                         
                                     );                                
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
+                                }
                                 }
                                 
                                 //quote legacy templates
@@ -557,6 +561,7 @@ function smarty_function_sugar_button($params, &$smarty)
                         $output = '
                             <input id="pdfview_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
                             $pdfItems = array();
+                                if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
                                 $urlParams = array(
                                     'module' => $module,                                    
@@ -572,6 +577,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                                         'items' => array(),
                                                     );
                             }
+                                }
                                 
                                 //quote legacy templates
                                 if($module == "Quotes") {
@@ -604,6 +610,7 @@ function smarty_function_sugar_button($params, &$smarty)
                             <script language="javascript">
                                 function display_pdf_email_list(el) {
                                     var menu = \'';
+                                    if (!empty($pdfManagerList)) {
                                 foreach($pdfManagerList as $pdfTemplate){   
                                     $urlParams = array(
                                         'module' => $module,                                    
@@ -617,6 +624,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                     
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
+                                    }
                                     //quote legacy templates
                                     if($module == "Quotes") {
                                         require_once 'modules/Quotes/Layouts.php';
