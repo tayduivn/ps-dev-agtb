@@ -188,72 +188,7 @@ class MetadataApi extends SugarApi {
         $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList','relationships');
         $perModuleChunks = array('modules','modStrings','acl');
 
-
-
-        if ( $onlyHash ) {
-            // The client only wants hashes
-            $hashesOnly = array();
-            $hashesOnly['_hash'] = $data['_hash'];
-            foreach ( $baseChunks as $chunk ) {
-                if (in_array($chunk,$this->typeFilter) ) {
-                    $hashesOnly[$chunk]['_hash'] = $data['_hash'];
-                }
-            }
-            
-            foreach ( $perModuleChunks as $chunk ) {
-                if (in_array($chunk, $this->typeFilter)) {
-                    // We want modules, let's filter by the requested modules and by which hashes match.
-                    foreach($data[$chunk] as $modName => &$modData) {
-                        if (empty($moduleFilter) || in_array($modName,$moduleFilter)) {
-                            $hashesOnly[$chunk][$modName]['_hash'] = $data[$chunk][$modName]['_hash'];
-                        }
-                    }
-                }
-            }
-
-            $data = $hashesOnly;
-            
-        } else {
-            // The client is being bossy and wants some data as well.
-            foreach ( $baseChunks as $chunk ) {
-                if (!in_array($chunk,$this->typeFilter)
-                    || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
-                    unset($data[$chunk]);
-                }
-            }
-            
-            // Relationships are special, they are a baseChunk but also need to pay attention to modules
-            if (!empty($moduleFilter) && isset($data['relationships']) ) {
-                // We only want some modules, but we want the relationships
-                foreach ($data['relationships'] as $relName => $relData ) {
-                    if ( $relName == '_hash' ) {
-                        continue;
-                    }
-                    if (!in_array($relData['rhs_module'],$moduleFilter)
-                        && !in_array($relData['lhs_module'],$moduleFilter)) {
-                        unset($data['relationships'][$relName]);
-                    }
-                }
-            }
-
-            foreach ( $perModuleChunks as $chunk ) {
-                if (!in_array($chunk, $this->typeFilter)) {
-                    unset($data[$chunk]);
-                } else {
-                    // We want modules, let's filter by the requested modules and by which hashes match.
-                    foreach($data[$chunk] as $modName => &$modData) {
-                        if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
-                            || (isset($args[$chunk][$modName]) && $args[$chunk][$modName] == $modData['_hash'])) {
-                            unset($data[$chunk][$modName]);
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $data;
-        
-        
+        return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
     // this is the function for the endpoint of the public metadata api.
@@ -312,7 +247,21 @@ class MetadataApi extends SugarApi {
         $data["_hash"] = md5(serialize($data));
 
         $baseChunks = array('viewTemplates','fields','appStrings','views', 'layouts', 'config');
+        
+        return $this->filterResults($args, $data, $onlyHash, $baseChunks);
+    }
 
+    /*
+     * Filters the results for Public and Private Metadata
+     * @param array $args the Arguments from the Rest Request
+     * @param array $data the data to be filtered
+     * @param bool $onlyHash check to return only hashes
+     * @param array $baseChunks the chunks we want filtered
+     * @param array $perModuleChunks the module chunks we want filtered
+     * @param array $moduleFilter the specific modules we want
+     */
+
+    protected function filterResults($args, $data, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array()) {
 
         if ( $onlyHash ) {
             // The client only wants hashes
@@ -323,20 +272,46 @@ class MetadataApi extends SugarApi {
                     $hashesOnly[$chunk]['_hash'] = $data['_hash'];
                 }
             }
+            
+            foreach ( $perModuleChunks as $chunk ) {
+                if (in_array($chunk, $this->typeFilter)) {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if (empty($moduleFilter) || in_array($modName,$moduleFilter)) {
+                            $hashesOnly[$chunk][$modName]['_hash'] = $data[$chunk][$modName]['_hash'];
+                        }
+                    }
+                }
+            }
 
             $data = $hashesOnly;
-
+            
         } else {
             // The client is being bossy and wants some data as well.
             foreach ( $baseChunks as $chunk ) {
                 if (!in_array($chunk,$this->typeFilter)
                     || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
-                }
+                }        
             }
 
+            foreach ( $perModuleChunks as $chunk ) {
+                if (!in_array($chunk, $this->typeFilter)) {
+                    unset($data[$chunk]);
+                } else {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
+                            || (isset($args[$chunk][$modName]) && $args[$chunk][$modName] == $modData['_hash'])) {
+                            unset($data[$chunk][$modName]);
+                            continue;
+                        }
+                    }
+                }
+            }
         }
-
+        
         return $data;
     }
+
 }
