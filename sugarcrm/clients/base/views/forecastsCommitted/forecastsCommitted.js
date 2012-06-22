@@ -25,8 +25,8 @@
         //Add listeners
         this.layout.context.on("change:selectedUser", function(context, user) { self.userId = user.id; self.buildForecastsCommitted(); } );
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.timePeriodId = timePeriod.id; self.buildForecastsCommitted(); });
+        this.layout.context.on("change:updatedTotals", function(context, totals) { self.totals = totals; });
     },
-
 
     bindDataChange: function() {
         var self = this;
@@ -35,14 +35,17 @@
             self._collection = self.context.model.forecasts.committed;
             self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
             self._collection.fetch();
-            self.render();
+            self.buildForecastsCommitted();
         });
         this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
             self.timePeriodId = timePeriod.id;
             self._collection = self.context.model.forecasts.committed;
             self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
             self._collection.fetch();
-            self.render();
+            self.buildForecastsCommitted();
+        });
+        this.context.on('change:updatedTotals', function(context, totals) {
+            self.totals = totals;
         });
     },
 
@@ -142,6 +145,15 @@
     },
 
     commitForecast: function() {
-        model = this.context.model.committed;
+        var self = this;
+        var date_entered = new Date();
+        self._collection.add({
+            'date_entered' : date_entered.toString(),
+            'timeperiod_id' : self.totals.timePeriod,
+            'forecast_type' : 'Direct',
+            'best_case' : self.totals.bestCase,
+            'likely_case' : self.totals.likelyCase
+        });
+        self.buildForecastsCommitted();
     }
 })
