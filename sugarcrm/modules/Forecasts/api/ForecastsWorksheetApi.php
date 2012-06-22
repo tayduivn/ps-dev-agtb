@@ -42,8 +42,22 @@ class ForecastsWorksheetApi extends ModuleApi {
                 'shortHelp' => 'A ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
             ),
+            'worksheetSave' => array(
+                'reqType' => 'PUT',
+                'path' => array('Forecasts','worksheet'),
+                'pathVars' => array('',''),
+                'method' => 'worksheetSave',
+                'shortHelp' => 'A ping',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
+            ),
         );
         return $parentApi;
+    }
+
+
+    public function worksheetSave($api, $args)
+    {
+
     }
 
     /**

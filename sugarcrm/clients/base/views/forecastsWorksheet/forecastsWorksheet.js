@@ -6,6 +6,8 @@
  */
 ({
 
+    url: 'rest/v10/Forecasts/worksheet',
+
     _name_type_map: {
 //        best_case_worksheet: 'int',
 //        likely_case_worksheet: 'int',
@@ -55,7 +57,7 @@
     },
 
     createURL:function() {
-        var url = app.config.serverUrl + "/Forecasts/worksheet";
+        var url = this.url;
         var args = {};
         if(this.timePeriod) {
            args['timeperiod_id'] = this.timePeriod;
@@ -166,7 +168,8 @@
                         }
 
                         settings.field.model.set(settings.field.name, value);
-//                        settings.field.model.save(settings.field.name, value);
+                        settings.field.model.url = self.url;
+                        settings.field.model.save(settings.field.name, value);
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
                     }
@@ -260,6 +263,16 @@
             self.overallLikely += likely;
             self.overallBest += best;
         });
+
+        var totals = {
+            'includedAmount' : self.includedAmount,
+            'includedLikely' : self.includedLikely,
+            'includedBest' : self.includedBest,
+            'overallAmount' : self.overallAmount,
+            'overallLikely' : self.overallLikely,
+            'overallBest' : self.overallBest
+        };
+        this.context.set("updatedTotals", totals);
     },
 
     /**
