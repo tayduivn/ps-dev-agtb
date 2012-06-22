@@ -158,7 +158,7 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
         // any keys are contain a $ variable
         if ($field_name !== $value->getKey()) {
             $tmpKey = $value->getKey();
-            if (strstr($tmpKey, '$') === false) {
+            if (strstr($tmpKey, '$') === false && !empty($tmpKey)) {
                 $field_name = $tmpKey;
             }
         }
@@ -187,6 +187,13 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
     {
         /* @var SugarBean $bean */
         $bean = BeanFactory::getBean($filter_link->getParentModule());
+
+        if ($link_name !== $filter_link->getKey()) {
+            $tmpKey = $filter_link->getKey();
+            if (strstr($tmpKey, '$') === false && !empty($tmpKey)) {
+                $link_name = $tmpKey;
+            }
+        }
 
         // no bean found, just return it
         if ($bean === false) {

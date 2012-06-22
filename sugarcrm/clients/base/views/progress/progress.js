@@ -14,8 +14,39 @@
 
     bindDataChange: function () {
         this.model = this.context.model.forecasts.progress;
+        this.worksheetCollection = this.context.model.forecasts.worksheet;
+        
         this.model.on('change', this.render);
+        this.worksheetCollection.on('change reset', this.calculatePipelineSize);
         this.context.on("change:selectedUser", this.updateProgressForSelectedUser);
+    },
+    
+    calculatePipelineSize: function() {
+        var ps = 0;
+        var likelyTotal = this.worksheetCollection.reduce(function(memo, model) {
+            // Only add up values that are "included" in the worksheet.
+            if ( model.get('forecast') === true && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
+                console.log("adding likely for ", model.get('name'));
+                memo += parseInt(model.get('likely_case_worksheet'), 10);
+            }
+            return memo;
+        }, 0);
+        
+        if ( likelyTotal > 0 ) {
+            ps = this.model.get('revenue') / likelyTotal;
+            
+            if ( ps < 2 ) {
+                // Round to 1 decimal place
+                ps = Math.round( ps * 10 )/10;
+            } else {
+                // Show whole number
+                ps = Math.round( ps );
+            }
+        }
+
+        // This value is used in the template.
+        this.pipelineSize = ps;
+        this.render();
     },
     
     render: function () {

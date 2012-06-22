@@ -153,7 +153,6 @@ class ForecastsProgressApi extends ModuleApi
 			),
 			"opportunities" => $this->getOpportunities($api, $args),
 			"revenue"       => $this->getRevenue($api, $args),
-			"pipelineSize"  => $this->getPipelineSize($api, $args),
 		);
 
 		return $progressData;
@@ -224,15 +223,6 @@ class ForecastsProgressApi extends ModuleApi
 		$this->loadProgressData($args);
 
 		return $this->revenueInPipeline;
-	}
-
-
-	public function getPipelineSize( $api, $args )
-	{
-		$this->loadProgressData($args);
-
-		$pipelineSize = 0;
-		return $pipelineSize;
 	}
 
 

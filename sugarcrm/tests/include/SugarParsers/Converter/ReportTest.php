@@ -76,7 +76,6 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNotEqualFilterConvert()
     {
-        $this->markTestSkipped('Not Currently Working');
 
         $obj = json_decode('{"billing_address_postalcode": { "$not" : "90210" } }');
         $this->filter->parse($obj);
@@ -238,7 +237,6 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNotEmptyFilterConvert()
     {
-        $this->markTestSkipped('Not Currently Working');
         $obj = json_decode('{"billing_address_postalcode": { "$not" : "$empty" }}');
         $this->filter->parse($obj);
 
@@ -309,18 +307,15 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testReportsToFilterConvert()
     {
-        $this->markTestSkipped('Not Currently Working');
-        $obj = json_decode('{"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}');
+        $obj = json_decode('{"assigned_user_link":{ "id" : {"$reports":"seed_chris_id"}}}');
         $this->filter->parse($obj);
 
         $actual = $this->filter->convert($this->converter);
 
-        var_dump($actual);
-
         $expected = array("Filter_1" => array(
             'operator' => 'AND',
             0 => array(
-                'name' => 'user_name',
+                'name' => 'id',
                 'table_key' => 'Accounts:assigned_user_link',
                 'qualifier_name' => 'reports_to',
                 'input_name0' => array('seed_chris_id')
@@ -335,7 +330,6 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMultiLinkToFilterConvert()
     {
-        $this->markTestSkipped('Not Currently Working');
         $obj = json_decode('{"contacts": {"assigned_user_link":{ "id" : "seed_chris_id"} } }');
         $this->filter->parse($obj);
         $actual = $this->filter->convert($this->converter);
@@ -348,9 +342,8 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMultipleFiltersConvert()
     {
-        $this->markTestSkipped('Not Currently Working');
         $this->filter = new SugarParsers_Filter(new Opportunity());
-        $obj = json_decode('{ "$and" : [{"timeperiod_id":"abc123"}, {"assigned_user_link":{ "user_name" : {"$reports":"seed_chris_id"}}}] }');
+        $obj = json_decode('{ "$and" : [{"timeperiod_id":"abc123"}, {"assigned_user_link":{ "id" : {"$reports":"seed_chris_id"}}}] }');
         $this->filter->parse($obj);
 
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
@@ -369,8 +362,8 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             1 =>
             array (
-              'name' => 'user_name',
-              'table_key' => 'Accounts:assigned_user_link',
+              'name' => 'id',
+              'table_key' => 'Opportunities:assigned_user_link',
               'qualifier_name' => 'reports_to',
               'input_name0' =>
               array (

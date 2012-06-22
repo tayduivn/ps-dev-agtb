@@ -52,6 +52,8 @@ class SugarParsers_Filter
      */
     protected $bean_links = array();
 
+    protected $field_tree = array();
+
 
     public function __construct(SugarBean $bean)
     {
@@ -128,6 +130,11 @@ class SugarParsers_Filter
                 $value = array('$link' => array('_value' => array($value), 'parent_module' => $bean->module_dir, 'target_module' => $links[$key]['module']));
             }
 
+            $_field = (isset($bean->field_defs[$key])) ? $bean->field_defs[$key] : array();
+            if(isset($_field['name'])) {
+                $this->field_tree[] = $_field;
+            }
+
             // since the value is an array with no variables and there is only one, lets explode it out
             if ($valueHasVariables === false && is_array($value) && count($value) === 1) {
                 $_key = array_shift(array_keys($value));
@@ -201,7 +208,12 @@ class SugarParsers_Filter
                 /* @var $filter SugarParsers_Filter_AbstractFilter */
                 $filter = new $klass();
                 $filter->filter($value);
-                $filter->setKey($key);
+                $_f = array_pop($this->field_tree);
+                if(isset($_f['name'])) {
+                    $filter->setKey($_f['name']);
+                } else {
+                    $filter->setKey($key);
+                }
                 if ($filter instanceof SugarParsers_Filter_Link) {
                     $filter->setParentModule($parent_module);
                     $filter->setTargetModule($target_module);
