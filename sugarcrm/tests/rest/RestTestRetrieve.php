@@ -42,6 +42,18 @@ class RestTestRetrieve extends RestTestBase {
 
         $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");
         $this->assertEquals("UNIT TEST - BEFORE",$restReply['reply']['name'],"Did not retrieve the account name.");
+
+    }
+
+    // test that the reply is html decoded Story Id: 30925015 Url: https://www.pivotaltracker.com/story/show/30925015
+    public function testRetrieveHTMLEntity() {
+        $this->account = new Account();
+        $this->account->name = "UNIT TEST << >> BEFORE";
+        $this->account->save();
+        $restReply = $this->_restCall("Accounts/{$this->account->id}");
+
+        $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");
+        $this->assertEquals("UNIT TEST << >> BEFORE",$restReply['reply']['name'],"Did not retrieve the account name.");
     }
 
 }

@@ -23,7 +23,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "Log In",
-                                    class: "login-submit",
+                                    'class': "login-submit",
                                     value: "login",
                                     primary: true,
                                     events: {
@@ -51,7 +51,7 @@
                                     type: "button",
                                     label: "Sign Up",
                                     value: "signup",
-                                    class: 'pull-left',
+                                    'class': 'pull-left',
                                     events: {
                                         click: "function(){ " +
                                             "app.router.navigate('#signup');" +
@@ -98,6 +98,75 @@
                             "type": "simple",
                             "components": [
                                 {view: "signupView"}
+                            ]
+                        }
+                    }
+                }
+            },
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template":  
+                            "<div class='container-fluid'>" +
+                                    "<div class='row-fluid'>" +
+                                        "<div class='span7'>" +
+                                            "<div class='card2'>" +
+                                                "<div class='row-fluid'>" +
+                                                    "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                                    "<div class='span8'>" +
+                                                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                        "{{ this.model.attributes.message }}</p>" +
+                                                    "</div>" +
+                                                "</div>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>",
+                        controller: "{" +
+                            "initialize: function(options) { " +
+                                "app.view.View.prototype.initialize.call(this, options);" +
+                            "}," +
+                            "render: function(data) { " +
+                                "var self = this, attributes = {};" +
+                                "if(this.context.get('errorType')) {" +
+                                    "attributes = this.getErrorAttributes(); " +
+                                    "this.model.set(attributes); " +
+                                "}" +
+                                "app.view.View.prototype.render.call(this);" +
+                            "}," +
+                            "getErrorAttributes: function() {" +
+                                "var attributes = {}; "+
+                                "if(this.context.get('errorType') ==='404') {" +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 404 Not Found'," +
+                                        "type: '404'," +
+                                        "message: \"We're sorry but the resource you asked for cannot be found.\"" +
+                                    "};" +
+                                "} else if(this.context.get('errorType') ==='500') { " +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 500 Internal Server Error'," + 
+                                        "type: '500'," +
+                                        "message: 'There was an error on the server. Please contact technical support.'" +
+                                    "};" +
+                                "} else {" +
+                                    "attributes = { " +
+                                        "title: 'Unknown Error', " +
+                                        "type: 'Unknown'," +
+                                        "message: 'Unknown error.'" +
+                                    "};" +
+                                "} " +
+                                "return attributes;" +
+                            "}" +
+                        "}"
+                    }
+                },
+                "layouts": {
+                    "error": {
+                        "meta": {
+                            "type": "simple",
+                            "components": [
+                                {view: "errorView"}
                             ]
                         }
                     }
@@ -176,10 +245,10 @@
                                             "function(){ var self = this; " +
                                             "var oEmail = this.model.get(\"email\");" +
                                             "if (oEmail) {" +
-                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "   this.model.set({\"email\": [{\"email_address\":oEmail}]}, {silent: true});" +
                                             "}" +
                                             "var validFlag = this.model.isValid();" +
-                                            " this.model.set({\"email\":oEmail});" +
+                                            " this.model.set({\"email\":oEmail}, {silent: true});" +
                                             "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
@@ -191,7 +260,7 @@
                                             "       state:this.model.get(\"state\")," +
                                             "       country:this.model.get(\"country\")," +
                                             "       company:this.model.get(\"company\")," +
-                                            "       title:this.model.get(\"jobtitle\")" +
+                                            "       jobtitle:this.model.get(\"jobtitle\")" +
                                             "   }; " +
                                             "   this.app.api.signup(contactData, null, " +
                                             "   {" +
@@ -321,26 +390,13 @@
                 "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                controller: "{" +
-                    "handleValidationError: function(errors) {" +
-                    "var self = this;" +
-                    "this.$('.control-group').addClass(\"error\");" +
-                    "this.$('.help-block').html(\"\");" +
-                    "this.$('.controls').addClass('input-append');" +
-                    "_.each(errors, function(errorContext, errorName) {" +
-                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
-                    "});" +
-                    "this.$('.add-on').remove();" +
-                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
-                    "}" +
-                    "}"
+                }
             },
             "phone": {
                 "templates": {
@@ -356,9 +412,6 @@
             }
         },
         'views': {
-            "alert": {
-                controller: "\\\"\/**\n * View that displays errors.\n * @class View.Views.AlertView\n * @extends View.View\n *\/\n\n({\n    initialize: function(options) {\n        app.view.View.prototype.initialize.call(this, options);\n    },\n    \/**\n     * Displays an alert message and returns alert instance.\n     * @param {Object} options\n     * @return {Backbone.View} Alert instance\n     * @method\n     *\/\n    show: function(options) {\n        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;\n        if (!options) {\n            return false;\n        }\n\n        level = options.level ? options.level : \\'info\\';\n        title = options.title ? options.title : null;\n        msg = (_.isString(options.messages)) ? [options.messages] : options.messages;\n        autoClose = options.autoClose ? options.autoClose : false;\n\n        \/\/ \\\"process\\\" is the loading indicator .. I didn\\'t name it ;=)\n        alertClass = (level === \\\"process\\\" || level === \\\"success\\\" || level === \\\"warning\\\" || level === \\\"info\\\" || level === \\\"error\\\") ? \\\"alert-\\\" + level : \\\"\\\";\n\n        ctx = {\n            alertClass: alertClass,\n            title: title,\n            messages: msg,\n            autoClose: autoClose\n        };\n        try {\n            AlertView = Backbone.View.extend({\n                events: {\n                    \\'click .close\\': \\'close\\'\n                },\n                template: \\\"<div class=\\\\\\\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{\/if}}\\\\\\\">\\\" +\n                    \\\"<a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>{{#if title}}<strong>{{title}}<\/strong>{{\/if}}\\\" +\n                    \\\"{{#each messages}}<p>{{this}}<\/p>{{\/each}}<\/div>\\\",\n                loadingTemplate: \\\"<div class=\\\\\\\"alert {{alertClass}}\\\\\\\">\\\" +\n                    \\\"<strong>{{title}}<\/strong>\u2026<\/div><a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>\\\",\n                initialize: function() {\n                    this.render();\n                },\n                close: function() {\n                    this.$el.remove();\n                },\n                render: function() {\n                    var tpl = (level === \\'process\\') ?\n                        Handlebars.compile(this.loadingTemplate) :\n                        Handlebars.compile(this.template);\n\n                    this.$el.html(tpl(ctx));\n                }\n            });\n            thisAlert = new AlertView();\n            this.$el.prepend(thisAlert.el);\n\n            if (autoClose) {\n                setTimeout(function() {\n                    $(\\'.timeten\\').fadeOut().remove();\n                }, 9000);\n            }\n            return thisAlert;\n\n        } catch (e) {\n            app.logger.error(\\\"Failed to render \\'\\\" + this.name + \\\"\\' view.\\\\n\\\" + e.message);\n            return null;\n            \/\/ TODO: trigger app event to render an error message\n        }\n    }\n})\n\\\""
-            },
             "loginView": {
                 templates: {
                     "loginView": "<form name='{{name}}'>" +
@@ -474,6 +527,25 @@
                         "{{/each}}" +
                         "</div>" +
                         "</div>" +
+                        "</div>"
+                }
+            },
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
+                            "<div class='row-fluid'>" +
+                                "<div class='span7'>" +
+                                    "<div class='card2'>" +
+                                        "<div class='row-fluid'>" +
+                                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                            "<div class='span8'>" +
+                                                "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                "{{ this.model.attributes.message }}</p>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
                         "</div>"
                 }
             }
@@ -771,7 +843,8 @@
             }
         },
         "appStrings": {
-            ERROR_FIELD_REQUIRED: "Error. This field is required."
+            ERROR_FIELD_REQUIRED: "Error. This field is required.",
+            ERROR_EMAIL: "Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
         }
     };
 
@@ -783,8 +856,7 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard",
-                module: app.config.defaultModule
+                layout: "dashboard"
             });
         });
 
@@ -822,9 +894,8 @@
         ];
 
         app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
-        
-        // Perform any original before checks .. if these fail return false
-        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        if(!oRoutingBefore.call(this, route, args)) return false;
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.

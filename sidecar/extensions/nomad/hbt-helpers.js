@@ -24,10 +24,17 @@
         }));
     });
 
-    Handlebars.registerHelper('buildLinkRoute', function(context, model, link, action) {
-        model = model || context.get("model");
-        var id = model.id;
-
-        return new Handlebars.SafeString(app.nomad.buildLinkRoute(context.get("module"), id, link, action));
+    Handlebars.registerHelper('linkRoute', function(context, link, relatedId, action) {
+        action = _.isString(action) ? action : null;
+        var model = context.get("model");
+        return new Handlebars.SafeString(app.nomad.buildLinkRoute(model.module, model.id, link, relatedId, action));
     });
+
+    Handlebars.registerHelper('relatedRoute', function(relatedModel, action) {
+        action = _.isString(action) ? action : null;
+        var model = relatedModel.link.bean;
+        var link = relatedModel.link.name;
+        return new Handlebars.SafeString(app.nomad.buildLinkRoute(model.module, model.id, link, relatedModel.id, action));
+    });
+
 })(SUGAR.App);

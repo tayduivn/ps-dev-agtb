@@ -42,7 +42,6 @@ class OAuth2Api extends SugarApi {
                 'method' => 'logout',
                 'shortHelp' => 'OAuth2 logout.',
                 'longHelp' => 'include/api/help/oauth2_logout.html',
-                'noLoginRequired' => true,
             ),
         );
     }
@@ -67,6 +66,7 @@ class OAuth2Api extends SugarApi {
         }
 
         // The OAuth access token is actually just a session, so we can nuke that here.
+        $_SESSION = array();
         session_regenerate_id(true);
 
         return array('success'=>true);

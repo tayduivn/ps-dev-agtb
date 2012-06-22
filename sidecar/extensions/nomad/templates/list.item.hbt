@@ -1,7 +1,7 @@
 <article id="{{model.module}}{{model.id}}">
     <i class="icon-star-empty"></i>
     <div>
-    <a href="#{{model.module}}/{{model.id}}">
+    <a href="#{{#if model.link}}{{relatedRoute model}}{{else}}{{modelRoute model}}{{/if}}">
         {{#with fields.[0]}}
         {{field ../view ../model}}
         {{/with}}

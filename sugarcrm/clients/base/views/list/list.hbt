@@ -3,7 +3,7 @@
                         <thead>
                         <tr role="row">
                             {{#each fields}}
-                            <th class="{{#if sorting}}sorting{{#eq ../../../collection.orderBy.field name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/if}}"
+                            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.field name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                                 role="columnheader" data-fieldname="{{name}}">
                                 {{str label ../../module}}
                             </th>

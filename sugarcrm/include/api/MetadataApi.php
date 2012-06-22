@@ -59,7 +59,7 @@ class MetadataApi extends SugarApi {
 
     public function getAllMetadata($api, $args) {
         // Default the type filter to everything
-        $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts');
+        $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts','relationships');
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['typeFilter']);
@@ -141,6 +141,16 @@ class MetadataApi extends SugarApi {
         $data['acl'] = array();
         foreach ($this->modules as $modName) {
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
+            // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
+            if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
+                $data['acl'][$modName]['admin'] = 'no';
+                $data['acl'][$modName]['developer'] = 'no';
+                $data['acl'][$modName]['edit'] = 'no';
+                $data['acl'][$modName]['delete'] = 'no';
+                $data['acl'][$modName]['import'] = 'no';
+                $data['acl'][$modName]['export'] = 'no';
+                $data['acl'][$modName]['massupdate'] = 'no';
+            }
         }
         // remove the disabled modules from the module list
         require_once("modules/MySettings/TabController.php");
@@ -161,11 +171,12 @@ class MetadataApi extends SugarApi {
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
         $data['appListStrings'] = $mm->getAppListStrings();
+        $data['relationships'] = $mm->getRelationshipData();
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
-        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList');
+        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList','relationships');
         $perModuleChunks = array('modules','modStrings','acl');
 
 
@@ -199,7 +210,21 @@ class MetadataApi extends SugarApi {
                 if (!in_array($chunk,$this->typeFilter)
                     || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
-                }        
+                }
+            }
+            
+            // Relationships are special, they are a baseChunk but also need to pay attention to modules
+            if (!empty($moduleFilter) && isset($data['relationships']) ) {
+                // We only want some modules, but we want the relationships
+                foreach ($data['relationships'] as $relName => $relData ) {
+                    if ( $relName == '_hash' ) {
+                        continue;
+                    }
+                    if (!in_array($relData['rhs_module'],$moduleFilter)
+                        && !in_array($relData['lhs_module'],$moduleFilter)) {
+                        unset($data['relationships'][$relName]);
+                    }
+                }
             }
 
             foreach ( $perModuleChunks as $chunk ) {
@@ -211,7 +236,6 @@ class MetadataApi extends SugarApi {
                         if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
                             || (isset($args[$chunk][$modName]) && $args[$chunk][$modName] == $modData['_hash'])) {
                             unset($data[$chunk][$modName]);
-                            continue;
                         }
                     }
                 }

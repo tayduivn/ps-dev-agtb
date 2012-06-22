@@ -23,6 +23,14 @@
         this.$("[rel=popover]").popover();
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
+        if ($.fn.timeago)
+            $("span.relativetime").timeago({
+                logger: SUGAR.App.logger,
+                date: SUGAR.App.utils.date,
+                lang: SUGAR.App.lang,
+                template: SUGAR.App.template
+            });
+
     };
 
     /**

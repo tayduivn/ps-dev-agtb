@@ -1,4 +1,4 @@
-<h1 class="nomad">{{viewObj.moduleSingular}}</h1>
+<h1 class="nomad">{{#if viewObj.model.link}}Related{{/if}} {{viewObj.moduleSingular}}</h1>
 <div class="bizcard">
     {{#nothing}}TODO: research how to get image data{{/nothing}}
     <img src="{{! getFieldValue model image}}" class="avatar" alt="{{! getFieldValue model image}}">
@@ -14,25 +14,29 @@
             {{/with}}
         {{/each}}
     </div>
-    <span class="fade"></span>
-    <a href="#{{viewObj.model.module}}/{{viewObj.model.id}}/edit"><i class="icon-chevron-right more"></i></a>
-    <div id="record-action" class="row-fluid">
-        {{#if isPhoneBtn}}
-        <a class="span1_5th phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone"></i></a>
-        {{/if}}
-        {{#if isEmailBtn}}
-        <a class="span1_5th email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
-        {{/if}}
-        {{#if isMessageBtn}}
-        <a class="span1_5th message {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-sms-white"></i></a>
-        {{/if}}
-        {{#if isUrlBtn}}
-        <a class="span1_5th link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
-        {{/if}}
-        {{#if isAddressBtn}}
-        <a class="span1_5th map {{#unless isAddressNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
-        {{/if}}
-    </div>
+    {{#if isActions}}
+        <span class="fade"></span>
+    {{/if}}
+    <a href="#{{#if viewObj.model.link}}{{relatedRoute viewObj.model "edit"}}{{else}}{{modelRoute viewObj.model "edit"}}{{/if}}"><i class="icon-chevron-right more"></i></a>
+    {{#if isActions}}
+        <div id="record-action" class="row-fluid">
+            {{#if isPhoneBtn}}
+            <a class="phone {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-phone icon-md"></i></a>
+            {{/if}}
+            {{#if isEmailBtn}}
+            <a class="email {{#unless isEmailNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-envelope icon-md"></i></a>
+            {{/if}}
+            {{#if isMessageBtn}}
+            <a class="message sms {{#unless isPhoneNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-comment icon-md"></i><span></span></a>
+            {{/if}}
+            {{#if isUrlBtn}}
+            <a class="link {{#unless isUrlNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-external-link icon-md"></i></a>
+            {{/if}}
+            {{#if isAddressBtn}}
+            <a class="map {{#unless isAddressNotEmpty}}disabled{{/unless}}" href="javascript:void(0)"><i class="icon-map-marker icon-md"></i></a>
+            {{/if}}
+        </div>
+    {{/if}}
 </div>
 <div class="container-fluid" id="detailListing">
     <div class="row-fluid">

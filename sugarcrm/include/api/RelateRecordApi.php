@@ -79,6 +79,9 @@ class RelateRecordApi extends ModuleApi {
      * @return array Two elements: The link name, and the SugarBean of the far end
      */
     protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
+        if ( empty($primaryBean) ) {
+            throw new SugarApiExceptionNotFound('Could not find the primary bean');
+        }
         if ( ! $primaryBean->ACLAccess($securityTypeLocal) ) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeLocal.' records for module: '.$args['module']);
         }
@@ -156,6 +159,10 @@ class RelateRecordApi extends ModuleApi {
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
 
         $relatedBean->retrieve($args['remote_id']);
+        if ( empty($relatedBean->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        }
 
         return $this->formatBean($api, $args, $relatedBean);
         
@@ -179,6 +186,12 @@ class RelateRecordApi extends ModuleApi {
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
+        // Reload the related record so that it has all the latest data similar to what we do in the create and update
+        $relatedBean->retrieve($id);
+        if ( empty($relatedBean->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        }
         return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
     }
 
@@ -188,6 +201,10 @@ class RelateRecordApi extends ModuleApi {
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
 
         $relatedBean->retrieve($args['remote_id']);
+        if ( empty($relatedBean->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        }
         
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
 
@@ -203,13 +220,17 @@ class RelateRecordApi extends ModuleApi {
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','edit');
 
         $relatedBean->retrieve($args['remote_id']);
+        if ( empty($relatedBean->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        }
 
         $id = $this->updateBean($relatedBean, $api, $args);
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
         
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
+        
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
@@ -222,6 +243,10 @@ class RelateRecordApi extends ModuleApi {
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
 
         $relatedBean->retrieve($args['remote_id']);
+        if ( empty($relatedBean->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        }
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
 

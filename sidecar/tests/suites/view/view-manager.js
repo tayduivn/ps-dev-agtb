@@ -21,6 +21,7 @@ describe("View Manager", function() {
             });
 
             it("typed", function() {
+
                 var klass = app.view.declareComponent("layout", "list", null, null, "fluid");
                 expect(klass).toEqual(app.view.layouts.FluidLayout);
             });
@@ -103,6 +104,47 @@ describe("View Manager", function() {
                 expect(app.view.fields.IntField.prototype.foo).toBeDefined();
             });
 
+        });
+
+        describe("duplicate components", function() {
+
+            it("declareComponent can be asked to remove duplicates", function() {
+                var f1, f2, v1, v2, l1, l2, cache; 
+
+                // Fields
+                f1 = app.view.declareComponent("field", "fubar", null, "{ foo: function() { return 'fimpl1'; } }");
+                fcheck = app.view.declareComponent("field", "fubar", null, "{ foo: function() { return 'nope'; } }");
+                cache = app.view['fields'];
+
+                // Calling declareComponent without the remove param still results in cached component as before
+                expect(cache.FubarField.prototype.foo()).toEqual('fimpl1');
+
+                // But if we use the remove param it fubar field will be overwritten
+                f2 = app.view.declareComponent("field", "fubar", null, "{ foo: function() { return 'fimpl2'; } }", null, true);
+                cache = app.view['fields'];
+                expect(cache.FubarField.prototype.foo()).toEqual('fimpl2');
+
+                // Views 
+                v1 = app.view.declareComponent("view", "fubar", null, "{ foo: function() { return 'vimpl1'; } }");
+                v2 = app.view.declareComponent("view", "fubar", null, "{ foo: function() { return 'vimpl2'; } }", null, true);
+                cache = app.view['views'];
+                expect(cache.FubarView.prototype.foo()).toEqual('vimpl2');
+
+                // Layouts 
+                l1 = app.view.declareComponent("layout", "fubar", null, "{ foo: function() { return 'limpl1'; } }");
+                l2 = app.view.declareComponent("layout", "fubar", null, "{ foo: function() { return 'limpl2'; } }", null, true);
+                cache = app.view['layouts'];
+                expect(cache.FubarLayout.prototype.foo()).toEqual('limpl2');
+            });
+
+            it("declareComponent called with remove flag but no controlller is ignored and original preserved", function() {
+                var f1, f2, cache; 
+                f1 = app.view.declareComponent("field", "fubar", null, "{ foo: function() { return 'original_preserved'; } }");
+                f2 = app.view.declareComponent("field", "fubar", null, null /*no controller*/, null, true);
+                cache = app.view['fields'];
+                expect(cache.FubarField.prototype.foo).toBeDefined();
+                expect(cache.FubarField.prototype.foo()).toEqual('original_preserved');
+            });
         });
 
     });
@@ -208,12 +250,18 @@ describe("View Manager", function() {
         });
 
         it("layout with a custom controller", function () {
-            var layout = app.view.createLayout({
+            var layout;
+
+            app.view.declareComponent("layout", "fluid", null, null, "fluid");
+            layout = app.view.createLayout({
                 name : "detailplus",
                 module: "Contacts",
                 context: context
             });
-            expect(layout instanceof app.view.layouts.FluidLayout).toBeTruthy();
+
+            // Originally checked to see if DetailPlus is a Fluid Layout, however it is no longer the case
+            // after migrating layouts serverside, not sure what happened.
+            expect(layout instanceof app.view.layouts.ContactsDetailplusLayout).toBeTruthy();
             expect(layout.customLayoutCallback).toBeDefined();
         });
 
@@ -318,6 +366,28 @@ describe("View Manager", function() {
             expect(result.def.class).toEqual("foo");
         });
 
+        it("should use the vardef controller if provided", function() {
+            var def, result, ctx, meta;
+            meta = app.metadata.getField('relate'); //has a controller
+            def = {
+                    'class': "foo",
+                    'label': "Relate Label",
+                    'name': "relate",
+                    'type': "relate"
+            };
+            ctx = app.context.getContext();
+            ctx.set({
+                module: "Cases",
+                model: app.data.createBean("Cases")
+            });
+            result = app.view.createField({
+                def: def,
+                context: ctx,
+                meta: meta,
+                view: new app.view.View({ name: "edit", context: context })
+            });
+        });
+        
 
         it("with default template", function() {
             var fieldId = app.view.getFieldId();

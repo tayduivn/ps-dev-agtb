@@ -2,6 +2,12 @@ var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
+    "relationships": {
+        "contacts_accounts": {
+            lhs_module:"Accounts",
+            rhs_module:"Contacts"
+        }
+    },
     "modules": {
         "Cases": {
             '_hash': '12345678910',
@@ -71,8 +77,6 @@ fixtures.metadata = {
                     "type": "radioenum",
                     "options": "Elastic_boost_options"
                 }
-            },
-            "relationships": {
             },
             "views": {
                 "edit": {
@@ -356,12 +360,6 @@ fixtures.metadata = {
                     vname: "LBL_ACCOUNT_ID"
                 }
 
-            },
-            "relationships": {
-                "contacts_accounts": {
-                    lhs_module:"Accounts",
-                    rhs_module:"Contacts"
-                }
             },
             "views": {
                 "edit": {
@@ -1246,6 +1244,9 @@ fixtures.metadata = {
                     {view: "list"}
                 ]
             }
+        },
+        "fluid": {
+            controller: "({})"
         }
-    },
+    }
 };

@@ -89,7 +89,7 @@ class RegisterLeadApi extends SugarApi {
             'team_set_id'=>'1',
             'team_id'=>'1'
         );
-        $fieldList = array('first_name','last_name','phone_work','email','primary_address_country', 'account_name', 'title');
+        $fieldList = array('first_name', 'last_name', 'phone_work', 'email', 'primary_address_country', 'primary_address_state', 'account_name', 'title');
         foreach ($fieldList as $fieldName) {
             if (isset($args[$fieldName])) {
                 $fields[$fieldName] = $args[$fieldName];

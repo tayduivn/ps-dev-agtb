@@ -49,9 +49,6 @@ abstract class SugarApi {
     protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
 
         $sfh = new SugarFieldHandler();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
 
         // Need to figure out the ownership for ACL's
         $isOwner = false;
@@ -70,7 +67,7 @@ abstract class SugarApi {
         $data = array();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$GLOBALS['current_user']->id,$isOwner) < 1 ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
                 // No read access to this field, skip it.
                 continue;
             }
@@ -121,8 +118,33 @@ abstract class SugarApi {
                 }
                 $data['email'] = $emails;
         }
+        
+        // if data is an array or object we need to decode each element, if not just decode data and pass it back
+        if(is_array($data) || is_object($data)) {
+            $this->htmlDecodeReturn($data);
+        }
+        elseif(!empty($data)) {
+            $data = html_entity_decode($data);
+        }
 
         return $data;
+    }
+    /**
+     * Recursively runs html entity decode for the reply
+     * @param $data array The bean the API is returning
+     */
+    protected function htmlDecodeReturn(&$data) {
+        foreach($data AS $key => $value) {
+            if(is_array($value) && !empty($value)) {
+                $this->htmlDecodeReturn($value);
+            }
+            elseif(!empty($data) && !empty($value)) {
+                $data[$key] = html_entity_decode($value);
+            }
+            else {
+                $data[$key] = $value;
+            }
+        }
     }
 
     /**
@@ -142,7 +164,7 @@ abstract class SugarApi {
         }
 
         if (!$bean->ACLAccess($aclToCheck)) {
-            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$args['module']);
+            throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);
         }
 
         return $bean;

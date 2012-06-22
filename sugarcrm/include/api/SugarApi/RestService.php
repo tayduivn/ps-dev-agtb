@@ -80,14 +80,14 @@ class RestService extends ServiceBase {
             }
             
 
-            if ( count($_POST) > 0 ) {
-                // They have normal post arguments
-                $postVars = array();
-            } else if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
                 $postVars = array();
+            } else if ( count($_POST) > 0 ) {
+                // They have normal post arguments
+                $postVars = securexss($_POST);
             } else {
                 $postContents = null;
                 if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
@@ -111,7 +111,7 @@ class RestService extends ServiceBase {
             }
             
             // I know this looks a little weird, overriding post vars with get vars, but 
-            // in the case of REST, get vars ar fairly uncommon and pretty explicit, where
+            // in the case of REST, get vars are fairly uncommon and pretty explicit, where
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
@@ -122,12 +122,8 @@ class RestService extends ServiceBase {
 
             $this->respond($output, $route, $argArray);
 
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
         } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
-            $this->handleException($apiException);
+            $this->handleException($e);
         }
     }
 
@@ -240,26 +236,49 @@ class RestService extends ServiceBase {
      */
     protected function handleException(Exception $exception) {
         if ( is_a($exception,"SugarApiException") ) {
-            $httpError = $exception->errorCode;
+            $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getErrorLabel();
+            $description = $exception->getDescription();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
             $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getMessage();
+            $description = $exception->getDescription();
         } else {
             $httpError = 500;
+            $errorLabel = 'unknown_error';
+            $description = $exception->getMessage();
         }
         header("HTTP/1.1 {$httpError}");
 
-        $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
+        $GLOBALS['log']->error('An unknown exception happened: ('.$errorLabel.')'.$description);
         
         // TODO: Translate error messages
-        $reply = "ERROR: ".$exception->getMessage();
+        $reply = "ERROR: ".$description;
 
+        $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
                 $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $exception->errorCode)));
+                $crazyEncoding = true;
             }
         }
-        echo($reply);
+        if ( $crazyEncoding ) {
+            echo($reply);
+            die();
+        }
+        
+        // Send proper headers
+        header("Content-Type: application/json");
+        header("Cache-Control: no-store");
+
+        $replyData = array(
+            'error'=>$errorLabel,
+        );
+        if ( !empty($description) ) {
+            $replyData['error_description'] = $description;
+        }
+        echo(json_encode($replyData));
         die();
     }
 
@@ -318,6 +337,24 @@ class RestService extends ServiceBase {
         SugarApplication::trackLogin();
         //END SUGARCRM flav=pro ONLY
 
+        // Need to setup the session for portal users
+        if( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+            // Add the necessary visibility and acl classes to the default bean list
+            require_once('modules/ACL/SugarACLSupportPortal.php');
+            $default_acls = SugarBean::getDefaultACL();
+            // This one overrides the Static ACL's, so disable that
+            unset($default_acls['SugarACLStatic']);
+            $default_acls['SugarACLStatic'] = false;
+            $default_acls['SugarACLSupportPortal'] = true;
+            SugarBean::setDefaultACL($default_acls);
+            SugarACL::resetACLs();
+
+            $default_visibility = SugarBean::getDefaultVisibility();
+            $default_visibility['SupportPortalVisibility'] = true;
+            SugarBean::setDefaultVisibility($default_visibility);
+            $GLOBALS['log']->debug("Added SupportPortalVisibility to session.");
+        }
+        
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];
