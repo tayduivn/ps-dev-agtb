@@ -233,7 +233,11 @@ $mod_strings = array (
   'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
   'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
 
-  // Labels for jsTree implementation
+  //Labels for jsTree implementation
   'LBL_TREE_MY_OPPORTUNITIES' => 'My Opportunities',
   'LBL_TREE_PARENT' => 'Parent',
+
+   //Labels for worksheet totals
+   'LBL_INCLUDED_TOTAL' => 'Included Total',
+   'LBL_OVERALL_TOTAL' => 'Overall Total'
 );

@@ -29,8 +29,17 @@
      * @param {Object} options
      */
     initialize:function (options) {
-        this.viewModule = app.viewModule;
         var self = this;
+
+        this.viewModule = app.viewModule;
+        this.includedAmount = 0;
+        this.includedBest = 0;
+        this.includedLikely = 0;
+        this.overallAmount = 0;
+        this.overallBest = 0;
+        this.overallLikely = 0;
+        this.timer = null;
+
         //set expandable behavior to false by default
         this.isExpandableRows = false;
 
@@ -193,15 +202,41 @@
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
+        var columnKeys = {};
+
         for( var i = 0; i < fields.length; i++ )  {
-            columnDefs.push( { "sName": fields[i].name, "aTargets": [ i ] } );
+            var name = fields[i].name;
+            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
+            columnKeys[name] = i;
         }
 
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
-                "bPaginate":false
+                "bPaginate":false,
+                "fnFooterCallback":function(nFoot, aaData, iStart, iEnd, aiDisplay)
+                {
+                    self.includedAmount = 0;
+                    self.includedBest = 0;
+                    self.includedLikely = 0;
+                    self.overallAmount = 0;
+                    self.overallBest = 0;
+                    self.overallLikely = 0;
+
+                    for (var i=iStart; i<iEnd; i++)
+                    {
+                        var included = /checked/.test(aaData[i][columnKeys['forecast']]);
+                        var amount = $(aaData[i][columnKeys['amount']]).html();
+                        //var likely = $(aaData[i][columnKeys['likely_case_worksheet']]).html();
+                        //var best = $(aaData[i][columnKeys['best_case_worksheet']]).html();
+                        if(included)
+                        {
+                            self.includedAmount += parseFloat(amount);
+                        }
+                        self.overallAmount += parseFloat(amount);
+                    }
+                }
             }
         );
 
