@@ -113,46 +113,19 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             $bundles = array();
             $count = 0;
             foreach ($ordered_bundle_list as $ordered_bundle) {
-                $bundle = array();
-                $bundle['name'] = $ordered_bundle->name;
-                $bundle['subtotal'] = format_number_sugarpdf($ordered_bundle->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
-                $bundle['total'] = format_number_sugarpdf($ordered_bundle->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
 
-                $bundle['products'] = array();
+                $bundleFields = PdfManagerHelper::parseBeanFields($ordered_bundle, true);
                 $product_bundle_line_items = $ordered_bundle->get_product_bundle_line_items();
                 foreach ($product_bundle_line_items as $product_bundle_line_item) {
 
-                    if ($product_bundle_line_item->object_name == "Product") {
-                        $bundle['products'][$count]['quantity'] = format_number_sugarpdf($product_bundle_line_item->quantity, 0, 0);
-                        $bundle['products'][$count]['mft_part_num'] = $product_bundle_line_item->mft_part_num;
-                        $bundle['products'][$count]['name'] = stripslashes($product_bundle_line_item->name);
-                        if (!empty($product_bundle_line_item->description)) {
-                            $bundle['products'][$count]['name'] .= "\n" . nl2br(stripslashes($product_bundle_line_item->description));
-                        }
+                    $bundleFields['products'][$count] = PdfManagerHelper::parseBeanFields($product_bundle_line_item, true);
 
-                        $bundle['products'][$count]['list_usdollar'] = format_number_sugarpdf($product_bundle_line_item->list_usdollar, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
-                        $bundle['products'][$count]['discount_usdollar'] = format_number_sugarpdf($product_bundle_line_item->discount_usdollar, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
-                        $bundle['products'][$count]['ext_price'] = format_number_sugarpdf($product_bundle_line_item->discount_usdollar * $product_bundle_line_item->quantity, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
-                        $bundle['products'][$count]['discount_amount'] = "";
-                        if (format_number($ordered_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())!= 0.00) {
-                            if ($product_bundle_line_item->discount_select) {
-                                $bundle['products'][$count]['discount_amount'] = format_number($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision())."%";
-                            } else {
-                                $bundle['products'][$count]['discount_amount'] = format_number_sugarpdf($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => false)));
-                            }
-                        }
-                    } elseif ($product_bundle_line_item->object_name == "ProductBundleNote") {
-                        $bundle['products'][$count]['quantity'] = "";
-                        $bundle['products'][$count]['mft_part_num'] = "";
-                        $bundle['products'][$count]['name'] = stripslashes($product_bundle_line_item->description);
-                        $bundle['products'][$count]['list_usdollar'] = "";
-                        $bundle['products'][$count]['discount_usdollar'] = "";
-                        $bundle['products'][$count]['ext_price'] = "";
-                        $bundle['products'][$count]['discount_amount'] = "";
+                    if ($product_bundle_line_item->object_name == "ProductBundleNote") {
+                        $bundleFields['products'][$count]['name'] = $bundleFields['products'][$count]['description'];
                     }
                     $count++;
                 }
-                $bundles[] = $bundle;
+                $bundles[] = $bundleFields;
             }
 
             $this->ss->assign('product_bundles', $bundles);
