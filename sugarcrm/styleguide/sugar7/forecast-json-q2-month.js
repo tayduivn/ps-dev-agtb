@@ -102,79 +102,62 @@
     "values": [
 
     {
-        "label": "January",
-        "gvalue": "50",
-        "gvaluelabel": "50K",
-        "values": [0, 50, 0, 0],
-        "valuelabels": ["0","50K","0","0"],
-        "probability": [0,60,0,0],
-        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
-        "close_date": ["2012-01-01","2012-01-01","2012-01-01","2012-01-01"],
-        "links": ["","",""],
-        "goalmarkervalue" : [200,50],
-        "goalmarkervaluelabel" : ["200K","50K"]
-    }
-    ,
-    {
-
-        "label": "Febuary",
-        "gvalue": "50",
-        "gvaluelabel": "50K",
-        "values": [0,0,50,0],
-        "valuelabels": ["0","0","50K","0"],
-        "probability": [0,0,70,0],
-        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
-        "close_date": ["2012-02-01","2012-02-01","2012-02-01","2012-02-01"],
-        "links": ["","",""],
-        "goalmarkervalue" : [
-            200,
-            50
-        ],
-        "goalmarkervaluelabel" : [
-            "200k",
-            "50K"
-        ]
-
-    }
-    ,
-    {
-        "label": "March",
-        "gvalue": "50",
-        "gvaluelabel": "50K",
-        "values": [0,0,0,50],
-        "valuelabels": ["0","0","0","50K"],
-        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
-        "close_date": ["2012-03-01","2012-03-01","2012-03-01","2012-03-01"],
-        "probability": [0,0,0,100],
-        "links": ["","",""],
-        "goalmarkervalue" : [
-            200,
-            90
-        ],
-        "goalmarkervaluelabel" : [
-            "200K",
-            "90k"
-        ]
-
-    }
-    ,
-    {
         "label": "April",
-        "gvalue": "10",
-        "gvaluelabel": "10K",
-        "values": [10,0,0,50],
-        "valuelabels": ["10K","0","0","50K"],
+        "gvalue": "70",
+        "gvaluelabel": "70K",
+        "values": [10,10,0,50],
+        "valuelabels": ["10K","10K","0","50K"],
         "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
         "close_date": ["2012-04-01","2012-04-01","2012-04-01","2012-04-01"],
-        "probability": [10,0,0,100],
+        "probability": [10,30,0,100],
         "links": ["","",""],
         "goalmarkervalue" : [
             200,
-            70
+            80
         ],
         "goalmarkervaluelabel" : [
             "200K",
-            "70k"
+            "80k"
+        ]
+
+    },
+    {
+        "label": "May",
+        "gvalue": "10",
+        "gvaluelabel": "10K",
+        "values": [5,0,50,50],
+        "valuelabels": ["5K","0","50K","50K"],
+        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
+        "close_date": ["2012-05-01","2012-05-01","2012-05-01","2012-05-01"],
+        "probability": [10,30,0,100],
+        "links": ["","",""],
+        "goalmarkervalue" : [
+            200,
+            120
+        ],
+        "goalmarkervaluelabel" : [
+            "200K",
+            "120k"
+        ]
+
+    },
+    {
+        "label": "June",
+        "gvalue": "10",
+        "gvaluelabel": "10K",
+        "values": [10,20,0,50],
+        "valuelabels": ["10K","20K","0","50K"],
+        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
+        "close_date": ["2012-06-01","2012-06-01","2012-06-01","2012-06-01"],
+        "probability": [10,30,0,100],
+        "links": ["","",""],
+        "goalmarkervalue" : [
+            200,
+            100
+        ],
+        "goalmarkervaluelabel" : [
+            "200K",
+            "100k"
         ]
 
     }

@@ -18,17 +18,14 @@
         "print":"on"
         ,
         "goal_marker_type": [
-            "group",
-            "pareto"
+            "group"
         ]
         ,
         "goal_marker_color": [
-            "#3FB300",
-            "#7D12B2"
+            "#3FB300"
         ]
         ,       "goal_marker_label" : [
-        "Quota",
-        "Likely"
+        "Quota"
     ]
         ,
         "label_name":"Sales Stage"
@@ -111,8 +108,8 @@
         "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
         "close_date": ["2012-01-01","2012-01-01","2012-01-01","2012-01-01"],
         "links": ["","",""],
-        "goalmarkervalue" : [200,50],
-        "goalmarkervaluelabel" : ["200K","50K"]
+        "goalmarkervalue" : [200],
+        "goalmarkervaluelabel" : ["200K"]
     }
     ,
     {
@@ -127,54 +124,29 @@
         "close_date": ["2012-02-01","2012-02-01","2012-02-01","2012-02-01"],
         "links": ["","",""],
         "goalmarkervalue" : [
-            200,
-            50
+            200
         ],
         "goalmarkervaluelabel" : [
-            "200k",
-            "50K"
+            "200k"
         ]
 
     }
     ,
     {
         "label": "March",
-        "gvalue": "50",
-        "gvaluelabel": "50K",
-        "values": [0,0,0,50],
-        "valuelabels": ["0","0","0","50K"],
+        "gvalue": "90",
+        "gvaluelabel": "90K",
+        "values": [0,0,0,90],
+        "valuelabels": ["0","0","0","90K"],
         "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
         "close_date": ["2012-03-01","2012-03-01","2012-03-01","2012-03-01"],
         "probability": [0,0,0,100],
         "links": ["","",""],
         "goalmarkervalue" : [
-            200,
-            90
+            200
         ],
         "goalmarkervaluelabel" : [
-            "200K",
-            "90k"
-        ]
-
-    }
-    ,
-    {
-        "label": "April",
-        "gvalue": "10",
-        "gvaluelabel": "10K",
-        "values": [10,0,0,50],
-        "valuelabels": ["10K","0","0","50K"],
-        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
-        "close_date": ["2012-04-01","2012-04-01","2012-04-01","2012-04-01"],
-        "probability": [10,0,0,100],
-        "links": ["","",""],
-        "goalmarkervalue" : [
-            200,
-            70
-        ],
-        "goalmarkervaluelabel" : [
-            "200K",
-            "70k"
+            "200K"
         ]
 
     }

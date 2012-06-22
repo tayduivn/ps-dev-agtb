@@ -164,20 +164,20 @@
           <div class="control-group">
             <label for="select01" class="control-label">Group By:</label>
             <div class="controls">
-              <select data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
-                <option value="pk" selected="selected">Forecast Category</option> 
-                <option value="pk">Probability</option> 
-                <option value="pk">Sales Stage</option> 
+              <select id="groupby" data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
+                <option value="month" selected="selected">Forecast Category</option>
+                <option value="probability">Probability</option>
+                <option value="salesstage">Sales Stage</option>
               </select>
             </div>
           </div>
           <div class="control-group">
             <label for="select01" class="control-label">Data Set:</label>
             <div class="controls">
-              <select data-placeholder="Choose a data set..." class="chzn-select span12" tabindex="2">
-                <option value="likely" selected="selected">Likely</option> 
-                <option value="best">Best</option> 
-                <option value="worst">Worst</option> 
+              <select id="dataset" data-placeholder="Choose a data set..." class="chzn-select span12" tabindex="2">
+                <option value="" selected="selected">Committed</option>
+                <option value="-likely" selected="selected">Likely</option>
+                <option value="-best">Best</option>
               </select>
             </div>
           </div>
@@ -389,11 +389,31 @@
       chartConfig["dataPointSize"] = 5;
 
       var forecast = null;
-      forecast = new loadSugarChart(chartId,'forecast-json-month.js',css,chartConfig);
+      var chartFile = 'forecast-json-q1-month.js';
+      forecast = new loadSugarChart(chartId,chartFile,css,chartConfig);
   </script>
   <script type="text/javascript" charset="utf-8">
       /* Data set - can contain whatever information you want */
+      function quarter(val) {
+          var quarter = "";
+          switch (val){
+              case "2012-01-01 - 2012-03-30":
+                  quarter = "q1";
+                  break;
+              case "2012-04-01 - 2012-06-30":
+                  quarter = "q2";
+                  break;
+              case "2012-07-01 - 2012-09-30":
+                  quarter = "q3";
+                  break;
+              case "2012-10-01 - 2012-12-30":
+                  quarter = "q4";
+                  break;
+          }
 
+          return quarter;
+
+      }
 
 
       $(document).ready(function() {
@@ -653,9 +673,6 @@
                           var val  = parseInt(value.replace(/,/,''));
                           //updateChart("forecast-json-update.js",forecast.chartObject);
 
-
-                          var json =  forecast.chartObject.json;
-
                           var cellIndex = $(this).parent().parent()[0].cellIndex;
                           var rowIndex = $(this).parent().parent().parent()[0]._DT_RowIndex;
 
@@ -667,8 +684,6 @@
 
                           var likely = $('h2#likely').html().replace(/,/,"")
                           var json =  forecast.chartObject.json;
-
-
                           $(json.values).each( function(i) {
                               if(rowIndex == i) {
                                   this.goalmarkervalue[1] =  val/1000;
@@ -691,7 +706,7 @@
           $(".dblclick").live({
 
               mouseenter:function(){
-                  $(this).before('<span class="span2" style=" border-right: medium none; position: absolute; left: -25px; top: -8px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+                  $(this).before('<span class="span2" style=" border-right: medium none; position: absolute; left: -15px; top: 0px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
               } ,
               mouseleave:function(){
                   $('span.span2').remove();
@@ -735,44 +750,16 @@
   });
 
 
+
   $("#date_filter").chosen().change(function(formData){
+      var q = quarter(formData.target.value);
       oTable.fnDraw();
-      jQuery.ajax({
-          url: "forecast-json-month.js?r=" + new Date().getTime(),
-          dataType:"text",
-          async: false,
-          success: function(data) {
-
-              if(data !== undefined && data != "No Data"){
-                  var json = eval('('+data+')');
-                  var dateRange = formData.target.value;
-                  var dateMin = dateRange.substring(0,4) + dateRange.substring(5,7)  + dateRange.substring(8,10);
-                  var dateMax = dateRange.substring(13,17) + dateRange.substring(18,20) + dateRange.substring(21,23);
-
-                  var likely = $('h2#likely').html().replace(/,/,"");
-                  $(json.values).each( function(i)    {
-                      var close_date = this.close_date;
-                      var that = this;
-//          console.log(probability)
-                      $.each(close_date , function(j,date) {
-                          var newDate = date.substring(0,4) + date.substring(5,7) + date.substring( 8,10 );
-
-                          if ( !(dateMin <= newDate && newDate <= dateMax)){
-                              that.values[j] = 0;
-                              that.goalmarkervalue[1] =  likely/1000;
-                              that.goalmarkervaluelabel[1] =  likely/1000+"K";
-                          }
-
-
-                      });
-
-                  });
-                  forecast.chartObject.json = json;
-                  updateChart(forecast.chartObject);
-
-              }
-          }
-      });
+      chartFile =  'forecast-json-'+q+'-month.js';
+      forecast = swapChart(chartId,chartFile,css,chartConfig);
+  }).ready(function(){
+       var q = quarter($("#date_filter")[0].value);
+      chartFile =  'forecast-json-'+q+'-month.js';
+      forecast = swapChart(chartId,chartFile,css,chartConfig);
   });
 
   $("#group_by").chosen().change(function(data){
@@ -897,8 +884,16 @@
   $("#x-axis").chosen().change(function(data){
     forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
   });
+  $("#groupby").chosen().change(function(data){
+    forecast = swapChart(chartId,'forecast-json-q1-'+data.target.value+'.js',css,chartConfig);
+  });
+  $("#dataset").chosen().change(function(data){
+      forecast = swapChart(chartId,'forecast-json-q1-month'+data.target.value+'.js',css,chartConfig);
+  });
 
 });
+
+
 </script>  
 </body>
 </html>

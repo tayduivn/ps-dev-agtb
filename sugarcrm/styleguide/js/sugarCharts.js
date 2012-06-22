@@ -44,6 +44,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 			case "barChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
                     if(SUGAR.charts.isDataEmpty(data)){
+                        var json = data;
                         var properties = $jit.util.splat(data.properties)[0];
                         var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
                         //init BarChart
@@ -219,13 +220,14 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
 
                         SUGAR.charts.trackWindowResize(barChart, chartId, data);
+                        barChart.json = json;
                         that.chartObject = barChart;
 
                     }
                 });
 
 				break;
-				
+
 			case "lineChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
                     if(SUGAR.charts.isDataEmpty(data)){
@@ -764,18 +766,12 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                 });
 
 				break;
-				
+
 			}
 		}
 
-function updateChart(jsonFilename, chart, params) {
-    params = params ? params : {};
-    SUGAR.charts.get(jsonFilename, params, function(data) {
-        if(SUGAR.charts.isDataEmpty(data)){
-            chart.busy = false;
-            chart.updateJSON(data);
-        }
-    });
+function updateChart(chart) {
+    chart.updateJSON(chart.json);
 }
 
 function swapChart(chartId,jsonFilename,css,chartConfig){

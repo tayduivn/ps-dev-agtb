@@ -157,27 +157,6 @@
         ]
 
     }
-    ,
-    {
-        "label": "April",
-        "gvalue": "10",
-        "gvaluelabel": "10K",
-        "values": [10,0,0,50],
-        "valuelabels": ["10K","0","0","50K"],
-        "sales_stage": ["Qualified","Proposal","Negotiation","Closed"],
-        "close_date": ["2012-04-01","2012-04-01","2012-04-01","2012-04-01"],
-        "probability": [10,0,0,100],
-        "links": ["","",""],
-        "goalmarkervalue" : [
-            200,
-            70
-        ],
-        "goalmarkervaluelabel" : [
-            "200K",
-            "70k"
-        ]
-
-    }
 
 
 
