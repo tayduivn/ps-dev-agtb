@@ -172,8 +172,16 @@ class FileApi extends SugarApi {
         $filesIndex = $prefix . $field;
 
         // Simple validation
-        if (empty($_FILES)) {
-            // @TODO Localize this exception message
+        // In the case of very large files that are too big for the request too handle AND
+        // if the auth token was sent as part of the request body, you will get a no auth error
+        // message on uploads. This check is in place specifically for file uploads that are too
+        // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
+        if (isset($_FILES)) {
+            if (empty($_FILES)) {
+                // @TODO Localize this exception message
+                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
+            }
+        } else {
             throw new SugarApiExceptionMissingParameter('Attachment is missing');
         }
 
