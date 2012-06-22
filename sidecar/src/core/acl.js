@@ -55,7 +55,6 @@
 
             return hasAccess;
         },
-
         /**
          * Checks acls to see if the current user has access to action on a given model's field.
          *
@@ -65,7 +64,11 @@
          * @return {Boolean} Flag indicating if the current user has access to the given action.
          */
         hasAccessToModel: function(action, model, field) {
-            return model ? this.hasAccess(action, model.module, model.get("assigned_user_id"), field) : true;
+            model = model || new Backbone.Model();
+            if (action=='edit' && !model.get('id')){
+                action = 'create';
+            }
+            return this.hasAccess(action, model.module, model.get("assigned_user_id"), field);
         }
 
     });
