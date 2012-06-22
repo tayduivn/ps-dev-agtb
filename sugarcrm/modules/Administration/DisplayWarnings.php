@@ -36,6 +36,10 @@ function displayAdminError($errorString){
 		//END SUGARCRM flav=pro || flav=sales ONLY
 }
 
+if(!empty($_SESSION['display_lotuslive_alert'])){
+    displayAdminError(translate('MSG_RECONNECT_LOTUSLIVE', 'Administration'));
+}
+
 //BEGIN SUGARCRM flav=pro
 if( is_admin($current_user) && file_exists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
