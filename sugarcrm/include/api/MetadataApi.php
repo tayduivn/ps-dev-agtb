@@ -50,11 +50,20 @@ class MetadataApi extends SugarApi {
                 'shortHelp' => 'This method will return the hash of all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
             ),
+            'getPublicMetadata' =>  array(
+                'reqType' => 'GET',
+                'path' => array('metadata','public'),
+                'pathVars'=> array(''),
+                'method' => 'getPublicMetadata',
+                'shortHelp' => 'This method will return the metadata needed when not logged in',
+                'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noLoginRequired' => true,
+            ),
         );
     }
     
-    protected function getMetadataManager() {
-        return new MetaDataManager($this->user,$this->platforms);
+    protected function getMetadataManager( $public = false ) {
+        return new MetaDataManager($this->user,$this->platforms, $public);
     }
 
     public function getAllMetadata($api, $args) {
@@ -179,7 +188,80 @@ class MetadataApi extends SugarApi {
         $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList','relationships');
         $perModuleChunks = array('modules','modStrings','acl');
 
+        return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
+    }
 
+    // this is the function for the endpoint of the public metadata api.
+    public function getPublicMetadata($api, $args) {
+        $configs = array();
+
+        // right now we are getting the config only for the portal
+        if($args['platform'] == 'portal') {
+
+            $admin = new Administration();
+            $admin->retrieveSettings();
+            foreach($admin->settings AS $setting_name => $setting_value) {
+                if(stristr($setting_name, 'portal_')) {
+                    $key = str_replace('portal_', '', $setting_name);
+                    $configs[$key] = json_decode(html_entity_decode($setting_value));
+                }
+            }
+        }
+
+        // Default the type filter to everything available to the public, no module info at this time
+        $this->typeFilter = array('fields','viewTemplates','appStrings','views', 'layouts', 'config');
+
+        if ( !empty($args['typeFilter']) ) {
+            // Explode is fine here, we control the list of types
+            $types = explode(",", $args['typeFilter']);
+            if ($types != false) {
+                $this->typeFilter = $types;
+            }
+        }
+
+        $onlyHash = false;
+
+        if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
+            $onlyHash = true;
+        }
+
+        if ( isset($args['platform']) ) {
+            $this->platforms = array(basename($args['platform']),'base');
+        } else {
+            $this->platforms = array('base');
+        }
+        // since this is a public metadata call pass true to the meta data manager to only get public/
+        $mm = $this->getMetadataManager( TRUE );
+
+        // Start collecting data
+        $data = array();
+
+        $data['fields']  = $mm->getSugarClientFiles('field');
+        $data['views']   = $mm->getSugarClientFiles('view');
+        $data['layouts'] = $mm->getSugarLayouts();
+        $data['viewTemplates'] = $mm->getViewTemplates();
+        $data['appStrings'] = $mm->getAppStrings();
+        $data['config'] = $configs;
+        $md5 = serialize($data);
+        $md5 = md5($md5);
+        $data["_hash"] = md5(serialize($data));
+
+        $baseChunks = array('viewTemplates','fields','appStrings','views', 'layouts', 'config');
+        
+        return $this->filterResults($args, $data, $onlyHash, $baseChunks);
+    }
+
+    /*
+     * Filters the results for Public and Private Metadata
+     * @param array $args the Arguments from the Rest Request
+     * @param array $data the data to be filtered
+     * @param bool $onlyHash check to return only hashes
+     * @param array $baseChunks the chunks we want filtered
+     * @param array $perModuleChunks the module chunks we want filtered
+     * @param array $moduleFilter the specific modules we want
+     */
+
+    protected function filterResults($args, $data, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array()) {
 
         if ( $onlyHash ) {
             // The client only wants hashes
@@ -210,21 +292,7 @@ class MetadataApi extends SugarApi {
                 if (!in_array($chunk,$this->typeFilter)
                     || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
-                }
-            }
-            
-            // Relationships are special, they are a baseChunk but also need to pay attention to modules
-            if (!empty($moduleFilter) && isset($data['relationships']) ) {
-                // We only want some modules, but we want the relationships
-                foreach ($data['relationships'] as $relName => $relData ) {
-                    if ( $relName == '_hash' ) {
-                        continue;
-                    }
-                    if (!in_array($relData['rhs_module'],$moduleFilter)
-                        && !in_array($relData['lhs_module'],$moduleFilter)) {
-                        unset($data['relationships'][$relName]);
-                    }
-                }
+                }        
             }
 
             foreach ( $perModuleChunks as $chunk ) {
@@ -236,6 +304,7 @@ class MetadataApi extends SugarApi {
                         if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
                             || (isset($args[$chunk][$modName]) && $args[$chunk][$modName] == $modData['_hash'])) {
                             unset($data[$chunk][$modName]);
+                            continue;
                         }
                     }
                 }
@@ -243,7 +312,6 @@ class MetadataApi extends SugarApi {
         }
         
         return $data;
-        
-        
     }
+
 }

@@ -204,8 +204,8 @@
             try {
                 message = message || "<none>";
                 var l = app.config.logLevel || this.levels.ERROR;
-                var writer = app.config.logWriter || this.ConsoleWriter;
-                var formatter = app.config.logFormatter || this.SimpleFormatter;
+                var writer = app.logger[app.config.logWriter] || this.ConsoleWriter;
+                var formatter = app.logger[app.config.logFormatter] || this.SimpleFormatter;
 
                 if (level.value >= l.value) {
                     if (_.isFunction(message)) message = message.call(this);

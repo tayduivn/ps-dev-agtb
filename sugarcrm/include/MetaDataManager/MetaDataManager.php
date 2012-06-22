@@ -54,14 +54,16 @@ class MetaDataManager {
      *
      * @param User $user A User bean
      * @param array $platforms A list of clients
+     * @param bool $public is this a public metadata grab
      */
-    function __construct ($user, $platforms = null) {
+    function __construct ($user, $platforms = null, $public = false) {
         if ( $platforms == null ) {
             $platforms = array('base');
         }
 
         $this->user = $user;
         $this->platforms = $platforms;
+
     }
 
     /**
@@ -410,9 +412,8 @@ class MetaDataManager {
      */
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
-
         foreach ( $this->platforms as $platform ) {
-            $basedir  = "clients/$platform/$path/";
+            $basedir  = "clients/{$platform}/{$path}/";
             $custdir  = "custom/$basedir";
             $basedirs = glob($basedir."*", GLOB_ONLYDIR);
             $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
@@ -472,7 +473,7 @@ class MetaDataManager {
             }
             $fileData['templates'] = $this->fetchTemplates($templateDirs);
             if ($meta) {
-                $fileData['meta'] = array_shift($meta); // Get the first member
+               $fileData['meta'] = array_shift($meta); // Get the first member
             }
             //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
 

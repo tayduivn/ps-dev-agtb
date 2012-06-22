@@ -105,10 +105,12 @@
 		<script language="javascript">
 			var syncResult, view, layout, html;
 			var App = SUGAR.App.init({
-                el: "#sidecar"
+                el: "#sidecar",
+                callback: function(app){
+                    app.start();
+                }
             });
             App.api.debug = App.config.debugSugarApi;
-            App.start();
 		</script>
     </body>
 </html>

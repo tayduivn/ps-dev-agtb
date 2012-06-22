@@ -4,9 +4,9 @@
         appId: 'nomad',
         env: 'dev',
         debugSugarApi: true,
-        logLevel: app.logger.levels.DEBUG,
-        logWriter: app.logger.ConsoleWriter,
-        logFormatter: app.logger.SimpleFormatter,
+        logLevel: 'DEBUG',
+        logWriter: 'ConsoleWriter',s
+        logFormatter: 'SimpleFormatter',
         layoutCacheSize: 30,
         disableLayoutCache: ["login"],
         authStore: 'cache',
@@ -37,7 +37,8 @@
                 field: 'case_number',
                 direction: 'asc'
             }
-        }
+        },
+        syncConfig: false
 
     }, false);
 
