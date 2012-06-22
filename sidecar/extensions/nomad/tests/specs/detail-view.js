@@ -46,8 +46,9 @@ describe ("Detail View", function () {
         expect(!!view.urlFields.length).toEqual(true);
         expect(view.isDataDefined(view.urlFields)).toEqual(true);
 
-        expect(!!view.addressFields.length).toEqual(true);
-        expect(view.isDataDefined(view.addressFields)).toEqual(true);
+        expect(view.addressFieldsGroups).toBeTruthy();
+        expect(!!(_.keys(view.addressFieldsGroups).length)).toEqual(true);
+        expect(view.isDataDefined(view.addressFieldsGroups)).toEqual(true);
 
         initModuleSummaryView("Contacts");
 
@@ -56,6 +57,27 @@ describe ("Detail View", function () {
 
         initModuleSummaryView("Meetings");
 
-        expect(!!view.phoneFields.length || !!view.emailFields.length || !!view.urlFields.length || !!view.addressFields.length).toEqual(false);
+        expect(!!view.phoneFields.length || !!view.emailFields.length || !!view.urlFields.length || !!(_.keys(view.addressFieldsGroups).length)).toEqual(false);
+    });
+
+    it("should return addresses array in correct form", function() {
+        initModuleSummaryView("Accounts");
+
+        var addresses = view.getAddresses();
+        expect(addresses.length).toEqual(1);
+
+        _.each(addresses, function(address) {
+            expect(typeof address === "object").toEqual(true);
+
+            var value = _.values(address);
+            expect(value.length).toEqual(1);
+
+            value = value[0];
+            expect(typeof value === "object").toEqual(true);
+
+            var fields = _.values(value);
+            expect(fields.length).toEqual(5);
+        });
+
     });
 });
