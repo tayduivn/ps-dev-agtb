@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarFields extends RestTestBase {
+class RestTestPublicMetadataSugarFields extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -47,7 +47,7 @@ class RestTestMetadataSugarFields extends RestTestBase {
     }
 
     public function testMetadataSugarFields() {
-        $restReply = $this->_restCall('metadata?typeFilter=fields');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields');
 
         $this->assertTrue(isset($restReply['reply']['fields']['_hash']),'SugarField hash is missing.');
     }
@@ -75,7 +75,6 @@ class RestTestMetadataSugarFields extends RestTestBase {
                             'custom/clients/mobile/fields/address',
                             'custom/clients/portal/fields/address',
                             'custom/clients/base/fields/address',
-                            'clients/mobilefields/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -86,41 +85,35 @@ class RestTestMetadataSugarFields extends RestTestBase {
         
         // Make sure we get it when we ask for mobile
         file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when that was the direct option");
-
-        // Make sure we get the private code when we have public js of the same name
-        file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
-        $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when that was the direct option");
-
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents('clients/base/fields/address/address.js','BASE CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get base code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to base
         unlink('clients/mobile/fields/address/address.js');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('BASE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
         file_put_contents('custom/clients/mobile/fields/address/address.js','CUSTOM MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
         file_put_contents('custom/clients/portal/fields/address/address.js','CUSTOM PORTAL CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=portal');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['fields']['address']['controller'],"Didn't use the custom portal code.");
 
     }
@@ -140,7 +133,7 @@ class RestTestMetadataSugarFields extends RestTestBase {
             'custom/clients/base/fields/address/editView.hbt',
             'custom/clients/base/fields/address/detailView.hbt',
         );
-        
+
         foreach ( $filesToCheck as $filename ) {
             if ( file_exists($filename) ) {
                 $this->oldFiles[$filename] = file_get_contents($filename);
@@ -165,35 +158,35 @@ class RestTestMetadataSugarFields extends RestTestBase {
 
         // Make sure we get it when we ask for mobile
         file_put_contents('clients/mobile/fields/address/editView.hbt','MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents('clients/base/fields/address/editView.hbt','BASE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=base');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to base
         unlink('clients/mobile/fields/address/editView.hbt');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
         file_put_contents('custom/clients/mobile/fields/address/editView.hbt','CUSTOM MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't use the custom mobile code.");
 
         // Make sure custom base code works
         file_put_contents('custom/clients/base/fields/address/editView.hbt','CUSTOM BASE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=base');
+        $restReply = $this->_restCall('metadata/public?typeFilter=fields&platform=base');
         $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't use the custom base code.");
     }
 

@@ -1,4 +1,7 @@
 {
+    "config":{
+      "configfoo":"configBar"
+    },
     "relationships": {
         "account_cases": {
             "name": "account_cases",
@@ -39,7 +42,6 @@
             "rhs_link": "opportunities",
             "relationship_type": "one-to-many"
         }
-
     },
     "modules": {
         "Teams": {
