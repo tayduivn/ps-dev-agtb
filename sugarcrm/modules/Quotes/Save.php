@@ -178,7 +178,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 			$GLOBALS['log']->debug("deleting product id ".$_POST['delete'][$i]);
 			$product->mark_deleted($_POST['delete'][$i]);
 		// delete a comment row
-		} else if (isset($_POST['comment_delete'][$i]) && $_POST['comment_delete'][$i] != '1') {
+		} else if (isset($_POST['comment_delete'][$i]) && $_POST['comment_delete'][$i] != '1' && !isset($_REQUEST['duplicateSave'])) {
 			$product_bundle_note = new ProductBundleNote();
 			$GLOBALS['log']->debug("Deleting Product Bundle Note Id: ".$_POST['comment_delete'][$i]);
 			$product_bundle_note->mark_deleted($_POST['comment_delete'][$i]);
@@ -243,7 +243,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		// insert comment row
 		else if (!empty($_POST['comment_index'][$i]) && !empty($_POST['parent_group'][$i])) {
 			$product_bundle_note = new ProductBundleNote();
-			if (!empty($_POST['comment_id'][$i])) {
+			if (!empty($_POST['comment_id'][$i]) && !isset($_REQUEST['duplicateSave'])) {
 				$product_bundle_note->id = $_POST['comment_id'][$i];
 			}
 			$product_bundle_note->description = $_POST['comment_description'][$i];
