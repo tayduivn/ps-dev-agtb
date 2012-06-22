@@ -28,6 +28,8 @@
 
 <span class="hide actions context-menu">
     <a href="#" title="Edit" class="edit-item-btn"><i class="icon-pencil icon-md"></i><br>Edit</a>
+    {{#if unlinkVisible}}
     <a href="#" title="Unlink" class="unlink-item-btn"><i class="icon-minus-sign icon-md"></i><br>Unlink</a>
+    {{/if}}
     <a href="#" title="Remove" class="remove-item-btn"><i class="icon-trash icon-md"></i><br>Remove</a>
 </span>

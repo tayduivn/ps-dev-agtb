@@ -3768,6 +3768,9 @@ a:hover [class^="icon-"] {
   height: 52px;
   text-decoration: none;
 }
+#record-action > a:hover {
+  background-color: #222;
+}
 #record-action > a > i {
   margin: 16px 0 0 0;
   width: 26px;
