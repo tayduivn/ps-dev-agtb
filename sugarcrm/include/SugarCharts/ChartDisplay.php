@@ -466,12 +466,6 @@ class ChartDisplay
      */
     public function generateJson()
     {
-        $json = $this->getSugarChart()->buildJson($this->generateXML());
-
-        // fix-up the json since it builds it wrong for the php parser
-        $json = str_replace(array("\t", "\n"), "", $json);
-        $json = str_replace("'", '"', $json);
-
-        return $json;
+        return $this->getSugarChart()->buildJson($this->generateXML());
     }
 }
