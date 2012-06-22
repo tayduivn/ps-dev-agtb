@@ -7,6 +7,8 @@
         logLevel: app.logger.levels.DEBUG,
         logWriter: app.logger.ConsoleWriter,
         logFormatter: app.logger.SimpleFormatter,
+        layoutCacheSize: 30,
+        disableLayoutCache: ["login"],
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',

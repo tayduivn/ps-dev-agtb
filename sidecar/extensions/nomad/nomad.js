@@ -42,6 +42,7 @@
                 link: link,
                 create: true,
                 layout: "edit",
+                action:"create",
                 depth:depth
             });
         },

@@ -175,6 +175,13 @@
         },
 
         /**
+         * Removes a component from the DOM.
+         */
+        remove: function() {
+            return this.$el.remove();
+        },
+
+        /**
          * Gets a string representation of this component.
          * @return {String} String representation of this component.
          */
