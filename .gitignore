@@ -9,6 +9,7 @@ sidecar/src/config_si.php
 sidecar/minified
 sidecar/docs
 sidecar/extensions/nomad/compiled/*.js
+sidecar/extensions/portal/config.js
 sidecar/extensions/forcasts/config.js
 sidecar/extensions/core/config.js
 sidecar/extensions/nomad/config.js
