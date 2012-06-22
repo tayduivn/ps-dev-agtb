@@ -243,10 +243,6 @@
             return fields;
         },
 
-        detach:function(){
-            return this.$el.remove();
-        },
-
         /*unbindData:function(){
             _.each(this._components, function(component) {
                 component.unbindData();
