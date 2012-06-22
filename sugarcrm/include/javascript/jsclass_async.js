@@ -81,7 +81,7 @@ SugarVCalClient.prototype.load = function(user_id, request_id) {
     this.user_id = user_id;
 
     var vcal_server = './vcal_server.php?type=vfb&source=outlook&user_id=' + user_id;
-    if (window.combo_date_start != 'undefined') {
+    if (typeof(window.combo_date_start) != 'undefined') {
         var date_start = window.combo_date_start.datetime;
         vcal_server += '&datestart='+date_start;
     }
