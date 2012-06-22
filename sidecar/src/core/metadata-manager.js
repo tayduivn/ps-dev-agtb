@@ -2,6 +2,7 @@
     // Key prefix used to identify metadata in the local storage.
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
+    var _relPrefix = "r:";
     var _fieldPrefix = "f:";
     var _layoutPrefix = "l:";
     var _viewPrefix = "v:";
@@ -12,6 +13,8 @@
     // Metadata that has been loaded from offline storage (memory cache)
     // Module specific metadata
     var _metadata = {};
+    // Relationship definitions
+    var _relationships = {};
     // Field definitions
     var _fields = {};
     // View definitions
@@ -180,6 +183,15 @@
         },
 
         /**
+         * Gets a relationship definition.
+         * @param {String} name Relationship name.
+         * @return {Object} Relationship metadata.
+         */
+        getRelationship: function(name) {
+            return _getMeta(_relationships, name, _relPrefix);
+        },
+
+        /**
          * Gets field widget metadata.
          * @param {Object} type Field type.
          * @return {Object} Metadata for the specified field type.
@@ -309,6 +321,13 @@
 
                 }, this);
                 _set("modules", modules.join(","));
+            }
+
+            if (data.relationships) {
+                _.each(data.relationships, function(entry, relationship) {
+                    _relationships[relationship] = entry;
+                    _set(_relPrefix + relationship, entry);
+                });
             }
 
             if (data.fields) {

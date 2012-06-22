@@ -155,6 +155,7 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:r:contacts_accounts"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
             expect(SugarTest.storage["test:portal:templates"]).toBeDefined();

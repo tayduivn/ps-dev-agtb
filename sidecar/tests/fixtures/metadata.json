@@ -2,6 +2,47 @@
     "config":{
       "configfoo":"configBar"
     },
+    "relationships": {
+        "account_cases": {
+            "name": "account_cases",
+            "lhs_module": "Accounts",
+            "lhs_table": "accounts",
+            "lhs_key": "id",
+            "rhs_module": "Cases",
+            "rhs_table": "cases",
+            "rhs_key": "account_id",
+            "relationship_type": "one-to-many"
+        },
+        "opportunities_contacts": {
+            "name": "opportunities_contacts",
+            "lhs_module": "Opportunities",
+            "lhs_table": "opportunities",
+            "lhs_key": "id",
+            "rhs_module": "Contacts",
+            "rhs_table": "contacts",
+            "rhs_key": "id",
+            "relationship_type": "many-to-many",
+            "join_table": "opportunities_contacts",
+            "join_key_lhs": "opportunity_id",
+            "join_key_rhs": "contact_id"
+        },
+        "accounts_opportunities": {
+            "lhs_module": "Accounts",
+            "lhs_table": "accounts",
+            "lhs_link": "opportunities",
+            "rhs_module": "Opportunities",
+            "rhs_table": "opportunities",
+            "rhs_link": "opportunities",
+            "relationship_type": "one-to-many"
+        },
+        "opportunity_calls": {
+            "lhs_module": "Opportunities",
+            "lhs_link": "calls",
+            "rhs_module": "Calls",
+            "rhs_link": "opportunities",
+            "relationship_type": "one-to-many"
+        }
+    },
     "modules": {
         "Teams": {
             "fields": {}
@@ -11,7 +52,30 @@
             "fields": {}
         },
         "Accounts": {
-            "fields": {}
+            "fields": {
+                "cases": {
+                    "name": "cases",
+                    "type": "link",
+                    "relationship": "account_cases",
+                    "module": "Cases",
+                    "bean_name": "aCase",
+                    "source": "non-db",
+                    "vname": "LBL_CASES"
+                }
+            }
+        },
+        "Cases": {
+            "fields": {
+                "account_name": {
+                    "name": "account_name", "rname": "name", "id_name": "account_id", "vname": "LBL_ACCOUNT_NAME", "type": "relate", "link": "accounts", "table": "accounts", "join_name": "accounts", "isnull": "true", "module": "Accounts", "dbType": "varchar", "len": 100, "source": "non-db", "unified_search": true, "comment": "The name of the account represented by the account_id field", "required": true, "importable": "required"
+                },
+                "account_id": {
+                    "name": "account_id", "type": "relate", "dbType": "id", "rname": "id", "module": "Accounts", "id_name": "account_id", "reportable": false, "vname": "LBL_ACCOUNT_ID", "audited": true, "massupdate": false, "comment": "The account to which the case is associated"
+                },
+                "accounts": {
+                    "name": "accounts", "type": "link", "relationship": "account_cases", "link_type": "one", "side": "right", "source": "non-db", "vname": "LBL_ACCOUNT"
+                }
+            }
         },
         "Calls": {
             "fields": {}
@@ -49,7 +113,16 @@
                 "contacts": {
                     "name": "contacts",
                     "type": "link",
-                    "relationship": "opportunities_contacts"
+                    "relationship": "opportunities_contacts",
+                    "source": "non-db",
+                    "module": "Contacts",
+                    "bean_name": "Contact",
+                    "rel_fields": {
+                        "contact_role": {
+                            "type": "enum", "options": "opportunity_relationship_type_dom"
+                        }
+                    },
+                    "vname": "LBL_CONTACTS"
                 },
                 "accounts": {
                     "name": "accounts",
@@ -60,32 +133,6 @@
                     "name": "calls",
                     "type": "link",
                     "relationship": "opportunity_calls"
-                }
-
-            },
-            "relationships": {
-                "opportunities_contacts": {
-                    "lhs_module": "Opportunities",
-                    "lhs_link": "contacts",
-                    "rhs_module": "Contacts",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "many-to-many"
-                },
-                "accounts_opportunities": {
-                    "lhs_module": "Accounts",
-                    "lhs_table": "accounts",
-                    "lhs_link": "opportunities",
-                    "rhs_module": "Opportunities",
-                    "rhs_table": "opportunities",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "one-to-many"
-                },
-                "opportunity_calls": {
-                    "lhs_module": "Opportunities",
-                    "lhs_link": "calls",
-                    "rhs_module": "Calls",
-                    "rhs_link": "opportunities",
-                    "relationship_type": "one-to-many"
                 }
 
             }
@@ -105,10 +152,49 @@
                 "field_0": {
                     "name": "field_0",
                     "default": 100
+                },
+                "opportunities": {
+                    "name": "opportunities",
+                    "type": "link",
+                    "relationship": "opportunities_contacts",
+                    "source": "non-db",
+                    "module": "Opportunities",
+                    "bean_name": "Opportunity",
+                    "vname": "LBL_OPPORTUNITIES"
+                },
+                "opportunity_role_fields": {
+                    "name": "opportunity_role_fields",
+                    "rname": "id",
+                    "relationship_fields": {
+                        "id": "opportunity_role_id",
+                        "contact_role": "opportunity_role"
+                    },
+                    "vname": "LBL_ACCOUNT_NAME",
+                    "type": "relate",
+                    "link": "opportunities",
+                    "link_type": "relationship_info",
+                    "join_link_name": "opportunities_contacts",
+                    "source": "non-db",
+                    "importable": "false",
+                    "duplicate_merge": "disabled",
+                    "studio": false
+                },
+                "opportunity_role_id": {
+                    "name": "opportunity_role_id",
+                    "type": "varchar",
+                    "source": "non-db",
+                    "vname": "LBL_OPPORTUNITY_ROLE_ID",
+                    "studio": {
+                        "listview": false
+                    }
+                },
+                "opportunity_role": {
+                    "name": "opportunity_role",
+                    "type": "enum",
+                    "source": "non-db",
+                    "vname": "LBL_OPPORTUNITY_ROLE",
+                    "options": "opportunity_relationship_type_dom"
                 }
-
-            },
-            "relationships": {
 
             },
             "views": {

@@ -5,6 +5,12 @@ fixtures.metadata = {
     "config":{
       "configfoo":"configBar"
     },
+    "relationships": {
+        "contacts_accounts": {
+            lhs_module:"Accounts",
+            rhs_module:"Contacts"
+        }
+    },
     "modules": {
         "Cases": {
             '_hash': '12345678910',
@@ -74,8 +80,6 @@ fixtures.metadata = {
                     "type": "radioenum",
                     "options": "Elastic_boost_options"
                 }
-            },
-            "relationships": {
             },
             "views": {
                 "edit": {
@@ -359,12 +363,6 @@ fixtures.metadata = {
                     vname: "LBL_ACCOUNT_ID"
                 }
 
-            },
-            "relationships": {
-                "contacts_accounts": {
-                    lhs_module:"Accounts",
-                    rhs_module:"Contacts"
-                }
             },
             "views": {
                 "edit": {

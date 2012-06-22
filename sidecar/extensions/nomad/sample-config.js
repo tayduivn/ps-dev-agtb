@@ -5,8 +5,10 @@
         env: 'dev',
         debugSugarApi: true,
         logLevel: 'DEBUG',
-        logWriter: 'ConsoleWriter',
+        logWriter: 'ConsoleWriter',s
         logFormatter: 'SimpleFormatter',
+        layoutCacheSize: 30,
+        disableLayoutCache: ["login"],
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
@@ -17,7 +19,7 @@
         maxQueryResult: 20,
         platform: "mobile",
         defaultModule: "Accounts",
-        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
+        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules", "relationships"],
         additionalComponents: {
             "header": {
                 target: '#header'

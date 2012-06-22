@@ -7,6 +7,7 @@
             'click .cube': 'onHomeClicked',
             'click .create-entity': 'onAddClicked'
         },
+
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
@@ -54,22 +55,27 @@
             }
             return this;
         },
+
         onCreateClicked: function() {
             $(document.body).removeClass('onR');
         },
+
         onModuleTabClicked: function() {
             $(document.body).removeClass('onL');
         },
+
         onHomeClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onL');
             this.toggleMenu();
         },
+
         onAddClicked: function(e) {
             e.preventDefault();
             $(document.body).toggleClass('onR');
             this.toggleMenu();
         },
+
         toggleMenu:function(){
             if($(document.body).hasClass('onL') || $(document.body).hasClass('onR')){
                 this.$('.nav-collapse').show();
@@ -77,11 +83,13 @@
                 this.$('.nav-collapse').hide();
             }
         },
+
         _renderLeftList:function (tmpl,data) {
             if (tmpl) {
                 this.$('#moduleList').append(tmpl(data));
             }
         },
+
         _renderRightList: function(tmpl,data) {
             if (tmpl) {
                 this.$('#createList').append(tmpl(data));
