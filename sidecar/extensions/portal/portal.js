@@ -1052,13 +1052,11 @@
                     if (callbacks.success) callbacks.success(rsp);
                 } else {
                     //error
-                    responseText = '(' + rsp.xhr.code + ') ' + rsp.xhr.message;
-                    if (callbacks.error) callbacks.error(xhr, responseText);
+                    if (callbacks.error) callbacks.error(xhr, rsp.xhr.message);
                 }
             },
             error: function(xhr) {
-                var responseText = xhr.responseText;
-                if (callbacks.error) callbacks.error(xhr, responseText);
+                if (callbacks.error) callbacks.error(xhr, xhr.responseText);
             }
         });
     };
@@ -1100,7 +1098,14 @@
                         }
                     },
                     error: function(xhr, responseText) {
-                        app.alert.show('upload', {level: 'error', title: 'File upload error', messages: [responseText], autoclose: false});
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                        }
+                        var errors = {};
+                        errors[responseText] = {};
+                        model.trigger('error:validation:' + fileField, errors);
+                        model.trigger('error:validation');
                     }
                 });
             }
