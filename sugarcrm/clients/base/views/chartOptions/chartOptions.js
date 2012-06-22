@@ -8,7 +8,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = this.context.model.forecasts.chartoptions;
+            model = this.context.forecasts.chartoptions;
 
         model.on('change', function() {
             self.buildDropdowns(this);

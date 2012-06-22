@@ -38,10 +38,8 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'sales_stage',
                     'label' => 'LBL_SALES_STAGE',
-                    'options' => 'sales_stage_dom',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
                 ),
 
                 array(
@@ -49,6 +47,7 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_PROBABILITY',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true
                 ),
 
                 array(

@@ -7,11 +7,10 @@
      */
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
-        initialize: function(options) {
-            var models = this.initializeAllModels();
+    initialize: function(options) {
 
+            options.context = _.extend(options.context, this.initializeAllModels());
             options.context = _.extend(options.context, {
-                model: models,
                 register: app.events.register,
                 selectedTimePeriod: {},
                 selectedCategory: {},
@@ -56,14 +55,12 @@
         },
 
         fetchAllModels: function() {
-            _.each(this.context.model.forecasts, function(model, key) {
+            _.each(this.context.forecasts, function(model, key) {
                 model.fetch();
             });
         },
 
         initializeAllModels: function() {
-
-
 
             var self = this,
                 componentsMetadata = app.metadata.getLayout("Forecasts").forecasts.meta.components,
@@ -108,6 +105,12 @@
             return new Collection();
         },
 
+        namespace: function(target, namespace) {
+            if (!target[namespace]) {
+                target[namespace] = {};
+            }
+        },
+
         initializeDrawer: function() {
             $('.drawerTrig').on('click', function () {
                 // hide and show drawer
@@ -121,12 +124,6 @@
                 $('#drawer').toggleClass('span2');
                 $('#charts').toggleClass('span10').toggleClass('span12');
             });
-        },
-
-        namespace: function(target, namespace) {
-            if (!target[namespace]) {
-                target[namespace] = {};
-            }
         },
 
         /**

@@ -10,7 +10,7 @@
 
     bindDataChange: function() {
         var self = this,
-            model = this.context.model.forecasts.filters;
+            model = this.context.forecasts.filters;
 
         model.on('change', function() {
             self.buildDropdowns(this);

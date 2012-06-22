@@ -37,7 +37,7 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.model.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
         this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
@@ -192,7 +192,7 @@
      * TEMPORARY FUNCTION just to show flag toggle in console
      */
     updateWorksheetByMgrOpps: function(params){
-        var model = this.context.model.forecasts.worksheet;
+        var model = this.context.forecasts.worksheet;
         model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
         this.render();
     },
@@ -225,7 +225,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
-        var model = this.context.model.forecasts.worksheet;
+        var model = this.context.forecasts.worksheet;
         model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
         model.fetch();
         this.render();

@@ -47,12 +47,19 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.model.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", function(context, selectedUser) { self.updateWorksheetBySelectedUser(selectedUser); });
-        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
-        this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
+        this.layout.context.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
+        this.layout.context.on("change:selectedTimePeriod",
+            function(context, timePeriod) {
+                this.updateWorksheetBySelectedTimePeriod(timePeriod);
+            }, this);
+        this.layout.context.on("change:selectedCategory",
+            function(context, category) {
+                this.updateWorksheetBySelectedCategory(category);
+            },
+            this);
         this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
 
         // INIT tree with logged-in user
@@ -130,17 +137,34 @@
     },
 
     /**
+     * Adds the icon and associated events/handlers to the clickToEdit field
+     * @param field
+     * @private
+     */
+    _addCTEIcon: function(field) {
+//        debugger;
+        // add icon markup
+        var outerElement = field.$el;
+        field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; top: 20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+        outerElement.before(field.cteIcon);
+//        field.cteIcon.hide();
+
+        // add events
+//        // there's probably a better way to do this...
+//        outerElement.on('mousenter', ...
+//        outerElement.on('mouseleave' ...
+    },
+
+    /**
      * Renders the field as clickToEditable
      * @private
      */
     _renderClickToEditField: function(field) {
         var self = this;
         this._initCTETypes();
-        var outerElement = this.$("span[sfuuid='" + field.sfId + "']");
-        var icon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; top: 20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-        outerElement.before(icon);
+        this._addCTEIcon(field);
 
-        outerElement.editable(function(value, settings){
+        field.$el.editable(function(value, settings){
                 return value;
             },
             {
@@ -288,7 +312,7 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser.id;
-        this._collection = this.context.model.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
         this.calculateTotals();
@@ -326,7 +350,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        this._collection = this.context.model.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
         this.calculateTotals();

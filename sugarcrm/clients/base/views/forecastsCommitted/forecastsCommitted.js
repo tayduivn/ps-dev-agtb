@@ -19,7 +19,7 @@
         this.bestCase = 0;
         this.likelyCase = 0;
         this.historyLog = Array();
-        this._collection = this.context.model.forecasts.committed;
+        this._collection = this.context.forecasts.committed;
         this._collection.fetch();
         this.render();
         //Add listeners
@@ -32,14 +32,14 @@
         var self = this;
         this.context.on('change:selectedUser', function(context, user) {
             self.fullName = user.full_name;
-            self._collection = self.context.model.forecasts.committed;
+            self._collection = self.context.forecasts.committed;
             self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
             self._collection.fetch();
             self.buildForecastsCommitted();
         });
         this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
             self.timePeriodId = timePeriod.id;
-            self._collection = self.context.model.forecasts.committed;
+            self._collection = self.context.forecasts.committed;
             self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
             self._collection.fetch();
             self.buildForecastsCommitted();

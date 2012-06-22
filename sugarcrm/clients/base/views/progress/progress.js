@@ -13,8 +13,8 @@
     },
 
     bindDataChange: function () {
-        this.model = this.context.model.forecasts.progress;
-        this.worksheetCollection = this.context.model.forecasts.worksheet;
+        this.model = this.context.forecasts.progress;
+        this.worksheetCollection = this.context.forecasts.worksheet;
         
         this.model.on('change', this.render);
         this.worksheetCollection.on('change reset', this.calculatePipelineSize);
