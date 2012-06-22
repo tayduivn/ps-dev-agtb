@@ -18,10 +18,15 @@
         this.layout.off("list:paginate:success", null, this);
         this.layout.on("list:search:fire", this.fireSearch, this);
         this.layout.on("list:paginate:success", this.render, this);
+        this.layout.off("list:filter:toggled", null, this);
+        this.layout.on("list:filter:toggled", this.filterToggled, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+    },
+    filterToggled: function(isOpened) {
+        this.filterOpened = isOpened;
     },
     fireSearch: function(term) {
         var options = {
@@ -78,21 +83,40 @@
         self.orderBy.field = fieldName;
         self.orderBy.direction = orderMap[collection.orderBy.direction];
 
+        // Treat as a "sorted search" if the filter is toggled open
+        options = self.filterOpened ? self.getSearchOptions() : {};
+
         // If injected context with a limit (dashboard) then fetch only that 
         // amount. Also, add true will make it append to already loaded records.
-        options = {
-            limit: self.limit || null,
-            success: function() {
+        options.limit   = self.limit || null;
+        options.success = function() {
                 self.render();
                 window.scrollTo(0, document.body.scrollHeight);
-            }
-            // error handled upstream ;=)
         };
         
         // refetch the collection
         collection.fetch(options);
     },
+    getSearchOptions: function() {
+        var collection, options, previousTerms, term = '';
+        collection = this.context.get('collection');
 
+        // If we've made a previous search for this module grab from cache
+        if(app.cache.has('previousTerms')) {
+            previousTerms = app.cache.get('previousTerms');
+            if(previousTerms) {
+                term = previousTerms[this.module];
+            } 
+        }
+        // build search-specific options and return
+        options = {
+            params: { 
+                q: term
+            },
+            fields: collection.fields ? collection.fields : this.collection
+        };
+        return options;
+    },
     showActions: function(e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
     },
