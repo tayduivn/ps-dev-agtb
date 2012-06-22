@@ -47,6 +47,7 @@ $buildFiles = array(
     'portal' => array(
         'toMinifyAndConcat' => array(
             'extensions/portal/error.js',
+            'extensions/portal/user.js',
             'extensions/portal/views/header-view.js',
             'extensions/portal/views/alert-view.js',
             'extensions/portal/views/footer-view.js',
