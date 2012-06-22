@@ -57,11 +57,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
-            'additionalComponents' => array(
-                'header' => array(
-                    'target' => '#header'
-                )
-            ),
             'displayModules' => array(
                 'Bugs',
                 'Cases',
