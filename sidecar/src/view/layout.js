@@ -243,11 +243,6 @@
             return fields;
         },
 
-        /*unbindData:function(){
-            _.each(this._components, function(component) {
-                component.unbindData();
-            });
-        },*/
         /**
          * Disposes a layout.
          *

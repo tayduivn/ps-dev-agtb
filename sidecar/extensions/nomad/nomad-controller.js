@@ -4,7 +4,7 @@
 
         initialize: function() {
 
-            NomadController.__super__.initialize.apply(this,arguments);
+            app.Controller.prototype.initialize.apply(this, arguments);
             this.layoutHash = [];
             this.dataHash = {};
 
@@ -31,7 +31,7 @@
                 if (this.checkIsDisableCache(prevLayout.options.name)) {
                     prevLayout.dispose();
                 } else {
-                    prevLayout.detach();
+                    prevLayout.remove();
                 }
             }
 
@@ -134,14 +134,14 @@
 
         },
 
-        checkIsDisableCache:function(layoutName){
+        checkIsDisableCache: function(layoutName) {
 
             return !!_.find(app.config.disableLayoutCache,function(name){
                 return layoutName === name;
             });
         },
 
-        addLayoutToHash:function(layout){
+        addLayoutToHash: function(layout) {
 
             var o = _.find(this.layoutHash, function(o) {
                 return o.url === Backbone.history.getHash();
@@ -161,7 +161,7 @@
 
         },
 
-        getLayoutFromHash:function(){
+        getLayoutFromHash: function() {
 
             var o = _.find(this.layoutHash, function(o) {
                 return o.url === Backbone.history.getHash();

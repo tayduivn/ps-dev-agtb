@@ -175,10 +175,9 @@
         },
 
         /**
-         * Detach a component.
-         *
+         * Removes a component from the DOM.
          */
-        detach:function(){
+        remove: function() {
             return this.$el.remove();
         },
 

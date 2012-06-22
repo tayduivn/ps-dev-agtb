@@ -180,6 +180,7 @@
         onSwipeRightItem: function (e) {
             this.hideContextMenu();
         },
+
         hideContextMenu:function(){
             if (this.activeArticle) {
                 this.activeArticle.find('.grip').removeClass('on');
