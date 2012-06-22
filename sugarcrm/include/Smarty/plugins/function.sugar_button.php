@@ -429,11 +429,17 @@ function smarty_function_sugar_button($params, &$smarty)
                     $smarty->trigger_error("sugar_button: missing required param (record)");
                 }
                 $record = $params['record'];
-                $pdfManager = BeanFactory::newBean('PdfManager');
-                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
+                
+                require_once 'modules/PdfManager/PdfManagerHelper.php';
+                $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
+                //quote legacy templates
+                if($module == "Quotes") {
+                    require_once 'modules/Quotes/Layouts.php';
+                    $tplLayouts = get_layouts();
+                }
                 
                 $output = '';
-                if (!empty($pdfManagerList)) {
+                if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
                             <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
@@ -451,6 +457,23 @@ function smarty_function_sugar_button($params, &$smarty)
                                                         'items' => array(),
                                                     );
                             }
+                            //quote legacy templates
+                            if($module == "Quotes") {
+                                foreach($tplLayouts as $sugarpdf=>$path) {
+                                    $urlParams = array(
+                                        'module' => $module,                                    
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => $sugarpdf,
+                                        'email_action' => '',
+                                        
+                                    );
+                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>', 
+                                                            'items' => array(),
+                                                        );
+                                }
+                            }
+                            
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -475,6 +498,23 @@ function smarty_function_sugar_button($params, &$smarty)
                                     );                                
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
+                                
+                                //quote legacy templates
+                                if($module == "Quotes") {
+                                    require_once 'modules/Quotes/Layouts.php';
+                                    $tplLayouts = get_layouts();
+                                    foreach($tplLayouts as $sugarpdf=>$path) {
+                                        $urlParams = array(
+                                            'module' => $module,                                    
+                                            'record' => $record,
+                                            'action' => 'sugarpdf',
+                                            'sugarpdf' => $sugarpdf,
+                                            'email_action' => '',
+                                        );
+                                        $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>' ;
+                                    }
+                                }
+                                
                                 $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
@@ -488,15 +528,31 @@ function smarty_function_sugar_button($params, &$smarty)
                 $output='{sugar_button module="$module" id="REALPDFEMAIL" view="$view" form_id="formDetailView" record=$fields.id.value}';
                 break;
             case "REALPDFEMAIL":
+                $output = '';
+                
+                global $current_user, $sugar_config;
+                $userPref = $current_user->getPreference('email_link_type');
+                $defaultPref = $sugar_config['email_default_client'];
+                if($userPref != '') {
+                  $client = $userPref;
+                } else {
+                  $client = $defaultPref;
+                }
+                if($client == 'sugar') {
                 if(empty($params['record'])) {
                     $smarty->trigger_error("sugar_button: missing required param (record)");
                 }
                 $record = $params['record'];
-				$pdfManager = BeanFactory::newBean('PdfManager');
-                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
                 
-                $output = '';
-                if (!empty($pdfManagerList)) {
+                require_once 'modules/PdfManager/PdfManagerHelper.php';
+                $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
+                    //quote legacy templates
+                    if($module == "Quotes") {
+                        require_once 'modules/Quotes/Layouts.php';
+                        $tplLayouts = get_layouts();
+                    }
+                    
+                    if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
                             <input id="pdfview_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
@@ -516,6 +572,24 @@ function smarty_function_sugar_button($params, &$smarty)
                                                         'items' => array(),
                                                     );
                             }
+                                
+                                //quote legacy templates
+                                if($module == "Quotes") {
+                                    foreach($tplLayouts as $sugarpdf=>$path) {
+                                        $urlParams = array(
+                                            'module' => $module,                                    
+                                            'record' => $record,
+                                            'action' => 'sugarpdf',
+                                            'sugarpdf' => $sugarpdf,
+                                            'email_action' => 'EmailLayout',
+                                            
+                                        );
+                                        $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>', 
+                                                                'items' => array(),
+                                                            );
+                                    }
+                                }
+                                
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -543,13 +617,31 @@ function smarty_function_sugar_button($params, &$smarty)
                                     
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
+                                    //quote legacy templates
+                                    if($module == "Quotes") {
+                                        require_once 'modules/Quotes/Layouts.php';
+                                        $tplLayouts = get_layouts();
+                                        foreach($tplLayouts as $sugarpdf=>$path) {
+                                            $urlParams = array(
+                                                'module' => $module,                                    
+                                                'record' => $record,
+                                                'action' => 'sugarpdf',
+                                                'sugarpdf' => $sugarpdf,
+                                                'email_action' => 'EmailLayout',
+                                                
+                                            );
+                                            $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>' ;
+                                        }
+                                    }
+                                    
                                 $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
-                            <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_EMAIL') . '</a>
+                                <a onclick="display_pdf_email_list(this);" />' . translate('LBL_PDF_EMAIL') . '</a>
                           ';                   
                     }
+                }
                 }
                 break;
 				//END SUGARCRM flav=pro ONLY

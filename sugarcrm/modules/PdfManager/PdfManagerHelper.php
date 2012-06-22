@@ -296,6 +296,19 @@ class PdfManagerHelper
     }
 
     /**
+     * Get the available templates for a specific module
+     *
+     * @param  string $module
+     * @return array   
+     *
+     */
+    public static function getPublishedTemplatesForModule($module)
+    {
+        $pdfManager = BeanFactory::newBean('PdfManager');
+        return $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
+    }
+    
+    /**
      * Make array from bean
      *
      * @param  array   $module_instance -- Instance of module

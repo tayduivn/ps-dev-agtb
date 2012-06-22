@@ -353,8 +353,9 @@ EOD
     //END SUGARCRM flav=pro ONLY
     if ($report_export_access) {
                 $record = '{$fields.id.value}';
-                $pdfManager = BeanFactory::newBean('PdfManager');
-                $pdfManagerList = $pdfManager->get_full_list('', 'base_module="Reports" AND published = "yes"');
+                
+                require_once 'modules/PdfManager/PdfManagerHelper.php';
+                $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
                 
                 $output = '';
                 if (!empty($pdfManagerList)) {
