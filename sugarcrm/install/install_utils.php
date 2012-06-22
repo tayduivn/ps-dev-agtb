@@ -870,10 +870,10 @@ function handleSugarConfig() {
                 'target' => '#header'
             ),
             'footer' => array(
-                'footer' => '#footer'
+                'target' => '#footer'
             ),
             'alert' => array(
-                'alert' => '#alert'
+                'target' => '#alert'
             )
         ),
         'serverUrl' => $sugar_config['site_url'].'/rest/v10',
