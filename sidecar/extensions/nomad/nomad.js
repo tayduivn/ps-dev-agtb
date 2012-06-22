@@ -80,6 +80,15 @@
 
         app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
         app.logger.debug('REST URL: ' + app.api.serverUrl);
+    }).on("app:sync", function() {
+        app.alert.show('metadata_syncing', {
+                level: 'general',
+                messages: 'Please, wait while configuring...',
+                autoClose: true
+            }
+        );
+    }).on("app:sync:complete app:sync:error", function() {
+        app.alert.dismissAll();
     });
 
     app.events.on("data:sync:start", function(method, model, options) {
