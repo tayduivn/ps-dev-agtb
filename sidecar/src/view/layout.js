@@ -186,6 +186,7 @@
                 app.alert.show("no-layout", {
                     level: "error",
                     title: "Error",
+                    autoClose: true,
                     messages: ["Oops! We are not able to render anything. Please try again later or contact the support"]
                 });
             }

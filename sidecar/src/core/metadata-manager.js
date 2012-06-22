@@ -37,7 +37,7 @@
             _set(prefix + property, meta[property]);
         }
     }
-
+    
     function _getMeta(container, property, prefix, deleteHash) {
         if (!container[property]) {
             container[property] = _get(prefix + property);
@@ -247,17 +247,18 @@
                 meta = _.intersection(_.toArray(meta), app.config.displayModules);
             }
 
-            return meta
+            return meta;
         },
 
         /**
          * Gets module list as delimited string
          * @param {String} The delimiter to use.
+         * @param {Boolean} true if only wants modules loaded by this application. 
          * @return {Object}
          */
-        getDelimitedModuleList: function(delimiter) {
-            if (!delimiter) return null;
-            return _.toArray(this.getModuleList()).join(delimiter);
+        getDelimitedModuleList: function(delimiter, visible) {
+            if(!delimiter) return null;
+            return _.toArray(this.getModuleList({visible: (visible?visible:false)})).join(delimiter);
         },
 
         /**

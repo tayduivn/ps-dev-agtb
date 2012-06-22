@@ -933,6 +933,7 @@ $cache_headers = <<<EOQ
     Options +FollowSymLinks
     RewriteEngine On
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 </IfModule>
 EOQ;
     if(file_exists($htaccess_file)){

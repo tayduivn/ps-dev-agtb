@@ -29,19 +29,19 @@
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: 'DEBUG',
+        logLevel: app.logger.levels.DEBUG,
 
         /**
          * Logging writer.
          * @cfg [logWrtiter=Utils.Logger.ConsoleWriter]
          */
-        logWriter: 'ConsoleWriter',
+        logWriter: app.logger.ConsoleWriter,
 
         /**
          * Logging formatter.
          * @cfg [logFormatter=Utils.Logger.SimpleFormatter]
          */
-        logFormatter: 'SimpleFormatter',
+        logFormatter: app.logger.SimpleFormatter,
 
         /**
          * Sugar REST server URL.
@@ -49,7 +49,7 @@
          * The URL can relative or absolute.
          * @cfg {String}
          */
-        serverUrl: '../../sugarcrm/rest/v10',
+        serverUrl: '../../../rest/v10',
 
         /**
          * Max query result set size.
@@ -166,13 +166,7 @@
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar",
-        /**
-         * Syncs config from server on app start
-         * Defaults to true otherwise set to false
-         * @cfg {Boolean}
-         */
-        syncConfig: true
+        clientID: "sugar"
     }, false);
 
 })(SUGAR.App);

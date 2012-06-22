@@ -272,11 +272,18 @@
             });
         
         },
+
+        /**
+         * Handles `error` route.
+         * @param {String} errorType Error code.
+         */
         error: function(errorType) {
             app.logger.debug("Error route: " + errorType);
             app.controller.loadView({
                 layout: "error",
-                errorType: errorType 
+                errorType: errorType,
+                module: "Error",
+                create: true
             });
         }
         

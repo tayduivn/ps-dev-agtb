@@ -8,7 +8,7 @@
         <fieldset class="pad">
             {{#meta.panels}}
                 {{#each fields}}
-                    {{field     ../../this}}
+                {{#notEq ../../this.relateField name}}{{field ../../../this}}{{/notEq}}
                 {{/each}}
             {{/meta.panels}}
         </fieldset>

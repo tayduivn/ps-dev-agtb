@@ -103,6 +103,75 @@
                     }
                 }
             },
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template":  
+                            "<div class='container-fluid'>" +
+                                    "<div class='row-fluid'>" +
+                                        "<div class='span7'>" +
+                                            "<div class='card2'>" +
+                                                "<div class='row-fluid'>" +
+                                                    "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                                    "<div class='span8'>" +
+                                                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                        "{{ this.model.attributes.message }}</p>" +
+                                                    "</div>" +
+                                                "</div>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>",
+                        controller: "{" +
+                            "initialize: function(options) { " +
+                                "app.view.View.prototype.initialize.call(this, options);" +
+                            "}," +
+                            "render: function(data) { " +
+                                "var self = this, attributes = {};" +
+                                "if(this.context.get('errorType')) {" +
+                                    "attributes = this.getErrorAttributes(); " +
+                                    "this.model.set(attributes); " +
+                                "}" +
+                                "app.view.View.prototype.render.call(this);" +
+                            "}," +
+                            "getErrorAttributes: function() {" +
+                                "var attributes = {}; "+
+                                "if(this.context.get('errorType') ==='404') {" +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 404 Not Found'," +
+                                        "type: '404'," +
+                                        "message: \"We're sorry but the resource you asked for cannot be found.\"" +
+                                    "};" +
+                                "} else if(this.context.get('errorType') ==='500') { " +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 500 Internal Server Error'," + 
+                                        "type: '500'," +
+                                        "message: 'There was an error on the server. Please contact technical support.'" +
+                                    "};" +
+                                "} else {" +
+                                    "attributes = { " +
+                                        "title: 'Unknown Error', " +
+                                        "type: 'Unknown'," +
+                                        "message: 'Unknown error.'" +
+                                    "};" +
+                                "} " +
+                                "return attributes;" +
+                            "}" +
+                        "}"
+                    }
+                },
+                "layouts": {
+                    "error": {
+                        "meta": {
+                            "type": "simple",
+                            "components": [
+                                {view: "errorView"}
+                            ]
+                        }
+                    }
+                }
+            },
             "Signup": {
                 "fields": {
                     "first_name": {
@@ -176,10 +245,10 @@
                                             "function(){ var self = this; " +
                                             "var oEmail = this.model.get(\"email\");" +
                                             "if (oEmail) {" +
-                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "   this.model.set({\"email\": [{\"email_address\":oEmail}]}, {silent: true});" +
                                             "}" +
                                             "var validFlag = this.model.isValid();" +
-                                            " this.model.set({\"email\":oEmail});" +
+                                            " this.model.set({\"email\":oEmail}, {silent: true});" +
                                             "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
@@ -321,26 +390,13 @@
                 "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                controller: "{" +
-                    "handleValidationError: function(errors) {" +
-                    "var self = this;" +
-                    "this.$('.control-group').addClass(\"error\");" +
-                    "this.$('.help-block').html(\"\");" +
-                    "this.$('.controls').addClass('input-append');" +
-                    "_.each(errors, function(errorContext, errorName) {" +
-                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
-                    "});" +
-                    "this.$('.add-on').remove();" +
-                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
-                    "}" +
-                    "}"
+                }
             },
             "phone": {
                 "templates": {
@@ -471,6 +527,25 @@
                         "{{/each}}" +
                         "</div>" +
                         "</div>" +
+                        "</div>"
+                }
+            },
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
+                            "<div class='row-fluid'>" +
+                                "<div class='span7'>" +
+                                    "<div class='card2'>" +
+                                        "<div class='row-fluid'>" +
+                                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                            "<div class='span8'>" +
+                                                "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                "{{ this.model.attributes.message }}</p>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
                         "</div>"
                 }
             }
@@ -768,7 +843,8 @@
             }
         },
         "appStrings": {
-            ERROR_FIELD_REQUIRED: "Error. This field is required."
+            ERROR_FIELD_REQUIRED: "Error. This field is required.",
+            ERROR_EMAIL: "Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
         }
     };
 
@@ -780,8 +856,7 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard",
-                module: app.config.defaultModule
+                layout: "dashboard"
             });
         });
 
