@@ -219,6 +219,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
 
                         SUGAR.charts.trackWindowResize(barChart, chartId, data);
+                        barChart.json = json;
                         that.chartObject = barChart;
 
                     }
@@ -764,18 +765,12 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                 });
 
 				break;
-				
+
 			}
 		}
 
-function updateChart(jsonFilename, chart, params) {
-    params = params ? params : {};
-    SUGAR.charts.get(jsonFilename, params, function(data) {
-        if(SUGAR.charts.isDataEmpty(data)){
-            chart.busy = false;
-            chart.updateJSON(data);
-        }
-    });
+function updateChart(chart) {
+    chart.updateJSON(chart.json);
 }
 
 function swapChart(chartId,jsonFilename,css,chartConfig){
