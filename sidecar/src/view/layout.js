@@ -72,7 +72,7 @@
             this.layout = this.options.layout;
 
             // Used only for debugging
-            if (app.config.env == "debug") this.$el.data("comp", "layout_" + this.meta.type);
+            if (app.config.env == "dev") this.$el.data("comp", "layout_" + this.meta.type);
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
