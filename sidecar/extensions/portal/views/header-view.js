@@ -28,6 +28,7 @@
 
             self.setModuleInfo();
             self.setCreateTasksList();
+            self.setCurrentUserName();
             app.view.View.prototype._renderSelf.call(self);
 
             // Search ahead drop down menu stuff
@@ -81,6 +82,10 @@
         },
         show: function() {
             this.$el.show();
+        },
+
+        setCurrentUserName: function() {
+            this.fullName = app.user.get('full_name');
         },
         /**
          * Creates the task create drop down list 
