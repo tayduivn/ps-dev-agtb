@@ -20,14 +20,15 @@
  *        "fields": {
  *            "name": { ... },
  *            ...
- *        },
- *        "relationships": {
- *             "opportunities_contacts": { ... },
- *             ...
  *        }
  *      },
  *      "Contacts": { ... }
  *    }
+ *    "relationships": {
+ *        "opportunities_contacts": { ... },
+ *         ...
+ *    }
+ *
  * }
  * </code></pre>
  *
@@ -184,7 +185,6 @@
             this.reset(moduleName);
 
             var fields = module.fields;
-            var relationships = module.relationships;
             var defaults = null;
 
             _.each(_.values(fields), function(field) {
@@ -209,13 +209,7 @@
                  * @member Data.Bean
                  * @property {Object}
                  */
-                fields: fields,
-                /**
-                 * Relationships metadata.
-                 * @member Data.Bean
-                 * @property {Object}
-                 */
-                relationships: relationships
+                fields: fields
             });
 
             _collections[moduleName] = this.beanCollection.extend({
@@ -414,7 +408,7 @@
         canHaveMany: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
             var t = relationship.relationship_type.split("-");
             var type = module === relationship.rhs_module ? t[0] : t[2];
             return type === "many";
@@ -467,7 +461,7 @@
         getRelatedModule: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
 
             return module === relationship.rhs_module ?
                 relationship.lhs_module : relationship.rhs_module;
