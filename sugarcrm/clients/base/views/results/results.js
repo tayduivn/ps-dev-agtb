@@ -77,10 +77,10 @@
             success:function(data) {
                 cb(data);
             },
-            error:function(xhr, e) {
+            error:function(xhr, textStatus, errorThrown) {
                 cb(null); // dismiss the alert
-                app.error.handleHttpError(xhr, e, self);
-                app.logger.error("Failed to fetch search results " + this + "\n" + e);
+                app.error.handleHttpError(xhr, textStatus, errorThrown, self);
+                app.logger.error("Failed to fetch search results " + this + "\n" + textStatus + "\n" + errorThrown);
             }
         });
     },

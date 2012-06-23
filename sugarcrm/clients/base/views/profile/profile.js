@@ -40,9 +40,9 @@
                 app.alert.dismiss('fetch_contact_record');
                 cb(data);
             },
-            error: function(xhr, error) {
+            error: function(xhr, textStatus, errorThrown) {
                 app.alert.dismiss('fetch_contact_record');
-                app.error.handleHttpError(xhr, error, self);
+                app.error.handleHttpError(xhr, textStatus, errorThrown, self);
             }
         });
     },

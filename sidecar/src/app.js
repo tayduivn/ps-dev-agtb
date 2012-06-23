@@ -386,7 +386,7 @@ SUGAR.App = (function() {
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     if (origError) origError(xhr, textStatus, errorThrown);
-                    _app.error.handleHttpError(xhr, textStatus);
+                    _app.error.handleHttpError(xhr, textStatus, errorThrown);
                 }
             };
             loginCallbacks = {
@@ -397,7 +397,7 @@ SUGAR.App = (function() {
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     if (origError) origError(xhr, textStatus, errorThrown);
-                    _app.error.handleHttpError(xhr, textStatus);
+                    _app.error.handleHttpError(xhr, textStatus, errorThrown);
                 }
             };
 
@@ -428,7 +428,7 @@ SUGAR.App = (function() {
             };
             callbacks.error = function(xhr, textStatus, errorThrown) {
                 if (originalError) originalError(xhr, textStatus, errorThrown);
-                _app.error.handleHttpError(xhr, textStatus);
+                _app.error.handleHttpError(xhr, textStatus, errorThrown);
             };
 
             xhr = _app.api.logout(callbacks);

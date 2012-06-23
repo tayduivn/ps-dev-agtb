@@ -39,9 +39,9 @@
                 app.alert.dismiss('fetch_edit_contact_record');
                 cb(data);
             },
-            error: function(xhr, error) {
+            error: function(xhr, textStatus, errorThrown) {
                 app.alert.dismiss('fetch_edit_contact_record');
-                app.error.handleHttpError(xhr, error, self);
+                app.error.handleHttpError(xhr, textStatus, errorThrown, self);
             }
         });
     },
@@ -79,7 +79,7 @@
             },
             error: function(xhr, textStatus, errorThrown) {
                 app.alert.dismiss('save_profile_edit_view');
-                app.error.handleHttpError(xhr, textStatus);
+                app.error.handleHttpError(xhr, textStatus, errorThrown);
             },
             fieldsToValidate: self.getFields(this.model.module)
         };
