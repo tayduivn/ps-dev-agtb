@@ -87,7 +87,7 @@
                 autoClose: true
             }
         );
-    }).on("app:sync:complete app:sync:error", function() {
+    }).on("app:sync:complete", function() {
         app.alert.dismissAll();
     });
 
