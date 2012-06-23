@@ -50,6 +50,7 @@
         this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
+
         this.layout.context.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
         this.layout.context.on("change:selectedTimePeriod",
             function(context, timePeriod) {
@@ -224,6 +225,23 @@
         }
     },
 
+    bindDataChange: function() {
+        if(this._collection)
+        {
+           this._collection.on("reset", this.refresh, this);
+        }
+    },
+
+    /**
+     * Refresh the view
+     *
+     * This method ensures that we first calculate the totals from the collection before calling render to redraw results
+     * @param context
+     */
+    refresh:function(context) {
+        $.when(this.calculateTotals(), this.render());
+    },
+
     /**
      * Renders view
      */
@@ -315,8 +333,6 @@
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
-        this.calculateTotals();
-        this.render();
     },
 
     /**
@@ -339,8 +355,7 @@
             //Remove the filters
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
         }
-        this.calculateTotals();
-        this.render();
+        this.refresh();
     },
 
     /**
@@ -353,8 +368,6 @@
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
-        this.calculateTotals();
-        this.render();
     },
 
     /***
