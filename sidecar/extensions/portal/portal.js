@@ -426,7 +426,7 @@
                         "{{#each fields}}\n" +
                         "<div>{{field ../../this ../../model}}</div>" +
                         "{{/each}}" +
-                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                        "<p class=\"help-block\"><a rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                         "</div>          \n" +
                         "{{/each}}" +
                         "<div class=\"modal-footer\">\n" +
