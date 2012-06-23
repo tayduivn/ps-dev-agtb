@@ -522,9 +522,12 @@ class SugarBean
 
         $fieldDefs = $dictionary['audit']['fields'];
         $indices = $dictionary['audit']['indices'];
-        // '0' stands for the first index for all the audit tables
-        $indices[0]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[0]['name'];
-        $indices[1]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[1]['name'];
+
+        // Renaming template indexes to fit the particular audit table (removed the brittle hard coding)
+        foreach($indices as $nr => $properties){
+            $indices[$nr]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $properties['name'];
+        }
+
         $engine = null;
         if(isset($dictionary['audit']['engine'])) {
             $engine = $dictionary['audit']['engine'];
@@ -532,10 +535,7 @@ class SugarBean
             $engine = $dictionary[$this->getObjectName()]['engine'];
         }
 
-        $sql=$this->db->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
-
-        $msg = "Error creating table: ".$table_name. ":";
-        $this->db->query($sql,true,$msg);
+        $this->db->createTableParams($table_name, $fieldDefs, $indices, $engine);
     }
 
     /**
