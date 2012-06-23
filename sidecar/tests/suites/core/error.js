@@ -121,7 +121,7 @@ describe("Error module", function() {
 
         xhr = {
             status: '401',
-            responseText: '{"error": "invalid_grant", "error_description": "some desc"}',
+            responseText: '{"error": "invalid_grant", "error_description": "some desc"}'
         };
         SugarTest.server.respondWith("GET", /.*\/sugarcrm\/rest\/v10\/oauth2\/token\//,
             [401, {  "Content-Type": "application/json"},

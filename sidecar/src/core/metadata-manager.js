@@ -419,11 +419,11 @@
                         callback.call(self);
                     }
                 },
-                error: function(xhr, error) {
-                    app.logger.error("Error fetching metadata " + error);
-                    app.error.handleHttpError(xhr, error);
+                error: function(xhr, textStatus, errorThrown) {
+                    app.logger.error("Error fetching metadata");
+                    app.error.handleHttpError(xhr, textStatus, errorThrown);
                     if (callback) {
-                        callback.call(self, error);
+                        callback.call(self, errorThrown || textStatus);
                     }
                 }
             }, options);

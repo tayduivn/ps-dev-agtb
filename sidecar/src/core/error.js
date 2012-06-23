@@ -37,11 +37,11 @@
 
         // This attempts to call function fn (which may not exist), otherwise,
         // falls back to handleStatusCodesFallback. Caller ensures xhr.responseText exists.
-        _callCustomHandler: function(xhr, error, fn) {
+        _callCustomHandler: function(xhr, textStatus, errorThrown, fn) {
             if (fn) {
-                fn.call(this, xhr, error);
+                fn.call(this, xhr, textStatus, errorThrown);
             } else {
-                this.handleStatusCodesFallback(xhr, error);
+                this.handleStatusCodesFallback(xhr, textStatus, errorThrown);
             }
         },
     
@@ -95,12 +95,13 @@
          *
          *
          * @param xhr 
-         * @param error 
-         * @param alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
+         * @param {String} textStatus
+         * @param {String} errorThrown
+         * @param {Function} alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
          * called (if provided). 
          * @method
          */
-        _handleFineGrainedError: function (xhr, error, alternativeCallback) {
+        _handleFineGrainedError: function (xhr, textStatus, errorThrown, alternativeCallback) {
             var s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
             var match = _.find(_.keys(this.statusCodes._customHandlersMap), function(oAuthCode) {
                 return s.error == oAuthCode;
@@ -108,22 +109,23 @@
 
             var handler = match ? this.statusCodes._customHandlersMap[match] : null;
             if (handler && this[handler]) {
-                this[handler].call(this, xhr, error);
+                this[handler].call(this, xhr, textStatus, errorThrown);
             } else if (alternativeCallback) {
-                this._callCustomHandler(xhr, error, alternativeCallback);
+                this._callCustomHandler(xhr, textStatus, errorThrown, alternativeCallback);
             } else {
-                this.handleStatusCodesFallback(xhr, error)
+                this.handleStatusCodesFallback(xhr, textStatus, errorThrown)
             }
         },
 
         /**
          * Attempts to refresh the token.
          * @param originalXhr if refresh fails we want to use the original xhr and error (not xhr from refresh http call) 
-         * @param originalError
+         * @param originalTextStatus
+         * @param originalErrorThrown
          * @param cb optional callback if refresh fails
          *
          */
-        attemptRefresh: function(originalXhr, originalError, cb) {
+        attemptRefresh: function(originalXhr, originalTextStatus, originalErrorThrown, cb) {
             var callbacks, self = this;
 
             if (!this.refreshingLogin) {
@@ -138,7 +140,7 @@
                         self.refreshingLogin = false;
                         // Note that these are the xhr and error from original 401 since we don't want the xhr
                         // and error from the refresh http call!
-                        cb(originalXhr, originalError);
+                        cb(originalXhr, originalTextStatus, originalErrorThrown);
                     }
                 };
                 app.api.login({},{refresh:true},callbacks);
@@ -180,8 +182,8 @@
              * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
-            "400": function(xhr, error) {
-                this._handleFineGrainedError(xhr, error);
+            "400": function(xhr, textStatus, errorThrown) {
+                this._handleFineGrainedError(xhr, textStatus, errorThrown);
             },
 
             /**
@@ -195,20 +197,20 @@
              * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
-            "401": function(xhr, error) {
+            "401": function(xhr, textStatus, errorThrown) {
                 var self = this, callbacks, s;
 
                 // First check that it is not an error that we do NOT refresh on
                 s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
                 if(s.error && $.inArray(s.error, self.statusCodes._dontAttemptRefresh) === -1) {
 
-                    self.attemptRefresh(xhr, error, function() {
+                    self.attemptRefresh(xhr, textStatus, errorThrown, function() {
 
                         // This callback will only be called if refresh fails so we fallback.
-                        self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                        self._handleFineGrainedError(xhr, textStatus, errorThrown, self.handleUnauthorizedError);
                     });
                 } else {
-                    self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                    self._handleFineGrainedError(xhr, textStatus, errorThrown, self.handleUnauthorizedError);
                 }
             },
 
@@ -218,8 +220,8 @@
              * Provide custom `handleForbiddenError` handler.
              * @method
              */
-            "403": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleForbiddenError);
+            "403": function(xhr, textStatus, errorThrown) {
+                this._callCustomHandler(xhr, textStatus, errorThrown, this.handleForbiddenError);
             },
 
             /**
@@ -228,8 +230,8 @@
              * Provide custom `handleNotFoundError` handler.
              * @method
              */
-            "404": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleNotFoundError);
+            "404": function(xhr, textStatus, errorThrown) {
+                this._callCustomHandler(xhr, textStatus, errorThrown, this.handleNotFoundError);
             },
 
             /**
@@ -238,8 +240,8 @@
              * Provide custom `handleMethodNotAllowedError` handler.
              * @method
              */
-            "405": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleMethodNotAllowedError);
+            "405": function(xhr, textStatus, errorThrown) {
+                this._callCustomHandler(xhr, textStatus, errorThrown, this.handleMethodNotAllowedError);
             },
 
             /**
@@ -252,8 +254,8 @@
              * Provide custom `handlePreconditionFailureError` handler.
              * @method
              */
-            "412": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handlePreconditionFailureError);
+            "412": function(xhr, textStatus, errorThrown) {
+                this._callCustomHandler(xhr, textStatus, errorThrown, this.handlePreconditionFailureError);
             },
 
             /**
@@ -262,7 +264,7 @@
              * Validation errors handled automatically.
              * @method
              */
-            "422": function(xhr, error, model) {
+            "422": function(xhr, textStatus, errorThrown, model) {
                 this.handleValidationError(model, xhr.responseText);
             },
 
@@ -272,8 +274,8 @@
              * Provide custom `handleServerError` handler.
              * @method
              */
-            "500": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleServerError);
+            "500": function(xhr, textStatus, errorThrown) {
+                this._callCustomHandler(xhr, textStatus, errorThrown, this.handleServerError);
             }
         },
 
@@ -331,20 +333,29 @@
 
         /**
          * Handles http error codes returned from AJAX calls.
-         * @param {XHR} xhr jQuery XHR Object
-         * @param {String} error Error message
+         *
+         * See Jquery/Zepto documentation for details.
+         * http://api.jquery.com/jQuery.ajax/
+         * http://zeptojs.com/#$.ajax
+         *
+         * @param {XHR} xhr XMLHttpRequest object.
+         * @param {String} textStatus String describing the type of error that occurred.
+         * Possible values for the second argument (besides null) are `"timeout"`, `"error"`, `"abort"`, and `"parsererror"`.
+         * @param {String} errorThrown Textual portion of the HTTP status, such as "Not Found" or "Internal Server Error."
+         * when HTTP error occurs.
+         * @param {Backbone.Model} model(optional) Instance of the model for which the request was made.
          * @member Core.Error
          */
-        handleHttpError: function(xhr, error, model) {
+        handleHttpError: function(xhr, textStatus, errorThrown, model) {
             // If we have a handler defined for this status code
             if(xhr) {
                 if (xhr.status && this.statusCodes[xhr.status]) {
-                    this.statusCodes[xhr.status].call(this, xhr, error, model);
+                    this.statusCodes[xhr.status].call(this, xhr, textStatus, errorThrown, model);
                 } else {
                     // TODO: Default catch all error code handler
                     // Temporarily going to the handleStatusCodesFallback handler but will probably need
                     // to go to a sensible "all other errors" type of handler.
-                    this.handleStatusCodesFallback(xhr, error);
+                    this.handleStatusCodesFallback(xhr, textStatus, errorThrown);
                 }
             }
         },
@@ -369,7 +380,7 @@
          *
          *     app.error = _.extend(app.error, {
          *        // put your custom handlers here.
-         *        handleUnauthorizedError: function(xhr, error) {
+         *        handleUnauthorizedError: function(xhr, textStatus, errorThrown) {
          *        },
          *
          *        ...
@@ -378,14 +389,18 @@
          * })(SUGAR.App);
          * </pre></code>
          * 
-         * @param {XHR} xhr
-         * @param {String} error Error message
+         * @param {XHR} xhr XMLHttpRequest object.
+         * @param {String} textStatus String describing the type of error that occurred.
+         * Possible values for the second argument (besides null) are `"timeout"`, `"error"`, `"abort"`, and `"parsererror"`.
+         * @param {String} errorThrown Textual portion of the HTTP status, such as "Not Found" or "Internal Server Error."
+         * when HTTP error occurs.
          * @member Core.Error
          */
-        handleStatusCodesFallback: function(xhr, error) {
+        handleStatusCodesFallback: function(xhr, textStatus, errorThrown) {
             var message = "HTTP error: " + (xhr ? xhr.status : "(no-code)") +
                 "\nResponse: " + (xhr ? xhr.responseText : "(empty-response)") +
-                (error != "error" ? "\n" + error : "");
+                "\ntextStatus: " + textStatus +
+                "\nerrorThrown: " + errorThrown;
             app.logger.error(message);
         },
 
@@ -428,4 +443,5 @@
 
     // Enable error handling immediately.
     app.augment("error", module, module.initialize);
+
 })(SUGAR.App);

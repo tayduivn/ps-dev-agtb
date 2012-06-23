@@ -12,9 +12,10 @@
     /**
      * This is caused by attempt to login with invalid creds. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleNeedsLoginError = function(xhr, error) {
+    app.error.handleNeedsLoginError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("needs_login_error", {level: "error", messages: "The username/password combination provided is incorrect, please try again.", title:"Invalid Credentials", autoClose: true});
     };
@@ -22,9 +23,10 @@
     /**
      * This is caused by expired or invalid token. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleInvalidGrantError = function(xhr, error) {
+    app.error.handleInvalidGrantError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("invalid_grant_error", {level: "error", messages: "Your token is invalid or has expired. Please login again.", title:"Token Expired", autoClose: true});
     };
@@ -32,18 +34,20 @@
     /**
      * Client authentication handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleInvalidClientError = function(xhr, error) {
+    app.error.handleInvalidClientError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("invalid_client_error", {level: "error", messages: "Client authentication failed.", title:"Invalid Client", autoClose: true});
     };
     /**
      * Invalid request handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleInvalidRequestError = function(xhr, error) {
+    app.error.handleInvalidRequestError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("invalid_request_error", {level: "error", messages: "The request made is invalid or malformed. Please contact technical support.", title:"Invalid Request", autoClose: true});
     };
@@ -51,9 +55,10 @@
     /**
      * 401 Unauthorized error handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleUnauthorizedError = function(xhr, error) {
+    app.error.handleUnauthorizedError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("unauthorized_request_error", {level: "error", messages: "We're sorry, but it appears you are unauthorized to access this resource.", title:"HTTP Error: 401 Unauthorized", autoClose: true});
     };
@@ -61,9 +66,10 @@
     /**
      * 403 Forbidden error handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleForbiddenError = function(xhr, error) {
+    app.error.handleForbiddenError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("forbidden_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
     };
@@ -72,18 +78,20 @@
     /**
      * 404 Not Found handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleNotFoundError = function(xhr, error) {
+    app.error.handleNotFoundError = function(xhr, textStatus, errorThrown) {
         app.router.navigate('error/404', {trigger: true});
     };
 
     /**
      * 405 Method not allowed handler.
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleMethodNotAllowedError = function(xhr, error) {
+    app.error.handleMethodNotAllowedError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         app.alert.show("not_allowed_error", {level: "error", messages: "HTTP method not allowed for this resource. Please contact technical support.", title:"HTTP Error: 405 Method Not Allowed", autoClose: true});
     };
@@ -92,9 +100,10 @@
      * 412 Precondtion failure error.
      *
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handlePreconditionFailureError = function(xhr, error) {
+    app.error.handlePreconditionFailureError = function(xhr, textStatus, errorThrown) {
         backToLogin(true);
         // TODO: For finer grained control we could sniff the {error: <code>} in the response text (JSON) for one of:
         // missing_parameter, invalid_parameter, request_failure
@@ -104,9 +113,10 @@
     /**
      * 500 Internal server error handler. 
      * @param {Object} xhr object
-     * @param {String} error string 
+     * @param {String} textStatus
+     * @param {String} errorThrown
      */
-    app.error.handleServerError = function(xhr, error) {
+    app.error.handleServerError = function(xhr, textStatus, errorThrown) {
         // Since we can get a 500 before app synced we 
         // may not have stared backbone history.
         if(!Backbone.History.started) {
