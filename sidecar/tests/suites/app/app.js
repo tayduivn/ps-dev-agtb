@@ -13,7 +13,7 @@ describe("App", function() {
                 var metadata = fixtures.metadata;
                 callbacks.success(metadata, "", {status: 200});
             } else {
-                callbacks.error({code: 500});
+                callbacks.error({code: 500}, "error");
             }
         });
     });
