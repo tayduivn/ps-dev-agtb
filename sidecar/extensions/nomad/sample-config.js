@@ -5,7 +5,7 @@
         env: 'dev',
         debugSugarApi: true,
         logLevel: 'DEBUG',
-        logWriter: 'ConsoleWriter',s
+        logWriter: 'ConsoleWriter',
         logFormatter: 'SimpleFormatter',
         layoutCacheSize: 30,
         disableLayoutCache: ["login"],
