@@ -73,7 +73,7 @@
             this.modulePlural = app.lang.getAppListStrings("moduleList", defaultValue)[this.module];
 
             // Used only for debugging
-            if (app.config.env == "debug") this.$el.data("comp", "view_" + this.name);
+            if (app.config.env == "dev") this.$el.data("comp", "view_" + this.name);
         },
 
         /**

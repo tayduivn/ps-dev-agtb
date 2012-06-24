@@ -52,7 +52,7 @@ function testGetLastCurrentNextIds()
     $db = DBManagerFactory::getInstance();
     $queryDate = $timedate->getNow();
     $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
     if(!empty($timeperiod))
     {
@@ -62,7 +62,7 @@ function testGetLastCurrentNextIds()
     //previous timeperiod (3 months ago)
     $queryDate = $queryDate->modify('-3 month');
     $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
     if(!empty($timeperiod))
     {
@@ -72,7 +72,7 @@ function testGetLastCurrentNextIds()
     //next timeperiod (3 months from today)
     $queryDate = $queryDate->modify('+6 month');
     $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
     if(!empty($timeperiod))
     {

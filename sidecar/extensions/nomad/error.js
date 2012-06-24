@@ -78,10 +78,20 @@
 //        handleServerError:
 
         handleStatusCodesFallback: function(xhr, error) {
+            app.alert.dismissAll();
             _origHandleStatusCodesFallback(xhr, error);
-            var code = xhr ? xhr.status : "N/A";
-            this._alertSystemError(code);
-            if (code == "400") _login();
+            if (error == "timeout") {
+                app.alert.show("system_error", {
+                    level: "error",
+                    messages: "Request timeout",
+                    autoClose: true
+                });
+            }
+            else {
+                var code = xhr ? xhr.status : "N/A";
+                this._alertSystemError(code);
+                if (code == "400") _login();
+            }
         }
 
 

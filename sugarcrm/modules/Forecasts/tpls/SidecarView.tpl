@@ -128,7 +128,7 @@
 <script language="javascript">
     var syncResult, view, layout, html;
 
-    //SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
+    SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
 
     (function(app) {
          app.augment("forecasts", {
@@ -137,8 +137,8 @@
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
                     el: "core",
-                    contentEl: ".content",
-                    keyValueStore: app.sugarAuthStore //override the keyValueStore
+                    contentEl: ".content"
+                    //keyValueStore: app.sugarAuthStore //override the keyValueStore
                 });
                 return app;
             }

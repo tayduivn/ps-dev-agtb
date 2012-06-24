@@ -42,6 +42,7 @@
                 link: link,
                 create: true,
                 layout: "edit",
+                action:"create",
                 depth:depth
             });
         },
@@ -79,6 +80,15 @@
 
         app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
         app.logger.debug('REST URL: ' + app.api.serverUrl);
+    }).on("app:sync", function() {
+        app.alert.show('metadata_syncing', {
+                level: 'general',
+                messages: 'Please, wait while configuring...',
+                autoClose: true
+            }
+        );
+    }).on("app:sync:complete", function() {
+        app.alert.dismissAll();
     });
 
     app.events.on("data:sync:start", function(method, model, options) {
@@ -170,7 +180,7 @@
             return _.filter(model.fields, function (field) {
                 var relationship;
                 return ((field.type == "link") &&
-                    (relationship = model.relationships[field.relationship]) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
+                    (relationship = app.metadata.getRelationship([field.relationship])) && // this check is redundant but necessary 'cause currently the server doesn't return all relationships
                     app.data.canHaveMany(model.module, field.name) &&
                     _.has(modules, relationship.lhs_module) &&
                     _.has(modules, relationship.rhs_module));

@@ -151,6 +151,7 @@ class RestTestMetadataSugarViews extends RestTestBase {
                             'custom/clients/mobile/views/address',
                             'custom/clients/portal/views/address',
                             'custom/clients/base/views/address',
+                            'clients/mobile/views/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -163,6 +164,12 @@ class RestTestMetadataSugarViews extends RestTestBase {
         file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
         $restReply = $this->_restCall('metadata/?typeFilter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
+
+
+        file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
+        $restReply = $this->_restCall('metadata/?typeFilter=views&platform=mobile');
+        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
+
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there

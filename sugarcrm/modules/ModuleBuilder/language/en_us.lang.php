@@ -249,7 +249,10 @@ $mod_strings = array(
 	),
 	'portalSync'=>array(
 	    'default' => 'Enter the <b>Sugar Portal URL</b> of the portal instance to update, and click <b>Go</b>.<br><br>Then enter a valid Sugar user name and password, and then click <b>Begin Sync</b>.<br><br>The customizations made to the Sugar Portal <b>Layouts</b>, along with the <b>Style Sheet</b> if one was uploaded, will be transferred to specified the portal instance.',
-	),
+    ),
+    'portalConfig'=>array(
+   	    'default' => '',
+       ),
 	'portalStyle'=>array(
 	    'default' => 'You can customize the look of the Sugar Portal by using a style sheet.<br><br>Select a <b>Style Sheet</b> to upload.<br><br>The style sheet will be implemented in the Sugar Portal the next time a sync is performed.',
 	),
@@ -607,6 +610,13 @@ $mod_strings = array(
 'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
+    'LBL_PORTAL_CONFIGURE' =>'Configure Portal',
+    'LBL_PORTAL_ENABLE' =>'Enable',
+    'LBL_PORTAL_APP_NAME' =>'Application Name',
+    'LBL_PORTAL_LOGO_URL' =>'Logo URL',
+    'LBL_PORTAL_REST_URL' =>'Rest end point URL',
+    'LBL_PORTAL_LIST_NUMBER' =>'Number of records to display on list',
+    'LBL_PORTAL_DETAIL_NUMBER' =>'Number of fields to display on Detail View',
 'LBL_PORTAL'=>'Portal',
 'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
 'LBL_SYNCP_WELCOME'=>'Please enter the URL of the portal instance you wish to update.',

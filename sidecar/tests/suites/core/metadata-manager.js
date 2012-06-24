@@ -25,6 +25,21 @@ describe('Metadata Manager', function() {
         expect(app.metadata.getModules()['Cases']).toBeDefined();
         expect(app.metadata.getModules()['BOGUS']).not.toBeDefined();
     });
+    it('should extend loaded metadata with whats in local storage', function() {
+        var origConfig = app.config;
+        var newConfig = fixtures.metadata.config;
+        app.metadata.set({config:newConfig});
+        app.config = {};
+        app.loadConfig();
+        expect(app.config).toEqual(newConfig);
+        // return config to its orignal state
+        app.metadata.set({config:origConfig});
+        app.config = origConfig;
+    });
+
+    it('should get config vars', function() {
+        expect(app.metadata.getConfig()).toEqual(meta.config);
+    });
 
     it('should get definition for a specific view', function() {
         expect(app.metadata.getView("Contacts", "edit")).toEqual(meta.modules.Contacts.views.edit.meta);
@@ -126,7 +141,7 @@ describe('Metadata Manager', function() {
             SugarTest.seedFakeServer();
         });
 
-        it('should sync metadata', function() {
+        it('should sync metadata and config', function() {
             // Verify hash doesn't exist
             expect(SugarTest.storage["test:portal:md:_hash"]).toBeUndefined();
 
@@ -140,6 +155,7 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:r:contacts_accounts"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
             expect(SugarTest.storage["test:portal:templates"]).toBeDefined();
@@ -148,6 +164,8 @@ describe('Metadata Manager', function() {
             expect(SugarTest.storage["test:portal:md:lang:appListStrings"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:acl"]).toBeDefined();
             expect(SugarTest.storage["test:portal:md:moduleList"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:moduleList"]).toBeDefined();
+            expect(SugarTest.storage["test:portal:md:config"]).toBeDefined();
         });
 
         it('should not take any action when server returns 304', function() {

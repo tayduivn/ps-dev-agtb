@@ -54,4 +54,16 @@ class ForecastTreeSeedData {
         }
     }
 
+    public function populateProductCategorySeedData()
+    {
+        $results = $GLOBALS['db']->query("SELECT id, name, parent_id, assigned_user_id, 'category' type FROM product_categories WHERE deleted=0 UNION SELECT id, name, category_id, '1', 'product' type FROM product_templates WHERE deleted=0");
+        while(($row = $GLOBALS['db']->fetchByAssoc($results)))
+        {
+            $parent_id = empty($row['parent_id']) ? '' : $row['parent_id'];
+            $assigned_user_id = empty($row['assigned_user_id']) ? '1' : $row['assigned_user_id'];
+            $query = "INSERT INTO forecast_tree (id, name, hierarchy_type, user_id, parent_id) VALUES ('{$row['id']}', '{$row['name']}', 'products', '{$assigned_user_id}', '{$parent_id}')";
+            $GLOBALS['db']->query($query);
+        }
+    }
+
 }

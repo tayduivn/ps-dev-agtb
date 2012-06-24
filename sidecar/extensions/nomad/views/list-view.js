@@ -28,9 +28,19 @@
             app.view.View.prototype.initialize.call(this, options);
 
             this.activeArticle = null;
+
+            this.unlinkVisible = true;
+            // We must not allow a user to break a one-to-many relationship,
+            // if the relate field is required for the relationship.
+            var link = this.context.get("link");
+            if (link) {
+                var relatedField = app.data.getRelateField(this.context.get("parentModule"), link);
+                this.unlinkVisible = relatedField && relatedField.required === true ? false : true;
+            }
         },
 
         _renderSelf: function () {
+
             app.view.View.prototype._renderSelf.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
@@ -123,7 +133,6 @@
         showMoreBottomRecords: function () {
             this.showLoadingMsg('.show-more-bottom-btn',true);
 
-            //relate: !!this.context.get('link'),
             this.collection.paginate({add: true,
                 relate: !!this.context.get('link'),
                 success: _.bind(function () {
@@ -178,8 +187,14 @@
         },
 
         onSwipeRightItem: function (e) {
-            this.activeArticle.find('.grip').removeClass('on');
-            this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+            this.hideContextMenu();
+        },
+
+        hideContextMenu:function(){
+            if (this.activeArticle) {
+                this.activeArticle.find('.grip').removeClass('on');
+                this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+            }
         },
 
         onRemoveItem: function (e) {
@@ -202,18 +217,21 @@
                 var model = this.collection.get(cid);
                 model.destroy({ relate: true });
             }
+            this.hideContextMenu();
         },
 
         onEditItem: function (e) {
             e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
+            this.hideContextMenu();
         },
 
         onClickMenuItem:function(e){
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);
+            this.hideContextMenu();
         }
     });
 

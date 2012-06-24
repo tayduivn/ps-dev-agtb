@@ -347,7 +347,7 @@ class SugarSpot
                  * This would cause incorrect search results due to the open only returning more than only status like New%
                  */
 
-                if($v['type'] == 'bool') {
+                if(isset($v['type']) && !empty($v['type']) && $v['type'] == 'bool') {
                     unset($searchFields[$moduleName][$k]);
                     continue;
                 }
@@ -407,9 +407,9 @@ class SugarSpot
             // setup the custom query options
             // reset these each time so we don't append my_items calls for tables not in the query
             // this would happen in global search
-            $custom_select = $options['custom_select'];
-            $custom_from = $options['custom_from'];
-            $custom_where = $options['custom_where'];
+            $custom_select = isset($options['custom_select']) ? $options['custom_select'] : '';
+            $custom_from = isset($options['custom_from']) ? $options['custom_from'] : '';
+            $custom_where = isset($options['custom_where']) ? $options['custom_where'] : '';
 
             $allowBlankSearch = false;
             // Add an extra search filter for my items

@@ -245,10 +245,10 @@
                                             "function(){ var self = this; " +
                                             "var oEmail = this.model.get(\"email\");" +
                                             "if (oEmail) {" +
-                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "   this.model.set({\"email\": [{\"email_address\":oEmail}]}, {silent: true});" +
                                             "}" +
                                             "var validFlag = this.model.isValid();" +
-                                            " this.model.set({\"email\":oEmail});" +
+                                            " this.model.set({\"email\":oEmail}, {silent: true});" +
                                             "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
@@ -390,26 +390,13 @@
                 "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                controller: "{" +
-                    "handleValidationError: function(errors) {" +
-                    "var self = this;" +
-                    "this.$('.control-group').addClass(\"error\");" +
-                    "this.$('.help-block').html(\"\");" +
-                    "this.$('.controls').addClass('input-append');" +
-                    "_.each(errors, function(errorContext, errorName) {" +
-                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
-                    "});" +
-                    "this.$('.add-on').remove();" +
-                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
-                    "}" +
-                    "}"
+                }
             },
             "phone": {
                 "templates": {
@@ -856,7 +843,8 @@
             }
         },
         "appStrings": {
-            ERROR_FIELD_REQUIRED: "Error. This field is required."
+            ERROR_FIELD_REQUIRED: "Error. This field is required.",
+            ERROR_EMAIL: "Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
         }
     };
 
@@ -972,7 +960,7 @@
             var self = this;
             // TODO: Will it ever happen: app.config == undefined?
             // app.config should always be present because the logger depends on it
-            if (typeof(app.config) == undefined || (app.config && app.config.appStatus == 'offline')) {
+            if (_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) {
                 var callback = function(data) {
                     var params = {
                         module: "Login",

@@ -32,6 +32,7 @@
 		<script src='../../src/core/metadata-manager.js'></script>
         <script src='../../src/core/acl.js'></script>
         <script src='../../src/core/user.js'></script>
+		<script src='user.js'></script>
         <script src='../../src/utils/logger.js'></script>
 		<script src='config.js'></script>
 		<script src='../../src/data/bean.js'></script>
@@ -105,10 +106,12 @@
 		<script language="javascript">
 			var syncResult, view, layout, html;
 			var App = SUGAR.App.init({
-                el: "#sidecar"
+                el: "#sidecar",
+                callback: function(app){
+                    app.start();
+                }
             });
             App.api.debug = App.config.debugSugarApi;
-            App.start();
 		</script>
     </body>
 </html>

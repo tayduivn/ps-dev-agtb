@@ -38,7 +38,7 @@
          * @param {String} key Item key.
          */
         cut: function(key) {
-            tokenMap.splice(key, 1);
+            delete tokenMap[key];
         }
     };
 

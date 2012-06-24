@@ -54,14 +54,16 @@ class MetaDataManager {
      *
      * @param User $user A User bean
      * @param array $platforms A list of clients
+     * @param bool $public is this a public metadata grab
      */
-    function __construct ($user, $platforms = null) {
+    function __construct ($user, $platforms = null, $public = false) {
         if ( $platforms == null ) {
             $platforms = array('base');
         }
 
         $this->user = $user;
         $this->platforms = $platforms;
+
     }
 
     /**
@@ -216,10 +218,32 @@ class MetaDataManager {
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
-        //FIXME: Need more relationshp data (all relationship data)
-        $data['relationships'] = $vardefs['relationships'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
+
+        $md5 = serialize($data);
+        $md5 = md5($md5);
+        $data["_hash"] = $md5;
+
+        return $data;
+    }
+
+    /**
+     * The collector method for relationships.
+     *
+     * @return array An array of relationships, indexed by the relationship name
+     */
+    public function getRelationshipData() {
+        require_once('data/Relationships/RelationshipFactory.php');
+        $relFactory = SugarRelationshipFactory::getInstance();
+        
+        $data = $relFactory->getRelationshipDefs();
+        foreach ( $data as $relKey => $relData ) {
+            unset($data[$relKey]['table']);
+            unset($data[$relKey]['fields']);
+            unset($data[$relKey]['indices']);
+            unset($data[$relKey]['relationships']);
+        }
 
         $md5 = serialize($data);
         $md5 = md5($md5);
@@ -388,9 +412,8 @@ class MetaDataManager {
      */
     public function getSugarClientFileDirs($path, $full = false) {
         $dirs = array();
-
         foreach ( $this->platforms as $platform ) {
-            $basedir  = "clients/$platform/$path/";
+            $basedir  = "clients/{$platform}/{$path}/";
             $custdir  = "custom/$basedir";
             $basedirs = glob($basedir."*", GLOB_ONLYDIR);
             $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
@@ -450,7 +473,7 @@ class MetaDataManager {
             }
             $fileData['templates'] = $this->fetchTemplates($templateDirs);
             if ($meta) {
-                $fileData['meta'] = array_shift($meta); // Get the first member
+               $fileData['meta'] = array_shift($meta); // Get the first member
             }
             //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
 
