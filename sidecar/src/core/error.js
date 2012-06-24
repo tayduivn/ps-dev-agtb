@@ -94,7 +94,7 @@
          * The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
          *
          *
-         * @param {SUGAR.Api.HttpError} error
+         * @param {SUGAR.HttpError} error
          * @param {Function} alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
          * called (if provided). 
          * @method
@@ -116,7 +116,7 @@
             }
         },
 
-         // Extract OAuth error from response
+         // Extracts OAuth error from response
         _extractOAuthError: function(response) {
             var s;
             if (response) {
@@ -133,7 +133,7 @@
 
         /**
          * Attempts to refresh the token.
-         * @param {SUGAR.Api.HttpError} originalError if refresh fails we want to use the original error (not error from refresh http call)
+         * @param {SUGAR.HttpError} originalError if refresh fails we want to use the original error (not error from refresh http call)
          * @param cb optional callback if refresh fails
          *
          */
@@ -345,7 +345,7 @@
 
         /**
          * Handles http errors returned from AJAX calls.
-         * @param {SUGAR.Api.HttpError} error AJAX error.
+         * @param {SUGAR.HttpError} error AJAX error.
          * @param {Backbone.Model} model(optional) Instance of the model for which the request was made.
          * @member Core.Error
          */
