@@ -50,18 +50,22 @@ class SidecarMetaDataUpgrader
      */
     protected $legacyMetaDataFileNames = array(
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-        MB_WIRELESSEDITVIEW       => 'wireless.editviewdefs' ,
-        MB_WIRELESSDETAILVIEW     => 'wireless.detailviewdefs' ,
-        MB_WIRELESSLISTVIEW       => 'wireless.listviewdefs' ,
-        MB_WIRELESSBASICSEARCH    => 'wireless.searchdefs' , 
-        // Advanced is unneeded since it shares with basic
-        //MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
+        'wireless' => array(
+            MB_WIRELESSEDITVIEW       => 'wireless.editviewdefs' ,
+            MB_WIRELESSDETAILVIEW     => 'wireless.detailviewdefs' ,
+            MB_WIRELESSLISTVIEW       => 'wireless.listviewdefs' ,
+            MB_WIRELESSBASICSEARCH    => 'wireless.searchdefs' ,
+            // Advanced is unneeded since it shares with basic
+            //MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
+        ),
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW         => 'editviewdefs',
-        MB_PORTALDETAILVIEW       => 'detailviewdefs',
-        MB_PORTALLISTVIEW         => 'listviewdefs',
-        MB_PORTALSEARCHVIEW       => 'searchformdefs',
+        'portal' => array(
+            MB_PORTALEDITVIEW         => 'editviewdefs',
+            MB_PORTALDETAILVIEW       => 'detailviewdefs',
+            MB_PORTALLISTVIEW         => 'listviewdefs',
+            MB_PORTALSEARCHVIEW       => 'searchformdefs',
+        ),
         //END SUGARCRM flav=ent ONLY
     );
     
@@ -133,29 +137,67 @@ class SidecarMetaDataUpgrader
      */
     public function setMobileFilesToUpgrade()
     {
-        $this->setUpgradeFiles('wireless');
+        $metatype = 'wireless';
+        $this->setUpgradeFiles($metatype);
         
         // Get custom modules. We need both DEPLOYED and UNDEPLOYED
         // Undeployed will be those in packages that are NOT in builds but are
         // also in modules
-        /*
+        
         require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
         $mb = new ModuleBuilder();
-        $packages = $mb->getPackages();
-        foreach ($packages as $package) {
-            $key = $package->getKey();
+        
+        // Set the packages and modules in place
+        $mb->getPackages();
+        
+        // Set the core app module path for checking deployment
+        $modulepath = 'modules/';
+        
+        // Handle module list making. We need to look for metadata in three places:
+        // - modules/
+        // - custom/modulebuilder/packages/<PACKAGENAMES>/modules/<MODULENAME>/metadata
+        // - custom/modulebuilder/builds/<PACKAGENAMES>/SugarModules/modules/<PACKAGEKEY>_<MODULENAME>/metadata
+        //
+        // The first path will be handled if we don't send the packagename and deployed status
+        // The second path will be handled by history types with a package name and undeployed status
+        // The last path will be handdled by base types with a package name and undeployed status
+        // 
+        foreach ($mb->packages as $packagename => $package) {
+            $buildpath = $package->getBuildDir() . '/SugarModules/modules/';
+            foreach ($package->modules as $module => $mbmodule) {
+                $appModulePath = $modulepath . $package->key . '_' . $module;
+                $mbbModulePath = $buildpath . $package->key . '_' . $module;
+                $packagePath   = $package->getPackageDir() . '/modules/' . $module;
+                $deployed = file_exists($appModulePath) && file_exists($mbbModulePath);
+                
+                // For deployed modules we need to get 
+                if ($deployed) {
+                    // Reset the module name to the key_module name format
+                    $module = $package->key . '_' . $module;
+                    
+                    // Get the metadata directory
+                    $metadatadir = "$appModulePath/metadata/";
+                    
+                    // Get our upgrade files as base files since these are regular metadata
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype);
+                    $this->files = array_merge($this->files, $files);
+                    
+                    // For deployed modules we still need to handle package dir metadata
+                    $metadatadir = "$mbbModulePath/metadata/";
+                    
+                    // Get our upgrade files as undeployed base type wireless client
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false);
+                    $this->files = array_merge($this->files, $files);
+                } else {
+                    // Handle undeployed history metadata
+                    $metadatadir = "$packagePath/metadata/";
+                    
+                    // Get our upgrade files
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false);
+                    $this->files = array_merge($this->files, $files);
+                }
+            }
         }
-        */
-    }
-    
-    /**
-     * Gets a view name for a file name
-     * 
-     * @param string $filename The name of the file
-     * @return string
-     */
-    public function getViewNameFromFilename($filename) {
-        return ($name = array_search($filename, $this->legacyMetaDataFileNames)) !== false ? $name : '';
     }
     
     /**
@@ -187,6 +229,7 @@ class SidecarMetaDataUpgrader
         
         // Traverse the files and start parsing and moving
         foreach ($this->files as $file) {
+            // Get the appropriate upgrade class name for this view type
             $class = $this->getUpgraderClass($file['viewtype']);
             if ($class) {
                 if (!class_exists($class, false)) {
@@ -195,22 +238,8 @@ class SidecarMetaDataUpgrader
                 }
                 $upgrader = new $class($this, $file);
                 $upgrader->upgrade();
+                $upgrader->cleanupLegacyFiles();
             }
-
-            //$upgrader = new $class($this, $filename, $module, $client, $type, $basename, $filetime);
-            
-            // List views are always deployed
-            //if ($viewtype == 'list') {
-            //    $newname = MetaDataFiles::getDeployedFileName($viewname, $module, $type, $client);
-            //} else {
-            //    // Figure out if we need deployed or undeployed
-            //}
-            
-            // Step 3 - Convert old metadata to new format
-            
-            // Step 4 - Save the new file
-            
-            // Step 5 - Remove the old file
         }
     }
     
@@ -270,7 +299,17 @@ class SidecarMetaDataUpgrader
                     // Handle history file handling different
                     $history = is_numeric(substr($file, -4));
                     
-                    if (($history && $type != 'history') || (!$history && $type == 'history')) {
+                    // In the case of undeployed modules, type may be set to base
+                    // If it is, and there is a history file, set type to history
+                    // This is primarily for saving new defs using the MetaDataFiles
+                    // class to get the correct name of the metadata file
+                    if ($history && !$deployed && $type == 'base') {
+                        $type = 'history';
+                    }
+                    
+                    // Only hit history files for history types with a timestamp
+                    // Unless we are looking at undeployed modules
+                    if (($history && $type != 'history') || (!$history && $type == 'history') && $deployed) {
                         continue;
                     }
                     
@@ -282,7 +321,7 @@ class SidecarMetaDataUpgrader
                         $filename = basename($file, '.php');
                     }
                     
-                    if (in_array($filename, $this->legacyMetaDataFileNames)) {
+                    if (in_array($filename, $this->legacyMetaDataFileNames[$client])) {
                         // Success! We have a full file path. Add this module to the stack
                         $this->addUpgradeModule($module);
                         

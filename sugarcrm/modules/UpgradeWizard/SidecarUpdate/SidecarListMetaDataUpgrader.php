@@ -23,7 +23,8 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
         
         // This is the structure of the sidecar list meta
-        $this->sidecarViewdefs[$this->module][$this->client]['view']['list'] = array(
+        $module = $this->getNormalizedModuleName();
+        $this->sidecarViewdefs[$module][$this->client]['view']['list'] = array(
             array(
                 'panels' => array(
                     array(

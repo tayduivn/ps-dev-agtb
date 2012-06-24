@@ -79,7 +79,8 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             $paneldefs = array(array('label' => $this->viewtype == 'edit' ? 'LBL_EDIT' : 'LBL_DETAIL', 'fields' => $fields));
             unset($defs['data']);
             $defs['panels'] = $paneldefs;
-            $this->sidecarViewdefs[$this->module][$this->client]['view'][$this->viewtype] = $defs;
+            $module = $this->getNormalizedModuleName();
+            $this->sidecarViewdefs[$module][$this->client]['view'][$this->viewtype] = $defs;
         }
     }
 }

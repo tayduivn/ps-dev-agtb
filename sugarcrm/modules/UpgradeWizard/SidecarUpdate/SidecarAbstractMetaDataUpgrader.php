@@ -201,7 +201,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         // Get what we need to make our new files
         $viewname = $this->views[$this->client . $this->viewtype];
         $newname = $this->getNewFileName($viewname);
-        $content = $this->getNewFileContent();
+        $content = $this->getNewFileContents();
         
         // Make the new file
         //return $this->save($newname, $content);
@@ -214,12 +214,23 @@ abstract class SidecarAbstractMetaDataUpgrader
         // This check is probably not necessary, but seems like it is a good idea anyway
         if (file_exists($this->fullpath)) {
             require_once $this->fullpath;
+            
+            // There is an odd case where custom modules are pathed without the
+            // package name prefix but still use it in the module name for the
+            // viewdefs. This handles that case. Also sets a prop that lets the
+            // rest of the process know that the module is named differently
+            if (isset($module_name)) {
+                $this->modulename = $module = $module_name;
+            } else {
+                $module = $this->module;
+            }
+            
             $var = $this->variableMap[$this->client][$this->viewtype];
             if (isset($$var)) {
                 $defs = $$var;
                 if (isset($this->vardefIndexes[$this->client.$this->viewtype])) {
                     $index = $this->vardefIndexes[$this->client.$this->viewtype];
-                    $this->legacyViewdefs = empty($index) ? $defs[$this->module] : $defs[$this->module][$index];
+                    $this->legacyViewdefs = empty($index) ? $defs[$module] : $defs[$module][$index];
                 }
             }
         }
@@ -244,7 +255,9 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     public function getNewFileName($view) {
         if ($this->deployed) {
-            $newname = MetaDataFiles::getDeployedFileName($view, $this->module, $this->type, $this->client);
+            // Deployed will always use the full key_module name for custom modules 
+            $module = $this->getNormalizedModuleName();
+            $newname = MetaDataFiles::getDeployedFileName($view, $module, $this->type, $this->client);
         } else {
             $newname = MetaDataFiles::getUndeployedFileName($view, $this->module, $this->package, $this->type, $this->client);
         }
@@ -266,7 +279,22 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return string
      */
     public function getNewFileContents() {
-        $out  = "<?php\n\$viewdefs['{$this->module}'] = " . var_export($this->sidecarViewdefs[$this->module], true) . ";\n";
+        $module = $this->getNormalizedModuleName();
+        $out  = "<?php\n\$viewdefs['{$module}'] = " . var_export($this->sidecarViewdefs[$module], true) . ";\n";
         return $out;
+    }
+    
+    /**
+     * Handles the legacy metadata files that might be lingering around. For now,
+     * simply changes the name of the original legacy file to $filename.bak
+     * 
+     * @return boolean
+     */
+    public function cleanupLegacyFiles() {
+        //return rename($this->fullpath, $this->fullpath . '.bak');
+    }
+    
+    public function getNormalizedModuleName() {
+        return isset($this->modulename) ? $this->modulename : $this->module;
     }
 }
