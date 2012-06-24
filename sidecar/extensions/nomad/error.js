@@ -77,10 +77,10 @@
 //        handleMethodNotAllowedError:
 //        handleServerError:
 
-        handleStatusCodesFallback: function(xhr, textStatus, errorThrown) {
+        handleStatusCodesFallback: function(error) {
             app.alert.dismissAll();
-            _origHandleStatusCodesFallback(xhr, textStatus, errorThrown);
-            if (textStatus == "timeout") {
+            _origHandleStatusCodesFallback(error);
+            if (error.textStatus == "timeout") {
                 app.alert.show("system_error", {
                     level: "error",
                     messages: "Request timeout",
@@ -88,9 +88,8 @@
                 });
             }
             else {
-                var code = xhr ? xhr.status : "N/A";
-                this._alertSystemError(code);
-                if (code == "400") _login();
+                this._alertSystemError(error.status);
+                if (error.status == "400") _login();
             }
         }
 

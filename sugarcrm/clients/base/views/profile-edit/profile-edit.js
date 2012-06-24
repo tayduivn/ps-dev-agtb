@@ -39,9 +39,9 @@
                 app.alert.dismiss('fetch_edit_contact_record');
                 cb(data);
             },
-            error: function(xhr, textStatus, errorThrown) {
+            error: function(error) {
                 app.alert.dismiss('fetch_edit_contact_record');
-                app.error.handleHttpError(xhr, textStatus, errorThrown, self);
+                app.error.handleHttpError(error, self);
             }
         });
     },
@@ -77,9 +77,9 @@
                 app.alert.dismiss('save_profile_edit_view');
                 app.router.navigate('profile', {trigger: true});
             },
-            error: function(xhr, textStatus, errorThrown) {
+            error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');
-                app.error.handleHttpError(xhr, textStatus, errorThrown);
+                app.error.handleHttpError(error);
             },
             fieldsToValidate: self.getFields(this.model.module)
         };
