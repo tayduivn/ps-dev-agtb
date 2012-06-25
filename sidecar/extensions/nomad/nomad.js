@@ -117,7 +117,7 @@
             if (_.isArray(phones) && phones.length > 1) {
                 var numbers = this._buildNamedList(phones);
                 this._showActionSheet("Select phone number", numbers, function(buttonValue, buttonIndex) {
-                    if (buttonIndex < phones.length) self._callPhone(phones[buttonIndex].value);
+                    if (buttonIndex < phones.length) self._callPhone(self._extractValue(phones, buttonIndex));
                 });
             } else {
                 this._callPhone(this._extractValue(phones));
@@ -142,7 +142,7 @@
             if (_.isArray(phones) && phones.length > 1){
                 var numbers = this._buildNamedList(phones);
                 this._showActionSheet("Select phone number", numbers, function(buttonValue, buttonIndex) {
-                    if (buttonIndex < phones.length) self._showSmsComposer(phones[buttonIndex].value, message);
+                    if (buttonIndex < phones.length) self._showSmsComposer(self._extractValue(phones, buttonIndex), message);
                 });
             } else {
                 this._showSmsComposer(this._extractValue(phones), message);
@@ -163,11 +163,11 @@
          */
         openUrl: function(urls) {
             if (_.isArray(urls) && urls.length > 1){
-                var urlNames = _.pluck(urls, "name");
+                var urlNames = _.map(urls, function(item) { return _.keys(item)[0]; });
                 var self = this;
                 this._showActionSheet("Select URL to open", urlNames, function(buttonValue, buttonIndex) {
                     if (buttonIndex < urls.length){
-                        self._browseUrl(self._normalizeUrl(urls[buttonIndex].value));
+                        self._browseUrl(self._normalizeUrl(self._extractValue(urls, buttonIndex)));
                     }
                 });
             } else {
@@ -181,42 +181,45 @@
          * @param {String/Array} address Address or array of address objects.
          * <pre><code>
          * [
-         *   { name: 'Billing Address', value: '360 Acalanes Dr, Sunnyvale, CA 94086' },
-         *   { name: 'Shipping Address: '412 Del Medio Ave, Mountain View, CA 94040' }
+         *   {'Billing Address': {street: '360 Acalanes Dr', city: 'Sunnyvale', state: 'CA', postalcode: '94086' }},
+         *   {'Shipping Address': {street: '412 Del Medio Ave', city: 'Mountain View', state: 'CA', postalcode: '94040' }}
          * ]
          * </code></pre>
          */
-        openAddress: function(address) {
-            if (_.isArray(address) && address.length > 1){
+        openAddress: function(addresses) {
+            if (_.isArray(addresses) && addresses.length > 1){
                 var self = this;
-                var locationNames = _.pluck(address, "name");
+                var locationNames = _.map(addresses, function(item) { return app.lang.get(_.keys(item)[0]); });
                 this._showActionSheet("Select location to show", locationNames, function(buttonValue, buttonIndex) {
-                    if (buttonIndex < address.length)
-                        self._openGoogleMap(address[buttonIndex].value);
+                    if (buttonIndex < addresses.length)
+                        self._openGoogleMap(self._extractValue(addresses, buttonIndex));
                 });
             } else {
-                this._openGoogleMap(this._extractValue(address));
+                this._openGoogleMap(this._extractValue(addresses));
             }
         },
 
         // Generates googlemap URL from location data and opens it in external browser
-        _openGoogleMap: function(locationData) {
+        _openGoogleMap: function(locationObj) {
             app.logger.debug("Opening map");
-            var qStr = _.reduce(_.values(locationData), function(memo, value) {
-                return memo + ",+" + value;
-            });
-            this._browseUrl("http://maps.google.com/maps?q=" + encodeURI(qStr));
+            var location = "";
+            if (locationObj.street) location += locationObj.street;
+            if (locationObj.city) location += (",+" + locationObj.city);
+            if (locationObj.state) location += (",+" + locationObj.state);
+            if (locationObj.postalcode) location += (",+" + locationObj.postalcode);
+            this._browseUrl("http://maps.google.com/maps?q=" + encodeURI(location));
         },
 
         // Builds an array of named phone numbers: "<phone-name> - <phone-number>"
         _buildNamedList: function(items) {
             return _.map(items, function(item) {
-                return item.name + " - " + item.value;
+                return app.lang.get(_.keys(item)[0]) + " - " + _.values(item)[0];
             });
         },
 
-        _extractValue: function(data) {
-            return _.isString(data) ? data : (data[0].value || data[0]);
+        _extractValue: function(data, index) {
+            if (!index) index = 0;
+            return _.isString(data) ? data : (_.values(data[index])[0] || data[index].value || data[index]);
         },
 
         // Pre-pend with 'http://' is absent
