@@ -147,14 +147,26 @@
 //        debugger;
         // add icon markup
         var outerElement = field.$el;
-        field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; top: 20px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+        field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
         outerElement.before(field.cteIcon);
-//        field.cteIcon.hide();
+        field.cteIcon.hide();
 
         // add events
-//        // there's probably a better way to do this...
-//        outerElement.on('mousenter', ...
-//        outerElement.on('mouseleave' ...
+        field.showCteIcon = function(){
+            this.cteIcon.show();
+        };
+
+        field.hideCteIcon = function(){
+            this.cteIcon.hide();
+        };
+
+        var events = field.events || {};
+        field.events = _.extend(events, {
+            'mouseenter': 'showCteIcon',
+            'mouseleave': 'hideCteIcon'
+        });
+        field.delegateEvents();
+
     },
 
     /**
