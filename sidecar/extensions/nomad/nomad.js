@@ -167,11 +167,11 @@
                 var self = this;
                 this._showActionSheet("Select URL to open", urlNames, function(buttonValue, buttonIndex) {
                     if (buttonIndex < urls.length){
-                        self._browseUrl(urls[buttonIndex].value);
+                        self._browseUrl(self._normalizeUrl(urls[buttonIndex].value));
                     }
                 });
             } else {
-                this._browseUrl(this._extractValue(urls));
+                this._browseUrl(this._normalizeUrl(this._extractValue(urls)));
             }
         },
 
@@ -217,6 +217,12 @@
 
         _extractValue: function(data) {
             return _.isString(data) ? data : (data[0].value || data[0]);
+        },
+
+        // Pre-pend with 'http://' is absent
+        _normalizeUrl: function(url) {
+            if ((url.indexOf("http://") == 0) || (url.indexOf("https://") == 0)) return url;
+            return "http://" + url;
         }
 
     });

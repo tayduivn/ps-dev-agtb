@@ -1,6 +1,9 @@
 (function(app) {
 
     app.events.on("app:init", function() {
+        // Map iframe field type to url
+        app.metadata.fieldTypeMap["iframe"] = "url";
+        
         app.metadata.set(app.baseMetadata);
         app.data.declareModels();
 

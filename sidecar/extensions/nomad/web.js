@@ -32,7 +32,7 @@
         },
 
         _browseUrl: function(url) {
-            window.location = url;
+            window.open(url);
         },
 
         _showActionSheet: function(title, items, callback) {
