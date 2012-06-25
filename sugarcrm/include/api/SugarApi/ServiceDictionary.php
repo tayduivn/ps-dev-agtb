@@ -30,7 +30,7 @@ class ServiceDictionary {
             while (false !== ($children = readdir($current))) {
                 if ($children != "." && $children != "..") {
                     if (is_dir($thedir . "/" . $children)) {
-                        $this->_clearCache($thedir . "/" . $children, $extension);
+                        $this->clearCache($thedir . "/" . $children, $extension);
                     }
                     elseif (is_file($thedir . "/" . $children) && (substr_count($children, $extension))) {
                         unlink($thedir . "/" . $children);
