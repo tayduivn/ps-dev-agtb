@@ -53,12 +53,14 @@ class SugarPortalModule{
 	function getNodes()
 	{
 		$layouts = array();
-		
-		foreach($this->views as $file=>$def){
-			   $file = str_replace($file, '.php', '');
-			   $viewType = ($def['type'] == 'list')?"ListView":ucfirst($def['type']);
-			   $layouts[] = array('name'=>$def['name'], 'module'=>$this->module, 'action'=>"module=ModuleBuilder&action=editPortal&view=${viewType}&view_module=".$this->module);
-		}
+		if (isset($this->views)) {
+            foreach($this->views as $file=>$def){
+          			   $file = str_replace($file, '.php', '');
+          			   $viewType = ($def['type'] == 'list')?"ListView":ucfirst($def['type']);
+          			   $layouts[] = array('name'=>$def['name'], 'module'=>$this->module, 'action'=>"module=ModuleBuilder&action=editPortal&view=${viewType}&view_module=".$this->module);
+          		}
+        }
+
 		$nodes =  array(
 		            'name'=>$this->name, 'module'=>$this->module, 'type'=>'SugarPortalModule', 'action'=>"module=ModuleBuilder&action=wizard&portal=1&view_module=".$this->module, 
 		            'children'=>$layouts,
