@@ -227,7 +227,6 @@
                 },
                 "Confirm", "Cancel,Unlink"
             );
-            this.hideContextMenu();
         },
 
         onEditItem: function (e) {
