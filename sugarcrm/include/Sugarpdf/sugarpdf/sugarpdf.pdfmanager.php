@@ -82,10 +82,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         if ($this->module == 'Quotes' && $previewMode === FALSE) {
             global $locale;
             require_once 'modules/Quotes/Quote.php';
-            require 'modules/Quotes/config.php';
+            require_once 'modules/Quotes/config.php';
             require_once 'modules/Currencies/Currency.php';
             $currency = new Currency();
-            ////    settings
             $format_number_array = array(
                 'currency_symbol' => true,
                 'type' => 'sugarpdf',
@@ -94,8 +93,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             );
             $currency->retrieve($this->bean->currency_id);
             $fields['currency_iso'] = $currency->iso4217;
-            $fields['subtotal'] = format_number_sugarpdf($this->bean->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
-            $fields['total'] = format_number_sugarpdf($this->bean->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+            
+            // Adding Tax Rate Field
+            $fields['taxrate_value'] = format_number_sugarpdf($this->bean->taxrate_value, $locale->getPrecision(), $locale->getPrecision(), array('percentage' => true));;
 
             $this->bean->load_relationship('product_bundles');
             $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
@@ -122,7 +122,17 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
                     if ($product_bundle_line_item->object_name == "ProductBundleNote") {
                         $bundleFields['products'][$count]['name'] = $bundleFields['products'][$count]['description'];
+                    } else {
+                        // Special case about discount amount
+                        if ($product_bundle_line_item->discount_select) {
+                            $bundleFields['products'][$count]['discount_amount'] = format_number($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision()) . '%';
                     }
+
+                        // Special case about ext price
+                        $bundleFields['products'][$count]['ext_price'] = format_number_sugarpdf($product_bundle_line_item->discount_price * $product_bundle_line_item->quantity, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);                                        
+                    }
+                    
+                    
                     $count++;
                 }
                 $bundles[] = $bundleFields;
@@ -316,19 +326,19 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 );
                 
                 $pdfTemplate->body_html = str_replace(
-                    '<!--{START_BUNDLE_LOOP}-->',
+                    '<!--START_BUNDLE_LOOP-->',
                     '{foreach from=$product_bundles item="bundle"}',
                     $pdfTemplate->body_html
                 );
                 
                 $pdfTemplate->body_html = str_replace(
-                    '<!--{START_PRODUCT_LOOP}-->',
+                    '<!--START_PRODUCT_LOOP-->',
                     '{foreach from=$bundle.products item="product"}',
                     $pdfTemplate->body_html
                 );
                 
                 $pdfTemplate->body_html = str_replace(
-                    array("<!--{END_PRODUCT_LOOP}-->", "<!--{END_BUNDLE_LOOP}-->"),
+                    array("<!--END_PRODUCT_LOOP-->", "<!--END_BUNDLE_LOOP-->"),
                     '{/foreach}',
                     $pdfTemplate->body_html
                 );

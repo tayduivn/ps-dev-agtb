@@ -190,6 +190,26 @@ class PdfManagerHelper
             $field_defs = $field_defs['fields'];
         }
 
+        // Adding special fields not available in vardefs
+        if ($relatedModule == 'Quotes'){
+            $field_defs['taxrate_value'] = array( 
+                'name' => 'taxrate_value', 
+                'vname' => 'LBL_TAXRATE',
+                'type' => 'decimal'
+            );
+            $field_defs['currency_iso'] = array( 
+                'name' => 'currency_iso', 
+                'vname' => 'LBL_CURRENCY',
+                'type' => 'varchar'
+            );            
+        } elseif ($relatedModule == 'Products'){
+            $field_defs['discount_amount'] = array( 
+                'name' => 'discount_amount', 
+                'vname' => 'LBL_EXT_PRICE',
+                'type' => 'decimal'
+            );            
+        }
+
         $relatedFields = PdfManagerHelper::cleanFields($field_defs, false, true);
         foreach ($relatedFields as $val) {
             $name = $val[0];
@@ -374,15 +394,25 @@ class PdfManagerHelper
                 $fields_module[$name] = self::parseBeanFields($related_instance, FALSE);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
-                $module_instance->field_defs[$name]['type'] == 'currency' &&
+                (
+                        $module_instance->field_defs[$name]['type'] == 'currency'
+                    || 
+                        (
+                                $module_instance->field_defs[$name]['type'] == 'decimal'
+                            &&  in_array($module_instance->object_name , array('Product', 'ProductBundle'))
+                        )
+                ) &&
                 !empty($module_instance->currency_id)
                ) {
                   global $locale;
                   $format_number_array = array(
                       'currency_symbol' => true,
                       'currency_id' => $module_instance->currency_id,
+                    'type' => 'sugarpdf',
+                    'charset_convert' => true,
                   );
-                  $fields_module[$name] = format_number($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+
+                $fields_module[$name] = format_number_sugarpdf($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
                 ($module_instance->field_defs[$name]['type'] == 'decimal')
@@ -395,7 +425,7 @@ class PdfManagerHelper
                     $module_instance->$name = 0;
                   }
                   
-                  $fields_module[$name] = format_number($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+                $fields_module[$name] = format_number_sugarpdf($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
                 ($module_instance->field_defs[$name]['type'] == 'image')

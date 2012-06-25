@@ -355,7 +355,7 @@ EOD
                 $record = '{$fields.id.value}';
                 
                 require_once 'modules/PdfManager/PdfManagerHelper.php';
-                $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
+                $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule('Reports');
                 
                 $output = '';
                 if (!empty($pdfManagerList)) {
