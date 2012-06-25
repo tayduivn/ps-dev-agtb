@@ -144,7 +144,7 @@
      * @private
      */
     _addCTEIcon: function(field) {
-//        debugger;
+
         // add icon markup
         var outerElement = field.$el;
         field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
