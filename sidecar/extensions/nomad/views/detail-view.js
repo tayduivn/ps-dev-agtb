@@ -51,7 +51,7 @@
                     } else if (field.type == "email") {                 //if email - do nothing
 
                     } else if (field.name &&
-                              (field.name.indexOf("address") > -1) &&
+                              (field.name.indexOf("address_") > -1) &&
                               (field.name.indexOf("email") == -1)) {   //find address (not email addresses) fields
                         addressFields.push(field);
                     } else if (field.name && field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
@@ -199,7 +199,7 @@
          * @return {Boolean}
          */
         isDataDefined: function (data) {
-            return _.any(data, function(item, key) { return !!item; });
+            return _.any(data);
         }
     });
 
