@@ -15,8 +15,10 @@
     app.augment("nomad", {
 
         deviceReady: function(authAccessToken, authRefreshToken) {
-            app.logger.debug("Device is ready");
+            app.logger.debug("Device is ready, layout cache enabled: " + app.config.layoutCacheEnabled);
             app.isNative = !_.isUndefined(window.cordova);
+
+            if (app.config.layoutCacheEnabled !== true) app.NomadController = null;
 
             if (app.isNative) {
                 app.logger.debug("access/refresh tokens: " + authAccessToken + "/" + authRefreshToken);
