@@ -514,13 +514,14 @@
                   { "sTitle": "Amount",
                       "fnRender": function(obj) {
                           var sReturn = obj.aData[ obj.iDataColumn ];
-                          var ret = "<div style='position:relative;'><span class='dblclick format'>" + sReturn + "</span></div>";
+                          var ret = "<span class='format'>" + sReturn + "</span>";
                           return ret;
-                      }},
+                      }
+                  },
                   { "sTitle": "Best",
                       "fnRender": function(obj) {
                           var sReturn = obj.aData[ obj.iDataColumn ];
-                          var ret = "<div style='position:relative;'><span class='dblclick format'>" + sReturn + "</span></div>";
+                          var ret = "<span class='format'>" + sReturn + "</span>";
                           return ret;
                       }
                   },
@@ -637,8 +638,8 @@
                   var likelyTotal = 0;
                   for ( var i=iStart ; i<iEnd ; i++ )
                   {
-                      amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
-                      bestTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
+                      amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
+                      bestTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
                       likelyTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
                   }
 

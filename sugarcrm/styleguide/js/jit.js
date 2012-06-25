@@ -11849,15 +11849,15 @@ $jit.ST.Plot.NodeTypes.implement({
                           //render line segment, dimarray[i][0] is the curent datapoint, dimarrya[i][1] is the next datapoint, we need both in the current iteration to draw the line segment
 //                          console.log(node)
                           ctx.beginPath();
-                          ctx.moveTo(pos.x, y  - goalMarkerDim + (dataPointSize/2));
-                          ctx.lineTo(pos.x + this.config.siblingOffset + width, y - goalMarkerNextDim + (dataPointSize/2));
+                          ctx.moveTo(pos.x, pos.y  - goalMarkerDim + (dataPointSize/2));
+                          ctx.lineTo(pos.x + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize/2));
                           ctx.stroke();
                           ctx.restore();
                       }
                       //render data point
 
                       ctx.beginPath();
-                      ctx.arc(pos.x - (dataPointSize/2), pos.y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
+                      ctx.arc(pos.x , pos.y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
                       ctx.closePath();
                       ctx.fill();
 
