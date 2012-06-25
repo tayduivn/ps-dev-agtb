@@ -52,6 +52,11 @@
         serverUrl: '../../sugarcrm/rest/v10',
 
         /**
+         * Server request timeout (in seconds).
+         */
+        serverTimeout: 30,
+
+        /**
          * Max query result set size.
          * @cfg {Number}
          */

@@ -23,8 +23,7 @@
 
         var args = {
             name: this.$('[name=subject]').val(),
-            description: this.$('[name=description]').val(),
-            portal_flag: true
+            description: this.$('[name=description]').val()
         }
 
         var newNote = app.data.createRelatedBean(app.controller.context.get('model'), null, "notes", args);

@@ -199,25 +199,34 @@
 
         onRemoveItem: function (e) {
             e.preventDefault();
-            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
-
-            if (isOk) {
-                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
-                var model = this.collection.get(cid);
-                model.destroy();
-            }
+            var self = this;
+            // TODO: Localize
+            app.nomad.showConfirm("Do you really want to delete this record?",
+                function(index) {
+                    self.hideContextMenu();
+                    if (index == 2) {
+                        var id = $(e.target).closest('article').attr('id').replace(self.module, '');
+                        self.collection.get(id).destroy();
+                    }
+                },
+                "Confirm", "Cancel,Delete"
+            );
         },
 
         onUnlinkItem: function (e) {
             e.preventDefault();
-            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
-
-            if (isOk) {
-                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
-                var model = this.collection.get(cid);
-                model.destroy({ relate: true });
-            }
-            this.hideContextMenu();
+            var self = this;
+            // TODO: Localize
+            app.nomad.showConfirm("Do you really want to unlink this record?",
+                function(index) {
+                    self.hideContextMenu();
+                    if (index == 2) {
+                        var id = $(e.target).closest('article').attr('id').replace(self.module, '');
+                        self.collection.get(id).destroy({ relate: true });
+                    }
+                },
+                "Confirm", "Cancel,Unlink"
+            );
         },
 
         onEditItem: function (e) {

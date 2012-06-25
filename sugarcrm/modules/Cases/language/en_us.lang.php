@@ -73,7 +73,7 @@ $mod_strings = array (
 	'LBL_LIST_STATUS'					=> 'Status',
 	'LBL_LIST_SUBJECT'					=> 'Subject',
 	'LBL_LIST_ASSIGNED_TO_NAME'   		=> 'Assigned User',
-
+	'LBL_SHOW_MORE'				        => 'Show More Cases',
 	'LNK_CASE_LIST'						=> 'View Cases',
 	'LNK_NEW_CASE'						=> 'Create Case',
 	'NTC_REMOVE_FROM_BUG_CONFIRMATION'	=> 'Are you sure you want to remove this case from the bug?',

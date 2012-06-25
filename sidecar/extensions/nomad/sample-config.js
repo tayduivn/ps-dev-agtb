@@ -5,8 +5,9 @@
         env: 'dev',
         debugSugarApi: true,
         logLevel: 'DEBUG',
-        logWriter: 'ConsoleWriter',s
+        logWriter: 'ConsoleWriter',
         logFormatter: 'SimpleFormatter',
+        layoutCacheEnabled: true,
         layoutCacheSize: 30,
         disableLayoutCache: ["login"],
         authStore: 'cache',
@@ -21,10 +22,10 @@
         defaultModule: "Accounts",
         metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules", "relationships"],
         additionalComponents: {
-            "header": {
+            'header': {
                 target: '#header'
             },
-            alert: {
+            'alert': {
                 target: '#alert'
             }
         },

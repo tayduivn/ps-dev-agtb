@@ -85,7 +85,7 @@ var SugarTest = {};
 beforeEach(function(){
     SugarTest.resetWaitFlag();
     SugarTest.app = SUGAR.App.init({el: "body", silent: true});
-    SugarTest.app.config.logLevel = SUGAR.App.logger.levels.DEBUG;
+    SugarTest.app.config.logLevel = 'FATAL';
     SugarTest.app.config.env = "test";
     SugarTest.app.config.appId = "portal";
     SugarTest.app.config.maxQueryResult = 20;

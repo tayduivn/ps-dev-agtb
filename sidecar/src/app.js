@@ -215,7 +215,7 @@ SUGAR.App = (function() {
             _app.api = SUGAR.Api.getInstance({
                 serverUrl: _app.config.serverUrl,
                 platform: _app.config.platform,
-
+                timeout: _app.config.serverTimeout,
                 keyValueStore: _app[_app.config.authStore || "cache"],
                 clientID: _app.config.clientID
             });
