@@ -58,7 +58,8 @@ $buildFiles = array(
             'extensions/portal/lib/twitterbootstrap/js/bootstrap-dropdown.js',
             'extensions/portal/lib/twitterbootstrap/js/bootstrap-modal.js',
             'extensions/portal/lib/twitterbootstrap/js/bootstrap-alert.js',
-            'extensions/portal/portal-ui.js'
+            'extensions/portal/portal-ui.js',
+            'lib/jquery/jquery.iframe.transport.js'
         ),
         'toConcat' => array(
 
