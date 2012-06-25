@@ -74,7 +74,6 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
-
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
@@ -119,8 +118,8 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        $httpInfo = curl_getinfo($ch); 
         $httpReply = curl_exec($ch);
+        $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
 
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);

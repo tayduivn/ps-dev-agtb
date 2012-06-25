@@ -55,7 +55,7 @@ SUGAR.Api = (function() {
      * @ignore
      */
     function SugarApi(args) {
-        var _serverUrl, _platform, _keyValueStore, _clientID;
+        var _serverUrl, _platform, _keyValueStore, _clientID, _timeout;
         var _accessToken = null;
         var _refreshToken = null;
 
@@ -64,6 +64,7 @@ SUGAR.Api = (function() {
         _serverUrl = (args && args.serverUrl) || "/rest/v10";
         _platform = (args && args.platform) || "";
         _clientID = (args && args.clientID) || "sugar";
+        _timeout = ((args && args.timeout) || 30) * 1000;
         if (_keyValueStore) {
             if (!$.isFunction(_keyValueStore.set) ||
                 !$.isFunction(_keyValueStore.get) ||
@@ -127,7 +128,12 @@ SUGAR.Api = (function() {
                 var type = _methodsToRequest[method];
 
                 // by default use json headers
-                var params = {type: type, dataType: 'json', headers: {}};
+                var params = {
+                    type: type,
+                    dataType: 'json',
+                    headers: {},
+                    timeout: _timeout
+                };
 
                 options = options || {};
                 callbacks = callbacks || {};
@@ -267,8 +273,8 @@ SUGAR.Api = (function() {
              * @param  {Object} callbacks(optional) callback object.
              * @return {Object} XHR request object.
              */
-            getMetadata: function(hash, types, modules, callbacks) {
-                var params = {};
+            getMetadata: function(hash, types, modules, callbacks, options) {
+                var params = {}, method, url;
 
                 if (types) {
                     params.typeFilter = types.join(",");
@@ -284,8 +290,13 @@ SUGAR.Api = (function() {
 
                 params._hash = hash;
 
-                var method = 'read';
-                var url = this.buildURL("metadata", method, null, params);
+                method = 'read';
+
+                if (options && options.getPublic) {
+                    method = 'public';
+                }
+
+                url = this.buildURL("metadata", method, null, params);
 
                 return this.call(method, url, null, callbacks);
             },

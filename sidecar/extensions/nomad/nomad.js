@@ -42,6 +42,7 @@
                 link: link,
                 create: true,
                 layout: "edit",
+                action:"create",
                 depth:depth
             });
         },
@@ -79,6 +80,15 @@
 
         app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
         app.logger.debug('REST URL: ' + app.api.serverUrl);
+    }).on("app:sync", function() {
+        app.alert.show('metadata_syncing', {
+                level: 'general',
+                messages: 'Please, wait while configuring...',
+                autoClose: true
+            }
+        );
+    }).on("app:sync:complete", function() {
+        app.alert.dismissAll();
     });
 
     app.events.on("data:sync:start", function(method, model, options) {
@@ -179,6 +189,17 @@
         },
 
         /**
+         * Shows a confirmation dialog.
+         * @param {String} message
+         * @param {Function} confirmCallback callback: `function(index)`. Index will be 1 or 2.
+         * @param {String} title(optional) Dialog title.
+         * @param {String} buttonLabels(optional) Comma-separated two button labels. `Cancel,OK` if not specified.
+         */
+        showConfirm: function(message, confirmCallback, title, buttonLabels) {
+            this._showConfirm(message, confirmCallback, title, buttonLabels || "Cancel,OK");
+        },
+
+        /**
          * Displays email chooser UI.
          * @param {Array} emails
          * @param {String} subject(optional)
@@ -218,6 +239,21 @@
          */
         openAddress: function(addressObj) {
             app.logger.debug("Open address");
+        },
+
+        // -------------------------------------------------
+        // Private methods for pure web UI
+        // -------------------------------------------------
+
+        _showConfirm: function(message, confirmCallback, title, buttonLabels) {
+            // TODO: Implement HTML modal dialog
+
+            // Using standard browser confirm dialog for now
+            // Mobile Safari displays buttons in the following order: 'Cancel', 'Confirm'
+            // TODO: Test Android
+            var confirmed = confirm(message);
+            var index = confirmed ? 2 : 1;
+            confirmCallback(index);
         }
 
     });

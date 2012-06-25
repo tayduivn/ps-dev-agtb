@@ -13,7 +13,7 @@ describe("App", function() {
                 var metadata = fixtures.metadata;
                 callbacks.success(metadata, "", {status: 200});
             } else {
-                callbacks.error({code: 500});
+                callbacks.error({code: 500}, "error");
             }
         });
     });
@@ -30,8 +30,18 @@ describe("App", function() {
         });
 
         it("should return an existing instance", function() {
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\/public\?typeFilter=&moduleFilter.*/,
+                [304, {"Content-Type": "application/json"}, JSON.stringify({modules:{}})]);
             var app = SUGAR.App.init({el: "body"});
+            SugarTest.server.respond();
+            SugarTest.server.restore();
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/metadata\/public\?typeFilter=&moduleFilter.*/,
+                [304, {"Content-Type": "application/json"}, JSON.stringify({modules:{}})]);
             var app2 = SUGAR.App.init({el: "body"});
+            SugarTest.server.respond();
+            SugarTest.server.restore();
             expect(app2).toEqual(app);
         });
 

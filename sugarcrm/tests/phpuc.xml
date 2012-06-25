@@ -39,6 +39,7 @@
                 <directory>jssource</directory>
                 <directory>modules</directory>
                 <directory>ModuleInstall</directory>
+                <directory>rest</directory>
                 <directory>service</directory>
                 <directory>tests</directory>
             </testsuite>
@@ -49,6 +50,7 @@
         <directory>./tests/jssource</directory>
         <directory>./tests/modules</directory>
         <directory>./tests/ModuleInstall</directory>
+        <directory>./tests/rest</directory>
         <directory>./tests/service</directory>
         <directory>./tests/tests</directory>
     </testsuite>
