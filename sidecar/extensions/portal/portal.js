@@ -107,7 +107,7 @@
                 "views": {
                     "errorView": {
                         "meta": {},
-                        "template":  
+                        "template":
                             "<div class='container-fluid'>" +
                                     "<div class='row-fluid'>" +
                                         "<div class='span7'>" +
@@ -145,7 +145,7 @@
                                     "};" +
                                 "} else if(this.context.get('errorType') ==='500') { " +
                                     "attributes = {" +
-                                        "title: 'HTTP: 500 Internal Server Error'," + 
+                                        "title: 'HTTP: 500 Internal Server Error'," +
                                         "type: '500'," +
                                         "message: 'There was an error on the server. Please contact technical support.'" +
                                     "};" +
@@ -222,7 +222,7 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
-                                {     
+                                {
                                     name: "cancel_button",
                                     type: "button",
                                     label: "Cancel",
@@ -232,7 +232,7 @@
                                         click: "function(){" +
                                             "app.router.goBack();" +
                                             "}"
-                                    } 
+                                    }
                                 },
                                 {
                                     name: "signup_button",
@@ -852,7 +852,7 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-        
+
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
@@ -924,7 +924,7 @@
             app.logger.error("Module not loaded or user does not have access. ", route);
             alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
             return false;
-        } 
+        }
         return true;
     };
 
@@ -982,6 +982,30 @@
             app.Controller.__super__.loadView.call(this, params);
         }
     });
+
+    /**
+     * Extends the `save` action to add `portal` specific params to the payload.
+     *
+     * @param {Object} attributes(optional) model attributes
+     * @param {Object} options(optional) standard save options as described by Backbone docs and
+     * optional `fieldsToValidate` parameter.
+     */
+    var __superBeanSave__ = app.Bean.prototype.save;
+    app.Bean.prototype.save = function(attributes, options) {
+        //Here is the list of params that must be set for portal use case.
+        var defaultParams = {
+            portal_flag: 1,
+            portal_viewable: 1
+        }
+        var moduleFields = app.metadata.getModule(this.module).fields || {};
+        for (var field in defaultParams) {
+            if (moduleFields[field]) {
+                this.set(field, defaultParams[field], {silent:true});
+            }
+        }
+        //Call the prototype
+        __superBeanSave__.call(this, attributes, options);
+    };
 
     var _rrh = {
         /**
