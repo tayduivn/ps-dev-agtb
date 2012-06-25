@@ -18,23 +18,25 @@
         },
 
         _showEmailComposer: function(subject, body, email) {
-            app.logger.debug("Showing EMAIL composer for " + email);
+            window.location = "mailto:" + email +
+                "?subject=" + (subject || "") +
+                "&body=" + (body || "");
         },
 
         _showSmsComposer: function(phone, message) {
-            app.logger.debug("Showing SMS composer for phone " + phone);
+            window.location = "sms:" + phone;
         },
 
         _callPhone: function(phone) {
-            app.logger.debug("Initiating a phone call to " + phone);
+            window.location = "tel:" + phone;
         },
 
         _browseUrl: function(url) {
-            app.logger.debug("Opening URL in external browser: " + url);
+            window.location = url;
         },
 
         _showActionSheet: function(title, items, callback) {
-            app.logger.debug("Showing action sheet");
+            alert("Action sheet is not implemented!");
         }
 
     });
