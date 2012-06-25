@@ -1,139 +1,16 @@
 (function(app) {
 
-    var _rrh = {
-
-        associate: function(module, id, link, depth) {
-            var relatedModule = app.data.getRelatedModule(module, link);
-            app.logger.debug("Route changed to associate rels: " + module + "/" + id + "/" + link + "/" + relatedModule);
-            app.controller.loadView({
-                module: relatedModule,
-                layout: "associate",
-                viaLink: link,
-                toModule: module,
-                toId: id,
-                depth:depth
-            });
-        },
-
-        list: function(module, id, link) {
-            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/" + link);
-            app.controller.loadView({
-                parentModule: module,
-                parentModelId: id,
-                link: link,
-                layout: "relationships"
-            });
-        },
-        pickerList: function(module, id, action) {
-            app.logger.debug("Route changed to list rels: " + module + "/" + id + "/link/picker/" + action);
-            app.controller.loadView({
-                module: module,
-                modelId: id,
-                layout: "pickerlist",
-                action: action,
-                create: true
-            });
-        },
-        create: function(module, id, link, depth) {
-            app.logger.debug("Route changed to create rel: " + module + "/" + id + "/" + link + "/create");
-            app.controller.loadView({
-                parentModule: module,
-                parentModelId: id,
-                link: link,
-                create: true,
-                layout: "edit",
-                action:"create",
-                depth:depth
-            });
-        },
-
-        record: function(module, id, link, relatedId, action) {
-            app.logger.debug("Route changed to action rel: " + module + "/" + id + "/" + link + "/" + relatedId);
-
-            action = action || "detail";
-
-            app.controller.loadView({
-                parentModule: module,
-                parentModelId: id,
-                link: link,
-                modelId: relatedId,
-                action: action,
-                layout: action
-            });
-        }
-
+    var onPause = function() {
+        // This is going to get logged after the app gets resumed
+        // See iOS quirks in cordova docs
+        app.logger.debug("App was paused");
     };
-
-    app.events.on("app:init", function() {
-        app.metadata.set(app.baseMetadata);
-        app.data.declareModels();
-
-        // Register relationship routes
-        app.router.route(":module/:id/link/:link", "relationships:list", _rrh.list);
-        app.router.route(":module/:id/link/:link/:relatedId", "relationships:detail", _rrh.record);
-        app.router.route(":module/:id/link/:link/:relatedId/:action", "relationships:action", _rrh.record);
-        app.router.route(":module/:id/link/:link/create?depth=:depth", "relationships:create", _rrh.create);
-        app.router.route(":module/:id/link/:link/associate?depth=:depth", "relationships:associate", _rrh.associate);
-        app.router.route(":module/:id/links/:action","relationships:picker" ,_rrh.pickerList);
-
-        app.api.serverUrl = app.isNative ? app.user.get("serverUrl") : app.config.serverUrl;
-
-        app.logger.debug('App initialized in ' + (app.isNative ? "native shell" : "browser"));
-        app.logger.debug('REST URL: ' + app.api.serverUrl);
-    }).on("app:sync", function() {
-        app.alert.show('metadata_syncing', {
-                level: 'general',
-                messages: 'Please, wait while configuring...',
-                autoClose: true
-            }
-        );
-    }).on("app:sync:complete", function() {
-        app.alert.dismissAll();
-    });
-
-    app.events.on("data:sync:start", function(method, model, options) {
-        var message;
-        if (method == "read") {
-             // We don't want to show the alert when paginating because we show "Loading..." message on the button itself
-            if (_.isUndefined(options.offset)) message = "Loading...";
-        }
-        else if (method == "delete") {
-            // options.relate means we are breaking a relationship between two records, not actually deleting a record
-            message = options.relate === true ? "Unlinking..." : "Deleting...";
-        }
-        else {
-            message = "Saving...";
-        }
-
-        if (message) {
-            app.alert.show('data_syncing', {
-                level: 'general',
-                messages: message,
-                autoClose: true
-            });
-        }
-
-    }).on("data:sync:end", function(method, model, options, error) {
-            app.alert.dismiss('data_syncing');
-            // Error module will display proper message
-            if (error) return;
-
-            var message;
-            if (method == "delete") {
-                message = options.relate === true ? "Unlinked successfully." : "Deleted successfully.";
-            }
-            else if (method != "read") {
-                message = "Saved successfully.";
-            }
-
-            if (message) {
-                app.alert.show('data_sync_success', {
-                    level: 'success',
-                    messages: message,
-                    autoClose: true
-                });
-            }
-    });
+    var onResume = function(elapsed) {
+        app.logger.debug("App resumed after " + elapsed + " seconds");
+    };
+    var onMemoryWarning = function() {
+        app.logger.debug("App received memory warning");
+    };
 
     app.augment("nomad", {
 
@@ -153,6 +30,12 @@
             app.api.debug = app.config.debugSugarApi;
             app.start();
             app.logger.debug('App started');
+
+            if (app.isNative) {
+                document.addEventListener("pause", onPause, false);
+                document.addEventListener("resume", onResume, false);
+                document.addEventListener("memoryWarning", onMemoryWarning, false);
+            }
         },
 
         buildLinkRoute: function(moduleOrContext, id, link, relatedId, action) {
@@ -200,60 +83,138 @@
         },
 
         /**
-         * Displays email chooser UI.
-         * @param {Array} emails
-         * @param {String} subject(optional)
-         * @param {String} body(optional)
+         * Displays email chooser UI and pops up native mailer once email is selected.
+         * @param {Array/String} emails email or array of emails
+         * @param {String} subject(optional) email subject.
+         * @param {String} body(optional) email body.
          */
         sendEmail: function(emails, subject, body) {
-            app.logger.debug("Sending email");
+            if (_.isArray(emails) && emails.length > 1) {
+                this._showActionSheet("Select recepient", emails, function(buttonValue, buttonIndex) {
+                    if (buttonIndex < emails.length) this._showEmailComposer(subject, body, buttonValue);
+                });
+            } else {
+                this._showEmailComposer(subject, body, this._extractValue(emails));
+            }
         },
 
         /**
-         * Displays phone chooser UI.
-         * @param {Array} phones
+         * Displays phone chooser UI and initiates a phone call once a phone is selected.
+         *
+         * @param {Array/String} phones phone or array of phone objects.
+         * Array of phones consists of objects:
+         * <pre><code>
+         * [
+         *   { name: 'Mobile', value: '(408) 555-7890' },
+         *   { name: 'Home', value: '(650) 333-3456' }
+         * ]
+         * </code></pre>
          */
         callPhone: function(phones) {
-            app.logger.debug("Calling phone");
+            var self = this;
+            if (_.isArray(phones) && phones.length > 1) {
+                var numbers = this._buildNamedList(phones);
+                this._showActionSheet("Select phone number", numbers, function(buttonValue, buttonIndex) {
+                    if (buttonIndex < phones.length) self._callPhone(phones[buttonIndex].value);
+                });
+            } else {
+                this._callPhone(this._extractValue(phones));
+            }
         },
 
         /**
-         * Displays phone chooser UI.
-         * @param {Array} phones
+         * Displays phone chooser UI and sends SMS once a phone is selected.
+         *
+         * @param {Array/String} phones phone or array of phone objects.
+         * Array of phones consists of objects:
+         * <pre><code>
+         * [
+         *   { name: 'Mobile', value: '(408) 555-7890' },
+         *   { name: 'Home', value: '(650) 333-3456' }
+         * ]
+         * </code></pre>
+         * @param {String} message(optional) SMS message to send.
          */
-        sendSms: function(phones) {
-            app.logger.debug("Sending SMS");
+        sendSms: function(phones, message) {
+            var self = this;
+            if (_.isArray(phones) && phones.length > 1){
+                var numbers = this._buildNamedList(phones);
+                this._showActionSheet("Select phone number", numbers, function(buttonValue, buttonIndex) {
+                    if (buttonIndex < phones.length) self._showSmsComposer(phones[buttonIndex].value, message);
+                });
+            } else {
+                this._showSmsComposer(this._extractValue(phones), message);
+            }
         },
 
         /**
-         * Displays url chooser UI.
-         * @param {Array} phones
+         * Opens URL in mobile Safari.
+         *
+         * @param {String/Array} urls URL or array of URL objects.
+         * Array of URLs consists of objects:
+         * <pre><code>
+         * [
+         *   { name: 'Corporate site', value: 'http://example.com' },
+         *   { name: 'Other', value: 'http://example2.com' }
+         * ]
+         * </code></pre>
          */
         openUrl: function(urls) {
-            app.logger.debug("Opening URL");
+            if (_.isArray(urls) && urls.length > 1){
+                var urlNames = _.pluck(urls, "name");
+                var self = this;
+                this._showActionSheet("Select URL to open", urlNames, function(buttonValue, buttonIndex) {
+                    if (buttonIndex < urls.length){
+                        self._browseUrl(urls[buttonIndex].value);
+                    }
+                });
+            } else {
+                this._browseUrl(this._extractValue(urls));
+            }
         },
 
         /**
-         * Opens the map with specific address.
-         * @param {Array} phones
+         * Opens native map application to display a physical address.
+         *
+         * @param {String/Array} address Address or array of address objects.
+         * <pre><code>
+         * [
+         *   { name: 'Billing Address', value: '360 Acalanes Dr, Sunnyvale, CA 94086' },
+         *   { name: 'Shipping Address: '412 Del Medio Ave, Mountain View, CA 94040' }
+         * ]
+         * </code></pre>
          */
-        openAddress: function(addressObj) {
-            app.logger.debug("Open address");
+        openAddress: function(address) {
+            if (_.isArray(address) && address.length > 1){
+                var self = this;
+                var locationNames = _.pluck(address, "name");
+                this._showActionSheet("Select location to show", locationNames, function(buttonValue, buttonIndex) {
+                    if (buttonIndex < address.length)
+                        self._openGoogleMap(address[buttonIndex].value);
+                });
+            } else {
+                this._openGoogleMap(this._extractValue(address));
+            }
         },
 
-        // -------------------------------------------------
-        // Private methods for pure web UI
-        // -------------------------------------------------
+        // Generates googlemap URL from location data and opens it in external browser
+        _openGoogleMap: function(locationData) {
+            app.logger.debug("Opening map");
+            var qStr = _.reduce(_.values(locationData), function(memo, value) {
+                return memo + ",+" + value;
+            });
+            this._browseUrl("http://maps.google.com/maps?q=" + encodeURI(qStr));
+        },
 
-        _showConfirm: function(message, confirmCallback, title, buttonLabels) {
-            // TODO: Implement HTML modal dialog
+        // Builds an array of named phone numbers: "<phone-name> - <phone-number>"
+        _buildNamedList: function(items) {
+            return _.map(items, function(item) {
+                return item.name + " - " + item.value;
+            });
+        },
 
-            // Using standard browser confirm dialog for now
-            // Mobile Safari displays buttons in the following order: 'Cancel', 'Confirm'
-            // TODO: Test Android
-            var confirmed = confirm(message);
-            var index = confirmed ? 2 : 1;
-            confirmCallback(index);
+        _extractValue: function(data) {
+            return _.isString(data) ? data : (data[0].value || data[0]);
         }
 
     });
