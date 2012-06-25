@@ -31,7 +31,7 @@
         <i class="icon-chevron-down"></i>
     </div>
 </div>
-<div class="hide extend log">
+<div class="extend hide">
 {{#each historyLog}}
    <article>
    {{this.text}}

@@ -37,6 +37,7 @@
         this.includedAmount = 0;
         this.includedBest = 0;
         this.includedLikely = 0;
+        this.includedCount = 0;
         this.overallAmount = 0;
         this.overallBest = 0;
         this.overallLikely = 0;
@@ -294,6 +295,7 @@
         self.overallAmount = 0;
         self.overallBest = 0;
         self.overallLikely = 0;
+        self.includedCount = 0;
 
         _.each(self._collection.models, function (model) {
             var included = model.get('forecast');
@@ -306,6 +308,7 @@
                 self.includedAmount += amount;
                 self.includedLikely += likely;
                 self.includedBest += best;
+                self.includedCount++;
             }
             self.overallAmount += amount;
             self.overallLikely += likely;
@@ -313,12 +316,12 @@
         });
 
         var totals = {
-            'includedAmount' : self.includedAmount,
-            'includedLikely' : self.includedLikely,
-            'includedBest' : self.includedBest,
-            'overallAmount' : self.overallAmount,
-            'overallLikely' : self.overallLikely,
-            'overallBest' : self.overallBest
+            'likely_case' : self.includedLikely,
+            'best_case' : self.includedBest,
+            'timeperiod_id' : self.timePeriod,
+            'forecast_type' : 'Direct',
+            'opp_count' : self.includedCount,
+            'amount' : self.includedAmount
         };
         this.context.set("updatedTotals", totals);
     },

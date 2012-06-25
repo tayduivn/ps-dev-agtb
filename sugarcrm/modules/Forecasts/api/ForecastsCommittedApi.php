@@ -33,8 +33,16 @@ class ForecastsCommittedApi extends ModuleApi {
                 'path' => array('Forecasts','committed'),
                 'pathVars' => array('',''),
                 'method' => 'forecastsCommitted',
-                'shortHelp' => 'A list of forecasts entries',
+                'shortHelp' => 'A list of forecasts entries matching filter criteria',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
+            ),
+            'forecastsCommit' => array(
+                'reqType' => 'POST',
+                'path' => array('Forecasts','committed'),
+                'pathVars' => array('',''),
+                'method' => 'forecastsCommit',
+                'shortHelp' => 'Commit a forecast',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommit',
             )
         );
         return $parentApi;
@@ -104,6 +112,24 @@ class ForecastsCommittedApi extends ModuleApi {
         }
 
         return $forecasts;
+    }
+
+
+    public function forecastsCommit($api, $args)
+    {
+        global $current_user;
+        $forecast = new Forecast();
+        $forecast->user_id = $current_user->id;
+        $forecast->timeperiod_id = $args['timeperiod_id'];
+        $forecast->best_case = $args['best_case'];
+        $forecast->likely_case = $args['likely_case'];
+        $forecast->forecast_type = $args['forecast_type'];
+        $forecast->opp_count = $args['opp_count'];
+        if($args['amount'] != 0 && $args['opp_count'] != 0)
+        {
+            $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
+        }
+        $forecast->save();
     }
 
 }

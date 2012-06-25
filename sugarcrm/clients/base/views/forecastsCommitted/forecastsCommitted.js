@@ -5,6 +5,8 @@
  * @extends View.View
  */
 ({
+    url : 'rest/v10/Forecasts/committed',
+
     viewSelector : '.forecastsCommitted',
 
     _collection : {},
@@ -21,38 +23,62 @@
         this.historyLog = Array();
         this._collection = this.context.forecasts.committed;
         this._collection.fetch();
+        this.totals = null;
+        this.previousTotals = null;
         this.render();
         //Add listeners
-        this.layout.context.on("change:selectedUser", function(context, user) { self.userId = user.id; self.buildForecastsCommitted(); } );
-        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.timePeriodId = timePeriod.id; self.buildForecastsCommitted(); });
+        this.layout.context.on("change:selectedUser", function(context, user) { self.userId = user.id, self.fullName = user.full_name; self.updateCommitted(); } );
+        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.timePeriodId = timePeriod.id; self.updateCommitted(); });
         this.layout.context.on("change:updatedTotals", function(context, totals) { self.totals = totals; });
     },
 
+    updateCommitted: function() {
+        this._collection = this.context.forecasts.committed;
+        this._collection.url = this.createURL();
+        this._collection.fetch();
+    },
+
+    createURL: function() {
+        var url = this.url;
+        var args = {};
+        if(this.timePeriodId) {
+           args['timeperiod_id'] = this.timePeriodId;
+        }
+
+        if(this.userId)
+        {
+           args['user_id'] = this.userId;
+        }
+
+        var params = '';
+        _.each(args, function (value, key) {
+            params += '&' + key + '=' + encodeURIComponent(value);
+        });
+
+        if(params)
+        {
+            url += '?' + params.substr(1);
+        }
+
+        return url;
+    },
+
     bindDataChange: function() {
+        if(this._collection)
+        {
+           this._collection.on("reset", this.refresh, this);
+        }
+    },
+
+    refresh: function() {
         var self = this;
-        this.context.on('change:selectedUser', function(context, user) {
-            self.fullName = user.full_name;
-            self._collection = self.context.forecasts.committed;
-            self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
-            self._collection.fetch();
-            self.buildForecastsCommitted();
-        });
-        this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
-            self.timePeriodId = timePeriod.id;
-            self._collection = self.context.forecasts.committed;
-            self._collection.url = app.config.serverUrl + "/Forecasts/committed?timeperiod_id=" + self.timePeriodId + "&user_id=" + self.userId;
-            self._collection.fetch();
-            self.buildForecastsCommitted();
-        });
-        this.context.on('change:updatedTotals', function(context, totals) {
-            self.totals = totals;
-        });
+        $.when(self.buildForecastsCommitted(), self.render());
     },
 
     buildForecastsCommitted: function() {
         var self = this;
         var count = 0;
-        var previous;
+        var previousModel;
 
         //Reset the history log
         self.historyLog = [];
@@ -64,29 +90,30 @@
             {
               self.bestCase = model.get('best_case');
               self.likelyCase = model.get('likely_case');
-              previous = model;
+              previousModel = model;
             } else {
-              var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-              self.previousText = hb({'likely_case' : model.get('likely_case')});
-              self.previousLikelyCase = model.get('likely_case');
-              self.previousBestCase = model.get('best_case');
-              var id = model.get('id');
-              //hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-              self.historyLog.push(self.createHistoryLog(model, previous));
-              previous = model;
+              if(count == 1)
+              {
+                  var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
+                  self.previousText = hb({'likely_case' : model.get('likely_case')});
+                  self.previousLikelyCase = model.get('likely_case');
+                  self.previousBestCase = model.get('best_case');
+              }
+              self.historyLog.push(self.createHistoryLog(model, previousModel));
+              previousModel = model;
             }
+
             count++;
         });
 
-        //Call render again
-        this.render();
+        //debugger;
     },
 
-    createHistoryLog: function(current, previous) {
-        var best_difference = previous.get('best_case') - current.get('best_case');
+    createHistoryLog: function(current, previousModel) {
+        var best_difference = previousModel.get('best_case') - current.get('best_case');
         var best_changed = best_difference != 0;
         var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
-        var likely_difference = previous.get('likely_case') - current.get('likely_case');
+        var likely_difference = previousModel.get('likely_case') - current.get('likely_case');
         var likely_changed = likely_difference != 0;
         var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
         var args = Array();
@@ -118,7 +145,7 @@
         var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
         var current_date = new Date(current.get('date_entered'));
-        var previous_date = new Date(previous.get('date_entered'));
+        var previous_date = new Date(previousModel.get('date_entered'));
 
         var yearDiff = current_date.getYear() - previous_date.getYear();
         var monthsDiff = current_date.getMonth() - previous_date.getMonth();
@@ -144,16 +171,40 @@
         "click a[id=commit_forecast]" : "commitForecast"
     },
 
+    /**
+     * commit the forecast and by creating a forecast entry if the totals have been updated and the new forecast entry
+     * is different from the previous one (best_case and likely_case are not exactly identical)
+     *
+     */
     commitForecast: function() {
         var self = this;
-        var date_entered = new Date();
-        self._collection.add({
-            'date_entered' : date_entered.toString(),
-            'timeperiod_id' : self.totals.timePeriod,
-            'forecast_type' : 'Direct',
-            'best_case' : self.totals.bestCase,
-            'likely_case' : self.totals.likelyCase
-        });
-        self.buildForecastsCommitted();
+
+        if(!self.totals)
+        {
+           return;
+        }
+
+        //If there was a previous entry, check to make sure values have changed
+        if(self.previous &&
+            (self.totals.best_case == self.previous.best_case &&
+             self.totals.likely_case == self.previous.likely_case &&
+             self.totals.timeperiod_id == self.previous.timeperiod_id &&
+             self.totals.forecast_type == self.previous.forecast_type))
+        {
+           return;
+        }
+
+        self._collection.url = app.config.serverUrl + "/Forecasts/committed";
+        var forecast = new Backbone.Model();
+        forecast.set('best_case', self.totals.best_case);
+        forecast.set('likely_case', self.totals.likely_case);
+        forecast.set('timeperiod_id', self.totals.timeperiod_id);
+        forecast.set('forecast_type', self.totals.forecast_type);
+        forecast.set('amount', self.totals.amount);
+        forecast.set('opp_count', self.totals.opp_count);
+        self.previous = self.totals;
+        self._collection.create(forecast);
+        self._collection.url = self.createURL();
+        self._collection.fetch();
     }
 })
