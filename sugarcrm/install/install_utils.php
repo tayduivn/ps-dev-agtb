@@ -862,8 +862,8 @@ function handleSugarConfig() {
     }
 //BEGIN SUGARCRM flav=ent ONLY
     $portalConfig = array(
-        'appId'=>'SupportPortal',
-        'env'=>'dev',
+        'appId' => 'SupportPortal',
+        'env' => 'dev',
         'platform' => 'portal',
         'additionalComponents' => array(
             'header' => array(
@@ -878,7 +878,7 @@ function handleSugarConfig() {
         ),
         'serverUrl' => $sugar_config['site_url'].'/rest/v10',
         'unsecureRoutes' => array('signup', 'error'),
-        "clientID"=> "sugar"
+        'clientID' => 'sugar'
     );
     $configString = json_encode($portalConfig, true);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
