@@ -32,6 +32,13 @@ $viewdefs['Contracts']['DetailView'] = array(
 		array('label' => '10', 'field' => '30'),
 		array('label' => '10', 'field' => '30')
 	),
+	'form' => array(
+		'buttons'=>array(
+			'EDIT', 
+    		'DUPLICATE', 
+    		'DELETE'
+		)
+	),
 ),
 'panels' =>array (
   'lbl_contract_information'=>array(
