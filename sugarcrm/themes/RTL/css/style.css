@@ -496,6 +496,7 @@ direction: rtl;
 .buttons {
 	text-align: right;
 }
+div.action_buttons form, div.action_buttons input { float:right; }
 
 .paginationWrapper {
 	text-align: left;
