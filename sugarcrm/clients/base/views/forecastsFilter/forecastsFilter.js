@@ -18,28 +18,29 @@
     },
 
     buildDropdowns: function(model) {
-        var self = this;
+        var self = this,
+            default_values = {};
         self.$el.find(self.viewSelector).empty();
         _.each(model.attributes, function(data, key) {
-            var chosen = app.view.createField({
+            var modelData = model.get(key),
+                chosen = app.view.createField({
                     def: {
                         name: key,
-                        type: 'enum'
+                        type: 'enum',
+                        options: modelData.options
                     },
                     view: self
                 }),
-                $chosenPlaceholder = $(chosen.getPlaceholder().toString()),
-                modelData = model.get(key);
+                $chosenPlaceholder = $(chosen.getPlaceholder().toString());
 
             self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
             chosen.label = modelData.label;
+            default_values[key] = '';
             if (modelData.default) {
                 chosen.model.set(key, modelData.default);
-            }
-            if (modelData.multiselect) {
-                chosen.def.multi = modelData.multiselect;
+                default_values[key] = modelData.default;
             }
             chosen.def.options = modelData.options;
             chosen.setElement($chosenPlaceholder);
@@ -50,13 +51,8 @@
             } else if (key === 'category') {
                 self.handleCategoryEvents($chosenPlaceholder);
             }
-
-            if (modelData.default) {
-                $chosenPlaceholder.find('select').trigger('change', {
-                    selected: modelData.default
-                });
-            }
         });
+        self.context.set('renderedForecastFilter', default_values);
     },
 
     handleCategoryEvents: function($dropdown) {

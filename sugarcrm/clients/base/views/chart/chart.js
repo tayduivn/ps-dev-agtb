@@ -6,8 +6,18 @@
  */
 ({
 
-    currentUserId: null,
-    url: 'rest/v10/Forecasts/chart',
+    currentUserId:null,
+    currentGrupBy:null,
+    currentTimePeriod:null,
+    currentDataSet:null,
+
+    hasChartOptions:false,
+    hasFilterOptions:false,
+
+    values:{},
+    url:'rest/v10/Forecasts/chart',
+
+    chart: null,
 
     /**
      * Initialize the View
@@ -23,41 +33,60 @@
     /**
      * Listen to changes in selectedUser and selectedTimePeriod
      */
-    bindDataChange: function() {
-        var self = this,
-            chart = null,
-            currentTimePeriod = null;
+    bindDataChange:function () {
+        var self = this;
 
-        this.context.on('change:selectedUser', function(context, user) {
-            self.currentUserId = user.id;
-            self.renderChart(chart, currentTimePeriod);
+        this.context.on('change:selectedUser', function (context, user) {
+            self.handleRenderOptions({user_id: user.id});
         });
-        this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
-            currentTimePeriod = timePeriod.id;
-            self.renderChart(chart, currentTimePeriod);
+        this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
+            self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
+        this.context.on('change:selectedGroupBy', function (context, groupBy) {
+            self.handleRenderOptions({group_by: groupBy.id});
+        });
+        this.context.on('change:selectedDataSet', function (context, dataset) {
+            self.handleRenderOptions({dataset: dataset.id});
+        })
+
+        this.context.on('change:renderedForecastFilter', function (context, value) {
+            self.hasFilterOptions = true;
+            self.handleRenderOptions(value);
+        })
+
+        this.context.on('change:renderedChartOptions', function (context, value) {
+            self.hasChartOptions = true;
+            self.handleRenderOptions(value);
+        })
+    },
+
+    handleRenderOptions:function (options) {
+        var self = this;
+        _.each(options, function (value, key) {
+            self.values[key] = value;
+        });
+
+        if (self.hasChartOptions && self.hasFilterOptions) {
+            self.renderChart();
+        }
     },
 
     /**
      * Initialize or update the chart
      */
-    renderChart: function(chart, currentTimePeriod) {
-        if (currentTimePeriod) {
-            if (chart === null) {
-                chart = this._initializeChart(currentTimePeriod);
-            } else {
-                updateChart(this.url, chart, {
-                    user: this.currentUserId,
-                    tp: currentTimePeriod
-                });
-            }
+    renderChart:function () {
+        console.log("running renderChart Method");
+        if (this.chart === null) {
+            this.chart = this._initializeChart();
+        } else {
+            updateChart(this.url, this.chart, this.values);
         }
     },
 
     /**
      * Render the chart for the first time
      */
-    _initializeChart: function (currentTimePeriod) {
+    _initializeChart:function () {
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
@@ -77,10 +106,7 @@
                 "dataPointSize":"5"
             };
         app.view.View.prototype.render.call(this);
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, {
-            user: this.currentUserId,
-            tp: currentTimePeriod
-        });
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
     }
 

@@ -69,7 +69,7 @@ class ForecastsFiltersApi extends ModuleApi {
         $app_list_strings = return_app_list_strings_language($current_language);
 
         return array(
-            'timeperiods' => array(
+            'timeperiod_id' => array(
                 'label' => 'Forecast Period:',
                 'default' => TimePeriod::getCurrentId(),
                 'options' => TimePeriod::get_timeperiods_dom(),
@@ -89,20 +89,22 @@ class ForecastsFiltersApi extends ModuleApi {
         // placeholder for filters
         // todo: really make this work
         return array(
-            'groupby' => array(
+            'group_by' => array(
                 'label' => 'Group By:',
+                'default' => 'sales_stage',
                 'options' => array(
-                    'y0' => 'Forecast Category',
-                    'y1' => 'Sales Stage',
-                    'y2' => 'Probability'
+                    'forecast' => 'Forecast Category',
+                    'sales_stage' => 'Sales Stage',
+                    'probability' => 'Probability'
                 ),
             ),
             'dataset' => array(
                 'label' => 'Data Set:',
+                'default' => 'likely',
                 'options' => array(
-                    'x0' => 'Likely',
-                    'x1' => 'Best',
-                    'x2' => 'Worst'
+                    'likely' => 'Likely',
+                    'best' => 'Best',
+                    'worst' => 'Worst'
                 ),
             )
         );
