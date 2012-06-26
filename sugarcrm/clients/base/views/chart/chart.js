@@ -22,7 +22,7 @@
     },
 
     /**
-     * Listen to changes in selectedUser and selectedTimePeriod
+     * Listen to changes in values in the context
      */
     bindDataChange: function() {
         var self = this,
@@ -40,15 +40,25 @@
             self.filters.c = category.id;
             self.renderChart(chart);
         });
+        this.context.on('change:selectedGroupBy', function(context, groupby) {
+            self.filters.gb = groupby.id;
+            self.renderChart(chart);
+        });
+        this.context.on('change:selectedDataSet', function(context, dataset) {
+            self.filters.ds = dataset.id;
+            self.renderChart(chart);
+        });
     },
 
     /**
      * Initialize or update the chart
+     *
+     * @param chart
      */
     renderChart: function(chart) {
         var loadingMessage;
 
-        if (this.filters.tp && this.filters.c) {
+        if (this._isFilterValid()) {
             loadingMessage= SUGAR.App.alert.show('loading', {level: 'process', messages: 'Loading...'});
             if (chart === null) {
                 chart = this._initializeChart(function() {
@@ -63,7 +73,25 @@
     },
 
     /**
+     * Does filter have all the values that it needs?
+     *
+     * @return {Boolean}
+     * @private
+     */
+    _isFilterValid: function() {
+        if (this.filters.tp && this.filters.c && this.filters.gb) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    /**
      * Render the chart for the first time
+     *
+     * @param callback
+     * @return {Object}
+     * @private
      */
     _initializeChart: function (callback) {
         var chart,

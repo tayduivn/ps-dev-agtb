@@ -91,6 +91,7 @@ class ForecastsFiltersApi extends ModuleApi {
         return array(
             'groupby' => array(
                 'label' => 'Group By:',
+                'default' => 'y1',
                 'options' => array(
                     'y0' => 'Forecast Category',
                     'y1' => 'Sales Stage',
