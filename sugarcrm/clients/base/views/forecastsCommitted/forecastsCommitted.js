@@ -82,6 +82,7 @@
 
         //Reset the history log
         self.historyLog = [];
+        self.moreLog = [];
 
         _.each(self._collection.models, function(model)
         {
@@ -102,11 +103,14 @@
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
             }
-
             count++;
         });
 
-        //debugger;
+        //Slice everything after the second element
+        if(self.historyLog.length > 2)
+        {
+           self.moreLog = self.historyLog.splice(2, self.historyLog.length);
+        }
     },
 
     createHistoryLog: function(current, previousModel) {
