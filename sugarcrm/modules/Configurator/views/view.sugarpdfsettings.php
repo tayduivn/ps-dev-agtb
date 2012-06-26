@@ -143,7 +143,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
     private function checkUploadImage()
     {
         $error="";
-        $files = array('sugarpdf_pdf_header_logo'=>$_FILES['new_header_logo'], 'sugarpdf_pdf_small_header_logo'=>$_FILES['new_small_header_logo']);
+        $files = array('sugarpdf_pdf_small_header_logo'=>$_FILES['new_small_header_logo']);
         foreach($files as $k=>$v){
             if(empty($error) && isset($v) && !empty($v['name'])){
                 $file_name = K_PATH_CUSTOM_IMAGES .'pdf_logo_'. basename($v['name']);

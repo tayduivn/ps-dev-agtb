@@ -133,10 +133,6 @@ $admin_option_defs['Administration']['scheduler'] = array('Schedulers','LBL_SUGA
 $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LBL_SUGARFEED_SETTINGS','LBL_SUGARFEED_SETTINGS_DESC','./index.php?module=SugarFeed&action=AdminSettings');
 
 //BEGIN SUGARCRM flav=pro ONLY
-$admin_option_defs['Administration']['sugarpdf']= array('icon_AdminPDF','LBL_SUGARPDF_SETTINGS','LBL_SUGARPDF_SETTINGS_DESC','./index.php?module=Configurator&action=SugarpdfSettings');
-//END SUGARCRM flav=pro ONLY
-
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['pdfmanager']= array('icon_PdfManager','LBL_PDFMANAGER_SETTINGS','LBL_PDFMANAGER_SETTINGS_DESC','./index.php?module=PdfManager&action=index');
 //END SUGARCRM flav=pro ONLY
 

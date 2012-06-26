@@ -54,6 +54,7 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'My PDF Templates',
   'LNK_NEW_RECORD' => 'Create PDF Template',
   'LNK_LIST' => 'View PDF Templates',
+  'LNK_REPORT_CONFIG' => 'Manage Report PDF Template',
   'LNK_IMPORT_PDFMANAGER' => 'Import PDF Templates',
   'LBL_SEARCH_FORM_TITLE' => 'Search PDF Manager',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
