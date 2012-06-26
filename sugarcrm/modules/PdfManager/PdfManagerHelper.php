@@ -50,7 +50,6 @@ class PdfManagerHelper
         $studio_browser = new StudioBrowser();
         $studio_browser->loadModules();
         $studio_modules = array_keys($studio_browser->modules);
-        $available_modules = array('Reports' => isset($module_names[strtolower('Reports')]) ? $module_names[strtolower('Reports')] : strtolower('Reports'));
         foreach ($studio_modules as $module_name) {
             $available_modules[$module_name] = isset($module_names[strtolower($module_name)]) ? $module_names[strtolower($module_name)] : strtolower($module_name);
         }

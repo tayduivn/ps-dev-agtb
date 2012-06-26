@@ -63,7 +63,6 @@ class PdfManager extends Basic
     public $published;
     public $field;
     public $body_html;
-    public $header_image;
     public $title;
     public $subject;
     public $keywords;

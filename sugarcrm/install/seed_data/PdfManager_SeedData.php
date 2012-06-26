@@ -63,23 +63,3 @@ $pdfTemplate->deleted = 0;
 $pdfTemplate->team_id = 1;
 $pdfTemplate->save();
 
-
-$pdfTemplateImageId = create_guid();
-$file = 'themes/default/images/' . PDF_SMALL_HEADER_LOGO;
-$newfile = "upload://$pdfTemplateImageId";
-@copy($file, $newfile);
-
-$pdfTemplate = new PdfManager();
-$pdfTemplate->base_module = 'Reports';
-$pdfTemplate->name = $mod_strings['pdf_template_reports']['name'];
-$pdfTemplate->description = $mod_strings['pdf_template_reports']['description'];
-$pdfTemplate->header_image = $pdfTemplateImageId;
-$pdfTemplate->header_image_ext = substr(strrchr(PDF_SMALL_HEADER_LOGO, '.'), 1);
-$pdfTemplate->author = PDF_AUTHOR;
-$pdfTemplate->title = PDF_HEADER_TITLE;
-$pdfTemplate->subject = PDF_SUBJECT;
-$pdfTemplate->keywords = PDF_KEYWORDS;
-$pdfTemplate->published = 'yes';
-$pdfTemplate->deleted = 0;
-$pdfTemplate->team_id = 1;
-$pdfTemplate->save();

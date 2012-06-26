@@ -112,16 +112,6 @@ array (
             'customCode' => '{$fields.body_html.value|from_html}',
           ),
         ),
-        5 =>
-        array (
-          0 =>
-          array (
-            'name' => 'header_image',
-            'studio' => 'visible',
-            'label' => 'LBL_HEADER_IMAGE',
-          ),
-          1 => '',
-        ),
       ),
       'lbl_editview_panel1' =>
       array (

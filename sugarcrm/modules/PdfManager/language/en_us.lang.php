@@ -64,7 +64,6 @@ $mod_strings = array (
   'LBL_PUBLISHED' => 'Published',
   'LBL_FIELD' => 'Field',
   'LBL_BODY_HTML' => 'Template',
-  'LBL_HEADER_IMAGE' => 'Header image',
   'LBL_EDITVIEW_PANEL1' => 'PDF Document Properties',
   'LBL_TITLE' => 'Title',
   'LBL_SUBJECT' => 'Subject',

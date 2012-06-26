@@ -123,14 +123,6 @@ array (
             'popupHelp' => 'LBL_BODY_HTML_POPUP_HELP',
           ),
         ),
-        5 =>
-        array (
-          0 =>
-          array (
-            'name' => 'header_image',
-            'label' => 'LBL_HEADER_IMAGE',
-          ),
-        ),
       ),
       'lbl_editview_panel1' =>
       array (

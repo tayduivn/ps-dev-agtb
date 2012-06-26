@@ -1021,11 +1021,6 @@ $contact_user_link_guid',
         ',
     ),
 
-    'pdf_template_reports' => array(
-        'name' => 'Report Template',
-        'description' => 'This template is used to print Report in PDF.',
-        'body_html' => '',
-    ),
     //END SUGARCRM flav=pro ONLY
   
 );

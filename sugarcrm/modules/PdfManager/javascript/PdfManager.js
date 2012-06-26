@@ -41,10 +41,6 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
         alert(SUGAR.language.get('PdfManager', 'LBL_ALERT_SWITCH_BASE_MODULE'));
     }
 
-    if (moduleName.length > 0 && moduleName.indexOf('Reports') == 0) {
-        return true;
-    }
-
     if (linkName.length > 0 && linkName.indexOf('pdfManagerRelateLink_') == -1) {
         $('#subField').empty();
         $('#subField').hide();
