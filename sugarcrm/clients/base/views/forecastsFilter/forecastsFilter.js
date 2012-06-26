@@ -46,7 +46,7 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            if (key === 'timeperiods') {
+            if (key === 'timeperiod_id') {
                 self.handleTimePeriodEvents($chosenPlaceholder);
             } else if (key === 'category') {
                 self.handleCategoryEvents($chosenPlaceholder);

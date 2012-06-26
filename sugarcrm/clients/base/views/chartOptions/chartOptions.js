@@ -46,7 +46,7 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            if (key === 'groupby') {
+            if (key === 'group_by') {
                 self.handleGroupByEvents($chosenPlaceholder);
             } else if (key === 'dataset') {
                 self.handleDataSetEvents($chosenPlaceholder);
