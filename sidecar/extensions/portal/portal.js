@@ -1027,41 +1027,6 @@
     });
 
     /**
-     * Upload attachments of the bean to the server
-     *
-     * This method must be called after the bean has been saved to the server (in `success` callback)
-     *
-     * @param {String} module module name
-     * @param {String} fieldName the field that contains the attachement
-     * @param {Array} $files `file` type inputs to upload
-     * @param {callbacks} callbacks(optional) success and error callbacks
-     */
-    // TODO: This piece of code may move in the core files
-    app.Bean.prototype.uploadAttachment = function(module, fieldName, $files, callbacks) {
-
-        callbacks = callbacks || {};
-
-        this.fileField = fieldName;
-
-        // process the upload
-        return app.api.attachment('create', this, $files, {
-            success: function(rsp, textStatus, xhr) {
-                var responseText, rspField = rsp[fieldName];
-                if (rspField) {
-                    //success
-                    if (callbacks.success) callbacks.success(rsp);
-                } else {
-                    //error
-                    if (callbacks.error) callbacks.error(xhr, rsp.xhr.message);
-                }
-            },
-            error: function(xhr) {
-                if (callbacks.error) callbacks.error(xhr, xhr.responseText);
-            }
-        });
-    };
-
-    /**
      * Checks if there are `file` type fields in the view. If yes, process upload of the files
      *
      * @param {Object} model Model
@@ -1071,8 +1036,6 @@
     app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
 
         callbacks = callbacks || {};
-
-        var self = this;
 
         //check if there are attachments
         var $files = _.filter($(":file"), function(file) {
@@ -1089,7 +1052,7 @@
             for (var file in $files) {
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
-                model.uploadAttachment(self.module, fileField, $file, {
+                model.uploadFile(fileField, $file, {
                     success: function() {
                         filesToUpload--;
                         if (filesToUpload==0) {
@@ -1097,13 +1060,13 @@
                             if (callbacks.success) callbacks.success();
                         }
                     },
-                    error: function(xhr, responseText) {
+                    error: function(error) {
                         filesToUpload--;
                         if (filesToUpload==0) {
                             app.alert.dismiss('upload');
                         }
                         var errors = {};
-                        errors[responseText] = {};
+                        errors[error.responseText] = {};
                         model.trigger('error:validation:' + fileField, errors);
                         model.trigger('error:validation');
                     }

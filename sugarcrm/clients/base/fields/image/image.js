@@ -3,7 +3,11 @@
     _render: function() {
         app.view.Field.prototype._render.call(this);
         this.model.fileField = this.name;
-        this.fileURL = (this.value) ? app.api.buildAttachmentURL(this.model) : "";
+        this.fileURL = (this.value) ? app.api.buildFileURL({
+            module: this.module,
+            id: this.model.id,
+            field: this.name
+        }) : "";
         app.view.Field.prototype._render.call(this);
         return this;
     },
