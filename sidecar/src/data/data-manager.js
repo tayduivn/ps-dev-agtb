@@ -622,11 +622,11 @@
                 if (options.success) options.success(data);
             };
 
-            var error = function(xhr, error) {
-                app.error.handleHttpError(xhr, error, model);
+            var error = function(error) {
+                app.error.handleHttpError(error, model);
 
                 self.trigger("data:sync:end", method, model, options, error);
-                if (options.error) options.error(xhr, error);
+                if (options.error) options.error(error);
             };
 
             var callbacks = {
