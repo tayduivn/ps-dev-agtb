@@ -42,13 +42,20 @@
      * Initialize or update the chart
      */
     renderChart: function(chart, currentTimePeriod) {
+        var loadingMessage;
+
         if (currentTimePeriod) {
+            loadingMessage= SUGAR.App.alert.show('loading', {level: 'process', messages: 'Loading...'});
             if (chart === null) {
-                chart = this._initializeChart(currentTimePeriod);
+                chart = this._initializeChart(currentTimePeriod, function() {
+                    loadingMessage.close();
+                });
             } else {
-                updateChart(this.url, chart, {
+                SUGAR.charts.update(chart, this.url, {
                     user: this.currentUserId,
                     tp: currentTimePeriod
+                }, function() {
+                    loadingMessage.close();
                 });
             }
         }
@@ -57,7 +64,7 @@
     /**
      * Render the chart for the first time
      */
-    _initializeChart: function (currentTimePeriod) {
+    _initializeChart: function (currentTimePeriod, callback) {
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
@@ -80,7 +87,7 @@
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, {
             user: this.currentUserId,
             tp: currentTimePeriod
-        });
+        }, callback);
         return chart.chartObject;
     }
 
