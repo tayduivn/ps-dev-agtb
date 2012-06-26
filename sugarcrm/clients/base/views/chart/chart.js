@@ -6,11 +6,6 @@
  */
 ({
 
-    currentUserId:null,
-    currentGrupBy:null,
-    currentTimePeriod:null,
-    currentDataSet:null,
-
     hasChartOptions:false,
     hasFilterOptions:false,
 
@@ -27,7 +22,7 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.currentUserId = app.user.get('id');
+        this.handleRenderOptions({user_id: app.user.get('id')});
     },
 
     /**
@@ -86,7 +81,6 @@
     /**
      * Render the chart for the first time
      *
-     * @param callback
      * @return {Object}
      * @private
      */
