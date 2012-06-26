@@ -40,7 +40,7 @@ class RestTestClearCache extends RestTestBase {
     public function tearDown()
     {
         foreach($this->files AS $file) {
-            unlink($file);
+            //unlink($file);
         }
     }
 
@@ -48,10 +48,10 @@ class RestTestClearCache extends RestTestBase {
         if(!is_dir('custom/include/api')) {
             mkdir('custom/include/api',0,true);
         }
-        $file = 'custom/include/api/PingApi.php';
+        $file = 'custom/include/api/PongApi.php';
         $file_contents = <<<EOQ
 <?php
-class PingApi extends SugarApi {
+class PongApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'ping' => array(
@@ -70,11 +70,12 @@ class PingApi extends SugarApi {
 }
 EOQ;
         
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+
         file_put_contents($file, $file_contents);
 
         // verify ping
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
         
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');
@@ -90,6 +91,9 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
+        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache");
+
+
         // verify pong is there now
         $replyPong = $this->_restCall('ping');
         $this->assertEquals('ping', $replyPong['reply']);
