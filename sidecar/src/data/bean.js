@@ -183,7 +183,7 @@
                         if (rspField) {
                             if (callbacks.success) callbacks.success(data);
                         } else {
-                            var error = new SUGAR.HttpError(xhr);
+                            var error = new SUGAR.Api.HttpError(xhr);
                             error.responseText = data.xhr ? data.xhr.message : error.responseText;
                             if (callbacks.error) callbacks.error(error);
                         }
