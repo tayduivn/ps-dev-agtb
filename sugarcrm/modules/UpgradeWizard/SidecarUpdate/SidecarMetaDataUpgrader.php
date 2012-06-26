@@ -1,8 +1,32 @@
 <?php
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
+/**
+ * Handles migration of wireless and portal metadata for pre-6.6 modules into 6.6+
+ * formats. Looks for the following metadata to migrate and remove legacy versions of:
+ *  - custom, history and working portal module metadata
+ *  - custom, history and working wireless metadata
+ *  - base, custom, history and working for deployed and undeployed custom modules wireless metadata
+ *  
+ * Also looks for the following metadata to remove legacy versions of:
+ *  - All OOTB module wireless metadata (will be replaced on upgrade)
+ *  - All SugarObject templates wireless metadata (will be replaced on upgrade)
+ * 
+ * This upgrader should be the last of the upgraders run as it relies on files that
+ * are new to 6.6. As part of this upgrader will handle setting of files to be 
+ * removed, which will be handled by 
+ * ../build/scripts_for_patch/files_to_remove/UpgradeRemoval66x.php
+ */
 class SidecarMetaDataUpgrader
 {
+    /**
+     * Files to be removed by the upgrader after handling the processing of this
+     * script
+     * 
+     * @var array
+     */
+    protected static $filesForRemoval = array();
+
     /**
      * Listing of modules that need to be upgraded
      * 
@@ -15,14 +39,14 @@ class SidecarMetaDataUpgrader
      * 
      * @var array
      */
-    protected $deployedModules = array();
+    //protected $deployedModules = array();
     
     /**
      * The types of metadata files to be upgraded
      *
      * @var array
      */
-    protected $fileTypes = array('custom', 'history', 'working',);
+    //protected $fileTypes = array('custom', 'history', 'working',);
 
     /**
      * The list of paths for both portal and wireless viewdefs under the legacy
@@ -236,11 +260,20 @@ class SidecarMetaDataUpgrader
                     $classfile = $class . '.php';
                     require_once $classfile;
                 }
+                
                 $upgrader = new $class($this, $file);
-                $upgrader->upgrade();
-                $upgrader->cleanupLegacyFiles();
+                
+                // If the upgrade worked for this file, add it to the remove stack
+                if ($upgrader->upgrade()) {
+                    if (!in_array($file['fullpath'], self::$filesForRemoval)) {
+                        self::$filesForRemoval[] = $file['fullpath'];
+                    }
+                }
             }
         }
+        
+        // Add the rest of the OOTB module wireless metadata files to the stack
+        $this->cleanupLegacyFiles();
     }
     
     /**
@@ -395,5 +428,61 @@ class SidecarMetaDataUpgrader
         }
         
         return false;
+    }
+    
+    /**
+     * Adds to the stack of files for removal all wireless metadata that is 
+     * currently living in OOTB modules and in all of the SugarObject templates
+     * metadata directories.
+     */
+    protected function cleanupLegacyFiles() {
+        // In addition to all of the files we already worked on, we need to include
+        // the OOTB wireless metadata files that fit the bill.
+        $moduledirs = glob('modules/*', GLOB_ONLYDIR);
+        foreach ($moduledirs as $moduledir) {
+            $files = glob("$moduledir/metadata/*.php");
+            foreach ($files as $filepath) {
+                $filename = basename($filepath);
+                
+                // Handle history files and such
+                if (is_numeric(substr($filename, -4))) {
+                    $filename = substr($filename, 0, strpos('.php', $filename));
+                } else {
+                    $filename = basename($filename, '.php');
+                }
+                
+                // If this file name is an upgrade file and it hasn't been stacked, stack it
+                if (in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($filepath, self::$filesForRemoval)) {
+                    self::$filesForRemoval[] = $filepath;
+                }
+            }
+        }
+        
+        // And lastly we need to handle SugarObject Templates
+        $path = 'include/SugarObjects/templates/';
+        $SugarObjectsPaths = glob($path . '*', GLOB_ONLYDIR);
+        foreach ($SugarObjectsPaths as $objPath) {
+            $path = "$objPath/metadata/";
+            $files = glob($path . '*.php');
+            foreach ($files as $file) {
+                $filename = basename($file, '.php');
+                
+                // If this file name is an upgrade file and it hasn't been stacked, stack it
+                if (in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($file, self::$filesForRemoval)) {
+                    self::$filesForRemoval[] = $file;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Gets a listing of all files that will need to be removed as part of the 
+     * metadata upgrade to 6.6
+     * 
+     * @static
+     * @return array
+     */
+    public static function getFilesForRemoval() {
+        return self::$filesForRemoval;
     }
 }

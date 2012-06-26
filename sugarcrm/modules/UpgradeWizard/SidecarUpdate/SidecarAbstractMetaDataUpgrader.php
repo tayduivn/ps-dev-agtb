@@ -205,6 +205,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         
         // Make the new file
         //return $this->save($newname, $content);
+        return true;
     }
     
     /**
@@ -285,15 +286,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     }
     
     /**
-     * Handles the legacy metadata files that might be lingering around. For now,
-     * simply changes the name of the original legacy file to $filename.bak
+     * For custom modules, gets the module name as it is represented to the app. 
+     * Deployed module names will be PackageKey_ModuleName. Undeployed will just
+     * be ModuleName.
      * 
-     * @return boolean
+     * @return string
      */
-    public function cleanupLegacyFiles() {
-        //return rename($this->fullpath, $this->fullpath . '.bak');
-    }
-    
     public function getNormalizedModuleName() {
         return isset($this->modulename) ? $this->modulename : $this->module;
     }

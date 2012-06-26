@@ -25,12 +25,88 @@
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 
 class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
+    protected $legacyFilePaths = array(
+        'portal' => array(
+            'custom'  => 'custom/portal/',
+            'history' => 'custom/portal/',
+            'working' => 'custom/working/portal/',
+        ),
+        'wireless' => array(
+            'custom'  => 'custom/',
+            'history' => 'custom/history/',
+            'working' => 'custom/working/',
+        ),
+    );
+    
+    protected $modulesToTest = array(
+        'portal' => array(
+            'Bugs' => array('edit', 'list'), 
+            'Cases' => array('detail', 'search'), 
+            'Leads' => array('edit', 'detail', 'list'),
+        ),
+        'wireless' => array(
+            'Accounts' => array('list'), 
+            'Bugs' => array('edit', 'detail'), 
+            'Calls' => array('edit', 'list', 'detail'), 
+            'Notes' => array('edit', 'search'),
+        ),
+    );
+    
+    protected $builder;
+    
     public function setup() {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $this->builder = new SidecarMetaDataFileBuilder();
+        foreach ($this->modulesToTest as $client => $modules) {
+            foreach ($modules as $module => $viewtypes) {
+                foreach ($this->legacyFilePaths[$client] as $paths) {
+                    foreach ($paths as $type => $path) {
+                        $this->builder->buildFile($path, $module, $type, $client);
+                    }
+                }
+            }
+        }
+    }
+    
+    public function tearDown() {
+        $this->builder->teardownFiles();
     }
     
     public function testLegacyMetadataLocations() {
         $upgrader = new SidecarMetaDataUpgrader();
         $upgrader->upgrade();
+    }
+}
+
+class SidecarMetaDataFileBuilder {
+    private $existing = array();
+    private $files = array();
+
+    /**
+     * Maps of old metadata file names
+     *
+     * @var array
+     */
+    protected $legacyMetaDataFileNames = array(
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        'wirelessedit'   => 'wireless.editviewdefs',
+        'wirelessdetail' => 'wireless.detailviewdefs',
+        'wirelesslist'   => 'wireless.listviewdefs',
+        'wirelesssearch' => 'wireless.searchdefs',
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        'portaledit'     => 'editviewdefs',
+        'portaldetail'   => 'detailviewdefs',
+        'portallist'     => 'listviewdefs',
+        'portalsearch'   => 'searchformdefs',
+        //END SUGARCRM flav=ent ONLY
+    );
+    
+    public function buildFile($path, $module, $viewtype, $client) {
+        $file = "{$path}modules/$module/metadata/{$this->legacyMetaDataFileName[$client.$viewtype]}";
+    }
+    
+    public function teardownFiles() {
+        
     }
 }
