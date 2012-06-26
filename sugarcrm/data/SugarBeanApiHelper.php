@@ -27,11 +27,6 @@ require_once('include/SugarFields/SugarFieldHandler.php');
  */
 class SugarBeanApiHelper
 {
-    function __construct(SugarBean $bean)
-    {
-        $this->bean = $bean;
-    }
-
     /**
      * Formats the bean so it is ready to be handed back to the API's client. Certian fields will get extra processing
      * to make them easier to work with from the client end.
@@ -41,14 +36,14 @@ class SugarBeanApiHelper
      * @param $options array Currently no options are supported
      * @return array The bean in array format, ready for passing out the API to clients.
      */
-    public function getFormattedBean(array $fieldList = array(), array $options = array() )
+    public function getFormattedBean(SugarBean $bean, array $fieldList = array(), array $options = array() )
     {
         $sfh = new SugarFieldHandler();
 
         $data = array();
-        foreach ( $this->bean->field_defs as $fieldName => $properties ) {
+        foreach ( $bean->field_defs as $fieldName => $properties ) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$this->bean->ACLFieldAccess($fieldName,'read') ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
                 // No read access to this field, skip it.
                 continue;
             }
@@ -65,12 +60,12 @@ class SugarBeanApiHelper
             }
             $field = $sfh->getSugarField($type);
             
-            if ( $field != null && isset($this->bean->$fieldName) ) {
+            if ( $field != null && isset($bean->$fieldName) ) {
                 if ( method_exists($field,'apiFormatField') ) {
-                    $field->apiFormatField($data, $this->bean, $options, $fieldName, $properties);
+                    $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
                 } else {
-                    if ( isset($this->bean->$fieldName) ) {
-                        $data[$fieldName] = $this->bean->$fieldName;
+                    if ( isset($bean->$fieldName) ) {
+                        $data[$fieldName] = $bean->$fieldName;
                     } else {
                         $data[$fieldName] = '';
                     }
@@ -78,9 +73,9 @@ class SugarBeanApiHelper
             }
         }
 
-        if (isset($this->bean->field_defs['email']) &&
+        if (isset($bean->field_defs['email']) &&
             (empty($fieldList) || in_array('email',$fieldList))) {
-                $emailsRaw = $this->bean->emailAddress->getAddressesByGUID($this->bean->id, $this->bean->module_name);
+                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
                 $emails = array();
                 $emailProps = array(
                     'email_address',
@@ -106,25 +101,25 @@ class SugarBeanApiHelper
     /**
      * This function 
      *
-     * @param $this->bean SugarBean The bean you want populated from the $submittedData array, this function will modify this
+     * @param $bean SugarBean The bean you want populated from the $submittedData array, this function will modify this
      *                        record
      * @param $submittedData array The data that was passed in from the client to update/create this record
      * @param $options array Options to pass in to the populateFromApi function, look at SugarBeanApiHelper:populateFromApi
      *                       for more information
      * @return array An array of validation errors, or true if the submitted data appeared to be correct
      */
-    public function populateFromApi(array $submittedData, array $options = array() )
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array() )
     {
         $sfh = new SugarFieldHandler();
 
-        foreach ( $this->bean->field_defs as $fieldName => $properties ) {
+        foreach ( $bean->field_defs as $fieldName => $properties ) {
             if ( !isset($submittedData[$fieldName]) ) {
                 // They aren't trying to modify this field
                 continue;
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$this->bean->ACLFieldAccess($fieldName,'save') ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
                 // No write access to this field, but they tried to edit it
                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
             }
@@ -134,7 +129,7 @@ class SugarBeanApiHelper
             $field = $sfh->getSugarField($type);
             
             if ( $field != null ) {
-                $field->save($this->bean, $submittedData, $fieldName, $properties);
+                $field->save($bean, $submittedData, $fieldName, $properties);
             }
         }
 
