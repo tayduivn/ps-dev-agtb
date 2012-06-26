@@ -105,3 +105,9 @@ class SugarApiExceptionRequestMethodFailure extends SugarApiException
     public $errorLabel = 'request_failure';
     public $description = "The requested method failed.";
 }
+class SugarApiExceptionRequestTooLarge extends SugarApiException
+{
+    public $httpCode = 413;
+    public $errorLabel = 'request_too_large';
+    public $description = "The request is too large to process.";
+}

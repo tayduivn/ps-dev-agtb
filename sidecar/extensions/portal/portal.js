@@ -909,20 +909,20 @@
         }
 
         // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
-        if(route === 'index') {
+        if (route === 'index') {
             dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
             if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
                 app.router.list(dm);
-            } else if(app.acl.hasAccess('read', 'Home')) {
+            } else if (app.acl.hasAccess('read', 'Home')) {
                 app.router.index();
             } else {
                 alertUser();
                 return false;
             }
-        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
-        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if (!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
-            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            alertUser("Issue loading " + args[0] + " module. Please try again later or contact support.");
             return false;
         }
         return true;
@@ -1025,5 +1025,94 @@
         // Register portal specific routes
         app.router.route("signup", "signup", _rrh.signup);
     });
+
+    /**
+     * Upload attachments of the bean to the server
+     *
+     * This method must be called after the bean has been saved to the server (in `success` callback)
+     *
+     * @param {String} module module name
+     * @param {String} fieldName the field that contains the attachement
+     * @param {Array} $files `file` type inputs to upload
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.Bean.prototype.uploadAttachment = function(module, fieldName, $files, callbacks) {
+
+        callbacks = callbacks || {};
+
+        this.fileField = fieldName;
+
+        // process the upload
+        return app.api.attachment('create', this, $files, {
+            success: function(rsp, textStatus, xhr) {
+                var responseText, rspField = rsp[fieldName];
+                if (rspField) {
+                    //success
+                    if (callbacks.success) callbacks.success(rsp);
+                } else {
+                    //error
+                    if (callbacks.error) callbacks.error(xhr, rsp.xhr.message);
+                }
+            },
+            error: function(xhr) {
+                if (callbacks.error) callbacks.error(xhr, xhr.responseText);
+            }
+        });
+    };
+
+    /**
+     * Checks if there are `file` type fields in the view. If yes, process upload of the files
+     *
+     * @param {Object} model Model
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+
+        callbacks = callbacks || {};
+
+        var self = this;
+
+        //check if there are attachments
+        var $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+        var filesToUpload = $files.length;
+
+        //process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
+
+            //field by field
+            for (var file in $files) {
+                var $file = $($files[file]),
+                    fileField = $file.attr("name");
+                model.uploadAttachment(self.module, fileField, $file, {
+                    success: function() {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                            if (callbacks.success) callbacks.success();
+                        }
+                    },
+                    error: function(xhr, responseText) {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                        }
+                        var errors = {};
+                        errors[responseText] = {};
+                        model.trigger('error:validation:' + fileField, errors);
+                        model.trigger('error:validation');
+                    }
+                });
+            }
+        }
+        else {
+            if (callbacks.success) callbacks.success();
+        }
+    }
 
 })(SUGAR.App);
