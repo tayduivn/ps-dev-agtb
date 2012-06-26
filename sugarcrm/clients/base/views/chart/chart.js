@@ -7,6 +7,7 @@
 ({
 
     currentUserId: null,
+    filters: {},
     url: 'rest/v10/Forecasts/chart',
 
     /**
@@ -17,7 +18,7 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.currentUserId = app.user.get('id');
+        this.filters.user = app.user.get('id');
     },
 
     /**
@@ -25,36 +26,36 @@
      */
     bindDataChange: function() {
         var self = this,
-            chart = null,
-            currentTimePeriod = null;
+            chart = null;
 
         this.context.on('change:selectedUser', function(context, user) {
-            self.currentUserId = user.id;
-            self.renderChart(chart, currentTimePeriod);
+            self.filters.user = user.id;
+            self.renderChart(chart);
         });
         this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
-            currentTimePeriod = timePeriod.id;
-            self.renderChart(chart, currentTimePeriod);
+            self.filters.tp = timePeriod.id;
+            self.renderChart(chart);
+        });
+        this.context.on('change:selectedCategory', function(context, category) {
+            self.filters.c = category.id;
+            self.renderChart(chart);
         });
     },
 
     /**
      * Initialize or update the chart
      */
-    renderChart: function(chart, currentTimePeriod) {
+    renderChart: function(chart) {
         var loadingMessage;
 
-        if (currentTimePeriod) {
+        if (this.filters.tp && this.filters.c) {
             loadingMessage= SUGAR.App.alert.show('loading', {level: 'process', messages: 'Loading...'});
             if (chart === null) {
-                chart = this._initializeChart(currentTimePeriod, function() {
+                chart = this._initializeChart(function() {
                     loadingMessage.close();
                 });
             } else {
-                SUGAR.charts.update(chart, this.url, {
-                    user: this.currentUserId,
-                    tp: currentTimePeriod
-                }, function() {
+                SUGAR.charts.update(chart, this.url, this.filters, function() {
                     loadingMessage.close();
                 });
             }
@@ -64,7 +65,7 @@
     /**
      * Render the chart for the first time
      */
-    _initializeChart: function (currentTimePeriod, callback) {
+    _initializeChart: function (callback) {
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
@@ -84,10 +85,7 @@
                 "dataPointSize":"5"
             };
         app.view.View.prototype.render.call(this);
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, {
-            user: this.currentUserId,
-            tp: currentTimePeriod
-        }, callback);
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.filters, callback);
         return chart.chartObject;
     }
 
