@@ -34,60 +34,27 @@ class ApiHelper
      * @param $bean SugarBean Grab the helper module for this bean
      * @returns SugarBeanApiHelper A API helper class for beans
      */
-    protected static function findHelperForBean(SugarBean $bean) {
+    public static function getHelper(SugarBean $bean) {
         $module = $bean->module_dir;
-        if ( isset(self::$moduleHelpers[$module]) ) {
-            return self::$moduleHelpers[$module];
-        }
+        if ( !isset(self::$moduleHelpers[$module]) ) {
         
-        require_once('data/SugarBeanApiHelper.php');
-        $moduleHelperClass = 'SugarBeanApiHelper';
-        
-        if ( file_exists('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php') ) {
-            require_once('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php');
+            require_once('data/SugarBeanApiHelper.php');
+            $moduleHelperClass = 'SugarBeanApiHelper';
             
-            $moduleHelperClass = $module.'ApiHelperCstm';
-        } else if ( file_exists('modules/'.$module.'/'.$module.'ApiHelper.php') ) {
-            require_once('modules/'.$module.'/'.$module.'ApiHelper.php');
+            if ( file_exists('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php') ) {
+                require_once('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php');
+                
+                $moduleHelperClass = $module.'ApiHelperCstm';
+            } else if ( file_exists('modules/'.$module.'/'.$module.'ApiHelper.php') ) {
+                require_once('modules/'.$module.'/'.$module.'ApiHelper.php');
+                
+                $moduleHelperClass = $module.'ApiHelper';
+            }
 
-            $moduleHelperClass = $module.'ApiHelper';
+            self::$moduleHelpers[$module] = new $moduleHelperClass();
         }
-
-        self::$moduleHelpers[$module] = new $moduleHelperClass();
         
-        return self::$moduleHelpers[$module];
+        $moduleHelperClass = self::$moduleHelpers[$module];
+        return new $moduleHelperClass;
     }
-
-    /**
-     * Passes through the call to the appropriate getFormattedBean call in the SugarBeanApiHelper class
-     * for this module
-     *
-     * @param $bean SugarBean The bean you want formatted
-     * @param $fieldList array Which fields do you want formatted and returned (leave blank for all fields)
-     * @param $options array Options to pass in to the getFormattedBean function, look at SugarBeanApiHelper:getFormattedBean
-     *                       for more information
-     * @return array The bean in array format, ready for passing out the API to clients.
-     */
-    public static function getFormattedBean(SugarBean $bean, array $fieldList = array(), array $options = array() ) {
-        $helper = self::findHelperForBean($bean);
-        
-        return $helper->getFormattedBean($bean, $fieldList, $options);
-    } 
-
-    /**
-     * Passes through the call to the appropriate populateFromApi call in the SugarBeanApiHelper class
-     * for this module
-     *
-     * @param $bean SugarBean The bean you want populated from the $submittedData array, this function will modify this
-     *                        record
-     * @param $submittedData array The data that was passed in from the client to update/create this record
-     * @param $options array Options to pass in to the populateFromApi function, look at SugarBeanApiHelper:populateFromApi
-     *                       for more information
-     * @return array An array of validation errors, or true if the submitted data appeared to be correct
-     */
-    public static function populateFromApi(SugarBean &$bean, array $submittedData, array $options = array() ) {
-        $helper = self::findHelperForBean($bean);
-        
-        return $helper->populateFromApi($bean, $submittedData, $options);
-    } 
 }

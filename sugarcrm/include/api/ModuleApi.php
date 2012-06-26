@@ -68,42 +68,11 @@ class ModuleApi extends SugarApi {
      * @return id Bean id
      */
     protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
-        $sfh = new SugarFieldHandler();
 
-        // Need to figure out the ownership for ACL's
-        $isOwner = false;
-        if ( !isset($bean->id) || $bean->new_with_id ) {
-            // It's a new record
-            $isOwner = true;
-            
-        } else {
-            // It's an existing record
-            if ( isset($bean->field_defs['assigned_user_id']) ) {
-                if ( $api->user->id == $bean->assigned_user_id ) {
-                    $isOwner = true;
-                }
-            }
-        }
-
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
-            if ( !isset($args[$fieldName]) ) {
-                // They aren't trying to modify this field
-                continue;
-            }
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
-                // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
-            }
-            //END SUGARCRM flav=pro ONLY
-            
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-            
-            if ( $field != null ) {
-                $field->save($bean, $args, $fieldName, $properties);
-            }
+        $errors = ApiHelper::getModuleHelper($bean)->populateFromApi($bean,$args);
+        if ( $errors !== true ) {
+            // There were validation errors.
+            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
 
         $bean->save();
