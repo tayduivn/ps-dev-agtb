@@ -24,6 +24,7 @@ require_once('include/MetaDataManager/MetaDataManager.php');
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi {
+    protected $user = null;
     public function registerApiRest() {
         return array(
             'getAllMetadata' => array(
@@ -196,7 +197,7 @@ class MetadataApi extends SugarApi {
         $configs = array();
 
         // right now we are getting the config only for the portal
-        if($args['platform'] == 'portal') {
+        if(isset($args['platform']) && $args['platform'] == 'portal') {
 
             $admin = new Administration();
             $admin->retrieveSettings();
