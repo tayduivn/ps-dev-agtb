@@ -6,9 +6,18 @@
  */
 ({
 
-    currentUserId: null,
-    filters: {},
-    url: 'rest/v10/Forecasts/chart',
+    currentUserId:null,
+    currentGrupBy:null,
+    currentTimePeriod:null,
+    currentDataSet:null,
+
+    hasChartOptions:false,
+    hasFilterOptions:false,
+
+    values:{},
+    url:'rest/v10/Forecasts/chart',
+
+    chart: null,
 
     /**
      * Initialize the View
@@ -18,71 +27,59 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.filters.user = app.user.get('id');
+        this.currentUserId = app.user.get('id');
     },
 
     /**
      * Listen to changes in values in the context
      */
-    bindDataChange: function() {
-        var self = this,
-            chart = null;
+    bindDataChange:function () {
+        var self = this;
 
-        this.context.on('change:selectedUser', function(context, user) {
-            self.filters.user = user.id;
-            self.renderChart(chart);
+        this.context.on('change:selectedUser', function (context, user) {
+            self.handleRenderOptions({user_id: user.id});
         });
-        this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
-            self.filters.tp = timePeriod.id;
-            self.renderChart(chart);
+        this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
+            self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
-        this.context.on('change:selectedCategory', function(context, category) {
-            self.filters.c = category.id;
-            self.renderChart(chart);
+        this.context.on('change:selectedGroupBy', function (context, groupBy) {
+            self.handleRenderOptions({group_by: groupBy.id});
         });
-        this.context.on('change:selectedGroupBy', function(context, groupby) {
-            self.filters.gb = groupby.id;
-            self.renderChart(chart);
-        });
-        this.context.on('change:selectedDataSet', function(context, dataset) {
-            self.filters.ds = dataset.id;
-            self.renderChart(chart);
-        });
+        this.context.on('change:selectedDataSet', function (context, dataset) {
+            self.handleRenderOptions({dataset: dataset.id});
+        })
+
+        this.context.on('change:renderedForecastFilter', function (context, value) {
+            self.hasFilterOptions = true;
+            self.handleRenderOptions(value);
+        })
+
+        this.context.on('change:renderedChartOptions', function (context, value) {
+            self.hasChartOptions = true;
+            self.handleRenderOptions(value);
+        })
     },
 
-    /**
-     * Initialize or update the chart
-     *
-     * @param chart
-     */
-    renderChart: function(chart) {
-        var loadingMessage;
+    handleRenderOptions:function (options) {
+        var self = this;
+        _.each(options, function (value, key) {
+            self.values[key] = value;
+        });
 
-        if (this._isFilterValid()) {
-            loadingMessage= SUGAR.App.alert.show('loading', {level: 'process', messages: 'Loading...'});
-            if (chart === null) {
-                chart = this._initializeChart(function() {
-                    loadingMessage.close();
-                });
-            } else {
-                SUGAR.charts.update(chart, this.url, this.filters, function() {
-                    loadingMessage.close();
-                });
-            }
+        if (self.hasChartOptions && self.hasFilterOptions) {
+            self.renderChart();
         }
     },
 
     /**
-     * Does filter have all the values that it needs?
-     *
-     * @return {Boolean}
-     * @private
+     * Initialize or update the chart
      */
-    _isFilterValid: function() {
-        if (this.filters.tp && this.filters.c && this.filters.gb) {
-            return true;
+    renderChart:function () {
+        console.log("running renderChart Method");
+        if (this.chart === null) {
+            this.chart = this._initializeChart();
         } else {
-            return false;
+            updateChart(this.url, this.chart, this.values);
         }
     },
 
@@ -93,7 +90,7 @@
      * @return {Object}
      * @private
      */
-    _initializeChart: function (callback) {
+    _initializeChart:function () {
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
@@ -113,7 +110,7 @@
                 "dataPointSize":"5"
             };
         app.view.View.prototype.render.call(this);
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.filters, callback);
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
     }
 

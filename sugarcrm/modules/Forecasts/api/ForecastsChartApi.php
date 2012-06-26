@@ -27,6 +27,11 @@ require_once("include/SugarCharts/ReportBuilder.php");
 
 class ForecastsChartApi extends ChartApi
 {
+    protected $xaxisLabel = 'Amount';
+    protected $yaxisLabel = '';
+
+    protected $goalParetoLabel = '';
+
     public function registerApiRest()
     {
         $parentApi = array(
@@ -57,21 +62,21 @@ class ForecastsChartApi extends ChartApi
         $app_strings = return_application_language('en');
         $mod_strings = return_module_language('en', 'Opportunities');
         $report_defs = array();
-        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF');
+        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF');
 
-        if (!isset($args['user']) || empty($args['user'])) {
+        if (!isset($args['user_id']) || empty($args['user_id'])) {
             global $current_user;
-            $args['user'] = $current_user->id;
+            $args['user_id'] = $current_user->id;
         }
 
         $timeperiod = TimePeriod::getCurrentId();
-        if (isset($args['tp']) && !empty($args['tp'])) {
-            $timeperiod = $args['tp'];
+        if (isset($args['timeperiod_id']) && !empty($args['timeperiod_id'])) {
+            $timeperiod = $args['timeperiod_id'];
         }
 
         $testFilters = array(
             'timeperiod_id' => array('$is' => $timeperiod),
-            'assigned_user_link' => array('id' => $args['user']),
+            'assigned_user_link' => array('id' => $args['user_id']),
             //'probability' => array('$between' => array('0', '70')),
             //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
@@ -79,9 +84,12 @@ class ForecastsChartApi extends ChartApi
         // generate the report builder instance
         $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters, $args);
 
-        if (isset($args['ct']) && !empty($args['ct'])) {
-            $rb->setChartType($this->mapChartType($args['ct']));
+        if (isset($args['chart_type']) && !empty($args['chart_type'])) {
+            $rb->setChartType($this->mapChartType($args['chart_type']));
         }
+
+        // make sure the chart column is the amount field
+        $rb->setChartColumn($rb->getSummaryColumns('amount'));
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
@@ -112,20 +120,18 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user']);
+        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user_id']);
         $likely_values = $this->getDataSetValues($testFilters, $args);
-
 
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
 
         // add the goal marker stuff
-        $dataArray['properties'][0]['subtitle'] = $args['user'];
         $dataArray['properties'][0]['goal_marker_type'] = array('group', 'pareto');
         $dataArray['properties'][0]['goal_marker_color'] = array('#3FB300', '#7D12B2');
-        $dataArray['properties'][0]['goal_marker_label'] = array('Quota', 'Likely');
-        $dataArray['properties'][0]['label_name'] = 'Sales Stage';
-        $dataArray['properties'][0]['value_name'] = 'Amount';
+        $dataArray['properties'][0]['goal_marker_label'] = array('Quota', $this->goalParetoLabel);
+        $dataArray['properties'][0]['label_name'] = $this->yaxisLabel;
+        $dataArray['properties'][0]['value_name'] = $this->xaxisLabel;
 
         foreach ($dataArray['values'] as $key => $value) {
 
@@ -168,12 +174,14 @@ class ForecastsChartApi extends ChartApi
     protected function getDataSetValues($arrFilters, $args)
     {
         // base report
-        $report_base = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test Goal Marker Report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}';
+        $report_base = '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"}],"report_name":"Test Goal Marker Report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{}}';
 
         // generate a report builder instance
         // ignore any group by for this method
-        unset($args['gb']);
+        unset($args['group_by']);
         $rb = $this->generateReportBuilder("Opportunities", $report_base, $arrFilters, $args);
+
+        $this->processDataset($rb, $args);
 
         // run the report
         $report = new Report($rb->toJson());
@@ -181,6 +189,8 @@ class ForecastsChartApi extends ChartApi
 
         $results = array();
         $sum = 0;
+
+        error_log(var_export($report->chart_rows, true));
 
         // lets build a usable arary
         foreach ($report->chart_rows as $row) {
@@ -234,9 +244,6 @@ class ForecastsChartApi extends ChartApi
         // handle any group by if it is set
         $this->processGroupBy($rb, $args);
 
-        // handle the dataset
-        $this->processDataset($rb, $args);
-
         // return the report builder
         return $rb;
     }
@@ -250,7 +257,7 @@ class ForecastsChartApi extends ChartApi
      */
     protected function processGroupBy($rb, $args)
     {
-        if (isset($args['gb']) && !empty($args['gb'])) {
+        if (isset($args['group_by']) && !empty($args['group_by'])) {
             // get the current group by
             $group_by = $rb->getGroupBy();
 
@@ -264,10 +271,19 @@ class ForecastsChartApi extends ChartApi
                 }
             }
             // now lets add the new gb
-            $rb->addGroupBy($args['gb']);
+            //$rb->addGroupBy($args['group_by']);
+            // the group is really a summary column that is made to be the y-axis
+            $summary = $rb->addSummaryColumn($args['group_by']);
+
+            if(is_array($summary)) {
+                $rb->setYAxis($summary);
+            }
+
+            // set the label
+            $this->yaxisLabel = $summary['label'];
 
             // add a count column just in case.
-            $rb->addSummaryCount();
+            //$rb->addSummaryCount();
         }
 
         return $rb;
@@ -281,25 +297,28 @@ class ForecastsChartApi extends ChartApi
     protected function processDataset($rb, $args)
     {
         // make sure something is set
-        if (!isset($args['ds']) || empty($args['ds'])) {
-            $args['ds'] = "likely";
+        if (!isset($args['dataset']) || empty($args['dataset'])) {
+            $args['dataset'] = "likely";
         }
 
         // switch around it
-        switch (strtolower($args['ds'])) {
+        switch (strtolower($args['dataset'])) {
             case 'best_case':
             case 'best':
+                $this->goalParetoLabel = 'Best';
                 $rb->addSummaryColumn('best_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('best_case_worksheet');
                 break;
             case 'worst_case':
             case 'worst':
+                $this->goalParetoLabel = 'Worst';
                 $rb->addSummaryColumn('worst_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('worst_case');
                 break;
             case 'likely_case':
             case 'likely':
             default:
+                $this->goalParetoLabel = 'Likely';
                 $rb->addSummaryColumn('likely_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('likely_case_worksheet');
                 break;

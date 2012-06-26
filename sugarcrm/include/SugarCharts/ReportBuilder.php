@@ -426,7 +426,7 @@ class ReportBuilder
      * @param array $params         Additional params that can be added to summary columns
      *                               - group_function   - How do we want to group the field
      *                               - qualifier        - How is the field parsed in the reporting engine
-     * @return ReportBuilder
+     * @return array|boolean        The summary that was added or False if it was not added
      */
     public function addSummaryColumn($field, $module = null, $key = null, $params = array())
     {
@@ -464,15 +464,17 @@ class ReportBuilder
             foreach($summaries as $summary) {
                 if($summary == $new_summary) {
                     // we have a summary already set, so return false
-                    return $this;
+                    return false;
                 }
             }
 
             // so we don't have one set yet, lets add it
             $this->defaultReport['summary_columns'][] = $new_summary;
+
+            return $new_summary;
         }
 
-        return $this;
+        return false;
     }
 
     /**
@@ -511,6 +513,32 @@ class ReportBuilder
         }
 
         return false;
+    }
+
+    /**
+     * Set which summary is set at the x-Axis in the chart
+     *
+     * @param $summary
+     */
+    public function setXAxis($summary)
+    {
+        // set this as the x-axis
+        $this->removeSummaryColumn($summary);
+        $old = array_splice($this->defaultReport['summary_columns'], 0, 1, array($summary));
+        $this->defaultReport['summary_columns'][] = array_pop($old);
+    }
+
+    /**
+     * Set which summary is set as the y-Axis in the Chart
+     *
+     * @param $summary
+     */
+    public function setYAxis($summary)
+    {
+        // first remove the one we are adding
+        $this->removeSummaryColumn($summary);
+        $old = array_splice($this->defaultReport['summary_columns'], 1, 1, array($summary));
+        $this->defaultReport['summary_columns'][] = array_pop($old);
     }
 
     /**
