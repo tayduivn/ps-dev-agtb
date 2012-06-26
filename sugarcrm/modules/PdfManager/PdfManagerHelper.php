@@ -398,38 +398,38 @@ class PdfManagerHelper
                     || 
                         (
                                 $module_instance->field_defs[$name]['type'] == 'decimal'
-                            &&  in_array($module_instance->object_name , array('Product', 'ProductBundle'))
+                            &&  in_array($module_instance->object_name , array('Product', 'ProductBundle', 'Quotes'))
                         )
                 ) &&
-                !empty($module_instance->currency_id)
+                isset($module_instance->currency_id)
                ) {
-                  global $locale;
-                  $format_number_array = array(
-                      'currency_symbol' => true,
-                      'currency_id' => $module_instance->currency_id,
+                global $locale;
+                $format_number_array = array(
+                    'currency_symbol' => true,
+                    'currency_id' => $module_instance->currency_id,
                     'type' => 'sugarpdf',
                     'charset_convert' => true,
-                  );
+                );
 
                 $fields_module[$name] = format_number_sugarpdf($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
                 ($module_instance->field_defs[$name]['type'] == 'decimal')
                ) {
-                  global $locale;
-                  $format_number_array = array(
-                      'convert' => false,
-                  );
-                  if (!isset($module_instance->$name)) {
+                global $locale;
+                $format_number_array = array(
+                    'convert' => false,
+                );
+                if (!isset($module_instance->$name)) {
                     $module_instance->$name = 0;
-                  }
+                }
                   
                 $fields_module[$name] = format_number_sugarpdf($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
                 ($module_instance->field_defs[$name]['type'] == 'image')
                ) {
-                  $fields_module[$name] = $GLOBALS['sugar_config']['upload_dir']."/".$value;
+                $fields_module[$name] = $GLOBALS['sugar_config']['upload_dir']."/".$value;
             } elseif (is_string($value)) {
                 $fields_module[$name] = htmlspecialchars_decode(stripslashes($value), ENT_QUOTES);
             }
