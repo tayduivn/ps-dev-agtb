@@ -135,7 +135,8 @@
                 value = view.model.get(field.name);
 
                 if (value) {
-                    key = app.lang.get(field.name, view.module);
+                    key = field.label || field.name;
+                    key = app.lang.get(key, view.module);
                     dataObj[key] = value;
                     return dataObj;
                 }
@@ -145,16 +146,17 @@
 
         /**
          * Generate array of objects of type: [{"Primary Address": { street: "1234 Vicente", city: "Sunnyvale", ...} }, ...]
+         * this.addressFieldsGroups expected to be like: {"primary_address": [field1, field2, ...], ...}
          * @return {Array}
          */
         getAddresses: function () {
-            var addresses = [], addressObj, valueObj, view = this;
+            var key, addressObj, valueObj, view = this;
             //iterate over adress fields group
             return _.map(this.addressFieldsGroups, function (group, addressName) {
                 valueObj = {};
                 //iterate over fields in a group
                 _.each(group, function(field, index) {
-                    var key = field.name;
+                    key = field.name;
                     key = key.replace(addressName + "_", "");           //remove prefix
                     valueObj[key] = view.model.get(field.name);         //save field value to the object
                 });
