@@ -37,25 +37,46 @@ describe ("Detail View", function () {
     it("should be able to filter fields of needed types and check them", function() {
         initModuleSummaryView("Accounts");
 
-        expect(!!view.phoneFields.length).toEqual(true);
-        expect(view.isDataDefined(view.phoneFields)).toEqual(true);
+        expect(view.phoneFields.length).toBeGreaterThan(0);
+        expect(view.isDataDefined(view.phoneFields)).toBeTruthy();
 
-        expect(!!view.emailFields.length).toEqual(true);
-        expect(view.isDataDefined(view.emailFields)).toEqual(true);
+        expect(view.emailFields.length).toBeGreaterThan(0);
+        expect(view.isDataDefined(view.emailFields)).toBeTruthy();
 
-        expect(!!view.urlFields.length).toEqual(true);
-        expect(view.isDataDefined(view.urlFields)).toEqual(true);
+        expect(view.urlFields.length).toBeGreaterThan(0);
+        expect(view.isDataDefined(view.urlFields)).toBeTruthy();
 
-        expect(!!view.addressFields.length).toEqual(true);
-        expect(view.isDataDefined(view.addressFields)).toEqual(true);
+        expect(view.addressFieldsGroups).toBeTruthy();
+        expect(_.keys(view.addressFieldsGroups).length).toBeGreaterThan(0);
+        expect(view.isDataDefined(view.addressFieldsGroups)).toBeTruthy();
 
         initModuleSummaryView("Contacts");
 
-        expect(!!view.urlFields.length).toEqual(false);
-        expect(view.isDataDefined(view.urlFields)).toEqual(false);
+        expect(view.urlFields.length).toBeFalsy();
+        expect(view.isDataDefined(view.urlFields)).toBeFalsy();
 
         initModuleSummaryView("Meetings");
 
-        expect(!!view.phoneFields.length || !!view.emailFields.length || !!view.urlFields.length || !!view.addressFields.length).toEqual(false);
+        expect(view.phoneFields.length || view.emailFields.length || view.urlFields.length || _.keys(view.addressFieldsGroups).length).toBeFalsy();
+    });
+
+    it("should return addresses array in correct form", function() {
+        initModuleSummaryView("Accounts");
+
+        var addresses = view.getAddresses();
+        expect(addresses.length).toEqual(1);
+
+        _.each(addresses, function(address) {
+            expect(typeof address === "object").toBeTruthy();
+
+            var value = _.values(address);
+            expect(value.length).toEqual(1);
+
+            value = value[0];
+            expect(typeof value === "object").toBeTruthy();
+
+            var fields = _.values(value);
+            expect(fields.length).toEqual(5);
+        });
     });
 });
