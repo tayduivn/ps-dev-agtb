@@ -44,26 +44,11 @@ class ReportsSugarpdfReports extends Sugarpdf
         
         $this->SetFont(PDF_FONT_NAME_MAIN,'',PDF_FONT_SIZE_MAIN);
         
-        if (isset($this->tplHeaderData['author'])) {
-            $this->SetAuthor($this->tplHeaderData['author']);
-        }
-        if (isset($this->tplHeaderData['title'])) {
-            $this->SetTitle($this->tplHeaderData['title']);
-        }
-        if (isset($this->tplHeaderData['subject'])) {
-            $this->SetSubject($this->tplHeaderData['subject']);
-        }
-        if (isset($this->tplHeaderData['keywords'])) {
-            $this->SetKeywords($this->tplHeaderData['keywords']);
-        }
-        
-        $headerLogo = (!empty($this->tplHeaderData['logo'])) ? $this->tplHeaderData['logo'] : PDF_SMALL_HEADER_LOGO;
-
         //Set PDF document properties
    		if($this->bean->name == "untitled") {
-            $this->SetHeaderData($headerLogo, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], $timedate->getNow(true));
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], $timedate->getNow(true));
         } else {
-            $this->SetHeaderData($headerLogo, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, $timedate->getNow(true));
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, $timedate->getNow(true));
         }
         $cols = count($this->bean->report_def['display_columns']);
     }

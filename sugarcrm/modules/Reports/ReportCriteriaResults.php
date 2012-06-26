@@ -192,13 +192,8 @@ else if (isset($_REQUEST['record'])){
 }
 
 if(! empty($_REQUEST['to_pdf'])){
-    if (isset($args['reporter'])) {
-        $pdf_template_id = '';
-        if (!empty($_REQUEST['pdf_template_id'])) {
-            $pdf_template_id = $_REQUEST['pdf_template_id'];
-        }
-        template_handle_pdf($args['reporter'], true, $pdf_template_id);
-    }
+    if (isset($args['reporter']))
+        template_handle_pdf($args['reporter']);
 	return;
 } // if
 if(! empty($_REQUEST['to_csv'])){
