@@ -27,7 +27,7 @@
 
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
+function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
                 //Bug#45831
                 if(document.getElementById(chartId) == null) {
@@ -224,6 +224,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         that.chartObject = barChart;
 
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -377,6 +378,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(lineChart, chartId, data);
                         that.chartObject = lineChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
                 break;
@@ -500,6 +502,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(pieChart, chartId, data);
                         that.chartObject = pieChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -641,6 +644,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
                         that.chartObject = funnelChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -763,6 +767,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
                         that.chartObject = gaugeChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -798,6 +803,17 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         SUGAR = {};
     }
     SUGAR.charts = {
+        /**
+         * Execute callback function if specified
+         *
+         * @param callback
+         */
+        callback: function(callback) {
+            if (callback) {
+                callback();
+            }
+        },
+
         /**
          * Calls the server to retrieve chart data
          *
@@ -879,6 +895,26 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         }, 0);
                     }
                 }, delay);
+            });
+        },
+
+        /**
+         * Update chart with new data from server
+         *
+         * @param chart
+         * @param url
+         * @param params
+         * @param callback
+         */
+        update: function(chart, url, params, callback) {
+            var self = this;
+            params = params ? params : {};
+            this.get(url, params, function(data) {
+                if(self.isDataEmpty(data)){
+                    chart.busy = false;
+                    chart.updateJSON(data);
+                    self.callback(callback);
+                }
             });
         }
     }

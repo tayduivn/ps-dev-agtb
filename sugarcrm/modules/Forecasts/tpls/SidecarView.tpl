@@ -54,6 +54,7 @@
 <script src='../sidecar/src/view/view.js'></script>
 <script src='../sidecar/src/view/field.js'></script>
 <script src='../sidecar/src/view/layout.js'></script>
+<script src='../sidecar/src/view/alert.js'></script>
 
 <script src='../sidecar/src/view/layouts/fluid-layout.js'></script>
 
@@ -67,6 +68,7 @@
 <script src='clients/base/views/forecastsSubnav/forecastsSubnav.js'></script>
 <script src='clients/base/views/progress/progress.js'></script>
 <script src='clients/base/views/chart/chart.js'></script>
+<script src='clients/base/views/alert/alert-view.js'></script>
 
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <script src='include/javascript/sugarAuthStore.js'></script>
@@ -74,6 +76,7 @@
 <script type="text/javascript" src="include/SugarCharts/Jit/js/sugarCharts.js"></script>
 
 <div class="view-forecastsSubnav subnav"></div>
+<div id="alert" class="alert-top"></div>
 <div id="core-module">
     <div id="core" style="" >
         <div class="container-fluid">

@@ -31,7 +31,7 @@
     },
 
     /**
-     * Listen to changes in selectedUser and selectedTimePeriod
+     * Listen to changes in values in the context
      */
     bindDataChange:function () {
         var self = this;
@@ -85,6 +85,10 @@
 
     /**
      * Render the chart for the first time
+     *
+     * @param callback
+     * @return {Object}
+     * @private
      */
     _initializeChart:function () {
         var chart,

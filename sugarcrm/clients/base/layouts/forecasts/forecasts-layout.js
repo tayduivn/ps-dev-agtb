@@ -14,6 +14,8 @@
                 register: app.events.register,
                 selectedTimePeriod: {},
                 selectedCategory: {},
+                selectedGroupBy: {},
+                selectedDataSet: {},
                 selectedUser: {},
                 showManagerOpportunities: false
             });

@@ -144,20 +144,20 @@
      * @private
      */
     _addCTEIcon: function(field) {
-
+        debugger;
         // add icon markup
         var outerElement = field.$el;
         field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-        outerElement.before(field.cteIcon);
-        field.cteIcon.hide();
 
         // add events
         field.showCteIcon = function(){
-            this.cteIcon.show();
+            this.$el.parent().css('overflow-x', 'visible');
+            this.$el.before(this.cteIcon);
         };
 
         field.hideCteIcon = function(){
-            this.cteIcon.hide();
+            this.$el.parent().find(this.cteIcon).detach();
+            this.$el.parent().css('overflow-x', 'hidden');
         };
 
         var events = field.events || {};

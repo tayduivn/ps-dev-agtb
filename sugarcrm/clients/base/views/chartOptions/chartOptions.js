@@ -6,11 +6,13 @@
  */
 ({
 
-    bindDataChange:function () {
+    viewSelector: '.chartOptions',
+
+    bindDataChange: function() {
         var self = this,
             model = this.context.forecasts.chartoptions;
 
-        model.on('change', function () {
+        model.on('change', function() {
             self.buildDropdowns(this);
         });
     },
@@ -32,7 +34,7 @@
                 }),
                 $chosenPlaceholder = $(chosen.getPlaceholder().toString());
 
-            self.$el.find('.chartOptions').append($chosenPlaceholder);
+            self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
             chosen.options.viewName = 'edit';
             chosen.label = modelData.label;
