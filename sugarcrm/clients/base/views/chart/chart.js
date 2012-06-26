@@ -70,7 +70,6 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        console.log("running renderChart Method");
         if (this.chart === null) {
             this.chart = this._initializeChart();
         } else {
