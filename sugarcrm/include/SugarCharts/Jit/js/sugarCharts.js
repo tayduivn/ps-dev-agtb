@@ -901,12 +901,13 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
          * @param callback
          */
         update: function(chart, url, params, callback) {
+            var self = this;
             params = params ? params : {};
-            SUGAR.charts.get(jsonFilename, params, function(data) {
-                if(SUGAR.charts.isDataEmpty(data)){
+            this.get(url, params, function(data) {
+                if(self.isDataEmpty(data)){
                     chart.busy = false;
                     chart.updateJSON(data);
-                    SUGAR.charts.callback(callback);
+                    self.callback(callback);
                 }
             });
         }
