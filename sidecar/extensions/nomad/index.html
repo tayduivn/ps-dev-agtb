@@ -10,10 +10,11 @@
     <link rel="apple-touch-icon" href="img/badge.png">
     <link rel="apple-touch-icon-precomposed" href="img/badge.png">
 
-    <script src="../../lib/zepto/zepto.js"></script>
-    <script src="../../lib/zepto/event.js"></script>
-    <script src="../../lib/zepto/touch.js"></script>
-    <script src="../../lib/zepto/ajax.js"></script>
+    <script src="lib/zepto/zepto.js"></script>
+    <script src="lib/zepto/event.js"></script>
+    <script src="lib/zepto/touch.js"></script>
+    <script src="lib/zepto/ajax.js"></script>
+    <script src="lib/zepto/detect.js"></script>
     <!--<script src="../../lib/mobile.js"></script>-->
 
     <script language="javascript" src="../../lib/backbone/underscore.js"></script>
@@ -45,6 +46,7 @@
     <script src='compiled/edit-relate.js'></script>
     <script src='compiled/edit-text.js'></script>
     <script src='compiled/edit-textarea.js'></script>
+    <script src='compiled/list-url.js'></script>
     <script src='compiled/edit-url.js'></script>
     <script src='compiled/field.messages.js'></script>
 
@@ -79,7 +81,6 @@
     <script src='../../src/view/template.js'></script>
     <script src='../../src/core/context.js'></script>
     <script src='../../src/core/controller.js'></script>
-    <script src='nomad-controller.js'></script>
     <script src='../../src/core/router.js'></script>
     <script src='../../src/core/language.js'></script>
     <script src='../../src/core/metadata-manager.js'></script>
@@ -133,9 +134,14 @@
     <script src='templates/fields/textarea/textarea.js'></script>
     <script src='templates/fields/radioenum/radioenum.js'></script>
     <script src='templates/fields/relate/relate.js'></script>
+    <script src='templates/fields/url/url.js'></script>
 
     <script src='nomad.js'></script>
+    <script src='nomad-controller.js'></script>
+    <script src='routes.js'></script>
+    <script src='event-handlers.js'></script>
     <script src='error.js'></script>
+    <script src='web.js'></script>
     <script src='meta-bootstrap.js'></script>
 
     <!--<script language="javascript" src="../../tests/fixtures/mobile-metadata.js"></script>-->

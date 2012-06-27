@@ -36,12 +36,12 @@
         },
 
         // This attempts to call function fn (which may not exist), otherwise,
-        // falls back to handleStatusCodesFallback. Caller ensures xhr.responseText exists.
-        _callCustomHandler: function(xhr, error, fn) {
+        // falls back to handleStatusCodesFallback.
+        _callCustomHandler: function(error, fn) {
             if (fn) {
-                fn.call(this, xhr, error);
+                fn.call(this, error);
             } else {
-                this.handleStatusCodesFallback(xhr, error);
+                this.handleStatusCodesFallback(error);
             }
         },
     
@@ -94,36 +94,50 @@
          * The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
          *
          *
-         * @param xhr 
-         * @param error 
-         * @param alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
+         * @param {SUGAR.HttpError} error
+         * @param {Function} alternativeCallback(optional) If this does not match an expected oauth error than this callback will be
          * called (if provided). 
          * @method
+         * @private
          */
-        _handleFineGrainedError: function (xhr, error, alternativeCallback) {
-            var s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
+        _handleFineGrainedError: function(error, alternativeCallback) {
+            var oauthError = this._extractOAuthError(error.responseText);
             var match = _.find(_.keys(this.statusCodes._customHandlersMap), function(oAuthCode) {
-                return s.error == oAuthCode;
+                return oauthError == oAuthCode;
             });
 
             var handler = match ? this.statusCodes._customHandlersMap[match] : null;
             if (handler && this[handler]) {
-                this[handler].call(this, xhr, error);
+                this[handler].call(this, error);
             } else if (alternativeCallback) {
-                this._callCustomHandler(xhr, error, alternativeCallback);
+                this._callCustomHandler(error, alternativeCallback);
             } else {
-                this.handleStatusCodesFallback(xhr, error)
+                this.handleStatusCodesFallback(error);
             }
+        },
+
+         // Extracts OAuth error from response
+        _extractOAuthError: function(response) {
+            var s;
+            if (response) {
+                try {
+                    s = JSON.parse(response);
+                }
+                catch(e) {
+                    app.logger.error("Failed to parse OAuth response: " + response + "\n" + e);
+                }
+            }
+
+            return s ? s.error : null;
         },
 
         /**
          * Attempts to refresh the token.
-         * @param originalXhr if refresh fails we want to use the original xhr and error (not xhr from refresh http call) 
-         * @param originalError
+         * @param {SUGAR.HttpError} originalError if refresh fails we want to use the original error (not error from refresh http call)
          * @param cb optional callback if refresh fails
          *
          */
-        attemptRefresh: function(originalXhr, originalError, cb) {
+        attemptRefresh: function(originalError, cb) {
             var callbacks, self = this;
 
             if (!this.refreshingLogin) {
@@ -136,12 +150,12 @@
                     },
                     error: function(){
                         self.refreshingLogin = false;
-                        // Note that these are the xhr and error from original 401 since we don't want the xhr
-                        // and error from the refresh http call!
-                        cb(originalXhr, originalError);
+                        // Note that this is error from original 401
+                        // since we don't want the error from the refresh http call!
+                        cb(originalError);
                     }
                 };
-                app.api.login({},{refresh:true},callbacks);
+                app.api.login({}, {refresh:true}, callbacks);
             }
         },
 
@@ -180,8 +194,8 @@
              * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
-            "400": function(xhr, error) {
-                this._handleFineGrainedError(xhr, error);
+            "400": function(error) {
+                this._handleFineGrainedError(error);
             },
 
             /**
@@ -195,20 +209,20 @@
              * Provide custom `handleUnauthorizedError` handler.
              * @method
              */
-            "401": function(xhr, error) {
-                var self = this, callbacks, s;
+            "401": function(error) {
+                var self = this, oauthError;
 
                 // First check that it is not an error that we do NOT refresh on
-                s = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : "";
-                if(s.error && $.inArray(s.error, self.statusCodes._dontAttemptRefresh) === -1) {
+                oauthError = this._extractOAuthError(error.responseText);
+                if (oauthError && $.inArray(oauthError, self.statusCodes._dontAttemptRefresh) === -1) {
 
-                    self.attemptRefresh(xhr, error, function() {
+                    self.attemptRefresh(error, function() {
 
                         // This callback will only be called if refresh fails so we fallback.
-                        self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                        self._handleFineGrainedError(error, self.handleUnauthorizedError);
                     });
                 } else {
-                    self._handleFineGrainedError(xhr, error, self.handleUnauthorizedError);
+                    self._handleFineGrainedError(error, self.handleUnauthorizedError);
                 }
             },
 
@@ -218,8 +232,8 @@
              * Provide custom `handleForbiddenError` handler.
              * @method
              */
-            "403": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleForbiddenError);
+            "403": function(error) {
+                this._callCustomHandler(error, this.handleForbiddenError);
             },
 
             /**
@@ -228,8 +242,8 @@
              * Provide custom `handleNotFoundError` handler.
              * @method
              */
-            "404": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleNotFoundError);
+            "404": function(error) {
+                this._callCustomHandler(error, this.handleNotFoundError);
             },
 
             /**
@@ -238,8 +252,8 @@
              * Provide custom `handleMethodNotAllowedError` handler.
              * @method
              */
-            "405": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleMethodNotAllowedError);
+            "405": function(error) {
+                this._callCustomHandler(error, this.handleMethodNotAllowedError);
             },
 
             /**
@@ -252,8 +266,8 @@
              * Provide custom `handlePreconditionFailureError` handler.
              * @method
              */
-            "412": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handlePreconditionFailureError);
+            "412": function(error) {
+                this._callCustomHandler(error, this.handlePreconditionFailureError);
             },
 
             /**
@@ -262,8 +276,8 @@
              * Validation errors handled automatically.
              * @method
              */
-            "422": function(xhr, error, model) {
-                this.handleValidationError(model, xhr.responseText);
+            "422": function(error, model) {
+                this.handleValidationError(model, error.responseText);
             },
 
             /**
@@ -272,8 +286,8 @@
              * Provide custom `handleServerError` handler.
              * @method
              */
-            "500": function(xhr, error) {
-                this._callCustomHandler(xhr, error, this.handleServerError);
+            "500": function(error) {
+                this._callCustomHandler(error, this.handleServerError);
             }
         },
 
@@ -330,22 +344,20 @@
         },
 
         /**
-         * Handles http error codes returned from AJAX calls.
-         * @param {XHR} xhr jQuery XHR Object
-         * @param {String} error Error message
+         * Handles http errors returned from AJAX calls.
+         * @param {SUGAR.HttpError} error AJAX error.
+         * @param {Backbone.Model} model(optional) Instance of the model for which the request was made.
          * @member Core.Error
          */
-        handleHttpError: function(xhr, error, model) {
+        handleHttpError: function(error, model) {
             // If we have a handler defined for this status code
-            if(xhr) {
-                if (xhr.status && this.statusCodes[xhr.status]) {
-                    this.statusCodes[xhr.status].call(this, xhr, error, model);
-                } else {
-                    // TODO: Default catch all error code handler
-                    // Temporarily going to the handleStatusCodesFallback handler but will probably need
-                    // to go to a sensible "all other errors" type of handler.
-                    this.handleStatusCodesFallback(xhr, error);
-                }
+            if (this.statusCodes[error.status]) {
+                this.statusCodes[error.status].call(this, error, model);
+            } else {
+                // TODO: Default catch all error code handler
+                // Temporarily going to the handleStatusCodesFallback handler but will probably need
+                // to go to a sensible "all other errors" type of handler.
+                this.handleStatusCodesFallback(error);
             }
         },
 
@@ -369,7 +381,7 @@
          *
          *     app.error = _.extend(app.error, {
          *        // put your custom handlers here.
-         *        handleUnauthorizedError: function(xhr, error) {
+         *        handleUnauthorizedError: function(error) {
          *        },
          *
          *        ...
@@ -378,15 +390,11 @@
          * })(SUGAR.App);
          * </pre></code>
          * 
-         * @param {XHR} xhr
-         * @param {String} error Error message
+         * @param {String} error Ajax error.
          * @member Core.Error
          */
-        handleStatusCodesFallback: function(xhr, error) {
-            var message = "HTTP error: " + (xhr ? xhr.status : "(no-code)") +
-                "\nResponse: " + (xhr ? xhr.responseText : "(empty-response)") +
-                (error != "error" ? "\n" + error : "");
-            app.logger.error(message);
+        handleStatusCodesFallback: function(error) {
+            app.logger.error(error.toString());
         },
 
         /**
@@ -428,4 +436,5 @@
 
     // Enable error handling immediately.
     app.augment("error", module, module.initialize);
+
 })(SUGAR.App);

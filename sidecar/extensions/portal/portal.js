@@ -107,7 +107,7 @@
                 "views": {
                     "errorView": {
                         "meta": {},
-                        "template":  
+                        "template":
                             "<div class='container-fluid'>" +
                                     "<div class='row-fluid'>" +
                                         "<div class='span7'>" +
@@ -145,7 +145,7 @@
                                     "};" +
                                 "} else if(this.context.get('errorType') ==='500') { " +
                                     "attributes = {" +
-                                        "title: 'HTTP: 500 Internal Server Error'," + 
+                                        "title: 'HTTP: 500 Internal Server Error'," +
                                         "type: '500'," +
                                         "message: 'There was an error on the server. Please contact technical support.'" +
                                     "};" +
@@ -222,7 +222,7 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
-                                {     
+                                {
                                     name: "cancel_button",
                                     type: "button",
                                     label: "Cancel",
@@ -232,7 +232,7 @@
                                         click: "function(){" +
                                             "app.router.goBack();" +
                                             "}"
-                                    } 
+                                    }
                                 },
                                 {
                                     name: "signup_button",
@@ -426,7 +426,7 @@
                         "{{#each fields}}\n" +
                         "<div>{{field ../../this ../../model}}</div>" +
                         "{{/each}}" +
-                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                        "<p class=\"help-block\"><a rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                         "</div>          \n" +
                         "{{/each}}" +
                         "<div class=\"modal-footer\">\n" +
@@ -852,7 +852,7 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-        
+
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
@@ -909,22 +909,22 @@
         }
 
         // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
-        if(route === 'index') {
+        if (route === 'index') {
             dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
             if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
                 app.router.list(dm);
-            } else if(app.acl.hasAccess('read', 'Home')) {
+            } else if (app.acl.hasAccess('read', 'Home')) {
                 app.router.index();
             } else {
                 alertUser();
                 return false;
             }
-        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
-        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if (!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
-            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            alertUser("Issue loading " + args[0] + " module. Please try again later or contact support.");
             return false;
-        } 
+        }
         return true;
     };
 
@@ -983,6 +983,30 @@
         }
     });
 
+    /**
+     * Extends the `save` action to add `portal` specific params to the payload.
+     *
+     * @param {Object} attributes(optional) model attributes
+     * @param {Object} options(optional) standard save options as described by Backbone docs and
+     * optional `fieldsToValidate` parameter.
+     */
+    var __superBeanSave__ = app.Bean.prototype.save;
+    app.Bean.prototype.save = function(attributes, options) {
+        //Here is the list of params that must be set for portal use case.
+        var defaultParams = {
+            portal_flag: 1,
+            portal_viewable: 1
+        }
+        var moduleFields = app.metadata.getModule(this.module).fields || {};
+        for (var field in defaultParams) {
+            if (moduleFields[field]) {
+                this.set(field, defaultParams[field], {silent:true});
+            }
+        }
+        //Call the prototype
+        __superBeanSave__.call(this, attributes, options);
+    };
+
     var _rrh = {
         /**
          * Handles `signup` route.
@@ -1001,5 +1025,58 @@
         // Register portal specific routes
         app.router.route("signup", "signup", _rrh.signup);
     });
+
+    /**
+     * Checks if there are `file` type fields in the view. If yes, process upload of the files
+     *
+     * @param {Object} model Model
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+
+        callbacks = callbacks || {};
+
+        //check if there are attachments
+        var $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+        var filesToUpload = $files.length;
+
+        //process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
+
+            //field by field
+            for (var file in $files) {
+                var $file = $($files[file]),
+                    fileField = $file.attr("name");
+                model.uploadFile(fileField, $file, {
+                    field: fileField,
+                    success: function() {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                            if (callbacks.success) callbacks.success();
+                        }
+                    },
+                    error: function(error) {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                        }
+                        var errors = {};
+                        errors[error.responseText] = {};
+                        model.trigger('error:validation:' + this.field, errors);
+                        model.trigger('error:validation');
+                    }
+                });
+            }
+        }
+        else {
+            if (callbacks.success) callbacks.success();
+        }
+    }
 
 })(SUGAR.App);

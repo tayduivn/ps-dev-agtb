@@ -183,7 +183,7 @@
          * @private
          */
         _render: function() {
-            if (app.acl.hasAccess(this.name, this.module)) {
+            if (app.acl.hasAccessToModel(this.name, this.model)) {
                 this._renderSelf();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {

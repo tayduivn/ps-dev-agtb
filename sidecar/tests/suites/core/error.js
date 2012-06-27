@@ -114,19 +114,20 @@ describe("Error module", function() {
     });
 
     it("should attempt refresh if appropriate, otherwise handleUnauthorizedError callback on 401, or lastly, resort to generic fallback", function() {
-        var spyHandleUnauthorizedError, spyFallbackHandler, spyAttemptRefresh, xhr;
+        var spyHandleUnauthorizedError, spyFallbackHandler, spyAttemptRefresh, xhr, error;
         app.error.handleUnauthorizedError = function() {};
         spyHandleUnauthorizedError = sinon.spy(app.error, 'handleUnauthorizedError');
         spyAttemptRefresh = sinon.spy(app.error, 'attemptRefresh');
 
         xhr = {
             status: '401',
-            responseText: '{"error": "invalid_grant", "error_description": "some desc"}',
+            responseText: '{"error": "invalid_grant", "error_description": "some desc"}'
         };
+        error = new SUGAR.Api.HttpError(xhr);
         SugarTest.server.respondWith("GET", /.*\/sugarcrm\/rest\/v10\/oauth2\/token\//,
             [401, {  "Content-Type": "application/json"},
                 JSON.stringify("")]);
-        app.error.handleHttpError(xhr);
+        app.error.handleHttpError(error);
         SugarTest.server.respond();
         expect(spyAttemptRefresh).toHaveBeenCalled();
         expect(spyHandleUnauthorizedError).toHaveBeenCalled();
@@ -134,7 +135,7 @@ describe("Error module", function() {
         // Now try with it undefined and the fallback should get called
         app.error.handleUnauthorizedError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHttpError(xhr);
+        app.error.handleHttpError(error);
         SugarTest.server.respond();
         expect(spyHandleUnauthorizedError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler).toHaveBeenCalled();
@@ -150,12 +151,12 @@ describe("Error module", function() {
 
         xhr = {
             status: '401',
-            responseText: '{"error": "invalid_request", "error_description": "some desc"}',
+            responseText: '{"error": "invalid_request", "error_description": "some desc"}'
         };
         SugarTest.server.respondWith("GET", /.*\/sugarcrm\/rest\/v10\/oauth2\/token\//,
             [401, {  "Content-Type": "application/json"},
                 JSON.stringify("")]);
-        app.error.handleHttpError(xhr);
+        app.error.handleHttpError(new SUGAR.Api.HttpError(xhr));
         SugarTest.server.respond();
         expect(spyAttemptRefresh).not.toHaveBeenCalled();
         expect(spyHandleUnauthorizedError).toHaveBeenCalled();
@@ -170,13 +171,13 @@ describe("Error module", function() {
             status: '403',
             responseText: '{"error":"fubar"}'
         };
-        app.error.handleHttpError(xhr);
+        app.error.handleHttpError(new SUGAR.Api.HttpError(xhr));
         expect(spyHandleForbiddenError.called).toBeTruthy();
 
         // Now try with it undefined and the fallback should get called
         app.error.handleForbiddenError = undefined;
         spyFallbackHandler = sinon.spy(app.error, 'handleStatusCodesFallback');
-        app.error.handleHttpError(xhr);
+        app.error.handleHttpError(new SUGAR.Api.HttpError(xhr));
         expect(spyHandleForbiddenError).not.toHaveBeenCalledTwice();
         expect(spyFallbackHandler.called).toBeTruthy();
         spyFallbackHandler.restore();

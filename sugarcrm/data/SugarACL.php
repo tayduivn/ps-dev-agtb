@@ -151,7 +151,10 @@ class SugarACL
      */
     public static function checkAccess($module, $action, $context = array())
     {
-        foreach(self::loadACLs($module, $context) as $acl) {
+        if(!isset(self::$acls[$module])) {
+            self::loadACLs($module, $context);
+        }
+        foreach(self::$acls[$module] as $acl) {
             if(!$acl->checkAccess($module, $action, $context)) {
                 return false;
             }
@@ -255,7 +258,7 @@ class SugarACL
                        $min_access = "edit";
                     }
                 }
-                if(!self::checkField($module, $field, $min_access, $context)) {
+                if(!empty($list[$key]) && !self::checkAccess($module, "field", $context + array("field" => $field, "action" => $min_access))) {
                     // if have no access, blank or remove field value
                     if(empty($options['blank_value'])) {
                         unset($list[$key]);
