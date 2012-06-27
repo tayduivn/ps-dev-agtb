@@ -29,19 +29,27 @@ require_once('modules/Emails/Email.php');
  */
 class BugNullAssignedUserIdTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $old_current_user;
+    private $current_user;
     private $email;
 	
 	public function setUp()
 	{
 	    global $current_user;
+        
+        if (!empty($current_user)) {
+            $this->old_current_user = $current_user;
+        }
 		
-	    $current_user = SugarTestUserUtilities::createAnonymousUser();
+	    $this->current_user = SugarTestUserUtilities::createAnonymousUser();
+        
+        $GLOBALS['current_user'] = $this->current_user;
 	    $this->email = new Email();
 	    $this->email->email2init();
 
         // Set some values for some fields so the query is actually built
         $this->email->id = '1';
-        $this->email->created_by = $current_user->id;
+        $this->email->created_by = $this->current_user->id;
         $this->email->date_modified = date('Y-m-d H:i:s');
 
         // Specify an empty assigned user id for testing nulls
@@ -52,7 +60,11 @@ class BugNullAssignedUserIdTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 		unset($this->email);
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
+		unset($this->current_user);
+        
+        if ($this->old_current_user) {
+            $GLOBALS['current_user'] = $this->old_current_user;
+        }
 	}
 
     public function testNullAssignedUserIdConvertedToEmptyInSave() {
