@@ -398,7 +398,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $list_field['start_link_wrapper'] = $this->start_link_wrapper;
                 $list_field['end_link_wrapper'] = $this->end_link_wrapper;
                 $list_field['subpanel_id'] = $this->subpanel_id;
-                $list_field += $field_acl;
+                $list_field = array_merge($list_field, $field_acl);
                 if ( isset($aItem->field_defs[strtolower($list_field['name'])])) {
                     require_once('include/SugarFields/SugarFieldHandler.php');
                     // We need to see if a sugar field exists for this field type first,
