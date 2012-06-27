@@ -26,17 +26,31 @@
                 app.OAUTH["AuthAccessToken"] = authAccessToken;
                 app.OAUTH["AuthRefreshToken"] = authRefreshToken;
                 app.config.authStore = "keychain";
+
+                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store
+                //app.nativestore.init();
+                //app.cache.store = app.nativestore;
             }
 
             app.init({el: "#nomad" });
             app.api.debug = app.config.debugSugarApi;
-            app.start();
-            app.logger.debug('App started');
+
+            var startApp = function() {
+                app.start();
+                app.logger.debug('App started');
+            };
 
             if (app.isNative) {
+                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store and comment out startApp
+                //app.nativestore.load(startApp);
+                startApp();
+
                 document.addEventListener("pause", onPause, false);
                 document.addEventListener("resume", onResume, false);
                 document.addEventListener("memoryWarning", onMemoryWarning, false);
+            }
+            else {
+                startApp();
             }
         },
 
