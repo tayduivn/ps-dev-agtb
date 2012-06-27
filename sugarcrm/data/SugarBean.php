@@ -5098,8 +5098,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $table_alias = $this->table_name;
         }
-
-        if ( !($current_user->isAdminForModule($this->module_dir) || $force_admin ) &&
+        if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
