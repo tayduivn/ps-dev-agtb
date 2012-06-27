@@ -29,17 +29,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 
-require 'config.php';
 require_once 'include/Sugarpdf/sugarpdf_config.php';
-global $sugar_config;
-global $timedate;
-global $mod_strings;
+global $mod_strings, $installer_mod_strings;
+
+$modStringSrc = (isset($installer_mod_strings) && isset($installer_mod_strings['pdf_template_quote']) ? $installer_mod_strings : $mod_strings);
+
+if (defined(PDF_HEADER_LOGO)) {
+    $logo = K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO;
+    $imsize = @getimagesize($logo);
+    if ($imsize === FALSE) {
+        // encode spaces on filename
+        $logo = str_replace(' ', '%20', $logo);
+        $imsize = @getimagesize($logo);
+        if ($imsize === FALSE) {
+            $logo = K_PATH_IMAGES.PDF_HEADER_LOGO;
+        }
+    }
+    $logo = './' . $logo;
+    $modStringSrc['pdf_template_quote']['body_html'] = str_replace('./themes/default/images/pdf_logo.jpg', $logo, $modStringSrc['pdf_template_quote']['body_html']);
+    $modStringSrc['pdf_template_invoice']['body_html'] = str_replace('./themes/default/images/pdf_logo.jpg', $logo, $modStringSrc['pdf_template_invoice']['body_html']);
+}
 
 $pdfTemplate = new PdfManager();
 $pdfTemplate->base_module = 'Quotes';
-$pdfTemplate->name = $mod_strings['pdf_template_quote']['name'];
-$pdfTemplate->description = $mod_strings['pdf_template_quote']['description'];
-$pdfTemplate->body_html = to_html($mod_strings['pdf_template_quote']['body_html']);
+$pdfTemplate->name = $modStringSrc['pdf_template_quote']['name'];
+$pdfTemplate->description = $modStringSrc['pdf_template_quote']['description'];
+$pdfTemplate->body_html = to_html($modStringSrc['pdf_template_quote']['body_html']);
 $pdfTemplate->author = PDF_AUTHOR;
 $pdfTemplate->title = PDF_HEADER_TITLE;
 $pdfTemplate->subject = PDF_SUBJECT;
@@ -51,9 +66,9 @@ $pdfTemplate->save();
 
 $pdfTemplate = new PdfManager();
 $pdfTemplate->base_module = 'Quotes';
-$pdfTemplate->name = $mod_strings['pdf_template_invoice']['name'];
-$pdfTemplate->description = $mod_strings['pdf_template_invoice']['description'];
-$pdfTemplate->body_html = to_html($mod_strings['pdf_template_invoice']['body_html']);
+$pdfTemplate->name = $modStringSrc['pdf_template_invoice']['name'];
+$pdfTemplate->description = $modStringSrc['pdf_template_invoice']['description'];
+$pdfTemplate->body_html = to_html($modStringSrc['pdf_template_invoice']['body_html']);
 $pdfTemplate->author = PDF_AUTHOR;
 $pdfTemplate->title = PDF_HEADER_TITLE;
 $pdfTemplate->subject = PDF_SUBJECT;

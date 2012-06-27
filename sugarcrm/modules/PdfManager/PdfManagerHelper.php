@@ -190,23 +190,23 @@ class PdfManagerHelper
         }
 
         // Adding special fields not available in vardefs
-        if ($relatedModule == 'Quotes'){
-            $field_defs['taxrate_value'] = array( 
-                'name' => 'taxrate_value', 
+        if ($relatedModule == 'Quotes') {
+            $field_defs['taxrate_value'] = array(
+                'name' => 'taxrate_value',
                 'vname' => 'LBL_TAXRATE',
                 'type' => 'decimal'
             );
-            $field_defs['currency_iso'] = array( 
-                'name' => 'currency_iso', 
+            $field_defs['currency_iso'] = array(
+                'name' => 'currency_iso',
                 'vname' => 'LBL_CURRENCY',
                 'type' => 'varchar'
-            );            
-        } elseif ($relatedModule == 'Products'){
-            $field_defs['discount_amount'] = array( 
-                'name' => 'discount_amount', 
+            );
+        } elseif ($relatedModule == 'Products') {
+            $field_defs['discount_amount'] = array(
+                'name' => 'discount_amount',
                 'vname' => 'LBL_EXT_PRICE',
                 'type' => 'decimal'
-            );            
+            );
         }
 
         $relatedFields = PdfManagerHelper::cleanFields($field_defs, false, true);
@@ -318,15 +318,16 @@ class PdfManagerHelper
      * Get the available templates for a specific module
      *
      * @param  string $module
-     * @return array   
+     * @return array
      *
      */
     public static function getPublishedTemplatesForModule($module)
     {
         $pdfManager = BeanFactory::newBean('PdfManager');
+
         return $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
     }
-    
+
     /**
      * Make array from bean
      *
@@ -395,7 +396,7 @@ class PdfManagerHelper
                 isset($module_instance->field_defs[$name]['type']) &&
                 (
                         $module_instance->field_defs[$name]['type'] == 'currency'
-                    || 
+                    ||
                         (
                                 $module_instance->field_defs[$name]['type'] == 'decimal'
                             &&  in_array($module_instance->object_name , array('Product', 'ProductBundle', 'Quotes'))
@@ -423,7 +424,7 @@ class PdfManagerHelper
                 if (!isset($module_instance->$name)) {
                     $module_instance->$name = 0;
                 }
-                  
+
                 $fields_module[$name] = format_number_sugarpdf($module_instance->$name, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&

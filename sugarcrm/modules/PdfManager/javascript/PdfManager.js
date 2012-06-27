@@ -29,12 +29,12 @@
 //FILE SUGARCRM flav=pro ONLY
 
 
-SUGAR.PdfManager = {}; 
+SUGAR.PdfManager = {};
 
 SUGAR.PdfManager.fieldInserted = false;
 /**
  * Returns a list of fields for a module
- */ 
+ */
 SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
 
     if (SUGAR.PdfManager.fieldInserted && linkName.length == 0) {
@@ -45,7 +45,7 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
         $('#subField').empty();
         $('#subField').hide();
         return true;
-    }    
+    }
     var url = "index.php?" + SUGAR.util.paramsToUrl({
         module : "PdfManager",
         action : "getFields",
@@ -58,7 +58,7 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
     var resp = http_fetch_sync(url);
 
     var field = YAHOO.util.Dom.get('field');
-    
+
     if (field != null) {
         var inputTD = YAHOO.util.Dom.getAncestorByTagName(field, 'TD');
         if (resp.responseText.length > 0 && inputTD != null) {
@@ -72,19 +72,19 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
  * Push var to WYSIWYG
  */
 SUGAR.PdfManager.insertField = function(selField, selSubField) {
-    
+
     SUGAR.PdfManager.fieldInserted = true;
-    
+
     var fieldName = "";
-    
+
     if ( selField && selField.value != "") {
         fieldName += selField.value;
-        
+
         if ( selSubField && selSubField.value != "") {
             fieldName += "."+selSubField.value;
         }
     }
-    
+
     var cleanFieldName = fieldName.replace('pdfManagerRelateLink_', '');
 	var inst = tinyMCE.getInstanceById("body_html");
 	if (fieldName.length > 0 && inst) {
