@@ -70,11 +70,11 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        if (this.chart === null) {
+        //if (this.chart === null) {
             this.chart = this._initializeChart();
-        } else {
-            updateChart(this.url, this.chart, this.values);
-        }
+        //} else {
+        //    updateChart(this.url, this.chart, this.values);
+        //}
     },
 
     /**
