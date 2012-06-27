@@ -1,5 +1,4 @@
 <article id="{{model.module}}{{model.id}}">
-    <i class="icon-star-empty"></i>
     <div>
     <a href="#{{#if model.link}}{{relatedRoute model}}{{else}}{{modelRoute model}}{{/if}}">
         {{#with fields.[0]}}

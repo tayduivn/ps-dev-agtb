@@ -124,8 +124,10 @@
             // Render the layout to the main element
             app.$contentEl.html(currentLayout.$el);
 
-            if(cachedData && cachedData.cid === currentLayout.cid){
-                currentLayout.$el.find(".list-container").get(0).scrollTop = cachedData.scrollTop;
+            if (cachedData && cachedData.cid === currentLayout.cid) {
+                _.delay(function() {
+                    currentLayout.$el.find(".list-container").get(0).scrollTop = cachedData.scrollTop;
+                }, 100);
             }
 
             this.layout = currentLayout;
@@ -172,6 +174,6 @@
         }
     });
 
-    //app.augment("NomadController", NomadController, false);
+    app.augment("NomadController", NomadController, false);
 
 })(SUGAR.App);

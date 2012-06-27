@@ -4,7 +4,7 @@ describe("ACLs", function() {
     beforeEach(function() {
         SugarTest.seedMetadata(true);
         app = SUGAR.App;
-        model = app.data.createBean("Cases", {assigned_user_id: 'seed_sally_id'});
+        model = app.data.createBean("Cases", {id: "1234", assigned_user_id: 'seed_sally_id'});
         app.user.id = "seed_sally_id";
     });
 

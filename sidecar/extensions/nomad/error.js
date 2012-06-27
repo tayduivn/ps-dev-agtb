@@ -56,17 +56,17 @@
         // Other errors
         // --------------------------------------------------------
 
-        handleUnauthorizedError: function(xhr, error) {
+        handleUnauthorizedError: function() {
             this._alertUnauthorized();
             _login();
         },
 
-        handleForbiddenError: function(xhr, error) {
+        handleForbiddenError: function() {
             this._alertUnauthorized();
             _login();
         },
 
-        handleNotFoundError: function(xhr, error) {
+        handleNotFoundError: function() {
             app.alert.show("not_found_error", {
                 level: "error",
                 messages: "Resource not found",
@@ -77,10 +77,10 @@
 //        handleMethodNotAllowedError:
 //        handleServerError:
 
-        handleStatusCodesFallback: function(xhr, error) {
+        handleStatusCodesFallback: function(error) {
             app.alert.dismissAll();
-            _origHandleStatusCodesFallback(xhr, error);
-            if (error == "timeout") {
+            _origHandleStatusCodesFallback(error);
+            if (error.textStatus == "timeout") {
                 app.alert.show("system_error", {
                     level: "error",
                     messages: "Request timeout",
@@ -88,9 +88,8 @@
                 });
             }
             else {
-                var code = xhr ? xhr.status : "N/A";
-                this._alertSystemError(code);
-                if (code == "400") _login();
+                this._alertSystemError(error.status);
+                if (error.status == "400") _login();
             }
         }
 

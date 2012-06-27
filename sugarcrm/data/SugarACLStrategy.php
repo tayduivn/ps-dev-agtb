@@ -66,4 +66,43 @@ abstract class SugarACLStrategy
         }
         return null;
     }
+
+    /**
+     * Check access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param string $action Action to check
+     * @param array $context
+     * @return array[boolean] Access for each field, array() means all allowed
+     */
+    public function checkFieldList($module, $field_list, $action, $context)
+    {
+        $result = array();
+        foreach($list as $key => $field) {
+            $result[$key] = $this->checkAccess($module, "field", $context + array("field" => $field, "action" => $action));
+        }
+        return $result;
+    }
+
+    /**
+     * Get access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param array $context
+     * @return array[int] Access for each field, array() means all allowed
+     */
+    public function getFieldListAccess($module, $field_list, $context)
+    {
+        $result = array();
+        foreach($list as $key => $field) {
+            if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "edit"))) {
+                $result[$key] = SugarACL::ACL_READ_WRITE;
+            } else if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
+                $result[$key] = SugarACL::ACL_READ_WRITE;
+            } else {
+                $result[$key] = SugarACL::ACL_NO_ACCESS;
+            }
+        }
+        return $result;
+    }
 }

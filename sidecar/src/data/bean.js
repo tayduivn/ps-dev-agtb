@@ -133,7 +133,7 @@
                 _.each(errors, function(fieldErrors, fieldName) {
                     this.trigger("error:validation:" + fieldName, fieldErrors);
                 }, this);
-
+                this.trigger("error:validation");
                 isValid = false;
             }
 
@@ -156,6 +156,41 @@
             }
 
             return isValid ? Backbone.Model.prototype.save.call(this, attributes, options) : false;
+        },
+
+        /**
+         * Uploads a file.
+         * @param {String} fieldName Name of the file field.
+         * @param $files List of DOM elements that contain file inputs.
+         * @param callbacks(options) Callback hash.
+         * @param options(optional) Upload options. See {@link SUGAR.Api#file} method for details.
+         * @return {Object} XHR object.
+         */
+        uploadFile: function(fieldName, $files, callbacks, options) {
+            callbacks = callbacks || {};
+
+            return app.api.file(
+                'create',
+                {
+                    id: this.id,
+                    module: this.module,
+                    field: fieldName
+                },
+                $files,
+                {
+                    success: function(data, textStatus, xhr) {
+                        var rspField = data[fieldName];
+                        if (rspField) {
+                            if (callbacks.success) callbacks.success(data);
+                        } else {
+                            var error = new SUGAR.Api.HttpError(xhr);
+                            error.responseText = data.xhr ? data.xhr.message : error.responseText;
+                            if (callbacks.error) callbacks.error(error);
+                        }
+                    }
+                },
+                options
+            );
         },
 
         /**

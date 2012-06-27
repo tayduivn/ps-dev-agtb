@@ -62,6 +62,14 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
                     'enabled' => true,
                     'width' => 13
                 ),
+                4 =>
+                array(
+                    'name' => 'filename',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' => 35
+                ),
             ),
         ),
     ),
