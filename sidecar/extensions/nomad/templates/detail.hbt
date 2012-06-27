@@ -1,7 +1,7 @@
 <h1 class="nomad">{{#if viewObj.model.link}}Related{{/if}} {{viewObj.moduleSingular}}</h1>
 <div class="bizcard">
     {{#nothing}}TODO: research how to get image data{{/nothing}}
-    <img src="{{! getFieldValue model image}}" class="avatar" alt="{{! getFieldValue model image}}">
+    <img src="{{imageUrl image viewObj.model}}" class="avatar">
     <div class="card">
         <h3>
         {{#with headerField}}
