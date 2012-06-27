@@ -204,8 +204,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         $content = $this->getNewFileContents();
         
         // Make the new file
-        //return $this->save($newname, $content);
-        return true;
+        return $this->save($newname, $content);
+        //return true;
     }
     
     /**

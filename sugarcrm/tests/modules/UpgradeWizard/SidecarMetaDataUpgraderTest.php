@@ -52,16 +52,17 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
         ),
     );
     
-    protected $builder;
+    public $builder;
     
     public function setup() {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->builder = new SidecarMetaDataFileBuilder();
+        
         foreach ($this->modulesToTest as $client => $modules) {
             foreach ($modules as $module => $viewtypes) {
-                foreach ($this->legacyFilePaths[$client] as $paths) {
-                    foreach ($paths as $type => $path) {
-                        $this->builder->buildFile($path, $module, $type, $client);
+                foreach ($this->legacyFilePaths[$client] as $path) {
+                    foreach ($viewtypes as $viewtype) {
+                        $this->builder->buildFile($path, $module, $viewtype, $client);
                     }
                 }
             }
@@ -79,8 +80,9 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
 }
 
 class SidecarMetaDataFileBuilder {
-    private $existing = array();
-    private $files = array();
+    private $backedup = array();
+    private $created  = array();
+    private $backupSuffix = '_unittext.bak';
 
     /**
      * Maps of old metadata file names
@@ -103,10 +105,31 @@ class SidecarMetaDataFileBuilder {
     );
     
     public function buildFile($path, $module, $viewtype, $client) {
-        $file = "{$path}modules/$module/metadata/{$this->legacyMetaDataFileName[$client.$viewtype]}";
+        $file = "{$path}modules/$module/metadata/{$this->legacyMetaDataFileName[$client.$viewtype]}.php";
+        $test = 'tests/modules/UpgradeWizard/SidecarMetaDataUpgrader/metadata/' . $module.$viewtype . '.php';
+        
+        // If there is an existing file, just back it up
+        if (file_exists($file)) {
+            if (rename($file, $file . $this->backupSuffix)) {
+                $this->backedup[] = $file;
+            }
+        }
+        
+        // Make the test file
+        if (copy($test, $file)) {
+            $this->created[] = $file;
+        }
     }
     
     public function teardownFiles() {
-        
+        foreach ($this->created as $file) {
+            // Kill the file we made for testing
+            unlink($file);
+            
+            // Add back in the files that were backed up
+            if (file_exists($file . $this->backupSuffix)) {
+                rename($file . $this->backupSuffix, $file);
+            }
+        }
     }
 }
