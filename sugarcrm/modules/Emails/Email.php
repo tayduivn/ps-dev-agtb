@@ -2666,7 +2666,7 @@ class Email extends SugarBean {
         {
             $from_addr = $this->db->quote(strtolower($_REQUEST['from_addr']));
             $query['joins'] .= "INNER JOIN emails_email_addr_rel er_from ON er_from.email_id = emails.id AND er_from.deleted = 0 INNER JOIN email_addresses ea_from ON ea_from.id = er_from.email_address_id
-                                AND er_from.address_type='from' AND ea_from.email_address LIKE '%" . $from_addr . "%'";
+                                AND er_from.address_type='from' AND emails_text.from_addr LIKE '%" . $from_addr . "%'";
         }
 
         if( !empty($_REQUEST['to_addrs'])  )
