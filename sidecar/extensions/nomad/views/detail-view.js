@@ -23,8 +23,8 @@
                 app.nomad.openUrl(urls);
             },
             "click #record-action .map": function () {
-                var addressObj = this.getFieldsDataHash(this.addressFields);
-                app.nomad.openAddress(addressObj);
+                var addresses = this.getAddresses();
+                app.nomad.openAddress(addresses);
             },
             "click .card": function (e) {
                 this.$('div').find('a').first().trigger('click');
@@ -50,7 +50,9 @@
                         urls.push(field);
                     } else if (field.type == "email") {                 //if email - do nothing
 
-                    } else if (field.name && field.name.indexOf("address") > -1) {    //find address fields
+                    } else if (field.name &&
+                              (field.name.indexOf("address_") > -1) &&
+                              (field.name.indexOf("email") == -1)) {   //find address (not email addresses) fields
                         addressFields.push(field);
                     } else if (field.name && field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
                         field.type = "singleemail";
@@ -71,11 +73,13 @@
             this.linkFields =    linkFields;
             this.otherFields =   fields;
 
-            this.addressFields = addressFields;
+            //this.addressFields = addressFields;
             this.emailFields =   emails;
             this.phoneFields =   phones;
             this.urlFields =     urls;
 
+            //group address fields by "group" properties defined in vardefs
+            this.addressFieldsGroups = _.groupBy(addressFields, function(field) { return view.model.fields[field.name].group });
         },
 
         /**
@@ -88,7 +92,7 @@
             var isPhoneBtn =    !!this.phoneFields.length,
                 isEmailBtn =    !!this.emailFields.length,
                 isUrlBtn =      !!this.urlFields.length,
-                isAddressBtn =  !!this.addressFields.length,
+                isAddressBtn =  !!(_.keys(this.addressFieldsGroups).length),
                 isActions =     isPhoneBtn || isEmailBtn || isUrlBtn || isAddressBtn;
 
             //create custom data object
@@ -109,7 +113,7 @@
                     isUrlBtn:           isUrlBtn,
                     isUrlNotEmpty:      this.isDataDefined(this.urlFields),
                     isAddressBtn:       isAddressBtn,
-                    isAddressNotEmpty:  this.isDataDefined(this.addressFields),
+                    isAddressNotEmpty:  this.isDataDefined(this.addressFieldsGroups),
                     isActions:          isActions
                 };
 
@@ -119,24 +123,51 @@
 
         /**
          * Returns array of fields data (from model), specified by array of fields metadata.
+         * Returned array is like: [{field-label: field.value}, ...]
          * @param fields
          * @return {Array}
          */
         getFieldsDataArray: function (fields) {
             var view = this;
-            var value, data = [];
-            _.each(fields, function (field, index) {
+            var label, value, vardef, dataObj;
+            return _.map(fields, function(field, index) {
+                dataObj = {};
                 value = view.model.get(field.name);
-                if (value) data.push({
-                    name: field.label,
-                    value: value
-                });
+                vardef = app.metadata.getModule(view.module).fields[field.name];
+                if (value) {
+                    label = app.lang.get(
+                        field.label ||
+                        vardef.label ||
+                        vardef.vname ||
+                        field.name,
+                        view.module);
+                    dataObj[label] = value;
+                    return dataObj;
+                }
             });
-            return data;
         },
 
-        isDataDefined: function (data) {
-            return _.any(data, function(item, key) { return !!item; });
+        /**
+         * Generate array of objects of type: [{"Primary Address": { street: "1234 Vicente", city: "Sunnyvale", ...} }, ...]
+         * this.addressFieldsGroups expected to be like: {"primary_address": [field1, field2, ...], ...}
+         * @return {Array}
+         */
+        getAddresses: function () {
+            var key, addressObj, valueObj, view = this;
+            //iterate over address fields group
+            return _.map(this.addressFieldsGroups, function (group, addressName) {
+                valueObj = {};
+                //iterate over fields in a group
+                _.each(group, function(field, index) {
+                    key = field.name;
+                    key = key.replace(addressName + "_", "");           //remove prefix
+                    valueObj[key] = view.model.get(field.name);         //save field value to the object
+                });
+                addressObj = {};
+                addressName = app.lang.get(addressName, view.module);   //localize address name
+                addressObj[addressName] = valueObj;                     //return address object to the mapped (result) array
+                return addressObj;
+            });
         },
 
         /**
@@ -149,7 +180,7 @@
             var value, data = {};
             _.each(fields, function (field, index) {
                 value = view.model.get(field.name);
-                if (value) data[field.label] = value;
+                if (value) data[field.name] = value;
             });
             return data;
         },
@@ -165,6 +196,15 @@
                 if (email.email_address) emailsArray.push(email.email_address);
             });
             return emailsArray;
+        },
+
+        /**
+         * Check if array or object has at least one non-falsy item
+         * @param data
+         * @return {Boolean}
+         */
+        isDataDefined: function (data) {
+            return _.any(data);
         }
     });
 

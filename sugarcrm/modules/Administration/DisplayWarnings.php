@@ -197,7 +197,7 @@ if($smtp_error) {
             $focus->retrieveSettings();
             $license_users = isset($focus->settings['license_users'])?$focus->settings['license_users']:'';
 
-            $_SESSION['license_seats_needed'] = count( get_user_array(false, "", "", false, null, " AND ".User::getLicensedUsersWhere(), false)) - $license_users;
+            $_SESSION['license_seats_needed'] = $db->getOne("SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere()) - $license_users;
         }
 
         if( $_SESSION['license_seats_needed'] > 0 ){

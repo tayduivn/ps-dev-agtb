@@ -3514,9 +3514,6 @@ article {
   border-top: 1px solid #e8e8e8;
   min-height: 52px;
 }
-.fav article {
-  padding-left: 44px;
-}
 article [class^="icon-star"] {
   position: absolute;
   top: 24px;

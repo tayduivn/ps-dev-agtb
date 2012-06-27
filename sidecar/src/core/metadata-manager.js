@@ -419,9 +419,9 @@
                         callback.call(self);
                     }
                 },
-                error: function(xhr, error) {
-                    app.logger.error("Error fetching metadata " + error);
-                    app.error.handleHttpError(xhr, error);
+                error: function(error) {
+                    app.logger.error("Error fetching metadata");
+                    app.error.handleHttpError(error);
                     if (callback) {
                         callback.call(self, error);
                     }

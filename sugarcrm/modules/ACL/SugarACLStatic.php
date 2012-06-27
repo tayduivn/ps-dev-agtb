@@ -183,4 +183,22 @@ class SugarACLStatic extends SugarACLStrategy
         return true;
 
     }
+
+    public function checkFieldList($module, $field_list, $action, $context)
+    {
+        $user_id = $this->getUserID($context);
+        if(is_admin($GLOBALS['current_user']) || empty($user_id) || !isset($_SESSION['ACL'][$user_id][$module]['fields'])) {
+            return array();
+        }
+        return parent::checkFieldList($module, $field_list, $action, $context);
+    }
+
+    public function getFieldListAccess($module, $field_list, $context)
+    {
+        $user_id = $this->getUserID($context);
+        if(is_admin($GLOBALS['current_user']) || empty($user_id) || !isset($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        	return array();
+        }
+        return parent::getFieldListAccess($module, $field_list, $action, $context);
+    }
 }

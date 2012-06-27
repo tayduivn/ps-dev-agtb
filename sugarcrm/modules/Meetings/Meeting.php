@@ -120,7 +120,7 @@ class Meeting extends SugarBean {
             $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
         }
 	}
-	
+
 	/**
 	 * Disable edit if meeting is recurring and source is not Sugar. It should be edited only from Outlook.
 	 * @param $view string
@@ -493,7 +493,7 @@ class Meeting extends SugarBean {
                 $meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
             } else {
                 $meeting_fields['SET_COMPLETE'] = '';
-            }			
+            }
 		}
 		global $timedate;
 		$today = $timedate->nowDb();
@@ -513,8 +513,7 @@ class Meeting extends SugarBean {
 		if (!empty($this->contact_id)) {
 			global $locale;
             // Bug# 46125 - make first name, last name, salutation and title of Contacts respect field level ACLs
-            $contact_temp = new Contact();
-            $contact_temp->retrieve($this->contact_id);
+			$contact_temp = BeanFactory::getBean("Contacts", $this->contact_id);
             $contact_temp->_create_proper_name_field();
             $this->contact_name = $contact_temp->full_name;
 		}
