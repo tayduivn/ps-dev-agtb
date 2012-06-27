@@ -223,6 +223,17 @@ class SugarACL
         if(empty($list)) {
             return;
         }
+
+        if(empty($options['min_access'])) {
+            $min_access = 'access';
+        } else {
+            if($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
+                $min_access = "edit";
+            }
+        }
+
+        $check_fields = array();
+
         foreach($list as $key=>$value) {
             if(!empty($options['use_value'])) {
                 if(is_array($value)) {
@@ -247,25 +258,45 @@ class SugarACL
                 $field = str_replace($options['suffix'], '', $field);
             }
             if(!empty($options['add_acl'])) {
-                // finding out access level
-                $list[$key]['acl'] = self::getFieldAccess($module, $field, $context);
+                $check_fields[$key] = $field;
             } else {
-                // or just checking for specific access
-                if(empty($options['min_access'])) {
-                    $min_access = 'access';
-                } else {
-                    if($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
-                       $min_access = "edit";
+                if(!empty($list[$key])) {
+                    $check_fields[$key] = $field;
+                }
+            }
+        }
+
+        if(!self::$acls[$module]) {
+            self::loadACLs($module, $context);
+        }
+
+        if(!empty($options['add_acl'])) {
+            // initialize the access details
+            foreach($check_fields as $key => $value) {
+                $list[$key]['acl'] = self::ACL_READ_WRITE;
+            }
+            foreach(self::$acls[$module] as $acl) {
+                foreach($acl->getFieldListAccess($module, $check_fields, $context) as $key => $acl) {
+                    if($acl < $list[$key]['acl']) {
+                        $list[$key]['acl'] = $acl;
                     }
                 }
-                if(!empty($list[$key]) && !self::checkAccess($module, "field", $context + array("field" => $field, "action" => $min_access))) {
-                    // if have no access, blank or remove field value
-                    if(empty($options['blank_value'])) {
-                        unset($list[$key]);
-                    } else {
-                        $list[$key] = '';
+            }
+        } else {
+            foreach(self::$acls[$module] as $acl) {
+                foreach($acl->checkFieldList($module, $check_fields, $min_access, $context) as $key => $access) {
+                    if(!$access) {
+                        // if have no access, blank or remove field value
+                        if(empty($options['blank_value'])) {
+                        	unset($list[$key]);
+                        } else {
+                        	$list[$key] = '';
+                        }
+                        // no need to check it again
+                        unset($check_fields[$key]);
                     }
                 }
+                if(empty($check_fields)) break;
             }
         }
     }
