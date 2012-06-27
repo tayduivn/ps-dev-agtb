@@ -81,6 +81,10 @@ class ForecastsChartApi extends ChartApi
             //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
 
+        if(isset($args['category']) && $args['category'] == "Committed") {
+            $testFilters['forecast'] = array('$is' => 1);
+        }
+
         // generate the report builder instance
         $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters, $args);
 
