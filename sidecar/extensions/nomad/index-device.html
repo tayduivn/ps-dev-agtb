@@ -17,6 +17,7 @@
     <script type="text/javascript" src="lib/event.js"></script>
     <script type="text/javascript" src="lib/touch.js"></script>
     <script type="text/javascript" src="lib/ajax.js"></script>
+    <script type="text/javascript" src="lib/detect.js"></script>
     <script type="text/javascript" src="lib/underscore.js"></script>
     <script type="text/javascript" src="lib/backbone.js"></script>
     <script type="text/javascript" src="lib/stash.js"></script>
@@ -65,14 +66,7 @@
         function onDeviceReady() {
             console.log('Device ready');
             _.defer(function() {
-                function onGetAccessToken(accessToken) {
-                    var _accessToken = accessToken;
-                    function onGetRefreshToken(refreshToken) {
-                        SUGAR.App.nomad.deviceReady(_accessToken, refreshToken);
-                    };
-                    window.plugins.keychain.getForKey('AuthRefreshToken', 'SugarCRM', onGetRefreshToken, onGetRefreshToken);
-                };
-                window.plugins.keychain.getForKey('AuthAccessToken', 'SugarCRM', onGetAccessToken, onGetAccessToken);
+                SUGAR.App.nomad.deviceReady();
             });
         }
     </script>

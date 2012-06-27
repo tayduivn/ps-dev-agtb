@@ -14,9 +14,67 @@
 
     app.augment("nomad", {
 
-        deviceReady: function(authAccessToken, authRefreshToken) {
-            app.logger.debug("Device is ready, layout cache enabled: " + app.config.layoutCacheEnabled);
+        deviceReady: function() {
             app.isNative = !_.isUndefined(window.cordova);
+
+            var accessToken = null, refreshToken = null;
+            var deviceInfo = {};
+            var self = this;
+            var _ready = function() {
+                self._deviceReady(accessToken, refreshToken, deviceInfo);
+            };
+
+            deviceInfo.browser = $.browser;
+            deviceInfo.os = $.os;
+
+            if (app.isNative) {
+                async.waterfall([
+                    // Fetch access token
+                    function(callback) {
+                        window.plugins.keychain.getForKey('AuthAccessToken', 'SugarCRM',
+                            function(token) {
+                                accessToken = token;
+                                callback(null);
+                            },
+                            function() {
+                                callback(null);
+                            }
+                        );
+                    },
+
+                    // Fetch refresh token
+                    function(callback) {
+                        window.plugins.keychain.getForKey('AuthRefreshToken', 'SugarCRM',
+                            function(token) {
+                                refreshToken = token;
+                                callback(null);
+                            },
+                            function() {
+                                callback(null);
+                            }
+                        );
+                    },
+
+                    // Fetch device info
+                    function(callback) {
+                        // TODO: Call device info plugin
+                        callback(null);
+                    }
+                ],
+                function(err) {
+                    if (err) console.log(err);
+                    _ready();
+                });
+            }
+            else {
+                _ready();
+            }
+
+        },
+
+        _deviceReady: function(authAccessToken, authRefreshToken, deviceInfo) {
+            app.logger.debug("Device: " + JSON.stringify(deviceInfo));
+            app.logger.debug("Layout cache enabled: " + app.config.layoutCacheEnabled);
 
             if (app.config.layoutCacheEnabled !== true) app.NomadController = null;
 
