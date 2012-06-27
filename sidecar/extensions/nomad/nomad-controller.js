@@ -12,13 +12,14 @@
 
         loadView: function(params) {
 
-            var loadView = _.bind(this._loadView,this);
+            var loadView = _.bind(this._loadView, this);
 
-            if(params.layout === "login"){
+            if (params.layout === "login") {
+                // HACK: To work-around frozen login view
                 _.delay(function() {
                     loadView(params);
                 }, 1000);
-            }else{
+            } else {
                 loadView(params);
             }
 
