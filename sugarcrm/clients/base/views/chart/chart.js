@@ -42,12 +42,15 @@
         });
         this.context.on('change:selectedDataSet', function (context, dataset) {
             self.handleRenderOptions({dataset: dataset.id});
-        })
+        });
+        this.context.on('change:selectedCategory', function(context, value) {
+            self.handleRenderOptions({category: value.id});
+        });
 
         this.context.on('change:renderedForecastFilter', function (context, value) {
             self.hasFilterOptions = true;
             self.handleRenderOptions(value);
-        })
+        });
 
         this.context.on('change:renderedChartOptions', function (context, value) {
             self.hasChartOptions = true;
