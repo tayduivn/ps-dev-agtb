@@ -371,6 +371,10 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         static $count;
         if(!isset($count))$count = 0;
 
+        $field_acl['DetailView'] = $aItem->ACLAccess('DetailView');
+        $field_acl['ListView'] = $aItem->ACLAccess('ListView');
+        $field_acl['EditView'] = $aItem->ACLAccess('EditView');
+        $field_acl['Delete'] = $aItem->ACLAccess('Delete');
         foreach($thepanel->get_list_fields() as $field_name=>$list_field)
         {
             //add linked field attribute to the array.
@@ -400,10 +404,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $list_field['start_link_wrapper'] = $this->start_link_wrapper;
                 $list_field['end_link_wrapper'] = $this->end_link_wrapper;
                 $list_field['subpanel_id'] = $this->subpanel_id;
-                $list_field['DetailView'] = $aItem->ACLAccess('DetailView');
-                $list_field['ListView'] = $aItem->ACLAccess('ListView');
-                $list_field['EditView'] = $aItem->ACLAccess('EditView');
-                $list_field['Delete'] = $aItem->ACLAccess('Delete');
+                $list_field += $field_acl;
                 if ( isset($aItem->field_defs[strtolower($list_field['name'])])) {
                     require_once('include/SugarFields/SugarFieldHandler.php');
                     // We need to see if a sugar field exists for this field type first,
