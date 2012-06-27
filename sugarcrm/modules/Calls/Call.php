@@ -407,9 +407,6 @@ class Call extends SugarBean {
 		$this->fill_in_additional_parent_fields();
 
 		global $app_list_strings;
-		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
-		$this->parent_type_options = get_select_options_with_id($parent_types, $this->parent_type);
-
 		if (empty($this->reminder_time)) {
 			$this->reminder_time = -1;
 		}
