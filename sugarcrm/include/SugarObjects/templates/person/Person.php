@@ -35,7 +35,7 @@ class Person extends Basic
      * @var bool controls whether or not to invoke the getLocalFormatttedName method with title and salutation
      */
     var $createLocaleFormattedName = true;
-    
+
 	public function Person()
 	{
 		parent::Basic();
@@ -72,74 +72,42 @@ class Person extends Basic
 	{
 		global $locale, $app_list_strings;
 
-        // Bug# 46125 - make first name, last name, salutation and title of Contacts respect field level ACLs
-        $first_name = ""; $last_name = ""; $salutation = ""; $title = "";
+        $nameparts = array('first_name' => $this->first_name, 'last_name' => $this->last_name, "title" => $this->title);
+        if(isset($this->field_defs['salutation']['options'])
+        		&& isset($app_list_strings[$this->field_defs['salutation']['options']])
+        		&& isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
 
+        	$nameparts['salutation'] = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
+        } else {
+            $nameparts['salutation'] = '';
+        }
         //BEGIN SUGARCRM flav=pro ONLY
-        $globalUserSet = isset($GLOBALS['current_user']);
-        if ($globalUserSet && $this->ACLFieldAccess('first_name')) {
-        //END SUGARCRM flav=pro ONLY
-           // first name has at least read access
-           $first_name = $this->first_name;
-        //BEGIN SUGARCRM flav=pro ONLY
+        if(isset($GLOBALS['current_user'])) {
+            // Bug# 46125 - make first name, last name, salutation and title of Contacts respect field level ACLs
+            $this->ACLFilterFieldList($nameparts, array(), array("blank_value" => true));
         }
         //END SUGARCRM flav=pro ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && $this->ACLFieldAccess('last_name')) {
-        //END SUGARCRM flav=pro ONLY
-            // last name has at least read access
-            $last_name = $this->last_name;
-        //BEGIN SUGARCRM flav=pro ONLY
-        }
-        //END SUGARCRM flav=pro ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && $this->ACLFieldAccess('salutation')) {
-        //END SUGARCRM flav=pro ONLY
-
-            // salutation has at least read access
-            if(isset($this->field_defs['salutation']['options'])
-			  && isset($app_list_strings[$this->field_defs['salutation']['options']])
-			  && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
-
-			        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
-			} // if
-        //BEGIN SUGARCRM flav=pro ONLY
-        }
-        //END SUGARCRM flav=pro ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && $this->ACLFieldAccess('title')) {
-        //END SUGARCRM flav=pro ONLY
-            // title has at least read access
-            $title = $this->title;
-        //BEGIN SUGARCRM flav=pro ONLY
-        }
-        //END SUGARCRM flav=pro ONLY
-
         // Corner Case:
         // Both first name and last name cannot be empty, at least one must be shown
         // In that case, we can ignore field level ACL and just display last name...
         // In the ACL field level access settings, last_name cannot be set to "none"
-        if (empty($first_name) && empty($last_name)) {
-            $full_name = $locale->getLocaleFormattedName("", $last_name, $salutation, $title);
+        if (empty($nameparts['first_name']) && empty($nameparts['last_name'])) {
+        	$full_name = $locale->getLocaleFormattedName("", $this->last_name, $nameparts['salutation'], $nameparts['title']);
         } else {
-			if($this->createLocaleFormattedName) {
-				$full_name = $locale->getLocaleFormattedName($first_name, $last_name, $salutation, $title);
-			} else {
-				$full_name = $locale->getLocaleFormattedName($first_name, $last_name);
-			}
-		}
+        	if($this->createLocaleFormattedName) {
+        		$full_name = $locale->getLocaleFormattedName($nameparts['first_name'], $nameparts['last_name'], $nameparts['salutation'], $nameparts['title']);
+        	} else {
+        		$full_name = $locale->getLocaleFormattedName($nameparts['first_name'], $nameparts['last_name']);
+        	}
+        }
 
-		$this->name = $full_name;
-		$this->full_name = $full_name; //used by campaigns
+		$this->name = $this->full_name = $full_name; // fill_name used by campaigns
 	}
 
 	/**
  	 * @see parent::save()
  	 */
-	public function save($check_notify=false) 
+	public function save($check_notify=false)
 	{
 		//If we are saving due to relationship changes, don't bother trying to update the emails
         if(!empty($GLOBALS['resavingRelatedBeans']))
@@ -171,7 +139,7 @@ class Person extends Basic
 	/**
  	 * @see parent::get_summary_text()
  	 */
-	public function get_summary_text() 
+	public function get_summary_text()
 	{
 		$this->_create_proper_name_field();
         return $this->name;
@@ -180,7 +148,7 @@ class Person extends Basic
 	/**
  	 * @see parent::get_list_view_data()
  	 */
-	public function get_list_view_data() 
+	public function get_list_view_data()
 	{
 		global $system_config;
 		global $current_user;
