@@ -1,7 +1,7 @@
 (function(app) {
 
     Handlebars.registerHelper('listItem', function(model, view, fields) {
-        var template = app.template.get("list.item");
+        var template = app.template.get("list-item");
 
         return new Handlebars.SafeString(template({
             model: model,

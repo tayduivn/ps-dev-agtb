@@ -23,7 +23,7 @@
             else {
                 this.$el.removeClass("hide");
                 app.view.View.prototype._renderSelf.call(this);
-                this._renderLeftList(app.template.get('left.menu'),
+                this._renderLeftList(app.template.get('menu-left'),
                     {
                         items: _.keys(app.metadata.getModuleList()),
                         userName: app.user.get('full_name'),
@@ -34,7 +34,7 @@
                     var module = params.parentModule;
                     var id = params.parentModelId;
                     var link = params.link;
-                    this._renderRightList(app.template.get('right.menu.relationships'),
+                    this._renderRightList(app.template.get('menu-right-relationships'),
                         {
                             createURL: app.nomad.buildLinkRoute(module, id, link, "create?depth=1"),
                             associateURL: app.nomad.buildLinkRoute(module, id, link, "associate?depth=1"),
@@ -42,7 +42,7 @@
                         });
 
                 } else if (layout === "detail") {
-                    this._renderRightList(app.template.get('right.menu.relationships'),
+                    this._renderRightList(app.template.get('menu-right-relationships'),
                         {
                             createURL: app.router.buildRoute(params.module, params.modelId) + "/links/create",
                             associateURL: app.router.buildRoute(params.module, params.modelId) + "/links/associate",
@@ -50,7 +50,7 @@
                         });
                 }
                 else {
-                    this._renderRightList(app.template.get('right.menu'), _.keys(app.metadata.getModuleList()));
+                    this._renderRightList(app.template.get('menu-right'), _.keys(app.metadata.getModuleList()));
                 }
             }
             return this;

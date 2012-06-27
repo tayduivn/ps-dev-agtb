@@ -22,7 +22,7 @@
             // Default list item partial
             options.templateOptions = {
                 partials: {
-                    'list.item': app.template.get("list.item")
+                    'list-item': app.template.get("list-item")
                 }
             };
             app.view.View.prototype.initialize.call(this, options);
@@ -59,7 +59,7 @@
         onItemAdded: function (model, collection, options) {
             var fieldId = app.view.getFieldId();
 
-            var item = Handlebars.helpers.include('list.item', model, this, this.meta.panels[0].fields);
+            var item = Handlebars.helpers.include('list-item', model, this, this.meta.panels[0].fields);
 
             if (options.addTop && this.$('.items').children().length) {
                 this.$('.items').children().first().before(item.toString());

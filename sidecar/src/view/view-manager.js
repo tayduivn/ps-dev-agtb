@@ -313,6 +313,7 @@
          * @return {Function} Component class.
          */
         declareComponent: function(type, name, module, controller, layoutType, overwrite) {
+
             var ucType                  = app.utils.capitalize(type),
                 className               = app.utils.capitalizeHyphenated(name) + ucType,
                 customClassName         = (module || "") + className,
