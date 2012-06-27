@@ -121,8 +121,8 @@
          * Array of phones consists of objects:
          * <pre><code>
          * [
-         *   { name: 'Mobile', value: '(408) 555-7890' },
-         *   { name: 'Home', value: '(650) 333-3456' }
+         *   {'Mobile': '(408) 555-7890' },
+         *   {'Home': '(650) 333-3456' }
          * ]
          * </code></pre>
          */
@@ -145,8 +145,8 @@
          * Array of phones consists of objects:
          * <pre><code>
          * [
-         *   { name: 'Mobile', value: '(408) 555-7890' },
-         *   { name: 'Home', value: '(650) 333-3456' }
+         *   {'Mobile': '(408) 555-7890' },
+         *   {'Home': '(650) 333-3456' }
          * ]
          * </code></pre>
          * @param {String} message(optional) SMS message to send.
@@ -170,8 +170,8 @@
          * Array of URLs consists of objects:
          * <pre><code>
          * [
-         *   { name: 'Corporate site', value: 'http://example.com' },
-         *   { name: 'Other', value: 'http://example2.com' }
+         *   {'Corporate site': 'http://example.com' },
+         *   {'Other': 'http://example2.com' }
          * ]
          * </code></pre>
          */
@@ -203,7 +203,7 @@
         openAddress: function(addresses) {
             if (_.isArray(addresses) && addresses.length > 1){
                 var self = this;
-                var locationNames = _.map(addresses, function(item) { return app.lang.get(_.keys(item)[0]); });
+                var locationNames = _.map(addresses, function(item) { return _.keys(item)[0]; });
                 this._showActionSheet("Select location to show", locationNames, function(buttonValue, buttonIndex) {
                     if (buttonIndex < addresses.length)
                         self._openGoogleMap(self._extractValue(addresses, buttonIndex));
@@ -227,7 +227,7 @@
         // Builds an array of named phone numbers: "<phone-name> - <phone-number>"
         _buildNamedList: function(items) {
             return _.map(items, function(item) {
-                return app.lang.get(_.keys(item)[0]) + " - " + _.values(item)[0];
+                return _.keys(item)[0] + " - " + _.values(item)[0];
             });
         },
 

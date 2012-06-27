@@ -123,38 +123,43 @@
 
         /**
          * Returns array of fields data (from model), specified by array of fields metadata.
+         * Returned array is like: [{field-label: field.value}, ...]
          * @param fields
          * @return {Array}
          */
         getFieldsDataArray: function (fields) {
             var view = this;
-            var key, value, dataObj, data = [];
-            //map fields array into array [{field.name: field.value}, ...]
-            data = _.map(fields, function(field, index) {
+            var label, value, vardef, dataObj;
+            return _.map(fields, function(field, index) {
                 dataObj = {};
                 value = view.model.get(field.name);
-
+                vardef = app.metadata.getModule(view.module).fields[field.name];
                 if (value) {
-                    key = app.lang.get(field.name, view.module);
-                    dataObj[key] = value;
+                    label = app.lang.get(
+                        field.label ||
+                        vardef.label ||
+                        vardef.vname ||
+                        field.name,
+                        view.module);
+                    dataObj[label] = value;
                     return dataObj;
                 }
             });
-            return data;
         },
 
         /**
          * Generate array of objects of type: [{"Primary Address": { street: "1234 Vicente", city: "Sunnyvale", ...} }, ...]
+         * this.addressFieldsGroups expected to be like: {"primary_address": [field1, field2, ...], ...}
          * @return {Array}
          */
         getAddresses: function () {
-            var addresses = [], addressObj, valueObj, view = this;
-            //iterate over adress fields group
+            var key, addressObj, valueObj, view = this;
+            //iterate over address fields group
             return _.map(this.addressFieldsGroups, function (group, addressName) {
                 valueObj = {};
                 //iterate over fields in a group
                 _.each(group, function(field, index) {
-                    var key = field.name;
+                    key = field.name;
                     key = key.replace(addressName + "_", "");           //remove prefix
                     valueObj[key] = view.model.get(field.name);         //save field value to the object
                 });
