@@ -3536,6 +3536,9 @@ article > input[type=checkbox] {
   display: inline-block;
   height: 205px;
 }
+#detailListing.short #listing > i {
+  height: 155px;
+}
 #detailListing ul.actions {
   margin: 0;
   padding: 0;
@@ -4273,6 +4276,9 @@ h3.nomad {
 .bizcard img {
   float: left;
 }
+.bizcard.short .card {
+  height: 28px;
+}
 .bizcard .card {
   margin: 0 16px;
   line-height: 1.2em;
@@ -4320,6 +4326,9 @@ h3.nomad {
   position: absolute;
   bottom: 52px;
   left: 0;
+}
+.bizcard.short .fade {
+  bottom: 0 !important;
 }
 .bizcard .more {
   position: absolute;
