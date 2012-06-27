@@ -80,14 +80,14 @@ class RestService extends ServiceBase {
             }
             
 
-            if ( count($_POST) > 0 ) {
-                // They have normal post arguments
-                $postVars = array();
-            } else if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
                 $postVars = array();
+            } else if ( count($_POST) > 0 ) {
+                // They have normal post arguments
+                $postVars = securexss($_POST);
             } else {
                 $postContents = null;
                 if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
@@ -111,7 +111,7 @@ class RestService extends ServiceBase {
             }
             
             // I know this looks a little weird, overriding post vars with get vars, but 
-            // in the case of REST, get vars ar fairly uncommon and pretty explicit, where
+            // in the case of REST, get vars are fairly uncommon and pretty explicit, where
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
@@ -122,12 +122,8 @@ class RestService extends ServiceBase {
 
             $this->respond($output, $route, $argArray);
 
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
         } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
-            $this->handleException($apiException);
+            $this->handleException($e);
         }
     }
 
@@ -240,26 +236,49 @@ class RestService extends ServiceBase {
      */
     protected function handleException(Exception $exception) {
         if ( is_a($exception,"SugarApiException") ) {
-            $httpError = $exception->errorCode;
+            $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getErrorLabel();
+            $description = $exception->getDescription();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
             $httpError = $exception->getHttpCode();
+            $errorLabel = $exception->getMessage();
+            $description = $exception->getDescription();
         } else {
             $httpError = 500;
+            $errorLabel = 'unknown_error';
+            $description = $exception->getMessage();
         }
         header("HTTP/1.1 {$httpError}");
 
-        $GLOBALS['log']->error('An unknown exception happened: '.$exception->getMessage());
+        $GLOBALS['log']->error('An unknown exception happened: ('.$errorLabel.')'.$description);
         
         // TODO: Translate error messages
-        $reply = "ERROR: ".$exception->getMessage();
+        $reply = "ERROR: ".$description;
 
+        $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
                 $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $exception->errorCode)));
+                $crazyEncoding = true;
             }
         }
-        echo($reply);
+        if ( $crazyEncoding ) {
+            echo($reply);
+            die();
+        }
+        
+        // Send proper headers
+        header("Content-Type: application/json");
+        header("Cache-Control: no-store");
+
+        $replyData = array(
+            'error'=>$errorLabel,
+        );
+        if ( !empty($description) ) {
+            $replyData['error_description'] = $description;
+        }
+        echo(json_encode($replyData));
         die();
     }
 
@@ -292,17 +311,16 @@ class RestService extends ServiceBase {
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+        } else if ( isset($_POST['oauth_token']) ) {
+            $this->sessionId = $_POST['oauth_token'];
+        } else if ( isset($_GET['oauth_token']) ) {
+            $this->sessionId = $_GET['oauth_token'];
+        }
 
+        if ( !empty($this->sessionId) ) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
             $oauthServer->verifyAccessToken($this->sessionId);
-        } else if ( isset($_REQUEST[session_name()]) ) {
-            // They just have a regular web session
-            $this->sessionId = $_REQUEST[session_name()];
-            // The OAuth server starts a session to validate the token, we have to start it manually, like a sucker.
-            session_start();
-        }
-        
-        if ( !empty($this->sessionId) ) {
+
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -310,10 +328,18 @@ class RestService extends ServiceBase {
         }
 
         if ( $valid === false ) {
+            // In the case of very large files that are too big for the request too handle AND
+            // if the auth token was sent as part of the request body, you will get a no auth error
+            // message on uploads. This check is in place specifically for file uploads that are too
+            // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
+            if (isset($_FILES) && empty($_FILES)) {
+                throw new SugarApiExceptionRequestTooLarge('File is too large');
+            }
+
             // @TODO Localize exception strings
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
-
+        
         //BEGIN SUGARCRM flav=pro ONLY
         SugarApplication::trackLogin();
         //END SUGARCRM flav=pro ONLY

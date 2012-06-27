@@ -23,7 +23,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "Log In",
-                                    class: "login-submit",
+                                    'class': "login-submit",
                                     value: "login",
                                     primary: true,
                                     events: {
@@ -51,7 +51,7 @@
                                     type: "button",
                                     label: "Sign Up",
                                     value: "signup",
-                                    class: 'pull-left',
+                                    'class': 'pull-left',
                                     events: {
                                         click: "function(){ " +
                                             "app.router.navigate('#signup');" +
@@ -98,6 +98,75 @@
                             "type": "simple",
                             "components": [
                                 {view: "signupView"}
+                            ]
+                        }
+                    }
+                }
+            },
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template":
+                            "<div class='container-fluid'>" +
+                                    "<div class='row-fluid'>" +
+                                        "<div class='span7'>" +
+                                            "<div class='card2'>" +
+                                                "<div class='row-fluid'>" +
+                                                    "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                                    "<div class='span8'>" +
+                                                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                        "{{ this.model.attributes.message }}</p>" +
+                                                    "</div>" +
+                                                "</div>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>",
+                        controller: "{" +
+                            "initialize: function(options) { " +
+                                "app.view.View.prototype.initialize.call(this, options);" +
+                            "}," +
+                            "render: function(data) { " +
+                                "var self = this, attributes = {};" +
+                                "if(this.context.get('errorType')) {" +
+                                    "attributes = this.getErrorAttributes(); " +
+                                    "this.model.set(attributes); " +
+                                "}" +
+                                "app.view.View.prototype.render.call(this);" +
+                            "}," +
+                            "getErrorAttributes: function() {" +
+                                "var attributes = {}; "+
+                                "if(this.context.get('errorType') ==='404') {" +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 404 Not Found'," +
+                                        "type: '404'," +
+                                        "message: \"We're sorry but the resource you asked for cannot be found.\"" +
+                                    "};" +
+                                "} else if(this.context.get('errorType') ==='500') { " +
+                                    "attributes = {" +
+                                        "title: 'HTTP: 500 Internal Server Error'," +
+                                        "type: '500'," +
+                                        "message: 'There was an error on the server. Please contact technical support.'" +
+                                    "};" +
+                                "} else {" +
+                                    "attributes = { " +
+                                        "title: 'Unknown Error', " +
+                                        "type: 'Unknown'," +
+                                        "message: 'Unknown error.'" +
+                                    "};" +
+                                "} " +
+                                "return attributes;" +
+                            "}" +
+                        "}"
+                    }
+                },
+                "layouts": {
+                    "error": {
+                        "meta": {
+                            "type": "simple",
+                            "components": [
+                                {view: "errorView"}
                             ]
                         }
                     }
@@ -153,7 +222,7 @@
                     "signupView": {
                         "meta": {
                             "buttons": [
-                                {     
+                                {
                                     name: "cancel_button",
                                     type: "button",
                                     label: "Cancel",
@@ -163,7 +232,7 @@
                                         click: "function(){" +
                                             "app.router.goBack();" +
                                             "}"
-                                    } 
+                                    }
                                 },
                                 {
                                     name: "signup_button",
@@ -176,10 +245,10 @@
                                             "function(){ var self = this; " +
                                             "var oEmail = this.model.get(\"email\");" +
                                             "if (oEmail) {" +
-                                            "   this.model.attributes.email = [{\"email_address\":oEmail}];" +
+                                            "   this.model.set({\"email\": [{\"email_address\":oEmail}]}, {silent: true});" +
                                             "}" +
                                             "var validFlag = this.model.isValid();" +
-                                            " this.model.set({\"email\":oEmail});" +
+                                            " this.model.set({\"email\":oEmail}, {silent: true});" +
                                             "   if(validFlag) {" +
                                             "   $('#content').hide(); " +
                                             "   app.alert.show('signup', {level:'process', title:'Registering', autoClose:false}); " +
@@ -191,7 +260,7 @@
                                             "       state:this.model.get(\"state\")," +
                                             "       country:this.model.get(\"country\")," +
                                             "       company:this.model.get(\"company\")," +
-                                            "       title:this.model.get(\"jobtitle\")" +
+                                            "       jobtitle:this.model.get(\"jobtitle\")" +
                                             "   }; " +
                                             "   this.app.api.signup(contactData, null, " +
                                             "   {" +
@@ -321,26 +390,13 @@
                 "templates": {
                     "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
                     "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
-                        "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                controller: "{" +
-                    "handleValidationError: function(errors) {" +
-                    "var self = this;" +
-                    "this.$('.control-group').addClass(\"error\");" +
-                    "this.$('.help-block').html(\"\");" +
-                    "this.$('.controls').addClass('input-append');" +
-                    "_.each(errors, function(errorContext, errorName) {" +
-                    "self.$('.help-block').append(app.error.getErrorString(errorName,errorContext));" +
-                    "});" +
-                    "this.$('.add-on').remove();" +
-                    "this.$('.controls').find('input').after('<span class=\"add-on\"><i class=\"icon-exclamation-sign\"></i></span>');" +
-                    "}" +
-                    "}"
+                }
             },
             "phone": {
                 "templates": {
@@ -356,9 +412,6 @@
             }
         },
         'views': {
-            "alert": {
-                controller: "\\\"\/**\n * View that displays errors.\n * @class View.Views.AlertView\n * @extends View.View\n *\/\n\n({\n    initialize: function(options) {\n        app.view.View.prototype.initialize.call(this, options);\n    },\n    \/**\n     * Displays an alert message and returns alert instance.\n     * @param {Object} options\n     * @return {Backbone.View} Alert instance\n     * @method\n     *\/\n    show: function(options) {\n        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;\n        if (!options) {\n            return false;\n        }\n\n        level = options.level ? options.level : \\'info\\';\n        title = options.title ? options.title : null;\n        msg = (_.isString(options.messages)) ? [options.messages] : options.messages;\n        autoClose = options.autoClose ? options.autoClose : false;\n\n        \/\/ \\\"process\\\" is the loading indicator .. I didn\\'t name it ;=)\n        alertClass = (level === \\\"process\\\" || level === \\\"success\\\" || level === \\\"warning\\\" || level === \\\"info\\\" || level === \\\"error\\\") ? \\\"alert-\\\" + level : \\\"\\\";\n\n        ctx = {\n            alertClass: alertClass,\n            title: title,\n            messages: msg,\n            autoClose: autoClose\n        };\n        try {\n            AlertView = Backbone.View.extend({\n                events: {\n                    \\'click .close\\': \\'close\\'\n                },\n                template: \\\"<div class=\\\\\\\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{\/if}}\\\\\\\">\\\" +\n                    \\\"<a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>{{#if title}}<strong>{{title}}<\/strong>{{\/if}}\\\" +\n                    \\\"{{#each messages}}<p>{{this}}<\/p>{{\/each}}<\/div>\\\",\n                loadingTemplate: \\\"<div class=\\\\\\\"alert {{alertClass}}\\\\\\\">\\\" +\n                    \\\"<strong>{{title}}<\/strong>\u2026<\/div><a class=\\\\\\\"close\\\\\\\" data-dismiss=\\\\\\\"alert\\\\\\\" href=\\\\\\\"#\\\\\\\">x<\/a>\\\",\n                initialize: function() {\n                    this.render();\n                },\n                close: function() {\n                    this.$el.remove();\n                },\n                render: function() {\n                    var tpl = (level === \\'process\\') ?\n                        Handlebars.compile(this.loadingTemplate) :\n                        Handlebars.compile(this.template);\n\n                    this.$el.html(tpl(ctx));\n                }\n            });\n            thisAlert = new AlertView();\n            this.$el.prepend(thisAlert.el);\n\n            if (autoClose) {\n                setTimeout(function() {\n                    $(\\'.timeten\\').fadeOut().remove();\n                }, 9000);\n            }\n            return thisAlert;\n\n        } catch (e) {\n            app.logger.error(\\\"Failed to render \\'\\\" + this.name + \\\"\\' view.\\\\n\\\" + e.message);\n            return null;\n            \/\/ TODO: trigger app event to render an error message\n        }\n    }\n})\n\\\""
-            },
             "loginView": {
                 templates: {
                     "loginView": "<form name='{{name}}'>" +
@@ -373,7 +426,7 @@
                         "{{#each fields}}\n" +
                         "<div>{{field ../../this ../../model}}</div>" +
                         "{{/each}}" +
-                        "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                        "<p class=\"help-block\"><a rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                         "</div>          \n" +
                         "{{/each}}" +
                         "<div class=\"modal-footer\">\n" +
@@ -474,6 +527,25 @@
                         "{{/each}}" +
                         "</div>" +
                         "</div>" +
+                        "</div>"
+                }
+            },
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
+                            "<div class='row-fluid'>" +
+                                "<div class='span7'>" +
+                                    "<div class='card2'>" +
+                                        "<div class='row-fluid'>" +
+                                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                                            "<div class='span8'>" +
+                                                "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                                                "{{ this.model.attributes.message }}</p>" +
+                                            "</div>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
                         "</div>"
                 }
             }
@@ -771,7 +843,8 @@
             }
         },
         "appStrings": {
-            ERROR_FIELD_REQUIRED: "Error. This field is required."
+            ERROR_FIELD_REQUIRED: "Error. This field is required.",
+            ERROR_EMAIL: "Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
         }
     };
 
@@ -779,12 +852,11 @@
     app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
-        
+
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard",
-                module: app.config.defaultModule
+                layout: "dashboard"
             });
         });
 
@@ -822,9 +894,8 @@
         ];
 
         app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
-        
-        // Perform any original before checks .. if these fail return false
-        if (!oRoutingBefore.call(this, route, args)) return false;
+
+        if(!oRoutingBefore.call(this, route, args)) return false;
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
@@ -838,22 +909,22 @@
         }
 
         // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
-        if(route === 'index') {
+        if (route === 'index') {
             dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
             if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
                 app.router.list(dm);
-            } else if(app.acl.hasAccess('read', 'Home')) {
+            } else if (app.acl.hasAccess('read', 'Home')) {
                 app.router.index();
             } else {
                 alertUser();
                 return false;
             }
-        // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
-        } else if(!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
+            // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
+        } else if (!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
-            alertUser("Issue loading "+args[0]+" module. Please try again later or contact support.");
+            alertUser("Issue loading " + args[0] + " module. Please try again later or contact support.");
             return false;
-        } 
+        }
         return true;
     };
 
@@ -889,7 +960,7 @@
             var self = this;
             // TODO: Will it ever happen: app.config == undefined?
             // app.config should always be present because the logger depends on it
-            if (typeof(app.config) == undefined || (app.config && app.config.appStatus == 'offline')) {
+            if (_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) {
                 var callback = function(data) {
                     var params = {
                         module: "Login",
@@ -912,6 +983,30 @@
         }
     });
 
+    /**
+     * Extends the `save` action to add `portal` specific params to the payload.
+     *
+     * @param {Object} attributes(optional) model attributes
+     * @param {Object} options(optional) standard save options as described by Backbone docs and
+     * optional `fieldsToValidate` parameter.
+     */
+    var __superBeanSave__ = app.Bean.prototype.save;
+    app.Bean.prototype.save = function(attributes, options) {
+        //Here is the list of params that must be set for portal use case.
+        var defaultParams = {
+            portal_flag: 1,
+            portal_viewable: 1
+        }
+        var moduleFields = app.metadata.getModule(this.module).fields || {};
+        for (var field in defaultParams) {
+            if (moduleFields[field]) {
+                this.set(field, defaultParams[field], {silent:true});
+            }
+        }
+        //Call the prototype
+        __superBeanSave__.call(this, attributes, options);
+    };
+
     var _rrh = {
         /**
          * Handles `signup` route.
@@ -930,5 +1025,94 @@
         // Register portal specific routes
         app.router.route("signup", "signup", _rrh.signup);
     });
+
+    /**
+     * Upload attachments of the bean to the server
+     *
+     * This method must be called after the bean has been saved to the server (in `success` callback)
+     *
+     * @param {String} module module name
+     * @param {String} fieldName the field that contains the attachement
+     * @param {Array} $files `file` type inputs to upload
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.Bean.prototype.uploadAttachment = function(module, fieldName, $files, callbacks) {
+
+        callbacks = callbacks || {};
+
+        this.fileField = fieldName;
+
+        // process the upload
+        return app.api.attachment('create', this, $files, {
+            success: function(rsp, textStatus, xhr) {
+                var responseText, rspField = rsp[fieldName];
+                if (rspField) {
+                    //success
+                    if (callbacks.success) callbacks.success(rsp);
+                } else {
+                    //error
+                    if (callbacks.error) callbacks.error(xhr, rsp.xhr.message);
+                }
+            },
+            error: function(xhr) {
+                if (callbacks.error) callbacks.error(xhr, xhr.responseText);
+            }
+        });
+    };
+
+    /**
+     * Checks if there are `file` type fields in the view. If yes, process upload of the files
+     *
+     * @param {Object} model Model
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+
+        callbacks = callbacks || {};
+
+        var self = this;
+
+        //check if there are attachments
+        var $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+        var filesToUpload = $files.length;
+
+        //process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
+
+            //field by field
+            for (var file in $files) {
+                var $file = $($files[file]),
+                    fileField = $file.attr("name");
+                model.uploadAttachment(self.module, fileField, $file, {
+                    success: function() {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                            if (callbacks.success) callbacks.success();
+                        }
+                    },
+                    error: function(xhr, responseText) {
+                        filesToUpload--;
+                        if (filesToUpload==0) {
+                            app.alert.dismiss('upload');
+                        }
+                        var errors = {};
+                        errors[responseText] = {};
+                        model.trigger('error:validation:' + fileField, errors);
+                        model.trigger('error:validation');
+                    }
+                });
+            }
+        }
+        else {
+            if (callbacks.success) callbacks.success();
+        }
+    }
 
 })(SUGAR.App);

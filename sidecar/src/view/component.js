@@ -121,6 +121,16 @@
         },
 
         /**
+         * Fetches data for layout's model or collection.
+         *
+         * The default implementation does nothing.
+         * See {@link View.Layout#loadData} and {@link View.View#loadData} methods.
+         */
+        loadData: function() {
+            // Do nothing (view and layout will override)
+        },
+
+        /**
          * Disposes a component.
          *
          * This method:
@@ -162,6 +172,13 @@
             if (this.disposed === true) return;
             this._dispose();
             this.disposed = true;
+        },
+
+        /**
+         * Removes a component from the DOM.
+         */
+        remove: function() {
+            return this.$el.remove();
         },
 
         /**

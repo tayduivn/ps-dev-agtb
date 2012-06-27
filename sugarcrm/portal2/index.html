@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+		<meta http-equiv="x-ua-compatible" content="IE=8">
+
+
+		<!-- App Scripts -->
+        <script src='../sidecar/minified/sidecar.min.js'></script>
+
+
+        <!-- Portal specific JS -->
+        <script src='../sidecar/minified/portal.min.js'></script>
+        <script src='config.js'></script>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
+		<link rel="stylesheet" href="../sidecar/extensions/portal/lib/twitterbootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+
+    </head>
+    <body>
+    	<div id="portal">
+			<div id="sidecar">
+                <div id="alert" class="alert-top">
+
+                </div>
+                <div id="header">
+                    
+                </div>
+                <div id="subnav">
+
+                </div>
+                <div id="content">
+                    
+                </div>
+                <div id="footer">
+
+                </div>
+			</div>
+		</div>
+
+		<script language="javascript">
+			var syncResult, view, layout, html;
+			var App = SUGAR.App.init({
+                el: "#sidecar"
+            });
+            App.api.debug = App.config.debugSugarApi;
+            App.start();
+		</script>
+    </body>
+</html>

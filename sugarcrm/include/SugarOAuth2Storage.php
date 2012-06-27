@@ -218,6 +218,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         session_start();
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
+        } else if ( !empty($_SESSION['authenticated_user_id']) ) {
+            // It's not an oauth2 session, but a normal sugar session we will let them pass
+            return array(
+                'client_id'=>'sugar',
+                'user_id'=>$_SESSION['authenticated_user_id'],
+                'expires'=>(time()+7200), // Fake an expiration way off in the future
+            );
         } else {
             return NULL;
         }

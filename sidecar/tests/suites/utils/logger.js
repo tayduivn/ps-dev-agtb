@@ -5,8 +5,8 @@ describe("Logger", function() {
         config = SUGAR.App.config;
 
     beforeEach(function() {
-        config.logFormatter = logger.SimpleFormatter;
-        config.logWriter = logger.ConsoleWriter;
+        config.logFormatter = 'SimpleFormatter';
+        config.logWriter = 'ConsoleWriter';
     });
 
     afterEach(function() {
@@ -18,7 +18,7 @@ describe("Logger", function() {
             date = new Date(Date.UTC(2012, 2, 3, 6, 15, 32));
         clock = sinon.useFakeTimers(date.getTime());
 
-        config.logLevel = logger.levels.ERROR;
+        config.logLevel = 'ERROR';
 
         mock.expects("error").once().withArgs("ERROR[2012-2-3 6:15:32]: Test message");
         logger.error("Test message");
@@ -29,7 +29,7 @@ describe("Logger", function() {
         var mock = sinon.mock(console),
             e = mock.expects("log").once(), a;
 
-        config.logLevel = logger.levels.INFO;
+        config.logLevel = 'INFO';
         a = "foo";
         logger.info(function() {
             return "Test message " + a;
@@ -44,7 +44,7 @@ describe("Logger", function() {
             e = mock.expects("log").once(),
             foo = { bar: "some bar"};
 
-        config.logLevel = logger.levels.TRACE;
+        config.logLevel = 'TRACE';
         logger.trace(foo);
         expect(e.args[0]).toMatch(/TRACE\[.{14,20}\]: \{"bar":"some bar"\}/);
         mock.verify();
@@ -53,13 +53,13 @@ describe("Logger", function() {
     it("should not log a message if log level is below the configured one", function() {
         var mock = sinon.mock(console);
         mock.expects("log").never();
-        config.logLevel = logger.levels.INFO;
+        config.logLevel = 'INFO';
         logger.debug("");
         mock.verify();
     });
 
     it("should be able to log a message with a given log level", function() {
-        config.logLevel = logger.levels.TRACE;
+        config.logLevel = 'TRACE';
 
         var mock = sinon.mock(logger);
 

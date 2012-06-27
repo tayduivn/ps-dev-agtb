@@ -20,14 +20,15 @@
  *        "fields": {
  *            "name": { ... },
  *            ...
- *        },
- *        "relationships": {
- *             "opportunities_contacts": { ... },
- *             ...
  *        }
  *      },
  *      "Contacts": { ... }
  *    }
+ *    "relationships": {
+ *        "opportunities_contacts": { ... },
+ *         ...
+ *    }
+ *
  * }
  * </code></pre>
  *
@@ -184,7 +185,6 @@
             this.reset(moduleName);
 
             var fields = module.fields;
-            var relationships = module.relationships;
             var defaults = null;
 
             _.each(_.values(fields), function(field) {
@@ -209,13 +209,7 @@
                  * @member Data.Bean
                  * @property {Object}
                  */
-                fields: fields,
-                /**
-                 * Relationships metadata.
-                 * @member Data.Bean
-                 * @property {Object}
-                 */
-                relationships: relationships
+                fields: fields
             });
 
             _collections[moduleName] = this.beanCollection.extend({
@@ -414,10 +408,105 @@
         canHaveMany: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
             var t = relationship.relationship_type.split("-");
             var type = module === relationship.rhs_module ? t[0] : t[2];
             return type === "many";
+        },
+
+        /**
+         * Gets a field of type `relate` for a link.
+         *
+         * Suppose a module `parentModule` has a link field named `link`.
+         * For example, `Accounts` module has a link field `cases`.
+         * It is one-to-many relationship: an account may have many related cases,
+         * however a case can have only one associated account and this association is
+         * made via a `relate` field called `Cases.account_name`.
+         *
+         * So, for the above example the following call:
+         * <pre><code>
+         * var relateField = app.data.getRelateField("Accounts", "cases");
+         * </code></pre>
+         * would return definition of `Cases.account_name` field.
+         *
+         * @param {String} parentModule Name of the module that has a link field named `link`.
+         * @param {String} link Link name.
+         * @return {Object} Definition of the `relate` field if found or `null` if not found.
+         */
+        getRelateField: function(parentModule, link) {
+            var relationship = app.metadata.getModule(parentModule).fields[link].relationship;
+            var relatedModule = this.getRelatedModule(parentModule, link);
+            var fields = app.metadata.getModule(relatedModule).fields;
+
+            // Find the opposite link field on related module
+            var f = _.find(fields, function(field) {
+                return field.type == "link" && field.relationship == relationship;
+            });
+
+            if (f) {
+                f = _.find(fields, function(field) {
+                    return field.type == "relate" && field.link == f.name;
+                });
+            }
+
+            return f;
+        },
+
+        /**
+         * Gets relationship fields for a complex relationship.
+         *
+         * Some relationships have custom fields.
+         * For example, the `opporutnities_contacts` relationship has a custom field `contact_role`.
+         * The `Contacts` module has a field called `opportunity_role` that corresponds to the `contact_role`
+         * relationship field:
+         * <pre><code>
+         * // ['opportunity_role']
+         * var relationshipFields = app.data.getRelationshipFields("Opportunities", "contacts");
+         * </code></pre>
+         *
+         * Use this method to determine a list of relationship fields that should be rendered
+         * on views for related record(s). In the above use case, the edit view for a contact related
+         * to an opportunity should display a drop-down field for the opportunity role.
+         * The list view and detail view should also display this field.
+         *
+         * @param {String} parentModule Name of the module that has a link field called `link`.
+         * @param {String} link Link name.
+         * @return {Array} Relationship fields.
+         */
+        getRelationshipFields: function(parentModule, link) {
+            var ff = null;
+            var linkField = app.metadata.getModule(parentModule).fields[link];
+            if (linkField.rel_fields) {
+                var relationship = linkField.relationship;
+                var relatedModule = this.getRelatedModule(parentModule, link);
+                var fields = app.metadata.getModule(relatedModule).fields;
+
+                // Find the opposite link field on related module
+                var f = _.find(fields, function(field) {
+                    return field.type == "link" && field.relationship == relationship;
+                });
+
+                // Find relationship_info field
+                if (f) {
+                    f = _.find(fields, function(field) {
+                        return field.link == f.name && field.link_type == "relationship_info";
+                    });
+                }
+
+                // Extract relationship fields
+                if (f && f.relationship_fields) {
+                    var fieldNames = _.keys(linkField.rel_fields);
+                    _.each(f.relationship_fields, function(field, name) {
+                        if (_.include(fieldNames, name)) {
+                            if (!ff) ff = [];
+                            ff.push(field);
+                        }
+                    });
+                }
+            }
+
+            return ff;
+
         },
 
         /**
@@ -429,7 +518,7 @@
         getRelatedModule: function(module, link) {
             var meta = app.metadata.getModule(module);
             var name = meta.fields[link].relationship;
-            var relationship = meta.relationships[name];
+            var relationship = app.metadata.getRelationship(name);
 
             return module === relationship.rhs_module ?
                 relationship.lhs_module : relationship.rhs_module;
@@ -458,8 +547,8 @@
                     options.params.offset = options.offset;
                 }
 
-                if (app.config && app.config.maxQueryResult) {
-                    options.params.max_num = app.config.maxQueryResult;
+                if (options.limit || (app.config && app.config.maxQueryResult)) {
+                    options.params.max_num = options.limit || app.config.maxQueryResult;
                 }
 
                 if (model.orderBy && model.orderBy.field) {
@@ -508,19 +597,24 @@
                      */
                     model.query = options.query;
 
-                } else if ((options.relate === true) && (method != "read")) {
-                    // Reset the flag to indicate that fetched relationship(s) do exist.
+                }
+
+                if (options.relate === true) {
+                    // Reset the flag to indicate that relationship(s) do exist.
                     model.link.isNew = false;
-                    // The response for create/update/delete relationship contains updated beans
-                    if (model.link.bean) {
-                        model.link.bean.set(data.record);
-                    }
-                    data = data.related_record;
-                    // Attributes will be set automatically for create/update but not for delete
-                    // Also, break the link
-                    if (method == "delete") {
-                        model.set(data);
-                        delete model.link;
+
+                    if (method != "read") {
+                        // The response for create/update/delete relationship contains updated beans
+                        if (model.link.bean) {
+                            model.link.bean.set(data.record);
+                        }
+                        data = data.related_record;
+                        // Attributes will be set automatically for create/update but not for delete
+                        // Also, break the link
+                        if (method == "delete") {
+                            model.set(data);
+                            delete model.link;
+                        }
                     }
                 }
 
@@ -528,11 +622,11 @@
                 if (options.success) options.success(data);
             };
 
-            var error = function(xhr, error) {
-                app.error.handleHttpError(xhr, error, model);
+            var error = function(error) {
+                app.error.handleHttpError(error, model);
 
                 self.trigger("data:sync:end", method, model, options, error);
-                if (options.error) options.error(xhr, error);
+                if (options.error) options.error(error);
             };
 
             var callbacks = {

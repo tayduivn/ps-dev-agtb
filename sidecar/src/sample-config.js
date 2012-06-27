@@ -29,19 +29,19 @@
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: app.logger.levels.DEBUG,
+        logLevel: 'DEBUG',
 
         /**
          * Logging writer.
          * @cfg [logWrtiter=Utils.Logger.ConsoleWriter]
          */
-        logWriter: app.logger.ConsoleWriter,
+        logWriter: 'ConsoleWriter',
 
         /**
          * Logging formatter.
          * @cfg [logFormatter=Utils.Logger.SimpleFormatter]
          */
-        logFormatter: app.logger.SimpleFormatter,
+        logFormatter: 'SimpleFormatter',
 
         /**
          * Sugar REST server URL.
@@ -50,6 +50,11 @@
          * @cfg {String}
          */
         serverUrl: '../../sugarcrm/rest/v10',
+
+        /**
+         * Server request timeout (in seconds).
+         */
+        serverTimeout: 30,
 
         /**
          * Max query result set size.
@@ -73,7 +78,7 @@
          * A list of routes that don't require authentication (in addition to `login`).
          * @cfg {Array}
          */
-        unsecureRoutes: ["signup"],
+        unsecureRoutes: ["signup", "error"],
 
         /**
          * Platform name.
@@ -166,7 +171,13 @@
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar"
+        clientID: "sugar",
+        /**
+         * Syncs config from server on app start
+         * Defaults to true otherwise set to false
+         * @cfg {Boolean}
+         */
+        syncConfig: true
     }, false);
 
 })(SUGAR.App);

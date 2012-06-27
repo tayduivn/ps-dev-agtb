@@ -73,7 +73,7 @@
             this.modulePlural = app.lang.getAppListStrings("moduleList", defaultValue)[this.module];
 
             // Used only for debugging
-            if (app.config.env == "debug") this.$el.data("comp", "view_" + this.name);
+            if (app.config.env == "dev") this.$el.data("comp", "view_" + this.name);
         },
 
         /**
@@ -183,7 +183,7 @@
          * @private
          */
         _render: function() {
-            if (app.acl.hasAccess(this.name, this.module)) {
+            if (app.acl.hasAccessToModel(this.name, this.model)) {
                 this._renderSelf();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
@@ -195,6 +195,19 @@
             }
 
             return this;
+        },
+
+        /**
+         * Fetches data for view's model or collection.
+         *
+         * This method calls view's context {@link Core.Context#loadData} method
+         * and sets context's `fields` property beforehand.
+         *
+         * Override this method to provide custom fetch algorithm.
+         */
+        loadData: function() {
+            this.context.set("fields", this.getFieldNames());
+            this.context.loadData();
         },
 
         /**

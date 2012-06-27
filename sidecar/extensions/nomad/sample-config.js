@@ -4,9 +4,12 @@
         appId: 'nomad',
         env: 'dev',
         debugSugarApi: true,
-        logLevel: app.logger.levels.DEBUG,
-        logWriter: app.logger.ConsoleWriter,
-        logFormatter: app.logger.SimpleFormatter,
+        logLevel: 'DEBUG',
+        logWriter: 'ConsoleWriter',
+        logFormatter: 'SimpleFormatter',
+        layoutCacheEnabled: true,
+        layoutCacheSize: 30,
+        disableLayoutCache: ["login"],
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
@@ -17,12 +20,12 @@
         maxQueryResult: 20,
         platform: "mobile",
         defaultModule: "Accounts",
-        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"],
+        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules", "relationships"],
         additionalComponents: {
-            "header": {
+            'header': {
                 target: '#header'
             },
-            alert: {
+            'alert': {
                 target: '#alert'
             }
         },
@@ -35,7 +38,8 @@
                 field: 'case_number',
                 direction: 'asc'
             }
-        }
+        },
+        syncConfig: false
 
     }, false);
 

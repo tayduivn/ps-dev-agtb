@@ -6,6 +6,7 @@
 
         <!-- Third party library scripts -->
 		<script src="../../lib/jquery/jquery.min.js"></script>
+        <script src="../../lib/jquery/jquery.iframe.transport.js"></script>
         <script src="../../lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="../../lib/backbone/underscore.js"></script>
 		<script src="../../lib/backbone/backbone.js"></script>
@@ -13,7 +14,8 @@
         <script src="../../lib/stash/stash.js"></script>
         <script src="../../lib/async/async.js"></script>
         <script src="../../lib/chosen/chosen.jquery.js"></script>
-        <script src="../../lib/searchahead/jquery.searchahead.js"></script>
+        <script src="../../lib/sugar/sugar.searchahead.js"></script>
+        <script src="../../lib/sugar/sugar.timeago.js"></script>
 
 		<!-- App Scripts -->
         <script src='../../lib/sugarapi/sugarapi.js'></script>
@@ -22,7 +24,7 @@
 		<script src='../../src/core/cache.js'></script>
         <script src="../../src/core/events.js"></script>
         <script src='../../src/core/error.js'></script>
-		<script src='core/error.js'></script>
+		<script src='error.js'></script>
 		<script src='../../src/view/template.js'></script>
 		<script src='../../src/core/context.js'></script>
 		<script src='../../src/core/controller.js'></script>
@@ -31,6 +33,7 @@
 		<script src='../../src/core/metadata-manager.js'></script>
         <script src='../../src/core/acl.js'></script>
         <script src='../../src/core/user.js'></script>
+		<script src='user.js'></script>
         <script src='../../src/utils/logger.js'></script>
 		<script src='config.js'></script>
 		<script src='../../src/data/bean.js'></script>
@@ -104,10 +107,12 @@
 		<script language="javascript">
 			var syncResult, view, layout, html;
 			var App = SUGAR.App.init({
-                el: "#sidecar"
+                el: "#sidecar",
+                callback: function(app){
+                    app.start();
+                }
             });
             App.api.debug = App.config.debugSugarApi;
-            App.start();
 		</script>
     </body>
 </html>

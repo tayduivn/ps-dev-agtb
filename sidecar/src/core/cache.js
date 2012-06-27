@@ -85,7 +85,10 @@
          * @param {String} key Item key.
          */
         cut: function(key) {
-            this.store.cut(_buildKey(key));
+            // Stash does delete ls[e] and IE9 complains if doesn't exist 
+            if( this.store.has(_buildKey(key)) ) {
+                this.store.cut(_buildKey(key));
+            }
         },
 
         /**

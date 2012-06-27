@@ -202,32 +202,71 @@ SUGAR.App = (function() {
                 this
             );
 
+            // App cache must be inited first
+            if (_app.cache) {
+                _app.cache.init(this);
+            }
+
             // Instantiate controller: <Capitalized-appId>Controller or Controller.
             var className = _app.utils.capitalize(_app.config ? _app.config.appId : "") + "Controller";
             var Klass = this[className] || this["Controller"];
             this.controller = new Klass();
 
-            // Here we initialize all the modules;
+            _app.api = SUGAR.Api.getInstance({
+                serverUrl: _app.config.serverUrl,
+                platform: _app.config.platform,
+                timeout: _app.config.serverTimeout,
+                keyValueStore: _app[_app.config.authStore || "cache"],
+                clientID: _app.config.clientID
+            });
+
+            var self = this;
+            var syncCallback = function(metadata, error){
+                if (error) {
+                    self.trigger("app:sync:error", error);
+                    return;
+                }
+                self.initModules();
+                self.loadConfig();
+                if (!opts.silent) {
+                    _app.trigger("app:init", self);
+                }
+                if (opts.callback && _.isFunction(opts.callback)) {
+                    opts.callback(_app);
+                }
+            };
+
+            if (_app.config.syncConfig !== false ) {
+                var options = {
+                    getPublic: true
+                };
+               _app.metadata.sync(syncCallback, options);
+            } else {
+                syncCallback();
+            }
+
+            return _app;
+        },
+        /**
+         * Inits app modules
+         */
+        initModules: function() {
+                    // Here we initialize all the modules;
             // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(_modules, function(module) {
                 if (_.isFunction(module.init)) {
                     module.init(this);
                 }
             }, this);
+        },
 
-            _app.api = SUGAR.Api.getInstance({
-                serverUrl: _app.config.serverUrl,
-                platform: _app.config.platform,
-
-                keyValueStore: _app[_app.config.authStore || "cache"],
-                clientID: _app.config.clientID
-            });
-
-            if (!opts.silent) {
-                _app.trigger("app:init", this);
-            }
-
-            return _app;
+        /**
+         * Loads configuration from local storage and extends current settings
+         */
+        loadConfig: function() {
+            // extend our config with settings from local storage if we have it
+            _app.config = _app.config || {};
+            _app.config = _.extend(_app.config, _app.metadata.getConfig());
         },
 
         /**
@@ -286,6 +325,8 @@ SUGAR.App = (function() {
             var self = this;
 
             async.waterfall([function(callback) {
+                self.isSynced = false;
+                self.trigger("app:sync");
                 _app.metadata.sync(callback);
             }, function(callback) {
                 _app.data.declareModels();
@@ -343,9 +384,9 @@ SUGAR.App = (function() {
                     _app.trigger("app:login:success", loginData);
                     if (origSuccess) origSuccess(loginData);
                 },
-                error: function(xhr, textStatus, errorThrown) {
-                    if (origError) origError(xhr, textStatus, errorThrown);
-                    _app.error.handleHttpError(xhr, textStatus);
+                error: function(error) {
+                    if (origError) origError(error);
+                    _app.error.handleHttpError(error);
                 }
             };
             loginCallbacks = {
@@ -354,9 +395,9 @@ SUGAR.App = (function() {
                     loginData = data;
                     _app.api.records(method, module, {}, {}, loadUserCallbacks);
                 },
-                error: function(xhr, textStatus, errorThrown) {
-                    if (origError) origError(xhr, textStatus, errorThrown);
-                    _app.error.handleHttpError(xhr, textStatus);
+                error: function(error) {
+                    if (origError) origError(error);
+                    _app.error.handleHttpError(error);
                 }
             };
 
@@ -385,9 +426,9 @@ SUGAR.App = (function() {
                     originalSuccess(data);
                 }
             };
-            callbacks.error = function(xhr, textStatus, errorThrown) {
-                if (originalError) originalError(xhr, textStatus, errorThrown);
-                _app.error.handleHttpError(xhr, textStatus);
+            callbacks.error = function(error) {
+                if (originalError) originalError(error);
+                _app.error.handleHttpError(error);
             };
 
             xhr = _app.api.logout(callbacks);

@@ -75,6 +75,7 @@ class RestTestMetadataSugarFields extends RestTestBase {
                             'custom/clients/mobile/fields/address',
                             'custom/clients/portal/fields/address',
                             'custom/clients/base/fields/address',
+                            'clients/mobilefields/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -87,6 +88,12 @@ class RestTestMetadataSugarFields extends RestTestBase {
         file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
         $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when that was the direct option");
+
+        // Make sure we get the private code when we have public js of the same name
+        file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
+        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when that was the direct option");
+
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there

@@ -27,7 +27,7 @@ $viewdefs['KBDocuments']['portal']['view']['list-bottom'] = array(
         array(
             'name' => 'show_more_button',
             'type' => 'button',
-            'label' => 'Show More',
+            'label' => 'LBL_SHOW_MORE',
             'class' => 'loading wide'
         ),
     ),

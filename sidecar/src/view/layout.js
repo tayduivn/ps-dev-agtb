@@ -61,10 +61,7 @@
         initialize: function(options) {
             app.view.Component.prototype.initialize.call(this, options);
 
-            // TODO: Do we need this?
-            //_.bindAll(this, 'render', 'bindData');
-
-            this._components = []; // list of components
+            this._components = [];
 
             if (!this.meta) return;
 
@@ -74,7 +71,8 @@
              */
             this.layout = this.options.layout;
 
-            this.$el.data("comp", "layout_" + this.meta.type);
+            // Used only for debugging
+            if (app.config.env == "dev") this.$el.data("comp", "layout_" + this.meta.type);
 
             _.each(this.meta.components, function(def) {
                 var context = this.context;
@@ -93,7 +91,6 @@
                         module: module,
                         layout: this
                     });
-                    context.set({view:view});
                     this.addComponent(view, def);
                 }
                 // Layouts can either by referenced by name or defined inline
@@ -129,7 +126,7 @@
         addComponent: function(component, def) {
             if (!component.layout) component.layout = this;
             this._components.push(component);
-            this._placeComponent(component, def);
+            this._placeComponent(component, def); // Some implementations of placeComponent require a def
         },
 
         /**
@@ -189,10 +186,28 @@
                 app.alert.show("no-layout", {
                     level: "error",
                     title: "Error",
+                    autoClose: true,
                     messages: ["Oops! We are not able to render anything. Please try again later or contact the support"]
                 });
             }
             return this;
+        },
+
+        /**
+         * Fetches data for layout's model or collection.
+         *
+         * The default implementation first calls the {@link Core.Context#loadData} method for the layout's context
+         * and then iterates through the components and calls their {@link View.Component#loadData} method.
+         * This method sets context's `fields` property beforehand.
+         *
+         * Override this method to provide custom fetch algorithm.
+         */
+        loadData: function() {
+            this.context.set("fields", this.getFieldNames());
+            this.context.loadData();
+            _.each(this._components, function(component) {
+                component.loadData();
+            });
         },
 
         /**

@@ -2,6 +2,7 @@
     // Key prefix used to identify metadata in the local storage.
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
+    var _relPrefix = "r:";
     var _fieldPrefix = "f:";
     var _layoutPrefix = "l:";
     var _viewPrefix = "v:";
@@ -12,6 +13,8 @@
     // Metadata that has been loaded from offline storage (memory cache)
     // Module specific metadata
     var _metadata = {};
+    // Relationship definitions
+    var _relationships = {};
     // Field definitions
     var _fields = {};
     // View definitions
@@ -37,7 +40,7 @@
             _set(prefix + property, meta[property]);
         }
     }
-
+    
     function _getMeta(container, property, prefix, deleteHash) {
         if (!container[property]) {
             container[property] = _get(prefix + property);
@@ -47,15 +50,15 @@
         return container[property];
     }
 
-     // Initializes custom layouts/views templates and controllers
+    // Initializes custom layouts/views templates and controllers
     function _initCustomComponents(module, moduleName) {
         _.each(["layout", "view"], function(type) {
-            _.each(module[type + 's'], function (def, name) {
+            _.each(module[type + 's'], function(def, name) {
                 if (type === "view" && def.template) { // Only views can have templates
                     app.template.setView(name, moduleName, def.template, true);
                 }
                 if (def.controller) { // Both layouts and views can have controllers
-                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type);
+                    app.view.declareComponent(type, name, moduleName, def.controller, def.meta.type, true);
                 }
             });
         });
@@ -95,11 +98,11 @@
          * @param module Module definition
          * @private
          */
-        _patchMetadata: function (moduleName, module) {
+        _patchMetadata: function(moduleName, module) {
             if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view) {
-                if(view.meta) {
+                if (view.meta) {
                     _.each(view.meta.panels, function(panel) {
                         _.each(panel.fields, function(field, fieldIndex) {
                             var name = _.isString(field) ? field : field.name;
@@ -180,6 +183,15 @@
         },
 
         /**
+         * Gets a relationship definition.
+         * @param {String} name Relationship name.
+         * @return {Object} Relationship metadata.
+         */
+        getRelationship: function(name) {
+            return _getMeta(_relationships, name, _relPrefix);
+        },
+
+        /**
          * Gets field widget metadata.
          * @param {Object} type Field type.
          * @return {Object} Metadata for the specified field type.
@@ -237,18 +249,28 @@
          * Gets module list
          * @return {Object}
          */
-        getModuleList: function() {
-            return _getMeta(_app, "moduleList", "", true) || {};
+        getModuleList: function(opts) {
+            var meta = _getMeta(_app, "moduleList", "", true) || {};
+
+            /**
+             * @cfg {Boolean} opts.visible Set true if you want to return only module lists that the user has access to.
+             */
+            if (opts && opts.visible && app.config && app.config.displayModules) {
+                meta = _.intersection(_.toArray(meta), app.config.displayModules);
+            }
+
+            return meta;
         },
 
         /**
          * Gets module list as delimited string
          * @param {String} The delimiter to use.
+         * @param {Boolean} true if only wants modules loaded by this application. 
          * @return {Object}
          */
-        getDelimitedModuleList: function(delimiter) {
+        getDelimitedModuleList: function(delimiter, visible) {
             if(!delimiter) return null;
-            return _.toArray(this.getModuleList()).join(delimiter);
+            return _.toArray(this.getModuleList({visible: (visible?visible:false)})).join(delimiter);
         },
 
         /**
@@ -270,6 +292,15 @@
         },
 
         /**
+         * Gets Config.
+         *
+         * @return Dictionary of Configs.
+         */
+        getConfig: function() {
+            return _getMeta(_app, "config", "") || {};
+        },
+
+        /**
          * Sets the metadata.
          *
          * By default this function is used by MetadataManager to translate server responses into metadata
@@ -278,7 +309,7 @@
          */
         set: function(data) {
             if (data.modules) {
-                var modules = []; 
+                var modules = [];
 
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = this._patchMetadata(module, entry);
@@ -288,8 +319,15 @@
                     // Compile templates and declare components for custom layouts and views
                     _initCustomComponents(entry, module);
 
-                   }, this);
+                }, this);
                 _set("modules", modules.join(","));
+            }
+
+            if (data.relationships) {
+                _.each(data.relationships, function(entry, relationship) {
+                    _relationships[relationship] = entry;
+                    _set(_relPrefix + relationship, entry);
+                });
             }
 
             if (data.fields) {
@@ -297,7 +335,7 @@
                     _fields[type] = entry;
                     _set(_fieldPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("field", type, null, entry.controller);
+                        app.view.declareComponent("field", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -307,7 +345,7 @@
                     _views[type] = entry;
                     _set(_viewPrefix + type, entry);
                     if (entry.controller) {
-                        app.view.declareComponent("view", type, null, entry.controller);
+                        app.view.declareComponent("view", type, null, entry.controller, null, true);
                     }
                 });
             }
@@ -317,9 +355,20 @@
                     _layouts[type] = layout;
                     _set(_layoutPrefix + type, layout);
                     if (layout.controller) {
-                        app.view.declareComponent("layout", type, null, layout.controller);
+                        app.view.declareComponent("layout", type, null, layout.controller, null, true);
                     }
                 });
+            }
+
+            if (data.config) {
+                _.each(data.config, function(value, key) {
+                    if (!app.config) {
+                        app.config = {};
+                    } else {
+                        app.config[key] = value;
+                    }
+                });
+                _setMeta(_app, "config", "", data);
             }
 
             _setMeta(_app, "moduleList", "", data);
@@ -351,16 +400,18 @@
         /**
          * Syncs metadata from the server. Saves the metadata to the local cache.
          * @param {Function} callback(optional) Callback function to be executed after sync completes.
+         * @param {Object} options(optional) Sync call options currently supports public:true to get public metadata.
          */
-        sync: function(callback) {
+        sync: function(callback, options) {
+            options = options || {};
             var self = this;
-
-            app.api.getMetadata(self.getHash(), app.config.metadataTypes, [], {
+            var metadataTypes = app.config.metadataTypes || [];
+            app.api.getMetadata(self.getHash(), metadataTypes, [], {
                 success: function(metadata, textStatus, jqXHR) {
                     if (jqXHR.status == 304) { // Our metadata is up to date so we do nothing.
-                        app.logger.debug("Metadata is up to date");
+                        app.logger.trace("Metadata is up to date");
                     } else if (jqXHR.status == 200) { // Need to update our app with new metadata.
-                        app.logger.debug("Metadata is out of date");
+                        app.logger.trace("Metadata is out of date");
                         self.set(metadata);
                     }
 
@@ -369,13 +420,13 @@
                     }
                 },
                 error: function(error) {
-                    app.logger.error("Error fetching metadata " + error);
+                    app.logger.error("Error fetching metadata");
                     app.error.handleHttpError(error);
                     if (callback) {
                         callback.call(self, error);
                     }
                 }
-            });
+            }, options);
         }
     });
 

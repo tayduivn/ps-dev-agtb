@@ -74,7 +74,6 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
-
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
@@ -102,7 +101,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Only set a custom request for not POST with a body
         // This affects the server and how it sets its superglobals
         if (empty($requestMethodSet)) {
-            if ($httpAction == 'PUT') {
+            if ($httpAction == 'PUT' && empty($postBody) ) {
                 curl_setopt($ch, CURLOPT_PUT, 1);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
@@ -119,8 +118,8 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        $httpInfo = curl_getinfo($ch); 
         $httpReply = curl_exec($ch);
+        $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
 
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);

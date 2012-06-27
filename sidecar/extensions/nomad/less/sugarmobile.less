@@ -117,10 +117,6 @@ article {
   min-height: 52px;
 }
 
-.fav article {
-  padding-left: 44px;
-}
-
 article [class^="icon-star"] {
 position: absolute;
 top: 24px;
@@ -335,14 +331,29 @@ a:hover [class^="icon-"]{
   background-color: rgba(255,0,0,.25);
 }
 
-#record-action .icon-sms-white {
-  background-size: 700%;
-  height: 22px;
-  width: 26px;
-  margin-top: 13px;
-  &, &:active {
-    background: url('../img/sprite.png') no-repeat 38% 0 !important;
-  }
+#record-action .sms > span:after {
+  content: "...";
+  position:relative;
+  top:-9px;
+  color: black;
+  font-weight: normal;
+  margin-left: -17px;
+  display:inline-block;
+  width:10px;
+  height:11px;
+}
+
+.form-horizontal .sms > span:after {
+  content: "...";
+  position:relative;
+  top:-6px;
+  color: white;
+  font-weight: normal;
+  margin-left: -12px;
+  letter-spacing:-1px;
+  display:inline-block;
+  height:13px;
+  width:9px;
 }
 
 #record-action > a:not(:last-child) {
@@ -355,36 +366,14 @@ margin:0;
 padding:0;
 height:52px;
 text-decoration:none;
+  &:active {
+    background-color:#222;
+  }
 }
 
 #record-action > a > i {
   margin:16px 0 0 0;
   width:26px;
-  &.icon-sms-white {
-    margin-bottom:-4px;
-  }
-}
-
-.icon-sms-black {
-  background: url('../img/sprite.png') no-repeat 57% 0;
-  background-size: 700%;
-  height: 17px;
-  width: 16px;
-  margin-bottom: -20%;
-  &:active {
-    background: url('../img/sprite.png') no-repeat 38% 0;
-  }
-}
-
-.icon-sms-white {
-  background: url('../img/sprite.png') no-repeat 38% 0;
-  background-size: 700%;
-  height: 18px;
-  width: 16px;
-  margin-bottom: -20%;
-  &:active {
-    background: url('../img/sprite.png') no-repeat 57% 0 !important;
-  }
 }
 
 .icon-account-black {

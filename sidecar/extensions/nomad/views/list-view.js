@@ -28,9 +28,19 @@
             app.view.View.prototype.initialize.call(this, options);
 
             this.activeArticle = null;
+
+            this.unlinkVisible = true;
+            // We must not allow a user to break a one-to-many relationship,
+            // if the relate field is required for the relationship.
+            var link = this.context.get("link");
+            if (link) {
+                var relatedField = app.data.getRelateField(this.context.get("parentModule"), link);
+                this.unlinkVisible = relatedField && relatedField.required === true ? false : true;
+            }
         },
 
         _renderSelf: function () {
+
             app.view.View.prototype._renderSelf.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
@@ -123,7 +133,6 @@
         showMoreBottomRecords: function () {
             this.showLoadingMsg('.show-more-bottom-btn',true);
 
-            //relate: !!this.context.get('link'),
             this.collection.paginate({add: true,
                 relate: !!this.context.get('link'),
                 success: _.bind(function () {
@@ -178,42 +187,60 @@
         },
 
         onSwipeRightItem: function (e) {
-            this.activeArticle.find('.grip').removeClass('on');
-            this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+            this.hideContextMenu();
+        },
+
+        hideContextMenu:function(){
+            if (this.activeArticle) {
+                this.activeArticle.find('.grip').removeClass('on');
+                this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+            }
         },
 
         onRemoveItem: function (e) {
             e.preventDefault();
-            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
-
-            if (isOk) {
-                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
-                var model = this.collection.get(cid);
-                model.destroy();
-            }
+            var self = this;
+            // TODO: Localize
+            app.nomad.showConfirm("Do you really want to delete this record?",
+                function(index) {
+                    self.hideContextMenu();
+                    if (index == 2) {
+                        var id = $(e.target).closest('article').attr('id').replace(self.module, '');
+                        self.collection.get(id).destroy();
+                    }
+                },
+                "Confirm", "Cancel,Delete"
+            );
         },
 
         onUnlinkItem: function (e) {
             e.preventDefault();
-            var isOk = confirm(app.lang.getAppString('MSG_CONFIRM_DELETE'));
-
-            if (isOk) {
-                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
-                var model = this.collection.get(cid);
-                model.destroy({ relate: true });
-            }
+            var self = this;
+            // TODO: Localize
+            app.nomad.showConfirm("Do you really want to unlink this record?",
+                function(index) {
+                    self.hideContextMenu();
+                    if (index == 2) {
+                        var id = $(e.target).closest('article').attr('id').replace(self.module, '');
+                        self.collection.get(id).destroy({ relate: true });
+                    }
+                },
+                "Confirm", "Cancel,Unlink"
+            );
         },
 
         onEditItem: function (e) {
             e.preventDefault();
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
+            this.hideContextMenu();
         },
 
         onClickMenuItem:function(e){
             var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);
+            this.hideContextMenu();
         }
     });
 

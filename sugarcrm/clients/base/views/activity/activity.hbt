@@ -13,7 +13,7 @@
                                 <a>{{attributes.name}}</a>
                                 <br>
                                 <date class="date">
-                                    Posted on {{attributes.date_entered}}
+                                    {{timeago attributes.date_entered}}
                                 </date>
                             </p>
                             <div class="actions">
@@ -55,47 +55,5 @@
                 </ul>
             </div>
         </div>
-    </div>
-</div>
-
-
-<div class="modal hide" id="noteModal">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
-
-        <h3>Add a Note</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label for="input01" class="control-label">Subject:</label>
-
-                    <div class="controls">
-                        <input type="text" id="input01" name="subject" class="input-xlarge">
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label for="select01" class="control-label">Note:</label>
-
-                    <div class="controls">
-                        <textarea class="input-xlarge" name="description"></textarea>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label for="select01" class="control-label">Attachement:</label>
-
-                    <div class="controls">
-                        <input type="file">
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a id="saveNote" data-loading-text="Saving..." class="btn loading btn-primary">
-            Save
-        </a>
-        <button class="btn cancel" data-dismiss="modal">Cancel</button>
     </div>
 </div>

@@ -62,7 +62,7 @@
 
             this.relateLayout.$el.appendTo('#content');
             this.relateLayout.render();
-            this.relateLayout.getComponent('list').context.loadData();
+            this.relateLayout.getComponent('list').loadData();
         }
     });
 

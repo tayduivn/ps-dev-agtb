@@ -860,8 +860,30 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
-
-
+//BEGIN SUGARCRM flav=ent ONLY
+    $portalConfig = array(
+        'appId'=>'SupportPortal',
+        'env'=>'dev',
+        'platform' => 'portal',
+        'additionalComponents' => array(
+            'header' => array(
+                'target' => '#header'
+            ),
+            'footer' => array(
+                'target' => '#footer'
+            ),
+            'alert' => array(
+                'target' => '#alert'
+            )
+        ),
+        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+        'unsecureRoutes' => array('signup', 'error'),
+        "clientID"=> "sugar"
+    );
+    $configString = json_encode($portalConfig, true);
+    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
+//END SUGARCRM flav=ent ONLY
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
@@ -912,6 +934,7 @@ $cache_headers = <<<EOQ
     Options +FollowSymLinks
     RewriteEngine On
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 </IfModule>
 EOQ;
     if(file_exists($htaccess_file)){

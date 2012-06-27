@@ -351,7 +351,7 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
         $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Fetch a Contact that you should be able to see
         $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
@@ -365,7 +365,7 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: Should not be able to create a new Contact
         $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
         
         // Fetch contacts, make sure we can only see the correct ones.
         $restReply = $this->_restCall("Contacts");
@@ -380,7 +380,7 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: Try and fetch a Account you shouldn't be able to see
         $restReply = $this->_restCall("Accounts/".$this->accounts[0]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Fetch a Account that you should be able to see
         $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
@@ -392,7 +392,7 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: Should not be able to create a new Account
         $restReply = $this->_restCall("Accounts/",json_encode(array('name'=>'UnitTestNew')),'POST');
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
         
         $restReply = $this->_restCall("Accounts");
 
@@ -421,7 +421,7 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: We should not be able to fetch an Opportunity
         $restReply = $this->_restCall("Opportunities/".$this->opps[1]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Negative test: We should not be able to list opportunities
         $restReply = $this->_restCall("Opportunities/");
@@ -429,16 +429,16 @@ class RestTestPortalSecurity extends RestTestBase {
         
         // Negative test: Should not be able to create a new Opportunity
         $restReply = $this->_restCall("Opportunities/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00')),'POST');
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
 
 
         // Negative test: Try and fetch a Case you shouldn't be able to see
         $restReply = $this->_restCall("Cases/".$this->cases[0]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Negative test: Fetch a Case that is related to an account you can see, but is not portal visible
         $restReply = $this->_restCall("Cases/".$this->cases[2]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Fetch a Case assigned to the other account that you should be able to see
         $restReply = $this->_restCall("Cases/".$this->cases[1]->id);
@@ -473,11 +473,11 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Negative test: Try and fetch a Bug you shouldn't be able to see
         $restReply = $this->_restCall("Bugs/".$this->bugs[0]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Fetch a Bug that is related to an account you can see, but is not portal visible
         $restReply = $this->_restCall("Bugs/".$this->bugs[5]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Fetch a Bug assigned to the other account that you should be able to see
         $restReply = $this->_restCall("Bugs/".$this->bugs[1]->id);
@@ -516,11 +516,11 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Note 2: no portal_flag, related to bug #2, bug not portal visible, related to account #2
         $restReply = $this->_restCall("Notes/".$this->notes[2]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
         
         // Note 5: portal_flag, related to bug #5, bug not portal visible, related to account #0
         $restReply = $this->_restCall("Notes/".$this->notes[5]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
         
         // Note 35: portal_flag, related to bug #11, bug portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[35]->id);
@@ -532,23 +532,38 @@ class RestTestPortalSecurity extends RestTestBase {
 
         // Note 14: no portal_flag, related to bug #14, bug portal visible, related to account #2
         $restReply = $this->_restCall("Notes/".$this->notes[14]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Note 15: portal_flag, related to case #15, case portal visible, related to account #0
         $restReply = $this->_restCall("Notes/".$this->notes[15]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Note 13: portal_flag, related to case #13, case portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[13]->id);
         $this->assertEquals($this->notes[13]->id,$restReply['reply']['id']);
 
+        // Make sure we can find Note #13 through the relationship API
+        $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/'.$this->notes[13]->id);
+        $this->assertEquals($this->notes[13]->id,$restReply['reply']['id']);
+        
+        // Make sure we can find Note #13 through the relationship list API
+        $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/');
+        $foundIt = false;
+        foreach ( $restReply['reply']['records'] as $noteRecord ) {
+            if ( $noteRecord['id'] == $this->notes[13]->id ) {
+                $foundIt = true;
+            }
+            $this->assertEquals(1,$noteRecord['portal_flag']);
+        }
+        $this->assertTrue($foundIt);        
+
         // Note 22: portal_flag, related to case #22, case not portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[22]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Note 49: no portal_flag, related to case #19, case portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[49]->id);
-        $this->assertContains('ERROR',$restReply['replyRaw']);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
 
         // Positive test: Should be able to create a new Note, as long as it is related to a case or a bug.
         $restReply = $this->_restCall("Cases/".$this->cases[25]->id."/link/notes/",json_encode(array('name'=>'UnitTestNew','portal_flag'=>1)),'POST');

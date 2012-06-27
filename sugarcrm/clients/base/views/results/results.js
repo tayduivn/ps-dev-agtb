@@ -69,7 +69,7 @@
      */
     fireSearchRequest: function (cb, offset) {
         var mlist = '', self = this, params;
-        mlist = app.metadata.getDelimitedModuleList(',');
+        mlist = app.metadata.getDelimitedModuleList(',', true);
         params = {query: self.lastQuery, moduleList: mlist, maxNum: app.config.maxQueryResult};
         if (offset) params.offset = offset;
 
@@ -77,10 +77,10 @@
             success:function(data) {
                 cb(data);
             },
-            error:function(xhr, e) {
+            error:function(error) {
                 cb(null); // dismiss the alert
-                app.error.handleHttpError(xhr, e, self);
-                app.logger.error("Failed to fetch search results " + this + "\n" + e);
+                app.error.handleHttpError(error, self);
+                app.logger.error("Failed to fetch search results " + this + "\n" + error);
             }
         });
     },

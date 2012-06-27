@@ -1,7 +1,7 @@
 /**
  * Native Key Value Store.
  *
- * @class NativeStore
+ * @class Nomad.NativeStore
  * @singleton
  * @alias SUGAR.App.nativestore
  */
@@ -10,9 +10,7 @@
         cache = {};
         
     var _nativeStore = {
-        /**
-         * Initializes the native store.
-         */
+
         init: function() {
             this.nativeStorePlugin = window.plugins.nativestore;
         },
