@@ -18,17 +18,6 @@
             app.logger.debug("Device is ready, layout cache enabled: " + app.config.layoutCacheEnabled);
             app.isNative = !_.isUndefined(window.cordova);
 
-            app.AUTH_ACCESS_TOKEN = authAccessToken;
-            app.AUTH_REFRESH_TOKEN = authRefreshToken;
-            
-            app.init({el: "#nomad" });
-            app.api.debug = app.config.debugSugarApi;
-
-            var startApp = function() {
-                app.start();
-                app.logger.debug('App started');
-            };
-            
             if (app.config.layoutCacheEnabled !== true) app.NomadController = null;
 
             if (app.isNative) {
@@ -38,19 +27,30 @@
                 app.OAUTH["AuthRefreshToken"] = authRefreshToken;
                 app.config.authStore = "keychain";
 
-                startApp();
+                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store
+                //app.nativestore.init();
                 //app.cache.store = app.nativestore;
-                //app.cache.store.load(startApp);
-            }
-            else {
-                startApp();
             }
 
+            app.init({el: "#nomad" });
+            app.api.debug = app.config.debugSugarApi;
+
+            var startApp = function() {
+                app.start();
+                app.logger.debug('App started');
+            };
+
             if (app.isNative) {
+                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store and comment out startApp
+                //app.nativestore.load(startApp);
+                startApp();
+
                 document.addEventListener("pause", onPause, false);
                 document.addEventListener("resume", onResume, false);
                 document.addEventListener("memoryWarning", onMemoryWarning, false);
-
+            }
+            else {
+                startApp();
             }
         },
 
