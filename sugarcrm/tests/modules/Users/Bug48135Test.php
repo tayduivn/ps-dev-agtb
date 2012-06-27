@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro||flav=sales ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -135,4 +136,3 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 }
-?>
