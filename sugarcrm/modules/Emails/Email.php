@@ -132,6 +132,13 @@ class Email extends SugarBean {
 	// prefix to use when importing inlinge images in emails
 	public $imagePrefix;
 
+    /**
+     * Used for keeping track of field defs that have been modified
+     *
+     * @var array
+     */
+    public $modifiedFieldDefs = array();
+
 	/**
 	 * sole constructor
 	 */
@@ -3151,6 +3158,58 @@ eoq;
     		$r = $this->db->query($q);
             while($a = $this->db->fetchByAssoc($r)) {
                 $this->cid2Link($a['id'], $a['file_mime_type']);
+            }
+    	}
+
+    /**
+     * Bugs 50972, 50973
+     * Sets the field def for a field to allow null values
+     *
+     * @todo Consider moving to SugarBean to allow other models to set fields to NULL
+     * @param string $field The field name to modify
+     * @return void
+     */
+    public function setFieldNullable($field)
+    {
+        if (isset($this->field_defs[$field]) && is_array($this->field_defs[$field]))
+        {
+            if (empty($this->modifiedFieldDefs[$field]))
+            {
+                if (
+                    isset($this->field_defs[$field]['isnull']) &&
+                    (strtolower($this->field_defs[$field]['isnull']) == 'false' || $this->field_defs[$field]['isnull'] === false)
+                )
+                {
+                    $this->modifiedFieldDefs[$field]['isnull'] = $this->field_defs[$field]['isnull'];
+                    unset($this->field_defs[$field]['isnull']);
+                }
+
+                if (isset($this->field_defs[$field]['dbType']) && $this->field_defs[$field]['dbType'] == 'id')
+                {
+                    $this->modifiedFieldDefs[$field]['dbType'] = $this->field_defs[$field]['dbType'];
+                    unset($this->field_defs[$field]['dbType']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Bugs 50972, 50973
+     * Set the field def back to the way it was prior to modification
+     *
+     * @param $field
+     * @return void
+     */
+    public function revertFieldNullable($field)
+    {
+        if (!empty($this->modifiedFieldDefs[$field]) && is_array($this->modifiedFieldDefs[$field]))
+        {
+            foreach ($this->modifiedFieldDefs[$field] as $k => $v)
+            {
+                $this->field_defs[$field][$k] = $v;
+            }
+
+            unset($this->modifiedFieldDefs[$field]);
             }
     	}
 } // end class def
