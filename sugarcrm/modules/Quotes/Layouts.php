@@ -35,10 +35,7 @@ global $mod_strings;
 // To add a layout, you will need to register the new file below and in the $layouts_dom array
 // in modules/Quotes/language/<lang>.lang.php
 global $layouts;
-$layouts = array(
-	'Standard'=>'modules/Quotes/layouts/Standard.php',
-    'Invoice'=>'modules/Quotes/layouts/Invoice.php'
-);
+$layouts = array();
 
 /**
  * a kind of silly getter...
