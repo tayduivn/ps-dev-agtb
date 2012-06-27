@@ -24,7 +24,7 @@
             listView.context.set({view:listView});
 
             listView.setTemplateOption("partials", {
-                'list.item': app.template.get("list.menu.item")
+                'list-item': app.template.get("list-item-relate")
             });
 
             listView.on('menu:item:clicked',function(item){
@@ -35,8 +35,8 @@
             },this);
 
             var searchboxView = app.view.createView({
-                template: app.template.get('list.menu.header'),
-                name: 'searchlist',
+                template: app.template.get('list-header-relate'),
+                name: 'list-header',
                 context: app.context.getContext({module: module})
             });
 

@@ -4046,7 +4046,7 @@ html {
   padding-left: 0;
   padding-right: 0;
 }
-.searchlist .listing {
+.list-header .listing {
   height: 93px;
   position: relative;
   left: 0;
@@ -4056,13 +4056,13 @@ html {
   display: block;
   z-index: 2000;
 }
-.searchlist .container-fluid {
+.list-header .container-fluid {
   padding: 0 !important;
 }
 .filtered .topelbar {
   padding-right: 124px;
 }
-.searchlist .listing {
+.list-header .listing {
   margin-left: -128px !important;
   padding-left: 128px;
   overflow: visible;

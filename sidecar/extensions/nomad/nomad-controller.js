@@ -12,6 +12,21 @@
 
         loadView: function(params) {
 
+            var loadView = _.bind(this._loadView, this);
+
+            if (params.layout === "login") {
+                // HACK: To work-around frozen login view
+                _.delay(function() {
+                    loadView(params);
+                }, 1000);
+            } else {
+                loadView(params);
+            }
+
+        },
+
+        _loadView: function(params) {
+
             var prevLayout = this.layout;
             if (prevLayout) {
 
@@ -42,7 +57,7 @@
             // Prepare model and collection
             this.context.prepare();
 
-            var currentLayout = this.getLayoutFromHash();
+            var currentLayout = (!this.checkIsDisableCache(params.layout)) ? this.getLayoutFromHash() : null;
 
             var isNewLayout = !currentLayout;
 
@@ -69,7 +84,7 @@
                     currentLayout.model = model;
                     currentLayout.collection = collection;
 
-                    _.each(currentLayout._components,function(component){
+                    _.each(currentLayout._components, function(component) {
                         component.model = model;
                         component.collection = collection;
                     });
@@ -138,7 +153,7 @@
 
         checkIsDisableCache: function(layoutName) {
 
-            return !!_.find(app.config.disableLayoutCache,function(name){
+            return !!_.find(app.config.disableLayoutCache, function(name) {
                 return layoutName === name;
             });
         },

@@ -10,7 +10,7 @@
             </article>
             <div style="margin-top: 50px;">
                 {{#each ../collection.models}}
-                {{include "list.item" this ../../this ../fields}}
+                {{include "list-item" this ../../this ../fields}}
                 {{/each}}
             </div>
             {{#if ../collection.models.length}}

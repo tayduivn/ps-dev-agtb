@@ -3,8 +3,8 @@
     var _meta = {
         type: "list",
         components: [
-            { view:"searchassociate" },
-            { view: "associate" }
+            { view: "list-header-associate" },
+            { view: "list-associate" }
         ]
     };
 
@@ -15,11 +15,11 @@
 
             app.view.Layout.prototype.initialize.call(this, options);
 
-            var searchListView = this.getComponent('searchassociate');
-            var associateView = this.getComponent('associate');
+            var searchListView = this.getComponent('list-header-associate');
+            var associateView = this.getComponent('list-associate');
 
             if(associateView){
-                associateView.setTemplateOption("partials", {'list.item': app.template.get("list.associate.item")});
+                associateView.setTemplateOption("partials", {'list-item': app.template.get("list-item-associate")});
             }
 
             if (searchListView) {
