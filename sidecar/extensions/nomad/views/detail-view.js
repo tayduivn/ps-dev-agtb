@@ -123,25 +123,28 @@
 
         /**
          * Returns array of fields data (from model), specified by array of fields metadata.
+         * Returned array is like: [{field-label: field.value}, ...]
          * @param fields
          * @return {Array}
          */
         getFieldsDataArray: function (fields) {
             var view = this;
-            var key, value, dataObj, data = [];
-            //map fields array into array [{field.name: field.value}, ...]
-            data = _.map(fields, function(field, index) {
+            var label, value, vardef, dataObj;
+            return _.map(fields, function(field, index) {
                 dataObj = {};
                 value = view.model.get(field.name);
-
+                vardef = app.metadata.getModule(view.module).fields[field.name];
                 if (value) {
-                    key = field.label || field.name;
-                    key = app.lang.get(key, view.module);
-                    dataObj[key] = value;
+                    label = app.lang.get(
+                        field.label ||
+                        vardef.label ||
+                        vardef.vname ||
+                        field.name,
+                        view.module);
+                    dataObj[label] = value;
                     return dataObj;
                 }
             });
-            return data;
         },
 
         /**
@@ -151,7 +154,7 @@
          */
         getAddresses: function () {
             var key, addressObj, valueObj, view = this;
-            //iterate over adress fields group
+            //iterate over address fields group
             return _.map(this.addressFieldsGroups, function (group, addressName) {
                 valueObj = {};
                 //iterate over fields in a group
