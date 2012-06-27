@@ -1053,6 +1053,7 @@
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
                 model.uploadFile(fileField, $file, {
+                    field: fileField,
                     success: function() {
                         filesToUpload--;
                         if (filesToUpload==0) {
@@ -1067,7 +1068,7 @@
                         }
                         var errors = {};
                         errors[error.responseText] = {};
-                        model.trigger('error:validation:' + fileField, errors);
+                        model.trigger('error:validation:' + this.field, errors);
                         model.trigger('error:validation');
                     }
                 });
