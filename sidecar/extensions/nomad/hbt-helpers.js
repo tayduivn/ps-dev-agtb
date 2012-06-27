@@ -37,4 +37,14 @@
         return new Handlebars.SafeString(app.nomad.buildLinkRoute(model.module, model.id, link, relatedModel.id, action));
     });
 
+    Handlebars.registerHelper('imageUrl', function(image, model) {
+        return image ? app.api.buildFileURL({
+            field: image.name,
+            module: model.module,
+            id: model.id
+        }, {
+            htmlJsonFormat: false
+        }) : "";
+    });
+
 })(SUGAR.App);
