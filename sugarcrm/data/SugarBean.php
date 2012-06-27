@@ -289,12 +289,11 @@ class SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
         if(!empty($current_user->id) &&
-                    $this->bean_implements('ACL') &&
-                    !is_admin($current_user) &&
-                    ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
-            == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN || ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN_DEV))
+                (is_admin($current_user) ||
+                ($this->bean_implements('ACL') && (ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
+                == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
+                == ACL_ALLOW_ADMIN || ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
+                == ACL_ALLOW_ADMIN_DEV)))))
         {
             $this->disable_row_level_security =true;
         }
@@ -523,9 +522,12 @@ class SugarBean
 
         $fieldDefs = $dictionary['audit']['fields'];
         $indices = $dictionary['audit']['indices'];
-        // '0' stands for the first index for all the audit tables
-        $indices[0]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[0]['name'];
-        $indices[1]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[1]['name'];
+
+        // Renaming template indexes to fit the particular audit table (removed the brittle hard coding)
+        foreach($indices as $nr => $properties){
+            $indices[$nr]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $properties['name'];
+        }
+
         $engine = null;
         if(isset($dictionary['audit']['engine'])) {
             $engine = $dictionary['audit']['engine'];
@@ -533,10 +535,7 @@ class SugarBean
             $engine = $dictionary[$this->getObjectName()]['engine'];
         }
 
-        $sql=$this->db->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
-
-        $msg = "Error creating table: ".$table_name. ":";
-        $this->db->query($sql,true,$msg);
+        $this->db->createTableParams($table_name, $fieldDefs, $indices, $engine);
     }
 
     /**
@@ -5105,8 +5104,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $table_alias = $this->table_name;
         }
-
-        if ( ( (!empty($current_user) && !$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
+        if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";

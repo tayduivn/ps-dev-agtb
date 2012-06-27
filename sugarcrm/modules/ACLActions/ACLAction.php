@@ -362,6 +362,11 @@ class ACLAction  extends SugarBean{
 
         }
         if(!empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
+            if (!empty($_SESSION['ACL'][$user_id][$category][$type]['admin']) && $_SESSION['ACL'][$user_id][$category][$type]['admin']['aclaccess'] >= ACL_ALLOW_ADMIN)
+            {
+                // If you have admin access for a module, all ACL's are allowed
+                return $_SESSION['ACL'][$user_id][$category][$type]['admin']['aclaccess'];
+            }            
             return  $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'];
         }
     }
@@ -488,6 +493,3 @@ class ACLAction  extends SugarBean{
 
 
 }
-
-
-?>

@@ -297,7 +297,23 @@ class Employee extends Person {
      */
     function hasCustomFields()
     {
-        return !empty($GLOBALS['dictionary']['User']['custom_fields']);
+
+        //Check to see if there are custom user fields that we should report on, first check the custom_fields array
+        $userCustomfields = !empty($GLOBALS['dictionary']['Employee']['custom_fields']);
+        if(!$userCustomfields){
+            //custom Fields not set, so traverse employee fields to see if any custom fields exist
+            foreach ($GLOBALS['dictionary']['Employee']['fields'] as $k=>$v){
+                if(!empty($v['source']) && $v['source'] == 'custom_fields'){
+                    //custom field has been found, set flag to true and break
+                    $userCustomfields = true;
+                    break;
+                }
+
+            }
+        }
+
+        //return result of search for custom fields
+        return $userCustomfields;
     }
 }
 

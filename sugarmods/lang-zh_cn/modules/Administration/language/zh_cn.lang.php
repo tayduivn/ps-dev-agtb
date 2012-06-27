@@ -862,7 +862,7 @@ $mod_strings = array (
     'WARN_LICENSE_SEATS_MAXED'=>  "警告: 启用的用户数已经超出了许可证允许的最大值. ",	
     'WARN_LICENSE_SEATS_EDIT_USER'=>  "警告: 启用的用户数已经达到了许可证允许的最大值. ",
     'WARN_LICENSE_SEATS_USER_CREATE'=>"警告: 启用的用户数已经达到了许可证允许的最大值，您将不能创建新的用户。", 
-    'WARN_LICENSE_SEATS2' => ".  请联系您的销售代表或电子邮件给<a href=\"mailto:cagroup@sugarcrm.com\">cagroup@sugarcrm.com</a>.",
+    'WARN_LICENSE_SEATS2' => ".  请联系您的销售代表或电子邮件给<a href=\"mailto:sales@sugarcrm.com\">sales@sugarcrm.com</a>.",
 	'WARN_REPAIR_CONFIG' => '注意:config.php文件需要修复。请使用管理员界面下的“修复”链接来修复您的config.php文件。',
     'WARN_UPGRADE_APP'=> "最新版本的应用现已有效. ",
 	'WARN_UPGRADE' => '警告:请更新',

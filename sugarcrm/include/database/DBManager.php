@@ -2440,8 +2440,9 @@ protected function checkQuery($sql, $object_name = false)
      * @param string $type Column type
      * @return array|bool array containing the different components of the passed in type or false in case the type contains illegal characters
      */
-    public function getTypeParts($type) {
-        if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\w+)\s*(,\s*(?'scale'\d+))*\))*)", $type, $matches))
+    public function getTypeParts($type)
+    {
+        if(preg_match("#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#", $type, $matches))
         {
             $return = array();  // Not returning matches array as such as we don't want to expose the regex make up on the interface
             $return['baseType'] = $matches['type'];

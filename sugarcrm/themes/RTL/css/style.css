@@ -219,13 +219,36 @@ ul.megamenu,
 	float: left;	
 }
 
+#quickCreateULSubnav,
 #quickCreate ul.clickMenu li ul.subnav
 {
-	right: auto;	
+    left:0px;
+	right: auto;
+    direction: rtl;
 }
+.selectActionsDisabled span.ab {
+    margin:0px 10px 0 0;
+    padding:0 0 0 5px;
+}
+.selectActionsDisabled {
+    padding: 0 10px 0 0px;
+}
+td.paginationActionButtons ul.clickMenu .massall,
+ul#selectLink.clickMenu .massall, td.selectCol .massall,
+ul.SugarActionMenuIESub li a, ul.clickMenu li span, .selectActionsDisabled span, .selectActionsDisabled a, .selectActionsDisabled a:hover,
+ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a, ul.SugarActionMenuIESub li a,
+ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
+    float:right;
+    text-align:right;
+}
+ul.clickMenu li span.ab, .selectActionsDisabled span.ab {
+    border-right:1px #aaa solid;
+    border-left:0px;
 
-#globalLinksModule ul.clickMenu li ul.subnav {
-	left: 0px;	
+}
+ul#quickCreateULSubnav {
+    left:0px;
+    right:auto !important;
 }
 ul.moduleTabExtraMenu, ul.filter-menu,
 ul.megamenu ul.MMLastViewed,
@@ -473,6 +496,7 @@ direction: rtl;
 .buttons {
 	text-align: right;
 }
+div.action_buttons form, div.action_buttons input { float:right; }
 
 .paginationWrapper {
 	text-align: left;
