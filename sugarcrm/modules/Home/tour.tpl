@@ -48,13 +48,13 @@
 		<div style="float: left;"> 
 			<div style="float: left; width: 290px; margin-right: 40px;">
 			<p>
-			You can always reference back to the application <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">documentation</a> link under the profile tab for help or just send us feedback.
+			You can always reference our <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">documentation</a> through the "Support" link under the profile tab.
 <br>
 				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -26px;"></i>
 			</p>
 			</div>
 			<div style="float: left">
-				<img src="include/images/tour/profile_link.png" width="168" height="275">
+				<img src="include/images/tour/profile_link.png" width="168" height="247">
 			</div>
 		</div>
 	</div>

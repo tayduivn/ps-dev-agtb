@@ -82,11 +82,6 @@ $global_control_links['help'] = array(
  );
 */
 
-$global_control_links['docs'] = array(
-'linkinfo' => array($app_strings['documentation']['LBL_DOCS'] => 'javascript:void(window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/'.$app_strings['documentation'][$sugar_flavor].'\'))'),
-'submenu' => ''
-);
-
 $global_control_links['users'] = array(
 'linkinfo' => array($app_strings['LBL_LOGOUT'] => 'index.php?module=Users&action=Logout'),
 'submenu' => ''

@@ -32,7 +32,7 @@ var tourModal;
 		init: function(params) {
 			var modals = params.modals;
             var modalArray = new Array();
-			tourModal = $('<div id="'+params.id+'" class="modal"></div>').modal({backdrop: false}).draggable();
+			tourModal = $('<div id="'+params.id+'" class="modal"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 
 			var tourIdSel = "#"+params.id;
 
@@ -71,7 +71,7 @@ var tourModal;
 
 					for(var i=0; i<modals.length; i++) {
                         var modalId =  modals[i].target.replace("#","")+"_modal";
-                        modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.class+'"></div>').modal({backdrop: false}).draggable();
+                        modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.class+'"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 //                        modalArray[i].modal('show');
                         var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">×</a><h3>"+modals[i].title+"</h3></div>";
 
