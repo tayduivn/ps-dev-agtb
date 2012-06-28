@@ -61,14 +61,14 @@
 <script src='../sidecar/extensions/modules/Forecasts/hbt-helpers.js'></script>
 
 <script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/base/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/base/views/tree/tree.js'></script>
-<script src='clients/base/views/chartOptions/chartOptions.js'></script>
-<script src='clients/base/views/forecastsCommitted/forecastsCommitted.js'></script>
-<script src='clients/base/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/base/views/progress/progress.js'></script>
-<script src='clients/base/views/chart/chart.js'></script>
-<script src='clients/base/views/alert/alert-view.js'></script>
+<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/forecasts/views/tree/tree.js'></script>
+<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
+<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
+<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
+<script src='clients/forecasts/views/progress/progress.js'></script>
+<script src='clients/forecasts/views/chart/chart.js'></script>
+<script src='clients/forecasts/views/alert/alert-view.js'></script>
 
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <script src='include/javascript/sugarAuthStore.js'></script>
