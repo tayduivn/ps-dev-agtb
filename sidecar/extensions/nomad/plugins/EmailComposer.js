@@ -31,12 +31,12 @@ function EmailComposer() {
 }
 
 EmailComposer.ComposeResultType = {
-Cancelled:0,
-Saved:1,
-Sent:2,
-Failed:3,
-NotSent:4
-}
+    Cancelled:0,
+    Saved:1,
+    Sent:2,
+    Failed:3,
+    NotSent:4
+};
 
 
 
@@ -58,17 +58,17 @@ EmailComposer.prototype.showEmailComposer = function(subject,body,toRecipients,c
 		args.bIsHTML = bIsHTML;
 	
 	cordova.exec(null, null, "EmailComposer", "showEmailComposer", [args]);
-}
+};
 
 // this will be forever known as the orch-func -jm
 EmailComposer.prototype.showEmailComposerWithCB = function(cbFunction,subject,body,toRecipients,ccRecipients,bccRecipients,bIsHTML) {
 	this.resultCallback = cbFunction;
 	this.showEmailComposer.apply(this,[subject,body,toRecipients,ccRecipients,bccRecipients,bIsHTML]);
-}
+};
 
 EmailComposer.prototype._didFinishWithResult = function(res) {
 	this.resultCallback(res);
-}
+};
 
 
 
@@ -81,7 +81,6 @@ cordova.addConstructor(function()  {
 					   // shim to work in 1.5 and 1.6
 					   if (!window.Cordova) {
 					   window.Cordova = cordova;
-					   };
-					   
-					   window.plugins.emailComposer = new EmailComposer();
+                       }
+    window.plugins.emailComposer = new EmailComposer();
 					   });
