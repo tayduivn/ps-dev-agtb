@@ -76,14 +76,86 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
     {
         $this->link_path = array('self');
 
-        foreach ($value as $key => $val) {
-
-            $this->_convert($key, $val);
+        // handle when the first item is a control variable
+        if ($this->checkForAndOrControlVariable(current($value))) {
+            // get the first value from the array
+            $value = current($value);
+            // set the default operator since it's a Control Variable
+            $this->controlStatement = $value->getOperator(true);
+            // set the $value to the Control Variable Value
+            $value = $value->getValue();
         }
 
-        return array("Filter_1" => array_merge(array(
+        // setup the start of the filter
+        $filter = array("Filter_1" => array(
             'operator' => $this->controlStatement,
-        ), $this->_reportFilters));
+        ));
+
+        // track if the control variable changes at all.
+        $hasMoreControlVariables = false;
+
+        // keep track of the filter groups
+        $filter_groups = array();
+
+        // build filter groups
+        foreach ($value as $key => $val) {
+            // keep the current controlStatement to track if it changes when we parse the filter
+            $startControlVariable = $this->controlStatement;
+            // parse the filters
+            $this->_convert($key, $val);
+
+            // move the filters into the $filter_group variable with the current set controll statement
+            $filter_groups[] = array_merge(array('operator' => $this->controlStatement), $this->_reportFilters);
+
+            // track of the control variable change
+            if ($startControlVariable !== $this->controlStatement) {
+                // it has changed, set the flag to true.
+                $hasMoreControlVariables = true;
+            }
+
+            // clear out the set _reportFilters
+            $this->_reportFilters = array();
+            // reset the control statement to what it was when we started
+            $this->controlStatement = $startControlVariable;
+            // variable cleanup.
+            unset($startControlVariable);
+        }
+
+        // manage if the control variable changed at all
+        if ($hasMoreControlVariables == false) {
+            // since it did not change, just add the filter groups to the root of the master $filter
+            foreach ($filter_groups as $_filter) {
+                // unset operator since we don't need, and it's already set.
+                unset($_filter['operator']);
+                // do the merge
+                $filter["Filter_1"] = array_merge($filter['Filter_1'], $_filter);
+            }
+        } else {
+            // if we only have one filter group and the control variable changed move it up
+            if(count($filter_groups) == 1) {
+                // since we only have one, just set the Filter_1 to be the only filter in the group with the operator
+                // since it's not the default operator
+                $filter["Filter_1"] = current($filter_groups);
+            } else {
+                // merge in all the filter groups while keeping the operator set to what the default was since it
+                // changed and we need the actual filter groups
+                $filter["Filter_1"] = array_merge($filter["Filter_1"], $filter_groups);
+            }
+        }
+
+        // return the filter from the converter
+        return $filter;
+    }
+
+    /**
+     * Check to see if an item is an And or Or Control Variable
+     *
+     * @param SugarParsers_Filter_AbstractFilter $item
+     * @return boolean
+     */
+    protected function checkForAndOrControlVariable($item)
+    {
+        return ($item instanceof SugarParsers_Filter_And || $item instanceof SugarParsers_Filter_Or);
     }
 
     /**
