@@ -500,6 +500,8 @@ div.action_buttons form, div.action_buttons input { float:right; }
 
 .paginationWrapper {
 	text-align: left;
+    direction:ltr;
+    float:left;
 }
 
 #notifDivider {
