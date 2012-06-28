@@ -433,6 +433,12 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                         if('full_name' == $field_name){//bug #32465
                            $list_field['fields'][strtoupper($field_name)] = $widget_contents;
                         }
+
+                        //vardef source is non db, assign the field name to varname for processing of column.
+                        if(!empty($vardef['source']) && $vardef['source']=='non-db'){
+                            $list_field['varname'] = $field_name;
+
+                        }
                         $widget_contents = $layout_manager->widgetDisplay($list_field);
                     } else if(isset($list_field['widget_class']) && $list_field['widget_class'] == 'SubPanelEmailLink' ) {
                         $widget_contents = $layout_manager->widgetDisplay($list_field);
