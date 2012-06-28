@@ -54,6 +54,8 @@ class SugarParsers_Filter
 
     protected $field_tree = array();
 
+    protected $inside_or_and = false;
+
 
     public function __construct(SugarBean $bean)
     {
@@ -83,6 +85,7 @@ class SugarParsers_Filter
         if (is_object($obj)) {
             $obj = $this->objectToArray($obj);
         }
+        $this->inside_or_and = false;
         $this->parsedFilter = $this->parseFilterArray($obj);
     }
 
@@ -99,6 +102,10 @@ class SugarParsers_Filter
         $stripArrayKeys = false;
 
         foreach ($array as $key => $value) {
+
+            if($key === '$or') {
+                $this->inside_or_and = true;
+            }
 
             $target_module = null;
             $parent_module = null;
@@ -208,7 +215,7 @@ class SugarParsers_Filter
                 /* @var $filter SugarParsers_Filter_AbstractFilter */
                 $filter = new $klass();
                 $filter->filter($value);
-                $_f = array_pop($this->field_tree);
+                $_f = ($this->inside_or_and) ? end($this->field_tree) : array_pop($this->field_tree);
                 if(isset($_f['name'])) {
                     $filter->setKey($_f['name']);
                 } else {
@@ -225,6 +232,11 @@ class SugarParsers_Filter
             if (isset($_filters[$_filterKey])) {
                 $stripArrayKeys = true;
                 $_filterKey = null;
+            }
+
+            if(($filter instanceof SugarParsers_Filter_Or)) {
+                array_pop($this->field_tree);
+                $this->inside_or_and = false;
             }
 
             $_filters[$_filterKey] = $filter;
