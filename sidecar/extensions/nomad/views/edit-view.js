@@ -9,6 +9,11 @@
 
         initialize: function (options) {
             app.view.View.prototype.initialize.call(this, options);
+
+            this._modelBackup = null;                         //backuped model attributes json
+            this.relateField = null;
+            this.relationshipFields = null;                   //specific relationship data fields collection
+
             this.backupModel();
 
             _.each(this.meta.panels, function (panel, panelIndex) {
@@ -20,6 +25,7 @@
             var link = this.context.get("link");
             if (link) {
                 // Pre-populate relate field
+                var self = this;
                 var parentModule = this.model.link.bean.module;
                 var parentId = this.model.link.bean.id;
                 var relateField = app.data.getRelateField(parentModule, link);
@@ -27,6 +33,12 @@
                     this.relateField = relateField.name;
                     this.model.set(relateField.id_name, parentId);
                 }
+
+                //add specific relationship fields
+                var relFieldNames = app.data.getRelationshipFields(parentModule, link);
+                if (relFieldNames.length) this.relationshipFields = _.map(relFieldNames, function(fieldName) {
+                                              return app.metadata.getModule(self.module).fields[fieldName];
+                                          });
             }
         },
 
