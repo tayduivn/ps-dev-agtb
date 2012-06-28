@@ -23,6 +23,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav!=sales ONLY
 class ConfiguratorViewSugarpdfsettings extends SugarView
 {
+
+    /**
+     * @see SugarView::_getModuleTab()
+     */
+    protected function _getModuleTab()
+    {
+        return 'PdfManager';
+    }
+
     /**
 	 * @see SugarView::preDisplay()
 	 */
@@ -40,7 +49,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
 	    global $mod_strings;
 
     	return array(
-    	   "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+    	   "<a href='index.php?module=PdfManager&action=index'>".translate('LBL_MODULE_NAME','PdfManager')."</a>",
     	   $mod_strings['LBL_PDFMODULE_NAME']
     	   );
     }
@@ -76,7 +85,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
                     }
                 }
                 $focus->saveConfig();
-                header('Location: index.php?module=Administration&action=index');
+                header('Location: index.php?module=PdfManager&action=index');
             }
         }
 
@@ -98,7 +107,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
         echo getClassicModuleTitle(
                 "Administration",
                 array(
-                    "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+                    "<a href='index.php?module=PdfManager&action=index'>".translate('LBL_MODULE_NAME','PdfManager')."</a>",
                    $mod_strings['LBL_PDFMODULE_NAME'],
                    ),
                 false

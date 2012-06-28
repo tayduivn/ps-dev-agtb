@@ -38,6 +38,27 @@ function getPdfManagerAvailableModules()
 
 class PdfManagerHelper
 {
+
+    /**
+     * Returns a list of banned Fields and Links by module for PdfManager
+     *
+     * @return array
+     */
+
+    public static function getBannnedFieldsAndLinks()
+    {
+    
+        $bannedPdfManagerFieldsAndLinks = array();
+
+        include 'modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        
+        if (file_exists('custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php')) {
+            include 'custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        }
+            
+        return $bannedPdfManagerFieldsAndLinks;
+    }
+
     /**
      * Returns a list of available modules for PdfManager
      *
@@ -98,10 +119,13 @@ class PdfManagerHelper
     public static function getLinksForModule($module)
     {
         global $app_list_strings;
+        
+        $bannedFieldsAndLinks = PdfManagerHelper::getBannnedFieldsAndLinks();
+        
         $focus = BeanFactory::newBean($module);
         $focus->id = create_guid();
 
-        $fields = PdfManagerHelper::cleanFields($focus->field_defs);
+        $fields = PdfManagerHelper::cleanFields($focus->field_defs, $module);
 
         $links = array();
 
@@ -111,7 +135,7 @@ class PdfManagerHelper
             $name = 'products';
             $def = $focusBundle->field_defs[$name];
             $focusBundle->load_relationship($name);
-            $fieldsBundle = PdfManagerHelper::cleanFields($focusBundle->field_defs);
+            $fieldsBundle = PdfManagerHelper::cleanFields($focusBundle->field_defs, 'Products');
             $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
             $relatedModule = (!empty($app_list_strings['moduleListSingular']['Product'])) ?
                                 $app_list_strings['moduleListSingular']['Product'] : 'Product';
@@ -153,6 +177,10 @@ class PdfManagerHelper
                         continue;
                     }
 
+                    if (isset($bannedFieldsAndLinks[$module]) && isset($bannedFieldsAndLinks[$module]['relationships']) && in_array($name, $bannedFieldsAndLinks[$module]['relationships'])) {
+                        continue;
+                    }                    
+                    
                     $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
                     $links[$name] = array(
                         "label" => "$label ($relatedModule)",
@@ -209,7 +237,7 @@ class PdfManagerHelper
             );
         }
 
-        $relatedFields = PdfManagerHelper::cleanFields($field_defs, false, true);
+        $relatedFields = PdfManagerHelper::cleanFields($field_defs, $relatedModule, false, true);
         foreach ($relatedFields as $val) {
             $name = $val[0];
             //Rollups must be either a number or a possible number (like a string) to roll up
@@ -238,14 +266,20 @@ class PdfManagerHelper
      * @param  array $fieldDef
      * @return array
      */
-    public static function cleanFields($fieldDef, $includeLinks = true, $forRelatedField = false, $returnKeys = false)
+    public static function cleanFields($fieldDef, $moduleName = '', $includeLinks = true, $forRelatedField = false, $returnKeys = false)
     {
+
+        $bannedFieldsAndLinks = PdfManagerHelper::getBannnedFieldsAndLinks();
         $fieldArray = array();
         foreach ($fieldDef as $fieldName => $def) {
             if (!is_array($def) || $fieldName == 'deleted' || empty($def['type'])) {
                 continue;
             }
 
+            if (isset($bannedFieldsAndLinks[$moduleName]) && isset($bannedFieldsAndLinks[$moduleName]['fields']) && in_array($fieldName, $bannedFieldsAndLinks[$moduleName]['fields'])) {
+                continue;
+            }
+            
             //Check the studio property of the field def.
             if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
                 (isset($def['studio']['formula']) && self::isFalse($def['studio']['formula'])) ||

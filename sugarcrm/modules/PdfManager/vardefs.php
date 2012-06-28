@@ -130,6 +130,26 @@ $dictionary['PdfManager'] = array(
             'cols' => '20',
             'dependency' => false,
         ),
+        'template_name' =>
+        array (
+            'required' => false,
+            'name' => 'template_name',
+            'vname' => 'LBL_TEMPLATE_NAME',
+            'type' => 'varchar',
+            'massupdate' => 0,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => false,
+            'reportable' => false,
+            'unified_search' => false,
+            'merge_filter' => 'disabled',
+            'calculated' => false,
+            'len' => '255',
+            'size' => '20',
+        ),        
         'author' =>
         array (
             'required' => true,

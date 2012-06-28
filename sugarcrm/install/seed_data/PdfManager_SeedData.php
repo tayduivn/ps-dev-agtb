@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/Sugarpdf/sugarpdf_config.php';
 global $mod_strings, $installer_mod_strings;
 
-$modStringSrc = (isset($installer_mod_strings) && isset($installer_mod_strings['pdf_template_quote']) ? $installer_mod_strings : $mod_strings);
+$modStringSrc = return_mod_list_strings_language($GLOBALS['current_language'], 'PdfManager');
 
 if (defined(PDF_HEADER_LOGO)) {
     $logo = K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO;
@@ -55,6 +55,7 @@ $pdfTemplate->base_module = 'Quotes';
 $pdfTemplate->name = $modStringSrc['pdf_template_quote']['name'];
 $pdfTemplate->description = $modStringSrc['pdf_template_quote']['description'];
 $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_quote']['body_html']);
+$pdfTemplate->template_name = $modStringSrc['pdf_template_quote']['template_name'];;
 $pdfTemplate->author = PDF_AUTHOR;
 $pdfTemplate->title = PDF_HEADER_TITLE;
 $pdfTemplate->subject = PDF_SUBJECT;
@@ -69,6 +70,7 @@ $pdfTemplate->base_module = 'Quotes';
 $pdfTemplate->name = $modStringSrc['pdf_template_invoice']['name'];
 $pdfTemplate->description = $modStringSrc['pdf_template_invoice']['description'];
 $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_invoice']['body_html']);
+$pdfTemplate->template_name = $modStringSrc['pdf_template_invoice']['template_name'];;
 $pdfTemplate->author = PDF_AUTHOR;
 $pdfTemplate->title = PDF_HEADER_TITLE;
 $pdfTemplate->subject = PDF_SUBJECT;

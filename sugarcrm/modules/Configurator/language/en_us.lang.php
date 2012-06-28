@@ -262,7 +262,7 @@ $mod_strings = array (
     'PDF_SMALL_HEADER_LOGO_INFO' => 'This image appears in the Header of the PDF document pages.',
 
     'PDF_NEW_SMALL_HEADER_LOGO' => 'Select New Image',
-    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'an image to replace the current image. The file format can be either .jpg or .png. (Only .jpg for EZPDF.) The recommended size is 212x40 px.',
+    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'Select an image to replace the current image. The file format can be either .jpg or .png. (Only .jpg for EZPDF.) The recommended size is 212x40 px.',
 
     'PDF_SMALL_HEADER_LOGO_WIDTH' => 'Reports Image Width',
     'PDF_SMALL_HEADER_LOGO_WIDTH_INFO' => 'Change the scale of the uploaded image that appears in Reports PDF Documents. (TCPDF only)',

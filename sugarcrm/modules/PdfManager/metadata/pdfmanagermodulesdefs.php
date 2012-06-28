@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,62 +29,23 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-require_once 'modules/PdfManager/PdfManagerHelper.php';
+// For $bannedPdfManagerFieldsAndLinks, list of banned Fields and Links by module for PdfManager
+/*
+        $bannedPdfManagerFieldsAndLinks['moduleName'] = array(
+            'fields' => array(
+                'fieldName1',
+                'fieldName2',
+            ),
+            'relationships' => array(
+                'relationshipName1',
+                'relationshipName2',
+            ),
+        );
+*/
 
-class PdfManager extends Basic
-{
-    public $new_schema = true;
-    public $module_dir = 'PdfManager';
-    public $object_name = 'PdfManager';
-    public $table_name = 'pdfmanager';
-    public $importable = false;
-    public $id;
-    public $name;
-    public $date_entered;
-    public $date_modified;
-    public $modified_user_id;
-    public $modified_by_name;
-    public $created_by;
-    public $created_by_name;
-    public $description;
-    public $deleted;
-    public $created_by_link;
-    public $modified_user_link;
-    public $team_id;
-    public $team_set_id;
-    public $team_count;
-    public $team_name;
-    public $team_link;
-    public $team_count_link;
-    public $teams;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
-    public $base_module;
-    public $published;
-    public $field;
-    public $body_html;
-    public $template_name;
-    public $title;
-    public $subject;
-    public $keywords;
-
-    public function PdfManager_sugar()
-    {
-        parent::Basic();
-    }
-
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL': return true;
-        }
-
-        return false;
-    }
-
-    public function isFavoritesEnabled()
-    {
-        return false;
-    }
-}
+$bannedPdfManagerFieldsAndLinks['Employees'] = array (
+    'relationships' => array(
+        'holidays',
+        'oauth_tokens',
+    ),
+);

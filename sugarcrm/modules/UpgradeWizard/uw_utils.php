@@ -4980,7 +4980,6 @@ function repairUpgradeHistoryTable()
 function addPdfManagerTemplate() {
     logThis('Begin addPdfManagerTemplate');
   
-    $installer_mod_strings = getModuleLanguagePack($current_language, './install');
     include 'install/seed_data/PdfManager_SeedData.php';
     
     logThis('End addPdfManagerTemplate');
