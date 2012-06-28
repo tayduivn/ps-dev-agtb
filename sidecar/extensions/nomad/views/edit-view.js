@@ -7,24 +7,22 @@
             "click #backRecord": "cancel"
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
             this._modelBackup = null;                         //backuped model attributes json
             this.relateField = null;
             this.relationshipFields = null;                   //specific relationship data fields collection
 
-            this.backupModel();
-
-            _.each(this.meta.panels, function (panel, panelIndex) {
-                _.each(panel.fields, function (field, fieldIndex) {
+            _.each(this.meta.panels, function(panel, panelIndex) {
+                _.each(panel.fields, function(field, fieldIndex) {
                     if (field.name.indexOf("email") == 0) field.type = "singleemail";
                 });
             });
 
             this.model.on("error:validation", function() {
                 app.alert.show('validation_error', {
-                    level:'error',
+                    level: 'error',
                     messages: 'Validation error!',
                     autoClose: true
                 });
@@ -52,30 +50,35 @@
             }
         },
 
-        saveRecord: function () {
+        _renderSelf: function() {
+            this.backupModel();
+            app.view.View.prototype._renderSelf.call(this);
+        },
+
+        saveRecord: function() {
             var self = this;
             this.model.save(null, {
                 relate: !!this.context.get('link'),
                 fieldsToValidate: this.getFields(),
-                success: function (model, resp) {
+                success: function(model, resp) {
                     var depth = parseInt(self.context.get("depth")) || 1;
                     app.router.go(-depth);
                 }
             });
         },
 
-        cancel: function (e) {
+        cancel: function(e) {
             this.restoreModel();
             var depth = parseInt(this.context.get("depth")) || 1;
             app.router.go(-depth);
         },
 
-        backupModel: function () {
+        backupModel: function() {
             var serializedModel = JSON.stringify(this.model.attributes);
             this._modelBackup = JSON.parse(serializedModel);
         },
 
-        restoreModel: function () {
+        restoreModel: function() {
             this.model.set(this._modelBackup);
         }
     });
