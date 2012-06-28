@@ -78,7 +78,7 @@ abstract class SugarACLStrategy
     public function checkFieldList($module, $field_list, $action, $context)
     {
         $result = array();
-        foreach($list as $key => $field) {
+        foreach($field_list as $key => $field) {
             $result[$key] = $this->checkAccess($module, "field", $context + array("field" => $field, "action" => $action));
         }
         return $result;
@@ -94,7 +94,7 @@ abstract class SugarACLStrategy
     public function getFieldListAccess($module, $field_list, $context)
     {
         $result = array();
-        foreach($list as $key => $field) {
+        foreach($field_list as $key => $field) {
             if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "edit"))) {
                 $result[$key] = SugarACL::ACL_READ_WRITE;
             } else if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
