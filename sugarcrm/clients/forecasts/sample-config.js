@@ -67,7 +67,7 @@
          * Platform name.
          * @cfg {String}
          */
-        platform: "core",
+        platform: "forecasts",
 
         /**
          * Default module to load for the home route (index).

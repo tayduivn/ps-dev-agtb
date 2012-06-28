@@ -78,7 +78,7 @@
 <div class="view-forecastsSubnav subnav"></div>
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
-    <div id="core" style="" >
+    <div id="forecasts" style="" >
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span2" id="drawer">
@@ -139,7 +139,7 @@
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
-                    el: "core",
+                    el: "forecasts",
                     contentEl: ".content"
                     //keyValueStore: app.sugarAuthStore //override the keyValueStore
                 });
