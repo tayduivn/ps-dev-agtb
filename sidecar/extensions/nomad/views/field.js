@@ -22,7 +22,7 @@
             });
 
             //get template and output the result
-            template = app.template.get('field.messages');
+            template = app.template.get('edit-field-error');
             this.$('.controls').append(template(errMessages));
             app.alert.show('field_validation_error', {level:'error', messages:'Validation error!', autoClose: true});
         },
