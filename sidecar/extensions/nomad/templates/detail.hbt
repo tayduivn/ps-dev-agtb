@@ -1,5 +1,5 @@
 <h1 class="nomad">{{#if viewObj.model.link}}Related{{/if}} {{viewObj.moduleSingular}}</h1>
-<div class="bizcard">
+<div class="bizcard{{#unless isActions}} short{{/unless}}">
     {{#nothing}}TODO: research how to get image data{{/nothing}}
     <img src="{{imageUrl image viewObj.model}}" class="avatar">
     <div class="card">
@@ -14,9 +14,7 @@
             {{/with}}
         {{/each}}
     </div>
-    {{#if isActions}}
-        <span class="fade"></span>
-    {{/if}}
+    <span class="fade"></span>
     <a href="#{{#if viewObj.model.link}}{{relatedRoute viewObj.model "edit"}}{{else}}{{modelRoute viewObj.model "edit"}}{{/if}}"><i class="icon-chevron-right more"></i></a>
     {{#if isActions}}
         <div id="record-action" class="row-fluid">
@@ -38,7 +36,7 @@
         </div>
     {{/if}}
 </div>
-<div class="container-fluid" id="detailListing">
+<div class="container-fluid{{#unless isActions}} short{{/unless}}" id="detailListing">
     <div class="row-fluid">
         <div class="span12 listing" id="listing"><i></i>
             <ul class="actions">
