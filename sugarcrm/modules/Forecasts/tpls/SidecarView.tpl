@@ -41,7 +41,7 @@
 <script src='../sidecar/src/core/user.js'></script>
 <script src='../sidecar/src/utils/logger.js'></script>
 
-<script src='config.js'></script>
+<script src='clients/forecasts/config.js'></script>
 
 <script src='../sidecar/src/data/bean.js'></script>
 <script src='../sidecar/src/data/bean-collection.js'></script>
