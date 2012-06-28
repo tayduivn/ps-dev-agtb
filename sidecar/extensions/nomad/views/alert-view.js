@@ -26,7 +26,7 @@
                 }, app.config.alertAutoCloseDelay || 9000);
             }
 
-            var tmpl = app.template.get('panel.alert');
+            var tmpl = app.template.get('alert-panel');
             alert.$el.append(tmpl(alert)).prependTo(this.$el);
 
             return alert;

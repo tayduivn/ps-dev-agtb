@@ -22,6 +22,14 @@
                 });
             });
 
+            this.model.on("error:validation", function() {
+                app.alert.show('validation_error', {
+                    level:'error',
+                    messages: 'Validation error!',
+                    autoClose: true
+                });
+            }, this);
+
             var link = this.context.get("link");
             if (link) {
                 // Pre-populate relate field
@@ -36,9 +44,11 @@
 
                 //add specific relationship fields
                 var relFieldNames = app.data.getRelationshipFields(parentModule, link);
-                if (relFieldNames.length) this.relationshipFields = _.map(relFieldNames, function(fieldName) {
-                                              return app.metadata.getModule(self.module).fields[fieldName];
-                                          });
+                if (relFieldNames.length) {
+                    this.relationshipFields = _.map(relFieldNames, function(fieldName) {
+                        return app.metadata.getModule(self.module).fields[fieldName];
+                    });
+                }
             }
         },
 
