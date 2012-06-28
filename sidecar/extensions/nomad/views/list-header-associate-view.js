@@ -1,9 +1,9 @@
 (function(app) {
 
-    app.view.views.SearchassociateView = app.view.views.SearchlistView.extend({
+    app.view.views.ListHeaderAssociateView = app.view.views.ListHeaderView.extend({
         initialize: function(options) {
-            app.view.views.SearchlistView.prototype.initialize.call(this, options);
-            this.template = app.template.get("list.associate.header"); //todo:remove it later
+            app.view.views.ListHeaderView.prototype.initialize.call(this, options);
+            this.template = app.template.get("list-header-associate"); //todo:remove it later
         },
         onClickMenuSave:function(e){
             e.preventDefault();

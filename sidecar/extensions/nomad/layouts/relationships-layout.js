@@ -3,7 +3,7 @@
     var _meta = {
         type: "list",
         components: [
-            { view:"searchrelationships" },
+            { view: "list-header-relationships" },
             { view: "list" }
         ]
     };
@@ -14,10 +14,10 @@
             this.options.meta = _meta;
             app.view.Layout.prototype.initialize.call(this, options);
 
-            var searchListView = this.getComponent('searchlist');
+            var searchListView = this.getComponent('list-header');
 
             var listView = this.getComponent('list');
-            listView.template =  app.template.get("list.relationships");
+            listView.template =  app.template.get("list-relationships");
 
             if (searchListView) {
                 searchListView.setListView(listView);

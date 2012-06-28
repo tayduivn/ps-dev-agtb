@@ -460,10 +460,6 @@ class EditView
                     $this->fieldDefs[$name]['value'] = $value;
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
-                $this->fieldDefs[$name]['acl'] = $this->focus->ACLFieldGet($name);
-                //END SUGARCRM flav=pro ONLY
-
                 //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean
                 //with values from the request if they are set and either the bean is brand new (such as a create from a subpanels) or the 'full form' button has been clicked
                 if ((($this->populateBean && empty($this->focus->id)) || (isset($_REQUEST['full_form'])))
@@ -500,6 +496,9 @@ class EditView
                    }
                 }
             }
+            //BEGIN SUGARCRM flav=pro ONLY
+            $this->focus->ACLFilterFieldList($this->fieldDefs, array(), array("add_acl" => true));
+            //END SUGARCRM flav=pro ONLY
         }
 
         if (isset($this->focus->additional_meta_fields))

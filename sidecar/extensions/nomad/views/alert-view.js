@@ -26,8 +26,8 @@
                 }, app.config.alertAutoCloseDelay || 9000);
             }
 
-            var tmpl = app.template.get('panel.alert');
-            alert.$el.append(tmpl(alert)).prependTo(this.$el);
+            var tmpl = app.template.get('alert-panel');
+            if (tmpl) alert.$el.append(tmpl(alert)).prependTo(this.$el);
 
             return alert;
         }

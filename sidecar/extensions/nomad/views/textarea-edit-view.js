@@ -1,6 +1,6 @@
 (function (app) {
 
-    app.view.views.TextareaeditView = app.view.View.extend({
+    app.view.views.TextareaEditView = app.view.View.extend({
 
         editElTag: "textarea",
 

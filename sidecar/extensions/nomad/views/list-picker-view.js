@@ -1,6 +1,6 @@
 (function(app) {
 
-    app.view.views.PickerlistView = app.view.View.extend({
+    app.view.views.ListPickerView = app.view.View.extend({
         events: {
             'click .picker-list-row': 'onRowClick',
             'click .menu-cancel': 'onClickMenuCancel'

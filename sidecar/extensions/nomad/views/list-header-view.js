@@ -1,8 +1,8 @@
 (function(app) {
 
-    app.view.views.SearchlistView = app.view.View.extend({
+    app.view.views.ListHeaderView = app.view.View.extend({
         ITEM_TYPE_DELAY: 400,
-        className: "searchlist",
+        className: "list-header",
         events: {
             'keyup .search-query': 'onKeyUp',
             'click .favorites-btn': 'onClickFavoritesBtn',
