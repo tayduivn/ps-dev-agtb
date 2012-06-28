@@ -290,7 +290,6 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAssignedUserLinkWithOrStatement()
     {
-
         $filter = array(
             'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))
         );
@@ -300,6 +299,28 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $pFilter = $this->obj->getParsedFilter();
 
         $orFilter = current($pFilter['assigned_user_link']->getValue());
+
+        $this->assertEquals(2, count($orFilter->getValue()));
+    }
+
+    /**
+     * @group SugarParser
+     */
+    public function testAssignedUserLinkWithOrInsideOfAndStatement()
+    {
+        $filter = array('$and' => array(
+            'timeperiod_id' => array('$is' => 'hello world'),
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))
+        ));
+        $this->obj->parse($filter);
+
+        // make sure that we have to arguments in the or statement
+        $pFilter = $this->obj->getParsedFilter();
+        // get the andFilter Value
+        $andFilter = $pFilter[0]->getValue();
+
+        // make sure we still have two items
+        $orFilter = current($andFilter['assigned_user_link']->getValue());
 
         $this->assertEquals(2, count($orFilter->getValue()));
     }
