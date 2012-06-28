@@ -96,22 +96,22 @@
 
         switch (inside ? placement.split(' ')[1] : placement) {
           case 'bottom':
-            tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
+            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + pos.width / 2 - actualWidth / 2}
             break
           case 'bottom left':
-            tp = {top: pos.top + pos.height, left: pos.left + this.options.sidePadding}
+            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + this.options.leftOffset}
             break
           case 'bottom right':
-            tp = {top: pos.top + pos.height, left: (pos.left + pos.width) - actualWidth - this.options.sidePadding }
+            tp = {top: pos.top + pos.height + this.options.topOffset , left: (pos.left + pos.width) - actualWidth - this.options.leftOffset }
             break
           case 'top':
-            tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2}
+            tp = {top: pos.top - actualHeight + this.options.topOffset, left: pos.left + (pos.width / 2 - actualWidth / 2) + this.options.leftOffset}
             break
           case 'top right':
-            tp = {top: pos.top - actualHeight, left: (pos.left + pos.width) - actualWidth - this.options.sidePadding}
+            tp = {top: pos.top - actualHeight + this.options.topOffset, left: (pos.left + pos.width) - actualWidth - this.options.leftOffset}
             break
           case 'top left':
-            tp = {top: pos.top - actualHeight, left: pos.left + this.options.sidePadding}
+            tp = {top: pos.top - actualHeight  + this.options.topOffset, left: pos.left + this.options.leftOffset}
             break
           case 'left':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
@@ -169,7 +169,8 @@
   	id: false,
   	footer: '',
     onShow:$.empty,
-    sidePadding: 10
+    leftOffset: 0,
+    topOffset: 0
   })
 
 }( window.jQuery );

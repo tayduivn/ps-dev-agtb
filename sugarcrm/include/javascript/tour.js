@@ -32,8 +32,10 @@ var tourModal;
 		init: function(params) {
 			var modals = params.modals;
             var modalArray = new Array();
-			tourModal = $('<div id="'+params.id+'" class="modal"></div>').modal({backdrop: false});
+			tourModal = $('<div id="'+params.id+'" class="modal"></div>').modal({backdrop: false}).draggable();
+
 			var tourIdSel = "#"+params.id;
+
 			$.ajax({
 				url: params.modalUrl,
 				success: function(data){
@@ -49,6 +51,7 @@ var tourModal;
 					$(tourIdSel+'Start a.btn').not('.btn-primary').on("click",function(e){
 						$(tourIdSel+'Start').css("display","none");
 						$(tourIdSel+'End').css("display","block");
+                        centerModal();
 					});
 					$(tourIdSel+' a.close').on("click",function(e){
 						tourModal.modal("hide");
@@ -61,12 +64,14 @@ var tourModal;
 						params.onTourFinish();
 					});
 
+                    centerModal();
+
                     $('<div style="position: absolute;" id="tourArrow">arrow</div>');
 
 
 					for(var i=0; i<modals.length; i++) {
                         var modalId =  modals[i].target.replace("#","")+"_modal";
-                        modalArray[i] = $('<div id="'+modalId+'" class="modal"></div>').modal({backdrop: false});
+                        modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.class+'"></div>').modal({backdrop: false}).draggable();
 //                        modalArray[i].modal('show');
                         var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">×</a><h3>"+modals[i].title+"</h3></div>";
 
@@ -79,8 +84,26 @@ var tourModal;
 
 						$(modals[i].target).ready(function(){
 
-                            var direction = /top/.test(modals[i].placement) == true ? "down" : "up";
-                            var bounce = /top/.test(modals[i].placement) == true ? "up" : "down";
+                            var direction,bounce;
+                            if (modals[i].placement == "top right") {
+                               bounce = "up right";
+                               direction = "down right"
+                            } else if (modals[i].placement == "top left") {
+                               bounce = "up left";
+                               direction = "down left"
+                            } else if(modals[i].placement == "top") {
+                               bounce = "up";
+                               direction = "down"
+                            } else if (modals[i].placement == "bottom right") {
+                                bounce = "down right";
+                                direction = "up right"
+                            } else if (modals[i].placement == "bottom left") {
+                                bounce = "down left";
+                                direction = "up left"
+                            } else {
+                                bounce = "down";
+                                direction = "right"
+                            }
 
 							$(modals[i].target).popoverext({
 							title: "",
@@ -94,7 +117,7 @@ var tourModal;
                             onShow:  function(){
                                 $('.pointer').css('top','0px');
 
-                                $(".popover .pointer").effect("bounce", { times:3, direction: bounce }, 300,
+                                $(".popover .pointer").effect("custombounce", { times:1000, direction: bounce, distance: 50, gravity: false }, 2000,
                                     function(){
 
 //                                    $('.pointer').attr('style','');
@@ -102,7 +125,8 @@ var tourModal;
                                     }
                                 );
                             },
-                            sidePadding: 0
+                            leftOffset: modals[i].leftOffset ? modals[i].leftOffset : 0,
+                            topOffset: modals[i].topOffset ? modals[i].topOffset : 0
 
 							});
 						});
@@ -111,6 +135,10 @@ var tourModal;
 	
 					}
 
+                    function centerModal() {
+                        $(tourIdSel).css("margin-left",-$(tourIdSel).width()/2);
+                        $(tourIdSel).css("margin-top",-$(tourIdSel).height()/2);
+                    }
 
                     function nextModal (i) {
 
@@ -124,6 +152,7 @@ var tourModal;
                             $(modals[i].target).popoverext('hide');
                             modalArray[i].modal('hide');
                             tourModal.modal("show");
+                            centerModal();
                         }
 
                     }
@@ -141,6 +170,7 @@ var tourModal;
                         $(modals[i].target).popoverext('hide');
                         modalArray[i].modal('hide');
                         tourModal.modal("show");
+                        centerModal();
                     }
 
                     function footerTemplate (i,modals) {

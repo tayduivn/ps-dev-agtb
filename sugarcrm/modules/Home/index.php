@@ -731,10 +731,12 @@ $resources = $sugarChart->getChartResources();
 $mySugarResources = $sugarChart->getMySugarChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 $sugar_smarty->assign('mySugarChartResources', $mySugarResources);
+//BEGIN SUGARCRM flav=pro ONLY
 $viewed_tour = $current_user->getPreference('viewed_tour');
 if(empty($viewed_tour) || $viewed_tour == 'false') {
     $sugar_smarty->assign('view_tour', true);
 }
+//END SUGARCRM flav=pro ONLY
 if (file_exists("custom/include/MySugar/tpls/MySugar.tpl")) {
 	echo $sugar_smarty->fetch('custom/include/MySugar/tpls/MySugar.tpl');
 } else {

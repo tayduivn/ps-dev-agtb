@@ -49,6 +49,10 @@ h1, h2, h3, h4, h5, h6 {
 padding-top: 9px;
 }
 
+.modal.whatsnew {
+    margin-top: -75px;
+
+}
 
 .modal a, 
 .popover a {
@@ -77,6 +81,11 @@ padding-top: 9px;
 h3.popover-title {
 	margin-bottom: 0px;	
 }
+#tour {
+    width: auto;
+    margin: 0;
+}
+
 #tourEnd .modal-body p, 
 #tourEnd .modal-body a {
 	font-size: 18px;
@@ -103,6 +112,38 @@ i.icon-arrow-up:before {
 
 }
 
+.pointer.up.right {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+}
+
+.pointer.up.left {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+}
+
 .pointer.down {
       background-position: 0px 109px;
+}
+
+.pointer.down.right {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+}
+
+.pointer.down.left {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
 }

@@ -4,7 +4,9 @@ modals[0] = {
 	target: "#moduleTab_AllHome", 
 	title: "Home Icon", 
 	content: "Quickly get back to your Home Page dashboard in one click.", 
-	placement: "bottom"
+	placement: "bottom left",
+    leftOffset: 40,
+    topOffset: -10
 };
 modals[1] = {
 	target: "#moduleTab_AllAccounts", 
@@ -16,7 +18,7 @@ modals[2] = {
 	target: "#moduleTabExtraMenuAll", 
 	title: "More Modules", 
 	content: "The rest of your modules are here.",  
-	placement: "bottom left"
+	placement: "bottom"
 };
 modals[3] = {
 	target: "#dcmenuSearchDiv", 
@@ -37,22 +39,27 @@ modals[5] = {
 	placement: "bottom"
 };
 modals[6] = {
-	target: "#quickCreate", 
+	target: "#quickCreate",
 	title: "Quick Create", 
 	content: "All previous quick create icons are now in one dropdown.",  
-	placement: "bottom"
+	placement: "bottom right",
+    leftOffset: 40,
+    topOffset: -10
 };
 modals[7] = {
-	target: "#arrow", 
+	target: "#arrow",
 	title: "Collapsible Footer", 
 	content: "Easily expand and collapse the footer.", 
-	placement: "top"
+	placement: "top right",
+    leftOffset: 80,
+    topOffset: -40
 };
 modals[8] = {
 	target: "#integrations", 
 	title: "Custom Apps", 
 	content: "Your custom integrations go here.", 
-	placement: "top"
+	placement: "top",
+    leftOffset: -30
 };
 modals[9] = {
 	target: "#logo", 
@@ -69,9 +76,11 @@ $(document).ready(function() {
 		modals: modals,
 		modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
 		prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
+        'class': 'whatsnew',
 		onTourFinish: function() {
 				$('#bootstrapJs').remove();
 				$('#popoverext').remove();
+				$('#bounce').remove();
 				$('#bootstrapCss').remove();
 				$('#tourCss').remove();
 				$('#tourJs').remove();

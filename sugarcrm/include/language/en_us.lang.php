@@ -4134,4 +4134,12 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
+$app_strings ['documentation'] = array (
+    'LBL_DOCS' => 'Documentation',
+    'ULT' => '02_Sugar_Ultimate',
+	'ENT' => '02_Sugar_Enterprise',
+	'CORP' => '03_Sugar_Corporate',
+	'PRO' => '04_Sugar_Professional',
+	'COM' => '05_Sugar_Community_Edition'
+);
 ?>
