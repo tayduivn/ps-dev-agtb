@@ -1,9 +1,6 @@
 (function(app) {
 
     app.view.views.EditView = app.view.View.extend({
-        _modelBackup: null,                         //backuped model attributes json
-        relateField: null,
-        relationshipFields: null,                   //specific relationship data fields collection
 
         events: {
             "click #saveRecord": "saveRecord",
@@ -12,6 +9,11 @@
 
         initialize: function (options) {
             app.view.View.prototype.initialize.call(this, options);
+
+            this._modelBackup = null;                         //backuped model attributes json
+            this.relateField = null;
+            this.relationshipFields = null;                   //specific relationship data fields collection
+
             this.backupModel();
 
             _.each(this.meta.panels, function (panel, panelIndex) {
