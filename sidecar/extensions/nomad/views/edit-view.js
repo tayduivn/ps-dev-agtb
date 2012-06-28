@@ -42,7 +42,7 @@
 
                 //add specific relationship fields
                 var relFieldNames = app.data.getRelationshipFields(parentModule, link);
-                if (relFieldNames.length) {
+                if (relFieldNames && relFieldNames.length) {
                     this.relationshipFields = _.map(relFieldNames, function(fieldName) {
                         return app.metadata.getModule(self.module).fields[fieldName];
                     });
