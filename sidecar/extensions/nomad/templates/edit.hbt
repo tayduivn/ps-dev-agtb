@@ -6,6 +6,9 @@
 <div class="form-horizontal" id="createRecord">
     <div id="scroll">
         <fieldset class="pad">
+            {{#each relationshipFields}}
+                {{field ../this}}
+            {{/each}}
             {{#meta.panels}}
                 {{#each fields}}
                 {{#notEq ../../this.relateField name}}{{field ../../../this}}{{/notEq}}

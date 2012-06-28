@@ -12,6 +12,21 @@
 
         loadView: function(params) {
 
+            var loadView = _.bind(this._loadView, this);
+
+            if (params.layout === "login") {
+                // HACK: To work-around frozen login view
+                _.delay(function() {
+                    loadView(params);
+                }, 1000);
+            } else {
+                loadView(params);
+            }
+
+        },
+
+        _loadView: function(params) {
+
             var prevLayout = this.layout;
             if (prevLayout) {
 
@@ -42,7 +57,7 @@
             // Prepare model and collection
             this.context.prepare();
 
-            var currentLayout = this.getLayoutFromHash();
+            var currentLayout = (!this.checkIsDisableCache(params.layout)) ? this.getLayoutFromHash() : null;
 
             var isNewLayout = !currentLayout;
 
@@ -69,7 +84,7 @@
                     currentLayout.model = model;
                     currentLayout.collection = collection;
 
-                    _.each(currentLayout._components,function(component){
+                    _.each(currentLayout._components, function(component) {
                         component.model = model;
                         component.collection = collection;
                     });
@@ -94,7 +109,10 @@
                         this.context.set({'collection': currentLayout.collection}, {silent: true});
                     }
 
-                    if (isNewLayout) {
+                    if (isNewLayout || params["action"] === "create" ||
+                        params["action"] === "edit" ||
+                        params["create"] === true)
+                    {
                         currentLayout.render();
                     }
                     currentLayout.loadData();
@@ -109,11 +127,13 @@
                 currentLayout.loadData();
             }
 
-            if (!this.checkIsDisableCache(params.layout)) {
+            if (!this.checkIsDisableCache(params.layout) &&
+                params["action"] !== "create" &&
+                params["create"] !== true) {
 
                 this.addLayoutToHash(currentLayout);
 
-                if (!params.modelId && params["action"] !== "edit" && params["create"] !== true) {
+                if (!params.modelId && params["action"] !== "edit") {
                     this.dataHash[(params.module || params.link).toLowerCase()] = {
                         collection: this.context.get("collection"),
                         cid: currentLayout.cid
@@ -138,7 +158,7 @@
 
         checkIsDisableCache: function(layoutName) {
 
-            return !!_.find(app.config.disableLayoutCache,function(name){
+            return !!_.find(app.config.disableLayoutCache, function(name) {
                 return layoutName === name;
             });
         },

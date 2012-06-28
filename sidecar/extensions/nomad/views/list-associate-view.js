@@ -1,6 +1,6 @@
 (function(app) {
 
-    app.view.views.AssociateView = app.view.views.ListView.extend({
+    app.view.views.ListAssociateView = app.view.views.ListView.extend({
 
         initialize: function(options) {
             app.view.View.prototype.initialize.call(this, options);

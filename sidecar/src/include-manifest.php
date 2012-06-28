@@ -2,7 +2,6 @@
 $buildFiles = array(
     'sidecar' => array(
         'toMinifyAndConcat' => array(
-            'lib/handlebars/handlebars-1.0.0.beta.6.js',
             'lib/sugarapi/sugarapi.js',
             'src/app.js',
             'src/utils/utils.js',
@@ -28,13 +27,12 @@ $buildFiles = array(
             'src/view/view.js',
             'src/view/field.js',
             'src/view/layout.js',
-            'src/view/layouts/list-layout.js',
-            'src/view/layouts/fluid-layout.js',
             'src/view/alert.js',
             'lib/sugar/sugar.searchahead.js',
             'lib/sugar/sugar.timeago.js',
         ),
         'toConcat' => array(
+            'lib/handlebars/handlebars-1.0.0.beta.6.js',
             'lib/jquery/jquery.min.js',
             'lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js',
             'lib/backbone/underscore.js',
@@ -42,6 +40,14 @@ $buildFiles = array(
             'lib/stash/stash.js',
             'lib/async/async.js',
             'lib/chosen/chosen.jquery.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-button.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-tooltip.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-popover.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-dropdown.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-modal.js',
+            'extensions/portal/lib/twitterbootstrap/js/bootstrap-alert.js',
+            'lib/jquery/jquery.iframe.transport.js',
+
         )
     ),
     'portal' => array(
@@ -52,17 +58,9 @@ $buildFiles = array(
             'extensions/portal/views/alert-view.js',
             'extensions/portal/views/footer-view.js',
             'extensions/portal/portal.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-button.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-tooltip.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-popover.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-dropdown.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-modal.js',
-            'extensions/portal/lib/twitterbootstrap/js/bootstrap-alert.js',
-            'extensions/portal/portal-ui.js',
-            'lib/jquery/jquery.iframe.transport.js'
+            'extensions/portal/portal-ui.js'
         ),
         'toConcat' => array(
-
         )
     ),
 );

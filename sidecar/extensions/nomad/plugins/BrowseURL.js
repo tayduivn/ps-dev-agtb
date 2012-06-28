@@ -14,7 +14,6 @@
 function BrowseURL() {}
 
 BrowseURL.prototype.browse = function(url){
-    console.log ("inside plugin function, calling native");
     cordova.exec(null, null, "BrowseURL", "browse", [url]);
 };
 

@@ -176,7 +176,7 @@
                 "invalid_request":         "handleInvalidRequestError",
                 "unauthorized_client":     "handleUnauthorizedClientError",
                 "unsupported_grant_type":  "handleUnsupportedGrantTypeError",
-                "invalid_scope":           "handleInvalidScopeError",
+                "invalid_scope":           "handleInvalidScopeError"
                 /* TODO: Add any other oauth or custom codes we care about here */
             },
 

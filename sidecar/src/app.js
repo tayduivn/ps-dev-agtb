@@ -209,7 +209,7 @@ SUGAR.App = (function() {
 
             // Instantiate controller: <Capitalized-appId>Controller or Controller.
             var className = _app.utils.capitalize(_app.config ? _app.config.appId : "") + "Controller";
-            var Klass = this[className] || this["Controller"];
+            var Klass = this[className] || this.Controller;
             this.controller = new Klass();
 
             _app.api = SUGAR.Api.getInstance({

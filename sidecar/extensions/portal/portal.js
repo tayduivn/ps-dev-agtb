@@ -996,7 +996,7 @@
         var defaultParams = {
             portal_flag: 1,
             portal_viewable: 1
-        }
+        };
         var moduleFields = app.metadata.getModule(this.module).fields || {};
         for (var field in defaultParams) {
             if (moduleFields[field]) {
@@ -1063,7 +1063,7 @@
                     },
                     error: function(error) {
                         filesToUpload--;
-                        if (filesToUpload==0) {
+                        if (filesToUpload===0) {
                             app.alert.dismiss('upload');
                         }
                         var errors = {};
@@ -1077,6 +1077,6 @@
         else {
             if (callbacks.success) callbacks.success();
         }
-    }
+    };
 
 })(SUGAR.App);

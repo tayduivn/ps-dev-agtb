@@ -139,9 +139,14 @@ padding-left:0;
   height:100%;
 }
 
-#detailListing #listing > i {
-  display:inline-block;
-  height:205px;
+#detailListing {
+  #listing > i {
+    display:inline-block;
+    height:205px;
+  }
+  &.short #listing > i {
+    height:155px;
+  }
 }
 
 #detailListing ul.actions {
@@ -624,7 +629,7 @@ html {
   padding-right:0;
 }
 
-.searchlist {
+.list-header {
     .listing {
       height: 93px;
       position: relative;
@@ -645,7 +650,7 @@ html {
 }
 
 
-.searchlist .listing {
+.list-header .listing {
 margin-left: -128px !important;
 padding-left: 128px;
 overflow:visible;
@@ -844,6 +849,9 @@ text-shadow: 0 -1px 0 @black;
   img {
     float:left;
   }
+  &.short .card {
+    height:28px;
+  }
   .card {
     margin: 0 16px;
     line-height: 1.2em;
@@ -881,6 +889,9 @@ text-shadow: 0 -1px 0 @black;
     position: absolute;
     bottom: 52px;
     left: 0;
+  }
+  &.short .fade {
+    bottom: 0 !important;
   }
   .more {
     position:absolute;

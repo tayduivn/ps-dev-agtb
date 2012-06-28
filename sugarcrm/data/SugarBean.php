@@ -374,7 +374,7 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+        if(!empty($current_user->id) && !isset($this->disable_team_security) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
         	// We can disable team security for this module
         	$this->disable_row_level_security =true;
         }
@@ -2896,21 +2896,25 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 $subwhere = str_replace('WHERE', '', $subwhere);
                 $list_fields = $this_subpanel->get_list_fields();
-                foreach($list_fields as $list_key=>$list_field)
-                {
-                    if(isset($list_field['usage']) && $list_field['usage'] == 'display_only')
-                    {
+                $acl_fields = array();
+                foreach($list_fields as $list_key=>$list_field) {
+                    if(isset($list_field['usage']) && $list_field['usage'] == 'display_only') {
                         unset($list_fields[$list_key]);
+                        continue;
                     }
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    if( !SugarACL::checkField($submodule->module_dir, $list_key, "detail", array("bean" => $submodule, "owner_override" => true))) {
-                        $list_fields[$list_key]['force_blank']=true;
-                    }
-                    //END SUGARCRM flav=pro ONLY
+                    $acl_fields[$list_key] = true;
                 }
 
-		        //BEGIN SUGARCRM flav=pro ONLY
-		        //Retrieve team_set.team_count column as well
+                //BEGIN SUGARCRM flav=pro ONLY
+                SugarACL::listFilter($submodule->module_dir, $acl_fields, array("bean" => $submodule, "owner_override" => true), array("blank_value" => true));
+                foreach($list_fields as $list_key=>$list_field)
+                {
+                    if(empty($acl_fields[$list_key])) {
+                        $list_fields[$list_key]['force_blank']=true;
+                    }
+                }
+
+                //Retrieve team_set.team_count column as well
 		        if(!empty($list_fields['team_name']) && empty($list_fields['team_count'])){
 		            $list_fields['team_count'] = true;
 

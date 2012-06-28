@@ -9,7 +9,7 @@
         logFormatter: 'SimpleFormatter',
         layoutCacheEnabled: true,
         layoutCacheSize: 30,
-        disableLayoutCache: ["login"],
+        disableLayoutCache: ["login","associate"],
         authStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
