@@ -57,8 +57,10 @@
 
                     // Fetch device info
                     function(callback) {
-                        // TODO: Call device info plugin
-                        callback(null);
+                        window.plugins.deviceInfo.getDeviceInfo(function(info) {
+                            deviceInfo.info = info;
+                            callback(null);
+                        });
                     }
                 ],
                 function(err) {
