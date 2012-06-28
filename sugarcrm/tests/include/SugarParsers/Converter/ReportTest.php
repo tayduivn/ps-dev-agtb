@@ -349,28 +349,69 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
         $actual = $this->filter->convert($converter);
 
-        $expected = array (
-          'Filter_1' =>
-          array (
-            'operator' => 'AND',
-            0 =>
-            array (
-              'name' => 'timeperiod_id',
-              'table_key' => 'self',
-              'qualifier_name' => 'is',
-              'input_name0' => 'abc123',
+        $expected = array(
+            'Filter_1' =>
+            array(
+                'operator' => 'AND',
+                0 =>
+                array(
+                    'name' => 'timeperiod_id',
+                    'table_key' => 'self',
+                    'qualifier_name' => 'is',
+                    'input_name0' => 'abc123',
+                ),
+                1 =>
+                array(
+                    'name' => 'id',
+                    'table_key' => 'Opportunities:assigned_user_link',
+                    'qualifier_name' => 'reports_to',
+                    'input_name0' =>
+                    array(
+                        0 => 'seed_chris_id',
+                    ),
+                ),
             ),
-            1 =>
-            array (
-              'name' => 'id',
-              'table_key' => 'Opportunities:assigned_user_link',
-              'qualifier_name' => 'reports_to',
-              'input_name0' =>
-              array (
-                0 => 'seed_chris_id',
-              ),
+        );
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @group SugarParser
+     */
+    public function testAssignedUserLinkWithOrStatementConverts()
+    {
+
+        $filter = array(
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))
+        );
+        $this->filter->parse($filter);
+
+        $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
+        $actual = $this->filter->convert($converter);
+
+        $expected = array(
+            'Filter_1' =>
+            array(
+                'operator' => 'OR',
+                0 =>
+                array(
+                    'name' => 'id',
+                    'table_key' => 'Opportunities:assigned_user_link',
+                    'qualifier_name' => 'is',
+                    'input_name0' => 'seed_chris_id',
+                ),
+                1 =>
+                array(
+                    'name' => 'id',
+                    'table_key' => 'Opportunities:assigned_user_link',
+                    'qualifier_name' => 'reports_to',
+                    'input_name0' =>
+                    array(
+                        0 => 'seed_chris_id',
+                    ),
+                ),
             ),
-          ),
         );
 
         $this->assertSame($expected, $actual);

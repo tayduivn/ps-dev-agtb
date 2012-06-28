@@ -284,6 +284,25 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $reportsFilter = $filter2->getValue();
         $this->assertSame(array('seed_chris_id'), $reportsFilter['user_name']->getValue(), "Assert that the second filter argument is array('seed_chris_id')");
     }
+
+    /**
+     * @group SugarParser
+     */
+    public function testAssignedUserLinkWithOrStatement()
+    {
+
+        $filter = array(
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))
+        );
+        $this->obj->parse($filter);
+
+        // make sure that we have to arguments in the or statement
+        $pFilter = $this->obj->getParsedFilter();
+
+        $orFilter = current($pFilter['assigned_user_link']->getValue());
+
+        $this->assertEquals(2, count($orFilter->getValue()));
+    }
 }
 
 require_once('include/SugarParsers/Converter/AbstractConverter.php');
