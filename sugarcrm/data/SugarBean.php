@@ -1957,12 +1957,24 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $new_rel_id = $rel_id;
             $new_rel_link = $rel_link;
-            //Try to find the link in this bean based on the relationship
-            foreach ($this->field_defs as $key => $def)
+            // Bug #53223 : wrong relationship from subpanel create button
+            // if LHSModule and RHSModule are same module use left link to add new item b/s of:
+            // $rel_id and $rel_link are not emty - request is from subpanel
+            // $rel_link contains relationship name - checked by call load_relationship
+            $this->load_relationship($rel_link);
+            if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
-                if (isset($def['type']) && $def['type'] == 'link' && isset($def['relationship']) && $def['relationship'] == $rel_link)
+                $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+            }
+            else
+            {
+                //Try to find the link in this bean based on the relationship
+                foreach ($this->field_defs as $key => $def)
                 {
-                    $new_rel_link = $key;
+                    if (isset($def['type']) && $def['type'] == 'link' && isset($def['relationship']) && $def['relationship'] == $rel_link)
+                    {
+                        $new_rel_link = $key;
+                    }
                 }
             }
          }
