@@ -109,7 +109,10 @@
                         this.context.set({'collection': currentLayout.collection}, {silent: true});
                     }
 
-                    if (isNewLayout) {
+                    if (isNewLayout || params["action"] === "create" ||
+                        params["action"] === "edit" ||
+                        params["create"] === true)
+                    {
                         currentLayout.render();
                     }
                     currentLayout.loadData();
@@ -124,11 +127,13 @@
                 currentLayout.loadData();
             }
 
-            if (!this.checkIsDisableCache(params.layout)) {
+            if (!this.checkIsDisableCache(params.layout) &&
+                params["action"] !== "create" &&
+                params["create"] !== true) {
 
                 this.addLayoutToHash(currentLayout);
 
-                if (!params.modelId && params["action"] !== "edit" && params["create"] !== true) {
+                if (!params.modelId && params["action"] !== "edit") {
                     this.dataHash[(params.module || params.link).toLowerCase()] = {
                         collection: this.context.get("collection"),
                         cid: currentLayout.cid
