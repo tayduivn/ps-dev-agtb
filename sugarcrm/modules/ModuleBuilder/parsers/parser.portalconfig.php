@@ -67,7 +67,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 $portalConfig[$field] = $_REQUEST[$field];
             }
         }
-        $configString = json_encode($portalConfig, true);
 
         if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
             $portalConfig['on'] = 1;
