@@ -62,6 +62,12 @@
                 this.updateWorksheetBySelectedCategory(category);
             },
             this);
+        // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
+        this.layout.context.on("change:renderedForecastFilter", function(context, defaultValues) {
+            this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
+            this.updateWorksheetBySelectedCategory({id: defaultValues.category});
+        }, this);
+        // END STORY 31921015
         this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
 
         // INIT tree with logged-in user

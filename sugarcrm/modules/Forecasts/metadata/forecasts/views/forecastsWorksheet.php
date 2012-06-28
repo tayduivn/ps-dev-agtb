@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
+$viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
     'panels' =>
     array(
         0 =>
@@ -9,18 +9,18 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
             array(
                 array(
                     'name' => 'forecast',
+                    'type' => 'toggle',
                     'label' => 'LBL_FORECAST',
                     'default' => true,
                     'enabled' => true,
                 ),
-
                 array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'route' =>
                     array(
-                        'module'=>'Users',
+                        'module'=>'Opportunities',
                         'action'=>'DetailView',
                         'recordID'=>'primaryid'
                     ),
@@ -29,15 +29,15 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                 ),
 
                 array(
-                    'name' => 'amount',
-                    'label' => 'LBL_AMOUNT',
+                    'name' => 'date_closed',
+                    'label' => 'LBL_DATE_CLOSED',
                     'default' => true,
                     'enabled' => true,
                 ),
 
                 array(
-                    'name' => 'quota',
-                    'label' => 'LBL_QUOTA',
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_SALES_STAGE',
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -47,33 +47,29 @@ $viewdefs['Forecasts']['core']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_PROBABILITY',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true
                 ),
 
                 array(
-                    'name' => 'best_case',
-                    'label' => 'LBL_BEST_CASE',
+                    'name' => 'amount',
+                    'label' => 'LBL_AMOUNT',
                     'default' => true,
                     'enabled' => true
                 ),
 
                 array(
                     'name' => 'best_case_worksheet',
-                    'label' => 'LBL_BEST_CASE_WORKSHEET',
+                    'label' => 'LBL_BEST_CASE',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
                 ),
 
                 array(
-                    'name' => 'likely_case',
-                    'label' => 'LBL_LIKELY_CASE',
-                    'default' => true,
-                    'enabled' => true,
-                    'clickToEdit' => true
-                ),
-                array(
                     'name' => 'likely_case_worksheet',
-                    'label' => 'LBL_LIKELY_CASE_WORKSHEET',
+                    'label' => 'LBL_LIKELY_CASE',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true

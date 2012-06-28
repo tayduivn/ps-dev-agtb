@@ -41,7 +41,7 @@
 <script src='../sidecar/src/core/user.js'></script>
 <script src='../sidecar/src/utils/logger.js'></script>
 
-<script src='config.js'></script>
+<script src='clients/forecasts/config.js'></script>
 
 <script src='../sidecar/src/data/bean.js'></script>
 <script src='../sidecar/src/data/bean-collection.js'></script>
@@ -60,15 +60,15 @@
 
 <script src='../sidecar/extensions/modules/Forecasts/hbt-helpers.js'></script>
 
-<script src='clients/base/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/base/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/base/views/tree/tree.js'></script>
-<script src='clients/base/views/chartOptions/chartOptions.js'></script>
-<script src='clients/base/views/forecastsCommitted/forecastsCommitted.js'></script>
-<script src='clients/base/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/base/views/progress/progress.js'></script>
-<script src='clients/base/views/chart/chart.js'></script>
-<script src='clients/base/views/alert/alert-view.js'></script>
+<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
+<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/forecasts/views/tree/tree.js'></script>
+<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
+<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
+<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
+<script src='clients/forecasts/views/progress/progress.js'></script>
+<script src='clients/forecasts/views/chart/chart.js'></script>
+<script src='clients/forecasts/views/alert/alert-view.js'></script>
 
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <script src='include/javascript/sugarAuthStore.js'></script>
@@ -78,7 +78,7 @@
 <div class="view-forecastsSubnav subnav"></div>
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
-    <div id="core" style="" >
+    <div id="forecasts" style="" >
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span2" id="drawer">
@@ -139,7 +139,7 @@
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
-                    el: "core",
+                    el: "forecasts",
                     contentEl: ".content"
                     //keyValueStore: app.sugarAuthStore //override the keyValueStore
                 });
