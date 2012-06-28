@@ -27,15 +27,36 @@
             };
             app.view.View.prototype.initialize.call(this, options);
 
-            this.activeArticle = null;
+            //for testing purposes
+            /*
+            this.collection.on("xxx", function() {
+                _.each(this.models, function(model) {
 
+                    model.set({"opportunity_role": "Influencer"});
+                });
+            });
+            */
+
+            this.activeArticle = null;
+            this.relationshipFields = null;                   //specific relationship data fields collection
             this.unlinkVisible = true;
+
             // We must not allow a user to break a one-to-many relationship,
             // if the relate field is required for the relationship.
-            var link = this.context.get("link");
+            var self = this,
+                link = this.context.get("link");
             if (link) {
-                var relatedField = app.data.getRelateField(this.context.get("parentModule"), link);
+                var parentModule = this.context.get("parentModule"),
+                    relatedField = app.data.getRelateField(parentModule, link);
                 this.unlinkVisible = relatedField && relatedField.required === true ? false : true;
+
+                //add specific relationship fields
+                var relFieldNames = app.data.getRelationshipFields(parentModule, link);
+                if (relFieldNames && relFieldNames.length) {
+                    this.relationshipFields = _.map(relFieldNames, function(fieldName) {
+                        return app.metadata.getModule(self.module).fields[fieldName];
+                    });
+                }
             }
         },
 

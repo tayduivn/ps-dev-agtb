@@ -4,7 +4,11 @@
         {{#with fields.[0]}}
         {{field ../view ../model}}
         {{/with}}
-    </a><br>
+    </a>
+    {{#with view.relationshipFields.[0]}}
+    {{field ../view ../model}}
+    {{/with}}
+    <br>
     {{#with fields.[1]}}
     {{field ../view ../model}}
     {{/with}}

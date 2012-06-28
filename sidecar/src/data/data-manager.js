@@ -620,6 +620,9 @@
 
                 self.trigger("data:sync:end", method, model, options);
                 if (options.success) options.success(data);
+
+                //for testing purposes
+                //model.trigger("xxx");
             };
 
             var error = function(error) {
