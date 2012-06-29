@@ -4,9 +4,7 @@ modals[0] = {
 	target: "#moduleTab_AllHome", 
 	title: SUGAR.language.get('Home', 'LBL_TOUR_HOME'),
 	content: SUGAR.language.get('Home', 'LBL_TOUR_HOME_DESCRIPTION'),
-	placement: "bottom left",
-    leftOffset: rtl ? -40 : 40,
-    topOffset: -10
+	placement: "bottom"
 };
 modals[1] = {
 	target: "#moduleTab_AllAccounts", 
