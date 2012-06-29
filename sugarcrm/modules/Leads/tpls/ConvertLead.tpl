@@ -38,6 +38,11 @@
 {{$field}}   
 {{/foreach}}
 {{/if}}
+{if $def.required }
+<script type="text/javascript">
+mod_array.push('{{$module}}');//Bug#50590 add all required modules to mod_array
+</script>
+{/if}
 {if !$def.required || !empty($def.select)}
 <input class="checkbox" type="checkbox" name="new{{$module}}" id="new{{$module}}" onclick="toggleDisplay('create{{$module}}');if (typeof(addRemoveDropdownElement) == 'function') addRemoveDropdownElement('{{$module}}');{{if !empty($def.select)}}toggle{{$module}}Select();{{/if}}">
 <script type="text/javascript">
