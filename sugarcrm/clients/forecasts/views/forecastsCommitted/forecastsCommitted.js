@@ -127,10 +127,10 @@
         {
             args[0] = App.lang.get(best_direction, 'Forecasts');
             args[1] = Math.abs(best_difference);
-            args[2] = current.get('best_case');
+            args[2] = previousModel.get('best_case');
             args[3] = App.lang.get(likely_direction, 'Forecasts');
             args[4] = Math.abs(likely_difference);
-            args[5] = current.get('likely_case');
+            args[5] = previousModel.get('likely_case');
             text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
         } else if (!best_changed && likely_changed) {
             args[0] = App.lang.get(likely_direction, 'Forecasts');
