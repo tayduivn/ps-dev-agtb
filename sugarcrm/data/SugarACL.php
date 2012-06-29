@@ -266,7 +266,7 @@ class SugarACL
             }
         }
 
-        if(empty(self::$acls) || !self::$acls[$module]) {
+        if(!isset(self::$acls[$module])) {
             self::loadACLs($module, $context);
         }
 
