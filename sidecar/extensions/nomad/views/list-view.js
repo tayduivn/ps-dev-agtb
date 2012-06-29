@@ -252,8 +252,17 @@
 
         onEditItem: function (e) {
             e.preventDefault();
-            var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
-            app.router.navigate(this.module + "/" + cid + "/edit", {trigger: true});
+            var route,
+                link = this.context.get("link"),
+                cid = $(e.target).closest('article').attr('id').replace(this.module, '');
+            if (link) {
+                var parentModule = this.context.get("parentModule"),
+                    parentModelId = this.context.get("parentModelId");
+                route = app.nomad.buildLinkRoute(parentModule, parentModelId, link, cid, "edit");
+            } else {
+                route = app.router.buildRoute(this.module, cid, "edit");
+            }
+            app.router.navigate(route, {trigger: true});
             this.hideContextMenu();
         },
 
