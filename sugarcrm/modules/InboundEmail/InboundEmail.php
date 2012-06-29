@@ -5246,8 +5246,15 @@ eoq;
 						$email->team_id = $toSugarFolder->team_id;
 						$email->team_set_id = $toSugarFolder->team_set_id;
             			//END SUGARCRM flav=pro ONLY
+                        // Bug 50972 - assigned_user_id set to empty string not true null
+                        // Modifying the field defs in just this one place to allow
+                        // a true null since this is what is expected when reading
+                        // inbox folders
+                        $email->setFieldNullable('assigned_user_id');
 						$email->assigned_user_id = "";
 						$email->save();
+                        $email->revertFieldNullable('assigned_user_id');
+                        // End fix 50972
 						//BEGIN SUGARCRM flav=pro ONLY
 						$email->getNotes($id);
                         if(!empty($email->attachments)) {
