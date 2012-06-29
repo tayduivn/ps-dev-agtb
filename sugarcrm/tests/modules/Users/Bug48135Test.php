@@ -85,7 +85,7 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['mod_strings']);
 
-        $GLOBALS['db']->query('DELETE FROM eapm WHERE name ="testUnit48135EAPM"');
+        $GLOBALS['db']->query("DELETE FROM eapm WHERE name = 'testUnit48135EAPM'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
