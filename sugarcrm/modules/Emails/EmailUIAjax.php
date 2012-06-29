@@ -440,7 +440,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	        $email->parent_id = $modId;
                 $email->parent_type = $_REQUEST['parent_type'];
                 $email->status = 'read';
+
+                // BUG FIX BEGIN
+                // Bug 50979 - relating a message in group inbox removes message
+                if (empty($email->assigned_user_id))
+                {
+                    $email->setFieldNullable('assigned_user_id');
+                }
                 $email->save();
+                // Bug 50979 - reset assigned_user_id field defs
+                if (empty($email->assigned_user_id))
+                {
+                    $email->revertFieldNullable('assigned_user_id');
+                }
+                // BUG FIX END
+
                 $email->load_relationship($mod);
                 $email->$mod->add($modId);
     	    }
