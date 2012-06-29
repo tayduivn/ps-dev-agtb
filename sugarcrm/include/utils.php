@@ -5294,3 +5294,29 @@ function clean_sensitive_data($defs, $data)
     }
     return $data;
 }
+
+/**
+ * Return relations with labels for duplicates
+ */
+function getDuplicateRelationListWithTitle($def, $var_def, $module)
+{
+    global $current_language;
+    $select_array = array_unique($def);
+    if (count($select_array) < count($def))
+    {
+        $temp_module_strings = return_module_language($current_language, $module);
+        $temp_duplicate_array = array_diff_assoc($def, $select_array);
+        $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
+        foreach ($temp_duplicate_array as $temp_key => $temp_value)
+        {
+            if (empty($var_def[$temp_key]['vname']))
+            {
+                $select_array[$temp_key] = $temp_value;
+                continue;
+            }
+            $select_array[$temp_key] = $temp_value.' ('.get_label($var_def[$temp_key]['vname'], $temp_module_strings).')';
+        }
+    }
+    asort($select_array);
+    return $select_array;
+}
