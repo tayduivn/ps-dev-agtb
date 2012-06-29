@@ -12,6 +12,7 @@
 //        probability: 'percent',
         sales_stage: 'enum'
     },
+    show: false,
 
     viewModule: {},
 
@@ -34,9 +35,8 @@
         //set expandable behavior to false by default
         this.isExpandableRows = false;
         this.category = 'Committed',
-
+        
         app.view.View.prototype.initialize.call(this, options);
-
         this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
@@ -141,8 +141,11 @@
      */
     render:function () {
         var self = this;
+        if(!this.showMe()){
+        	return false;
+        }
         app.view.View.prototype.render.call(this);
-
+        /*
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
@@ -183,8 +186,28 @@
             );
         } else {
             $.fn.dataTableExt.afnFiltering = [];
-        }
+        }*/
 
+    },
+    
+    /**
+     * Determines if this Worksheet should be rendered
+     */
+    showMe: function(){
+    	return true;
+    	var isManager = app.user.get('isManager');
+    	var userId = app.user.get('id');
+    	var selectedUser = userId;
+    	this.show = false;
+    	if(this.selectedUser){
+    		selectedUser = this.selectedUser;
+    	}
+    	
+    	if(isManager && userId.match(selectedUser) != undefined){
+    		this.show = true;
+    	}
+    	
+    	return this.show;
     },
 
 

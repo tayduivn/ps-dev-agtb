@@ -43,7 +43,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
                 'name' => 'Worksheet',
             ),
         ),
-        /*
+        
         7 => array(
             'view' => 'forecastsWorksheetManager',
             'collection' => array(
@@ -51,7 +51,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
                 'name' => 'WorksheetManager',
             ),
         ),
-        */
+        
         8 => array(
             'view' => 'forecastsSubnav',
         )

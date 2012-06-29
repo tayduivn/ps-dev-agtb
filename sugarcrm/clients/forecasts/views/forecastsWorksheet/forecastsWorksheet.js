@@ -7,6 +7,7 @@
 ({
 
     url: 'rest/v10/Forecasts/worksheet',
+    show: true,
 
     _name_type_map: {
 //        best_case_worksheet: 'int',
@@ -265,8 +266,13 @@
      */
     render:function () {
         var self = this;
+        
+        if(!this.showMe()){
+        	return false;
+        }
+        
         app.view.View.prototype.render.call(this);
-
+        
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
@@ -298,6 +304,25 @@
             });
         }
 
+    },
+    /**
+     * Determines if this Worksheet should be rendered
+     */
+    showMe: function(){
+    	var isManager = app.user.get('isManager');
+    	var userId = app.user.get('id');
+    	var selectedUser = userId;
+    	this.show = false;
+    	
+    	if(this.selectedUser){
+    		selectedUser = this.selectedUser;
+    	}
+    	
+    	if(!isManager || (isManager && userId.match(selectedUser) == undefined)){
+    		this.show = true;
+    	}	
+    	
+    	return this.show;
     },
 
     /**
@@ -349,7 +374,11 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+    	console.log("update sheet");
         this.selectedUser = selectedUser.id;
+        if(!this.showMe()){
+        	return false;
+        }
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
@@ -385,6 +414,9 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
+        if(!this.showMe()){
+        	return false;
+        }
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
