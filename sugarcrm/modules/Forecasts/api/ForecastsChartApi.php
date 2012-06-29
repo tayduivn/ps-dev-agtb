@@ -57,36 +57,47 @@ class ForecastsChartApi extends ChartApi
     public function chart($api, $args)
     {
         require_once('modules/Reports/Report.php');
-        global $mod_strings, $app_list_strings, $app_strings;
+        require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
+
+        global $mod_strings, $app_list_strings, $app_strings, $current_user;
+
         $app_list_strings = return_app_list_strings_language('en');
         $app_strings = return_application_language('en');
         $mod_strings = return_module_language('en', 'Opportunities');
-        $report_defs = array();
-        $report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":0,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF');
 
-        if (!isset($args['user_id']) || empty($args['user_id'])) {
-            global $current_user;
-            $args['user_id'] = $current_user->id;
-        }
+        $mgr = ChartAndWorksheetManager::getInstance();
+        //define worksheet type: 'manager' or 'individual'
+        $type =  isset($args['type']) ? $args['type'] : 'individual';
+
+        $report_defs = array();
+        $report_defs = $mgr->getWorksheetDefintion($type, 'opportunities');
+
+        $user_id = (isset($args['user_id']) && !empty($args['user_id'])) ? $args['user_id'] : $current_user->id;
 
         $timeperiod = TimePeriod::getCurrentId();
         if (isset($args['timeperiod_id']) && !empty($args['timeperiod_id'])) {
             $timeperiod = $args['timeperiod_id'];
         }
 
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $timeperiod),
-            'assigned_user_link' => array('id' => $args['user_id']),
-            //'probability' => array('$between' => array('0', '70')),
-            //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
-        );
+        $testFilters = array();
+        $testFilters = $mgr->getWorksheetFilters($type, array('user_id' => $user_id, 'timeperiod_id' => $timeperiod));
+        if (empty($testFilters))
+        {
+            $testFilters = array(
+                'timeperiod_id' => array('$is' => $timeperiod),
+                'assigned_user_link' => array('id' => $user_id),
+                //'probability' => array('$between' => array('0', '70')),
+                //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
+            );
+        }
+
 
         if(isset($args['category']) && $args['category'] == "Committed") {
             $testFilters['forecast'] = array('$is' => 1);
         }
 
         // generate the report builder instance
-        $rb = $this->generateReportBuilder('Opportunities', $report_defs['ForecastSeedReport1'][2], $testFilters, $args);
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters);
 
         if (isset($args['chart_type']) && !empty($args['chart_type'])) {
             $rb->setChartType($this->mapChartType($args['chart_type']));
@@ -126,7 +137,7 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $args['user_id']);
+        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $user_id);
         $likely_values = $this->getDataSetValues($testFilters, $args);
 
         // decode the data to add stuff to the properties
