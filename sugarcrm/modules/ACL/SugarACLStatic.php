@@ -199,6 +199,6 @@ class SugarACLStatic extends SugarACLStrategy
         if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
         	return array();
         }
-        return parent::getFieldListAccess($module, $field_list, $action, $context);
+        return parent::getFieldListAccess($module, $field_list, $context);
     }
 }
