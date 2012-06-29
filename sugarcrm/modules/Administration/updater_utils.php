@@ -46,18 +46,18 @@ function getSystemInfo($send_usage_info=true){
 		//get user count.
 
 		//BEGIN SUGARCRM dep=os ONLY
-		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 ", false);
+		$users_where = "is_group=0 AND portal_only=0 ";
 		//END SUGARCRM dep=os ONLY
 
 		//BEGIN SUGARCRM dep=od ONLY
-		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);
+		$users_where = "is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ";
 		//END SUGARCRM dep=od ONLY
 
 		//BEGIN SUGARCRM flav=sales ONLY
-		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND is_admin = 0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);
+		$users_where = "is_group=0 AND portal_only=0 AND is_admin = 0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ";
 		//END SUGARCRM flav=sales ONLY
+		$info['users']=$db->getOne("select count(id) count from users WHERE status='Active' AND $users_where", false, 'fetching active users count');
 
-		$info['users']=count($user_list);
 		if(empty($administration)){
 
 			$administration = new Administration();
@@ -66,13 +66,13 @@ function getSystemInfo($send_usage_info=true){
 		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';
 
 
-		$result=$db->getOne("select count(*) count from users where status='Active' and deleted=0 and is_admin='1'", false, 'fetching admin count');
+		$result=$db->getOne("select count(id) count from users where status='Active' and deleted=0 and is_admin='1'", false, 'fetching admin count');
 		if($result !== false) {
 			$info['admin_users'] = $result;
 		}
 
 
-		$result=$db->getOne("select count(*) count from users", false, 'fetching all users count');
+		$result=$db->getOne("select count(id) count from users", false, 'fetching all users count');
 		if($result !== false) {
 			$info['registered_users'] = $result;
 		}
