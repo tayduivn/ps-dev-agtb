@@ -5887,12 +5887,15 @@ span.dcmenuitem:hover{
 }
 
 
-#dcmenuSugarCube{
+#dcmenuSugarCube, #dcmenuSugarCubeEmpty{
 float: right;
 padding: 0px 0px 0 2px;
 height: 43px;
 }
 
+#dcmenuSugarCubeEmpty {
+    padding: 0px;
+}
 #dcmenuUserIcon {
 float: left;
 padding: 0px 0px 0 2px;

@@ -487,10 +487,11 @@ direction: rtl;
 }
 
 #footer #partner {
-    border-left: 0px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
     float: left;
     margin-left: 25px;
     margin-right: 0px;
+    border-right: 0;
 }
 
 .buttons {
@@ -518,4 +519,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 }
 #moduleList .ltr .MMLastViewed, #moduleList .ltr .MMFavorites {
     display:none;
+}
+
+#footer .copyright {
+    float: right;
 }

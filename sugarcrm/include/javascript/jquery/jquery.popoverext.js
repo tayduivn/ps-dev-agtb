@@ -28,6 +28,10 @@
         this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this))
       }
 
+      //console.log(this.tip())
+      var $tip = this.tip();
+
+
       this.options.selector ?
         (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
         this.fixTitle()
@@ -88,7 +92,12 @@
           .css({ top: 0, left: 0, display: 'block' })
           .appendTo(inside ? this.$element : document.body);
 
-
+        if(this.options.hideOnBlur) {
+        $tip
+          .attr("tabindex","-1")
+          .on("blur", $.proxy(this.hide, this))
+          .trigger("focus");
+        }
 
         pos = this.getPosition(inside)
         actualWidth = $tip[0].offsetWidth
@@ -170,7 +179,8 @@
   	footer: '',
     onShow:$.empty,
     leftOffset: 0,
-    topOffset: 0
+    topOffset: 0,
+    hideOnBlur: false
   })
 
 }( window.jQuery );

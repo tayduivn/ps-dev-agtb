@@ -54,60 +54,7 @@
 <script>
  	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
 </script>       
-{if $smarty.request.module != "Emails" && $smarty.request.module != "Users" && $smarty.request.module != "UpgradeWizard"}
-{literal}
 
-<script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script>
-<style type="text/css" media="screen, projection">
-  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);
-</style>
-<script type="text/javascript">
-/*
-$('#zenbox_tab').click(function(){
-
-    window.open(
-            'http://support.sugarcrm.com/',
-            '_blank' // <- This is what makes it open in a new window.
-    );
-
-});
-
-  if (typeof(Zenbox) !== "undefined") {
-    Zenbox.init({
-      dropboxID:   "20047068",
-      url:         "https://suga.zendesk.com",
-      tabID:       "support",
-      tabColor:    "black",
-      tabPosition: "Left"
-    });
-  }
-  */
- {/literal}
-
-{if !$DISABLE_FEEDBACK_WIDGET}{literal}
-/*
-$('#zenbox_tab').ready(function(){
-	$('#partner').append($('#zenbox_tab'));	
-	$('#zenbox_tab').css('text-indent','0px').attr('title','').html("Feedback");
-	$('#zenbox_close').remove();
-	$('.zenbox_header').html('<div class="close">&nbsp;</div>')
-	$('.zenbox_header .close').click(function() {
-		window.Zenbox.hide();
-		});
-}).click(function(){
-	if($('.zenbox_support_links').length == 0) {
-		var links = $('<div class="zenbox_support_links">If you are reporting a bug on the page, please submit it <a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_new">here</a>. You can also submit feature requests in our <br>forum <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">here</a>.</div>');
-		
-		setTimeout(function(){
-			$('#zenbox_container').append(links);
-		}, 1000);
-	}
-		
-});
-*/
-{/literal}{/if}{/if}
-
-</script>
 {literal}
 
 

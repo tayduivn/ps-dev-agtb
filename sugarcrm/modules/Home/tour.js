@@ -1,70 +1,70 @@
-
+var rtl = rtl == "undefined" ? false : rtl;
 var modals=new Array();
 modals[0] = {
 	target: "#moduleTab_AllHome", 
-	title: "Home Icon", 
-	content: "Quickly get back to your Home Page dashboard in one click.", 
+	title: SUGAR.language.get('Home', 'LBL_TOUR_HOME'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_HOME_DESCRIPTION'),
 	placement: "bottom left",
-    leftOffset: 40,
+    leftOffset: rtl ? -40 : 40,
     topOffset: -10
 };
 modals[1] = {
 	target: "#moduleTab_AllAccounts", 
-	title: "Modules", 
-	content: "All your important modules are here.",  
+	title: SUGAR.language.get('Home', 'LBL_TOUR_MODULES'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_MODULES_DESCRIPTION'),
 	placement: "bottom"
 };
 modals[2] = {
 	target: "#moduleTabExtraMenuAll", 
-	title: "More Modules", 
-	content: "The rest of your modules are here.",  
+	title: SUGAR.language.get('Home', 'LBL_TOUR_MORE'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_MORE_DESCRIPTION'),
 	placement: "bottom"
 };
 modals[3] = {
 	target: "#dcmenuSearchDiv", 
-	title: "Full Text Search", 
-	content: "Search just got a whole lot better.", 
+	title: SUGAR.language.get('Home', 'LBL_TOUR_SEARCH'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_SEARCH_DESCRIPTION'),
 	placement: "bottom"
 };
 modals[4] = {
-	target: "#dcmenuSugarCube", 
-	title: "Notifications", 
-	content: "SugarCRM application notifications.",  
+	target: $("#dcmenuSugarCube").length == 0 ? "#dcmenuSugarCubeEmpty" : "#dcmenuSugarCube",
+	title: SUGAR.language.get('Home', 'LBL_TOUR_NOTIFICATIONS'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_NOTIFICATIONS_DESCRIPTION'),
 	placement: "bottom"
 };
 modals[5] = {
 	target: "#globalLinksModule", 
-	title: "Profile", 
-	content: "Access profile, settings and logout.", 
+	title: SUGAR.language.get('Home', 'LBL_TOUR_PROFILE'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_PROFILE_DESCRIPTION'),
 	placement: "bottom"
 };
 modals[6] = {
 	target: "#quickCreate",
-	title: "Quick Create", 
-	content: "All previous quick create icons are now in one dropdown.",  
+	title: SUGAR.language.get('Home', 'LBL_TOUR_QUICKCREATE'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_QUICKCREATE_DESCRIPTION'),
 	placement: "bottom right",
-    leftOffset: 40,
+    leftOffset: rtl ? -40 : 40,
     topOffset: -10
 };
 modals[7] = {
 	target: "#arrow",
-	title: "Collapsible Footer", 
-	content: "Easily expand and collapse the footer.", 
+	title: SUGAR.language.get('Home', 'LBL_TOUR_FOOTER'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_FOOTER_DESCRIPTION'),
 	placement: "top right",
-    leftOffset: 80,
+    leftOffset: rtl ? -90 : 80,
     topOffset: -40
 };
 modals[8] = {
 	target: "#integrations", 
-	title: "Custom Apps", 
-	content: "Your custom integrations go here.", 
+	title: SUGAR.language.get('Home', 'LBL_TOUR_CUSTOM'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_CUSTOM_DESCRIPTION'),
 	placement: "top",
-    leftOffset: -30
+    leftOffset: rtl ? 30 : -30
 };
 modals[9] = {
 	target: "#logo", 
-	title: "Your Brand", 
-	content: "Your logo goes here. You can mouse over for more info.",  
+	title: SUGAR.language.get('Home', 'LBL_TOUR_BRAND'),
+	content: SUGAR.language.get('Home', 'LBL_TOUR_BRAND_DESCRIPTION'),
 	placement: "top"
 };
 
@@ -76,7 +76,7 @@ $(document).ready(function() {
 		modals: modals,
 		modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
 		prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
-        'class': 'whatsnew',
+        className: 'whatsnew',
 		onTourFinish: function() {
 				$('#bootstrapJs').remove();
 				$('#popoverext').remove();

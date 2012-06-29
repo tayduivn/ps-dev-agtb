@@ -67,12 +67,22 @@
                 animation1[ref] = (motion == 'pos' ? '-=' : '+=') + distance;
                 animation2[ref] = (motion == 'pos' ? '+=' : '-=') + distance;
                 if(ref2 != "undefined") {
-                    if(direction == "up right" || direction == "down left")   {
-                        animation1[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
-                        animation2[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
+                    if(!rtl) {
+                        if(direction == "up right" || direction == "down left")   {
+                            animation1[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
+                            animation2[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
+                        } else {
+                            animation1[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
+                            animation2[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
+                        }
                     } else {
-                        animation1[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
-                        animation2[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
+                        if(direction == "down right" || direction == "up left")   {
+                            animation1[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
+                            animation2[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
+                        } else {
+                            animation1[ref2] = (motion == 'pos' ? '+=' : '-=') + distance;
+                            animation2[ref2] = (motion == 'pos' ? '-=' : '+=') + distance;
+                        }
                     }
 
                 }

@@ -31,7 +31,7 @@ var tourModal;
 	return {
 		init: function(params) {
 			var modals = params.modals;
-            var modalArray = new Array();
+
 			tourModal = $('<div id="'+params.id+'" class="modal"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 
 			var tourIdSel = "#"+params.id;
@@ -67,11 +67,11 @@ var tourModal;
                     centerModal();
 
                     $('<div style="position: absolute;" id="tourArrow">arrow</div>');
-
+                    var modalArray = new Array();
 
 					for(var i=0; i<modals.length; i++) {
                         var modalId =  modals[i].target.replace("#","")+"_modal";
-                        modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.class+'"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
+                        modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.className+'"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 //                        modalArray[i].modal('show');
                         var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">×</a><h3>"+modals[i].title+"</h3></div>";
 
@@ -117,7 +117,8 @@ var tourModal;
                             onShow:  function(){
                                 $('.pointer').css('top','0px');
 
-                                $(".popover .pointer").effect("custombounce", { times:1000, direction: bounce, distance: 50, gravity: false }, 2000,
+                                $(".popover .pointer")
+                                  .effect("custombounce", { times:1000, direction: bounce, distance: 50, gravity: false }, 2000,
                                     function(){
 
 //                                    $('.pointer').attr('style','');
@@ -126,7 +127,8 @@ var tourModal;
                                 );
                             },
                             leftOffset: modals[i].leftOffset ? modals[i].leftOffset : 0,
-                            topOffset: modals[i].topOffset ? modals[i].topOffset : 0
+                            topOffset: modals[i].topOffset ? modals[i].topOffset : 0,
+                            hideOnBlur: true
 
 							});
 						});
@@ -135,8 +137,11 @@ var tourModal;
 	
 					}
 
+                    $(window).resize(function() {
+                        centerModal();
+                    });
                     function centerModal() {
-                        $(tourIdSel).css("margin-left",-$(tourIdSel).width()/2);
+                        $(tourIdSel).css("left",$(window).width()/2 - $(tourIdSel).width()/2);
                         $(tourIdSel).css("margin-top",-$(tourIdSel).height()/2);
                     }
 
@@ -177,12 +182,12 @@ var tourModal;
                         var content = $('<div></div>')
                         var footer = $("<div class=\"modal-footer\"></div>");
 
-                        var skip = $("<a href=\"#\" class=\"btn-link\" id=\"skipTour\">Skip Tour</a>");
-                        var next = $('<a class="btn btn-primary" id="nextModal'+i+'" href="#">Next <i class="icon-play icon-xsm"></i></a>');
+                        var skip = $("<a href=\"#\" class=\"btn-link\" id=\"skipTour\">"+SUGAR.language.get('app_strings', 'LBL_TOUR_SKIP')+"</a>");
+                        var next = $('<a class="btn btn-primary" id="nextModal'+i+'" href="#">'+SUGAR.language.get('app_strings', 'LBL_TOUR_NEXT')+' <i class="icon-play icon-xsm"></i></a>');
                         content.append(footer);
                         footer.append(skip).append(next);
 
-                        var back = $('<a class="btn" href="#" id="prevModal'+i+'">Back</a>');
+                        var back = $('<a class="btn" href="#" id="prevModal'+i+'">'+SUGAR.language.get('app_strings', 'LBL_TOUR_BACK')+'</a>');
 
 
                         $('#nextModal'+i).live("click", function(){

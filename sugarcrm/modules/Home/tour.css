@@ -84,6 +84,7 @@ h3.popover-title {
 #tour {
     width: auto;
     margin: 0;
+    left: 0px;
 }
 
 #tourEnd .modal-body p, 
@@ -104,6 +105,11 @@ i.icon-arrow-up:before {
     font-size: 40px;
 
 }
+.caption {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+}
 
 .pointer{
     background-image:  url(../../include/images/tour/arrow.png);
@@ -118,6 +124,7 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(45deg); /* Firefox */
     -webkit-transform:rotate(45deg); /* Safari and Chrome */
     -o-transform:rotate(45deg); /* Opera */
+    background-position: 0px 209px\9;
 }
 
 .pointer.up.left {
@@ -126,6 +133,7 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(-45deg); /* Firefox */
     -webkit-transform:rotate(-45deg); /* Safari and Chrome */
     -o-transform:rotate(-45deg); /* Opera */
+    background-position: 0px 209px\9;
 }
 
 .pointer.down {
@@ -138,6 +146,7 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(-45deg); /* Firefox */
     -webkit-transform:rotate(-45deg); /* Safari and Chrome */
     -o-transform:rotate(-45deg); /* Opera */
+    background-position: 0px 209px\9;
 }
 
 .pointer.down.left {
@@ -146,4 +155,57 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(45deg); /* Firefox */
     -webkit-transform:rotate(45deg); /* Safari and Chrome */
     -o-transform:rotate(45deg); /* Opera */
+    background-position: 0px 209px\9;
+}
+
+
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+.rtl .modal {
+    direction: rtl;
+}
+
+.rtl .modal-footer .btn {
+    float: left;
+}
+
+.rtl .modal ul {
+    margin: 0 25px 9px 0px;
+}
+
+.rtl .modal .close {
+    float: left;
+}
+
+.rtl .pointer.up.right {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+}
+
+.rtl .pointer.up.left {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+}
+
+.rtl .pointer.down.right {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+}
+
+.rtl .pointer.down.left {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
 }
