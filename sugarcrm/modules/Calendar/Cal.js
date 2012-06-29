@@ -1328,7 +1328,7 @@
 	}
 	
 	
-	CAL.edit_all_recurrences = function (){		
+	CAL.editAllRecurrences = function (){		
 		var record = CAL.get("record").value;
 		if(CAL.get("repeat_parent_id").value != ""){
 			record = CAL.get("repeat_parent_id").value;
@@ -1681,7 +1681,7 @@
 						YAHOO.util.Connect.asyncRequest('POST',url,callback,false);	
 	}	
 	
-	CAL.remove_all_recurrences = function(){				
+	CAL.removeAllRecurrences = function(){				
 	
 		if(confirm(CAL.lbl_confirm_remove_all_recurring)){
 			if(CAL.get("repeat_parent_id").value != ''){
