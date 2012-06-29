@@ -106,6 +106,7 @@ class Bug53223Test extends Sugar_PHPUnit_Framework_OutputTestCase //Sugar_PHPUni
 
     public function setUp()
     {
+        $this->markTestIncomplete("This test is not yet complete. Artem is working on it");
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');

@@ -912,7 +912,7 @@ class Email extends SugarBean {
 		}
 
 		if(!empty($request['fromAccount'])) {
-			if (isset($ie->id) && !$ie->isPop3Protocol()) {
+			if (isset($ie->id) && !$ie->isPop3Protocol() && $mail->oe->mail_smtptype != 'gmail') {
 				$sentFolder = $ie->get_stored_options("sentFolder");
 				if (!empty($sentFolder)) {
 					$data = $mail->CreateHeader() . "\r\n" . $mail->CreateBody() . "\r\n";

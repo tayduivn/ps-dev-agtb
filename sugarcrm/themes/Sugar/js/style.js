@@ -462,6 +462,7 @@ SUGAR.append(SUGAR.themes, {
         }
 
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
+        $("#glblSearchBtn").tipTip({maxWidth: "auto", edgeOffset: 10});
 		//setup tool tips for partner integrations
 		$("#partner").children("a").each(
             function (index) {

@@ -4,11 +4,7 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
-            {if $FTS_AUTOCOMPLETE_ENABLE}
-                <input size=20 id='sugar_spot_search' accesskey="0" title='{$APP.LBL_SEARCH_TIPS}' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
-            {else}
-                <input size=20 id='sugar_spot_search' accesskey="0" title='' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
-            {/if}
+            <input size=20 id='sugar_spot_search' accesskey="0" title='' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
             <div id="sugar_spot_search_results" style="display:none;">
                 {if $FTS_AUTOCOMPLETE_ENABLE}
@@ -20,7 +16,11 @@
 
             <div id="sugar_spot_ac_results"></div>
         </div>
-    <div id="glblSearchBtn" {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}>{$ICONSEARCH}
+    {if $FTS_AUTOCOMPLETE_ENABLE}
+        <div id="glblSearchBtn" title='{$APP.LBL_SEARCH_TIPS}' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}>{$ICONSEARCH}
+    {else}
+        <div id="glblSearchBtn" title='{$APP.LBL_ALT_SPOT_SEARCH}' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}>{$ICONSEARCH}
+    {/if}
     </div>
 </div>
 //BEGIN SUGARCRM flav=sales ONLY
@@ -31,6 +31,8 @@
 
 <script>
     var search_text = '{$APP.LBL_SEARCH}';
+    var searchTip = '{$APP.LBL_SEARCH_TIPS}';
+    var searchTip2 = '{$APP.LBL_SEARCH_TIPS_2}';
 {literal}
 $("#sugar_spot_search").ready(function() {
     $("#sugar_spot_search").val(search_text);
@@ -58,6 +60,10 @@ $("#sugar_spot_search").ready(function() {
         source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&append_wildcard=true&data='+data,
         minLength: 3,
         search: function(event,ui){
+            $("#glblSearchBtn").attr('title', searchTip2 + " '" + $("#sugar_spot_search").val() + "'.");
+            $("#glblSearchBtn").tipTip({maxWidth: "auto", edgeOffset: 10});
+            $("#glblSearchBtn").mouseover();
+            setTimeout("$('#glblSearchBtn').mouseout();$('#glblSearchBtn').attr('title', searchTip);$('#glblSearchBtn').tipTip({maxWidth: 'auto', edgeOffset: 10});", 2500);
         var el = $("#sugar_spot_search_results");
                    if ( !el.is(":visible") ) {
                        el.html('');

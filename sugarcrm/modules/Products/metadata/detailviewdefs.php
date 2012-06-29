@@ -26,7 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Products']['DetailView'] = array(
-'templateMeta' => array('maxColumns' => '2', 
+'templateMeta' => array('maxColumns' => '2',
+                        'form' => array('buttons'=>array('EDIT',
+                            'DUPLICATE',
+                            'DELETE',
+                            'AUDIT',
+                        )),
                         'widths' => array(
                                         array('label' => '10', 'field' => '30'), 
                                         array('label' => '10', 'field' => '30')
