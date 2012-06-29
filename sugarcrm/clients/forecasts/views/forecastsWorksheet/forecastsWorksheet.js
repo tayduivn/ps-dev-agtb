@@ -34,14 +34,6 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-        this.includedAmount = 0;
-        this.includedBest = 0;
-        this.includedLikely = 0;
-        this.includedCount = 0;
-        this.overallAmount = 0;
-        this.overallBest = 0;
-        this.overallLikely = 0;
-        this.timer = null;
 
         //set expandable behavior to false by default
         this.isExpandableRows = false;
@@ -69,6 +61,50 @@
         }, this);
         // END STORY 31921015
         this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
+
+        var TotalModel = Backbone.Model.extend({
+
+        });
+
+        this.totalModel = new TotalModel(
+            {
+                includedAmount : 0,
+                includedBest : 0,
+                includedLikely : 0,
+                includedCount : 0,
+                overallAmount : 0,
+                overallBest : 0,
+                overallLikely : 0
+            }
+        );
+
+
+        var TotalView = Backbone.View.extend({
+            id : 'summary',
+
+            tagName : 'tfoot',
+
+            initialize: function() {
+                self.layout.context.on("change:selectedToggle", function(context, data) {
+                    self.refresh();
+                });
+            },
+
+            render: function() {
+                var self = this;
+                var hb = Handlebars.compile("<tr><th colspan='5' style='text-align: right;'>Included Total</th>" +
+                    "<th>{{includedAmount}}</th><th>{{includedBest}}</th><th>{{includedLikely}}</th></tr>" +
+                    "<tr class='overall'><th colspan='5' style='text-align: right;'>Overall Total</th>" +
+                    "<th>{{overallAmount}}</th><th>{{overAllBest}}</th><th>{{overallLikely}}</th></tr>");
+                $('#summary').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.totalView = new TotalView({
+            model : this.totalModel
+        });
+
 
         // INIT tree with logged-in user
         var selectedUser = {
@@ -298,6 +334,8 @@
             });
         }
 
+        this.totalView.render();
+
     },
 
     /**
@@ -306,13 +344,13 @@
      */
     calculateTotals: function() {
         var self = this;
-        self.includedAmount = 0;
-        self.includedBest = 0;
-        self.includedLikely = 0;
-        self.overallAmount = 0;
-        self.overallBest = 0;
-        self.overallLikely = 0;
-        self.includedCount = 0;
+        var includedAmount = 0;
+        var includedBest = 0;
+        var includedLikely = 0;
+        var overallAmount = 0;
+        var overallBest = 0;
+        var overallLikely = 0;
+        var includedCount = 0;
 
         _.each(self._collection.models, function (model) {
             var included = model.get('forecast');
@@ -322,24 +360,33 @@
 
             if(included)
             {
-                self.includedAmount += amount;
-                self.includedLikely += likely;
-                self.includedBest += best;
-                self.includedCount++;
+                includedAmount += amount;
+                includedLikely += likely;
+                includedBest += best;
+                includedCount++;
             }
-            self.overallAmount += amount;
-            self.overallLikely += likely;
-            self.overallBest += best;
+            overallAmount += amount;
+            overallLikely += likely;
+            overallBest += best;
         });
 
+        self.totalModel.set('includedAmount', includedAmount);
+        self.totalModel.set('includedBest', includedBest);
+        self.totalModel.set('includedLikely', includedLikely);
+        self.totalModel.set('overallAmount', overallAmount);
+        self.totalModel.set('overallBest', overallBest);
+        self.totalModel.set('overallLikely', overallLikely);
+
         var totals = {
-            'likely_case' : self.includedLikely,
-            'best_case' : self.includedBest,
+            'likely_case' : includedLikely,
+            'best_case' : includedBest,
             'timeperiod_id' : self.timePeriod,
             'forecast_type' : 'Direct',
-            'opp_count' : self.includedCount,
-            'amount' : self.includedAmount
+            'opp_count' : includedCount,
+            'amount' : includedAmount
         };
+
+
         this.context.set("updatedTotals", totals);
     },
 
