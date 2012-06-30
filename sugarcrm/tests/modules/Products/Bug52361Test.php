@@ -179,6 +179,7 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
         parent::tearDown();
         $_REQUEST = array();
         unset($_SERVER['REQUEST_METHOD']);
+        SugarCache::$isCacheReset = false;
 
         // Removing temp data
         SugarTestContactUtilities::removeAllCreatedContacts();
