@@ -380,6 +380,7 @@ function post_install() {
     // End Bug 40458///////////////////
 
     upgradeGroupInboundEmailAccounts();
+    upgrade_custom_duration_defs();
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
@@ -577,4 +578,122 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 	}
 
 }
-?>
+
+/**
+ * Bug #53981 we have to disable duration_hours & duration_minutes fields for studio & remove duration_hours from editviewdefs.php
+ * because it will be replaced by duration field
+ */
+function upgrade_custom_duration_defs()
+{
+    require_once('include/utils/file_utils.php');
+    global $path;
+
+    //check to see if custom vardefs exist for calls and/or meetings
+    $modsToCheck = array('Meeting');
+
+    //first lets make any custom vardefs not show up in studio
+    foreach ($modsToCheck as $mods)
+    {
+        $filestr = 'custom/Extension/modules/' . $mods . 's/Ext/Vardefs/';
+        if (file_exists($filestr) && is_dir($filestr))
+        {
+            //custom vardef directory exists, lets iterate through the files and grab the defs
+
+            $modDir = opendir($filestr);
+            while (false !== ($file = readdir($modDir)))
+            {
+                if ($file == "." || $file == "..")
+                {
+                    continue;
+                }
+
+                $dictionary = array();
+                include($filestr . $file);
+                $rewrite = false;
+                //read the file and see check for duration_minutes or duration_hours
+                if (!empty($dictionary[$mods]['fields']['duration_hours']))
+                {
+                    $dictionary[$mods]['fields']['duration_hours']['studio'] = false;
+                    $rewrite = true;
+                }
+
+                if (!empty($dictionary[$mods]['fields']['duration_minutes']))
+                {
+                    $dictionary[$mods]['fields']['duration_minutes']['studio'] = false;
+                    $rewrite = true;
+                }
+
+                //found the field, rewrite the vardef and overwrite the file
+                if ($rewrite)
+                {
+                    $out =  "<?php\n// created: " . date('Y-m-d H:i:s') . "\n";
+                    $iterator = new RecursiveArrayIterator($dictionary);
+                    $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+
+                    $keys = array();
+                    foreach($iterator as $k => $v)
+                    {
+                        if (is_array($v))
+                        {
+                            array_push($keys, $k);
+                        }
+                        else
+                        {
+                            $keys = array_slice($keys, 0, $iterator->getDepth());
+                            array_push($keys, $k);
+                            $out .= "\$dictionary['" . implode("']['", $keys) . "'] = " . var_export_helper($v) . ";\n";
+                            array_pop($keys);
+                        }
+                    }
+
+                    if (!sugar_file_put_contents($filestr . $file, $out, LOCK_EX))
+                    {
+                        logThis("could not write $mods dictionary to {$filestr}{$file}", $path);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //now lets get rid of the duration fields in any custom editview defs
+        //the view def will alrady have the input files as hidden, so lets get rid of the duplicates
+        foreach ($modsToCheck as $mods)
+        {
+            $filestr = 'custom/modules/' . $mods . 's/metadata/';
+            $file = 'editviewdefs.php';
+            $rewrite = false;
+            $viewdefs = array();
+            if (file_exists($filestr . $file))
+            {
+                //custom editview  exists, lets get rid of the dupes
+                include($filestr . $file);
+
+                //iterate through and unset the duration_fields
+                foreach ($viewdefs[$mods.'s']['EditView']['panels'] as $panelName => $panel)
+                {
+                    foreach ($panel as $rowctr => $fieldrow)
+                    {
+                        foreach ($fieldrow as $fieldctr => $fields)
+                        {
+                            if (!empty($fields['name'])  && ($fields['name'] == 'duration_hours' || $fields['name'] == 'duration_minutes'))
+                            {
+                                //unset this field (the original duration fields)
+                                unset($viewdefs[$mods . 's']['EditView']['panels'][$panelName][$rowctr][$fieldctr]);
+                                $rewrite = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //rewrite custom file
+            if ($rewrite)
+            {
+                if (!write_array_to_file("viewdefs['{$mods}s']['EditView']", $viewdefs[$mods.'s']['EditView'], $filestr . $file, 'w'))
+                {
+                    logThis("could not write $mods dictionary to {$filestr}{$file}", $path);
+                }
+            }
+        }
+    }
+}
