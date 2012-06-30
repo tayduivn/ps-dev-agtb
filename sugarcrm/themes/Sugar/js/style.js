@@ -452,7 +452,7 @@ SUGAR.append(SUGAR.themes, {
 
     },
     globalToolTips: function () {
-    	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+    	// $("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: SUGAR.language.translate('', 'LBL_QUICK_CREATE_TITLE')});
