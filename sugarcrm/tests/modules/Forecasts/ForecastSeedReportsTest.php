@@ -240,6 +240,8 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
             $limit = true;
         }
 
+        echo $report->query . "\n";
+
         $result = $GLOBALS['db']->query($report->query);
 
         //echo $report->query . "\n";
@@ -251,12 +253,9 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals(4, $count);
-        //$report->run_summary_query();
 
-        //$this->assertEquals(2, count($report->query_list));
-
-        $report_data = json_decode($saved_report->content, true);
-        $parser = new SugarParsers_Filter(new Opportunity());
+        //$report_data = json_decode($saved_report->content, true);
+        //$parser = new SugarParsers_Filter(new Opportunity());
 
 
         //echo var_export($report_data);

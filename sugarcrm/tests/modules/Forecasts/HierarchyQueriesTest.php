@@ -242,11 +242,12 @@ public function testForecastTree()
     $this->assertEquals(4, $opportunities);
 }
 
-
+/*
 public function testForecastTreeWithSubSelectOnTempTable()
 {
+    global $current_user;
     //Here is the alternate method where we use a sub-select against the temporary table created
-    $hierarchy_sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', true, "status = 'Active' AND id = '{$this->employee4->id}'");
+    $hierarchy_sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', true, "status = 'Active' AND id = '{$current_user->id}'");
     $result = $GLOBALS['db']->query($hierarchy_sql);
 
     $hierarchy = "select _id from _hierarchy_return_set";
@@ -285,5 +286,5 @@ public function testForecastTreeWithSubSelectOnTempTable()
 
     $this->assertEquals(4, $opportunities);
 }
-
+*/
 }
