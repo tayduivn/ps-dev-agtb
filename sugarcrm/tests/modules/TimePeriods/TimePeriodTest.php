@@ -39,7 +39,6 @@ static function tearDownAfterClass()
 }
 
 /**
- * @outputBuffering disabled
  *
  */
 function testGetLastCurrentNextIds()

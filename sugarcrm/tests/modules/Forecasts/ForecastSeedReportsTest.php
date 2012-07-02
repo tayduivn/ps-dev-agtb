@@ -214,7 +214,6 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
-     * @outputBuffering disabled
      *
      */
     public function testForecastSeedReport1()

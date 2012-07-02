@@ -2145,7 +2145,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerRecursiveQuery
-     * @outputBuffering disabled
      * @group hierarchy
      * @param $startId
      * @param $startDbLevel
@@ -2153,7 +2152,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
-        $this->markTestSkipped('Skipping for now, need Jim to resolve multi hierarchy issues');
         $idCurrent = $startId;
         $levels = $startDbLevel;
         $this->_db->preInstall();
