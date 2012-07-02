@@ -2181,8 +2181,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $childcount = 0;
         $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
 
-        echo $childrenSQL . "\n";
-
         $result = $this->_db->query($childrenSQL);
 
         while(($row = $this->_db->fetchByAssoc($result)) != null)
