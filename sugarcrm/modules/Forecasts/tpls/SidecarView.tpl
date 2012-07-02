@@ -108,12 +108,10 @@
                                   <div class="view-forecastsWorksheet"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {if $isManager === true && true}
                               <div id="view-manager" style="display:none">
                                   <div class="view-forecastsWorksheetManager"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {/if}
                           </div>
                         </div>
                     </div>

@@ -7,7 +7,7 @@
 ({
 
     url: 'rest/v10/Forecasts/worksheet',
-    show: true,
+    show: false,
 
     _name_type_map: {
 //        best_case_worksheet: 'int',
