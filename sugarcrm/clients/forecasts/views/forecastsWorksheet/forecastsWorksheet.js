@@ -7,6 +7,7 @@
 ({
 
     url: 'rest/v10/Forecasts/worksheet',
+    show: false,
 
     _name_type_map: {
 //        best_case_worksheet: 'int',
@@ -301,8 +302,15 @@
      */
     render:function () {
         var self = this;
+        
+        if(!this.showMe()){
+        	return false;
+        }
+        $("#view-sales-rep").show();
+        $("#view-manager").hide();
+        
         app.view.View.prototype.render.call(this);
-
+        
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
@@ -336,6 +344,26 @@
 
         this.totalView.render();
 
+    },
+    /**
+     * Determines if this Worksheet should be rendered
+     */
+    showMe: function(){
+    	var isManager = app.user.get('isManager');
+    	var userId = app.user.get('id');
+    	var selectedUser = userId;
+    	this.show = false;
+    	
+    	
+    	if(this.selectedUser){
+    		selectedUser = this.selectedUser;
+    	}
+
+    	if(!isManager || (isManager && userId.localeCompare(selectedUser) != 0)){
+    		this.show = true;
+    	}	
+    	
+    	return this.show;
     },
 
     /**
@@ -397,6 +425,9 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser.id;
+        if(!this.showMe()){
+        	return false;
+        }
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();
@@ -432,6 +463,9 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
+        if(!this.showMe()){
+        	return false;
+        }
         this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();

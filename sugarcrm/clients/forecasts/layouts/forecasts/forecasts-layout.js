@@ -136,7 +136,7 @@
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }
-
+            
             //add the layout to the div
             $(".view-"+comp.name).append(comp.$el);
         }

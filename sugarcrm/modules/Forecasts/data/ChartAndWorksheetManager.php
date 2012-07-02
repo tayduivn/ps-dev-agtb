@@ -24,7 +24,7 @@ private function ChartAndWorksheetManager()
 
 public static final function getInstance()
 {
-    static $instance;
+    $instance = null;
     if(is_null($instance))
     {
        $instance = new ChartAndWorksheetManager();

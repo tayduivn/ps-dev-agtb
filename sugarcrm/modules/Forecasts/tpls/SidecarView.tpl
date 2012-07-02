@@ -104,16 +104,14 @@
                           </div>
                           <hr>
                           <div>
-                              <div id="view-sales-rep">
+                              <div id="view-sales-rep" style="display:none">
                                   <div class="view-forecastsWorksheet"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {if $isManager === true && false}
-                              <div id="view-manager" style="visibility:hidden;">
-                                  <div class="view-forecastsWorksheet"></div>
+                              <div id="view-manager" style="display:none">
+                                  <div class="view-forecastsWorksheetManager"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {/if}
                           </div>
                         </div>
                     </div>

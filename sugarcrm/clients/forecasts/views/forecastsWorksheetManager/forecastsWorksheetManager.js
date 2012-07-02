@@ -12,6 +12,7 @@
 //        probability: 'percent',
         sales_stage: 'enum'
     },
+    show: false,
 
     viewModule: {},
 
@@ -34,13 +35,12 @@
         //set expandable behavior to false by default
         this.isExpandableRows = false;
         this.category = 'Committed',
-
+        
         app.view.View.prototype.initialize.call(this, options);
-
         this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
+        this.layout.context.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
         this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
         this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
 
@@ -120,6 +120,22 @@
             }
         );
     },
+    
+    /**
+     * Event Handler for updating the worksheet by a selected user
+     *
+     * @param params is always a context
+     */
+    updateWorksheetBySelectedUser:function (selectedUser) {
+        this.selectedUser = selectedUser.id;
+        if(!this.showMe()){
+        	return false;
+        }
+        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection.url = this.createURL();
+        this._collection.fetch();
+        this.render();
+    },
 
     /**
      * Renders a field.
@@ -141,8 +157,13 @@
      */
     render:function () {
         var self = this;
+        if(!this.showMe()){
+        	return false;
+        }
+        $("#view-sales-rep").hide();
+        $("#view-manager").show();
         app.view.View.prototype.render.call(this);
-
+        /*
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
@@ -183,8 +204,27 @@
             );
         } else {
             $.fn.dataTableExt.afnFiltering = [];
-        }
+        }*/
 
+    },
+    
+    /**
+     * Determines if this Worksheet should be rendered
+     */
+    showMe: function(){
+    	var isManager = app.user.get('isManager');
+    	var userId = app.user.get('id');
+    	var selectedUser = userId;
+    	this.show = false;
+    	if(this.selectedUser){
+    		selectedUser = this.selectedUser;
+    	}
+    	
+    	if(isManager && userId.localeCompare(selectedUser) == 0){
+    		this.show = true;
+    	}
+    
+    	return this.show;
     },
 
 
@@ -195,18 +235,6 @@
         var model = this.context.forecasts.worksheet;
         model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
         this.render();
-    },
-
-
-    /**
-     * Event Handler for updating the worksheet by a selected user
-     *
-     * @param params is always a context
-     */
-    updateWorksheetBySelectedUser:function (params) {
-        // TODO: What happens when a user is selected
-        // this is a placeholder for that functionality
-        //this.gTable.fnFilter({ "assigned_user_id" : params.attributes.selectedUser.id });
     },
 
     /**
@@ -226,6 +254,9 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         var model = this.context.forecasts.worksheet;
+        if(!this.showMe()){
+        	return false;
+        }
         model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
         model.fetch();
         this.render();
