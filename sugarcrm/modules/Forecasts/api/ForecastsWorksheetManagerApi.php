@@ -25,6 +25,9 @@ require_once('modules/Forecasts/api/ForecastsChartApi.php');
 
 class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
+    private $user_id;
+    private $timeperiod_id;
+
     public function __construct()
     {
 
@@ -61,84 +64,149 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
 
+        if(!User::isManager($current_user->id))
+        {
+           return array();
+        }
 
         if(isset($args['user_id']))
         {
             $user = new User();
             $user->retrieve($args['user_id']);
+            if(!User::isManager($user->id))
+            {
+                return array();
+            }
         } else {
             $user = $current_user;
         }
 
-
-        if(!User::isManager($user->id))
-        {
-           //Error
-           return array();
-        }
-
         $app_list_strings = return_app_list_strings_language($current_language);
+
+        $this->timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $this->user_id = isset($args['user_id']) ? $args['user_id'] : $user->id;
 
         $mgr = ChartAndWorksheetManager::getInstance();
         $report_defs = $mgr->getWorksheetDefintion('manager', 'opportunities');
 
-        $timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-
         $testFilters = array(
-            'timeperiod_id' => array('$is' => $timeperiod_id),
-            'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
-
+            'timeperiod_id' => array('$is' => $this->timeperiod_id),
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
         );
 
-        // generate the report builder instance
-        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters);
+        require_once('include/SugarParsers/Filter.php');
+        require_once("include/SugarParsers/Converter/Report.php");
+        require_once("include/SugarCharts/ReportBuilder.php");
 
-        if (isset($args['ct']) && !empty($args['ct'])) {
-            $rb->setChartType($this->mapChartType($args['ct']));
-        }
+        // create the a report builder instance
+        $rb = new ReportBuilder("Opportunities");
+        // load the default report into the report builder
+        $rb->setDefaultReport($report_defs[2]);
+
+        // parse any filters from above
+        $filter = new SugarParsers_Filter(new Opportunity());
+        $filter->parse($testFilters);
+        $converter = new SugarParsers_Converter_Report($rb);
+        $reportFilters = $filter->convert($converter);
+        // add the filter to the report builder
+
+        $rb->addFilter($reportFilters);
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
 
-        //Get the goal marker values
-        require_once("include/SugarCharts/ChartDisplay.php");
-        // create the chart display engine
-        $chartDisplay = new ChartDisplay();
-        // set the reporter with the chart contents from the report builder
-        $chartDisplay->setReporter(new Report($chart_contents));
+        $report = new Report($chart_contents);
+        $data_grid = $mgr->getWorksheetGridData('manager', $report);
 
-        $chart_data = $chartDisplay->getReporter()->chart_rows;
+        $quota = $this->getQuota();
+        $forecast = $this->getForecastBestLikely();
+        $worksheet = $this->getWorksheetBestLikelyAdjusted();
+        $data_grid = array_merge_recursive($data_grid, $quota, $forecast, $worksheet);
+        return $data_grid;
+    }
 
 
-        // lets get some json!
-        $json = $chartDisplay->generateJson();
+    protected function getQuota()
+    {
+        //getting quotas from quotas table
+        $quota_query = "SELECT u.user_name user_name,
+                              q.amount quota
+                        FROM quotas q, users u
+                        WHERE q.user_id = u.id
+                        AND (q.user_id = '{$this->user_id}' OR q.user_id IN (SELECT id FROM users WHERE reports_to_id = '{$this->user_id}'))
+                        AND q.timeperiod_id = '{$this->timeperiod_id}'
+                        AND q.quota_type = 'Direct'";
 
-        // if we have no data return an empty string
-        if ($json == "No Data") {
-            return '';
-        }
+        $result = $GLOBALS['db']->query($quota_query);
+        $data = array();
 
-        $query = $chartDisplay->getReporter()->summary_query;
-        $result = $GLOBALS['db']->query($query);
-
-        $data_grid = array();
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
-            $data_grid[$row['l1_user_name']]['amount'] += $row['OPPORTUNITIES_SUM_AMOUBFBD41'];
+            $data[$row['user_name']]['quota'] = $row['quota'];
         }
-
-        //get quota + best/likely (forecast) + best/likely (worksheet)
-
-        $quota = $mgr->getQuota($user_id, $timeperiod_id);
-        $forecast = $mgr->getForecastBestLikely($user_id, $timeperiod_id);
-        $worksheet = $mgr->getWorksheetBestLikelyAdjusted($user_id, $timeperiod_id);
-
-        $data_grid = array_merge_recursive($data_grid, $quota, $forecast, $worksheet);
-
-        $data = array('grid' => $data_grid, 'chart' => $chart_data);
 
         return $data;
     }
+
+    protected function getForecastBestLikely()
+    {
+        //getting best/likely values from forecast table
+        $forecast_query = "SELECT
+        u.user_name,
+        f.date_modified,
+        f.best_case best,
+        f.likely_case likely,
+        f.worst_case worst
+        FROM users u
+        INNER JOIN (
+        SELECT user_id, max(date_modified) date_modified, best_case, likely_case, worst_case
+        FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}'
+        AND forecast_type = 'Direct'
+        group by user_id
+        ) as f
+        ON f.user_id = u.id
+        WHERE u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}'
+        AND u.deleted=0 AND u.status = 'Active'";
+
+        $result = $GLOBALS['db']->query($forecast_query);
+
+        $data = array();
+        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        {
+            $data[$row['user_name']]['best'] = $row['best'];
+            $data[$row['user_name']]['likely'] = $row['likely'];
+        }
+
+        return $data;
+    }
+
+    protected function getWorksheetBestLikelyAdjusted()
+    {
+        //getting data from worksheet table for reportees
+        $reportees_query = "SELECT u.user_name user_name,
+                            w.forecast,
+                            w.best_case best_adjusted,
+                            w.likely_case likely_adjusted,
+                            w.worst_case worst_adjusted
+                            FROM worksheet w, users u
+                            WHERE w.related_id = u.id
+                            AND w.timeperiod_id = '{$this->timeperiod_id}'
+                            AND w.user_id = '{$this->user_id}'
+                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))";
+
+        $result = $GLOBALS['db']->query($reportees_query);
+
+        $data = array();
+
+        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        {
+            $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
+            $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
+            $data[$row['user_name']]['forecast'] = $row['forecast'];
+        }
+
+        return $data;
+    }
+
 
 }
