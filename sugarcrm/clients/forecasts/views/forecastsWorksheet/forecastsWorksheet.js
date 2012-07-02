@@ -306,6 +306,8 @@
         if(!this.showMe()){
         	return false;
         }
+        $("#view-sales-rep").show();
+        $("#view-manager").hide();
         
         app.view.View.prototype.render.call(this);
         
@@ -352,11 +354,12 @@
     	var selectedUser = userId;
     	this.show = false;
     	
+    	
     	if(this.selectedUser){
     		selectedUser = this.selectedUser;
     	}
-    	
-    	if(!isManager || (isManager && userId.match(selectedUser) == undefined)){
+
+    	if(!isManager || (isManager && userId.localeCompare(selectedUser) != 0)){
     		this.show = true;
     	}	
     	
@@ -421,7 +424,6 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-    	console.log("update sheet");
         this.selectedUser = selectedUser.id;
         if(!this.showMe()){
         	return false;

@@ -133,13 +133,14 @@
          * @param {View.Layout/View.View} comp Component to add
          */
         _placeComponent: function(comp) {
-        	var name = comp.name;
+        	//var name = comp.name;
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }
             
             //Check to see if which worksheet should be rendered.
-            if(typeof(comp.show) != "undefined"){
+            /*if(typeof(comp.show) != "undefined"){
+            	console.log(name + ": " + comp.show);
             	if(!comp.show){
             		return false;
             	}
@@ -147,10 +148,10 @@
                 if(name.match("WorksheetManager") && comp.show){
                 	name = name.replace("WorksheetManager", "Worksheet");
                 }
-            }
+            }*/
             
             //add the layout to the div
-            $(".view-"+name).append(comp.$el);
+            $(".view-"+comp.name).append(comp.$el);
         }
     });
 

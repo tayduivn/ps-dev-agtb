@@ -104,12 +104,12 @@
                           </div>
                           <hr>
                           <div>
-                              <div id="view-sales-rep">
+                              <div id="view-sales-rep" style="display:none">
                                   <div class="view-forecastsWorksheet"></div>
                                   <div class="view-summary"></div>
                               </div>
-                              {if $isManager === true && facebook}
-                              <div id="view-manager">
+                              {if $isManager === true && true}
+                              <div id="view-manager" style="display:none">
                                   <div class="view-forecastsWorksheetManager"></div>
                                   <div class="view-summary"></div>
                               </div>
