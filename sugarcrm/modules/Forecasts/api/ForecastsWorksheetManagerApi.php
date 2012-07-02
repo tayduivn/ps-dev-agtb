@@ -87,7 +87,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         $testFilters = array(
             'timeperiod_id' => array('$is' => $timeperiod_id),
-            //'assigned_user_link' => array('$reports' => $user_id)
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
+
         );
 
         // generate the report builder instance
@@ -107,7 +108,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         // set the reporter with the chart contents from the report builder
         $chartDisplay->setReporter(new Report($chart_contents));
 
-        return $chartDisplay->getReporter()->chart_rows;
+        $chart_data = $chartDisplay->getReporter()->chart_rows;
 
 
         // lets get some json!
@@ -118,29 +119,26 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             return '';
         }
 
+        $query = $chartDisplay->getReporter()->summary_query;
+        $result = $GLOBALS['db']->query($query);
 
-
-        $result = $GLOBALS['db']->query($report->query);
-
-        $opps = array();
+        $data_grid = array();
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
-            /*
-            $row['id'] = $row['primaryid'];
-            $row['forecast'] = $row['opportunities_forecast'];
-            $row['name'] = $row['opportunities_name'];
-            $row['amount'] = $row['opportunities_amount'];
-            $row['date_closed'] = $row['opportunities_date_closed'];
-            $row['probability'] = $row['opportunities_probability'];
-            $row['sales_stage'] = $row['opportunities_sales_stage'];
-            $row['best_case_worksheet'] = $row['OPPORTUNITIES_BEST_CAS81CC16'];
-            $row['likely_case_worksheet'] = $row['OPPORTUNITIES_LIKELY_C7E6E04'];
-            */
-            //Should we unset the data we don't need here so as to limit data sent back?
-
-            $opps[] = $row;
+            $data_grid[$row['l1_user_name']]['amount'] += $row['OPPORTUNITIES_SUM_AMOUBFBD41'];
         }
-        return $opps;
+
+        //get quota + best/likely (forecast) + best/likely (worksheet)
+
+        $quota = $mgr->getQuota($user_id, $timeperiod_id);
+        $forecast = $mgr->getForecastBestLikely($user_id, $timeperiod_id);
+        $worksheet = $mgr->getWorksheetBestLikelyAdjusted($user_id, $timeperiod_id);
+
+        $data_grid = array_merge_recursive($data_grid, $quota, $forecast, $worksheet);
+
+        $data = array('grid' => $data_grid, 'chart' => $chart_data);
+
+        return $data;
     }
 
 }
