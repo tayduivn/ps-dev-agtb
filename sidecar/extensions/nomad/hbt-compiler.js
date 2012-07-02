@@ -9,15 +9,42 @@ if (!nowatch) {
 }
 var fstools = require('fs-tools');
 
-fstools.walk(src_path, '\.hbt$',
+var precompile = function() {
+    console.log("Pre-compiling...");
+    fstools.walk(src_path, '\.hbt$',
+        function(path, stats, callback) {
+            compileTemplate(path, callback);
+        },
+        function(err) {
+            if (err) {
+                console.error(err);
+                process.exit(1);
+            }
+        }
+    );
+};
+
+fstools.walk(compiled_path, '\.js$',
     function(path, stats, callback) {
-        compileTemplate(path, callback);
+        console.log("Deleting: " + path);
+        fs.unlink(path, function(err) {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback();
+            }
+        });
     },
     function(err) {
+        console.log("Done deleting");
         if (err) {
             console.error(err);
+            process.exit(1);
         }
-    });
+        precompile();
+    }
+);
 
 if (watcher) {
     watcher.on('fileModified', function(path, stats) {

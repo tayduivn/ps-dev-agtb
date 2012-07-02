@@ -9,8 +9,10 @@
         logFormatter: 'SimpleFormatter',
         layoutCacheEnabled: true,
         layoutCacheSize: 30,
-        disableLayoutCache: ["login"],
+        disableLayoutCache: ["login","associate"],
         authStore: 'cache',
+         // takes effect only in the native app (possible values: 'cache' or 'nativestore')
+        keyValueStore: 'cache',
         serverUrl: '../../../sugarcrm/rest/v10',
         //serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
         clientID: "sugar",

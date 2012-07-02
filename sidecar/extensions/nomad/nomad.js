@@ -11,6 +11,10 @@
     var onMemoryWarning = function() {
         app.logger.debug("App received memory warning");
     };
+    var onBackButtonClicked = function() {
+        // TODO: Revisit this (opening and closing left/right menu)
+        app.router.goBack();
+    };
 
     app.augment("nomad", {
 
@@ -57,8 +61,10 @@
 
                     // Fetch device info
                     function(callback) {
-                        // TODO: Call device info plugin
-                        callback(null);
+                        window.plugins.deviceInfo.getDeviceInfo(function(info) {
+                            deviceInfo.info = info;
+                            callback(null);
+                        });
                     }
                 ],
                 function(err) {
@@ -85,9 +91,11 @@
                 app.OAUTH["AuthRefreshToken"] = authRefreshToken;
                 app.config.authStore = "keychain";
 
-                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store
-                //app.nativestore.init();
-                //app.cache.store = app.nativestore;
+                if (app.config.keyValueStore == "nativestore") {
+                    app.logger.debug("Using native key/value store");
+                    app.nativestore.init();
+                    app.cache.store = app.nativestore;
+                }
             }
 
             app.init({el: "#nomad" });
@@ -99,13 +107,17 @@
             };
 
             if (app.isNative) {
-                // TODO KV-NATIVE: Uncomment 'app.nativestore.load' to use native kv store and comment out startApp
-                //app.nativestore.load(startApp);
-                startApp();
+                if (app.config.keyValueStore == "nativestore") {
+                    app.nativestore.load(startApp);
+                }
+                else {
+                    startApp();
+                }
 
                 document.addEventListener("pause", onPause, false);
                 document.addEventListener("resume", onResume, false);
                 document.addEventListener("memoryWarning", onMemoryWarning, false);
+                document.addEventListener("backbutton", onBackButtonClicked, false);
             }
             else {
                 startApp();

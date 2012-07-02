@@ -1,7 +1,7 @@
 (function(app) {
 
     Handlebars.registerHelper('listItem', function(model, view, fields) {
-        var template = app.template.get("list.item");
+        var template = app.template.get("list-item");
 
         return new Handlebars.SafeString(template({
             model: model,
@@ -35,6 +35,16 @@
         var model = relatedModel.link.bean;
         var link = relatedModel.link.name;
         return new Handlebars.SafeString(app.nomad.buildLinkRoute(model.module, model.id, link, relatedModel.id, action));
+    });
+
+    Handlebars.registerHelper('imageUrl', function(image, model) {
+        return image ? app.api.buildFileURL({
+            field: image.name,
+            module: model.module,
+            id: model.id
+        }, {
+            htmlJsonFormat: false
+        }) : "";
     });
 
 })(SUGAR.App);

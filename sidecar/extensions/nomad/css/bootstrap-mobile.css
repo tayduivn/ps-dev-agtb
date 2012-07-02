@@ -3536,6 +3536,9 @@ article > input[type=checkbox] {
   display: inline-block;
   height: 205px;
 }
+#detailListing.short #listing > i {
+  height: 155px;
+}
 #detailListing ul.actions {
   margin: 0;
   padding: 0;
@@ -4046,7 +4049,7 @@ html {
   padding-left: 0;
   padding-right: 0;
 }
-.searchlist .listing {
+.list-header .listing {
   height: 93px;
   position: relative;
   left: 0;
@@ -4056,13 +4059,13 @@ html {
   display: block;
   z-index: 2000;
 }
-.searchlist .container-fluid {
+.list-header .container-fluid {
   padding: 0 !important;
 }
 .filtered .topelbar {
   padding-right: 124px;
 }
-.searchlist .listing {
+.list-header .listing {
   margin-left: -128px !important;
   padding-left: 128px;
   overflow: visible;
@@ -4273,6 +4276,9 @@ h3.nomad {
 .bizcard img {
   float: left;
 }
+.bizcard.short .card {
+  height: 28px;
+}
 .bizcard .card {
   margin: 0 16px;
   line-height: 1.2em;
@@ -4320,6 +4326,9 @@ h3.nomad {
   position: absolute;
   bottom: 52px;
   left: 0;
+}
+.bizcard.short .fade {
+  bottom: 0 !important;
 }
 .bizcard .more {
   position: absolute;

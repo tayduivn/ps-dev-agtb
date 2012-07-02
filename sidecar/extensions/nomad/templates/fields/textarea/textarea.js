@@ -17,7 +17,7 @@
         onClick: function (e) {
             //create textarea-edit view and pass current field name there
             this.textareaView = app.view.createView({
-                name: "textareaedit",
+                name: "textarea-edit",
                 context: this.context,
                 editedFieldName: this.name
             });

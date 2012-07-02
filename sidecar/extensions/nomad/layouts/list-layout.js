@@ -3,7 +3,7 @@
     var _meta = {
         type: "list",
         components: [
-            { view:"searchlist" },
+            { view:"list-header" },
             { view: "list" }
         ]
     };
@@ -17,7 +17,7 @@
             this.options.meta = _meta;
             app.view.Layout.prototype.initialize.call(this, options);
 
-            var searchListView = this.getComponent('searchlist');
+            var searchListView = this.getComponent('list-header');
 
             if (searchListView) {
                 searchListView.setListView(this.getComponent('list'));

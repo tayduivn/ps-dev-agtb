@@ -33,10 +33,28 @@
 
         initialize: function (options) {
             app.view.View.prototype.initialize.call(this, options);
+            var fieldsNumber = 4;                                   //number of fields displayed on summary view
+
+            //for testing purposes
+            //this.model.set({"opportunity_role": "Influencer"});
+
+            var self = this;
+            var headerField, image, fields = [], phones = [], urls = [], emails = [], addressFields = [];
+
+            //add specific relationship fields to the "other" fields collection
+            var link = this.context.get("link");
+            if (link) {
+                var parentModule = this.context.get("parentModule"),
+                    relFieldNames = app.data.getRelationshipFields(parentModule, link);
+                if (relFieldNames && relFieldNames.length) {
+                    fields = _.map(relFieldNames, function(fieldName) {
+                        return app.metadata.getModule(self.module).fields[fieldName];
+                    });
+                    if (fields.length > fieldsNumber) fields.length = fieldsNumber;
+                }
+            }
 
             //iterate over all fields and get the needed ones
-            var view = this;
-            var headerField, image, fields = [], phones = [], urls = [], emails = [], addressFields = [];
             _.each(this.meta.panels, function (panel, panelIndex) {
                 _.each(panel.fields, function (field, fieldIndex) {
 
@@ -52,12 +70,12 @@
 
                     } else if (field.name &&
                               (field.name.indexOf("address_") > -1) &&
-                              (field.name.indexOf("email") == -1)) {   //find address (not email addresses) fields
+                              (field.name.indexOf("email") == -1)) {    //find address (not email addresses) fields
                         addressFields.push(field);
                     } else if (field.name && field.name.indexOf("email") == 0) {      //find fields which name starts from 'email'
                         field.type = "singleemail";
                         emails.push(field);
-                    } else if (fields.length < 4) {                     //find four other fields to output
+                    } else if (fields.length < fieldsNumber) {          //find four other fields to output
                         fields.push(field);
                     }
 
@@ -79,7 +97,7 @@
             this.urlFields =     urls;
 
             //group address fields by "group" properties defined in vardefs
-            this.addressFieldsGroups = _.groupBy(addressFields, function(field) { return view.model.fields[field.name].group });
+            this.addressFieldsGroups = _.groupBy(addressFields, function(field) { return self.model.fields[field.name].group });
         },
 
         /**

@@ -3,7 +3,7 @@
     var _meta = {
         type: "list",
         components: [
-            { view: "pickerlist" }
+            { view: "list-picker" }
         ]
     };
 
@@ -12,7 +12,7 @@
         initialize: function(options) {
             this.options.meta = _meta;
             app.view.Layout.prototype.initialize.call(this, options);
-            var pickerList = this.getComponent('pickerlist');
+            var pickerList = this.getComponent('list-picker');
 
             pickerList.setData({items:app.nomad.getLinks(this.model),
                 modelId:this.context.get('modelId'),

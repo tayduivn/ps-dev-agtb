@@ -2,15 +2,15 @@
     <div class="row-fluid">
         <div class="span12 listing fav filtered list-container" id="listing-{{module}}">
             {{#each meta.panels}}
-            <article class="nav show-more-top-btn" style="display: none">
+            <article class="nav show-more-top-btn" style="display: none;top:50px;">
                 <div>
                     <a class="show_more_posts" href="javascript:void(0)">Show more {{../module}}...</a>
                     <span class="loading-holder" style="display: none">Loading...</span>
                 </div>
             </article>
-            <div style="margin-top: 50px;">
+            <div style="margin-top: 50px;" class="items">
                 {{#each ../collection.models}}
-                {{include "list.item" this ../../this ../fields}}
+                {{include "list-item" this ../../this ../fields}}
                 {{/each}}
             </div>
             {{#if ../collection.models.length}}

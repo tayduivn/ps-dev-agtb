@@ -187,7 +187,7 @@ class SugarACLStatic extends SugarACLStrategy
     public function checkFieldList($module, $field_list, $action, $context)
     {
         $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || !isset($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
             return array();
         }
         return parent::checkFieldList($module, $field_list, $action, $context);
@@ -196,9 +196,9 @@ class SugarACLStatic extends SugarACLStrategy
     public function getFieldListAccess($module, $field_list, $context)
     {
         $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || !isset($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
         	return array();
         }
-        return parent::getFieldListAccess($module, $field_list, $action, $context);
+        return parent::getFieldListAccess($module, $field_list, $context);
     }
 }
