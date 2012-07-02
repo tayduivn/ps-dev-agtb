@@ -205,18 +205,20 @@ describe("BeanCollection", function() {
     });
 
     it("should keep track of fields when paginating", function() {
-        var bean, beans, spy, args;
+        var bean, beans, stub, firstCallArgs, secondCallArgs;
         dm.declareModel("Contacts", metadata.modules["Contacts"]);
 
         bean  = dm.createBean("Contacts");
         beans = dm.createBeanCollection("Contacts");
+        stub   = sinon.stub(beans, 'fetch');
         beans.fetch({fields:['a','b','c']});
 
-        spy   = sinon.spy(beans, 'fetch');
         beans.paginate();
-        args = spy.getCall(0).args[0];
-
-        expect(args.fields).toEqual(['a','b','c']);
+        firstCallArgs = stub.getCall(0).args[0];
+        expect(firstCallArgs.fields).toEqual(['a','b','c']);
+        secondCallArgs = stub.getCall(1).args[0];
+        expect(secondCallArgs.offset).toEqual(0);
+        expect(secondCallArgs.page).toEqual(0);
         beans.fetch.restore();
     });
 

@@ -20,7 +20,10 @@ describe("Results View", function() {
         expect(view.meta).toBeDefined();
     });
     it("should get last query from context", function() {
+        // Prevent http request from going out
+        var stub = sinon.stub(jQuery, 'ajax');
         view.render();
+        stub.restore();
         expect(spyContextGet).toHaveBeenCalled();
         expect(spyContextGet.lastCall.args[0]).toEqual("query");
     });

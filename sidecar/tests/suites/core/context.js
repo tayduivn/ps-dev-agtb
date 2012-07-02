@@ -101,7 +101,10 @@ describe("Context", function() {
             }
         };
 
+        // Prevent outgoing http request
+        var stub = sinon.stub(jQuery, 'ajax');
         context.loadData();
+        stub.restore();
 
         expect(context.get('collection').orderBy).toBeDefined();
         expect(context.get('collection').orderBy.field).toEqual('case_number');
@@ -127,7 +130,10 @@ describe("Context", function() {
             }
         };
 
+        // Prevent outgoing http request
+        var stub = sinon.stub(jQuery, 'ajax');
         context.loadData();
+        stub.restore();
 
         expect(context.get('collection').orderBy).toBeDefined();
         expect(context.get('collection').orderBy.field).toEqual('fooby');
