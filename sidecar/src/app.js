@@ -222,6 +222,11 @@ SUGAR.App = (function() {
 
             var self = this;
             var syncCallback = function(metadata, error){
+                // _app will be nulled out if destroy was called on app before we
+                // asynchronously get here. This happens when running tests (see spec-helper). 
+                if(!_app) {
+                    return;
+                }
                 if (error) {
                     self.trigger("app:sync:error", error);
                     return;
