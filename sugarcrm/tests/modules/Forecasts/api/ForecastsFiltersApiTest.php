@@ -89,4 +89,22 @@ class ForecastsFiltersApiTest extends RestTestBase
         $this->assertContains($this->employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
     }
 
+    public function testTimeperiods()
+    {
+        $restReply = $this->_restCall("Forecasts/filters/");
+
+        $db = DBManagerFactory::getInstance();
+
+        $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 1 AND deleted=0');
+        while(($row = $db->fetchByAssoc($result)))
+        {
+            $fiscal_timeperiods[$row['id']]=$row['name'];
+        }
+
+        foreach($fiscal_timeperiods as $ftp)
+        {
+            $this->assertNotContains($ftp, $restReply['reply']['timeperiod_id']['options'], "filter contains ". $ftp['name'] . " fiscal timeperiod");
+        }
+    }
+
 }
