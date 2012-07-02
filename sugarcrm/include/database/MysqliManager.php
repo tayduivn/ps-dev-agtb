@@ -408,7 +408,7 @@ class MysqliManager extends MysqlManager
     public function createRecursiveQuerySPs()
     {
 
-        $dropRecursiveQuerySPs_statement = "DROP   PROCEDURE IF EXISTS _hierarchy";
+        $dropRecursiveQuerySPs_statement = "DROP PROCEDURE IF EXISTS _hierarchy";
         $this->query($dropRecursiveQuerySPs_statement);
 
         $createRecursiveQuerySPs_statement = "
@@ -555,7 +555,11 @@ class MysqliManager extends MysqlManager
     {
         $mode = ($lineage) ? 'U' : 'D';
         // First execute the stored procedure to load the _hierarchy_return_set with the hierarchy data
-        $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields', '$whereClause')";
+        $startWith = is_null($startWith) ? '' : $this->quote($startWith);
+        $level = is_null($level) ? '' : $level;
+        $whereClause = is_null($whereClause) ? '' : $this->quote($whereClause);
+
+        $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$startWith}', '$level', '$fields', '{$whereClause}')";
         $result = $this->queryMulti($sql_sp, false, false, false, true);
 
         // Now build the sql to return that allows the caller to execute sql in a way to simulate the CTE of the other dbs,
