@@ -28,27 +28,6 @@ class Individual implements IChartAndWorksheet {
         'opportunities' => array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"forecast","label":"Include in Forecast","table_key":"self"},{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"abc123","chart_type":"vBarF","do_round":0,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"","assigned_user_id":"seed_chris_id","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":[]}', 'detailed_summary', 'vBarF')
     );
 
-    public $user_id;
-    public $timeperiod_id;
-
-    public function getFilters($args=array())
-    {
-        global $current_user;
-        $user_id = (isset($args['user_id']) && !empty($args['user_id'])) ? $args['user_id'] : $current_user->id;
-        $timeperiod = (isset($args['timeperiod_id']) && !empty($args['timeperiod_id'])) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-
-        $filters = array();
-        $filters['assigned_user_link'] = array('id' => $user_id);
-        $filters['timeperiod_id'] = array('$is' => $timeperiod);
-
-        if(isset($args['category']) && $args['category'] == "Committed")
-        {
-            $filters['forecast'] = array('$is' => 1);
-        }
-        // also we can define other filters such as 'probability', 'sales_stage' etc.
-        return $filters;
-    }
-
     public function getGridData($report)
     {
         $report->run_query();
