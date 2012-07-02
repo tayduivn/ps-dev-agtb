@@ -314,9 +314,34 @@ class TimePeriod extends SugarBean {
         }
         return $timeperiods;
     }
+
+    static function get_not_fiscal_timeperiods_dom()
+    {
+        static $not_fiscal_timeperiods;
+
+        if(!isset($not_fiscal_timeperiods))
+        {
+            $db = DBManagerFactory::getInstance();
+            $not_fiscal_timeperiods = array();
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 0 AND deleted=0');
+            while(($row = $db->fetchByAssoc($result)))
+            {
+                if(!isset($not_fiscal_timeperiods[$row['id']]))
+                {
+                    $not_fiscal_timeperiods[$row['id']]=$row['name'];
+                }
+            }
+        }
+        return $not_fiscal_timeperiods;
+    }
 }
 
 function get_timeperiods_dom()
 {
     return TimePeriod::get_timeperiods_dom();
+}
+
+function get_not_fiscal_timeperiods_dom()
+{
+    return TimePeriod::get_not_fiscal_timeperiods_dom();
 }

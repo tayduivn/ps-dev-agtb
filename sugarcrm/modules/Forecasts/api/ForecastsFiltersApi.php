@@ -72,7 +72,7 @@ class ForecastsFiltersApi extends ModuleApi {
             'timeperiod_id' => array(
                 'label' => 'Forecast Period:',
                 'default' => TimePeriod::getCurrentId(),
-                'options' => TimePeriod::get_timeperiods_dom(),
+                'options' => TimePeriod::get_not_fiscal_timeperiods_dom(),
             ),
             'category' => array(
                 'label' => 'Forecast Category:',
