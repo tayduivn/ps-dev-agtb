@@ -68,13 +68,8 @@ public function getWorksheetFilters($type, $args = array())
 {
     try {
         $instance = $this->getDataInstance($type);
-        foreach($args as $key => $value)
-        {
-            //populate instance with filters values. ex: $this->user_id = 'seed_jim_id'
-            $instance->$key = $value;
-        }
         $this->dataInstances[$type] = $instance;
-        return $instance->getFilters();
+        return $instance->getFilters($args);
     } catch (Exception $ex) {
         return null;
     }

@@ -77,24 +77,15 @@ class ForecastsWorksheetApi extends ModuleApi {
         $app_list_strings = return_app_list_strings_language($current_language);
 
         $mgr = ChartAndWorksheetManager::getInstance();
-        //define worksheet type: 'manager' or 'individual'
-        $type =  isset($args['type']) ? $args['type'] : 'individual';
-
-        $report_defs = array();
-        $report_defs = $mgr->getWorksheetDefintion($type, 'opportunities');
+        $report_defs = $mgr->getWorksheetDefintion('individual', 'opportunities');
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        $testFilters = array();
-        $testFilters = $mgr->getWorksheetFilters($type, array('user_id' => $user_id, 'timeperiod_id' => $timeperiod_id));
-        if (empty($testFilters))
-        {
-            $testFilters = array(
-                'timeperiod_id' => array('$is' => $timeperiod_id),
-                'assigned_user_link' => array('id' => $user_id),
-            );
-        }
+        $testFilters = array(
+            'timeperiod_id' => array('$is' => $timeperiod_id),
+            'assigned_user_link' => array('id' => $user_id),
+        );
 
         require_once('include/SugarParsers/Filter.php');
         require_once("include/SugarParsers/Converter/Report.php");
@@ -112,16 +103,12 @@ class ForecastsWorksheetApi extends ModuleApi {
         $reportFilters = $filter->convert($converter);
         // add the filter to the report builder
 
-        //_pp($reportFilters);
-        //die();
         $rb->addFilter($reportFilters);
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
-
         $report = new Report($chart_contents);
-
-        return $mgr->getWorksheetGridData($type, $report);
+        return $mgr->getWorksheetGridData('individual', $report);
     }
 
 }

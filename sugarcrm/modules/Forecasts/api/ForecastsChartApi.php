@@ -72,32 +72,20 @@ class ForecastsChartApi extends ChartApi
         $report_defs = array();
         $report_defs = $mgr->getWorksheetDefintion($type, 'opportunities');
 
-        $user_id = (isset($args['user_id']) && !empty($args['user_id'])) ? $args['user_id'] : $current_user->id;
+        $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        $timeperiod = TimePeriod::getCurrentId();
-        if (isset($args['timeperiod_id']) && !empty($args['timeperiod_id'])) {
-            $timeperiod = $args['timeperiod_id'];
-        }
-
-        $testFilters = array();
-        $testFilters = $mgr->getWorksheetFilters($type, array('user_id' => $user_id, 'timeperiod_id' => $timeperiod));
-        if (empty($testFilters))
-        {
-            $testFilters = array(
-                'timeperiod_id' => array('$is' => $timeperiod),
-                'assigned_user_link' => array('id' => $user_id),
-                //'probability' => array('$between' => array('0', '70')),
-                //'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
-            );
-        }
-
+        $testFilters = array(
+            'timeperiod_id' => array('$is' => $timeperiod_id),
+            'assigned_user_link' => array('id' => $user_id),
+        );
 
         if(isset($args['category']) && $args['category'] == "Committed") {
             $testFilters['forecast'] = array('$is' => 1);
         }
 
         // generate the report builder instance
-        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters);
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters, $args);
 
         if (isset($args['chart_type']) && !empty($args['chart_type'])) {
             $rb->setChartType($this->mapChartType($args['chart_type']));
@@ -137,7 +125,7 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        $quota = $quota_bean->getCurrentUserQuota($timeperiod, $user_id);
+        $quota = $quota_bean->getCurrentUserQuota($testFilters['timeperiod_id'], $testFilters['assigned_user_link']);
         $likely_values = $this->getDataSetValues($testFilters, $args);
 
         // decode the data to add stuff to the properties
@@ -207,7 +195,7 @@ class ForecastsChartApi extends ChartApi
         $results = array();
         $sum = 0;
 
-        error_log(var_export($report->chart_rows, true));
+        //error_log(var_export($report->chart_rows, true));
 
         // lets build a usable arary
         foreach ($report->chart_rows as $row) {
