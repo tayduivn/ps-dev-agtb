@@ -86,7 +86,7 @@
             tagName : 'tfoot',
 
             initialize: function() {
-                self.layout.context.on("change:selectedToggle", function(context, data) {
+                self.context.on("change:selectedToggle", function(context, data) {
                     self.refresh();
                 });
             },

@@ -64,6 +64,27 @@ public function getWorksheetDefintion($type, $id='')
     }
 }
 
+public function getWorksheetFilters($type, $args = array())
+{
+    try {
+        $instance = $this->getDataInstance($type);
+        $this->dataInstances[$type] = $instance;
+        return $instance->getFilters($args);
+    } catch (Exception $ex) {
+        return null;
+    }
+}
+
+public function getWorksheetGridData($type, $report)
+{
+    try {
+        $instance = $this->getDataInstance($type);
+        return $instance->getGridData($report);
+    } catch (Exception $ex) {
+        return null;
+    }
+}
+
 /**
  *
  * @param $type String value of the data type to retrieve (ex: 'manager', 'individual')
@@ -73,7 +94,7 @@ public function getWorksheetDefintion($type, $id='')
  */
 protected function getDataInstance($type)
 {
-    if(isset($this->instances[$type]))
+    if(isset($this->dataInstances[$type]))
     {
        return $this->dataInstances[$type];
     }
@@ -86,7 +107,8 @@ protected function getDataInstance($type)
     $klass = ucfirst($type);
 
     require_once($this->dataMapping[$type]);
-    return new $klass();
+    $this->dataInstances[$type] = new $klass();
+    return $this->dataInstances[$type];
 }
 
 }

@@ -18,6 +18,7 @@
         //Set defaults
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
+        this.timePeriodId = '';
         this.bestCase = 0;
         this.likelyCase = 0;
         this.historyLog = Array();
@@ -34,33 +35,13 @@
 
     updateCommitted: function() {
         this._collection = this.context.forecasts.committed;
-        this._collection.url = this.createURL();
-        this._collection.fetch();
-    },
-
-    createURL: function() {
-        var url = this.url;
-        var args = {};
-        if(this.timePeriodId) {
-           args['timeperiod_id'] = this.timePeriodId;
-        }
-
-        if(this.userId)
-        {
-           args['user_id'] = this.userId;
-        }
-
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
+        var urlParams = $.param({
+            user_id: encodeURIComponent(this.userId),
+            timeperiod_id : encodeURIComponent(this.timePeriodId)
         });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }
-
-        return url;
+        this._collection.fetch({
+            data: urlParams
+        });
     },
 
     bindDataChange: function() {
@@ -208,7 +189,12 @@
         forecast.set('opp_count', self.totals.opp_count);
         self.previous = self.totals;
         self._collection.create(forecast);
-        self._collection.url = self.createURL();
-        self._collection.fetch();
+        var urlParams = $.param({
+            user_id: encodeURIComponent(this.userId),
+            timeperiod_id : encodeURIComponent(this.timePeriodId)
+        });
+        this._collection.fetch({
+            data: urlParams
+        });
     }
 })

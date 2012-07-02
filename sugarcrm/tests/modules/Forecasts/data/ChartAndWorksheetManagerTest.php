@@ -40,7 +40,6 @@ function tearDown()
 }
 
 /**
- * @outputBuffering disabled
  *
  */
 function testChartAndWorksheetManager()

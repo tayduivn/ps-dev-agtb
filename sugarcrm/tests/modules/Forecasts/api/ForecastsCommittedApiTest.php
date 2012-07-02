@@ -40,8 +40,8 @@ class ForecastsCommittedApiTest extends RestTestBase
 
     }
 
-    /**
-     * @outputBuffering disabled
+    /***
+     * @group forecastapi
      */
     public function testForecastsCommittedApi()
     {

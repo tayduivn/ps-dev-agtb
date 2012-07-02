@@ -74,7 +74,7 @@ class ForecastsFiltersApiTest extends RestTestBase
     }
 
     /***
-     *
+     * @group forecastapi
      */
     public function testReportees() {
 
@@ -87,17 +87,6 @@ class ForecastsFiltersApiTest extends RestTestBase
         // assertContains in case the order is ever jumbled
         $this->assertContains($this->employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
         $this->assertContains($this->employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
-
-        $secondLevel = array();
-        if( !empty($restReply['reply']['children'][0]['children']) )
-            $secondLevel = $restReply['reply']['children'][0]['children'];
-        else
-            $secondLevel = $restReply['reply']['children'][1]['children'];
-
-        $this->assertEquals($secondLevel[0]['metadata']['id'], $this->employee3->id, "employee3's id was not found in the Expected place in the rest reply" );
-
-        $this->assertEquals($secondLevel[0]['children'][0]['metadata']['id'], $this->employee4->id, "employee4's id was not found in the Expected place in the rest reply" );
-
     }
 
 }

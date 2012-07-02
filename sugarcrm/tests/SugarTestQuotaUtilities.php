@@ -1,6 +1,5 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
-
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,41 +23,56 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Forecasts/WorksheetSeedData.php');
+$beanList = array();
+$beanFiles = array();
+require('include/modules.php');
+$GLOBALS['beanList'] = $beanList;
+$GLOBALS['beanFiles'] = $beanFiles;
+require_once 'modules/Quotas/Quota.php';
 
-class WorksheetSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarTestQuotaUtilities
 {
+    private static $_createdQuotas = array();
 
-private $createdWorksheets;
+    private function __construct() {}
 
-function setUp()
-{
-    global $beanFiles, $beanList, $current_user, $app_list_strings;
-    require('include/modules.php');
-    $app_list_strings = return_app_list_strings_language('en_us');
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-    $current_user->is_admin = 1;
-    $current_user->save();
-    $GLOBALS['db']->query("UPDATE worksheet SET deleted = 1");
-}
-
-function tearDown()
-{
-    return;
-    foreach($this->createdWorksheets as $id)
+    public static function createQuota($amount=500, $id = '')
     {
-        $GLOBALS['db']->query("DELETE FROM worksheet WHERE id = '{$id}'");
+        $quota = new Quota();
+        $quota->amount = $amount;
+        $quota->currency_id = -99;
+        $quota->committed = 1;
+        if(!empty($id))
+        {
+            $quota->new_with_id = true;
+            $quota->id = $id;
+        }
+        $quota->save();
+        self::$_createdQuotas[] = $quota;
+        return $quota;
     }
-    $GLOBALS['db']->query("UPDATE worksheet SET deleted = 0");
-}
 
-/**
- *
- */
-function testPopulateSeedData()
-{
-    $this->createdWorksheets = WorksheetSeedData::populateSeedData();
-}
+    public static function setCreatedQuota($quota_ids) {
+    	foreach($quota_ids as $quota_id) {
+    		$quota = new Quota();
+    		$quota->id = $quota_id;
+        	self::$_createdQuotas[] = $quota;
+    	} // foreach
+    } // fn
 
+    public static function removeAllCreatedQuotas()
+    {
+        $quota_ids = self::getCreatedQuotaIds();
+        $GLOBALS['db']->query('DELETE FROM quotes WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
+    }
 
+    public static function getCreatedQuotaIds()
+    {
+        $quota_ids = array();
+        foreach (self::$_createdQuotas as $quota) {
+            $quota_ids[] = $quota->id;
+        }
+        return $quota_ids;
+    }
 }
+?>
