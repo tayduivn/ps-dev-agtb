@@ -10,15 +10,15 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
+        this.context.on("change:selectedUser", this.updateProgressForSelectedUser);
+        this.context.on("change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
 
     bindDataChange: function () {
         this.model = this.context.forecasts.progress;
         this.worksheetCollection = this.context.forecasts.worksheet;
-        
         this.model.on('change', this.render);
         this.worksheetCollection.on('change reset', this.calculatePipelineSize);
-        this.context.on("change:selectedUser", this.updateProgressForSelectedUser);
     },
     
     calculatePipelineSize: function() {
@@ -48,17 +48,18 @@
         this.pipelineSize = ps;
         this.render();
     },
-    
+
     render: function () {
         _.extend(this, this.model.toJSON());
         app.view.View.prototype.render.call(this);
     },
 
     updateProgressForSelectedUser: function (context, user) {
+        var self = this;
         var urlParams = $.param({
-            userId: this.context.get("selectedUser")["id"],
-            timePeriodId: this.context.get("selectedTimePeriod")["id"],
-            shouldRollup: (this.context.get("showManagerOpportunities") ? 1 : 0)
+            userId: self.context.get("selectedUser")["id"],
+            timePeriodId: self.context.get("selectedTimePeriod")["id"],
+            shouldRollup: (self.context.get("showManagerOpportunities") ? 1 : 0)
         });
         this.model.fetch({
             data: urlParams
