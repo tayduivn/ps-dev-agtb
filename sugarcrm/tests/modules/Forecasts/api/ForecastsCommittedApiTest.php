@@ -40,7 +40,8 @@ class ForecastsCommittedApiTest extends RestTestBase
 
     }
 
-    /**
+    /***
+     * @group forecastapi
      */
     public function testForecastsCommittedApi()
     {

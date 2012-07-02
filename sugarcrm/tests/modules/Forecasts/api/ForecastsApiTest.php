@@ -36,6 +36,9 @@ class ForecastsApiTest extends RestTestBase
 
     public function tearDown(){}
 
+    /***
+     * @group forecastapi
+     */
     public function testForecastsApi()
     {
         $this->markTestIncomplete("Placeholder only:  " . $this->getName() . " needs to be implemented.");
