@@ -133,7 +133,7 @@
                 _.each(errors, function(fieldErrors, fieldName) {
                     this.trigger("error:validation:" + fieldName, fieldErrors);
                 }, this);
-                this.trigger("error:validation");
+                this.trigger("error:validation", errors);
                 isValid = false;
             }
 
