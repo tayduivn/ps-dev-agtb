@@ -29,9 +29,18 @@
 
 
 require_once('include/SugarCharts/ChartDisplay.php');
+require_once('modules/Reports/Report.php');
 
 class ChartDisplayMock47148 extends ChartDisplay
 {
+    /**
+     * Overwrite this method to not actually run a report
+     */
+    public function setReporter(Report $reporter)
+    {
+        $this->reporter = $reporter;
+    }
+
     public function get_row_remap($row)
     {
         return parent::get_row_remap($row);
@@ -45,11 +54,11 @@ class ChartDisplayMock47148 extends ChartDisplay
  */
 class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_backup;
+    private $_backup = array();
 
     public function setUp()
     {
-        $this->_backup['do_thousands'] = $GLOBALS['do_thousands'];
+        $this->_backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
         $GLOBALS['do_thousands'] = true;
     }
 
@@ -74,7 +83,7 @@ class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
         $row['count'] = count($row['cells']);
 
         // define fake of report
-        $report = new stdClass();
+        $report = new Report();
         $report->chart_numerical_position = 0;
         $report->chart_header_row = array(
             0 => array(

@@ -79,11 +79,7 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->chartDisplay = new ChartDisplay();
 
         $this->chartDisplay->setReporter(new Report(self::$report_defs[0]));
-        $sugarChart = $this->chartDisplay->getSugarChart();
-        $json = $sugarChart->buildJson($sugarChart->generateXML());
-        // fix-up the json
-        $json = str_replace(array("\t", "\n"), "", $json);
-        $json = str_replace("'", '"', $json);
+        $json = $this->chartDisplay->generateJson();
 
         $this->chartData = json_decode($json, true);
 
@@ -104,7 +100,7 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testChartDataHasTwoLabels()
     {
-        $this->assertEquals(2, count($this->chartData['labels']));
+        $this->assertEquals(2, count($this->chartData['label']));
     }
 
 }

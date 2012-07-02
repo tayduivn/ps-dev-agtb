@@ -85,6 +85,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp1->worst_case = 1100;
         $opp1->team_id = '1';
         $opp1->team_set_id = '1';
+        $opp1->timeperiod_id = TimePeriod::getCurrentId();
         $opp1->save();
 
         $line_1 = SugarTestProductUtilities::createProduct();
@@ -110,6 +111,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp2->likely_case_worksheet = 1100;
         $opp2->team_id = '1';
         $opp2->team_set_id = '1';
+        $opp2->timeperiod_id = TimePeriod::getCurrentId();
         $opp2->save();
 
         $line_2 = SugarTestProductUtilities::createProduct();
@@ -134,6 +136,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp3->likely_case_worksheet = 1100;
         $opp3->team_id = '1';
         $opp3->team_set_id = '1';
+        $opp3->timeperiod_id = TimePeriod::getCurrentId();
         $opp3->save();
 
         $line_3 = SugarTestProductUtilities::createProduct();
@@ -159,6 +162,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp4->worst_case = 1100;
         $opp4->team_id = '1';
         $opp4->team_set_id = '1';
+        $opp4->timeperiod_id = TimePeriod::getCurrentId();
         $opp4->save();
 
         $line_4 = SugarTestProductUtilities::createProduct();
@@ -184,6 +188,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp5->likely_case_worksheet = 1100;
         $opp5->team_id = '1';
         $opp5->team_set_id = '1';
+        $opp5->timeperiod_id = TimePeriod::getCurrentId();
         $opp5->save();
 
         $line_5 = SugarTestProductUtilities::createProduct();
@@ -198,7 +203,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $line_5->save();
 
         self::$report_defs = array();
-        self::$report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"best_case","label":"Best case","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case","label":"Likely case","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case","label":"SUM: Best case","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case","label":"SUM: Likely case","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test 8","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1.1_table_filter_row_3","Filter.1.2_table_filter_row_4"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"operator":"AND","0":{"name":"timeperiod_id","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["8c80c447-b5c3-c71e-78bc-4fcee62190fa"]},"1":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","runtime":1,"input_name0":["Current User"]}},"1":{"operator":"OR","0":{"name":"probability","table_key":"self","qualifier_name":"greater_equal","runtime":1,"input_name0":"70","input_name1":"on"},"1":{"name":"forecast","table_key":"self","qualifier_name":"equals","runtime":1,"input_name0":["yes"]}}}}}', 'detailed_summary', 'vBarF');
+        self::$report_defs['ForecastSeedReport1'] = array('Opportunities', 'ForecastSeedReport1', '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"best_case","label":"Best case","table_key":"self"},{"name":"best_case_worksheet","label":"Best Case (adjusted)","table_key":"self"},{"name":"likely_case","label":"Likely case","table_key":"self"},{"name":"likely_case_worksheet","label":"Likely Case (adjusted)","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case","label":"SUM: Best case","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"best_case_worksheet","label":"SUM: Best Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case","label":"SUM: Likely case","field_type":"currency","group_function":"sum","table_key":"self"},{"name":"likely_case_worksheet","label":"SUM: Likely Case (adjusted)","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test 8","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case_worksheet:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1.1_table_filter_row_3","Filter.1.2_table_filter_row_4"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"operator":"AND","0":{"name":"timeperiod_id","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["' . TimePeriod::getCurrentId() .'"]},"1":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","runtime":1,"input_name0":["Current User"]}},"1":{"operator":"OR","0":{"name":"probability","table_key":"self","qualifier_name":"greater_equal","runtime":1,"input_name0":"70","input_name1":"on"},"1":{"name":"forecast","table_key":"self","qualifier_name":"equals","runtime":1,"input_name0":["yes"]}}}}}', 'detailed_summary', 'vBarF');
         //self::$report_defs['ForecastSeedReport2'] = array('Opportunities', 'ForecastSeedReport2', '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"best_case","label":"Best case","table_key":"self"},{"name":"likely_case","label":"Likely case","table_key":"self"}],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum"},{"name":"amount","label":"Opportunity Amount","table_key":"self","type":"currency"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"amount","label":"Opportunity Amount","table_key":"self"},{"name":"amount","label":"SUM: Opportunity Amount","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"Test 4","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:amount:sum","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:timeperiods":{"name":"Opportunities  >  Time Periods","parent":"self","link_def":{"name":"timeperiods","relationship_name":"opportunities_timeperiods","bean_is_lhs":false,"link_type":"one","label":"TimePeriods","module":"TimePeriods","table_key":"Opportunities:timeperiods"},"dependents":["Filter.1_table_filter_row_1"],"module":"TimePeriods","label":"TimePeriods"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Opportunities:assigned_user_link"},"dependents":["Filter.1_table_filter_row_2"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"name","table_key":"Opportunities:timeperiods","qualifier_name":"is","runtime":1,"input_name0":["last_current_next"]},"1":{"name":"id","table_key":"Opportunities:assigned_user_link","qualifier_name":"reports_to","runtime":1,"input_name0":["Current User"]},"2":{"name":"probability","table_key":"self","qualifier_name":"greater","runtime":1,"input_name0":"70","input_name1":"on"}}}}', 'detailed_summary', 'vBarF');
         parent::setUpBeforeClass();
     }
@@ -251,89 +256,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
             //echo var_export($row, true);
         }
 
-        $this->assertEquals(4, $count);
-
-        //$report_data = json_decode($saved_report->content, true);
-        //$parser = new SugarParsers_Filter(new Opportunity());
-
-
-        //echo var_export($report_data);
-        /**
-         * These Queries should give you the data you need to begin building the chart
-         *
-         */
-        /*
-        foreach($report->query_list as $query)
-        {
-            $result = $GLOBALS['db']->query($query);
-            while(($row = $GLOBALS['db']->fetchByAssoc($result)))
-            {
-                echo var_export($row, true);
-            }
-        }
-        */
+        // this should only return the 2 ppl that direct report to the current user.
+        $this->assertEquals(2, $count);
     }
-
-    /*
-    public function testForecastSeedReport2()
-    {
-        global $current_user, $mod_strings;
-        $mod_strings = return_module_language('en', 'Opportunities');
-        $saved_report = new SavedReport();
-        $result = $saved_report->save_report(-1, $current_user->id, self::$report_defs['ForecastSeedReport2'][1], self::$report_defs['ForecastSeedReport2'][0], self::$report_defs['ForecastSeedReport2'][3], self::$report_defs['ForecastSeedReport2'][2], 1, '1', self::$report_defs['ForecastSeedReport2'][4]);
-        //Assert that we have created the report
-        $this->assertNotEmpty($result);
-        $report = new Report($saved_report->content);
-        $report->run_query();
-        $report->run_summary_query();
-        $this->assertEquals(2, count($report->query_list));
-        $report_data = json_decode($saved_report->content, true);
-
-        //Now re-create the report and then json_encode
-        //This is the core of the test.  Our idea is perhaps that we load the defined seed report and then pass in these dynamic filters
-        $report_data['filters_def'] = array(
-            'Filter_1' =>
-            array(
-                'operator' => 'AND',
-                0 =>
-                array(
-                    'name' => 'name',
-                    'table_key' => 'Opportunities:timeperiods',
-                    'qualifier_name' => 'is',
-                    'runtime' => 1,
-                    'input_name0' =>
-                    array(
-                        0 => 'last_current_next',
-                    ),
-                ),
-                1 =>
-                array(
-                    'name' => 'id',
-                    'table_key' => 'Opportunities:assigned_user_link',
-                    'qualifier_name' => 'reports_to',
-                    'runtime' => 1,
-                    'input_name0' =>
-                    array(
-                        0 => 'Current User',
-                    ),
-                ),
-                2 =>
-                array(
-                    'name' => 'probability',
-                    'table_key' => 'self',
-                    'qualifier_name' => 'greater',
-                    'runtime' => 1,
-                    'input_name0' => '70',
-                    'input_name1' => 'on',
-                ),
-            ),
-        );
-
-        $report = new Report(json_encode($report_data));
-        $report->run_query();
-        $report->run_summary_query();
-        $this->assertEquals(2, count($report->query_list));
-
-    }
-    */
 }
