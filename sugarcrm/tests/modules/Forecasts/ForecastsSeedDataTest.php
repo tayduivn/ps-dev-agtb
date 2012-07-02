@@ -49,7 +49,6 @@ function tearDown()
 }
 
 /**
- * @outputBuffering disabled
  *
  */
 function testPopulateSeedData()

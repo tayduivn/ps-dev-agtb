@@ -1605,7 +1605,7 @@ class MysqlManager extends DBManager
         // figure you may want to manipulate these in PHP so they are in the most convenient form for
         // use in the stored procedure.
 
-        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
+        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '{$this->quote($fields)}')";
         return $sql;
     }
 
