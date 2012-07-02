@@ -184,14 +184,15 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     {
         //getting data from worksheet table for reportees
         $reportees_query = "SELECT u.user_name user_name,
+                            w.forecast,
                             w.best_case best_adjusted,
-                            w.likely_case likely_adjusted
+                            w.likely_case likely_adjusted,
+                            w.worst_case worst_adjusted
                             FROM worksheet w, users u
                             WHERE w.related_id = u.id
                             AND w.timeperiod_id = '{$this->timeperiod_id}'
                             AND w.user_id = '{$this->user_id}'
-                            AND w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}')
-                            AND w.forecast_type = 'Rollup'";
+                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))";
 
         $result = $GLOBALS['db']->query($reportees_query);
 
@@ -201,25 +202,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         {
             $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
             $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
-        }
-
-        //getting data from opportunities table for manager
-        $manager_query = "SELECT u.user_name user_name,
-                            SUM(o.best_case) best_adjusted,
-                            SUM(o.likely_case) likely_adjusted
-                            FROM users u, opportunities o
-                            WHERE u.id = o.assigned_user_id
-                            AND o.timeperiod_id = '{$this->timeperiod_id}'
-                            AND o.assigned_user_id = '{$this->user_id}'
-                            GROUP BY user_name";
-
-
-        $result = $GLOBALS['db']->query($manager_query);
-
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
-            $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
+            $data[$row['user_name']]['forecast'] = $row['forecast'];
         }
 
         return $data;
