@@ -24,6 +24,11 @@
         initialize: function(attributes){
             Backbone.Model.prototype.initialize.call(this, attributes);
             this._relatedCollections = null;
+
+            // Populate with default values only if the model is new
+            if (this.isNew() && this._defaults) {
+                this.set(this._defaults, { silent: true });
+            }
         },
 
         /**
