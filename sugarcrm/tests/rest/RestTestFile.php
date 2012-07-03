@@ -93,11 +93,11 @@ class RestTestFile extends RestTestBase {
         //$this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
         $this->assertNull($reply['reply'], 'Decoded reply should be null');
         $this->assertNotEmpty($reply['replyRaw'], 'Raw Reply should contain an HTML encoded JSON string');
-        $this->assertContains('&quot;xhr&quot;', $reply['replyRaw'], 'Raw reply should contain "xhr"');
+        $this->assertContains('&quot;picture&quot;', $reply['replyRaw'], 'Raw reply should contain "picture"');
 
         $decoded = json_decode(html_entity_decode($reply['replyRaw']), true);
-        $this->assertNotEmpty($decoded['picture']['xhr'], 'Sugar HTML JSON result not decodeable');
-        $this->assertInternalType('array', $decoded['picture']['xhr'], 'Expected array after decoding, some other type returned');
+        $this->assertNotEmpty($decoded['picture']['content-type'], 'Sugar HTML JSON result not decodeable');
+        $this->assertEquals('image/png', $decoded['picture']['content-type'], 'Content Type value incorrect');
     }
 
     public function testPutUploadImageToContact() {
@@ -151,6 +151,29 @@ class RestTestFile extends RestTestBase {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
+    
+    public function testSimulateFileTooLarge() {
+        // Send an empty POST request to the file endpoint leaving the request headers in place
+        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
+        
+        // One more time, this time without sending the oauth_token (simulates a clobbered body)
+        $reply = $this->_restCallNoAuthHeader('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
+    }
+    
+    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest() {
+        // Send an empty GET and POST request to make sure we get a needs login error
+        $reply = $this->_restCallNoAuthHeader('Notes');
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
+        
+        $reply = $this->_restCallNoAuthHeader('Notes', '', 'POST');
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
+    }
 
     protected function _restCallPut($urlPart, $args, $passInQueryString = true) {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
@@ -176,6 +199,51 @@ class RestTestFile extends RestTestBase {
         $response = file_get_contents($url, false, $context);
 
         return array('info' => array(), 'reply' => json_decode($response,true), 'replyRaw' => $response, 'error' => null);
+    }
+    
+    protected function _restCallNoAuthHeader($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
+    {
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
+        $ch = curl_init($urlBase.$urlPart);
+        if (!empty($postBody)) {
+            if (empty($httpAction)) {
+                $httpAction = 'POST';
+                curl_setopt($ch, CURLOPT_POST, 1); // This sets the POST array
+                $requestMethodSet = true;
+            }
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
+        } else {
+            if (empty($httpAction)) {
+                $httpAction = 'GET';
+            }
+        }
+        
+        // Only set a custom request for not POST with a body
+        // This affects the server and how it sets its superglobals
+        if (empty($requestMethodSet)) {
+            if ($httpAction == 'PUT' && empty($postBody) ) {
+                curl_setopt($ch, CURLOPT_PUT, 1);
+            } else {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
+            }
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $addedHeaders);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+
+        if (is_array($addedOpts) && !empty($addedOpts)) {
+            // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
+            foreach ($addedOpts as $opt => $val) {
+                curl_setopt($ch, $opt, $val);
+            }
+        }
+
+        $httpReply = curl_exec($ch);
+        $httpInfo = curl_getinfo($ch);
+        $httpError = $httpReply === false ? curl_error($ch) : null;
+
+        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
 }
 
