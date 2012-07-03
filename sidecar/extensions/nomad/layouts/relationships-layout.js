@@ -18,6 +18,7 @@
 
             var listView = this.getComponent('list');
             listView.template =  app.template.get("list-relationships");
+            listView.headerHeight = 100;
 
             if (searchListView) {
                 searchListView.setListView(listView);

@@ -48,6 +48,9 @@
                     });
                 }
             }
+
+            this.headerHeight = 144; //TODO: refactor it
+
         },
 
         _renderSelf: function () {
@@ -59,6 +62,25 @@
             if (this.collection.next_offset === -1) {
                 this.$('.show-more-bottom-btn').hide();
             }
+
+            var listContainer = this.$el.find('.list-container');
+
+            var callbackFunction = _.bind(function() {
+                this.collection.fetch({
+                    relate: !!this.context.get('link'),
+                    success: _.bind(function() {
+                        listContainer.pullToRefresh('hide');
+                    }, this)
+                });
+
+            }, this);
+
+            listContainer.pullToRefresh({
+                'callback': callbackFunction,
+                'height': 50,
+                'top':this.headerHeight - 50
+            });
+
         },
 
         search: function(query) {

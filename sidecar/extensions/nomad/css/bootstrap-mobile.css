@@ -3973,6 +3973,7 @@ html {
 }
 .listing article.nav.show-more-top-btn {
   top: 93px;
+  z-index: 2;
 }
 .listing article.nav:last-child {
   border-top: 1px solid #b5b5b5;
