@@ -174,6 +174,7 @@ $dictionary['PdfManager'] = array(
         array (
             'required' => false,
             'name' => 'title',
+            'default' => 'SugarCRM',
             'vname' => 'LBL_TITLE',
             'type' => 'varchar',
             'massupdate' => 0,
