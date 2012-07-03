@@ -233,7 +233,7 @@
      */
     updateWorksheetByMgrOpps: function(params){
         var model = this.context.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
         this.render();
     },
 
@@ -257,14 +257,14 @@
         if(!this.showMe()){
         	return false;
         }
-        model.url = app.config.serverUrl + "/Forecasts/worksheetManager?timeperiod_id=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
         model.fetch();
         this.render();
     },
 
     createURL:function()
     {
-        var url = app.config.serverUrl + "/Forecasts/worksheetManager";
+        var url = app.config.serverUrl + "/Forecasts/worksheetmanager";
         return url;
     },
 
