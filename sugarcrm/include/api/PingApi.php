@@ -85,5 +85,4 @@ class PingApi extends SugarApi {
         return 'pong';
     }
 
-
 }
