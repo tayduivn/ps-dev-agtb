@@ -90,8 +90,7 @@
         // amount. Also, add true will make it append to already loaded records.
         options.limit   = self.limit || null;
         options.success = function() {
-                self.render();
-                window.scrollTo(0, document.body.scrollHeight);
+            self.render();
         };
         
         // refetch the collection
