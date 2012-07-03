@@ -27,16 +27,6 @@
             };
             app.view.View.prototype.initialize.call(this, options);
 
-            //for testing purposes
-            /*
-            this.collection.on("xxx", function() {
-                _.each(this.models, function(model) {
-
-                    model.set({"opportunity_role": "Influencer"});
-                });
-            });
-            */
-
             this.activeArticle = null;
             this.relationshipFields = null;                   //specific relationship data fields collection
             this.unlinkVisible = true;
