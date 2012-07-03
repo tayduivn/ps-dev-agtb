@@ -84,5 +84,4 @@ class PingApi extends SugarApi {
         // Just a normal ping request
         return 'pong';
     }
-
 }
