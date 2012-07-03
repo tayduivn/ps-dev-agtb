@@ -38,9 +38,9 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'worksheetManager' => array(
+            'worksheetmanager' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','worksheetManager'),
+                'path' => array('Forecasts','worksheetmanager'),
                 'pathVars' => array('',''),
                 'method' => 'worksheetManager',
                 'shortHelp' => 'Worksheet for manager view',
