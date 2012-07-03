@@ -47,7 +47,8 @@ class ACLField  extends ACLAction
     * @param STRING $category - the category (e.g module name - Accounts, Contacts)
     * @param STRING $type - the type (e.g. 'module', 'field')
     */
-    function getAvailableFields($module, $object=false){
+    static function getAvailableFields($module, $object=false){
+
         static $exclude = array('deleted', 'assigned_user_id');
         static $modulesAvailableFields = array();
         if(!isset($modulesAvailableFields[$module])){
@@ -280,9 +281,17 @@ class ACLField  extends ACLAction
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    function hasAccess($field, $module,$user_id, $is_owner)
-    {
-        if(is_admin($GLOBALS['current_user'])) return 4;
+    static function hasAccess($field, $module,$user_id, $is_owner){
+        static $is_admin = null;
+        if (is_null($is_admin)) {
+            $is_admin = is_admin($GLOBALS['current_user']);
+            if ( !$is_admin ) {
+                $is_admin = $GLOBALS['current_user']->isAdminForModule($module);
+            }            
+        }
+        if ($is_admin) {
+            return 4;
+        }
 
         if(!isset($_SESSION['ACL'][$user_id][$module]['fields'][$field])){
             return 4;

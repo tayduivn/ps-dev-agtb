@@ -303,7 +303,7 @@ ENDQ;
 	function addTeamSecurityClause() {
 		global $current_user;
 		if(!is_admin($current_user)) {
-			return " INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id  = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 group by tst.team_set_id) folder_tf on folder_tf.team_set_id = emails.team_set_id ";
+			return " INNER JOIN	team_sets_teams tst	ON tst.team_set_id = emails.team_set_id	INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 ";
 		}
 	}
 	//END SUGARCRM flav=pro ONLY
@@ -337,7 +337,7 @@ ENDQ;
 				  " JOIN emails_text on emails.id = emails_text.email_id
                   WHERE folders_rel.folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0";
 			if ($this->is_group) {
-				$q = $q . " AND emails.assigned_user_id is null";
+				$q = $q . " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
 			$r = $this->db->limitQuery($q . $order, $start, $pageSize);
 		}
@@ -396,7 +396,7 @@ ENDQ;
 		//END SUGARCRM flav=pro ONLY
 			" WHERE folder_id = '{$folderId}' AND folders_rel.deleted = 0 AND emails.deleted = 0" ;
 			if ($this->is_group) {
-				$q .= " AND emails.assigned_user_id IS null";
+				$q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
 			$r = $this->db->query ( $q ) ;
 		}
@@ -425,7 +425,7 @@ ENDQ;
 		//END SUGARCRM flav=pro ONLY
                "AND fr.polymorphic_id = emails.id AND emails.status = 'unread' AND emails.deleted = 0" ;
             if ($this->is_group) {
-                $q .= " AND emails.assigned_user_id IS null";
+                $q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
             }
             $r = $this->db->query ( $q ) ;
         }

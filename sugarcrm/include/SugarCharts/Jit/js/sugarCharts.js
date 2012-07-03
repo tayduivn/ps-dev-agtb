@@ -28,24 +28,24 @@
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
 function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
-    this.chartObject = "";
-                //Bug#45831
-                if(document.getElementById(chartId) == null) {
-                    return false;
-                }
+            this.chartObject = "";
+            //Bug#45831
+            if(document.getElementById(chartId) == null) {
+                return false;
+            }
 
-				var labelType, useGradients, nativeTextSupport, animate;		    	
-				(function() {
-				  var ua = navigator.userAgent,
-					  typeOfCanvas = typeof HTMLCanvasElement,
-					  nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-					  textSupport = nativeCanvasSupport 
-						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-				  labelType = 'Native';
-				  nativeTextSupport = labelType == 'Native';
-				  useGradients = false;
-				  animate = false;
-				})();
+            var labelType, useGradients, nativeTextSupport, animate;
+            (function() {
+              var ua = navigator.userAgent,
+                  typeOfCanvas = typeof HTMLCanvasElement,
+                  nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
+                  textSupport = nativeCanvasSupport
+                    && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+              labelType = 'Native';
+              nativeTextSupport = labelType == 'Native';
+              useGradients = false;
+              animate = false;
+            })();
 
 			var delay = 500;
             var that = this;
@@ -62,6 +62,39 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 
                             var properties = $jit.util.splat(json.properties)[0];
                             var marginBottom = (chartConfig["orientation"] == 'vertical' && json.values.length > 8) ? 20*4 : 20;
+
+                            // Bug #49732 : Bars in charts overlapping
+                            // if to many data to display fix canvas width and set up width to container to allow overflow
+                            if ( chartConfig["orientation"] == 'vertical' )
+                            {
+                                function fixChartContainer(event, itemsCount)
+                                {
+                                    var region = YAHOO.util.Dom.getRegion('content');
+                                    if ( region && region.width )
+                                    {
+                                        // one bar needs about 40 px to correct display data and labels
+                                        var realWidth = itemsCount * 40;
+                                        if ( realWidth > region.width )
+                                        {
+                                            var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
+                                            var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
+                                            if ( chartContainer.length > 0 && chartCanvas.length > 0 )
+                                            {
+                                                chartContainer = YAHOO.util.Dom.get(chartContainer[0])
+                                                YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
+                                                chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
+                                                YAHOO.util.Dom.setStyle(chartCanvas, 'width', realWidth+'px');
+                                                if (!event)
+                                                {
+                                                    YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                fixChartContainer(null, json.values.length);
+                            }
+
                             //init BarChart
                             var barChart = new $jit.BarChart({
                                 //id of the visualization container
@@ -106,13 +139,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                     bottom: marginBottom
                                 },
                                 ScrollNote: {
-                                    text: (chartConfig["scroll"] && $jit.util.isTouchScreen()) ? "Use two fingers to scroll" : "",
+                                    text: (chartConfig["scroll"] && SUGAR.util.isTouchScreen()) ? "Use two fingers to scroll" : "",
                                     size: 12
                                 },
                                 Events: {
                                     enable: true,
                                     onClick: function(node) {
-                                        if(!node || $jit.util.isTouchScreen()) return;
+                                        if(!node || SUGAR.util.isTouchScreen()) return;
                                         if(node.link == undefined || node.link == '') return;
                                         window.location.href=node.link;
                                     }
@@ -143,7 +176,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                                             tip.innerHTML = '<b>' + elem.name + '</b>: ' + elem.valuelabel ;
                                         } else {
                                             if(elem.link != 'undefined' && elem.link != '') {
-                                                drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+                                                drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
                                             } else {
                                                 drillDown = "";
                                             }
@@ -259,7 +292,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
-					if(!node || $jit.util.isTouchScreen()) return;  
+					if(!node || SUGAR.util.isTouchScreen()) return;
 					if(node.link == 'undefined' || node.link == '') return;
 					window.location.href=node.link;
 					}
@@ -285,7 +318,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					enable: true,
 					onShow: function(tip, elem) {
 					  if(elem.link != 'undefined' && elem.link != '') {
-						drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
 					  } else {
 						drillDown = "";
 					  }
@@ -425,7 +458,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
-					if(!node || $jit.util.isTouchScreen()) return;  
+					if(!node || SUGAR.util.isTouchScreen()) return;
 					if(node.link == 'undefined' || node.link == '') return;
 					window.location.href=node.link;
 					}
@@ -442,7 +475,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					enable: true,
 					onShow: function(tip, elem) {
 					  if(elem.link != 'undefined' && elem.link != '') {
-						drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
 					  } else {
 						drillDown = "";
 					  }
@@ -553,7 +586,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
-					if(!node || $jit.util.isTouchScreen()) return;  
+					if(!node || SUGAR.util.isTouchScreen()) return;
 					if(node.link == 'undefined' || node.link == '') return;
 					window.location.href=node.link;
 					}
@@ -579,7 +612,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					enable: true,
 					onShow: function(tip, elem) {
 					  if(elem.link != 'undefined' && elem.link != '') {
-						drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
 					  } else {
 						drillDown = "";
 					  }
@@ -707,7 +740,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
-					if(!node || $jit.util.isTouchScreen()) return;  
+					if(!node || SUGAR.util.isTouchScreen()) return;
 					if(node.link == 'undefined' || node.link == '') return;
 					window.location.href=node.link;
 					}
@@ -724,7 +757,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					enable: true,
 					onShow: function(tip, elem) {
 					  if(elem.link != 'undefined' && elem.link != '') {
-						drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
 					  } else {
 						drillDown = "";
 					  }

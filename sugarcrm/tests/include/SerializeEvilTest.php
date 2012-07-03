@@ -22,6 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once("include/Sugarpdf/sugarpdf_config.php");
 require_once 'include/tcpdf/tcpdf.php';
 require_once 'include/SugarCache/SugarCacheFile.php';
 require_once 'modules/Import/sources/ImportFile.php';

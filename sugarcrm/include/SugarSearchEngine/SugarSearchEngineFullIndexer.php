@@ -162,7 +162,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->info("Total time to populate full system index queue: $totalTime (s)");
         $avgRecs = ($totalCount != 0 && $totalTime != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
-        $GLOBALS['log']->info("Total number of records queued: $totalCount , records per sec. $avgRecs");
+        $GLOBALS['log']->info("Total number of modules queued: $totalCount , modules per sec. $avgRecs");
 
         return $this;
 
@@ -178,12 +178,17 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
         $db = DBManagerFactory::getInstance('fts');
         $obj = BeanFactory::getBean($module, null);
+        if (!($obj instanceOf SugarBean)) {
+            $GLOBALS['log']->error("Full indexer: Failed to get bean for module: $module");
+            return 0;
+        }
         $beanName = BeanFactory::getBeanName($module);
         $tableName = self::QUEUE_TABLE;
         $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
         $db->query($query, true, "Error populating index queue for fts");
         //For each module we populate the fts queue with, create a consumer to digest the beans as well.
         $this->createJobQueueConsumerForModule($module);
+        return 1;
     }
 
     /**
@@ -377,6 +382,13 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function run($module)
     {
+        if (isSearchEngineDown())
+        {
+            $GLOBALS['log']->fatal('FTS Server is down, postponing the job for full index.');
+            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+            return true;
+        }
+
         $GLOBALS['log']->info("Going to index all records in module {$module} ");
         $startTime = microtime(true);
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);

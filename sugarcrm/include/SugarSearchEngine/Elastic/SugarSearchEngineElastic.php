@@ -149,6 +149,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     protected function indexSingleBean($bean)
     {
+        if (isSearchEngineDown())
+        {
+            $this->addRecordsToQueue(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean)));
+            return;
+        }
         $GLOBALS['log']->info("Preforming single bean index");
         try
         {
@@ -161,12 +166,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to index bean with error: {$e->getMessage()}");
+            if ($this->checkException($e))
+            {
+                $recordsToBeQueued = $this->getRecordsFromDocs(array($doc));
+                $this->addRecordsToQueue($recordsToBeQueued);
+            }
         }
 
     }
 
     public function delete(SugarBean $bean)
     {
+        if (isSearchEngineDown())
+        {
+            return;
+        }
         if(empty($bean->id))
             return;
 
@@ -180,6 +194,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to delete index: {$e->getMessage()}");
+            $this->checkException($e);
         }
     }
 
@@ -188,6 +203,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function bulkInsert(array $docs)
     {
+        if (isSearchEngineDown())
+        {
+            $recordsToBeQueued = $this->getRecordsFromDocs($docs);
+            $this->addRecordsToQueue($recordsToBeQueued);
+            return;
+        }
+
         try
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -217,8 +239,26 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
+            if ($this->checkException($e))
+            {
+                $recordsToBeQueued = $this->getRecordsFromDocs($batchedDocs);
+                $this->addRecordsToQueue($recordsToBeQueued);
+            }
         }
 
+    }
+
+    protected function getRecordsFromDocs($docs)
+    {
+        $records = array();
+        $i = 0;
+        foreach ($docs as $doc)
+        {
+            $records[$i]['bean_id'] = $doc->getId();
+            $records[$i]['bean_module'] = BeanFactory::getBeanName($doc->getType());
+            $i++;
+        }
+        return $records;
     }
 
     /**
@@ -481,6 +521,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
+        if (isSearchEngineDown())
+        {
+            return null;
+        }
+
         $appendWildcard = false;
         if( !empty($options['append_wildcard']) && $this->canAppendWildcard($queryString) )
         {
@@ -573,6 +618,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
+            $this->checkException($e);
             return null;
         }
 
@@ -608,6 +654,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false)
     {
+        if (isSearchEngineDown())
+        {
+            return;
+        }
+
         try
         {
             // create an elastic index
@@ -622,6 +673,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->error("Unable to create index with error: {$e->getMessage()}");
+            $this->checkException($e);
         }
 
     }

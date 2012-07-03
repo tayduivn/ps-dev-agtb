@@ -44,12 +44,13 @@ function DurationDependency(start_field,end_field,duration_field,format){
 	this.date_delimiter = /([-.\\/])/.exec(this.date_format)[0];
 	this.time_delimiter = /([.:])/.exec(this.time_format)[0];
 	this.has_meridiem = /p/i.test(this.format);
-	
-	var date_format_cleaned = this.date_format.replace(/%/g,"").replace(new RegExp(this.date_delimiter, 'g'),"");
+
+	var delimiter = (this.date_delimiter=="."?"\\"+this.date_delimiter:this.date_delimiter);
+	var date_format_cleaned = this.date_format.replace(/%/g,"").replace(new RegExp(delimiter, 'g'),"");
 	this.month_pos = date_format_cleaned.search(/m/);
 	this.day_pos = date_format_cleaned.search(/d/);
-	this.year_pos = date_format_cleaned.search(/Y/);	
-	
+	this.year_pos = date_format_cleaned.search(/Y/);
+
 	if(document.getElementById(end_field).value != "")
 		this.calculate_duration();
 	else
