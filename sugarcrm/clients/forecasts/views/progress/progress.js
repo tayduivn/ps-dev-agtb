@@ -57,8 +57,8 @@
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
         var urlParams = $.param({
-            userId: self.context.get("selectedUser")["id"],
-            timePeriodId: self.context.get("selectedTimePeriod")["id"],
+            userId: context.attributes.selectedUser.id,
+            //timePeriodId: self.context.get("selectedTimePeriod")["id"],
             shouldRollup: (self.context.get("showManagerOpportunities") ? 1 : 0)
         });
         this.model.fetch({
