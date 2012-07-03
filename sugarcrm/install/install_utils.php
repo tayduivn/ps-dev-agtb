@@ -880,7 +880,7 @@ function handleSugarConfig() {
         'unsecureRoutes' => array('signup', 'error'),
         "clientID"=> "sugar"
     );
-    $configString = json_encode($portalConfig, true);
+    $configString = json_encode($portalConfig);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
     sugar_file_put_contents('portal2/config.js', $portalJSConfig);
 //END SUGARCRM flav=ent ONLY

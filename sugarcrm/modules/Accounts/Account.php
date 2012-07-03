@@ -137,16 +137,6 @@ class Account extends Company {
 	function Account() {
         parent::Company();
 
-        $this->setupCustomFields('Accounts');
-
-		foreach ($this->field_defs as $field)
-		{
-			if(isset($field['name']))
-			{
-				$this->field_name_map[$field['name']] = $field;
-			}
-		}
-
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
