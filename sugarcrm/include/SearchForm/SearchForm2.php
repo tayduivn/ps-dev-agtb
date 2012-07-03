@@ -819,7 +819,6 @@ require_once('include/EditView/EditView2.php');
                          global $current_user;
                          $field_value = $db->quote($current_user->id);
                          $operator = '=' ;
-                         $where .= ' AND ';
                      }
                  } else if(!empty($parms['closed_values']) && is_array($parms['closed_values'])) {
                      if( $parms['value'] == false ) {
@@ -981,7 +980,6 @@ require_once('include/EditView/EditView2.php');
                                  // So we have to fuzz out the math a little bit
                                  $field_value = array(($field_value - 0.01) , ($field_value + 0.01));
                                  $operator = 'between';
-                                 $where .= ' AND ';
                              }
                          }
 
