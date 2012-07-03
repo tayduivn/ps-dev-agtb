@@ -935,11 +935,10 @@ $cache_headers = <<<EOQ
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
 <IfModule mod_rewrite.c>
+    Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    Options +FollowSymLinks
-    RewriteEngine On
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 </IfModule>
