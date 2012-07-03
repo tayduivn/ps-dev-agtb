@@ -162,13 +162,6 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
 				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
-			//BEGIN SUGARCRM flav!=sales ONLY
-			if ($this->button_properties['add_to_passthru_data']['return_type']=='addtoprospectlist') {
-				if (isset($widget_data['query'])) {
-					$popup_request_data['passthru_data']['query']=$widget_data['query'];
-				}
-			}
-			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 

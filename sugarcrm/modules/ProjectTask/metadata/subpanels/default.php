@@ -54,24 +54,24 @@ if (isset($app) && isset($app->controller)){
 		        'name'=>array(
 				 	'vname' => 'LBL_LIST_NAME',
 					'widget_class' => 'SubPanelDetailViewLink',
-					'width' => '9999%',
+					'width' => '20%',
 				),
 				'percent_complete'=>array(
 				 	'vname' => 'LBL_LIST_PERCENT_COMPLETE',
-					'width' => '9999%',
+					'width' => '20%',
 				),
 				'status'=>array(
 				 	'vname' => 'LBL_LIST_STATUS',
-					'width' => '9999%',
+					'width' => '20%',
 				),
 				'assigned_user_name'=>array(
 				 	'vname' => 'LBL_LIST_ASSIGNED_USER_ID',
 				 	'module' => 'Users',
-					'width' => '9999%',
+					'width' => '20%',
 				),
 				'date_finish'=>array(
 				 	'vname' => 'LBL_LIST_DATE_DUE',
-					'width' => '9999%',
+					'width' => '20%',
 				),
 			),
 		);

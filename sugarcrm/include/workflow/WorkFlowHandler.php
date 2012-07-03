@@ -100,7 +100,14 @@ function process_alerts(&$focus, $alerts){
                     if(!empty($focus->emailAddress) && isset($old_addresses)) {
                         $focus->emailAddress->addresses = $old_addresses;
                     }
-                    $file = "custom/modules/".$focus->module_dir."/workflow/workflow_alerts.php";
+
+                // Bug 45142 - dates need to be converted to DB format for
+                // workflow alerts to work properly in Alerts then Actions
+                // situations - rgonzalez
+                $focus->fixUpFormatting();
+                // End Bug 45142
+
+                $file = "custom/modules/".$focus->module_dir."/workflow/workflow_alerts.php";
                     if(file_exists($file)){
                         include_once($file);
                         foreach($alerts as $alert){

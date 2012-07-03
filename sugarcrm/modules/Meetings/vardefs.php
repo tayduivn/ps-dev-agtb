@@ -138,6 +138,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Duration (hours)',
     'importable' => 'required',
     'required' => true,
+    'studio' => 'false',
   ),
   'duration_minutes' =>
   array (
@@ -146,7 +147,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'int',
     'group'=>'duration_hours',
     'len' => '2',
-    'comment' => 'Duration (minutes)'
+    'comment' => 'Duration (minutes)',
+    'studio' => 'false',
   ),
   'date_start' =>
   array (

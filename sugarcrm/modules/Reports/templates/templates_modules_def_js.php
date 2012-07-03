@@ -124,6 +124,7 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			if($module->object_name == 'Team' && $module->ACLFieldAccess('team_set_id', 'access', array("owner_override" => true))) {
 		       $module->field_defs['team_set_id'] = array('name'=>'team_set_id', 'type'=>'team_set_id', 'vname' => 'LBL_TEAMS', 'rname'=>'id', 'dbType'=>'id', 'id_name'=>'team_set_id');
 			}
+
 			//END SUGARCRM flav!=sales ONLY
 			ksort($module->field_defs);
 
@@ -135,6 +136,7 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 
 			foreach($module->field_defs as $field_def)
 			{
+
 			    if(isset($field_def['reportable']) &&
 			           $field_def['reportable'] == false)
 			    {
@@ -179,14 +181,10 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 						if($field_name == "vname")
 						{
 							$field_value = translate($field_value);
-							if(preg_match('/:$/',$field_value))
-			                                {
+							if(substr($field_value, -1) == ':')
+                            {
 								$field_value = substr($field_value,0,-1);
 							}
-							$field_value = addslashes($field_value);
-						}
-						else if ($field_name == 'comments' || $field_name == 'help') {
-							$field_value = addslashes($field_value);
 						}
 
 						if ($field_name != 'default' && $field_name != 'default_value') {

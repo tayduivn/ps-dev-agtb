@@ -47,7 +47,7 @@ class One2MBeanRelationship extends One2MRelationship
         // test to see if the relationship exist if the relationship between the two beans
         // exist then we just fail out with false as we don't want to re-trigger this
         // the save and such as it causes problems with the related() in sugarlogic
-        if($this->relationship_exists($lhs, $rhs)) return false;
+        if($this->relationship_exists($lhs, $rhs) && !empty($GLOBALS['resavingRelatedBeans'])) return false;
 
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
@@ -88,6 +88,11 @@ class One2MBeanRelationship extends One2MRelationship
             $this->callAfterAdd($lhs, $rhs);
             $this->callAfterAdd($rhs, $lhs);
         }
+
+        //One2MBean relationships require that the RHS bean be saved or else the relationship will not be saved.
+        //If we aren't already in a relationship save, intitiate a save now.
+        if (empty($GLOBALS['resavingRelatedBeans']))
+            SugarRelationship::resaveRelatedBeans();
     }
 
     protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
@@ -302,13 +307,27 @@ class One2MBeanRelationship extends One2MRelationship
         $alias = empty($params['join_table_alias']) ? "{$link->name}_rel": $params['join_table_alias'];
         $alias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
 
+        $tableInRoleFilter = "";
+        if ($targetTable == "meetings" && $linkIsLHS == false) { 
+            if ($alias == "meetings_activities_1_meetings_rel" ||
+                $alias == "meetings_activities_1_tasks_rel" ||
+                $alias == "meetings_activities_1_calls_rel" ||
+                $alias == "meetings_activities_1_emails_rel" ||
+                $alias == "meetings_activities_1_notes_rel")
+                $tableInRoleFilter = $alias;
+        }
+        
         //Set up any table aliases required
         $targetTableWithAlias = "$targetTable $alias";
         $targetTable = $alias;
 
         $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
-               . $this->getRoleWhere() . "\n";
+               . $this->getRoleWhere($tableInRoleFilter) . "\n";
+
+        if (!empty($params['return_as_array'])) {
+            $return_array = true;
+        }
 
         if (!empty($params['return_as_array'])) {
             $return_array = true;

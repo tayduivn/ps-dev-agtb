@@ -26,17 +26,17 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
         parent::SugarWidgetReportField($layout_manager);
     }
 
-	public function queryFilterEmpty($layout_def)
-	{
-	    $column = $this->_get_column_select($layout_def);
-	    return "($column IS NULL OR $column LIKE '' OR $column = '^^')";
-	}
+    public function queryFilterEmpty($layout_def)
+    {
+        $column = $this->_get_column_select($layout_def);
+        return "(coalesce(length($column),0) = 0 OR $column = '^^')";
+    }
 
     public function queryFilterNot_Empty($layout_def)
-	{
-	    $column = $this->_get_column_select($layout_def);
-		return "( $column IS NOT NULL AND $column <> '' AND $column != '^^' )\n";
-	}
+    {
+        $column = $this->_get_column_select($layout_def);
+        return "(coalesce(length($column),0) > 0 AND $column != '^^' )\n";
+    }
 
 	public function queryFilteris($layout_def) {
         $input_name0 = $this->getInputValue($layout_def);
@@ -45,7 +45,6 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
         {
             return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";
         }
-
 		return $this->_get_column_select($layout_def)." = ".$this->reporter->db->quoted($input_name0)."\n";
 	}
 

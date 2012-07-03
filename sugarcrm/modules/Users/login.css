@@ -123,4 +123,8 @@ input[type="text"], input[type="password"], textarea {
 	background-color:rgba(204,204,204,.8);
 	background-color: #cccccc\9;
 	}
+
+.loginBoxShadow .last {
+    border-bottom-color:#999999;
+}
 /*//END SUGARCRM flav!=com ONLY*/

@@ -241,6 +241,12 @@ eoq;
 						}
 						//END SUGARCRM flav=pro ONLY
 						$this->sugarbean->mark_deleted($id);
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        // ideally we should use after_delete logic hook
+                        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+                        $searchEngine = SugarSearchEngineFactory::getInstance();
+                        $searchEngine->delete($this->sugarbean);
+                        //END SUGARCRM flav=pro ONLY
 					}
 				}
 				else {
