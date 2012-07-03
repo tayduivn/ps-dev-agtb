@@ -336,7 +336,7 @@ echo "<br>";
         echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_REPORTS'].$line_exit_format;
         installLog($mod_strings['LBL_PERFORM_DEFAULT_REPORTS']);
         installerHook('pre_createDefaultReports');
-        require_once('modules/Reports/SeedReports.php');
+        require_once(get_custom_file_if_exists('modules/Reports/SeedReports.php'));
         create_default_reports();
         installerHook('post_createDefaultReports');
         echo $mod_strings['LBL_PERFORM_DONE'];

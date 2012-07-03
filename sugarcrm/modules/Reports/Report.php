@@ -157,6 +157,10 @@ class Report
             $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
         }
 
+        if (!empty($this->report_def['full_table_list']))
+        {
+            $this->fixReportDefs();
+        }
         $this->cleanLabels();
 
         if (!empty($this->report_def['report_name'])) {
@@ -436,6 +440,88 @@ class Report
     }
 
     /**
+     * Bug #52757
+     * Tries to find missed relations and removes them from full_table_list
+     */
+    public function fixReportDefs()
+    {
+        $validTableKeys = array();
+        // Collecting table_keys from display_columns
+        foreach ($this->report_def['display_columns'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from summary_columns
+        foreach ($this->report_def['summary_columns'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from group_defs
+        foreach ($this->report_def['group_defs'] as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+        // Collecting table_keys from filter_defs
+        $filters_def = array();
+        $recursiveArrayIterator = new RecursiveArrayIterator($this->report_def['filters_def']);
+        $recursiveIteratorIterator = new RecursiveIteratorIterator($recursiveArrayIterator, RecursiveIteratorIterator::SELF_FIRST);
+        foreach($recursiveIteratorIterator as $k => $v)
+        {
+            if (is_array($v) && !empty($v['table_key']))
+            {
+                $filters_def[] = $v;
+            }
+        }
+        foreach ($filters_def as $column)
+        {
+            if (in_array($column['table_key'], $validTableKeys) == false)
+            {
+                $validTableKeys[] = $column['table_key'];
+            }
+        }
+
+        // Filling dependencies from validTableKeys
+        $requiredTableKeys = array(
+            'self' => $this->module
+        );
+        foreach ($this->report_def['full_table_list'] as $k => $v)
+        {
+            if (in_array($k, $validTableKeys) == true)
+            {
+                $offset = -1;
+                while (($offset = strpos($k, ':', $offset + 1)) !== false)
+                {
+                    $requiredTableKeys[substr($k, 0, $offset)] = $k;
+                }
+                $requiredTableKeys[$k] = $k;
+            }
+        }
+
+        // Removing incorrect dependencies
+        foreach ($this->report_def['full_table_list'] as $k => $v)
+        {
+            if (in_array($k, $validTableKeys) == true)
+            {
+                continue;
+            }
+            if (!empty($requiredTableKeys[$k]))
+            {
+                continue;
+            }
+            unset($this->report_def['full_table_list'][$k]);
+        }
+    }
+
+    /**
      * Ensure that report labels do not have HTML inside
      */
     protected function cleanLabels()
@@ -539,9 +625,17 @@ class Report
 
     function _load_all_fields()
     {
+        $tmp = array();
         foreach ($this->full_table_list as $table_key => $table_data) {
+            if(!isset($table_data['module'])) continue;
+
+            if(!isset($tmp[$table_data['module']]))
+            {
+                $tmp[$table_data['module']] = array();
+            }
             foreach ($this->full_bean_list[$table_key]->field_defs as $field_def)
             {
+                $tmp[$table_data['module']][$field_def['name']] = 0;
                 $field_def['module'] = $this->full_table_list[$table_key]['bean_label'];
                 $field_def['real_table'] = $this->full_bean_list[$table_key]->table_name;
                 //if ( ! empty($field_def['source']) && $field_def['source'] == 'custom_fields' ) {
@@ -555,10 +649,16 @@ class Report
                     require_once($beanFiles[$beanList[$field_def['ext2']]]);
                     $joinFocus = new $beanList[$field_def['ext2']]();
                     $field_def['secondary_table'] = $joinFocus->table_name;
+                    if(isset($table_data['link_def']) && $table_data['link_def']['module'] == $table_data['module'])
+                    {
+                        $tmp[$table_data['module']][$field_def['name']]++;
+                    }
                 }
+                $field_def['rep_rel_name'] = $field_def['name'] . '_' . $tmp[$table_data['module']][$field_def['name']];
                 $this->all_fields[$table_key . ':' . $field_def['name']] = $field_def;
             }
         }
+	unset($tmp);
     }
 
 
@@ -899,13 +999,14 @@ class Report
             $joinFocus = new $beanList[$field_def['ext2']]();
             */
             //#27662  , if the table was not in reristed cutom links, we will regist it
-            if (!isset($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']])) {
+            $kk = $field_def['secondary_table'] . '_' . $field_def['rep_rel_name'];
+            if (!isset($this->selected_loaded_custom_links[$kk])) {
                 $this->jtcount++;
                 $params = array(
                     'join_table_alias' => $field_def['secondary_table'] . $this->jtcount,
                     'base_table' => $field_def['secondary_table'],
                     'join_id' => $layout_def['table_alias'] . '.' . $field_def['id_name']);
-                $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']] = $params;
+                $this->selected_loaded_custom_links[$kk] = $params;
             }
         }
         if (!empty($layout_def['name']) && ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')) {
@@ -1005,7 +1106,7 @@ class Report
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         //BEGIN SUGARCRM flav!=sales ONLY
-        if (!is_admin($GLOBALS['current_user']) && !$this->focus->disable_row_level_security) {
+        if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
             if (!empty($where_clause)) {
                 $where_clause .= " AND";
             }
@@ -1200,7 +1301,21 @@ return str_replace(' > ','_',
         $got_join = array();
         foreach ($this->report_def[$key] as $index => $display_column) {
             if ($display_column['name'] == 'count') {
-                $select_piece = 'COUNT(*) count';
+                if ('self' != $display_column['table_key'])
+                {
+                    // use table name itself, not it's alias
+                    $table_name = $this->alias_lookup[$display_column['table_key']];
+                }
+                else
+                {
+                    // use table alias
+                    if(isset($this->full_table_list['self']['params']['join_table_alias'])) {
+                        $table_name = $this->full_table_list['self']['params']['join_table_alias'];
+                    } else {
+                        $table_name = $this->full_bean_list['self']->table_name;
+                    }
+                }
+                $select_piece = 'COUNT(DISTINCT ' . $table_name . '.id) ' . $table_name . '__count';
                 $got_count = 1;
             }
             else {
@@ -1510,7 +1625,7 @@ return str_replace(' > ','_',
             require_once($beanFiles[$table_def['bean_name']]);
             $focus = new $table_def['bean_name']();
             //BEGIN SUGARCRM flav!=sales ONLY
-            if (!is_admin($GLOBALS['current_user']) && !$focus->disable_row_level_security) {
+            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
                 $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
                                     tst INNER JOIN team_memberships team_memberships ON tst.team_id =
                                     team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
@@ -1820,7 +1935,11 @@ return str_replace(' > ','_',
     {
         $this->_load_currency();
         $get_next_row = $this->get_next_row('summary_result', 'summary_columns');
-        $this->current_summary_row_count = $get_next_row['count'];
+        if(isset($get_next_row['count'])) {
+            $this->current_summary_row_count = $get_next_row['count'];
+        } else {
+            $this->current_summary_row_count = null;
+        }
 
         return $get_next_row;
     }
@@ -2007,6 +2126,28 @@ return str_replace(' > ','_',
                 $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
                 $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                
+                // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
+                // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
+                if (strpos($display_column['name'], '_usdoll') !== false && $display_column['type'] == 'currency') {
+                	// Get the fields
+					$fields = $display_column['fields'];
+					// Get truncated field names: amount, currency_id, amount_usdollar
+					$currencyId = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_CURRENCY");
+					$amount = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT");
+					$amountUSDollar = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_USDOLLAR");
+					// If currency is set to US Dollar, and the amount and amountUSDollar are equal, skip pre-processing
+					// Otherwise, use the currency and amount to convert to dollar and ignore amount_usdollar
+					if (isset($fields[$currencyId]) && !($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
+						// Get currency
+						$currency = new Currency();
+						$currency->retrieve($fields[$currencyId]);
+						// Just convert to dollar, because if the currency isn't found, conversion rate is set to one, and won't change anything
+						$display = $currency->convertToDollar($fields[$amount]);
+					}
+                }
+                
+                // Call the conversion to prefered currency
                 $display = currency_format_number($display, $params);
 
             }
@@ -2017,10 +2158,11 @@ return str_replace(' > ','_',
 
             if (isset($display_column['type'])) {
 
-                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_" . strtoupper($display_column['name']));
+                $alias = $this->alias_lookup[$display_column['table_key']];
+                $array_key = strtoupper($alias . '__count');
 
-                if (array_key_exists($field_name, $display_column['fields'])) {
-                    $displayData = $display_column['fields'][$field_name];
+                if (array_key_exists($array_key, $display_column['fields'])) {
+                    $displayData = $display_column['fields'][$array_key];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
                         $display = "";
                     }
@@ -2064,8 +2206,19 @@ return str_replace(' > ','_',
 
         $row['cells'] = $cells;
 
-        if (isset($db_row['count'])) {
-            $row['count'] = $db_row['count'];
+        // calculate summary rows count as the product of all count fields in summary
+        $count = 1;
+        $count_exists = false;
+        foreach ($db_row as $count_column => $count_value)
+        {
+            if (substr($count_column, -7) == "__count") {
+                $count *= max($count_value, 1);
+                $count_exists = true;
+            }
+        }
+
+        if ($count_exists) {
+            $row['count'] = $count;
         }
 
         // for charts
@@ -2245,8 +2398,8 @@ return str_replace(' > ','_',
         global $beanList;
         $extModule = new $beanList[$field_def['ext2']];
         $secondaryTableAlias = $field_def['secondary_table'];
-        if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']])) {
-            $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']]['join_table_alias'];
+        if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']])) {
+            $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']]['join_table_alias'];
         } else if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
         }

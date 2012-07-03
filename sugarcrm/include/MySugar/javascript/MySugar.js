@@ -168,7 +168,7 @@ SUGAR.mySugar = function() {
             }
 
 			var pageTextSpan = document.getElementById('pageNum_'+pageNum+'_title_text');
-			pageTextSpan.innerHTML = newTitleValue;
+            pageTextSpan.innerHTML = YAHOO.lang.escapeHTML(newTitleValue);
 
             SUGAR.mySugar.toggleSpansForRename(pageNum);
         },

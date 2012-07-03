@@ -65,7 +65,7 @@ class DCMenu extends DashletContainer
 
 	public function getSearchIcon() {
 		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);	
+		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', 'class="searchIconLink"', "dcMenuSearchBtn.png", 'class="icon searchicon" align="top"',null,null,'');
 		return $iconSearch;
 	}
 	
@@ -95,7 +95,7 @@ class DCMenu extends DashletContainer
                 $class = "";
             }
 
-            $image = '<a href="#" ><span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span></a>';
+            $image = '<span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span>';
 		}
         else
         {

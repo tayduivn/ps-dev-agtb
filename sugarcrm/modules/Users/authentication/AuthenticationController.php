@@ -36,6 +36,11 @@ class AuthenticationController
 
 	protected static $authcontrollerinstance = null;
 
+    /**
+     * @var SugarAuthenticate
+     */
+    public $authController;
+
 	/**
 	 * Creates an instance of the authentication controller and loads it
 	 *
@@ -59,7 +64,6 @@ class AuthenticationController
         }
 
         $this->authController = new $type();
-        $this->authController->pre_login();
 	}
 
 

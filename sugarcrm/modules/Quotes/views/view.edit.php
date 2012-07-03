@@ -203,7 +203,7 @@ class QuotesViewEdit extends ViewEdit
 		$this->ss->assign('CURRENCY_JAVASCRIPT', $currency->getJavascript());
 
 
-		$add_row = '';
+		$add_row = array();
 		if (!empty($this->bean->id))
 		{
 			$this->bean->load_relationship('product_bundles');
@@ -220,7 +220,7 @@ class QuotesViewEdit extends ViewEdit
 				foreach ($ordered_bundle_list as $product_bundle) {
 					$product_list = $product_bundle->get_products();
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
-					$add_row .= "quotesManager.addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
+					$add_row[] = "quotesManager.addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
 
 					if (is_array($bundle_list)) {
 						while (list($key, $line_item) = each ($bundle_list)) {
@@ -231,7 +231,7 @@ class QuotesViewEdit extends ViewEdit
 								$encoded_name = js_escape(br2nl($line_item->name));
 
 
-								$add_row .= "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, 0, 0) . "','$line_item->product_template_id','$encoded_name'"
+								$add_row[] = "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, 0, 0) . "','$line_item->product_template_id','$encoded_name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
@@ -245,7 +245,7 @@ class QuotesViewEdit extends ViewEdit
 							else if ($line_item->object_name == "ProductBundleNote") {
 								$encoded_description = js_escape(br2nl($line_item->description));
 								//$encoded_description = html_entity_decode($encoded_description);
-								$add_row .= "quotesManager.addCommentRow('$line_item->id', '$product_bundle->id', '$encoded_description');\n";
+								$add_row[] = "quotesManager.addCommentRow('$line_item->id', '$product_bundle->id', '$encoded_description');\n";
 							}
 						} //while
 					} //if
@@ -275,11 +275,11 @@ class QuotesViewEdit extends ViewEdit
 						foreach ($product_list as $line_item) {
 		                    $tax_class_name = isset($line_item->tax_class) ? $tax_class_name = $app_list_strings['tax_class_dom'][$line_item->tax_class] : "";
 
-							$add_row .= "quotesManager.addRow('','$line_item->quantity','$line_item->product_template_id','$line_item->name'"
+							$add_row[] = "quotesManager.addRow('','$line_item->quantity','$line_item->product_template_id','$line_item->name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
-											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'";
-							$add_row .=  ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name',
+											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
+							    .", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name',
 								'$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)
 							    ."', '".js_escape(br2nl($line_item->description))."', '"
 							    . $line_item->type_id ."','"
@@ -288,7 +288,7 @@ class QuotesViewEdit extends ViewEdit
 
 						} //foreach
 						if(empty($product_list)){
-								$add_row .= "quotesManager.addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
+								$add_row[] = "quotesManager.addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
 						} //if
                         //bug 39573 - Comments are not duplicated in quotes
                         $bundle_list = $product_bundle->get_product_bundle_line_items();
@@ -296,7 +296,7 @@ class QuotesViewEdit extends ViewEdit
                             while (list($key, $line_item) = each ($bundle_list)){
                                 if ($line_item->object_name == "ProductBundleNote"){
                                     $encoded_description = js_escape(br2nl($line_item->description));
-                                    $add_row .= "quotesManager.addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
+                                    $add_row[] = "quotesManager.addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
 
                                 }
                             }
@@ -306,9 +306,47 @@ class QuotesViewEdit extends ViewEdit
 			}
 		} //if-else for !empty($this->bean->id)
 
-		// Create the javascript code to render the rows
-		$add_row = 'function add_rows_on_load() {' . $add_row . '}';
-		$this->ss->assign("ADD_ROWS", $add_row);
+		//Bug#53607: Create the javascript code to store the rendering function in a queue
+        $add_row_js = 'var add_row_stack = [];';
+        foreach($add_row as $script_command) {
+            $add_row_js .= "add_row_stack.push(function(){
+                $script_command
+            });";
+        }
+
+		//Bug#53607: Rather than executing all rendering row script once, it will keep in a queue.
+        //           And it will render the specified number of rows every interval.
+        $add_row_js .= "function add_rows_on_load() {
+            if(typeof add_row_stack != 'undefined' && add_row_stack.length > 0) {
+                //interval is in msec,
+                //size is the number of rows rendering every time
+                var _interval = 100,
+                    _size = 3,
+                    _exec = add_row_stack.splice(0, _size),
+                    _header_button = document.getElementById('SAVE_HEADER'),
+                    _footer_button = document.getElementById('SAVE_FOOTER');
+                if(_header_button) {
+                    _header_button.disabled = true;
+                }
+                if(_footer_button) {
+                    _footer_button.disabled = true;
+                }
+                for(idx in _exec) {
+                    _exec[idx]();
+                }
+                window.setTimeout(add_rows_on_load, _interval);
+            } else {
+                var _header_button = document.getElementById('SAVE_HEADER'),
+                    _footer_button = document.getElementById('SAVE_FOOTER');
+                if(_header_button) {
+                    _header_button.disabled = false;
+                }
+                if(_footer_button) {
+                    _footer_button.disabled = false;
+                }
+            }
+        }";
+		$this->ss->assign("ADD_ROWS", $add_row_js);
 
 		$setup_script = '';
 		$taxclass = translate('tax_class_dom');

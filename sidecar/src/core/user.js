@@ -115,6 +115,6 @@
         }
     });
 
-    app.augment("user", _user);
+    app.augment("user", _user, false);
 
 })(SUGAR.App);

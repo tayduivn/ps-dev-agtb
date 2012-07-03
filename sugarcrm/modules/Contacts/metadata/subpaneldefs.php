@@ -207,21 +207,25 @@ $layout_defs['Contacts'] = array(
 		),
 		//END SUGARCRM flav=pro ONLY
 		//BEGIN SUGARCRM flav=pro ONLY
-		'products' => array(
-			'order' => 50,
-			'module' => 'Products',
-			'sort_order' => 'desc',
-			'sort_by' => 'date_purchased',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'function:get_products_query',
-			'add_subpanel_data' => 'product_id',
-			'set_subpanel_data' => 'products',
-			'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
-			),
-		),
+        'products' => array(
+            'order' => 50,
+            'module' => 'Products',
+            'subpanel_name' => 'default',
+            'sort_order' => 'desc',
+            'sort_by' => 'date_purchased',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
+            'top_buttons' => array(
+                array(
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                ),
+                array(
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                ),
+            ),
+
+        ),
 		//END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav!=sales ONLY

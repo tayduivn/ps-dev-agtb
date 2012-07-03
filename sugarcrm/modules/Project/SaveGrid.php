@@ -40,6 +40,7 @@ for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
     // don't save any blank rows 
     if (isset($_REQUEST["duration_" . $i]) && ($_REQUEST["duration_" . $i] != "")) {    
         $projectTask = new ProjectTask();
+        $projectTask->skipParentUpdate();
         if (isset($_REQUEST["obj_id_" . $i])) {
             //$projectTask->id = $_REQUEST["obj_id_" . $i];
             $projectTask->retrieve($_REQUEST["obj_id_" . $i]);
@@ -90,6 +91,20 @@ for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
         }
     }
 }
+// get random ProjectTask from current project
+$ind = rand(1, $_REQUEST['numRowsToSave']);
+$projectTask = new ProjectTask();
+$projectTask->skipParentUpdate();
+if(isset($_REQUEST["obj_id_" . $ind]) && !empty($_REQUEST["obj_id_" . $ind]))
+{
+    $projectTask->retrieve($_REQUEST["obj_id_" . $ind]);
+}
+else
+{
+    $projectTask->retrieve($newIds[$ind]);
+}
+//updating percentage complete for tasks with child tasks in current project
+$projectTask->updateStatistic();
 // Handle deleted rows.
 $deletedRows = $_REQUEST['deletedRows'];
 if ($deletedRows != "") {

@@ -38,7 +38,8 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
 
 		$this->testUser = SugarTestUserUtilities::createAnonymousUser();
 		$this->testAccount = SugarTestAccountUtilities::createAccount();        
-        
+        $this->testUser->is_admin = false; // ensure non-admin user
+
         $this->teamSet = new TeamSet();
         $this->teamSet->addTeams($this->testUser->getPrivateTeamID());
         

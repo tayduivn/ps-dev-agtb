@@ -552,11 +552,16 @@ class User extends Person {
 
 		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
 		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
-		if(!empty($this->team_id)){
-			$this->default_team = $this->team_id;
-		}else{
-			$this->team_id = $this->default_team;
-		}
+        if(!$this->is_admin) {
+            //Bug#53249: Prevent admin user set non-member team as a primary team
+            if(!empty($this->team_id)){
+                $this->default_team = $this->team_id;
+            }else{
+                $this->team_id = $this->default_team;
+            }
+        } else {
+            $this->team_id = $this->default_team;
+        }
 
 		//END SUGARCRM flav=pro ONLY
 
@@ -718,7 +723,7 @@ class User extends Person {
 
 		select id from users where id in ( SELECT  er.bean_id AS id FROM email_addr_bean_rel er,
 			email_addresses ea WHERE ea.id = er.email_address_id
-		    AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = 'Users' AND email_address_caps IN ('{$email}') )
+		    AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = 'Users' AND email_address_caps IN ('{$email1}') )
 EOQ;
 
 

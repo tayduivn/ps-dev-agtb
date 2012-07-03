@@ -97,9 +97,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		$icon_remove_text = strtolower($app_strings['LBL_ID_FF_REMOVE']);
 		
 		//BEGIN SUGARCRM flav!=sales ONLY
-		if($linked_field == 'get_products_query')
-			$linked_field = 'products';
-        else if($linked_field == 'get_emails_by_assign_or_link')
+         if($linked_field == 'get_emails_by_assign_or_link')
             $linked_field = 'emails';
 		//END SUGARCRM flav!=sales ONLY
 		//based on listview since that lets you select records
@@ -117,4 +115,3 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		}
 	}
 }
-?>

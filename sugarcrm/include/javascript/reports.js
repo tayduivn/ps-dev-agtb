@@ -2313,7 +2313,7 @@ SUGAR.reports = function() {
 		
 			field_type = field.type;
 		
-			if ( typeof(field.custom_type) != 'undefined') {
+			if ( typeof(field.custom_type) != 'undefined' && typeof(filter_defs[field.custom_type]) != 'undefined') {
 				field_type = field.custom_type;
 			}
 		
@@ -3213,45 +3213,45 @@ SUGAR.reports = function() {
     		
 		},			
 		//END SUGARCRM flav!=sales ONLY
-		deleteFromFullTableList: function(rowId) {
-			var row = document.getElementById(rowId);
-			var key = row.cells[0].getElementsByTagName('input')[1].value;
-			if (key.split('>').length == 1)
-				return;
-			key = key.replace(/>/g,':');
-			//Upgraded content strings don't have dependents.
-			if (full_table_list[key].dependents) {
-				if (full_table_list[key].dependents.length == 1){
-					delete full_table_list[key];
-				}
-				else {
-					var dependents = full_table_list[key].dependents;
-					for (var i = 0; i < dependents.length; i++) {
-						if (dependents[i] == rowId) {
-							delete dependents[i];
-						}
-					}
-					var allUndefined = true;
-					for (var i = 0; i < dependents.length; i++) {
-						if (typeof(dependents[i]) != 'undefined') {
-							allUndefined = false;
-							break;
-						}
-					}
-					if ((typeof(full_table_list[key].dependents) == 'undefined' || allUndefined) && key !='self') {
-						delete full_table_list[key];
-					}
-					
-					/*
-					for (var i = 0; i < dependents.length; i++) {
-						if (dependents[i] == rowId) {
-							dependents.splice(i,1);
-							break;
-						}
-					}*/
-				}
-			}
-		},
+
+        /**
+         * Removing element from dependents of full_table_list
+         *
+         * @param stirng rowId element for removal
+         */
+        deleteFromFullTableList: function(rowId) {
+            for (var key in full_table_list)
+            {
+                if (typeof full_table_list[key] != 'object')
+                {
+                    continue;
+                }
+                if (typeof full_table_list[key].module != 'string')
+                {
+                    continue;
+                }
+
+                if (typeof full_table_list[key].dependents == 'undefined')
+                {
+                    full_table_list[key].dependents = [];
+                }
+
+                var dependents = full_table_list[key].dependents;
+                full_table_list[key].dependents = [];
+                for (var i = 0; i < dependents.length; i++)
+                {
+                    if (dependents[i] != rowId)
+                    {
+                        full_table_list[key].dependents.push(dependents[i]);
+                    }
+                }
+
+                if (full_table_list[key].dependents.length == 0 && key !='self')
+                {
+                    delete full_table_list[key];
+                }
+            }
+        },
 		cleanFullTableList: function() {
 			for (i in full_table_list) {
 				if (typeof(full_table_list[i].dependents) == 'undefined' && i !='self') {
@@ -3961,6 +3961,7 @@ SUGAR.reports = function() {
 	        					myColumnDefs, myDataSource, 
 	        					{height : "270px", width: "200px"}
 	        );
+            myDataTable.sortColumn(myDataTable.getColumn(0), YAHOO.widget.DataTable.CLASS_ASC);
 	        /*
 	        myDataTable.subscribe("rowClickEvent", myDataTable.onEventSelectRow);
 	        myDataTable.subscribe("rowSelectEvent", SUGAR.reports.gridRowClickHandler);
@@ -4081,7 +4082,7 @@ SUGAR.reports = function() {
             if (!moduleTree) {
 				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_RELATED_MODULES_PANEL_HELP_DESC') +"\");'></span></h3>";
 				var moduleTree = new YAHOO.widget.Module("module_tree_panel", { visible: false });
-				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:230px; width:200px; overflow:auto;\"></div>";
+				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:215px; width:200px; overflow:auto;\"></div>";
 				moduleTree.setHeader(title);
 				moduleTree.setBody(moduletreePanelHTML);
 				moduleTree.render();

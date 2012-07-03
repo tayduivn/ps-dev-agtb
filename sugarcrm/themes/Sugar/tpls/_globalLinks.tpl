@@ -41,12 +41,20 @@
 
                 <li><a id="logout_link" href='{$LOGOUT_LINK}' class='utilsLink'>{$LOGOUT_LABEL}</a> </li>
             </ul>
-            <span> <a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a></span>
+            <span> 
+        	    <div id="dcmenuUserIcon" {$NOTIFCLASS}>
+				  {$NOTIFICON}
+				</div>
+            	<a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a>
+            	
+            </span>
         </li>
     </ul>
 </div>
-<div class="dcmenuDivider" id="notifDivider"></div>
-<div id="dcmenuSugarCube" {$NOTIFCLASS} {if $ISADMIN}onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}"{/if}>
-  {$NOTIFICON}
-  {$NOTIFCODE}
-</div>
+
+{if $NOTIFCODE != ""}
+	<div class="dcmenuDivider" id="notifDivider"></div>
+	<div id="dcmenuSugarCube" {$NOTIFCLASS} {if $ISADMIN}onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}"{/if}>
+	  {$NOTIFCODE}
+	</div>
+{/if}
