@@ -4469,8 +4469,11 @@ function save_relationship_changes($is_update, $exclude=array())
     * will fill in any parent_name fields.
     */
     function fill_in_additional_parent_fields() {
-
-        if(!empty($this->parent_id) && !empty($this->last_parent_id) && $this->last_parent_id == $this->parent_id){
+        // Added empty parent name check because beans with parent_name in vardef
+        // were being nullified on retrieve AFTER save but were not passing the
+        // parent_id/last_parent_id conditional, so the bean was losing parent_name
+        // rgonzalez
+        if(!empty($this->parent_id) && !empty($this->last_parent_id) && $this->last_parent_id == $this->parent_id && !empty($this->parent_name)){
             return false;
         }else{
             $this->parent_name = '';
