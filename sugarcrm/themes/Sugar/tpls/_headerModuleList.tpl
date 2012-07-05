@@ -71,7 +71,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 	{else}
 		<li class="{$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title class="sf-with-ul"}
 	{/if}
-		{if $shortcutTopMenu.$name && $name != "Home"}
+		{if $shortcutTopMenu.$name }
 		<ul class="megamenu">
 		<li >
 			<div class="megawrapper">

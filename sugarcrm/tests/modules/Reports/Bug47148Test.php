@@ -58,6 +58,8 @@ class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        global $beanFiles, $beanList;
+        require('include/modules.php');
         $this->_backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
         $GLOBALS['do_thousands'] = true;
     }

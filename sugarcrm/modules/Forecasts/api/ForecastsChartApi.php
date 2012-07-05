@@ -125,7 +125,7 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        $quota = $quota_bean->getCurrentUserQuota($testFilters['timeperiod_id'], $testFilters['assigned_user_link']);
+        $quota = $quota_bean->getCurrentUserQuota($args['timeperiod_id'], $args['user_id']);
         $likely_values = $this->getDataSetValues($testFilters, $args);
 
         // decode the data to add stuff to the properties

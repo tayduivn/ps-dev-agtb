@@ -60,4 +60,63 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         }
 
     }
+
+    protected function checkException($e)
+    {
+        if ($e instanceof Elastica_Exception_Client)
+        {
+            $error = $e->getError();
+            switch ($error) {
+                case CURLE_UNSUPPORTED_PROTOCOL:
+                case CURLE_FAILED_INIT:
+                case CURLE_URL_MALFORMAT:
+                case CURLE_COULDNT_RESOLVE_PROXY:
+                case CURLE_COULDNT_RESOLVE_HOST:
+                case CURLE_COULDNT_CONNECT:
+                case CURLE_OPERATION_TIMEOUTED:
+                    $this->disableFTS();
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    protected function disableFTS()
+    {
+        $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
+        searchEngineDown();
+
+        // notification
+        $cfg = new Configurator();
+        $cfg->config['fts_disable_notification'] = true;
+        $cfg->handleOverride();
+    }
+
+    protected function addRecordsToQueue($records)
+    {
+        $GLOBALS['log']->fatal('addRecordsToQueue');
+        global $db;
+        if (empty($db))
+        {
+            $db = DBManagerFactory::getInstance('fts');
+            $db->resetQueryCount();
+        }
+
+        foreach ($records as $rec)
+        {
+            if (empty($rec['bean_id']) || empty($rec['bean_module']))
+            {
+                $GLOBALS['log']->error('Error populating fts_queue. Empty bean_id or bean_module.');
+                continue;
+            }
+            $query = "INSERT INTO fts_queue (bean_id,bean_module) values ('{$rec['bean_id']}', '{$rec['bean_module']}')";
+            $db->query($query, true, "Error populating index queue for fts");
+        }
+
+        // create a cron job consumer to digest the beans
+        require_once('include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php');
+        $indexer = new SugarSearchEngineSyncIndexer();
+        $indexer->removeExistingFTSSyncConsumer();
+        $indexer->createJobQueueConsumer();
+    }
 }

@@ -35,6 +35,27 @@
 
             self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
+            // Initialize the default timeperiod & category on the context
+            switch(key)
+            {
+                case 'timeperiod_id':
+                    var defaultTimePeriod = {
+                        "id" : modelData.default,
+                        "label" : modelData.options[modelData.default]
+                    }
+                    self.context.set('selectedTimePeriod', defaultTimePeriod);
+                    break;
+
+                case 'category':
+                    var defaultCategory = {
+                        "id" : modelData.default,
+                        "label" : modelData.options[modelData.default]
+                    }
+                    console.log(defaultCategory);
+                    self.context.set('selectedCategory', defaultCategory);
+                    break;
+            }
+
             chosen.options.viewName = 'edit';
             chosen.label = modelData.label;
             default_values[key] = '';
@@ -57,18 +78,18 @@
         });
     },
 
-    handleCategoryEvents: function($dropdown) {
+    handleCategoryEvents: function(dropdown) {
         var self = this;
-        $dropdown.on('change', 'select', function(event, data) {
+        dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
             self.context.forecasts.set('selectedCategory', {"id": id, "label": label});
         });
     },
 
-    handleTimePeriodEvents: function($dropdown) {
+    handleTimePeriodEvents: function(dropdown) {
         var self = this;
-        $dropdown.on('change', 'select', function(event, data) {
+        dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
             self.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});

@@ -92,8 +92,8 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign("showSchedButton", $showSchedButton);
         $sugar_smarty->assign("hide_fts_config", $hide_fts_config);
         $sugar_smarty->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
-        $sugar_smarty->assign("fts_host", $config['host']);
-        $sugar_smarty->assign("fts_port", $config['port']);
+        $sugar_smarty->assign("fts_host", empty($config['host']) ? 'localhost' : $config['host']);
+        $sugar_smarty->assign("fts_port", empty($config['port']) ? '9200' : $config['port']);
         $sugar_smarty->assign("scheduleDisableButton", $scheduleDisableButton);
         $sugar_smarty->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
         $sugar_smarty->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);

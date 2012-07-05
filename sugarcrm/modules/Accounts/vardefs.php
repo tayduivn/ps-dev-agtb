@@ -350,16 +350,16 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'table' => 'users',
   ),
 
-//BEGIN SUGARCRM flav!=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
   'products' => array(
       'name' => 'products',
       'type' => 'link',
+      'link_file' => 'modules/Products/AccountLink.php',
+      'link_class' => 'AccountLink',
       'relationship' => 'products_accounts',
       'source' => 'non-db',
       'vname' => 'LBL_PRODUCTS',
   ),
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav=pro ONLY
   'contracts' => array (
     'name' => 'contracts',
     'type' => 'link',

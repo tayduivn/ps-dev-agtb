@@ -48,15 +48,14 @@
        This parameter is used with the configuration file and the
        connection string.  It is not used within the SQL script itself
        like the other paramters are. -->
-  <parameter name="DbServer"  defaultValue="localhost" tags="MySQL,dbServer" />
+  <parameter name="DbServer"  defaultValue="localhost" tags="MySQL,dbServer">
+    <parameterEntry type="TextFile" scope="install.sql" match="PlaceHolderForDbServer" />
+  </parameter>
   <parameter name="Automatic host name " defaultValue="'setup_db_host_name' => '{DbServer}'," tags="Hidden,MySQL">
     <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_host_name'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <parameter name="Automatic host name PostInstall " defaultValue="'db_host_name' => '{DbServer}'," tags="Hidden,MySQL">
     <parameterEntry type="TextFile" scope="\\config.php$" match="'db_host_name'\s*=>\s*'[^']*'\s*," />
-  </parameter>
-  <parameter name="Automatic host name InstallSQL " defaultValue="{DbServer}" tags="Hidden,MySQL">
-    <parameterEntry type="TextFile" scope="install.sql" match="PlaceHolderForDbServer" />
   </parameter>
   <!-- This parameter prompts the user for the database name. -->
   <parameter name="DbName"

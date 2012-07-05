@@ -90,6 +90,15 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
         $header_row = $this->bean->get_summary_header_row();
         $columns_row = $this->bean->get_header_row();
     
+        // build options for the writeHTMLTable from options for the writeCellTable
+        $options = array('header' =>
+            array(
+                "tr" => array(
+                    "bgcolor" => $this->options['header']['fill'],
+                    "color"   => $this->options['header']['textColor']),
+                "td"      => array()
+            )
+        );
         while(($row = $this->bean->get_summary_next_row()) != 0) {
             $item = array();
             $count = 0;
@@ -105,7 +114,7 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                     break;
                 }
             }
-            $this->writeCellTable($item, $this->options);
+            $this->writeHTMLTable($item, false, $options);
             $this->Ln1();
             
             $item = array();
@@ -123,7 +132,7 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                 $item[$count][$label] = $value;
     
             }
-            $this->writeCellTable($item, $this->options);
+            $this->writeHTMLTable($item, false, $options);
             $this->Ln1();
         }
     
@@ -139,7 +148,7 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                 $value = $total_row['cells'][$j];
                 $item[$count][$label] = $value;
             }
-            $this->writeCellTable($item, $this->options);
+            $this->writeHTMLTable($item, false, $options);
         }
         
 	    

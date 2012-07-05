@@ -179,7 +179,6 @@ class DashletsDialog {
     function getReportCharts($category){
     	global $current_user;
 
-
     	//require_once('modules/Reports/Report.php');
 
     	$chartsList = array();
@@ -244,7 +243,8 @@ class DashletsDialog {
 				$displayDashlet = $myDashlet->checkDashletDisplay();
 
 				if ($displayDashlet) {
-				$report_def = array( 'title' => $savedReport->name,
+					$title = getReportNameTranslation($savedReport->name); 
+					$report_def = array( 'title' => $title, 
 										 'onclick' => 'return SUGAR.mySugar.addDashlet(\'' . $savedReport->id . '\', \'chart\', \''.$savedReport->module.'\');',
 									);
 

@@ -346,15 +346,19 @@ class TeamSetManager {
 	 */
 	public static function flushBackendCache( ) {
         // This function will flush the cache files used for the module list and the link type lists
-        sugar_cache_clear(TEAM_SET_CACHE_KEY);
 
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
-            unlink($cachefile);
+        // TeamSetCache
+        sugar_cache_clear(TEAM_SET_CACHE_KEY);
+        $cachefile = sugar_cached('modules/Teams/TeamSetCache.php');
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSets = array();'."\n ?>") === false) {
+            $GLOBALS['log']->error("File $cachefile could not be written (flush)");
         }
 
+        // TeamSetMD5Cache
         sugar_cache_clear(TEAM_SET_MD5_CACHE_KEY);
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php')) ) {
-            unlink($cachefile);
+        $cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php');
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSetsMD5 = array();'."\n ?>") === false) {
+            $GLOBALS['log']->error("File $cachefile could not be written (flush)");
         }
     }
 

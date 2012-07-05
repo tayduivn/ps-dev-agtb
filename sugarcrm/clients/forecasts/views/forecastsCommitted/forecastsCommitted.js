@@ -26,15 +26,17 @@
         this._collection.fetch();
         this.totals = null;
         this.previousTotals = null;
+        this.showButton = true;
         this.render();
         //Add listeners
         this.context.forecasts.on("change:selectedUser", function(context, user) {
-            self.userId = user.id, self.fullName = user.full_name;
-            self.updateCommitted();
+            self.showButton = app.user.get('id') == user.id; 
+            self.userId = user.id; 
+            self.fullName = user.full_name; self.updateCommitted(); 
         });
         this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
             self.timePeriodId = timePeriod.id;
-            self.updateCommitted();
+            self.updateCommitted(); 
         });
         this.context.forecasts.on("change:updatedTotals", function(context, totals) {
             self.totals = totals;

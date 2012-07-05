@@ -425,6 +425,34 @@ class Product extends SugarBean {
 		$expired = $timedate->asDbDate($timedate->getNow()->get($support_expired));
 		$coming_due = $timedate->asDbDate($timedate->getNow()->get($support_coming_due));
 
+		/**
+		 * Convert price related data into users preferred currency
+		 * for display in subpanels 
+		 */
+		// See if a user has a preferred currency
+		if ($current_user->getPreference('currency')) {
+			// Retrieve the product currency
+			$currency = new Currency();
+			$currency->retrieve($this->currency_id);
+			// Retrieve the users currency
+			$userCurrency = new Currency();
+			$userCurrency->retrieve($current_user->getPreference('currency'));
+			// If the product currency and the user default currency are different, convert to users currency
+			if ($userCurrency->id != $currency->id) {
+				$this->cost_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->cost_price));
+				$this->discount_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_price));
+				$this->list_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->list_price));
+				$this->deal_calc = $userCurrency->convertFromDollar($currency->convertToDollar($this->deal_calc));
+				
+				if (!(isset($this->discount_select) && $this->discount_select)) {
+					$this->discount_amount = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_amount));
+				}
+				
+				$this->currency_symbol = $userCurrency->symbol;
+				$this->currency_name = $userCurrency->name;
+				$this->currency_id = $userCurrency->id;
+			}
+		}
 
 		if (!empty($the_date_support_expires) && $db_date_support_expires < $expired) {
 			$the_date_support_expires="<strong><font color='$support_expired_color'>$the_date_support_expires</font></strong>";

@@ -34,7 +34,14 @@ global $mod_strings;
 $res = $GLOBALS['sugar_config']['passwordsetting'];
 //END SUGARCRM flav=pro ONLY
 $login_vars = $GLOBALS['app']->getLoginVars(false);
-$authController->login($_REQUEST['user_name'], $_REQUEST['user_password']);
+
+$user_name = isset($_REQUEST['user_name'])
+    ? $_REQUEST['user_name'] : '';
+
+$password = isset($_REQUEST['user_password'])
+    ? $_REQUEST['user_password'] : '';
+
+$authController->login($user_name, $password);
 // authController will set the authenticated_user_id session variable
 if(isset($_SESSION['authenticated_user_id'])) {
 	// Login is successful
