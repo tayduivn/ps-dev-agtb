@@ -311,8 +311,8 @@ class ForecastsChartApi extends ChartApi
             case 'best_case':
             case 'best':
                 $this->goalParetoLabel = 'Best';
-                $rb->addSummaryColumn('best_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
-                $rb->setChartColumn('best_case_worksheet');
+                $rb->addSummaryColumn('best_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('best_case');
                 break;
             case 'worst_case':
             case 'worst':
@@ -324,8 +324,8 @@ class ForecastsChartApi extends ChartApi
             case 'likely':
             default:
                 $this->goalParetoLabel = 'Likely';
-                $rb->addSummaryColumn('likely_case_worksheet', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
-                $rb->setChartColumn('likely_case_worksheet');
+                $rb->addSummaryColumn('likely_case=', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('likely_case');
                 break;
 
         }

@@ -79,9 +79,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp1->probability = '85';
         $opp1->forecast = -1;
         $opp1->best_case = 1300;
-        $opp1->best_case_worksheet = 1200;
         $opp1->likely_case = 1200;
-        $opp1->likely_case_worksheet = 1100;
         $opp1->worst_case = 1100;
         $opp1->team_id = '1';
         $opp1->team_set_id = '1';
@@ -106,9 +104,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp2->probability = '75';
         $opp2->forecast = 1;
         $opp2->best_case = 1300;
-        $opp2->best_case_worksheet = 1200;
         $opp2->likely_case = 1200;
-        $opp2->likely_case_worksheet = 1100;
         $opp2->team_id = '1';
         $opp2->team_set_id = '1';
         $opp2->timeperiod_id = TimePeriod::getCurrentId();
@@ -131,9 +127,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp3->probability = '60';
         $opp3->forecast = 1;
         $opp3->best_case = 1300;
-        $opp3->best_case_worksheet = 1200;
         $opp3->likely_case = 1200;
-        $opp3->likely_case_worksheet = 1100;
         $opp3->team_id = '1';
         $opp3->team_set_id = '1';
         $opp3->timeperiod_id = TimePeriod::getCurrentId();
@@ -156,9 +150,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp4->probability = '60';
         $opp4->forecast = -1;
         $opp4->best_case = 1300;
-        $opp4->best_case_worksheet = 1200;
         $opp4->likely_case = 1200;
-        $opp4->likely_case_worksheet = 1100;
         $opp4->worst_case = 1100;
         $opp4->team_id = '1';
         $opp4->team_set_id = '1';
@@ -183,9 +175,7 @@ class ForecastSeedReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp5->probability = '90';
         $opp5->forecast = 0;
         $opp5->best_case = 1300;
-        $opp5->best_case_worksheet = 1200;
         $opp5->likely_case = 1200;
-        $opp5->likely_case_worksheet = 1100;
         $opp5->team_id = '1';
         $opp5->team_set_id = '1';
         $opp5->timeperiod_id = TimePeriod::getCurrentId();
