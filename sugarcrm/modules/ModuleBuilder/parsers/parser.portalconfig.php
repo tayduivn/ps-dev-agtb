@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
+        $portalFields = array('on','appStatus', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
@@ -88,10 +88,11 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
-        if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
+        if (isset($portalConfig['appStatus']) && $portalConfig['appStatus'] == 'true') {
+            $portalConfig['appStatus'] = 'online';
             $portalConfig['on'] = 1;
         } else {
-            $portalConfig['on'] = 0;
+            $portalConfig['appStatus'] = 'offline';
         }
 
         foreach ($portalConfig as $fieldKey => $fieldValue) {
