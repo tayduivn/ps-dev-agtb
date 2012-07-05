@@ -441,13 +441,6 @@ class Opportunity extends SugarBean
                 $this->timeperiod_id = $timeperiod;
             }
         }
-		/*
-				if(empty($this->best_case_worksheet) && empty($this->likely_case_worksheet))
-				{
-					$this->best_case_worksheet = $this->best_case;
-					$this->likely_case_worksheet = $this->likely_case;
-				}
-				*/
 		//END SUGARCRM flav=pro ONLY
 
 		require_once('modules/Opportunities/SaveOverload.php');

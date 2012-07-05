@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay');
+        $portalFields = array('on', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
@@ -60,6 +60,26 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 'Bugs',
                 'Cases',
                 'KBDocuments'
+            ),
+            'serverTimeout' => 30,
+            'defaultModule' => 'Cases',
+            'orderByDefaults' => array(
+                'Cases' => array(
+                    'field' => 'case_number',
+                    'direction' => 'desc'
+                ),
+                'Bugs' => array(
+                    'field' => 'bug_number',
+                    'direction' => 'desc'
+                ),
+                'Notes' => array(
+                    'field' => 'date_modified',
+                    'direction' => 'desc'
+                ),
+                'KBDocuments' => array(
+                    'field' => 'date_modified',
+                    'direction' => 'desc'
+                ) 
             )
         );
         foreach ($portalFields as $field) {

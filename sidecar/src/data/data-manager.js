@@ -197,7 +197,9 @@
             });
 
             var model = this.beanModel.extend({
-                defaults: defaults,
+                // We don't want to populate model with default values using Backbone's 'defaults' property
+                // We do it manually in Bean.initialize method only if the given model is new
+                _defaults: defaults,
                 /**
                  * Module name.
                  * @member Data.Bean

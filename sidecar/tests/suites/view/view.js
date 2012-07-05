@@ -62,17 +62,28 @@ describe("View.View", function() {
         expect(html).toContain('K pobede kommunizma!');
     });
 
-    it('should return its fields', function(){
+    it('should return its fields and dispose them when re-rendering', function(){
         var view = app.view.createView({
                 context: context,
                 name: "detail"
             });
+        var fields = [ 'first_name', 'last_name', 'phone_work', 'phone_home', 'email1', 'account_name' ];
+        var mock = sinon.mock(app.view.Field.prototype);
+        mock.expects("dispose").exactly(9);
+
         expect(view.getFieldNames()).toEqual([ 'first_name', 'last_name', 'phone_work', 'phone_home', 'email1', 'account_name', 'account_id' ]);
 
-        expect(view.getFields()).toEqual({});
+        expect(_.isEmpty(view.getFields())).toBeTruthy();
+        expect(_.isEmpty(view.fields)).toBeTruthy();
         view.render();
-        expect(_.isEmpty(view.getFields())).toBeFalsy();
-        expect(_.pluck(view.getFields(), "name")).toEqual([ 'first_name', 'last_name', 'phone_work', 'phone_home', 'email1', 'account_name' ]);
+        expect(_.keys(view.fields).length).toEqual(9);
+        expect(_.pluck(view.getFields(), "name")).toEqual(fields);
+
+        // Make sure the number of fields is still the same
+        view.render();
+        expect(_.keys(view.fields).length).toEqual(9);
+        expect(_.pluck(view.getFields(), "name")).toEqual(fields);
+        mock.verify();
     });
 
 

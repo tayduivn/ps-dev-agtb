@@ -17,7 +17,6 @@
         
         load: function(callback) {
             this.nativeStorePlugin.getAll(function(metadata) {
-                metadata = JSON.parse(metadata);
                 cache = metadata;
                 if(callback) callback();
             }, emptyFn);
