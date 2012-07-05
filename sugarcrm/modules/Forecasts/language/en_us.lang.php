@@ -189,6 +189,7 @@ $mod_strings = array (
   'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
   'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
   'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
+  'LBL_QUOTA' => 'Quota',
   
   'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
   'LBL_FMT_ROLLUP_FORECAST'=>'(Rollup)',
