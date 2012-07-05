@@ -142,12 +142,12 @@ describe("Router", function() {
 
     it("should call a route handler and routing.after if routing.before returns true", function() {
         sinon.stub(app.routing, "before", function() { return true; });
-        var spy = sinon.spy(app.routing, "after");
-        var spy2 = sinon.spy(app.router, "index");
+        var stub = sinon.stub(app.routing, "after");
+        var stub2 = sinon.stub(app.router, "index");
 
         app.router._routeHandler(app.router.index);
-        expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
+        expect(stub).toHaveBeenCalled();
+        expect(stub2).toHaveBeenCalled();
         app.routing.before.restore();
         app.routing.after.restore();
         app.router.index.restore();

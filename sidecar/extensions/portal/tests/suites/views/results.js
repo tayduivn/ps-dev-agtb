@@ -1,5 +1,5 @@
 describe("Results View", function() {
-    var app, stubContextGet, context, ResultsView, view;
+    var app, spyContextGet, context, ResultsView, view;
 
     beforeEach(function() {
         var controller;
@@ -8,7 +8,8 @@ describe("Results View", function() {
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
         context        = app.context.getContext();
-        stubContextGet = sinon.stub(context, 'get');
+        context.set('query', 'fubar');
+        spyContextGet = sinon.spy(context, 'get');
         ResultsView = app.view.declareComponent('view', 'Results', null, controller);
         view = new ResultsView({context: context});
     });
@@ -19,9 +20,12 @@ describe("Results View", function() {
         expect(view.meta).toBeDefined();
     });
     it("should get last query from context", function() {
+        // Prevent http request from going out
+        var stub = sinon.stub(jQuery, 'ajax');
         view.render();
-        expect(stubContextGet).toHaveBeenCalled();
-        expect(stubContextGet.lastCall.args[0]).toEqual("query");
+        stub.restore();
+        expect(spyContextGet).toHaveBeenCalled();
+        expect(spyContextGet.lastCall.args[0]).toEqual("query");
     });
     it("should call update collection and render subnav if search api returns records", function() {
         var stubFireSearch, stubUpdateCollection, stubRenderSubnav;
