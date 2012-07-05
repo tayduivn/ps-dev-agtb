@@ -6,10 +6,6 @@
  */
 ({
 
-    _renderSelf:function() {
-        app.view.View.prototype._renderSelf.call(this);
-    },
-
     bindDataChange: function() {
         var self = this;
         app.view.View.prototype.bindDataChange.call(this);
