@@ -43,26 +43,6 @@
 
         this._collection = this.context.forecasts.worksheet;
 
-        // listening for updates to context for selectedUser:change
-
-        this.layout.context.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
-        this.layout.context.on("change:selectedTimePeriod",
-            function(context, timePeriod) {
-                this.updateWorksheetBySelectedTimePeriod(timePeriod);
-            }, this);
-        this.layout.context.on("change:selectedCategory",
-            function(context, category) {
-                this.updateWorksheetBySelectedCategory(category);
-            },
-            this);
-        // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
-        this.layout.context.on("change:renderedForecastFilter", function(context, defaultValues) {
-            this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
-            this.updateWorksheetBySelectedCategory({id: defaultValues.category});
-        }, this);
-        // END STORY 31921015
-        this.layout.context.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
-
         var TotalModel = Backbone.Model.extend({
 
         });
@@ -284,6 +264,26 @@
         if(this._collection)
         {
            this._collection.on("reset", this.refresh, this);
+        }
+        // listening for updates to context for selectedUser:change
+        if (this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
+            this.context.forecasts.on("change:selectedTimePeriod",
+                function(context, timePeriod) {
+                    this.updateWorksheetBySelectedTimePeriod(timePeriod);
+                }, this);
+            this.context.forecasts.on("change:selectedCategory",
+                function(context, category) {
+                    this.updateWorksheetBySelectedCategory(category);
+                },
+                this);
+            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
+            this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
+                this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
+                this.updateWorksheetBySelectedCategory({id: defaultValues.category});
+            }, this);
+            // END STORY 31921015
+            this.context.forecasts.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
         }
     },
 

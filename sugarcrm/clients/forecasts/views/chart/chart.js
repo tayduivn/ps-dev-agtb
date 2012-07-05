@@ -6,7 +6,11 @@
  */
 ({
 
-    hasChartOptions:false,
+    hasSelectedTimePeriod:false,
+    hasSelectedGroupBy:false,
+    hasSelectedDataset:false,
+    hasSelectedCategory:false,
+
     hasFilterOptions:false,
 
     values:{},
@@ -30,32 +34,28 @@
      */
     bindDataChange:function () {
         var self = this;
-
-        this.context.on('change:selectedUser', function (context, user) {
+        this.context.on("reset", function() {
+            this.render();
+        });
+        this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id});
         });
-        this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
+        this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
+            self.hasSelectedTimePeriod = true;
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
-        this.context.on('change:selectedGroupBy', function (context, groupBy) {
+        this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
+            self.hasSelectedGroupBy = true;
             self.handleRenderOptions({group_by: groupBy.id});
         });
-        this.context.on('change:selectedDataSet', function (context, dataset) {
+        this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
+            self.hasSelectedDataset = true;
             self.handleRenderOptions({dataset: dataset.id});
         });
-        this.context.on('change:selectedCategory', function(context, value) {
+        this.context.forecasts.on('change:selectedCategory', function(context, value) {
+            self.hasSelectedCategory = true;
             self.handleRenderOptions({category: value.id});
         });
-
-        this.context.on('change:renderedForecastFilter', function (context, value) {
-            self.hasFilterOptions = true;
-            self.handleRenderOptions(value);
-        });
-
-        this.context.on('change:renderedChartOptions', function (context, value) {
-            self.hasChartOptions = true;
-            self.handleRenderOptions(value);
-        })
     },
 
     handleRenderOptions:function (options) {
@@ -64,7 +64,10 @@
             self.values[key] = value;
         });
 
-        if (self.hasChartOptions && self.hasFilterOptions) {
+        if (self.hasSelectedTimePeriod &&
+            self.hasSelectedGroupBy &&
+            self.hasSelectedDataset &&
+            self.hasSelectedCategory) {
             self.renderChart();
         }
     },

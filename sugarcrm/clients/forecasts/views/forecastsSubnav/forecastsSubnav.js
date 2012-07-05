@@ -13,14 +13,16 @@
 
     bindDataChange: function() {
         var self = this;
-        this.context.on('change:selectedUser', function(context, user) {
-            self.fullName = user.full_name;
-            self.render();
-        });
-        this.context.on('change:selectedTimePeriod', function(context, timePeriod) {
-            self.timePeriod = timePeriod.label;
-            self.render();
-        });
+        app.view.View.prototype.bindDataChange.call(this);
+
+        this.context.forecasts.on('change:selectedUser', function(context, user) {
+            this.fullName = user.full_name;
+            this.render();
+        }, self);
+        this.context.forecasts.on('change:selectedTimePeriod', function(context, timePeriod) {
+            this.timePeriod = timePeriod.label;
+            this.render();
+        }, self);
     }
 
 })

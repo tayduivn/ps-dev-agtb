@@ -38,23 +38,24 @@
 
             chosen.options.viewName = 'edit';
             chosen.label = modelData.label;
-            default_values[key] = '';
+
             if (modelData.default) {
                 chosen.model.set(key, modelData.default);
-                default_values[key] = modelData.default;
+                default_values.id = modelData.default;
+                default_values.label = modelData.options[modelData.default];
             }
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
             if (key === 'group_by') {
+                self.context.forecasts.set('selectedGroupBy', default_values);
                 self.handleGroupByEvents($chosenPlaceholder);
             } else if (key === 'dataset') {
+                self.context.forecasts.set('selectedDataSet', default_values);
                 self.handleDataSetEvents($chosenPlaceholder);
             }
 
         });
-
-        self.context.set('renderedChartOptions', default_values);
     },
 
     handleGroupByEvents: function($dropdown) {
@@ -62,7 +63,7 @@
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.set('selectedGroupBy', {"id": id, "label": label});
+            self.context.forecasts.set('selectedGroupBy', {"id": id, "label": label});
         });
     },
 
@@ -71,7 +72,7 @@
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.set('selectedDataSet', {"id": id, "label": label});
+            self.context.forecasts.set('selectedDataSet', {"id": id, "label": label});
         });
     }
 

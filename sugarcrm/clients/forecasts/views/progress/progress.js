@@ -10,8 +10,7 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
-        this.context.on("change:selectedUser", this.updateProgressForSelectedUser);
-        this.context.on("change:selectedTimePeriod", this.updateProgressForSelectedUser);
+        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
 
     bindDataChange: function () {
@@ -57,9 +56,9 @@
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
         var urlParams = $.param({
-            userId: context.attributes.selectedUser.id,
-            //timePeriodId: self.context.get("selectedTimePeriod")["id"],
-            shouldRollup: (self.context.get("showManagerOpportunities") ? 1 : 0)
+            userId: self.context.forecasts.get("selectedUser").id,
+            timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
+            shouldRollup: (self.context.forecasts.get("showManagerOpportunities") ? 1 : 0)
         });
         this.model.fetch({
             data: urlParams

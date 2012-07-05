@@ -94,17 +94,17 @@
 
                 // ONLY do something if this is a different user
                 // My Opportunities will have the same user id as the current user, so allow that as well
-                if( nodeType == "my_opportunities" || self.context.attributes.selectedUser.id != userData.id ) {
+                if( nodeType == "my_opportunities" || self.context.forecasts.get("selectedUser").id != userData.id ) {
 
                     // if user clicked on a "My Opportunities" node
                     // set this flag true
                     if( nodeType == "my_opportunities") {
-                        self.context.set("showManagerOpportunities", true);
-                    } else if( self.context.attributes.showManagerOpportunities ) {
+                        self.context.forecasts.set("showManagerOpportunities", true);
+                    } else if( self.context.forecasts.get("showManagerOpportunities")) {
                         // resets back to false if user clicks  non-My-Opportunities node
                         // and showManagerOpportunities was previously set to true
                         // so we dont unnecessarily change the context when we dont need to
-                        self.context.set("showManagerOpportunities", false);
+                        self.context.forecasts.set("showManagerOpportunities", false);
                     }
 
                     var selectedUser = {
@@ -115,7 +115,7 @@
                     };
 
                     // update context with selected user
-                    self.context.set( "selectedUser" , selectedUser);
+                    self.context.forecasts.set( "selectedUser" , selectedUser);
 
                     // Handle different types of nodes
                     switch(nodeType) {
