@@ -6,6 +6,11 @@
  */
 ({
 
+    initialize : function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.fullName = app.user.get('full_name');
+    },
+
     bindDataChange: function() {
         var self = this;
         app.view.View.prototype.bindDataChange.call(this);
