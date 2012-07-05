@@ -311,6 +311,9 @@
                             "}" +
                             "}," +
                             "render: function(data) { " +
+                            "if (app.config && app.config.logoURL) {" +
+                            "this.logoURL=app.config.logoURL" +
+                            "}" +
                             "var that  = this;" +
                             "app.view.View.prototype.render.call(this);" +
                             "that.toggleStateField();" +
@@ -419,7 +422,7 @@
                         "<div class=\"row\">\n" +
                         "<div class=\"span4 offset4 thumbnail\">\n" +
                         "<div class=\"modal-header tcenter\">\n" +
-                        "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                        "<h2 class=\"brand\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</h2>\n" +
                         "</div>\n" +
                         "{{#each meta.panels}}" +
                         "<div class=\"modal-body tcenter\">\n" +
@@ -449,7 +452,7 @@
                 templates: {
                     "footer": "<footer>\n" +
                     "    <div class=\"row-fluid\">\n" +
-                    "        <div class=\"span3\"><a href=\"\" class=\"logo\">SugarCRM</a></div>\n" +
+                    "        <div class=\"span3\"><a href=\"\" class=\"logo\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</a></div>\n" +
                     "        <div class=\"span9\">\n" +
                     "            <div class=\"btn-toolbar pull-right\">\n" +
                     "                <div class=\"btn-group\">\n" +
@@ -494,7 +497,7 @@
                         "<div class=\"row\">\n" +
                         "<div class=\"span4 offset4 thumbnail\">\n" +
                         "<div class=\"modal-header tcenter\">\n" +
-                        "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                        "<h2 class=\"brand\"{{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</h2>\n" +
                         "</div>\n" +
                         "{{#each meta.panels}}" +
                         "<div class=\"modal-body tcenter\">\n" +
