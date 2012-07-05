@@ -5,13 +5,6 @@
  * @extends View.View
  */
 ({
-
-    _name_type_map: {
-//        best_case_worksheet: 'int',
-//        likely_case_worksheet: 'int',
-//        probability: 'percent',
-        sales_stage: 'enum'
-    },
     show: false,
 
     viewModule: {},
@@ -48,79 +41,6 @@
         this.context.forecasts.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
     },
 
-
-    /**
-     * Initializes clickToEdit field types (chosen, datepicker, etc...)
-     * @private
-     */
-    _initCTETypes: function() {
-        $.editable.addInputType('enum', {
-            element: function(settings, original) {
-//                debugger;
-                var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.field.def.options), function (value, key) {
-                    var option = $("<option>").val(key).append(value);
-                    selEl.append(option);
-                });
-                $(this).append(selEl);
-                var hidden = $('<input type="hidden">');
-                $(this).append(hidden);
-                return(hidden);
-            },
-
-            /**
-             * sets up and attaches the chosen plugin for this type.
-             * @param settings
-             * @param original
-             */
-            plugin: function(settings, original) {
-                var self = this;
-                self.passedSettings = settings;
-                self.passedOriginal = original;
-                $("select", this).filter(".cteSelect").chosen().change(self, function(e){
-//                    debugger;
-//                    e.data.submit(e.data.passedSettings, e.data.passedOriginal);
-                    e.data.passedSettings.field.$el.html($(this).val());
-                });
-            },
-
-            /**
-             * process value from chosen for submittal
-             * @param settings
-             * @param original
-             */
-            submit: function(settings, original) {
-//                debugger;
-                $("input", this).val($("select", this).filter(".cteSelect").val());
-            }
-        });
-    },
-
-    /**
-     * Renders the field as clickToEditable
-     * @private
-     */
-    _renderClickToEditField: function(field) {
-        this._initCTETypes();
-        var outerElement = this.$("span[sfuuid='" + field.sfId + "']");
-
-        outerElement.editable(function(value, settings){return value;},
-            {
-                type: field.def.type || this._name_type_map[field.name] || 'text',
-                select: true,
-                field: field,
-                callback: function(value, settings) {
-                    try{
-                        settings.field.model.save(settings.field.name, value);
-                    } catch (e) {
-                        app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
-                    }
-                    return value;
-                }
-            }
-        );
-    },
-    
     /**
      * Event Handler for updating the worksheet by a selected user
      *
@@ -135,21 +55,6 @@
         this._collection.url = this.createURL();
         this._collection.fetch();
         this.render();
-    },
-
-    /**
-     * Renders a field.
-     *
-     * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
-     * in metadata, it will also render it as clickToEditable.
-     * @param {View.Field} field The field to render
-     * @protected
-     */
-    _renderField: function(field) {
-        app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit){
-            this._renderClickToEditField(field);
-        }
     },
 
     bindDataChange: function() {
