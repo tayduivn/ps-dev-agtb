@@ -50,6 +50,12 @@ array (
         'width' => '10%',
         'name' => 'base_module',
       ),
+      'published' =>
+      array (
+        'name' => 'published',
+        'default' => true,
+        'width' => '10%',
+      ),      
       'team_name' =>
       array (
         'type' => 'relate',

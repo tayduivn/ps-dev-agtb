@@ -32,13 +32,40 @@
 SUGAR.PdfManager = {};
 
 SUGAR.PdfManager.fieldInserted = false;
+
+/**
+ * Replace &, <, > and " by HTML corresponding syntax
+ */
+SUGAR.PdfManager.htmlEntities = function(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Change the HelpTip for WYSIWYG
+ */
+SUGAR.PdfManager.changeHelpTips = function() {
+    if ($("#base_module").attr("value") == 'Quotes') {
+        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this,SUGAR.PdfManager.htmlEntities(SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_QUOTES_HELP')),'','' )});
+    } else {
+        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this,SUGAR.PdfManager.htmlEntities(SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_HELP')),'','' )});
+    }
+}
+
 /**
  * Returns a list of fields for a module
  */
 SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
 
+    if (!SUGAR.PdfManager.fieldInserted && $("#field").closest("form").find("input[name=duplicateSave]").size()) {
+        SUGAR.PdfManager.fieldInserted = true;
+    }
+    
     if (SUGAR.PdfManager.fieldInserted && linkName.length == 0) {
         alert(SUGAR.language.get('PdfManager', 'LBL_ALERT_SWITCH_BASE_MODULE'));
+    }
+
+    if (linkName.length == 0 ) {
+        SUGAR.PdfManager.changeHelpTips();
     }
 
     if (linkName.length > 0 && linkName.indexOf('pdfManagerRelateLink_') == -1) {
@@ -92,3 +119,5 @@ SUGAR.PdfManager.insertField = function(selField, selSubField) {
 		inst.execCommand('mceInsertRawHTML', false, '{$fields.' + cleanFieldName + '}');
 	}
 }
+
+YAHOO.util.Event.onContentReady('EditView', SUGAR.PdfManager.changeHelpTips);

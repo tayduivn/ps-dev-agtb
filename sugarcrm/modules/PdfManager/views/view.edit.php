@@ -41,6 +41,13 @@ class PdfManagerViewEdit extends ViewEdit
 
     public function display()
     {
+    
+        // Default Team as Global
+        if ((empty($this->bean->id))  && !$this->ev->isDuplicate) {
+            $this->bean->team_id = 1;
+            $this->bean->team_set_id = 1;
+        }
+    
         // Load TinyMCE
         require_once 'include/SugarTinyMCE.php';
         $tiny = new SugarTinyMCE();
