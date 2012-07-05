@@ -52,6 +52,8 @@
                         'meta': this.meta
                     });
                 }
+                this.$('.modelNotLoaded').hide();
+                this.$('.modelLoaded').show();
             }, this);
         }
     }

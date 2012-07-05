@@ -1,21 +1,25 @@
-                {{#notEq collection.next_offset "-1"}}
-                    <div class="block-footer">
-                            {{#each meta.buttons}}
-                                {{field ../this ../model}}
-                            {{/each}}
-                    </div>
-                {{/notEq}}
-                <ul class="nav nav-pills actions">
-                    {{#if context.attributes.isCreateEnabled}}
-                    <li>
-                        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i
-                                class="icon-plus"></i></a>
-                    </li>
-                    {{/if}}
-                    <li>
-                        <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search"><i
-                                class="icon-search"></i></a>
-                    </li>
-                </ul>
-            
-
+{{#if collection.length}}
+    {{#notEq collection.next_offset "-1"}}
+    <div class="block-footer">
+        {{#each meta.buttons}}
+        {{field ../this ../model}}
+        {{/each}}
+    </div>
+    {{/notEq}}
+{{else}}
+    <div class="block-footer">
+        {{#if context._dataFetched}}{{str "LBL_LISTVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+    </div>
+{{/if}}
+<ul class="nav nav-pills actions">
+    {{#if context.attributes.isCreateEnabled}}
+    <li>
+        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i
+                class="icon-plus"></i></a>
+    </li>
+    {{/if}}
+    <li>
+        <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search"><i
+                class="icon-search"></i></a>
+    </li>
+</ul>
