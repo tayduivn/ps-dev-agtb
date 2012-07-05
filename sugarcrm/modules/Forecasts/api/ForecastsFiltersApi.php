@@ -165,7 +165,6 @@ class ForecastsFiltersApi extends ModuleApi {
             );
 
             // Set the main user id as the root for treeData
-            // Set the main user id as the root for treeData
             if($user['metadata']['id'] == $current_user->id) {
                 $user['attr']['rel'] = 'root';
                 $treeData = $user;

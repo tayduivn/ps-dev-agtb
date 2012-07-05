@@ -152,6 +152,38 @@
         }
     },
 
+    bindDataChange: function() {
+        if(this._collection)
+        {
+            this._collection.on("reset", this.refresh, this);
+        }
+        // listening for updates to context for selectedUser:change
+        if (this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser",
+                function(context, selectedUser) {
+                    this.updateWorksheetBySelectedUser(selectedUser);
+                }, this);
+            this.context.forecasts.on("change:selectedTimePeriod",
+                function(context, timePeriod) {
+                    this.updateWorksheetBySelectedTimePeriod(timePeriod);
+                }, this);
+            this.context.forecasts.on("change:selectedCategory",
+                function(context, category) {
+                    this.updateWorksheetBySelectedCategory(category);
+                },this);
+            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
+            this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
+                this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
+                this.updateWorksheetBySelectedCategory({id: defaultValues.category});
+            }, this);
+            // END STORY 31921015
+            this.context.forecasts.on("change:showManagerOpportunities",
+                function(context, showOpps) {
+                    this.updateWorksheetByMgrOpportunities(showOpps);
+                }, this);
+        }
+    },
+
     /**
      * Renders view
      */
@@ -227,14 +259,25 @@
     	return this.show;
     },
 
-
     /***
-     * TEMPORARY FUNCTION just to show flag toggle in console
+     * Event Handler for showing a manager's opportunities
+     *
+     * @param showOpps {Boolean} value to display manager's opportunities or not
      */
-    updateWorksheetByMgrOpps: function(params){
+    updateWorksheetByMgrOpportunities: function(showOpps){
+        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
+
+        // vvvv this was in the old function
         var model = this.context.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" //****> showOpps is only true/false might need to store this somewhere when timeperiod changes + params.id;
         this.render();
+        // ^^^^ this was in the old function
+
+        if(showOpps) {
+            // Show manager's Opportunities (forecastWorksheet for manager's id)
+        } else {
+            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
+        }
     },
 
     /**

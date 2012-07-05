@@ -14,6 +14,8 @@
 
     currentTreeUrl:'',
 
+    currentRootId:'',
+
     /**
      * Initialize the View
      *
@@ -25,6 +27,7 @@
 
         this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
         this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
+        this.currentRootId = app.user.get('id');
 
         // Hide the whole tree view until jsTree gets it's data back
         // if current user has reportees, then we'll show the tree view
@@ -69,21 +72,11 @@
             "types" : {
                 "types" : {
                     "types" : {
-                        "parent_link" : {
-
-                        },
-                        "manager" : {
-
-                        },
-                        "my_opportunities" : {
-
-                        },
-                        "rep" : {
-
-                        },
-                        "root" : {
-
-                        }
+                        "parent_link" : {},
+                        "manager" : {},
+                        "my_opportunities" : {},
+                        "rep" : {},
+                        "root" : {}
                     }
                 }
             }
@@ -94,13 +87,13 @@
 
                 // ONLY do something if this is a different user
                 // My Opportunities will have the same user id as the current user, so allow that as well
-                if( nodeType == "my_opportunities" || self.context.forecasts.get("selectedUser").id != userData.id ) {
+                if(nodeType == "my_opportunities" || self.context.forecasts.get("selectedUser").id != userData.id ) {
 
                     // if user clicked on a "My Opportunities" node
                     // set this flag true
-                    if( nodeType == "my_opportunities") {
+                    if(nodeType == "my_opportunities") {
                         self.context.forecasts.set("showManagerOpportunities", true);
-                    } else if( self.context.forecasts.get("showManagerOpportunities")) {
+                    } else if(self.context.forecasts.get("showManagerOpportunities")) {
                         // resets back to false if user clicks  non-My-Opportunities node
                         // and showManagerOpportunities was previously set to true
                         // so we dont unnecessarily change the context when we dont need to
@@ -111,7 +104,8 @@
                         'id'            : userData.id,
                         'full_name'     : userData.full_name,
                         'first_name'    : userData.first_name,
-                        'last_name'     : userData.last_name
+                        'last_name'     : userData.last_name,
+                        'isManager'     : (nodeType == 'root' || nodeType == 'manager') ? true : false
                     };
 
                     // update context with selected user
@@ -125,9 +119,16 @@
 
                         case "parent_link":
                         case "manager":
-                            self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id;
-                            self.rendered = false;
-                            self.render();
+                            // final check before render, no need to re-render if we've clicked back on the root
+                            // the second level of users (managers underneath the logged-in/root manager) have
+                            // the "manager" rel but they may be at the top ("root") of the tree
+                            // and we dont need to re-render in that case either
+                            if(self.currentRootId != selectedUser.id)  {
+                                self.currentRootId = selectedUser.id;
+                                self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id;
+                                self.rendered = false;
+                                self.render();
+                            }
                             break;
 
                         case "my_opportunities":
@@ -138,6 +139,9 @@
                             // Anything special for the Rep
                             break;
                     }
+                } else if(self.context.forecasts.get("showManagerOpportunities")) {
+                    // Case for user has selected My Opportunities, then clicks back on the manager user
+                    self.context.forecasts.set("showManagerOpportunities", false)
                 }
             });
 
