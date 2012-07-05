@@ -41,7 +41,7 @@ class ForecastsChartApi extends ChartApi
                 'pathVars' => array('', ''),
                 'method' => 'chart',
                 'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
-                'longHelp' => 'modules/Forecasts/api/help/ForecastChartApi.html#chart',
+                'longHelp' => 'modules/Forecasts/api/help/ForecastChartApi.html',
             ),
         );
         return $parentApi;
