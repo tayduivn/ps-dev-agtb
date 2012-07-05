@@ -1627,7 +1627,7 @@ class MysqlManager extends DBManager
      */
     public function getGuidSQL()
     {
-        return 'UUID()';
+      	return 'UUID()';
     }
 
 }

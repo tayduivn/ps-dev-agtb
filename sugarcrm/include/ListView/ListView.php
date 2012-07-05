@@ -400,6 +400,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $list_field['end_link_wrapper'] = $this->end_link_wrapper;
                 $list_field['subpanel_id'] = $this->subpanel_id;
                 $list_field = array_merge($list_field, $field_acl);
+
                 if ( isset($aItem->field_defs[strtolower($list_field['name'])])) {
                     require_once('include/SugarFields/SugarFieldHandler.php');
                     // We need to see if a sugar field exists for this field type first,
@@ -427,6 +428,12 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                         $list_field['fields'][$field_name] = $widget_contents;
                         if('full_name' == $field_name){//bug #32465
                            $list_field['fields'][strtoupper($field_name)] = $widget_contents;
+                        }
+
+                        //vardef source is non db, assign the field name to varname for processing of column.
+                        if(!empty($vardef['source']) && $vardef['source']=='non-db'){
+                            $list_field['varname'] = $field_name;
+
                         }
                         $widget_contents = $layout_manager->widgetDisplay($list_field);
                     } else if(isset($list_field['widget_class']) && $list_field['widget_class'] == 'SubPanelEmailLink' ) {
@@ -479,7 +486,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 'id' => $tempid,
                 'buttons' => $button_contents,
                 'class' => 'clickMenu subpanel records fancymenu button',
-                'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
+                'flat' => false //assign flat value as false to display dropdown menu at any other preferences.
             ), $this->xTemplate);
             $this->xTemplate->assign('CLASS', "inlineButtons");
             $this->xTemplate->assign('CELL_COUNT', ++$count);
@@ -584,12 +591,6 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
         $sortBy = $defaultOrderBy;
     } else {
         $this->setUserVariable($varName, "ORDER_BY", $sortBy);
-    }
-    if($sortBy == 'amount') {
-        $sortBy = 'amount*1';
-    }
-    if($sortBy == 'amount_usdollar') {
-        $sortBy = 'amount_usdollar*1';
     }
 
     $desc = $this->getSessionVariable($varName, $sortBy."S");
@@ -1311,7 +1312,8 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 $select_link = smarty_function_sugar_action_menu(array(
                     'class' => 'clickMenu selectmenu',
                     'id' => 'selectLink',
-                    'buttons' => $menuItems
+                    'buttons' => $menuItems,
+                    'flat' => false,
                 ),$this->xTemplate);
 
             } else {
@@ -1924,11 +1926,11 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 		/**
 		 * @deprecated only used by legacy opportunites listview, nothing current. Leaving for BC
 		 */
-		if($orderBy == 'amount*1')
+		if($orderBy == 'amount')
 		{
 			$this->xTemplateAssign('amount_arrow', $imgArrow);
 		}
-		else if($orderBy == 'amount_usdollar*1')
+		else if($orderBy == 'amount_usdollar')
 		{
 			$this->xTemplateAssign('amount_usdollar_arrow', $imgArrow);
 		}

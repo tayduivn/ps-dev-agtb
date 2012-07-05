@@ -49,6 +49,7 @@ class PackageManagerDisplay{
         global $sugar_version, $sugar_config;
         $app_strings = return_application_language($current_language);
         $ss = new Sugar_Smarty();
+        $ss->assign('APP_STRINGS', $app_strings);
         $ss->assign('FORM_1_PLACE_HOLDER', $form1);
         $ss->assign('form_action', $form_action);
         $ss->assign('hidden_fields', $hidden_fields);
@@ -103,7 +104,14 @@ class PackageManagerDisplay{
 
         $ss->assign('MOD', $mod_strings);
 		$ss->assign('module_load', 'true');
-        $ss->assign('scripts', PackageManagerDisplay::getDisplayScript($install));
+        if (UploadStream::getSuhosinStatus() == false)
+        {
+            $ss->assign('ERR_SUHOSIN', true);
+        }
+        else
+        {
+            $ss->assign('scripts', PackageManagerDisplay::getDisplayScript($install));
+        }
         $show_login = false; //hiding install from sugar
 		$ss->assign('MODULE_SELECTOR', PackageManagerDisplay::buildGridOutput($tree, $mod_strings, $isAlive, $show_login));
        $ss->assign('FORM_2_PLACE_HOLDER', $form2);
@@ -595,4 +603,3 @@ class PackageManagerDisplay{
 		}
     }
  }
-?>

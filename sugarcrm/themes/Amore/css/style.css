@@ -108,11 +108,12 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .more .selected {
 	background:		#ef3067;
 }
-
-ul.SugarActionMenuIESub li a:hover,
+#globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
+#globalLinksModule ul.clickMenu li:hover span,
+ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
 ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-	background:		#ef3067;
+	background-color:		#ef3067;
     color:#ffffff !important;
 }
 

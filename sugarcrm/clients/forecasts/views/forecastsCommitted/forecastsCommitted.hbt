@@ -12,8 +12,10 @@
         {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
         <h2 id="likely">{{likelyCase}}</h2>
     </div>
+    {{#if showButton}}
     <a class="btn btn-primary" id="commit_forecast">
     <i class="icon-upload icon-md"></i> {{str "LBL_QC_COMMIT_BUTTON" "Forecasts"}}</a>
+    {{/if}}
     <hr>
 {{#if previousText.length}}
 <div class="log drawer">

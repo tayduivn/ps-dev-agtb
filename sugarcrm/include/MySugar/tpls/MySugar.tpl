@@ -200,12 +200,12 @@ mySugarLoader.insert();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"  alt=""{/capture}
+			{capture assign=img_attr} border="0"  alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0" alt=""{/capture}
+			{capture assign=img_attr} border="0" alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
 			<!--//END SUGARCRM flav=pro ONLY -->
