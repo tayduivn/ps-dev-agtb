@@ -36,7 +36,6 @@ class Individual implements IChartAndWorksheet {
 
         while(($row=$GLOBALS['db']->fetchByAssoc($report->result))!=null)
         {
-            $GLOBALS['log']->fatal(var_export($row, true));
             $row['id'] = $row['primaryid'];
             $row['forecast'] = ($row['opportunities_forecast'] == 1) ? true : false;
             $row['name'] = $row['opportunities_name'];

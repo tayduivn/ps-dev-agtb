@@ -324,7 +324,7 @@ class ForecastsChartApi extends ChartApi
             case 'likely':
             default:
                 $this->goalParetoLabel = 'Likely';
-                $rb->addSummaryColumn('likely_case=', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->addSummaryColumn('likely_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('likely_case');
                 break;
 
