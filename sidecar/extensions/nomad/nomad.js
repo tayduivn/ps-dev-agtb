@@ -84,6 +84,18 @@
 
             if (app.config.layoutCacheEnabled !== true) app.NomadController = null;
 
+            var startApp = function() {
+                app.init({el: "#nomad" });
+                app.api.debug = app.config.debugSugarApi;
+                app.start();
+                app.logger.debug('App started');
+
+                document.addEventListener("pause", onPause, false);
+                document.addEventListener("resume", onResume, false);
+                document.addEventListener("memoryWarning", onMemoryWarning, false);
+                document.addEventListener("backbutton", onBackButtonClicked, false);
+            };
+
             if (app.isNative) {
                 app.logger.debug("access/refresh tokens: " + authAccessToken + "/" + authRefreshToken);
                 app.OAUTH = {};
@@ -95,33 +107,16 @@
                     app.logger.debug("Using native key/value store");
                     app.nativestore.init();
                     app.cache.store = app.nativestore;
-                }
-            }
-
-            app.init({el: "#nomad" });
-            app.api.debug = app.config.debugSugarApi;
-
-            var startApp = function() {
-                app.start();
-                app.logger.debug('App started');
-            };
-
-            if (app.isNative) {
-                if (app.config.keyValueStore == "nativestore") {
                     app.nativestore.load(startApp);
                 }
                 else {
                     startApp();
                 }
-
-                document.addEventListener("pause", onPause, false);
-                document.addEventListener("resume", onResume, false);
-                document.addEventListener("memoryWarning", onMemoryWarning, false);
-                document.addEventListener("backbutton", onBackButtonClicked, false);
             }
             else {
                 startApp();
             }
+
         },
 
         buildLinkRoute: function(moduleOrContext, id, link, relatedId, action) {

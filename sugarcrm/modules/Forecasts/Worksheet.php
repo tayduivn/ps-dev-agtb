@@ -55,8 +55,9 @@ class Worksheet extends SugarBean {
             $opp->retrieve($this->related_id);
             if(!empty($opp->id))
             {
-                $opp->best_case_worksheet = $this->best_case;
-                $opp->likely_case_worksheet = $this->likely_case;
+                $opp->best_case = $this->best_case;
+                $opp->likely_case = $this->likely_case;
+                $opp->worst_case = $this->worst_case;
                 $opp->save();
             }
         }

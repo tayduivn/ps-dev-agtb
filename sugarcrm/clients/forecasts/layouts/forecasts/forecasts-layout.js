@@ -19,22 +19,17 @@
             options.context.forecasts.set("selectedGroupBy", app.defaultSelections.group_by);
             options.context.forecasts.set("selectedDataSet", app.defaultSelections.dataset);
             options.context.forecasts.set("selectedUser", {
-                                'id'            : app.user.get('id'),
-                                'full_name'     : app.user.get('full_name'),
-                                // first and last name are not passed through /Forecasts/me
-                                'first_name'    : '',
-                                'last_name'     : ''
-                            });
+                'id'            : app.user.get('id'),
+                'full_name'     : app.user.get('full_name'),
+                'isManager'     : app.user.get('isManager'),
+                // first and last name are not passed through /Forecasts/me
+                'first_name'    : '',
+                'last_name'     : ''
+            });
             options.context.forecasts.set("showManagerOpportunities", false);
 
             app.view.Layout.prototype.initialize.call(this, options);
 
-            //If it's a manager, switch to the manager view
-            if(app.user.get('isManager'))
-            {
-                //$('#view-sales-rep').hide();
-                //$('#view-manager').show();
-            }
             this.initializeDrawer();
         },
 

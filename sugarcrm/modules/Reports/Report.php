@@ -2214,7 +2214,7 @@ return str_replace(' > ','_',
         $count_exists = false;
         foreach ($db_row as $count_column => $count_value)
         {
-            if (substr($count_column, -7) == "__count") {
+            if (substr($count_column, -7) == "__count" || $count_column == 'count') {
                 $count *= max($count_value, 1);
                 $count_exists = true;
             }
