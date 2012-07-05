@@ -150,6 +150,30 @@
 
     App.viewModule = {/literal}'{$module}';{literal}
 
+    // get default selections for filter and category
+    App.defaultSelections = {};
+    $.ajax(App.config.serverUrl + '/Forecasts/filters', {
+        dataType: "json"
+    }).done(function(data){
+            App.defaultSelections.timeperiod_id = {
+                'id': data.timeperiod_id.default
+            };
+            App.defaultSelections.category = {
+                'id': data.category.default
+            };
+        });
+    // get default selections for group_by and dataset
+    $.ajax(App.config.serverUrl + '/Forecasts/chartoptions', {
+        dataType: "json"
+    }).done(function(data){
+        App.defaultSelections.group_by = {
+            'id': data.group_by.default
+        };
+        App.defaultSelections.dataset = {
+            'id': data.dataset.default
+        };
+    });
+
     // should already be logged in to sugar, don't need to log in to sidecar.
     App.api.isAuthenticated = function() {
 
