@@ -28,9 +28,17 @@
         this.previousTotals = null;
         this.render();
         //Add listeners
-        this.layout.context.on("change:selectedUser", function(context, user) { self.userId = user.id, self.fullName = user.full_name; self.updateCommitted(); } );
-        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.timePeriodId = timePeriod.id; self.updateCommitted(); });
-        this.layout.context.on("change:updatedTotals", function(context, totals) { self.totals = totals; });
+        this.context.forecasts.on("change:selectedUser", function(context, user) {
+            self.userId = user.id, self.fullName = user.full_name;
+            self.updateCommitted();
+        });
+        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+            self.timePeriodId = timePeriod.id;
+            self.updateCommitted();
+        });
+        this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+            self.totals = totals;
+        });
     },
 
     updateCommitted: function() {

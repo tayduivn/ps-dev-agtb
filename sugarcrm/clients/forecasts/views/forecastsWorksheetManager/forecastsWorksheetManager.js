@@ -40,12 +40,12 @@
         this._collection = this.context.forecasts.worksheet;
 
         // listening for updates to context for selectedUser:change
-        this.layout.context.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
-        this.layout.context.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
-        this.layout.context.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
+        this.context.forecasts.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
+        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
+        this.context.forecasts.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
 
         //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
-        this.layout.context.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
+        this.context.forecasts.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
     },
 
 

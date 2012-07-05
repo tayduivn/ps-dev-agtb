@@ -40,19 +40,21 @@
             default_values[key] = '';
             if (modelData.default) {
                 chosen.model.set(key, modelData.default);
-                default_values[key] = modelData.default;
+                default_values.id = modelData.default;
+                default_values.label = modelData.options[modelData.default];
             }
             chosen.def.options = modelData.options;
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
             if (key === 'timeperiod_id') {
+                self.context.forecasts.set("selectedTimePeriod", default_values);
                 self.handleTimePeriodEvents($chosenPlaceholder);
             } else if (key === 'category') {
+                self.context.forecasts.set("selectedCategory", default_values);
                 self.handleCategoryEvents($chosenPlaceholder);
             }
         });
-        self.context.set('renderedForecastFilter', default_values);
     },
 
     handleCategoryEvents: function($dropdown) {
@@ -60,7 +62,7 @@
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.set('selectedCategory', {"id": id, "label": label});
+            self.context.forecasts.set('selectedCategory', {"id": id, "label": label});
         });
     },
 
@@ -69,7 +71,7 @@
         $dropdown.on('change', 'select', function(event, data) {
             var label = $(this).find('option:[value='+data.selected+']').text();
             var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.set('selectedTimePeriod', {"id": id, "label": label});
+            self.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});
         });
     }
 
