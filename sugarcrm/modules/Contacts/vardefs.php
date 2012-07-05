@@ -337,6 +337,8 @@ array (
         array (
             'name' => 'products',
             'type' => 'link',
+            'link_file' => 'modules/Products/AccountLink.php',
+            'link_class' => 'AccountLink',
             'relationship' => 'contact_products',
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCTS_TITLE',

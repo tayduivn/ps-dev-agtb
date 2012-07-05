@@ -240,8 +240,9 @@ class Meeting extends SugarBean {
 
                 }
             } else {
-                SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
-                return $this->id;
+                // Generic Message Provides no value to End User - Log the issue with message detail and continue
+                // SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
+                $GLOBALS['log']->warn('ERR_EXTERNAL_API_SAVE_FAIL' . ": " . $this->type . " - " .  $response['errorMessage']);
             }
 
             $api->logoff();
@@ -451,7 +452,7 @@ class Meeting extends SugarBean {
 		}
 		$this->email_reminder_checked = $this->email_reminder_time == -1 ? false : true;
 
-		if (isset ($_REQUEST['parent_type'])) {
+		if (isset ($_REQUEST['parent_type']) && empty($this->parent_type)) {
 			$this->parent_type = $_REQUEST['parent_type'];
 		} elseif (is_null($this->parent_type)) {
 			$this->parent_type = $app_list_strings['record_type_default_key'];

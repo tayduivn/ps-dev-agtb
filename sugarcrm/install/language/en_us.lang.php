@@ -568,6 +568,7 @@ $mod_strings = array(
     'LBL_OOTB_DCE_REPORT'         => 'Create Action to gather daily reports',
     'LBL_OOTB_DCE_SALES_REPORT'   => 'Create weekly Sales Report Email',
     //END SUGARCRM flav=dce ONLY
+    'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 
     // BEGIN SUGARCRM flav=pro ONLY
     'LBL_FTS_TABLE_TITLE'     => 'Provide Full-Text Search Settings',

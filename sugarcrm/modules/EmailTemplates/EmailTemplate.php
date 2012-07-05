@@ -431,30 +431,38 @@ class EmailTemplate extends SugarBean {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
 			}
-			$repl_arr["contact_".$field_def['name']] = '';
-			$repl_arr["contact_account_".$field_def['name']] = '';
+            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                'contact_'         . $field_def['name'] => '',
+                'contact_account_' . $field_def['name'] => '',
+            ));
 		}
 		foreach($prospect->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
 			}
-			$repl_arr["contact_".$field_def['name']] = '';
-			$repl_arr["contact_account_".$field_def['name']] = '';
+            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                'contact_'         . $field_def['name'] => '',
+                'contact_account_' . $field_def['name'] => '',
+            ));
 		}
 		//END SUGARCRM flav!=sales ONLY
 		foreach($contact->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
 			}
-			$repl_arr["contact_".$field_def['name']] = '';
-			$repl_arr["contact_account_".$field_def['name']] = '';
+            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                'contact_'         . $field_def['name'] => '',
+                'contact_account_' . $field_def['name'] => '',
+            ));
 		}
 		foreach($acct->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
 			}
-			$repl_arr["account_".$field_def['name']] = '';
-			$repl_arr["account_contact_".$field_def['name']] = '';
+            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                'account_'         . $field_def['name'] => '',
+                'account_contact_' . $field_def['name'] => '',
+            ));
 		}
 		// cn: end bug 9277 fix
 
@@ -476,17 +484,23 @@ class EmailTemplate extends SugarBean {
 						$translated = translate($field_def['options'], 'Accounts' ,$acct->$field_def['name']);
 
 						if(isset($translated) && ! is_array($translated)) {
-							$repl_arr["account_".$field_def['name']] = $translated;
-							$repl_arr["contact_account_".$field_def['name']] = $translated;
+                            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                                'account_'         . $field_def['name'] => $translated,
+                                'contact_account_' . $field_def['name'] => $translated,
+                            ));
 						} else { // unset enum field, make sure we have a match string to replace with ""
-							$repl_arr["account_".$field_def['name']] = '';
-							$repl_arr["contact_account_".$field_def['name']] = '';
+                            $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                                'account_'         . $field_def['name'] => '',
+                                'contact_account_' . $field_def['name'] => '',
+                            ));
 						}
 					} else {
                         // bug 47647 - allow for fields to translate before adding to template
                         $translated = self::_convertToType($field_def['type'],$acct->$field_def['name']);
-						$repl_arr["account_".$field_def['name']] = $translated;
-						$repl_arr["contact_account_".$field_def['name']] = $translated;
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            'account_'         . $field_def['name'] => $translated,
+                            'contact_account_' . $field_def['name'] => $translated,
+                        ));
 					}
 				}
 			}
@@ -514,18 +528,24 @@ class EmailTemplate extends SugarBean {
 					$translated = translate($field_def['options'], 'Accounts' ,$contact->$field_def['name']);
 
 					if(isset($translated) && ! is_array($translated)) {
-						$repl_arr["contact_".$field_def['name']] = $translated;
-						$repl_arr["contact_account_".$field_def['name']] = $translated;
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            'contact_'         . $field_def['name'] => $translated,
+                            'contact_account_' . $field_def['name'] => $translated,
+                        ));
 					} else { // unset enum field, make sure we have a match string to replace with ""
-						$repl_arr["contact_".$field_def['name']] = '';
-						$repl_arr["contact_account_".$field_def['name']] = '';
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            'contact_'         . $field_def['name'] => '',
+                            'contact_account_' . $field_def['name'] => '',
+                        ));
 					}
 				} else {
 					if (isset($contact->$field_def['name'])) {
                         // bug 47647 - allow for fields to translate before adding to template
                         $translated = self::_convertToType($field_def['type'],$contact->$field_def['name']);
-						$repl_arr["contact_".$field_def['name']] = $translated;
-						$repl_arr["contact_account_".$field_def['name']] = $translated;
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            'contact_'         . $field_def['name'] => $translated,
+                            'contact_account_' . $field_def['name'] => $translated,
+                        ));
 					} // if
 				}
 			}
@@ -543,19 +563,29 @@ class EmailTemplate extends SugarBean {
 					$translated = translate($field_def['options'],$bean_name,$focus->$field_def['name']);
 
 					if(isset($translated) && ! is_array($translated)) {
-						$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = $translated;
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            strtolower($beanList[$bean_name])."_".$field_def['name'] => $translated,
+                        ));
 					} else { // unset enum field, make sure we have a match string to replace with ""
-						$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = '';
+                        $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                            strtolower($beanList[$bean_name])."_".$field_def['name'] => '',
+                        ));
 					}
 				} else {
                     // bug 47647 - translate currencies to appropriate values
-					$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = self::_convertToType($field_def['type'],$focus->$field_def['name']);
+                    $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                        strtolower($beanList[$bean_name])."_".$field_def['name'] => self::_convertToType($field_def['type'],$focus->$field_def['name']),
+                    ));
 				}
 			} else {
 				if($field_def['name'] == 'full_name') {
-					$repl_arr[strtolower($beanList[$bean_name]).'_full_name'] = $focus->get_summary_text();
+                    $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                        strtolower($beanList[$bean_name]).'_full_name' => $focus->get_summary_text(),
+                    ));
 				} else {
-					$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = '';
+                    $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
+                        strtolower($beanList[$bean_name])."_".$field_def['name'] => '',
+                    ));
 				}
 			}
 		} // end foreach()
@@ -580,6 +610,27 @@ class EmailTemplate extends SugarBean {
 
 		return $string;
 	}
+
+    /**
+     * Add replacement(s) to the collection based on field definition
+     *
+     * @param array $data
+     * @param array $field_def
+     * @param array $replacement
+     * @return array
+     */
+    protected static function add_replacement($data, $field_def, $replacement)
+    {
+        foreach ($replacement as $key => $value)
+        {
+            // @see defect #48641
+            if ('multienum' == $field_def['type']) {
+                $value = implode(', ', unencodeMultienum($value));
+            }
+            $data[$key] = $value;
+        }
+        return $data;
+    }
 
 	function parse_template($string, &$bean_arr) {
 		global $beanFiles, $beanList;

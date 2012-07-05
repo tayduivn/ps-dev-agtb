@@ -1787,6 +1787,6 @@ EOQ;
     public function getGuidSQL()
     {
         $guidStart = create_guid_section(3);
-        return "'$guidStart-' || sys_guid()";
+      	return "'$guidStart-' || sys_guid()";
     }
 }

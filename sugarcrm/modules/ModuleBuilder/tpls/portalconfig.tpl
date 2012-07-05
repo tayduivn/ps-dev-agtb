@@ -52,7 +52,6 @@
                 {$mod.LBL_PORTAL_LIST_NUMBER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>
-
                 <input class='portalProperty portalField' id='maxQueryResult' name='maxQueryResult' value='{$maxQueryResult}' size=4>
             </td>
         </tr>
@@ -61,11 +60,17 @@
                 {$mod.LBL_PORTAL_DETAIL_NUMBER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>
-
                 <input class='portalProperty portalField' id='fieldsToDisplay' name='fieldsToDisplay' value='{$fieldsToDisplay}' size=4>
             </td>
         </tr>
-
+        <tr>                            
+            <td colspan='1' nowrap>     
+                {$mod.LBL_PORTAL_SEARCH_RESULT_NUMBER}:<span class="required">*</span>
+            </td>                       
+            <td colspan='1' nowrap>                                 
+                <input class='portalProperty portalField' id='maxSearchQueryResult' name='maxSearchQueryResult' value='{$maxSearchQueryResult}' size=4>
+            </td>                       
+        </tr>
         <tr>
             <td colspan='2' nowrap>
                 <input type='button' class='button' id='gobutton' value='Save'>
@@ -78,10 +83,9 @@
 {literal}
 
 <script language='javascript'>
-    addToValidate(0, "appName", "alpha", true,{/literal}"{$mod.LBL_PORTAL_APP_NAME}"{literal});
-    addToValidate(0, "restURL", "alpha", true,{/literal}"{$mod.LBL_PORTAL_REST_URL}"{literal});
-    addToValidate(0, "listSize", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
+    addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
+    addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 
     $('#gobutton').click(function(event){
         var field;
         var fields = $('.portalField');

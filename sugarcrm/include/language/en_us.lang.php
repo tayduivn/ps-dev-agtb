@@ -2627,6 +2627,7 @@ $app_strings = array (
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
+    'LBL_MEETING_GO_BACK'=>'Go back to the meeting',
     'LBL_MEMBERS'=>'Members',
     'LBL_MEMBER_OF'=>'Member Of',
     'LBL_MODIFIED_BY_USER'=>'Modified by User',
@@ -2711,6 +2712,8 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_TIPS' => "Press the search button or click enter to get an exact match for them.",
+    'LBL_SEARCH_TIPS_2' => "Press the search button or click enter to get an exact match for",
     'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
@@ -2815,7 +2818,7 @@ $app_strings = array (
     'LBL_TABGROUP_ALL' => 'All',
     'LBL_TABGROUP_ACTIVITIES' => 'Activities',
     'LBL_TABGROUP_COLLABORATION' => 'Collaboration',
-    'LBL_TABGROUP_HOME' => 'Home',
+    'LBL_TABGROUP_HOME' => 'Dashboard',
     'LBL_TABGROUP_MARKETING' => 'Marketing',
     'LBL_TABGROUP_MY_PORTALS' => 'My Sites',
     'LBL_TABGROUP_OTHER' => 'Other',
@@ -2913,6 +2916,7 @@ $app_strings = array (
     'ERROR_MIN_FIELD_LENGTH' => 'Error. The min length of this field is {{this}}.',
     'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
+    'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
@@ -3339,6 +3343,8 @@ $app_strings = array (
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
     'UPLOAD_ERROR_TEXT_SIZEINFO' => 'ERROR: There was an error during upload. Error code: {0} - {1}. The upload_maxsize is {2} ',
     'UPLOAD_ERROR_HOME_TEXT'     => 'ERROR: There was an error during your upload, please contact an administrator for help.',
+    'UPLOAD_MAXIMUM_EXCEEDED'    => 'Size of Upload ({0} bytes) Exceeded Allowed Maximum: {1} bytes',
+
 
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
@@ -3378,7 +3384,13 @@ $app_strings = array (
     'LBL_TIME_AGO_DAY' => 'yesterday',
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
-    'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}'
+    'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
+
+    'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time. You may add a record now.',
+    'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
+
+    'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

@@ -34,8 +34,17 @@ describe("Bean", function() {
     it("should be populated with defaults upon instantiation", function() {
         var moduleName = "Contacts", bean;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        bean = dm.createBean(moduleName);
+        bean = dm.createBean(moduleName, { first_name: "John" });
         expect(bean.get("field_0")).toEqual(100);
+        expect(bean.get("first_name")).toEqual("John");
+    });
+
+    it("should not be populated with defaults upon instantiation if the model exists", function() {
+        var moduleName = "Contacts", bean;
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        bean = dm.createBean(moduleName, { id: "xyz ", first_name: "John" });
+        expect(bean.has("field_0")).toBeFalsy();
+        expect(bean.get("first_name")).toEqual("John");
     });
 
     it("should be able to create a collection of related beans", function() {

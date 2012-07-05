@@ -971,7 +971,7 @@ EOJS;
 		$pages[$_REQUEST['pageId']]['pageTitle'] = SugarCleaner::stripTags(from_html($newPageName), false);
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
-		return $pages[$_REQUEST['pageId']]['pageTitle'];
+        return to_html($pages[$_REQUEST['pageId']]['pageTitle'], ENT_QUOTES);
 	}
 	//END SUGARCRM flav=pro ONLY
 }

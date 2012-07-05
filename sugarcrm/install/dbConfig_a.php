@@ -252,14 +252,14 @@ $outFTS =<<<EOQ3
         <td width='1%'></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_HOST']}</b></td>
         <td  width='35%'nowrap align="left">
-         <input type="text" name="fts_host" id="fts_host" value="" />
+         <input type="text" name="fts_host" id="fts_host" value="localhost" />
         </td>
 </tr>
 <tr id='fts_port_row' style='display:none;'>
 <td width='1%'></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_PORT']}</b></td>
         <td  width='35%'nowrap align="left">
-         <input type="text" name="fts_port" id="fts_port" maxlength="10" value="" />
+         <input type="text" name="fts_port" id="fts_port" maxlength="10" value="9200" />
         </td>
 </tr>
 </table>

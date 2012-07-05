@@ -862,8 +862,8 @@ function handleSugarConfig() {
     }
 //BEGIN SUGARCRM flav=ent ONLY
     $portalConfig = array(
-        'appId'=>'SupportPortal',
-        'env'=>'dev',
+        'appId' => 'SupportPortal',
+        'env' => 'dev',
         'platform' => 'portal',
         'additionalComponents' => array(
             'header' => array(
@@ -878,9 +878,9 @@ function handleSugarConfig() {
         ),
         'serverUrl' => $sugar_config['site_url'].'/rest/v10',
         'unsecureRoutes' => array('signup', 'error'),
-        "clientID"=> "sugar"
+        'clientID' => 'sugar'
     );
-    $configString = json_encode($portalConfig, true);
+    $configString = json_encode($portalConfig);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
     sugar_file_put_contents('portal2/config.js', $portalJSConfig);
 //END SUGARCRM flav=ent ONLY
@@ -899,6 +899,13 @@ $contents = '';
 $restrict_str = <<<EOQ
 
 # BEGIN SUGARCRM RESTRICTIONS
+
+EOQ;
+if (ini_get('suhosin.perdir') !== false && strpos(ini_get('suhosin.perdir'), 'e') !== false)
+{
+    $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
+}
+$restrict_str .= <<<EOQ
 RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
@@ -928,11 +935,10 @@ $cache_headers = <<<EOQ
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
 <IfModule mod_rewrite.c>
+    Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    Options +FollowSymLinks
-    RewriteEngine On
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 </IfModule>
@@ -1115,6 +1121,9 @@ function create_default_users(){
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
+    //Bug#53793: Keep default current user in the global variable in order to store 'created_by' info as default user
+    //           while installation is proceed.
+    $GLOBALS['current_user'] = $user;
 
 
     if( $create_default_user ){

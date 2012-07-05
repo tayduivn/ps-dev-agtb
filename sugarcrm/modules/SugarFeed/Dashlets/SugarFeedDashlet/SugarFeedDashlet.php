@@ -200,7 +200,8 @@ var $myFavoritesOnly = false;
                 $this->seedBean->disable_row_level_security = true;
 
                  //From SugarBean add_team_security_where_clause but customized select.
-                $lvsParams['custom_from'] .= ' LEFT JOIN (select tst.team_set_id, team_memberships.id as team_membership_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = "' . $current_user->id . '" AND team_memberships.deleted=0 group by tst.team_set_id) sugarfeed_tf on sugarfeed_tf.team_set_id  = sugarfeed.team_set_id ';
+                $lvsParams['custom_from'] .= " LEFT JOIN (select tst.team_set_id, MIN(team_memberships.id) as team_membership_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '" . $current_user->id . "' AND team_memberships.deleted=0
+                group by tst.team_set_id) sugarfeed_tf on sugarfeed_tf.team_set_id  = sugarfeed.team_set_id ";
 
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "

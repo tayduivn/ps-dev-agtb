@@ -23,7 +23,8 @@
 
             //get template and output the result
             template = app.template.get('edit-field-error');
-            this.$('.controls').append(template(errMessages));
+            this.$('.controls').children().not(this.fieldTag).remove();         //remove all error messages
+            this.$('.controls').append(template(errMessages));                  //append new ones
         },
 
         /**
@@ -33,7 +34,6 @@
             var fieldContainer = this.$('.control-group');
             if (fieldContainer.hasClass('error')) {
                 this.$('.control-group').removeClass('error');
-                this.$('.controls').children().not(this.fieldTag).remove();
             }
         }
     });

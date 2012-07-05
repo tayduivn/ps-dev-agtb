@@ -22,6 +22,9 @@
  * All Rights Reserved.
  ********************************************************************************/
  *}
+{if $ERR_SUHOSIN == true}
+{$APP_STRINGS.ERR_SUHOSIN}
+{else}
 {$scripts}
 {$TREEHEADER}
 {literal}
@@ -88,6 +91,4 @@ pre {
 </script>
 {/literal}
 {/if}
-
-
-
+{/if}
