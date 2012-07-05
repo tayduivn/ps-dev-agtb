@@ -79,7 +79,24 @@
 
     </table>
 </form>
+<div>
 
+    {if disabledDisplayModules}
+    <br>
+    <p>
+        {$mod.LBL_PORTAL_DISABLED_MODULES}
+    <ul>
+        {foreach from=$disabledDisplayModulesList item=modName}
+            <li>{$modName}</li>
+        {/foreach}
+    </ul>
+    </p>
+    <p>
+        {$mod.LBL_PORTAL_ENABLE_MODULES}
+    </p>
+    {/if}
+
+</div>
 {literal}
 
 <script language='javascript'>
