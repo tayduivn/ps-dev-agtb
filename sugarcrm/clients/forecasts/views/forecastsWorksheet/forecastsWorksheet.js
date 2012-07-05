@@ -119,49 +119,6 @@
     },
 
     /**
-     * Initializes clickToEdit field types (chosen, datepicker, etc...)
-     * @private
-     */
-    _initCTETypes: function() {
-        $.editable.addInputType('enum', {
-            element: function(settings, original) {
-                var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.field.def.options), function (value, key) {
-                    var option = $("<option>").val(key).append(value);
-                    selEl.append(option);
-                });
-                $(this).append(selEl);
-                var hidden = $('<input type="hidden">');
-                $(this).append(hidden);
-                return(hidden);
-            },
-
-            /**
-             * sets up and attaches the chosen plugin for this type.
-             * @param settings
-             * @param original
-             */
-            plugin: function(settings, original) {
-                var self = this;
-                self.passedSettings = settings;
-                self.passedOriginal = original;
-                $("select", this).filter(".cteSelect").chosen().change(self, function(e){
-                    $(this).parent().submit();
-                });
-            },
-
-            /**
-             * process value from chosen for submittal
-             * @param settings
-             * @param original
-             */
-            submit: function(settings, original) {
-                $("input", this).val($("select", this).filter(".cteSelect").val());
-            }
-        });
-    },
-
-    /**
      * Adds the icon and associated events/handlers to the clickToEdit field
      * @param field
      * @private
@@ -197,7 +154,6 @@
      */
     _renderClickToEditField: function(field) {
         var self = this;
-        this._initCTETypes();
         this._addCTEIcon(field);
 
         field.$el.editable(function(value, settings){
@@ -255,7 +211,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit) {
+        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit) {
             this._renderClickToEditField(field);
         }
     },
@@ -345,24 +301,38 @@
         this.totalView.render();
 
     },
+
+    /**
+     * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
+     * or whether to render the clickToEdit field
+     * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
+     */
+    isMyWorksheet: function() {
+        var userId = app.user.get('id');
+        var selectedUser = userId;
+
+        if(this.selectedUser){
+            selectedUser = this.selectedUser;
+        }
+
+        if(userId.localeCompare(selectedUser) != 0){
+            return false;
+        }
+        return true;
+    },
+
     /**
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var isManager = app.user.get('isManager');
-    	var userId = app.user.get('id');
-    	var selectedUser = userId;
+        var isManager = app.user.get('isManager');
     	this.show = false;
-    	
-    	
-    	if(this.selectedUser){
-    		selectedUser = this.selectedUser;
+
+
+    	if(!isManager || (isManager && !this.isMyWorksheet())){
+    		this.show = true;
     	}
 
-    	if(!isManager || (isManager && userId.localeCompare(selectedUser) != 0)){
-    		this.show = true;
-    	}	
-    	
     	return this.show;
     },
 
