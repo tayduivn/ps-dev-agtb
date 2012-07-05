@@ -307,4 +307,15 @@
         return new Handlebars.SafeString(wrapper);
     });
 
+    /**
+     * Joins an arrays elements by a glue string
+     * @method field
+     * @param {Array} array Array of strings
+     * @param {String} glue string glue
+     * @return {String} String
+     */
+    Handlebars.registerHelper('arrayJoin', function(array, glue) {
+        return array.join(glue);
+    });
+
 })(SUGAR.App);

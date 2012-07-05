@@ -25,8 +25,7 @@
         _.each(moduleMeta.fields, function(fieldMeta, fieldName) {
             var fMeta = fieldMeta;
             if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0) {
-                fMeta.label = app.lang.get(fMeta.vname, self.module);
-                results.push(fieldMeta);
+                results.push(app.lang.get(fMeta.vname, self.module));
             }
         });
         return results;

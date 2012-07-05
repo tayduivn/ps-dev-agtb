@@ -1,4 +1,4 @@
                     <div class="dataTables_filter">
-                        <label class="hide">Search:</label> <input class="span4" placeholder="{{#if searchFields}} Search by:{{#each searchFields}} {{label}},{{/each}}{{else}}Search...{{/if}}"
+                        <label class="hide">Search:</label> <input class="span4" placeholder="{{#if searchFields}} Search by: {{arrayJoin searchFields ", "}}{{else}}Search...{{/if}}"
                                                                    type="text" aria-controls="DataTables_Table_0">
                     </div>
