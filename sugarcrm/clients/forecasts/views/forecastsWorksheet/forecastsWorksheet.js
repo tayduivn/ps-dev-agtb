@@ -9,13 +9,6 @@
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
 
-    _name_type_map: {
-//        best_case_worksheet: 'int',
-//        likely_case_worksheet: 'int',
-//        probability: 'percent',
-        sales_stage: 'enum'
-    },
-
     viewModule: {},
 
     gTable:'',
@@ -160,7 +153,6 @@
                 return value;
             },
             {
-                type: this._name_type_map[field.name] || 'text',
                 select: true,
                 field: field,
                 view: self,
