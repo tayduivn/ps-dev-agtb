@@ -116,43 +116,41 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $chart_contents = $rb->toJson();
 
         $report = new Report($chart_contents);
-        $data_grid = $mgr->getWorksheetGridData('manager', $report);
-		
+
+        //populate output with default data
+        $default_data = array("amount" => 0,
+                              "quota" => 0,
+                              "best" => 0,
+                              "likely" => 0,
+                              "best_adjusted" => 0,
+                              "likely_adjusted" => 0,
+                              "forecast" => 0);
+
+        $default_data['name'] = $user->user_name;
+        $default_data['primaryid'] = $user->id;
+        $data[$user->user_name] = $default_data;
+
+
+        require_once("modules/Forecasts/Common.php");
+        $common = new Common();
+        $common->retrieve_direct_downline($this->user_id);
+
+        foreach($common->my_direct_downline as $reportee_id)
+        {
+            $reportee = new User();
+            $reportee->retrieve($reportee_id);
+            $default_data['name'] = $reportee->user_name;
+            $default_data['primaryid'] = $reportee_id;
+            $data[$reportee->user_name] = $default_data;
+        }
+
+        $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
+
         $quota = $this->getQuota();
         $forecast = $this->getForecastBestLikely();
         $worksheet = $this->getWorksheetBestLikelyAdjusted();
-        $userInfo = $this->getUserInfo();
-        $data_grid = array_merge_recursive($data_grid, $quota, $forecast, $worksheet, $userInfo);
-       
-        //build return array
-        $returnArray = array();
-        foreach($data_grid as $data){
-        	$tempArray = array();
-        	//normalize data to equal dimensions before returning
-        	if(!isset($data["amount"])){
-        		$data["amount"] = 0;
-        	}
-        	if(!isset($data["best_case"])){
-        		$data["best_case"] = 0;
-        	}
-        	if(!isset($data["likely_case"])){
-        		$data["likely_case"] = 0;
-        	}
-        	if(!isset($data["best_adjusted"])){
-        		$data["best_adjusted"] = 0;
-        	}
-        	if(!isset($data["likely_adjusted"])){
-        		$data["likely_adjusted"] = 0;
-        	}
-        	
-        	foreach($data as $key => $value){
-        		$tempArray[$key] = $value;
-        	}
-        	
-        	array_push($returnArray, $tempArray);
-        }
-        
-        return $returnArray;
+        $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
+        return $data_grid;
     }
 
 
