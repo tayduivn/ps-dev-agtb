@@ -2619,7 +2619,7 @@ function get_emails_by_assign_or_link($params)
     	'join_table_link_alias' => 'linkt',
     ));
     $rel_join = str_replace("{$bean->table_name}.id", "'{$bean->id}'", $rel_join);
-    $return_array['select']='SELECT emails.id ';
+    $return_array['select']='SELECT DISTINCT emails.id ';
     $return_array['from'] = "FROM emails ";
     $return_array['join'] = " INNER JOIN (".
         // directly assigned emails
