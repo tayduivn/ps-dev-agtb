@@ -34,6 +34,14 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
                 'shortHelp' => 'Returns current user',
                 'longHelp' => 'include/api/html/me.html',
             ),
+            'selecteUserObject' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'user', '?'),
+                'pathVars' => array('', '', 'userId'),
+                'method' => 'retrieveSelectedUser',
+                'shortHelp' => 'Returns selectedUser object for given user',
+                'longHelp' => 'include/api/html/user.html',
+            ),
         );
     }
 
@@ -52,5 +60,24 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         return $data;
 
     }
+
+    /**
+        * Retrieves a "selecteUser" object for a given user id
+        *
+        * @param $api
+        * @param $args
+        * @return array
+        */
+       public function retrieveSelectedUser($api, $args) {
+           $uid = $args['userId'];
+           $user = BeanFactory::getBean('Users', $uid);
+           $data = array();
+           $data['id'] = $user->id;
+           $data['full_name'] = $user->full_name;
+           $data['first_name'] = $user->first_name;
+           $data['last_name'] = $user->last_name;
+           $data['isManager'] = User::isManager($user->id);
+           return $data;
+       }
 
 }
