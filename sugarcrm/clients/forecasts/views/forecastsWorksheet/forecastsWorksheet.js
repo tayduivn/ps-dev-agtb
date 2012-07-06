@@ -69,7 +69,7 @@
                 var hb = Handlebars.compile("<tr><th colspan='5' style='text-align: right;'>Included Total</th>" +
                     "<th>{{includedAmount}}</th><th>{{includedBest}}</th><th>{{includedLikely}}</th></tr>" +
                     "<tr class='overall'><th colspan='5' style='text-align: right;'>Overall Total</th>" +
-                    "<th>{{overallAmount}}</th><th>{{overAllBest}}</th><th>{{overallLikely}}</th></tr>");
+                    "<th>{{overallAmount}}</th><th>{{overallBest}}</th><th>{{overallLikely}}</th></tr>");
                 $('#summary').html(hb(self.model.toJSON()));
                 return this;
             }
@@ -350,8 +350,8 @@
         _.each(self._collection.models, function (model) {
             var included = model.get('forecast');
             var amount = parseFloat(model.get('amount'));
-            var likely = parseFloat(model.get('likely_case_worksheet'));
-            var best = parseFloat(model.get('best_case_worksheet'));
+            var likely = parseFloat(model.get('likely_case'));
+            var best = parseFloat(model.get('best_case'));
 
             if(included)
             {

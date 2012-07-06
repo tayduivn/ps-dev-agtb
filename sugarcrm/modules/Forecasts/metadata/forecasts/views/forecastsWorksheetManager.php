@@ -10,6 +10,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                
                 array(
                     'name' => 'name',
+                    'type' => 'varchar',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'route' =>
@@ -24,6 +25,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
 
                 array(
                     'name' => 'amount',
+                    'type' => 'currency',
                     'label' => 'LBL_AMOUNT',
                     'default' => true,
                     'enabled' => true,
@@ -31,6 +33,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
 
                 array(
                     'name' => 'quota',
+                    'type' => 'currency',
                     'label' => 'LBL_QUOTA',
                     'default' => true,
                     'enabled' => true,
@@ -38,6 +41,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                 
                 array(
                     'name' => 'best_case',
+                    'type' => 'currency',
                     'label' => 'LBL_BEST_CASE',
                     'default' => true,
                     'enabled' => true
@@ -45,6 +49,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
 
                 array(
                     'name' => 'best_adjusted',
+                    'type' => 'currency',
                     'label' => 'LBL_BEST_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
@@ -53,6 +58,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
 
                 array(
                     'name' => 'likely_case',
+                    'type' => 'currency',
                     'label' => 'LBL_LIKELY_CASE',
                     'default' => true,
                     'enabled' => true,
@@ -60,11 +66,13 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                 ),
                 array(
                     'name' => 'likely_adjusted',
+                    'type' => 'currency',
                     'label' => 'LBL_LIKELY_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
                 ),
+
             ),
         ),
     ),

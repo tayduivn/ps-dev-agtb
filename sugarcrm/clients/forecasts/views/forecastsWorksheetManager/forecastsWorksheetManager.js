@@ -30,7 +30,7 @@
         this.category = 'Committed',
         
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheetmanager;
 
         // listening for updates to context for selectedUser:change
         this.context.forecasts.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
@@ -105,11 +105,13 @@
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
+
         for( var i = 0; i < fields.length; i++ )  {
-            columnDefs.push( { "sName": fields[i].name, "aTargets": [ i ] } );
+            var name = fields[i].name;
+            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
         }
 
-        this.gTable = this.$('.worksheetTable').dataTable(
+        this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
             {
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
@@ -119,7 +121,7 @@
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
-            $('.worksheetTable tr').on('click', function () {
+            $('.worksheetManagerTable tr').on('click', function () {
                 if (self.gTable.fnIsOpen(this)) {
                     self.gTable.fnClose(this);
                 } else {
@@ -157,8 +159,10 @@
         // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
 
         // vvvv this was in the old function
+        /*
         var model = this.context.forecasts.worksheet;
         model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" //****> showOpps is only true/false might need to store this somewhere when timeperiod changes + params.id;
+        */
         this.render();
         // ^^^^ this was in the old function
 
