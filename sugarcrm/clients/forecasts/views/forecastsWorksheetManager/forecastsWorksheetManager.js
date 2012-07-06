@@ -6,6 +6,7 @@
  */
 ({
     show: false,
+    showOpps: false,
 
     viewModule: {},
 
@@ -31,14 +32,6 @@
         
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.worksheetmanager;
-
-        // listening for updates to context for selectedUser:change
-        this.context.forecasts.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
-        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) { self.updateWorksheetBySelectedTimePeriod(timePeriod); });
-        this.context.forecasts.on("change:selectedCategory", function(context, category) { self.updateWorksheetBySelectedCategory(category); });
-
-        //TEMP FUNCTIONALITY, WILL BE HANDLED DIFFERENTLY SOON
-        this.context.forecasts.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
     },
 
     /**
@@ -47,6 +40,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+    	console.log("selectedUser");
         this.selectedUser = selectedUser.id;
         if(!this.showMe()){
         	return false;
@@ -54,7 +48,6 @@
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
         this._collection.fetch();
-        this.render();
     },
 
     bindDataChange: function() {
@@ -88,12 +81,24 @@
                 }, this);
         }
     },
-
+    
+    /**
+     * Refresh the view
+     *
+     * This method ensures that we refresh the view after data pulls
+     * @param context
+     */
+    refresh:function(context) {
+        
+    	this.render();
+    },
+    
     /**
      * Renders view
      */
     render:function () {
         var self = this;
+        
         if(!this.showMe()){
         	return false;
         }
@@ -142,11 +147,10 @@
     	if(this.selectedUser){
     		selectedUser = this.selectedUser;
     	}
-    	
-    	if(isManager && userId.localeCompare(selectedUser) == 0){
+
+    	if(!this.showOpps && isManager && userId.localeCompare(selectedUser) == 0){
     		this.show = true;
     	}
-    
     	return this.show;
     },
 
@@ -156,21 +160,13 @@
      * @param showOpps {Boolean} value to display manager's opportunities or not
      */
     updateWorksheetByMgrOpportunities: function(showOpps){
-        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
-
-        // vvvv this was in the old function
-        /*
-        var model = this.context.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" //****> showOpps is only true/false might need to store this somewhere when timeperiod changes + params.id;
-        */
-        this.render();
-        // ^^^^ this was in the old function
-
-        if(showOpps) {
-            // Show manager's Opportunities (forecastWorksheet for manager's id)
-        } else {
-            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
+    	this.showOpps = showOpps;
+    	if(!this.showMe()){
+        	return false;
         }
+        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection.url = this.createURL();
+        this._collection.fetch();
     },
 
     /**
@@ -195,7 +191,6 @@
         }
         model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
         model.fetch();
-        this.render();
     },
 
     createURL:function()
