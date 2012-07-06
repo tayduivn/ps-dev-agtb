@@ -17,7 +17,9 @@
         },
         _renderSelf: function() {
             if (!app.api.isAuthenticated()) return;
-
+            if (app.config && app.config.logoURL) {
+                this.logoURL=app.config.logoURL;
+            }
             app.view.View.prototype._renderSelf.call(this);
         },
         systemTour: function() {
