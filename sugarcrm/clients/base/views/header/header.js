@@ -45,7 +45,7 @@
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
         mlist = app.metadata.getDelimitedModuleList(',', true);
-        params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: app.config.maxSearchQueryResult};
+        params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);
