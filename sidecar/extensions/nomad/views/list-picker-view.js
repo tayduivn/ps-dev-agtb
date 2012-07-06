@@ -11,8 +11,8 @@
             this.data = {};
         },
 
-        _renderSelf: function() {
-            app.view.View.prototype._renderSelf.call(this, this.data);
+        _renderHtml: function() {
+            app.view.View.prototype._renderHtml.call(this, this.data);
         },
 
         setData: function(data){

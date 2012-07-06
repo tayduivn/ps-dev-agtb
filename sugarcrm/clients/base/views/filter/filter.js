@@ -11,10 +11,10 @@
     events: {
         'keyup .dataTables_filter input': 'filterList'
     },
-    _renderSelf: function() {
+    _renderHtml: function() {
         // this needs to be reset every render because the field set on the collection changes
         this.searchFields = this.getSearchFields();
-        app.view.View.prototype._renderSelf.call(this);
+        app.view.View.prototype._renderHtml.call(this);
         this.layout.off("list:search:toggle", null, this);
         this.layout.on("list:search:toggle", this.toggleSearch, this);
     },
@@ -75,7 +75,7 @@
     toggleSearch: function() {
         var isOpened,
             previousTerm = this.getPreviousTerm(this.module);
-        this._renderSelf();
+        this._renderHtml();
         this.$('.dataTables_filter').toggle();
 
         // Trigger toggled event. Presently, this is for the list-bottom view.

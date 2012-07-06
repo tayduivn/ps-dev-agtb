@@ -53,9 +53,9 @@
 
         },
 
-        _renderSelf: function () {
+        _renderHtml: function () {
 
-            app.view.View.prototype._renderSelf.call(this);
+            app.view.View.prototype._renderHtml.call(this);
 
             this.contextMenuEl = this.$('.context-menu');
 

@@ -105,17 +105,17 @@
          * Example:
          * <pre><code>
          * app.view.views.CustomView = app.view.View.extend({
-         *    _renderSelf: function() {
+         *    _renderHtml: function() {
          *       var ctx = {
          *         // Your custom context for this view template
          *       };
-         *       app.view.View.prototype._renderSelf.call(this, ctx);
+         *       app.view.View.prototype._renderHtml.call(this, ctx);
          *    }
          * });
          *
          * // Or totally different logic that doesn't use this.template
          * app.view.views.AnotherCustomView = app.view.View.extend({
-         *    _renderSelf: function() {
+         *    _renderHtml: function() {
          *       // Never do this :)
          *       return "&lt;div&gt;Hello, world!&lt;/div&gt;";
          *    }
@@ -137,7 +137,7 @@
          * See Handlebars.js documentation for details.
          * @protected
          */
-        _renderSelf: function(ctx, options) {
+        _renderHtml: function(ctx, options) {
             if (this.template) {
                 try {
                     this.$el.html(this.template(ctx || this, options || this.options.templateOptions));
@@ -173,11 +173,11 @@
         /**
          * Renders a view onto the page.
          *
-         * The method first renders this view by calling {@link View.View#_renderSelf}
+         * The method first renders this view by calling {@link View.View#_renderHtml}
          * and then for each field invokes {@link View.View#_renderField}.
          *
          * NOTE: Do not override this method, otherwise you will loose ACL check.
-         * Consider overriding {@link View.View#_renderSelf} instead.
+         * Consider overriding {@link View.View#_renderHtml} instead.
          *
          * @return {Object} Reference to this view.
          * @private
@@ -189,7 +189,7 @@
                 });
                 this.fields = {};
 
-                this._renderSelf();
+                this._renderHtml();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
                 _.each(this.fields, function(field) {
                     this._renderField(field);

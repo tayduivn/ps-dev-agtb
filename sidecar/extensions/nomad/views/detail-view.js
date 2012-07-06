@@ -106,7 +106,7 @@
          * Overrides default views method to pass custom data object as the context.
          * @protected
          */
-        _renderSelf: function () {
+        _renderHtml: function () {
             var isPhoneBtn =    !!this.phoneFields.length,
                 isEmailBtn =    !!this.emailFields.length,
                 isUrlBtn =      !!this.urlFields.length,
@@ -136,7 +136,7 @@
                 };
 
             //pass custom data object as the context
-            app.view.View.prototype._renderSelf.call(this, data);
+            app.view.View.prototype._renderHtml.call(this, data);
         },
 
         /**

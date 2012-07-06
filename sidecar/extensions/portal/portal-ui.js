@@ -1,10 +1,10 @@
 (function(app) {
 
     /**
-     * Overrides View::_renderSelf() to enable bootstrap widgets after the element has been added to the DOM
+     * Overrides View::_renderHtml() to enable bootstrap widgets after the element has been added to the DOM
      */
-    var __superViewRender__ = app.view.View.prototype._renderSelf;
-    app.view.View.prototype._renderSelf = function() {
+    var __superViewRender__ = app.view.View.prototype._renderHtml;
+    app.view.View.prototype._renderHtml = function() {
 
         __superViewRender__.call(this);
 

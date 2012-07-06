@@ -50,9 +50,9 @@
             }
         },
 
-        _renderSelf: function() {
+        _renderHtml: function() {
             this.backupModel();
-            app.view.View.prototype._renderSelf.call(this);
+            app.view.View.prototype._renderHtml.call(this);
         },
 
         saveRecord: function() {

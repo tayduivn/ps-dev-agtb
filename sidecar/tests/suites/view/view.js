@@ -47,8 +47,8 @@ describe("View.View", function() {
 
     it('should render with custom context for its template', function() {
         app.view.views.CustomView = app.view.View.extend({
-            _renderSelf: function() {
-                app.view.View.prototype._renderSelf.call(this, { prop: "kommunizma"});
+            _renderHtml: function() {
+                app.view.View.prototype._renderHtml.call(this, { prop: "kommunizma"});
             }
         });
         var view = app.view.createView({
