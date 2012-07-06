@@ -237,6 +237,7 @@ $mod_strings = array (
   //Labels for jsTree implementation
   'LBL_TREE_MY_OPPORTUNITIES' => 'My Opportunities',
   'LBL_TREE_PARENT' => 'Parent',
+  'LBL_TREE_TEAMS' => 'Teams',
 
    //Labels for worksheet totals
    'LBL_INCLUDED_TOTAL' => 'Included Total',
