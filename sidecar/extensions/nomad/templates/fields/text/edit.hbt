@@ -1,6 +1,0 @@
-<div class="control-group">
-    <label class="control-label">{{label}}</label>
-    <div class="controls">
-        <input type="text" class="span4" value="{{value}}">
-    </div>
-</div>
