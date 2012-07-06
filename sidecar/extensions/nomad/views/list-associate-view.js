@@ -22,6 +22,8 @@
             app.logger.debug("Record(s) are to be associated with " +
                 this.parentBean + " via link " + this.link);
             app.logger.debug("Multiselect: " + this.multiselect);
+
+            this.headerHeight = 144; //TODO: refactor it
         },
 
         save: function() {

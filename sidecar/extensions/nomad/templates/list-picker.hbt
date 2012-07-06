@@ -4,7 +4,7 @@
         <div class="span12 listing list-container" id="listing"><i></i>
             <div>
                 {{#each items}}
-                <article class="picker-list-row">
+                <article entity-name="{{this.name}}" class="picker-list-row">
                     <a href="#{{linkRoute ../context this.name ../action}}?depth=2">
                         {{this.name}}
                     </a>
@@ -14,8 +14,14 @@
         </div>
     </div>
 </div>
+<!--
 <fieldset>
     <div>
         <a href="javascript:void(0)" class="btn btn-inverse menu-cancel" id="backRecord">Back</a>
+    </div>
+</fieldset>-->
+<fieldset>
+    <div class="nav">
+        <a href="javascript:void(0)" class="back menu-cancel" id="backRecord"><i class="icon-chevron-left"></i></a>
     </div>
 </fieldset>
