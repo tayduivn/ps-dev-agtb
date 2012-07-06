@@ -117,6 +117,7 @@ class ForecastsFiltersApi extends ModuleApi {
      * @param $args
      * @return string
      */
+
     public function getReportees($api, $args) {
         global $app_list_strings, $current_language, $current_user;
         $app_list_strings = return_app_list_strings_language($current_language);
@@ -174,7 +175,6 @@ class ForecastsFiltersApi extends ModuleApi {
             } else if($user['metadata']['id'] == $id) {
                 // if this is the user requested in the URL,
                 // but not the currently-logged-in user
-
                 $user['attr']['rel'] = 'manager';
                 $treeData = $user;
 
@@ -234,8 +234,7 @@ class ForecastsFiltersApi extends ModuleApi {
             // Since user has children,
             // handle if user clicked a manager and we need to return a Parent link in the set
             if($returnParent)  {
-                $parentUser = new User();
-                $parentUser->retrieve($treeData['metadata']['reports_to_id']);
+                $parentUser = BeanFactory::getBean('Users', $treeData['metadata']['reports_to_id']);
 
                 if(!empty($parentUser->id)) {
                     $parentNode = array(

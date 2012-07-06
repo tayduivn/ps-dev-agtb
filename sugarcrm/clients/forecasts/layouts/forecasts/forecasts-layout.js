@@ -22,11 +22,11 @@
                 'id'            : app.user.get('id'),
                 'full_name'     : app.user.get('full_name'),
                 'isManager'     : app.user.get('isManager'),
+                'showOpps'      : false,
                 // first and last name are not passed through /Forecasts/me
                 'first_name'    : '',
                 'last_name'     : ''
             });
-            options.context.forecasts.set("showManagerOpportunities", false);
 
             app.view.Layout.prototype.initialize.call(this, options);
 
