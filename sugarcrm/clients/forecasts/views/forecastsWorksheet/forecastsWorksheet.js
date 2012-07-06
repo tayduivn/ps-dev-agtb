@@ -8,6 +8,7 @@
 
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
+    showOpps: false,
 
     viewModule: {},
 
@@ -325,11 +326,10 @@
         var isManager = app.user.get('isManager');
     	this.show = false;
 
-
-    	if(!isManager || (isManager && !this.isMyWorksheet())){
+    	if(this.showOpps || !isManager || (isManager && !this.isMyWorksheet())){
     		this.show = true;
     	}
-
+    	
     	return this.show;
     },
 
@@ -444,12 +444,10 @@
      * @param showOpps boolean value to display manager's opportunities or not
      */
     updateWorksheetByMgrOpportunities: function(showOpps){
-        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
-        if(showOpps) {
-            // Show manager's Opportunities (forecastWorksheet for manager's id)
-        } else {
-            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
-        }
+    	this.showOpps = showOpps;
+    	this._collection = this.context.forecasts.worksheet;
+        this._collection.url = this.createURL();
+        this._collection.fetch();   
     },
 
     /**
