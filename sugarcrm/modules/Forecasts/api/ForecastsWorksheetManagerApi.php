@@ -126,8 +126,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "likely_adjusted" => 0,
                               "forecast" => 0);
 
-        $default_data['name'] = $user->user_name;
-        $default_data['primaryid'] = $user->id;
+        $default_data['name'] = $user->first_name . " " . $user->last_name;
+        $default_data['user_id'] = $user->id;
         $data[$user->user_name] = $default_data;
 
 
@@ -139,8 +139,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         {
             $reportee = new User();
             $reportee->retrieve($reportee_id);
-            $default_data['name'] = $reportee->user_name;
-            $default_data['primaryid'] = $reportee_id;
+            $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
+            $default_data['user_id'] = $reportee_id;
             $data[$reportee->user_name] = $default_data;
         }
 
@@ -176,28 +176,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $data;
     }
     
-    protected function getUserInfo()
-    {
-        //getting quotas from quotas table
-        $sql = "SELECT u.user_name,
-                               u.id,
-                               u.first_name,		
-							   u.last_name
-                        FROM users u
-                        WHERE u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}'";
-
-        $result = $GLOBALS['db']->query($sql);
-        $data = array();
-
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data[$row['user_name']]['id'] = $row['id'];
-            $data[$row['user_name']]['name'] = $row['first_name'] . ' ' . $row['last_name'];
-        }
-
-        return $data;
-    }
-
     protected function getForecastBestLikely()
     {
         //getting best/likely values from forecast table
