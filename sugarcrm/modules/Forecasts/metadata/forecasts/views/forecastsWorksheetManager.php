@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
+$viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array(
     'panels' =>
     array(
         0 =>
@@ -7,13 +7,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-                array(
-                    'name' => 'forecast',
-                    'label' => 'LBL_FORECAST',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-
+               
                 array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
@@ -41,14 +35,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-
-                array(
-                    'name' => 'probability',
-                    'label' => 'LBL_PROBABILITY',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-
+                
                 array(
                     'name' => 'best_case',
                     'label' => 'LBL_BEST_CASE',
@@ -57,8 +44,8 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                 ),
 
                 array(
-                    'name' => 'best_case_worksheet',
-                    'label' => 'LBL_BEST_CASE_WORKSHEET',
+                    'name' => 'best_adjusted',
+                    'label' => 'LBL_BEST_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -72,8 +59,8 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                     'clickToEdit' => true
                 ),
                 array(
-                    'name' => 'likely_case_worksheet',
-                    'label' => 'LBL_LIKELY_CASE_WORKSHEET',
+                    'name' => 'likely_adjusted',
+                    'label' => 'LBL_LIKELY_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true

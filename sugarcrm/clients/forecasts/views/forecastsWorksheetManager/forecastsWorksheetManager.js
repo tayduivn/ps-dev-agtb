@@ -100,7 +100,7 @@
         $("#view-sales-rep").hide();
         $("#view-manager").show();
         app.view.View.prototype.render.call(this);
-        /*
+        
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
@@ -127,22 +127,6 @@
                 }
             });
         }
-
-        //Only filter for forecast == 1 or forecast == -1 and probability >= 70 if searching for Committed
-        if(this.category == 'Committed')
-        {
-            $.fn.dataTableExt.afnFiltering.push(
-                function(oSettings, aData, iDataIndex)
-                {
-                    var forecast = parseInt($(aData[0]).html());
-                    var probability = parseInt($(aData[4]).html());
-                    return (forecast === 1 || (forecast === -1 && probability >= 70));
-                }
-            );
-        } else {
-            $.fn.dataTableExt.afnFiltering = [];
-        }*/
-
     },
     
     /**
