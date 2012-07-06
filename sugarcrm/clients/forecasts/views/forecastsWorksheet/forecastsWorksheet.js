@@ -448,7 +448,6 @@
     	this._collection = this.context.forecasts.worksheet;
         this._collection.url = this.createURL();
         this._collection.fetch();   
-        this.render();
     },
 
     /**

@@ -40,7 +40,6 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-    	console.log("selectedUser");
         this.selectedUser = selectedUser.id;
         if(!this.showMe()){
         	return false;
