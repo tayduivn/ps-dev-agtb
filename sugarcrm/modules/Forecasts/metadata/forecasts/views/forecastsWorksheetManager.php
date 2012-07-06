@@ -15,9 +15,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                     'link' => true,
                     'route' =>
                     array(
-                        'module'=>'Users',
-                        'action'=>'DetailView',
-                        'recordID'=>'primaryid'
+                        'recordID'=>'user_id'
                     ),
                     'default' => true,
                     'enabled' => true,

@@ -50,6 +50,7 @@
      * @return {String}
      */
     Handlebars.registerHelper('userHref', function(context, model, route) {
+        var linkStr;
         var selectedUser = {
             id: '',
             full_name: '',
@@ -58,23 +59,26 @@
             isManager: false
         };
         var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
+        if (uid) {
+            $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
+                dataType: 'json',
+                context: selectedUser,
+                success: function(data) {
+                    this.id = data.id;
+                    this.full_name = data.full_name;
+                    this.first_name = data.first_name;
+                    this.last_name = data.last_name;
+                    this.isManager = data.isManager;
+                }
+            });
 
-        $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
-            dataType: 'json',
-            context: selectedUser,
-            success: function(data) {
-                this.id = data.id;
-                this.full_name = data.full_name;
-                this.first_name = data.first_name;
-                this.last_name = data.last_name;
-                this.isManager = data.isManager;
-            }
-        });
-
-        var linkStr = $('<a href="#">'+this.value +'</a>');
-        linkStr.on("click", function(){
-            context.forecasts.set("selectedUser", selectedUser);
-        });
+            linkStr = $('<a href="#">'+this.value +'</a>');
+            linkStr.on("click", function(){
+                context.forecasts.set("selectedUser", selectedUser);
+            });
+        } else {
+            linkStr = this.value;
+        }
         return linkStr;
     });
 

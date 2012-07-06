@@ -46,7 +46,7 @@
     _render:function () {
 
         // only let this render once.  since if there is more than one view on a layout it renders twice
-//        if (this.rendered) return;
+        if (this.rendered) return;
 
         app.view.View.prototype._render.call(this);
 
