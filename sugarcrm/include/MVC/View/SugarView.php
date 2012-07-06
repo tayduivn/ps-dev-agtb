@@ -270,11 +270,7 @@ class SugarView
         $ss->assign("SYSTEM_NAME", $this->getBrowserTitle());
 
         // get css
-        $css = $themeObject->getCSS();
-        if ($this->_getOption('view_print')) {
-            $css .= '<link rel="stylesheet" type="text/css" href="'.$themeObject->getCSSURL('print.css').'" media="all" />';
-        }
-        $ss->assign("SUGAR_CSS",$css);
+        $ss->assign("SUGAR_CSS", $this->getThemeCss());
 
         // get javascript
         ob_start();
@@ -698,6 +694,22 @@ class SugarView
             }
         }
 
+    }
+
+    /**
+     * Get the Themes CSS from the ThemeObject
+     *
+     * @return string           The html for the CSS that needs to be loaded
+     */
+    public function getThemeCss()
+    {
+        $themeObject = SugarThemeRegistry::current();
+        $css = $themeObject->getCSS();
+        if ($this->_getOption('view_print')) {
+            $css .= '<link rel="stylesheet" type="text/css" href="'.$themeObject->getCSSURL('print.css').'" media="all" />';
+        }
+
+        return $css;
     }
 
     function getModuleMenuHTML()

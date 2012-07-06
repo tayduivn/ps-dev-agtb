@@ -10,6 +10,8 @@
   */
 require_once('include/MVC/View/SugarView.php');
 
+require_once('include/MVC/View/SidecarView.php');
+
 /**
  * Sugar view factory
  * @api

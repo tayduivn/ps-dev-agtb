@@ -55,5 +55,5 @@ var max_tabs = {$max_tabs};
 
 <div id="main">
     <div id="content">
-    
-        <table style="width:100%" id="contentTable"><tr><td>
+
+        <!--<table style="width:100%" id="contentTable"><tr><td>-->
