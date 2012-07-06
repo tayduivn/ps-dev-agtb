@@ -34,15 +34,21 @@
         $('.view-tree').hide();
     },
 
+    bindDataChange: function() {
+        if(this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", this.render, this);
+        }
+    },
+
     /**
      * Start the rendering of the JS Tree
      */
-    render:function () {
+    _render:function () {
 
         // only let this render once.  since if there is more than one view on a layout it renders twice
-        if (this.rendered) return;
+//        if (this.rendered) return;
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
 
         var self = this;
 

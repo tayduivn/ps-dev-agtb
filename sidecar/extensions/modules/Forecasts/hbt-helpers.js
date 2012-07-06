@@ -36,13 +36,48 @@
    });
 
     /**
-     * Builds a link in the forecasts Module.
+     * Builds a link to a module detail view for a record in the forecasts Module.
      * @method moduleLink
      * @return {String}
      */
     Handlebars.registerHelper('moduleHref', function(context, model, route) {
         return 'index.php?module='+route.module+'&action='+route.action+'&record='+model.get(route.recordID);
     });
+
+    /**
+     * Builds a link to set the current user in the forecasts Module.
+     * @method moduleLink
+     * @return {String}
+     */
+    Handlebars.registerHelper('userHref', function(context, model, route) {
+        var selectedUser = {
+            id: '',
+            full_name: '',
+            first_name: '',
+            last_name: '',
+            isManager: false
+        };
+        var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
+
+        $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
+            dataType: 'json',
+            context: selectedUser,
+            success: function(data) {
+                this.id = data.id;
+                this.full_name = data.full_name;
+                this.first_name = data.first_name;
+                this.last_name = data.last_name;
+                this.isManager = data.isManager;
+            }
+        });
+
+        var linkStr = $('<a href="#">'+this.value +'</a>');
+        linkStr.on("click", function(){
+            context.forecasts.set("selectedUser", selectedUser);
+        });
+        return linkStr;
+    });
+
 
     /**
      * Allows browser debugger to be launched from within a handlebar template using {{debugger}}
