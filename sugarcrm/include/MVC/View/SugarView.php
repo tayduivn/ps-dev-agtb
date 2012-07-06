@@ -42,7 +42,7 @@ class SugarView
     /**
      * Options for what UI elements to hide/show/
      */
-    var $options = array('show_header' => true, 'show_title' => true, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => true, 'show_javascript' => true, 'view_print' => false,);
+    var $options = array('show_header' => true, 'show_title' => true, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => true, 'show_javascript' => true, 'view_print' => false, 'use_table_container' => true);
     var $type = null;
     var $responseTime;
     var $fileResources;
@@ -261,6 +261,7 @@ class SugarView
         $ss->assign("THEME_IE6COMPAT", $themeObject->ie6compat ? 'true':'false');
         $ss->assign("MODULE_NAME", $this->module);
         $ss->assign("langHeader", get_language_header());
+        $ss->assign('use_table_container', $this->options['use_table_container']);
 
         // set ab testing if exists
         $testing = (isset($_REQUEST["testing"]) ? $_REQUEST['testing'] : "a");
@@ -941,6 +942,7 @@ EOHTML;
         $ss = new Sugar_Smarty();
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
         $ss->assign('MOD',return_module_language($GLOBALS['current_language'], 'Users'));
+        $ss->assign('use_table_container', $this->options['use_table_container']);
 
 		$bottomLinkList = array();
 		 if (isset($this->action) && $this->action != "EditView") {

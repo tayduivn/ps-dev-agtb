@@ -27,9 +27,11 @@
  ********************************************************************************/
 *}
 <!--end body panes-->
-		<!--</td>
+        {if $use_table_container}
+		</td>
 		</tr>
-	  </table>-->
+	  </table>
+	  {/if}
     </div>
     <div class="clear"></div>
 </div>

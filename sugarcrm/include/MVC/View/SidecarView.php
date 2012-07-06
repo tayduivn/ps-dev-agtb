@@ -6,6 +6,7 @@ class SidecarView extends SugarView
 {
     public function SidecarView($bean = null, $view_object_map = array())
     {
+        $this->options['use_table_container'] = false;
         parent::SugarView($bean, $view_object_map);
     }
 
