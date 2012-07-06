@@ -1,4 +1,4 @@
 <div class="block">
     <h4>Teams</h4>
-    <div id="people" class="jstree-sugar"></div>
+    <div id="people" class="jstree-sugar" id="forecasts-jstree"></div>
 </div>
