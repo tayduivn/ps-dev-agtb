@@ -11,7 +11,6 @@
         },
 
         loadView: function(params) {
-
             var prevLayout = this.layout;
             if (prevLayout) {
 

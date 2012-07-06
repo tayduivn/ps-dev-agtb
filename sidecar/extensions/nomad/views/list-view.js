@@ -12,7 +12,8 @@
             'click .remove-item-btn': 'onRemoveItem',
             'click .unlink-item-btn': 'onUnlinkItem',
             'click .edit-item-btn': 'onEditItem',
-            'click .menu-item':'onClickMenuItem'
+            'click .menu-item':'onClickMenuItem',
+            'click .list-view-item':'onClickItem'
         },
 
         initialize: function (options) {
@@ -205,9 +206,14 @@
         },
 
         onClickGrip: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             var grip = $(e.target);
             var isActive = grip.hasClass('on');
             grip.closest('article').trigger(isActive ? 'swipeRight' : 'swipeLeft');
+
+            return false;
         },
 
         onSwipeLeftItem: function (e) {
@@ -219,6 +225,7 @@
             this.contextMenuEl.appendTo(this.activeArticle.find('.menu-container'));
             this.activeArticle.find('.grip').addClass('on');
             this.activeArticle.find('[id^=listing-action] .actions').removeClass('hide').addClass('on');
+            this.activeArticle.addClass('active-list-item');
         },
 
         onSwipeRightItem: function (e) {
@@ -229,11 +236,14 @@
             if (this.activeArticle) {
                 this.activeArticle.find('.grip').removeClass('on');
                 this.activeArticle.find('[id^=listing-action] .actions').addClass('hide').removeClass('on');
+                this.activeArticle.removeClass('active-list-item');
             }
         },
 
         onRemoveItem: function (e) {
             e.preventDefault();
+            e.stopPropagation();
+
             var self = this;
             // TODO: Localize
             app.nomad.showConfirm("Do you really want to delete this record?",
@@ -246,10 +256,14 @@
                 },
                 "Confirm", "Cancel,Delete"
             );
+
+            return false;
         },
 
         onUnlinkItem: function (e) {
             e.preventDefault();
+            e.stopPropagation();
+
             var self = this;
             // TODO: Localize
             app.nomad.showConfirm("Do you really want to unlink this record?",
@@ -262,10 +276,14 @@
                 },
                 "Confirm", "Cancel,Unlink"
             );
+
+            return false;
         },
 
         onEditItem: function (e) {
             e.preventDefault();
+            e.stopPropagation();
+
             var route,
                 link = this.context.get("link"),
                 cid = $(e.target).closest('article').attr('id').replace(this.module, '');
@@ -278,6 +296,8 @@
             }
             app.router.navigate(route, {trigger: true});
             this.hideContextMenu();
+
+            return false;
         },
 
         onClickMenuItem:function(e){
@@ -285,6 +305,19 @@
             var item = this.collection.get(cid);
             this.trigger('menu:item:clicked',item);
             this.hideContextMenu();
+
+        },
+
+        onClickItem:function(e){
+            if(!e.defaultPrevented && !e.cancelBubble && !$(e.currentTarget).hasClass('active-list-item')){
+                e.preventDefault();
+                e.stopPropagation();
+
+                var cid = $(e.target).closest('article').attr('id').replace(this.module, '');
+                var route = app.router.buildRoute(this.module, cid);
+                app.router.navigate(route, {trigger: true});
+            }
+
         }
     });
 

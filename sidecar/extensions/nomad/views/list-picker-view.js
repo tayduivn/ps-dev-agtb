@@ -20,7 +20,14 @@
         },
 
         onRowClick: function(e){
-            //e.preventDefault();
+
+            if ($(e.target).hasClass('picker-list-row')) {
+                var en = $(e.target).attr("entity-name");
+                var model = this.context.get('model');
+
+                var route = app.nomad.buildLinkRoute(this.data.module, this.data.modelId, en, this.data.action) + "?depth=2";
+                app.router.navigate(route, {trigger: true});
+            }
         },
 
         onClickMenuCancel: function(e){

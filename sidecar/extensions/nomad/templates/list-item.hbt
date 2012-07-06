@@ -1,4 +1,4 @@
-<article id="{{model.module}}{{model.id}}">
+<article id="{{model.module}}{{model.id}}" class="list-view-item">
     <div>
     <a href="#{{#if model.link}}{{relatedRoute model}}{{else}}{{modelRoute model}}{{/if}}">
         {{#with fields.[0]}}
