@@ -18,8 +18,8 @@
             this.timerId = null;
         },
 
-        _renderSelf: function() {
-            app.view.View.prototype._renderSelf.call(this);
+        _renderHtml: function() {
+            app.view.View.prototype._renderHtml.call(this);
             this.$searchBox = this.$('.search-query');
         },
 

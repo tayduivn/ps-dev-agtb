@@ -32,7 +32,7 @@
     /**
      * Uses query in context and fires a search request thereafter rendering
      */
-    _renderSelf: function() {
+    _renderHtml: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(data) {
@@ -40,7 +40,7 @@
             if(data && data.records && data.records.length) {
                 self.updateCollection(data);
                 
-                app.view.View.prototype._renderSelf.call(self);
+                app.view.View.prototype._renderHtml.call(self);
                 self.renderSubnav();
             } else {
                 self.renderSubnav('No results found for "'+self.lastQuery+'"');

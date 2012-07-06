@@ -22,7 +22,7 @@
             }
             else {
                 this.$el.removeClass("hide");
-                app.view.View.prototype._renderSelf.call(this);
+                app.view.View.prototype._renderHtml.call(this);
                 this._renderLeftList(app.template.get('menu-left'),
                     {
                         items: _.keys(app.metadata.getModuleList()),
