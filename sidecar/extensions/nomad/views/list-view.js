@@ -75,11 +75,13 @@
 
             }, this);
 
-            listContainer.pullToRefresh({
-                'callback': callbackFunction,
-                'height': 50,
-                'top':this.headerHeight - 50
-            });
+            if (app.config.pullToRefresh === true) {
+                listContainer.pullToRefresh({
+                    'callback': callbackFunction,
+                    'height': 50,
+                    'top':this.headerHeight - 50
+                });
+            }
 
         },
 
