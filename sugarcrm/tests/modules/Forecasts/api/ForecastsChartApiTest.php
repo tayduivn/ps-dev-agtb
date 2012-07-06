@@ -55,10 +55,8 @@ class ForecastsChartApiTest extends RestTestBase
         $opp1->probability = '85';
         $opp1->forecast = -1;
         $opp1->best_case = 1300;
-        $opp1->best_case_worksheet = 1300;
         $opp1->likely_case = 1200;
-        $opp1->likely_case_worksheet = 1100;
-        $opp1->worst_case = 900;
+        $opp1->worst_case = 1100;
         $opp1->team_id = '1';
         $opp1->team_set_id = '1';
         $opp1->timeperiod_id = self::$timeperiod->id;

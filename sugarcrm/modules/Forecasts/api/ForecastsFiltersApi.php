@@ -160,11 +160,13 @@ class ForecastsFiltersApi extends ModuleApi {
                 'state' => $openClosed,
                 'attr' => array(
                     // set all users to rep by default
-                    'rel' => 'rep'
+                    'rel' => 'rep',
+
+                    // adding id tag for QA's voodoo tests
+                    'id' => 'jstree_node_' . $row['id']
                 )
             );
 
-            // Set the main user id as the root for treeData
             // Set the main user id as the root for treeData
             if($user['metadata']['id'] == $current_user->id) {
                 $user['attr']['rel'] = 'root';
@@ -218,7 +220,11 @@ class ForecastsFiltersApi extends ModuleApi {
                     ),
                     'state' => 'closed',
                     'attr' => array(
-                        'rel' => 'my_opportunities'
+                        'rel' => 'my_opportunities',
+
+                        // adding id tag for QA's voodoo tests
+                        'id' => 'jstree_node_myopps_' . $treeData['metadata']['id']
+
                     )
                 );
                 // add myOpp to the beginning of children
@@ -246,7 +252,10 @@ class ForecastsFiltersApi extends ModuleApi {
                         ),
                         'state' => 'closed',
                         'attr' => array(
-                            'rel' => 'parent_link'
+                            'rel' => 'parent_link',
+
+                            // adding id tag for QA's voodoo tests
+                            'id' => 'jstree_node_parent'
                         )
                     );
 

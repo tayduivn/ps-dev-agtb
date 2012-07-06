@@ -5,13 +5,6 @@
  * @extends View.View
  */
 ({
-
-    _name_type_map: {
-//        best_case_worksheet: 'int',
-//        likely_case_worksheet: 'int',
-//        probability: 'percent',
-        sales_stage: 'enum'
-    },
     show: false,
 
     viewModule: {},
@@ -37,7 +30,7 @@
         this.category = 'Committed',
         
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheetmanager;
 
         // listening for updates to context for selectedUser:change
         this.context.forecasts.on("change:selectedUser", this.updateWorksheetBySelectedUser, this);
@@ -48,79 +41,6 @@
         this.context.forecasts.on("change:showManagerOpportunities", function(context, showManagerOpportunities) { self.showManagerOpportunities = showManagerOpportunities;} );
     },
 
-
-    /**
-     * Initializes clickToEdit field types (chosen, datepicker, etc...)
-     * @private
-     */
-    _initCTETypes: function() {
-        $.editable.addInputType('enum', {
-            element: function(settings, original) {
-//                debugger;
-                var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.field.def.options), function (value, key) {
-                    var option = $("<option>").val(key).append(value);
-                    selEl.append(option);
-                });
-                $(this).append(selEl);
-                var hidden = $('<input type="hidden">');
-                $(this).append(hidden);
-                return(hidden);
-            },
-
-            /**
-             * sets up and attaches the chosen plugin for this type.
-             * @param settings
-             * @param original
-             */
-            plugin: function(settings, original) {
-                var self = this;
-                self.passedSettings = settings;
-                self.passedOriginal = original;
-                $("select", this).filter(".cteSelect").chosen().change(self, function(e){
-//                    debugger;
-//                    e.data.submit(e.data.passedSettings, e.data.passedOriginal);
-                    e.data.passedSettings.field.$el.html($(this).val());
-                });
-            },
-
-            /**
-             * process value from chosen for submittal
-             * @param settings
-             * @param original
-             */
-            submit: function(settings, original) {
-//                debugger;
-                $("input", this).val($("select", this).filter(".cteSelect").val());
-            }
-        });
-    },
-
-    /**
-     * Renders the field as clickToEditable
-     * @private
-     */
-    _renderClickToEditField: function(field) {
-        this._initCTETypes();
-        var outerElement = this.$("span[sfuuid='" + field.sfId + "']");
-
-        outerElement.editable(function(value, settings){return value;},
-            {
-                type: field.def.type || this._name_type_map[field.name] || 'text',
-                select: true,
-                field: field,
-                callback: function(value, settings) {
-                    try{
-                        settings.field.model.save(settings.field.name, value);
-                    } catch (e) {
-                        app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
-                    }
-                    return value;
-                }
-            }
-        );
-    },
-    
     /**
      * Event Handler for updating the worksheet by a selected user
      *
@@ -137,18 +57,35 @@
         this.render();
     },
 
-    /**
-     * Renders a field.
-     *
-     * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
-     * in metadata, it will also render it as clickToEditable.
-     * @param {View.Field} field The field to render
-     * @protected
-     */
-    _renderField: function(field) {
-        app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit){
-            this._renderClickToEditField(field);
+    bindDataChange: function() {
+        if(this._collection)
+        {
+            this._collection.on("reset", this.refresh, this);
+        }
+        // listening for updates to context for selectedUser:change
+        if (this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser",
+                function(context, selectedUser) {
+                    this.updateWorksheetBySelectedUser(selectedUser);
+                }, this);
+            this.context.forecasts.on("change:selectedTimePeriod",
+                function(context, timePeriod) {
+                    this.updateWorksheetBySelectedTimePeriod(timePeriod);
+                }, this);
+            this.context.forecasts.on("change:selectedCategory",
+                function(context, category) {
+                    this.updateWorksheetBySelectedCategory(category);
+                },this);
+            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
+            this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
+                this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
+                this.updateWorksheetBySelectedCategory({id: defaultValues.category});
+            }, this);
+            // END STORY 31921015
+            this.context.forecasts.on("change:showManagerOpportunities",
+                function(context, showOpps) {
+                    this.updateWorksheetByMgrOpportunities(showOpps);
+                }, this);
         }
     },
 
@@ -163,16 +100,18 @@
         $("#view-sales-rep").hide();
         $("#view-manager").show();
         app.view.View.prototype.render.call(this);
-        /*
+        
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
+
         for( var i = 0; i < fields.length; i++ )  {
-            columnDefs.push( { "sName": fields[i].name, "aTargets": [ i ] } );
+            var name = fields[i].name;
+            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
         }
 
-        this.gTable = this.$('.worksheetTable').dataTable(
+        this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
             {
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
@@ -182,7 +121,7 @@
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
-            $('.worksheetTable tr').on('click', function () {
+            $('.worksheetManagerTable tr').on('click', function () {
                 if (self.gTable.fnIsOpen(this)) {
                     self.gTable.fnClose(this);
                 } else {
@@ -190,22 +129,6 @@
                 }
             });
         }
-
-        //Only filter for forecast == 1 or forecast == -1 and probability >= 70 if searching for Committed
-        if(this.category == 'Committed')
-        {
-            $.fn.dataTableExt.afnFiltering.push(
-                function(oSettings, aData, iDataIndex)
-                {
-                    var forecast = parseInt($(aData[0]).html());
-                    var probability = parseInt($(aData[4]).html());
-                    return (forecast === 1 || (forecast === -1 && probability >= 70));
-                }
-            );
-        } else {
-            $.fn.dataTableExt.afnFiltering = [];
-        }*/
-
     },
     
     /**
@@ -227,14 +150,27 @@
     	return this.show;
     },
 
-
     /***
-     * TEMPORARY FUNCTION just to show flag toggle in console
+     * Event Handler for showing a manager's opportunities
+     *
+     * @param showOpps {Boolean} value to display manager's opportunities or not
      */
-    updateWorksheetByMgrOpps: function(params){
+    updateWorksheetByMgrOpportunities: function(showOpps){
+        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
+
+        // vvvv this was in the old function
+        /*
         var model = this.context.forecasts.worksheet;
-        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
+        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" //****> showOpps is only true/false might need to store this somewhere when timeperiod changes + params.id;
+        */
         this.render();
+        // ^^^^ this was in the old function
+
+        if(showOpps) {
+            // Show manager's Opportunities (forecastWorksheet for manager's id)
+        } else {
+            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
+        }
     },
 
     /**

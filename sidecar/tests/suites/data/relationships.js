@@ -159,7 +159,7 @@ describe("Relationships", function() {
             contact.save(null, { relate: true });
             server.respond();
 
-            expect(server.requests[0].requestBody).toEqual('{"field_0":100,"first_name":"John","last_name":"Smith","opportunity_role":"Influencer"}');
+            expect(server.requests[0].requestBody).toEqual('{"first_name":"John","last_name":"Smith","opportunity_role":"Influencer","field_0":100}');
             expect(contact.id).toEqual("2");
             expect(contact.get("date_modified")).toBeDefined();
             expect(contact.link.isNew).toBeFalsy();
@@ -199,7 +199,7 @@ describe("Relationships", function() {
             contact.save(null, { relate: true });
             server.respond();
 
-            expect(server.requests[0].requestBody).toEqual('{"field_0":100,"id":"2","opportunity_role":"Primary Decision Maker"}');
+            expect(server.requests[0].requestBody).toEqual('{"id":"2","opportunity_role":"Primary Decision Maker"}');
             expect(opportunity.get("date_modified")).toBeDefined();
             expect(contact.get("date_modified")).toBeDefined();
         });
@@ -217,7 +217,7 @@ describe("Relationships", function() {
             contact.save(null, { relate: true });
             server.respond();
 
-            expect(server.requests[0].requestBody).toEqual('{"field_0":100,"id":"2","opportunity_role":"Influencer"}');
+            expect(server.requests[0].requestBody).toEqual('{"id":"2","opportunity_role":"Influencer"}');
             expect(opportunity.get("date_modified")).toBeDefined();
             expect(contact.get("date_modified")).toBeDefined();
             expect(contact.link.isNew).toBeFalsy();

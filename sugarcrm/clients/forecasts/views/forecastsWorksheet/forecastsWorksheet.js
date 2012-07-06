@@ -9,13 +9,6 @@
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
 
-    _name_type_map: {
-//        best_case_worksheet: 'int',
-//        likely_case_worksheet: 'int',
-//        probability: 'percent',
-        sales_stage: 'enum'
-    },
-
     viewModule: {},
 
     gTable:'',
@@ -76,7 +69,7 @@
                 var hb = Handlebars.compile("<tr><th colspan='5' style='text-align: right;'>Included Total</th>" +
                     "<th>{{includedAmount}}</th><th>{{includedBest}}</th><th>{{includedLikely}}</th></tr>" +
                     "<tr class='overall'><th colspan='5' style='text-align: right;'>Overall Total</th>" +
-                    "<th>{{overallAmount}}</th><th>{{overAllBest}}</th><th>{{overallLikely}}</th></tr>");
+                    "<th>{{overallAmount}}</th><th>{{overallBest}}</th><th>{{overallLikely}}</th></tr>");
                 $('#summary').html(hb(self.model.toJSON()));
                 return this;
             }
@@ -119,49 +112,6 @@
     },
 
     /**
-     * Initializes clickToEdit field types (chosen, datepicker, etc...)
-     * @private
-     */
-    _initCTETypes: function() {
-        $.editable.addInputType('enum', {
-            element: function(settings, original) {
-                var selEl = $('<select class="cteSelect">');
-                _.each(app.lang.getAppListStrings(settings.field.def.options), function (value, key) {
-                    var option = $("<option>").val(key).append(value);
-                    selEl.append(option);
-                });
-                $(this).append(selEl);
-                var hidden = $('<input type="hidden">');
-                $(this).append(hidden);
-                return(hidden);
-            },
-
-            /**
-             * sets up and attaches the chosen plugin for this type.
-             * @param settings
-             * @param original
-             */
-            plugin: function(settings, original) {
-                var self = this;
-                self.passedSettings = settings;
-                self.passedOriginal = original;
-                $("select", this).filter(".cteSelect").chosen().change(self, function(e){
-                    $(this).parent().submit();
-                });
-            },
-
-            /**
-             * process value from chosen for submittal
-             * @param settings
-             * @param original
-             */
-            submit: function(settings, original) {
-                $("input", this).val($("select", this).filter(".cteSelect").val());
-            }
-        });
-    },
-
-    /**
      * Adds the icon and associated events/handlers to the clickToEdit field
      * @param field
      * @private
@@ -197,14 +147,12 @@
      */
     _renderClickToEditField: function(field) {
         var self = this;
-        this._initCTETypes();
         this._addCTEIcon(field);
 
         field.$el.editable(function(value, settings){
                 return value;
             },
             {
-                type: this._name_type_map[field.name] || 'text',
                 select: true,
                 field: field,
                 view: self,
@@ -255,7 +203,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit) {
+        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit) {
             this._renderClickToEditField(field);
         }
     },
@@ -263,11 +211,14 @@
     bindDataChange: function() {
         if(this._collection)
         {
-           this._collection.on("reset", this.refresh, this);
+            this._collection.on("reset", this.refresh, this);
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser", function(context, selectedUser) { this.updateWorksheetBySelectedUser(selectedUser); }, this);
+            this.context.forecasts.on("change:selectedUser",
+                function(context, selectedUser) {
+                    this.updateWorksheetBySelectedUser(selectedUser);
+                }, this);
             this.context.forecasts.on("change:selectedTimePeriod",
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
@@ -275,15 +226,17 @@
             this.context.forecasts.on("change:selectedCategory",
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
-                },
-                this);
+                },this);
             // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
             // END STORY 31921015
-            this.context.forecasts.on("change:showManagerOpportunities", this.updateWorksheetByMgrOpportunities, this );
+            this.context.forecasts.on("change:showManagerOpportunities",
+                function(context, showOpps) {
+                    this.updateWorksheetByMgrOpportunities(showOpps);
+                }, this);
         }
     },
 
@@ -345,24 +298,38 @@
         this.totalView.render();
 
     },
+
+    /**
+     * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
+     * or whether to render the clickToEdit field
+     * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
+     */
+    isMyWorksheet: function() {
+        var userId = app.user.get('id');
+        var selectedUser = userId;
+
+        if(this.selectedUser){
+            selectedUser = this.selectedUser;
+        }
+
+        if(userId.localeCompare(selectedUser) != 0){
+            return false;
+        }
+        return true;
+    },
+
     /**
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var isManager = app.user.get('isManager');
-    	var userId = app.user.get('id');
-    	var selectedUser = userId;
+        var isManager = app.user.get('isManager');
     	this.show = false;
-    	
-    	
-    	if(this.selectedUser){
-    		selectedUser = this.selectedUser;
+
+
+    	if(!isManager || (isManager && !this.isMyWorksheet())){
+    		this.show = true;
     	}
 
-    	if(!isManager || (isManager && userId.localeCompare(selectedUser) != 0)){
-    		this.show = true;
-    	}	
-    	
     	return this.show;
     },
 
@@ -383,8 +350,8 @@
         _.each(self._collection.models, function (model) {
             var included = model.get('forecast');
             var amount = parseFloat(model.get('amount'));
-            var likely = parseFloat(model.get('likely_case_worksheet'));
-            var best = parseFloat(model.get('best_case_worksheet'));
+            var likely = parseFloat(model.get('likely_case'));
+            var best = parseFloat(model.get('best_case'));
 
             if(included)
             {
@@ -474,12 +441,15 @@
     /***
      * Event Handler for showing a manager's opportunities
      *
-     * @param params
+     * @param showOpps boolean value to display manager's opportunities or not
      */
-    updateWorksheetByMgrOpportunities: function(params){
-        //console.log("Worksheet's context.showManagerOpportunities has changed");
+    updateWorksheetByMgrOpportunities: function(showOpps){
         // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
-        // on the user tree
+        if(showOpps) {
+            // Show manager's Opportunities (forecastWorksheet for manager's id)
+        } else {
+            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
+        }
     },
 
     /**

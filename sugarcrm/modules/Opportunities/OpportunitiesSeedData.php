@@ -85,8 +85,6 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->worst_case = $worst_case[$key];
         $opp->likely_case = $likely_case[$key];
         $opp->best_case = $best_case[$key];
-        $opp->best_case_worksheet = $likely_case[$key];
-        $opp->likely_case_worksheet = $best_case[$key];
         //END SUGARCRM flav=pro ONLY
 
         $forecast= array('-1', '0', '1');

@@ -189,6 +189,7 @@ $mod_strings = array (
   'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
   'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
   'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
+  'LBL_QUOTA' => 'Quota',
   
   'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
   'LBL_FMT_ROLLUP_FORECAST'=>'(Rollup)',
@@ -236,6 +237,7 @@ $mod_strings = array (
   //Labels for jsTree implementation
   'LBL_TREE_MY_OPPORTUNITIES' => 'My Opportunities',
   'LBL_TREE_PARENT' => 'Parent',
+  'LBL_TREE_TEAMS' => 'Teams',
 
    //Labels for worksheet totals
    'LBL_INCLUDED_TOTAL' => 'Included Total',
