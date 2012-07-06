@@ -10,6 +10,7 @@
         layoutCacheEnabled: true,
         layoutCacheSize: 30,
         disableLayoutCache: ["login","associate"],
+        pullToRefresh: true,
         authStore: 'cache',
          // takes effect only in the native app (possible values: 'cache' or 'nativestore')
         keyValueStore: 'cache',

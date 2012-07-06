@@ -12,21 +12,6 @@
 
         loadView: function(params) {
 
-            var loadView = _.bind(this._loadView, this);
-
-            if (params.layout === "login") {
-                // HACK: To work-around frozen login view
-                _.delay(function() {
-                    loadView(params);
-                }, 1000);
-            } else {
-                loadView(params);
-            }
-
-        },
-
-        _loadView: function(params) {
-
             var prevLayout = this.layout;
             if (prevLayout) {
 
