@@ -26,12 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class ViewSidecar extends SugarView
+class ViewSidecar extends SidecarView
 {
     function ViewSidecar()
     {
         $this->options['show_footer'] = false;
-        parent::SugarView();
+        parent::SidecarView();
     }
 
 
