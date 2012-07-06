@@ -120,8 +120,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         //populate output with default data
         $default_data = array("amount" => 0,
                               "quota" => 0,
-                              "best" => 0,
-                              "likely" => 0,
+                              "best_case" => 0,
+                              "likely_case" => 0,
                               "best_adjusted" => 0,
                               "likely_adjusted" => 0,
                               "forecast" => 0);
