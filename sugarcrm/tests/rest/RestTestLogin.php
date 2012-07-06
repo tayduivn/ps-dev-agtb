@@ -271,4 +271,18 @@ class RestTestLogin extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
         
     }
+
+    function testBadLogin() {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => 'this is not the correct password',
+            'client_id' => 'sugar',
+            'client_secret' => '',
+        );
+
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['error']);
+        $this->assertEquals('need_login',$reply['reply']['error']);
+    }
 }
