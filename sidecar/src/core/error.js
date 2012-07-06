@@ -7,6 +7,11 @@
      */
     var module = {
         refreshingLogin: false,
+
+        init: function() {
+            this.initialize();
+        },
+
         /**
          * Setups the params for error module
          * @param opts
@@ -369,7 +374,7 @@
          * @member Core.Error
          */
         handleError: function(mesg, url, line) {
-            app.logger.error(mesg + " at " + url + " on line " + line);
+            app.logger.fatal(mesg + " at " + url + " on line " + line);
         },
         
         /**
@@ -434,7 +439,8 @@
         }
     };
 
-    // Enable error handling immediately.
-    app.augment("error", module, module.initialize);
+    // We don't want to initialize error handling immediately,
+    // because the handler may use code that have not been initialized yet
+    app.augment("error", module, false);
 
 })(SUGAR.App);
