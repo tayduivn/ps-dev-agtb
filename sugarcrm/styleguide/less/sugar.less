@@ -57,7 +57,7 @@ footer {
 }
 
 /* Typography */
-h1 {font-size: 26px !important;}
+h1 {font-size: 20px !important; font-weight: normal;}
 
 /* breadcrumbs */
 .breadcrumb {
@@ -66,59 +66,6 @@ h1 {font-size: 26px !important;}
 	background: 0;
 	border: none;
   .border-radius(0px);
-}
-
-/* tour */
-.tourSee {
-  color: @white;
-  position: fixed;
-  .border-radius(15px);
-  height: 20px;
-  width: 20px;
-  border: 5px solid @white;
-  z-index: @zindexModal;
-}
-.tourSee span {
-  display: block;
-  margin-top: 25px;
-  margin-left: -30px;
-  text-align: center;
-  width: 80px;
-  font-size: 11px;
-  text-transform: Uppercase;
-}
-
-#tourCube {
-  top: 5px;
-  left: 25px;
-}
-#tourAdd {
-  top: 65px;
-  right: 60px;
-}
-#tourModules {
-  top: 5px;
-  left: 102px;
-}
-#tourUser {
-  top: 5px;
-  right: 122px;
-}
-#tourCreate {
-  top: 5px;
-  right: 30px;
-}
-#tourRefine {
-top: 65px;
-right: 20px;
-}
-#tourUSearch {
-top: 5px;
-right: 320px;
-}
-#tourSort {
-top: 100px;
-left: 58px;
 }
 
 /* activity and twitter */
@@ -202,46 +149,10 @@ table tfoot td {
     padding: 6px;
 }
 
-#portal .navbar-inner {
-  background: #fff !important;
-  color: #444;
-  @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @grayLight;
-  .box-shadow(@shadow);
-}
-
-#portal .navbar-inner a, #portal .navbar a [class^="icon-"], #portal .navbar a .caret  {
-  color: @textColor !important;
-  text-shadow: none;
-}
-#portal .navbar .dropdown-menu li:hover a {color: @white !important;}
-#portal .navbar a .caret  {
- border-top-color: @gray;
-}
-
-#portal .navbar .divider-vertical {
-background-color: @grayLight;
-border-right: 1px solid @grayLighter;
-}
-
-#portal .cube {
-    background: url(../img/badge_256g.png) 50% 50% no-repeat;
-}
-#portal .container-fluid {position: relative;}
 #colright { position: absolute; top: 0; right: -2px; 
   background: @grayLight;
 }
 #colleft { position: absolute; top: 0; left: -2px; }
-
-#portal .search-query { border-color: @grayLight !important;}
-#portal .search-query:hover { border-color: @grayLight !important;}
-
-
-#portal .navbar .nav > li > a:hover {
-  background-color:  @grayLighter;
-  color: @textColor;
-  text-decoration: none;
-  text-shadow: none;
-}
 
 .navbar .nav .active > a,
 .navbar .nav .active > a:hover {
@@ -251,15 +162,6 @@ border-right: 1px solid @grayLighter;
   text-shadow: none;
   font-weight: bold;
 }
-
-#portal .navbar .nav .active > a,
-#portal .navbar .nav .active > a:hover {
-  color: @textColor;
-  background-color: darken(@grayLighter,5%);
-  border-bottom: 3px solid @gray;
-  padding-bottom: 14px;
-}
-
 
 .modal .brand, .thumbnail .brand {
   background: url(../img/sugar-red.png) 50% 50% no-repeat;
@@ -286,17 +188,17 @@ border-right: 1px solid @grayLighter;
   position: fixed !important;
   top: 47px;
   right: 0;
-  background: @grayLighter;
+  background-image: @textureSecondary;
   height: 100%;
   width: inherit;
   padding: 20px 0;
-  border-left: 1px solid darken(@grayLighter, 4%);
+  border-left: 3px solid @grayLight;
 }
 #folded .tab-pane.active {
   position: fixed !important;
   top: 93px;
   right: 0;
-  background: @grayLighter;
+  background-image: url(@textureSecondary);
   height: 100%;
   width: inherit;
   padding: 20px 0;
@@ -305,6 +207,7 @@ border-right: 1px solid @grayLighter;
 #folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
 #folded .tab-pane .block {width: 90%; margin-left: 5%;}
 #folded [data-toggle="tab"].actions {top: 0; color: @gray;}
+#dashboard  #folded .tab-pane.active .thumbnail {margin: 0 20px 20px;}
 
 #searchActivity {margin-top: -12px;}
 .subhead {margin-top: 20px;}
@@ -336,7 +239,8 @@ border-right: 1px solid @grayLighter;
   background: url(../img/badge_256g.png) 50% 8px no-repeat;
   float: left;
   height: 19px;
-  width: 26px;
+  width: 56px;
+  margin-left: -20px;
   z-index: 2000;
   display: block;
   -webkit-transition: all .2s linear;
@@ -356,21 +260,32 @@ border-right: 1px solid @grayLighter;
 .navbar-fixed-top .cube:hover {
   text-decoration: none;
 }
-.avatar {
+.navbar .dropdown-menu li, .navbar .dropdown-menu li.divider {
+  padding: 0;
+}
+.navbar .dropdown-menu li a {
+  display: block;
+  padding: 8px;
+}
+
+.avatar img {
 	.border-radius(3px);
+	@shadow: 0 2px 0 rgba(0,0,0,.4), inset 1px 1px 0 rgba(0,0,0,.8) , inset -1px -1px 0 rgba(0,0,0,.8);
+  .box-shadow(@shadow);
 }
 .avatar.thumbnail {padding: 3px;}
 
-.navbar .avatar, .block .avatar {
+.navbar .avatar, li li .avatar, .avatar img  {
   height: 24px;
   width: 24px;
-  	.border-radius(3px);
 }
-article .avatar {
-  height: 32px !important;
-  width: 32px !important;
-  margin-bottom: 12px;
-  	.border-radius(3px);
+.avatar32 img {
+  height: 32px;
+  width: 32px;
+}
+.avatar42 img {
+  height: 42px;
+  width: 42px;
 }
 .pull-left .avatar {margin-right: 10px;}
 .navbar .avatar {
@@ -378,8 +293,11 @@ article .avatar {
 	margin-top: -3px;
 	float: left;
 	.border-radius(3px);
+	height: 24px;
+  width: 24px;
+  @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
+  .box-shadow(@shadow);
 }
-
 
 .navbar form .btn {
 	margin-left: -11px;
@@ -489,22 +407,22 @@ textarea[readonly] {
 }
 
 .block.tabs-left .nav-tabs p {
-  margin: -18px 80px 10px 70px;
+  margin: 0 80px 10px 55px;
 }
 
-.block.tabs-left .nav-tabs li li .avatar {
+.block.tabs-left .nav-tabs li li .avatar img {
   margin: 3px 0 0;
 }
 
 .block.tabs-left .nav-tabs li li{
-  margin: 0 0 10px 45px;
+  margin: 0 0 10px 32px;
   padding: 10px 0 0;
   border-top: 1px solid @grayLighter;
   border-bottom: none;
 }
 
 .block.tabs-left .nav-tabs li li p {
-  margin: 0 0 10px 38px;
+  margin: 0 0 10px 36px;
 }
 
 .block.tabs-left .nav-tabs > li > a:hover, .block.tabs-left .nav-tabs > li > a {
@@ -689,6 +607,22 @@ article:hover .actions,  tr:hover .actions {
 #drawer {
 	position: relative;
 }
+#thedrawer {
+	background: @black;
+	position: fixed;
+	z-index: 1020;
+	top: 46px;
+	left: 52px;
+	height: 100%;
+	padding: 20px;
+  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
+  @shadow: inset 0 -1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
+  .box-shadow(@shadow);	
+}
+#thedrawer h4
+{
+color: @white;
+}
 
 .search-query {
   .border-radius(4px);
@@ -711,7 +645,7 @@ article:hover .actions,  tr:hover .actions {
 
 #guages .row-fluid  {
   padding: 10px 0 0;
-  border-bottom: 1px solid @grayLighter;
+  border-bottom: 1px solid @grayLight;
 }
 #guages, #guages h4  {
   border-bottom: 3px solid @grayLight;
@@ -720,7 +654,10 @@ article:hover .actions,  tr:hover .actions {
 #guages {
   margin-bottom: 10px;
 }
-
+.topline {position: relative;
+  margin: 0 -20px;
+}
+.data2 {font-size: 12px;}
 .topline h2 {
   padding: 0 !important;
   font-size: 20px;
@@ -732,18 +669,18 @@ article:hover .actions,  tr:hover .actions {
   top: 10px;
 }
 .topline .title {
-  padding: 10px 10px 0;
+  padding: 0 20px 0;
 }
 .topline .datapoint1 {
   position: absolute;
-  right: 280px;
-  top: 10px;
+  right: 110px;
+  top: 0;
   width: 120px;
 }
 .topline .datapoint2 {
   position: absolute;
-  right: 140px;
-  top: 10px;
+  right: -20px;
+  top: 0;
   width: 120px;
 }
 .topline .divider {
@@ -751,7 +688,7 @@ article:hover .actions,  tr:hover .actions {
   height: 60px;
   width: 1px;
   position: absolute;
-  right: 280px;
+  right: 130px;
   top: 0;
 }
 .topline .toggle {
@@ -760,10 +697,10 @@ article:hover .actions,  tr:hover .actions {
   top: 10px;
 }
 .topline .log {
-  background: @grayLighter;
   position: relative;
-    overflow: hidden;
-    height: 36px;
+  overflow: hidden;
+  height: 36px;
+  font-size: 11px;
   border-bottom: 2px solid @grayLight;
   color: @gray !important;
 }
@@ -1041,6 +978,7 @@ background: @grayLighter;
   .border-radius(3px 3px 0 0);
 }
  .dataTables_filter {display: none;}
+  .dataTables_filter input {width: 100%;}
 .form-search, .form-addit, .dataTables_filter {
 position: relative;
 margin: 0;
@@ -1259,23 +1197,76 @@ color: @red;
 }
 
 .thumbnav {
+#gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
+@shadow: inset -2px 0 2px rgba(0,0,0,1),  0 -1px 0 rgba(0,0,0,1);
+.box-shadow(@shadow);
+height: 100% !important;
+position: fixed;
+top: 49px;
+left: 0;
+width: 72px !important;
+}
+
+.thumbnav ul {
   list-style: none !important;
   padding: 0;
   margin: 0;
+  
 }
-.thumbnav li {
+.thumbnav ul li {
   display: block;
-  margin: 0 0 8px;
+  margin: 0;
 }
-.thumbnav li i {
-  font-size: 18px;
-  padding-top: 6px
+.thumbnav ul li i {
+  font-size: 24px;
+  padding-top: 16px
 }
-.thumbnav li a {
+.thumbnav ul li a {
   font-size: 11px;
-  min-width: 32px;
+  color: @white;
+  width: 70px;
+  height: 72px;
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
+  @shadow: inset 0 -1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
+  .box-shadow(@shadow);
+}
+.thumbnav ul li a:hover {
+  font-size: 11px;
+  color: @white;
+  width: 72px;
+  height: 72px;
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  @shadow: inset 0 0 20px rgba(0,0,0,1);
+  .box-shadow(@shadow);
+}
+.thumbnav ul li a.active{
+  #gradient > .vertical(lighten(@black, 10%), lighten(@black, 15%));
+  @shadow: inset 0 -1px 20px rgba(0,0,0,1), inset 8px 0 0 @red, inset 0 1px 0 rgba(255,255,255,.1);
+  .box-shadow(@shadow);
 }
 
+.topline {
+  margin-left: 52px;
+  margin-top: 20px;
+}
+h1 {
+  margin-left: 72px;
+  line-height: 26px;
+}
+#moduleActivity{
+  margin-left: 72px;
+}
+#moduleActivity .avatar {
+  margin: 0;
+  padding: 0;
+  
+}
 
 /* Progress
 ------------------------- */
@@ -1288,9 +1279,19 @@ color: @red;
 -------------------------------------------------- */
 @media (max-width: 480px) {
 
-.span2 .block > * {
+.span2 .block > *, footer, .nav-collapse .nav li, .thumbnav a b {
   display: none !important;
 }
+.nav-collapse .nav li:first-child {
+  display: block !important;}
+  .nav-collapse .nav li:first-child a{
+  margin-left: 0 !important;
+}
+.thumbnav {width: 42px !important;}
+.thumbnav a {width: 42px !important; height: 42px !important;}
+.thumbnav a i {font-size: 16px !important; padding-top: 12px !important; }
+.cube {width: 18px !important; height: 19px !important;}
+
 
 table th:gt(3), table td:gt(3)  {
   display: none !important;
@@ -1300,12 +1301,9 @@ table th:gt(3), table td:gt(3)  {
   display: block !important;
 }
 
-  #stream tbody tr td {
-    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
-    border-top: 1px solid @white;
-    border-bottom: 1px solid darken(@white, 10%);
-    vertical-align: middle;
-  }
+#dashboard #folded .tab-pane.active {
+  position: relative !important;
+}
 
   /* Change up some type stuff */
   h2 {
@@ -1342,6 +1340,8 @@ table th:gt(3), table td:gt(3)  {
     bottom: auto;
     left: auto;
   }
+  
+  
 
 }
 

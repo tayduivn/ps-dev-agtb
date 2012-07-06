@@ -115,6 +115,14 @@
         $('#charts').toggleClass('span10').toggleClass('span12');
         return false;
       })
+      
+      // column collapse
+      $('.thumbnav a').on('click',
+      function () {
+        $(this).toggleClass('active')
+        $('#thedrawer').toggleClass('hide');
+        return false;
+      })
 
       $('.btngroup .btn').button()
 
@@ -126,6 +134,19 @@
     	)
     })
 
+    $('.comment').toggle( 
+      function (e) {
+  		  $(this).parent().parent().find('ul').append('<li class="commented">Test</li>');
+  		  $(this).addClass('active');
+  		  return false; 
+	    },
+	    function (e) {
+  		  $(this).parent().parent().find('.commented').remove();
+  		  $(this).removeClass('active');
+  		  return false; 
+	    }
+    )
+
     $('.actions').find('a[data-toggle=tab]').on('click', function (e) {
       $('.nav-tabs').find('li').removeClass('on');
   		$(this).parent().parent().addClass('on');
@@ -135,6 +156,7 @@
       $('#folded').find('[data-toggle=tab]').on('click', function (e) {
   			$('.nav-tabs').find('li').removeClass('on');
       })
+      
 
     // toggle module search (needs tap logic for mobile)
   	$('.addit').on('click', function () {
@@ -155,7 +177,8 @@
   	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
   	    return false;
   	})
-
+            
+  	        
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
@@ -171,7 +194,8 @@
     $("[rel=popover]").popover()
     $("[rel=popoverTop]").popover({placement: "top"})
 
+$('#moduleActivity .form-search select').chosen()
 
-
+$('#moduleActivity .form-search input').quicksearch('ul.results li')
 
 }(window.jQuery)
