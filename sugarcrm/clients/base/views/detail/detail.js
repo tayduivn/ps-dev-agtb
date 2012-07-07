@@ -10,8 +10,8 @@
         'click .more': 'showMore',
         'click .less': 'hideMore'
     },
-    _renderSelf: function() {
-        app.view.View.prototype._renderSelf.call(this);
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
         var fieldsArray = this.$("form[name=detail]").find("span[sfuuid]") || [];
 
         var that = this;

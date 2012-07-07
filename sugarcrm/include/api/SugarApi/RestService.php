@@ -329,12 +329,30 @@ class RestService extends ServiceBase {
         }
 
         if ( $valid === false ) {
-            // In the case of very large files that are too big for the request too handle AND
-            // if the auth token was sent as part of the request body, you will get a no auth error
+            // In the case of large file uploads that are too big for the request too handle AND
+            // the auth token being sent as part of the request body, you will get a no auth error
             // message on uploads. This check is in place specifically for file uploads that are too
-            // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
-            if (isset($_FILES) && empty($_FILES)) {
-                throw new SugarApiExceptionRequestTooLarge('File is too large');
+            // big to be handled by checking for an empty request body for POST and PUT file requests.
+            
+            // Grab our path elements of the request and see if this is a files request
+            $pathParts = $this->parsePath($this->getRawPath());
+            if (isset($pathParts[1]) && is_array($pathParts[1]) && in_array('file', $pathParts[1])) {
+                // If this is a POST request then we can inspect the $_FILES and $_POST arrays
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    // If the post and files array are both empty on a POST request...
+                    if (empty($_FILES) && empty($_POST)) {
+                        throw new SugarApiExceptionRequestTooLarge('Request is too large');
+                    }
+                } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+                    // PUT requests need to read the php://input stream
+                    // Keep in mind that reading php://input is a one time deal
+                    // But since we are bound for an exception here this is a safe
+                    // consumption
+                    $input = file_get_contents('php://input');
+                    if (empty($input)) {
+                        throw new SugarApiExceptionRequestTooLarge('Request is too large');
+                    }
+                }
             }
 
             // @TODO Localize exception strings

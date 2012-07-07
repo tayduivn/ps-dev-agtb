@@ -1,4 +1,0 @@
-<i class="icon-exclamation-sign fright"></i>
-{{#each this}}
-  <small>{{this}}</small>
-{{/each}}

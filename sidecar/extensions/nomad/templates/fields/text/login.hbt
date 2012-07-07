@@ -1,3 +1,0 @@
-<div class="control-group">
-    <input type="text" size="35" tabindex="1" id="{{name}}" name="{{name}}" placeholder="{{def.placeholder}}" value="{{value}}" autocapitalize="off" autocorrect="off">
-</div>

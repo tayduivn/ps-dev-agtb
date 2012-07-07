@@ -20,9 +20,9 @@
 
         this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
     },
-    _renderSelf: function() {
+    _renderHtml: function() {
         var fieldsArray, that;
-        app.view.View.prototype._renderSelf.call(this);
+        app.view.View.prototype._renderHtml.call(this);
     },
     
     togglePreview: function(model) {
