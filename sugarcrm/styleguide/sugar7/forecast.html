@@ -18,29 +18,8 @@
         <div class="nav-collapse">
           <ul class="nav">
             <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-            <li><a href="accounts.html">Accounts</a></li>
-            <li><a href="bugs.html">Bugs</a></li>
-            <li><a href="cases.html">Cases</a></li>
-            <li><a href="contacts.html">Contacts</a></li>              
-            <li><a href="leads.html">Leads</a></li>
             <li><a href="opportunity.html">Opportunities</a></li>
-            <li class="active"><a href="forecast.html">Forecasts</a></li>            
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More</a>
-              <ul class="dropdown-menu">
-                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
-                <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
-                <li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
-                <li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
-                <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
-                <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
-                <li class="divider"></li>
-                <li><a href="#">Filter Menu By</a></li>
-              </ul>
-            </li>
+            <li class="active"><a href="forecast.html">Forecasts</a></li>
           </ul>
           <ul class="nav pull-right">
             <li class="divider-vertical"></li>
@@ -93,7 +72,7 @@
                       <li><input type="checkbox"> Opportunities</li>
                       <li><input type="checkbox"> Reports</li>
                     </ul>
-                    <a class="btn" href="#"><i class="icon icon-search"></i></a>
+                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                   </div>
                 </div>
               </div>
@@ -106,9 +85,9 @@
   <div class="container-fluid" id="dashboard">
     <div class="thumbnav">
       <ul>
-        <li><a href="" class=""><i class="icon-cog"></i><br><b>Filter</b></a></li>
-        <li><a href="" class=""><i class="icon-time"></i><br><b>History</b></a></li>
-        <li><a href="" class=""><i class="icon-sitemap"></i><br><b>Team</b></a></li>
+        <li><a href="" class=""><i class="icon-ok"></i><br><b>Committed</b></a></li>
+        <li><a href="" class=""><i class="icon-hand-up"></i><br><b>Upside</b></a></li>
+        <li><a href="" class=""><i class="icon-plus"></i><br><b>New</b></a></li>
       </ul>
     </div>
     <div class="span4 hide" id="thedrawer">
@@ -139,12 +118,13 @@
       </div>
   </div>
     <div class="row-fluid">
-      <div class="span7">
+      <div class="span8 content">
+        <a href="forecast.html" class="btn pull-right" style="margin-left: 10px;margin-right: -20px;"><i class="icon-cog"></i></a>
         <a href="forecast.html" class="btn btn-primary pull-right"><i class="icon-upload"></i> Commit</a>
         <h1>James Joplin's Forecast</h1>
         <div class="topline">
           <div class="title">
-              Your projected forecast for<br>
+              Forecast for<br>
               <h2>Q1 2012</h2>
           </div>
           <div class="datapoint1">
@@ -156,24 +136,38 @@
               Likely<br>
               <h2 id="likely"></h2>
           </div>
-          <div class="log">
+          <div class="log drawer">
             <div class="title">
                 <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
             </div>
-            <span class="datapoint1">
-              (123,300)
-            </span>
-            <span class="divider"></span>
-            <span class="datapoint2">
-              (123,300)
-            </span>
+              <span class="datapoint1">
+                123,300
+              </span>
+              <span class="divider"></span>
+              <span class="datapoint2">
+                123,300
+              </span>
+            <div class="toggle">
+              <i class="icon-chevron-down"></i>
+            </div>
           </div>
+           <div class="hide extend results">
+                <article>
+                  Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
+                  <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+                </article>
+                <article>
+                Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
+                  <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+                </article>
+            </div>
           <div id="dynamic"></div>
         </div>
       </div>  
-      <div class="span5 tab-content" id="folded">
+      <div class="span4 tab-content" id="folded">
         <div class="tab-pane active" id="overview">
-          <div class="thumbnail">
+          <div class="thumbnail viz">
+            <h4>Forecast for Q1 2012</h4>
               <div class="chartContainer">
                 <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
                 <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
@@ -462,7 +456,7 @@
                         "sTitle": "Opportunity",
                         "sWidth": "30%"
                     },
-                    { "sTitle": "Close" },
+                    { "sTitle": "Close Date" },
                     { "sTitle": "Stage" },
                     { "sTitle": "Probability",
                         "fnRender": function(obj) {
@@ -589,6 +583,7 @@
 
                     $('[rel="clickover"]').clickover() ;
                     $('[rel="clickoverTop"]').clickover({placement: "top"}) ;
+                    $('[rel="clickoverBottom"]').clickover({placement: "bottom"}) ;
                 },
                 "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
                     var amountTotal = 0;

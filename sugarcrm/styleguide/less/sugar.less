@@ -101,10 +101,6 @@ article:nth-child(even) {
 	background-color: transparent;
 	border-bottom-color: @grayDarker;
 }
-#sActivity article {
-	padding: 10px 45px 10px 0;
-	position: relative !important;
-}
 
 article:hover {
 	background: #e1f0fa;
@@ -283,9 +279,19 @@ table tfoot td {
   height: 32px;
   width: 32px;
 }
+.avatar68 img {
+position: absolute;
+top: 46px;
+right: 0;
+z-index: 1;
+
+  height: 92px;
+  width: 92px;
+}
 .avatar42 img {
   height: 42px;
   width: 42px;
+  margin-right: 10px;
 }
 .pull-left .avatar {margin-right: 10px;}
 .navbar .avatar {
@@ -407,7 +413,7 @@ textarea[readonly] {
 }
 
 .block.tabs-left .nav-tabs p {
-  margin: 0 80px 10px 55px;
+  margin: 0 80px 20px 55px;
 }
 
 .block.tabs-left .nav-tabs li li .avatar img {
@@ -415,10 +421,17 @@ textarea[readonly] {
 }
 
 .block.tabs-left .nav-tabs li li{
-  margin: 0 0 10px 32px;
-  padding: 10px 0 0;
+  margin: 0;
+  padding: 10px;
   border-top: 1px solid @grayLighter;
   border-bottom: none;
+}
+.block.tabs-left .nav-tabs .commented {
+  background: @grayLighter;
+  margin: 10px 0 10px 50px;
+}
+.commented li {
+  border-top: 1px solid @white !important;
 }
 
 .block.tabs-left .nav-tabs li li p {
@@ -466,10 +479,10 @@ h4 i {color: @grayLight;}
 }
 
 .block.tabs-left .nav-tabs li.on .actions .icon-eye-open {
-  color: @gray;
+  color: @grayDark;
   .opacity(100);
-  #gradient > .horizontal(darken(@grayLighter, 4%), darken(@grayLighter, 4%));
-  text-shadow: 0 1px @white;
+  background: @grayLight;
+  text-shadow: none;
   .border-radius(4px);
   padding-right: 100px;
   margin-right: -96px;
@@ -556,12 +569,12 @@ position: relative;
 }
 
 .card2 {
-  margin: -10px 0 20px;
+  margin: 10px 0 20px;
 }
+.card2 .row-fluid .btn { margin-top: -4px; margin-right: 8px; height: 16px; width: 16px;}
 .card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
-  padding: 10px 0 0;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
+  padding: 8px 0 0;
 }
 #folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
 .card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
@@ -655,7 +668,11 @@ color: @white;
   margin-bottom: 10px;
 }
 .topline {position: relative;
-  margin: 0 -20px;
+  margin: 0 -12px 0 -20px;
+}
+.results {position: relative;
+  margin: 0 -22px 0 0;
+  padding: 0 10px;
 }
 .data2 {font-size: 12px;}
 .topline h2 {
@@ -669,7 +686,7 @@ color: @white;
   top: 10px;
 }
 .topline .title {
-  padding: 0 20px 0;
+  padding: 0 20px 10px;
 }
 .topline .datapoint1 {
   position: absolute;
@@ -682,6 +699,29 @@ color: @white;
   right: -20px;
   top: 0;
   width: 120px;
+}
+.topline .log .title {
+  padding: 10px 20px 10px;
+}
+.topline .log .datapoint1 {
+  position: absolute;
+  right: 130px;
+  top: 10px;
+  width: 120px;
+}
+.topline .log .datapoint2 {
+  position: absolute;
+  right: -20px;
+  top: 10px;
+  width: 140px;
+}
+.topline .log .divider {
+  border-right: 1px solid  @grayLight;
+  height: 60px;
+  width: 1px;
+  position: absolute;
+  right: 151px;
+  top: 0;
 }
 .topline .divider {
   border-right: 1px solid  @grayLight;
@@ -700,9 +740,11 @@ color: @white;
   position: relative;
   overflow: hidden;
   height: 36px;
-  font-size: 11px;
+  #gradient > .vertical(lighten(@grayLight, 20%), lighten(@grayLight, 15%));
+  border-top: 2px solid @grayLight;
   border-bottom: 2px solid @grayLight;
   color: @gray !important;
+  margin-right: -21px;
 }
 
 .topline .extend {
@@ -784,9 +826,11 @@ color: @white;
 }
 
 date {
-	font-size: 85%;
-	color: #888;
+	font-size: 90%;
+	color: lighten(@gray, 30%);
 }
+
+.viz {min-height: 300px;}
 
 /* Search Module */
 
@@ -921,11 +965,11 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 /* Editable 
 --------------*/
 .card2 div [class^="span"]  {position: relative;}
-.card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
+.card2 .icon-pencil {position: absolute; left: -4px; top: 4px; padding: 0 2px !important;.opacity(60);}
 
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   position: relative;
-  margin: -5px 0 0 -2px !important;
+  margin: -2px 0 0 -2px !important;
 }
 table input {
   position: relative;
@@ -989,7 +1033,10 @@ padding: 5px;
 .box-shadow(@shadow);
 z-index: 1000;
 }
-
+.form-search {
+  margin: -11px 0 20px;
+  z-index: 0;
+}
 
 .block .tab-content {
   margin-top: -18px;
@@ -1155,27 +1202,25 @@ color: @red;
     clear: both;
 }
 
-.icon-phone {
-  background: url('../img/phone.png') no-repeat 50% 50%;
-  background-size: 80%;
-  height: 26px;
-  width: 26px;
-  display: block;
-  margin-bottom: -22px;
-}
-
 .navbar a [class^="icon-"] {
   color: @white !important;
     font-size: 14px;
 }
 .navbar .advanced {
   position: absolute;
-  top: -8px;
-  right: -20px;
-  line-height: 18px;
+  top: -9px;
+  right: -1px;
+}
+.navbar .advanced .btn {
+  line-height: 19px;
+  height: 18px;
 }
 .navbar .advanced .dropdown-menu {
   right: 35px;
+}
+.navbar .advanced.dropdown-toggle {
+  right: 40px;
+  top: 11px;
 }
 
 .navbar .nav > li > a.btn {
@@ -1195,13 +1240,14 @@ color: @red;
   width: 98%;
   text-align: center;
 }
-
+#dynamic {margin-right: -20px;}
 .thumbnav {
 #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
 @shadow: inset -2px 0 2px rgba(0,0,0,1),  0 -1px 0 rgba(0,0,0,1);
 .box-shadow(@shadow);
 height: 100% !important;
 position: fixed;
+z-index: 10;
 top: 49px;
 left: 0;
 width: 72px !important;
@@ -1218,7 +1264,7 @@ width: 72px !important;
   margin: 0;
 }
 .thumbnav ul li i {
-  font-size: 24px;
+  font-size: 26px;
   padding-top: 16px
 }
 .thumbnav ul li a {
@@ -1252,20 +1298,37 @@ width: 72px !important;
 }
 
 .topline {
-  margin-left: 52px;
   margin-top: 20px;
 }
-h1 {
-  margin-left: 72px;
-  line-height: 26px;
+.content {
+  padding-left: 72px;
+  position: relative;
 }
-#moduleActivity{
-  margin-left: 72px;
+.content .btn-toolbar {margin: 0 0 8px !important;}
+.content .vcard2 {
+  z-index: 0;
+  position: relative;
 }
 #moduleActivity .avatar {
   margin: 0;
-  padding: 0;
-  
+  padding: 0; 
+}
+
+.omnibar input.sayit  {  position: relative; z-index: 1; border: dashed 1px @grayLight;  min-height: 42px !important;}
+.omnibar.active input.sayit {border: solid 1px @grayLight;  min-height: 42px !important;}
+.omnibar .inputactions {margin: -14px 0 0 52px;}
+.omnibar .inputactions {
+  background: @grayLighter;
+  padding: 10px 4px 4px 4px;
+  z-index: 0;
+  position: relative;
+  border: solid 1px @grayLight;  
+  .border-radius(3px);
+}
+.omnibar .inputactions a i {
+  color: @gray;
+  padding: 4px 8px 0;
+  font-size: 18px;
 }
 
 /* Progress
