@@ -292,13 +292,18 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $metadataFile = $meta['filename'];
                     require_once($metadataFile);
 
-                    // Handle found view defs
+                    // Handle found view defs in the 6.6 format
                     if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)]) {
-                        return $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)];
+                        
+                        // Needed for conversion
+                        require_once 'include/MetaDataManager/MetaDataConverter.php';                        
+                        $viewtype = strtolower($view);
+                        
+                        $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
+                    } else {
+                        //Wireless detail metadata may actually be just edit metadata.
+                        $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
                     }
-                    
-                    //Wireless detail metadata may actually be just edit metadata.
-                    $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
                 }
 
                 break;
