@@ -1,240 +1,178 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ModuleApi.php');
-require_once('modules/Forecasts/api/ForecastsChartApi.php');
 
-class ForecastsWorksheetManagerApi extends ForecastsChartApi {
+require_once('tests/rest/RestTestBase.php');
 
-    private $user_id;
-    private $timeperiod_id;
+/***
+ * Used to test Forecast Module endpoints from ForecastModuleApi.php
+ *
+ * @group forecasts
+ */
+class ForecastsWorksheetManagerApiTest extends RestTestBase
+{
+    private $reportee;
 
-    public function __construct()
+    public function setUp()
     {
+        parent::setUp();
 
+        $this->reportee = SugarTestUserUtilities::createAnonymousUser();
+        $this->reportee->reports_to_id = $GLOBALS['current_user']->id;
+        $this->reportee->save();
     }
 
-    public function registerApiRest()
+    public function tearDown()
     {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
-        $parentApi= array (
-            'worksheetmanager' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','worksheetmanager'),
-                'pathVars' => array('',''),
-                'method' => 'worksheetManager',
-                'shortHelp' => 'Worksheet for manager view',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#ping',
-            ),
-        );
-        return $parentApi;
+        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        $userIds = SugarTestUserUtilities::getCreatedUserIds();
+        $GLOBALS['db'] -> query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    /**
-     * This method returns the result for a sales rep view/manager's opportunities view
-     *
-     * @param $api
-     * @param $args
-     * @return array
+    /***
+     * @group forecastapi
      */
-    public function worksheetManager($api, $args)
+    public function testForecastsWorksheetManagerApi()
     {
-        require_once('modules/Reports/Report.php');
-        require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
+        global $current_user;
 
-        global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
+        //get current timeperiod
+        $timeperiod_id = TimePeriod::getCurrentId();
 
-        if(!User::isManager($current_user->id))
-        {
-           return array();
-        }
+        //setup opps
+        $managerOpp = SugarTestOpportunityUtilities::createOpportunity();
+        $managerOpp->assigned_user_id = $current_user->id;
+        $managerOpp->timeperiod_id = $timeperiod_id;
+        $managerOpp->amount = 1800;
+        $managerOpp->save();
 
-        if(isset($args['user_id']))
-        {
-            $user = new User();
-            $user->retrieve($args['user_id']);
-            if(!User::isManager($user->id))
-            {
-                return array();
-            }
-        } else {
-            $user = $current_user;
-        }
+        $repOpp = SugarTestOpportunityUtilities::createOpportunity();
+        $repOpp->assigned_user_id = $this->reportee->id;
+        $repOpp->timeperiod_id = $timeperiod_id;
+        $repOpp->amount = 1300;
+        $repOpp->save();
 
-        $app_list_strings = return_app_list_strings_language($current_language);
+        //setup quotas
+        $managerQuota = SugarTestQuotaUtilities::createQuota(2000);
+        $managerQuota->user_id = $current_user->id;
+        $managerQuota->quota_type = "Direct";
+        $managerQuota->timeperiod_id = $timeperiod_id;
+        $managerQuota->save();
 
-        $this->timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $this->user_id = isset($args['user_id']) ? $args['user_id'] : $user->id;
-		
-        $mgr = ChartAndWorksheetManager::getInstance();
-        $report_defs = $mgr->getWorksheetDefintion('manager', 'opportunities');
+        $repQuota = SugarTestQuotaUtilities::createQuota(1500);
+        $repQuota->user_id = $this->reportee->id;
+        $repQuota->quota_type = "Direct";
+        $repQuota->timeperiod_id = $timeperiod_id;
+        $repQuota->save();
 
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $this->timeperiod_id),
-            'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
-        );
+        //setup forecasts
+        $managerForecast = new Forecast();
+        $managerForecast->user_id = $current_user->id;
+        $managerForecast->best_case = 1500;
+        $managerForecast->likely_case = 1200;
+        $managerForecast->worst_case = 900;
+        $managerForecast->timeperiod_id = $timeperiod_id;
+        $managerForecast->forecast_type = "Direct";
+        $managerForecast->save();
 
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
+        $repForecast = new Forecast();
+        $repForecast->user_id = $this->reportee->id;
+        $repForecast->best_case = 1100;
+        $repForecast->likely_case = 900;
+        $repForecast->worst_case = 700;
+        $repForecast->timeperiod_id = $timeperiod_id;
+        $repForecast->forecast_type = "Direct";
+        $repForecast->save();
 
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs[2]);
+        //setup worksheets
+        $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $managerWorksheet->user_id = $current_user->id;
+        $managerWorksheet->related_id = $current_user->id;
+        $managerWorksheet->forecast_type = "Direct";
+        $managerWorksheet->timeperiod_id = $timeperiod_id;
+        $managerWorksheet->best_case = 1550;
+        $managerWorksheet->likely_case = 1250;
+        $managerWorksheet->worst_case = 950;
+        $managerWorksheet->forecast = 1;
+        $managerWorksheet->save();
 
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        // add the filter to the report builder
+        $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $repWorksheet->user_id = $current_user->id;
+        $repWorksheet->related_id = $this->reportee->id;
+        $repWorksheet->forecast_type = "Rollup";
+        $repWorksheet->timeperiod_id = $timeperiod_id;
+        $repWorksheet->best_case = 1150;
+        $repWorksheet->likely_case = 950;
+        $repWorksheet->worst_case = 750;
+        $repWorksheet->forecast = 1;
+        $repWorksheet->save();
 
-        $rb->addFilter($reportFilters);
+        $managerData = array("amount" => $managerOpp->amount,
+                                "quota" => $managerQuota->amount,
+                                "best_case" => $managerForecast->best_case,
+                                "likely_case" => $managerForecast->likely_case,
+                                "best_adjusted" => $managerWorksheet->best_case,
+                                "likely_adjusted" => $managerWorksheet->likely_case,
+                                "forecast" => intval($managerWorksheet->forecast),
+                                "user_id" => $current_user->id,
+                                "name" => $current_user->first_name . ' ' . $current_user->last_name);
 
-        // create the json for the reporting engine to use
-        $chart_contents = $rb->toJson();
+        $repData = array("amount" => $repOpp->amount,
+                        "quota" => $repQuota->amount,
+                        "best_case" => $repForecast->best_case,
+                        "likely_case" => $repForecast->likely_case,
+                        "best_adjusted" => $repWorksheet->best_case,
+                        "likely_adjusted" => $repWorksheet->likely_case,
+                        "forecast" => intval($repWorksheet->forecast),
+                        "user_id" => $this->reportee->id,
+                        "name" => $this->reportee->first_name . ' ' . $this->reportee->last_name);
 
-        $report = new Report($chart_contents);
+        //case #1: current user is manager
+        $restReply = $this->_restCall("Forecasts/worksheetmanager/");
 
-        //populate output with default data
-        $default_data = array("amount" => 0,
-                              "quota" => 0,
-                              "best_case" => 0,
-                              "likely_case" => 0,
-                              "best_adjusted" => 0,
-                              "likely_adjusted" => 0,
-                              "forecast" => 0);
+        $this->assertEquals($managerData, $restReply['reply'][0], "there's no manager's data in the rest reply" );
+        $this->assertEquals($repData, $restReply['reply'][1], "there's no reportee's data in the rest reply" );
 
-        $default_data['name'] = $user->first_name . " " . $user->last_name;
-        $default_data['user_id'] = $user->id;
-        $data[$user->user_name] = $default_data;
+        //case #2: user in filter is not manager - rest reply should be empty
+        $restReply = $this->_restCall("Forecasts/worksheetmanager?user_id=" . $this->reportee->id);
 
+        $this->assertEmpty($restReply['reply'], "rest reply is not empty");
 
-        require_once("modules/Forecasts/Common.php");
-        $common = new Common();
-        $common->retrieve_direct_downline($this->user_id);
+        //case #3: current user is not manager - rest reply should be empty
+        $this->reportee->reports_to_id = '';
+        $this->reportee->save();
 
-        foreach($common->my_direct_downline as $reportee_id)
-        {
-            $reportee = new User();
-            $reportee->retrieve($reportee_id);
-            $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
-            $default_data['user_id'] = $reportee_id;
-            $data[$reportee->user_name] = $default_data;
-        }
+        $restReply = $this->_restCall("Forecasts/worksheetmanager/");
 
-        $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
-
-        $quota = $this->getQuota();
-        $forecast = $this->getForecastBestLikely();
-        $worksheet = $this->getWorksheetBestLikelyAdjusted();
-        $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
-        return array_values($data_grid);
+        $this->assertEmpty($restReply['reply'], "rest reply is not empty");
     }
-
-
-    protected function getQuota()
-    {
-        //getting quotas from quotas table
-        $quota_query = "SELECT u.user_name user_name,
-                              q.amount quota
-                        FROM quotas q, users u
-                        WHERE q.user_id = u.id
-                        AND (q.user_id = '{$this->user_id}' OR q.user_id IN (SELECT id FROM users WHERE reports_to_id = '{$this->user_id}'))
-                        AND q.timeperiod_id = '{$this->timeperiod_id}'
-                        AND q.quota_type = 'Direct'";
-
-        $result = $GLOBALS['db']->query($quota_query);
-        $data = array();
-
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data[$row['user_name']]['quota'] = $row['quota'];
-        }
-
-        return $data;
-    }
-    
-    protected function getForecastBestLikely()
-    {
-        //getting best/likely values from forecast table
-        $forecast_query = "SELECT
-        u.user_name,
-        f.date_modified,
-        f.best_case,
-        f.likely_case,
-        f.worst_case worst
-        FROM users u
-        INNER JOIN (
-        SELECT user_id, max(date_modified) date_modified, best_case, likely_case, worst_case
-        FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}'
-        AND forecast_type = 'Direct'
-        group by user_id
-        ) as f
-        ON f.user_id = u.id
-        WHERE u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}'
-        AND u.deleted=0 AND u.status = 'Active'";
-
-        $result = $GLOBALS['db']->query($forecast_query);
-
-        $data = array();
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data[$row['user_name']]['best_case'] = $row['best_case'];
-            $data[$row['user_name']]['likely_case'] = $row['likely_case'];
-        } 
-
-        return $data;
-    }
-
-    protected function getWorksheetBestLikelyAdjusted()
-    {
-        //getting data from worksheet table for reportees
-        $reportees_query = "SELECT u.user_name user_name,
-                            w.forecast,
-                            w.best_case best_adjusted,
-                            w.likely_case likely_adjusted,
-                            w.worst_case worst_adjusted
-                            FROM worksheet w, users u
-                            WHERE w.related_id = u.id
-                            AND w.timeperiod_id = '{$this->timeperiod_id}'
-                            AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))";
-
-        $result = $GLOBALS['db']->query($reportees_query);
-
-        $data = array();
-
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
-            $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
-            $data[$row['user_name']]['forecast'] = $row['forecast'];
-        }             
-
-        return $data;
-    }
-
 
 }
