@@ -82,7 +82,11 @@ class Administration extends SugarBean {
             return $this;
         }
 
-        $query = "SELECT category, name, value FROM {$this->table_name}";
+        if ( ! empty($category) ) {
+            $query = "SELECT category, name, value FROM {$this->table_name} WHERE category = '{$category}'";
+        } else {
+            $query = "SELECT category, name, value FROM {$this->table_name}";
+        }
 
         $result = $this->db->query($query, true, "Unable to retrieve system settings");
 
