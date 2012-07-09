@@ -9,15 +9,11 @@
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
     showOpps: false,
-
     viewModule: {},
     selectedUser: {},
-
     gTable:'',
-
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
-
     _collection:{},
 
     /**
