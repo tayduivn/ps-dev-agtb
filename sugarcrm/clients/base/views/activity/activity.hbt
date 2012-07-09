@@ -1,33 +1,31 @@
-<div class="card2">
-
                 <div class="block filtered tabbable tabs-left" id="moduleActivity">
-                    <h4>Activity</h4>
+                    <h4>{{str "LBL_MODULE_NAME" module}}</h4>
 
                     {{#each meta.panels}}
                     <ul class="nav nav-tabs results">
                         {{#if ../collection.models}}
                         {{#each ../../collection.models}}
-                        <li class="activity" data-id="{{this.id}}">
-                            <a data-toggle="tab"><span class="label label-note">Note</span></a>
+                        <li class="activity" data-id="{{id}}">
+                            <a href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{str "LBL_MODULE_NAME_SINGULAR" module}}</span></a>
                             <p>
-                                <a>{{attributes.name}}</a>
+                                <a href="javascript:void(0)">{{attributes.name}}</a>
                                 <br>
                                 <date class="date">
                                     {{timeago attributes.date_entered}}
                                 </date>
                             </p>
                             <div class="actions">
-                               <a><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                               <a href="javascript:void(0)" rel="tooltip" data-title="{{str "LBL_PREVIEW"}}"><i class="icon-eye-open"></i></a>
                             </div>
                         </li>
                         {{/each}}
                         {{else}}
-                            This record has no notes at this time. Please add a note by clicking on the add note link.
+                             {{#if ../../context._dataFetched}}{{str "LBL_STREAM_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
                         {{/if}}
                     </ul>
                     {{/each}}
                     <div class="actions">
-                        <a class="btn addNote" rel="tooltip" title="Add a note or attachment"><i class="icon-plus"></i> Add Note</a>
+                        <a class="btn addNote" rel="tooltip" data-title="{{str "LBL_NEW_FORM_TITLE" module}}"><i class="icon-plus"></i> {{str "LBL_NEW_FORM_BTN" module}}</a>
                     </div>
                 </div>
                 {{#if collection.models}}
@@ -42,4 +40,3 @@
             </div>
         </div>
     </div>
-</div>

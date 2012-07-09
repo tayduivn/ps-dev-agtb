@@ -3378,6 +3378,7 @@ $app_strings = array (
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
     'LBL_REFINE_LIST' => 'Refine list',
+    'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     );

@@ -13,7 +13,6 @@
         this.fallbackFieldTemplate = "detail";
     },
     render: function() {
-       // this.$el.parent().addClass("tab-content").attr("id", "folded");
         //avoid to have an empty detail view
     },
     bindDataChange: function() {
