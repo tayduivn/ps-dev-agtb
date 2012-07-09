@@ -56,12 +56,28 @@ class ViewPortalConfig extends SugarView
    	 */
 	function display() 
 	{
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+        $disabledModulesFlag = false;
+        $disabledModules = array();
+        // TODO: maybe consolidate this with the portal module list in install/install_utils.php
+        $maybeDisabledModules = array('Bugs','KBDocuments', 'Cases');
+        foreach ($maybeDisabledModules as $moduleName) {
+          if (in_array($moduleName, $tabs[1])) {
+              $disabledModules[]=translate($moduleName);
+              $disabledModulesFlag = true;
+          }
+        };
+
         $portalFields = array('on'=>'0', 'logoURL'=>
         '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'3');
         $admin = new Administration();
        	$admin->retrieveSettings();
 
         $smarty = new Sugar_Smarty();
+        $smarty->assign('disabledDisplayModulesList', $disabledModules);
+        $smarty->assign('disabledDisplayModules', $disabledModulesFlag);
         foreach ($portalFields as $fieldName=>$fieldDefault) {
             if (isset($admin->settings['portal_'.$fieldName])) {
                 $smarty->assign($fieldName, json_decode(html_entity_decode($admin->settings['portal_'.$fieldName])));

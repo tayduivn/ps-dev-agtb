@@ -610,6 +610,8 @@ $mod_strings = array(
 'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
+    'LBL_PORTAL_DISABLED_MODULES' => 'The following module(s) are disabled:',
+    'LBL_PORTAL_ENABLE_MODULES' => 'If you would like to enable them in the portal please enable them <a id="configure_tabs" target="_blank" href="./index.php?module=Administration&amp;action=ConfigureTabs">here</a>.',
     'LBL_PORTAL_CONFIGURE' => 'Configure Portal',
     'LBL_PORTAL_ENABLE' => 'Enable',
     'LBL_PORTAL_APP_NAME' => 'Application Name',
