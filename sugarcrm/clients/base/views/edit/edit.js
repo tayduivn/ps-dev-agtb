@@ -25,7 +25,8 @@
             fieldsToValidate: this.getFields(this.model.module)
         });
     },
-    bindDataChange: function() {
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
         if (this.model.id) {
             this.model.on("change", function() {
                 if (this.context.get('subnavModel')) {
