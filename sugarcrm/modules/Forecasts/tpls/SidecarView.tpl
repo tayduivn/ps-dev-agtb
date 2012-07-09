@@ -1,3 +1,15 @@
+<script src='clients/forecasts/config.js'></script>
+<script src='clients/forecasts/helper/hbt-helpers.js'></script>
+<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
+<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/forecasts/views/tree/tree.js'></script>
+<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
+<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
+<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
+<script src='clients/forecasts/views/progress/progress.js'></script>
+<script src='clients/forecasts/views/chart/chart.js'></script>
+<script src='clients/forecasts/views/alert/alert-view.js'></script>
+<script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <div class="view-forecastsSubnav subnav"></div>
 <div id="alert" class="alert-top"></div>
 <div id="core-module">

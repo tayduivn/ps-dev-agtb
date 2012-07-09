@@ -234,10 +234,6 @@
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
             // END STORY 31921015
-            this.context.forecasts.on("change:showManagerOpportunities",
-                function(context, showOpps) {
-                    this.updateWorksheetByMgrOpportunities(showOpps);
-                }, this);
         }
     },
 
