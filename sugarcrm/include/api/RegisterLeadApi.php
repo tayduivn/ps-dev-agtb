@@ -93,7 +93,7 @@ class RegisterLeadApi extends SugarApi {
         $admin = new Administration();
        	$admin->retrieveSettings();
 
-        if (isset($admin->settings['portal_defaultUser'])) {
+        if (isset($admin->settings['portal_defaultUser']) && !empty($admin->settings['portal_defaultUser'])) {
             $fields['assigned_user_id'] = json_decode(html_entity_decode($admin->settings['portal_defaultUser']));
         }
 
