@@ -6,15 +6,11 @@
  */
 ({
     show: false,
-    showOpps: false,
-
     viewModule: {},
-
+    selectedUser: {},
     gTable:'',
-
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
-
     _collection:{},
 
     /**
@@ -32,6 +28,9 @@
         
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.worksheetmanager;
+        
+        //set up base selected user
+    	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
     },
 
     /**
@@ -40,12 +39,12 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-        this.selectedUser = selectedUser.id;
+        this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
         this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
+        this._collection.url = this.createURL() + "?user_id=" + this.selectedUser.id;
         this._collection.fetch();
     },
 
@@ -68,12 +67,10 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
-            // END STORY 31921015
         }
     },
     
@@ -135,33 +132,14 @@
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var isManager = app.user.get('isManager');
-    	var userId = app.user.get('id');
-    	var selectedUser = userId;
+    	var selectedUser = this.selectedUser;
     	this.show = false;
-    	if(this.selectedUser){
-    		selectedUser = this.selectedUser;
-    	}
-
-    	if(!this.showOpps && isManager && userId.localeCompare(selectedUser) == 0){
+    	
+    	if(!selectedUser.showOpps && selectedUser.isManager){
     		this.show = true;
     	}
+    	
     	return this.show;
-    },
-
-    /***
-     * Event Handler for showing a manager's opportunities
-     *
-     * @param showOpps {Boolean} value to display manager's opportunities or not
-     */
-    updateWorksheetByMgrOpportunities: function(showOpps){
-    	this.showOpps = showOpps;
-    	if(!this.showMe()){
-        	return false;
-        }
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
-        this._collection.fetch();
     },
 
     /**
@@ -235,7 +213,6 @@
         }
 
         var cols = dTable.fnSettings().aoColumns;
-
         var retColumns = [];
 
         for (var i in cols) {
