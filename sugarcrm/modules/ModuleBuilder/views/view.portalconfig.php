@@ -56,8 +56,9 @@ class ViewPortalConfig extends SugarView
    	 */
 	function display() 
 	{
+        $userList = get_user_array();
         $portalFields = array('on'=>'0', 'logoURL'=>
-        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'3');
+        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'3', 'defaultUser'=>'');
         $admin = new Administration();
        	$admin->retrieveSettings();
 
@@ -69,7 +70,7 @@ class ViewPortalConfig extends SugarView
                 $smarty->assign($fieldName,$fieldDefault);
             }
         }
-
+        $smarty->assign('userList', $userList);
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SYNCP_WELCOME']);
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         if (isset($_REQUEST['label']))
