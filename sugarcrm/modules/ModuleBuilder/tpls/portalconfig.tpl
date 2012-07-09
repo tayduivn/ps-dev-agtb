@@ -27,6 +27,8 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 *}
+<link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
+<script src="sidecar/lib/chosen/chosen.jquery.js"></script>
 <form id='0' name='0'>
     <table class='tabform' width='100%' cellpadding=4>
 
@@ -72,6 +74,18 @@
             </td>                       
         </tr>
         <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:<span class="required">*</span>
+            </td>
+            <td colspan='1' nowrap>
+                <select data-placeholder="Select a user..." class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
+                {foreach from=$userList item=user key=userId}
+                    <option value="{$userId}" {if $userId == $defaultUser}selected{/if}>{$user}</option>
+                {/foreach}
+                </select>
+            </td>
+        </tr>
+        <tr>
             <td colspan='2' nowrap>
                 <input type='button' class='button' id='gobutton' value='Save'>
             </td>
@@ -100,13 +114,13 @@
 {literal}
 
 <script language='javascript'>
+    $('.chzn-select').chosen();
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
     addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 
     $('#gobutton').click(function(event){
         var field;
         var fields = $('.portalField');
-        console.log(fields);
         var props = {};
         var fName; var i;
         for(i=0; i<fields.length; i++) {
