@@ -9,8 +9,7 @@
         'click .search': 'showSearch',
         'click .addNote': 'openNoteModal',
         'click .activity a': 'loadChildDetailView',
-        'click [name=show_more_button_back]': 'showPreviousRecords',
-        'click [name=show_more_button_forward]': 'showNextRecords'
+        'click [name=show_more_button]': 'showMoreRecords'
     },
     bindDataChange: function() {
         if (this.collection) {
@@ -46,27 +45,27 @@
         // clears the current listened model and push the new one
         this.model.clear().set(activity.toJSON());
     },
-    showPreviousRecords: function() {
-        var self = this;
-        app.alert.show('show_previous_records', {level: 'process', title: 'Loading'});
-        this.context.get("collection").paginate({
-            page: -1,
-            success: function() {
-                app.alert.dismiss('show_previous_records');
-                self.render();
-            },
-            relate: true
-        });
-    },
-    showNextRecords: function() {
-        var self = this;
-        app.alert.show('show_next_records', {level: 'process', title: 'Loading'});
-        this.context.get("collection").paginate({
-            success: function() {
-                app.alert.dismiss('show_next_records');
-                self.render();
-            },
-            relate: true
-        });
+    showMoreRecords: function(evt) {
+        var self = this, options;
+        app.alert.show('show_more_records', {level:'process', title:'Loading'});
+
+        // If in "search mode" (the search filter is toggled open) set q:term param
+        options = self.filterOpened ? self.getSearchOptions() : {};
+
+        // Indicates records will be added to those already loaded in to view
+        options.add = true;
+
+        if (this.collection.link) {
+            options.relate = true;
+        }
+
+        options.success = function() {
+            app.alert.dismiss('show_more_records');
+            self.layout.trigger("list:paginate:success");
+            self.render();
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        options.limit = this.limit;
+        this.collection.paginate(options);
     }
 })

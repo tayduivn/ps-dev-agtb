@@ -35,6 +35,12 @@ class RestTestUpdate extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
             $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");
         }
+        if (isset($this->meeting->id)) {
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
+            $GLOBALS['db']->query("DELETE FROM meetings_contacts WHERE meeting_id = '{$this->meeting->id}'");
+            $GLOBALS['db']->query("DELETE FROM meetings_leads WHERE meeting_id = '{$this->meeting->id}'");
+            $GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting->id}'");
+        }
         parent::tearDown();
     }
 
@@ -99,5 +105,25 @@ class RestTestUpdate extends RestTestBase {
         $this->assertEquals($restReply['reply']['name'],
                             $contact2->name,
                             "Rest Reply and Bean Do Not Match.");
+    }
+    
+    public function testHasParentNameAfterSave() {
+        // Build an account
+        $this->account = new Account();
+        $this->account->name = 'ABC TEST';
+        $this->account->save();
+        
+        // Build a Meeting with a parent id of the account
+        $this->meeting = new Meeting();
+        $this->meeting->name = 'UNIT TEST MEETING';
+        $this->meeting->parent_id = $this->account->id;
+        $this->meeting->parent_type = 'Accounts';
+        $this->meeting->status = 'Not Held';
+        $this->meeting->save();
+        
+        // Change the meeting status and check for parent_name
+        $reply = $this->_restCall("Meetings/{$this->meeting->id}", json_encode(array('status' => 'Held')), 'PUT');
+        $this->assertEquals($this->meeting->id, $reply['reply']['id'], 'Meeting ID was not the correct ID');
+        $this->assertEquals($this->account->name, $reply['reply']['parent_name'], 'Parent Account name was not returned or was incorrect');
     }
 }

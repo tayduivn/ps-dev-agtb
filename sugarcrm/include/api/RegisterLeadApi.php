@@ -89,6 +89,14 @@ class RegisterLeadApi extends SugarApi {
             'team_set_id'=>'1',
             'team_id'=>'1'
         );
+
+        $admin = new Administration();
+       	$admin->retrieveSettings();
+
+        if (isset($admin->settings['portal_defaultUser']) && !empty($admin->settings['portal_defaultUser'])) {
+            $fields['assigned_user_id'] = json_decode(html_entity_decode($admin->settings['portal_defaultUser']));
+        }
+
         $fieldList = array('first_name', 'last_name', 'phone_work', 'email', 'primary_address_country', 'primary_address_state', 'account_name', 'title');
         foreach ($fieldList as $fieldName) {
             if (isset($args[$fieldName])) {
