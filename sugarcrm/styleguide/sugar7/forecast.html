@@ -149,12 +149,12 @@
           </div>
           <div class="datapoint1">
               Best<br>
-              <h2 id="best"></h2>
+              <h2 id="best"></h2> <i class="icon-arrow-down"></i>
           </div>
           <div class="divider"></div>
           <div class="datapoint2">
               Likely<br>
-              <h2 id="likely"></h2>
+              <h2 id="likely"></h2>  <i class="icon-arrow-down"></i>
           </div>
           <div class="log">
             <div class="title">
@@ -173,7 +173,8 @@
       </div>  
       <div class="span5 tab-content" id="folded">
         <div class="tab-pane active" id="overview">
-          <div class="thumbnail">
+          <div class="thumbnail" style="float: left; width: 90%; margin-left: 5%;">
+              <h4>Forecast for Q1 2012</h4>
               <div class="chartContainer">
                 <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
                 <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
@@ -181,6 +182,7 @@
                 </div>
               </div>
           </div>
+                <div class="clearfix"></div>
             <div class="block" id="guages">
               <h4>Projected</h4>
               <div class="row-fluid">
@@ -349,7 +351,7 @@
         chartConfig["dataPointSize"] = 5;
 
         var forecast = null;
-        var chartFile = 'forecast-json-q1-month.js';
+        var chartFile = 'forecast-json-best.js';
         forecast = new loadSugarChart(chartId,chartFile,css,chartConfig);
     </script>
     <script type="text/javascript" charset="utf-8">
@@ -381,7 +383,7 @@
             //$('#date_filter').ready(function(){
             $.fn.dataTableExt.afnFiltering.push(
                     function( oSettings, aData, iDataIndex ) {
-                        var probability = parseFloat(aData[4].replace(/<div style='position:relative;'><span class='dblclick'>/,'').replace(/<\/span><\/div>/,''));
+                        var probability = parseFloat(aData[4].replace(/<div class='inline-edit'><span class='click'>/,'').replace(/<\/span><\/div>/,''));
                         var probability_select = 0;
   //                      var probability_select = $('#probability_filter')[0].value;
 
@@ -435,7 +437,7 @@
 
 
 
-            $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput data2" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5" style="text-align: right;">Commited Total</th><th></th><th></th><th></th></tr><tr class="overall"><th colspan="5" style="text-align: right;">Overall Total</th><th></th><th></th><th></th></tr></tfoot></table>' );
+            $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput data2" id="example"><thead></thead><tbody></tbody><tfoot><tr><th colspan="5" style="text-align: right;">Commited Total</th><th></th><th></th></tr><tr class="overall"><th colspan="5" style="text-align: right;">Overall Total</th><th></th><th></th></tr></tfoot></table>' );
             var oTable = $('#example').dataTable( {
 
 
@@ -467,28 +469,21 @@
                     { "sTitle": "Probability",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div style='position:relative;'><span class='dblclick'>" + sReturn + "</span></div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Amount",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<span class='format'>" + sReturn + "</span>";
+                            var ret = "<div class='inline-edit'><span class='click'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     },
                     { "sTitle": "Best",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<span class='format'>" + sReturn + "</span>";
+                            var ret = "<div class='inline-edit'><span class='click format'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     },
                     { "sTitle": "Likely",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div style='position:relative;'><span class='dblclick format'>" + sReturn + "</span></div>";
+                            var ret = "<div class='inline-edit'><span class='click format'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     }
@@ -559,15 +554,15 @@
                             $('#example tbody').children('tr').each(function(i) {
                                 var tdInclude = $(this).children('td')[0];
                                 var isChecked = $(tdInclude).find('input').attr('checked');
-                                var tdAmount =$(this).children('td')[5];
-                                var tdBest =$(this).children('td')[6];
-                                var tdLikely =$(this).children('td')[7];
+                                //var tdAmount =$(this).children('td')[5];
+                                var tdBest =$(this).children('td')[5];
+                                var tdLikely =$(this).children('td')[6];
 
 
 
                                 if(isChecked) {
 
-                                    amountTotal += parseFloat($(tdAmount).find('span').html().replace(/,/,""));
+                                    //amountTotal += parseFloat($(tdAmount).find('span').html().replace(/,/,""));
                                     bestTotal += parseFloat($(tdBest).find('span').html().replace(/,/,""));
                                     likelyTotal += parseFloat($(tdLikely).find('span').html().replace(/,/,""));
                                 }
@@ -578,9 +573,9 @@
                             var included = $(trs)[0];
                             var includedCells =  $(included).children('th');
 
-                            $(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                            $(includedCells[2]).html(bestTotal).prettynumber({delimiter : ','});
-                            $(includedCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
+                            //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                            $(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
+                            $(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
 
                             $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
                             $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
@@ -596,9 +591,9 @@
                     var likelyTotal = 0;
                     for ( var i=iStart ; i<iEnd ; i++ )
                     {
-                        amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
-                        bestTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
-                        likelyTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div style='position:relative;'><span class='dblclick format'>/,'').replace(/<\/span><\/div>/,''));
+                        //amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
+                        bestTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div class='inline-edit'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
+                        likelyTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div class='inline-edit'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
                     }
 
                     /* Modify the footer row to match what we want */
@@ -610,12 +605,12 @@
                     var overallCells =  $(overall).children('th');
                     var includedCells =  $(included).children('th');
   //                  console.log($(overall).children('th'))
-                    $(overallCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                    $(overallCells[2]).html(bestTotal).prettynumber({delimiter : ','});
-                    $(overallCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
-                    $(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                    $(includedCells[2]).html(bestTotal).prettynumber({delimiter : ','});
-                    $(includedCells[3]).html(likelyTotal).prettynumber({delimiter : ','});
+                    //$(overallCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                    $(overallCells[1]).html(bestTotal).prettynumber({delimiter : ','});
+                    $(overallCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
+                    //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                    $(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
+                    $(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
 
                     $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
                     $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
@@ -624,7 +619,7 @@
 
                 },
                 "fnDrawCallback": function( oSettings ) {
-                    $('#example tbody td .dblclick').editable('save.php',{
+                    $('#example tbody td .click').editable('save.php',{
                         //loadurl: "load.php",
                         indicator : 'Saving ...',
                         cssclass   : "editable",
@@ -656,13 +651,34 @@
                         }
                     });
 
+
+
                 }
             } );
 
 
+            $('span.click input').live({
+
+                focus:function() {
+                var divParent = $(this).parents('div')[0],
+                        divParentWidth = $(divParent).width();
+                $(divParent).addClass('focus');
+
+                },
+
+                blur: function() {
+                    var divParent = $(this).parents('div')[0],
+                            divParentWidth = $(divParent).width();
+                   setTimeout(function(){
+                       $(divParent).removeClass('focus')
+                   }, 500)
+                }
+
+            });
 
              // editable example
-            $(".dblclick").live({
+            /*
+            $(".inline-edit click").live({
 
                 mouseenter:function(){
                     $(this).before('<span class="span2" style=" border-right: medium none; position: absolute; left: -15px; top: 0px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
@@ -671,7 +687,7 @@
                     $('span.span2').remove();
                 }
             });
-
+                  */
 
 
 
