@@ -413,14 +413,17 @@ class RestService extends ServiceBase {
      * @param array $args The request arguments
      */
     protected function sendContent($content, $encoding, $args) {
+    	$response = json_encode($content); 
         // @TODO: Handle other content types for rendering
         if ( $encoding !== false ) {
+        	$this->generateETagHeader(md5($response));
             header('Content-Encoding: '.$encoding);
-            $gzData = gzencode(json_encode($content));
+            $gzData = gzencode($response);
             header('Content-Length: '.strlen($gzData));
             echo $gzData;
         } else {
-            $response = json_encode($content);
+            $this->generateETagHeader(md5($response));
+            
             if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
                 $response = htmlentities($response);
             }
@@ -469,6 +472,7 @@ class RestService extends ServiceBase {
     protected function respond($output, $route, $args) {
         // TODO: gzip, and possibly XML based output
         if (!empty($route['rawReply'])) {
+        	$this->generateETagHeader(md5($output));
             echo $output;
         } else {
             if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
@@ -491,4 +495,26 @@ class RestService extends ServiceBase {
             $this->sendContent($output, $encoding, $args);
         }
     }
+    /**
+	 * generateETagHeader
+	 *
+	 * This function generates the necessary cache headers for using ETags with dynamic content. You
+	 * simply have to generate the ETag, pass it in, and the function handles the rest.
+	 *
+	 * @param string $etag ETag to use for this content.
+	 */
+	protected function generateETagHeader($etag){
+		header("cache-control:");
+		header('Expires: ');
+		header("ETag: " . $etag);
+		header("Pragma:");
+		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+				ob_clean();
+				header("Status: 304 Not Modified");
+				header("HTTP/1.0 304 Not Modified");
+				die();
+			}
+		}
+	}
 }
