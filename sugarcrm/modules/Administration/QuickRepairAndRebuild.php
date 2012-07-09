@@ -80,6 +80,9 @@ class RepairAndClear
             case 'clearSearchCache':
                 $this->clearSearchCache();
                 break;
+            case 'clearAdditionalCaches':
+                $this->clearAdditionalCaches();
+                break;
             //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
@@ -98,6 +101,7 @@ class RepairAndClear
                 $this->clearXMLfiles();
                 $this->clearSearchCache();
                 $this->clearExternalAPICache();
+                $this->clearAdditionalCaches();
                 //BEGIN SUGARCRM flav=pro ONLY
                 $this->clearPDFFontCache();
                 //END SUGARCRM flav=pro ONLY
@@ -388,6 +392,20 @@ class RepairAndClear
         $fontManager->clearCachedFile();
     }
     //END SUGARCRM flav=pro ONLY
+
+    /*
+     * Catch all function to clear out any misc. caches we may have
+     */
+
+    public function clearAdditionalCaches() {
+        global $mod_strings, $sugar_config;
+		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_ADD_CACHE']}</h3>";
+        // clear out the API Cache
+        require_once('include/api/SugarApi/ServiceDictionary.php');
+        $sd = new ServiceDictionary();
+        $sd->clearCache();
+    }
+        
 
 	//////////////////////////////////////////////////////////////
 	/////REPAIR AUDIT TABLES
