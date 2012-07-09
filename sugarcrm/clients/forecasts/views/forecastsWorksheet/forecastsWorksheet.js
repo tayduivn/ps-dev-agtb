@@ -11,6 +11,7 @@
     showOpps: false,
 
     viewModule: {},
+    selectedUser: {},
 
     gTable:'',
 
@@ -29,7 +30,6 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-        
         
         //set expandable behavior to false by default
         this.isExpandableRows = false;
@@ -84,9 +84,7 @@
             model : this.totalModel
         });
 
-
-        // INIT tree with logged-in user
-       
+        // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
     },
 
@@ -230,16 +228,10 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
-            // END STORY 31921015
-            this.context.forecasts.on("change:showManagerOpportunities",
-                function(context, showOpps) {
-                    this.updateWorksheetByMgrOpportunities(showOpps);
-                }, this);
         }
     },
 
@@ -376,8 +368,7 @@
             'opp_count' : includedCount,
             'amount' : includedAmount
         };
-
-
+        
         this.context.set("updatedTotals", totals);
     },
 
@@ -434,18 +425,6 @@
         this._collection.fetch();
     },
 
-    /***
-     * Event Handler for showing a manager's opportunities
-     *
-     * @param showOpps boolean value to display manager's opportunities or not
-     */
-    updateWorksheetByMgrOpportunities: function(showOpps){
-    	this.showOpps = showOpps;
-    	this._collection = this.context.forecasts.worksheet;
-        this._collection.url = this.createURL();
-        this._collection.fetch();   
-    },
-
     /**
      * Formats the additional details div when a user clicks a row in the grid
      *
@@ -487,7 +466,6 @@
         }
 
         var cols = dTable.fnSettings().aoColumns;
-
         var retColumns = [];
 
         for (var i in cols) {

@@ -9,6 +9,7 @@
     showOpps: false,
 
     viewModule: {},
+    selectedUser: {},
 
     gTable:'',
 
@@ -71,16 +72,10 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
-            // END STORY 31921015
-            this.context.forecasts.on("change:showManagerOpportunities",
-                function(context, showOpps) {
-                    this.updateWorksheetByMgrOpportunities(showOpps);
-                }, this);
         }
     },
     
@@ -150,21 +145,6 @@
     	}
     	
     	return this.show;
-    },
-
-    /***
-     * Event Handler for showing a manager's opportunities
-     *
-     * @param showOpps {Boolean} value to display manager's opportunities or not
-     */
-    updateWorksheetByMgrOpportunities: function(showOpps){
-    	this.showOpps = showOpps;
-    	if(!this.showMe()){
-        	return false;
-        }
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
-        this._collection.fetch();
     },
 
     /**
@@ -238,7 +218,6 @@
         }
 
         var cols = dTable.fnSettings().aoColumns;
-
         var retColumns = [];
 
         for (var i in cols) {
