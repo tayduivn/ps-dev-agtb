@@ -35,27 +35,6 @@
 
             self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
-            // Initialize the default timeperiod & category on the context
-            switch(key)
-            {
-                case 'timeperiod_id':
-                    var defaultTimePeriod = {
-                        "id" : modelData.default,
-                        "label" : modelData.options[modelData.default]
-                    }
-                    self.context.set('selectedTimePeriod', defaultTimePeriod);
-                    break;
-
-                case 'category':
-                    var defaultCategory = {
-                        "id" : modelData.default,
-                        "label" : modelData.options[modelData.default]
-                    }
-                    console.log(defaultCategory);
-                    self.context.set('selectedCategory', defaultCategory);
-                    break;
-            }
-
             chosen.options.viewName = 'edit';
             chosen.label = modelData.label;
             default_values[key] = '';
@@ -68,11 +47,19 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            if (key === 'timeperiod_id') {
-                self.context.forecasts.set("selectedTimePeriod", default_values);
+            if (key == 'timeperiod_id') {
+                var defaultTimePeriod = {
+                    "id" : modelData.default,
+                    "label" : modelData.options[modelData.default]
+                }
+                self.context.forecasts.set("selectedTimePeriod", defaultTimePeriod);
                 self.handleTimePeriodEvents($chosenPlaceholder);
-            } else if (key === 'category') {
-                self.context.forecasts.set("selectedCategory", default_values);
+            } else if (key == 'category') {
+                var defaultCategory = {
+                    "id" : modelData.default,
+                    "label" : modelData.options[modelData.default]
+                }
+                self.context.forecasts.set("selectedCategory", defaultCategory);
                 self.handleCategoryEvents($chosenPlaceholder);
             }
         });

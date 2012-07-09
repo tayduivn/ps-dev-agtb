@@ -58,7 +58,7 @@
         var urlParams = $.param({
             userId: self.context.forecasts.get("selectedUser").id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
-            shouldRollup: (self.context.forecasts.get("showManagerOpportunities") ? 1 : 0)
+            shouldRollup: 1
         });
         this.model.fetch({
             data: urlParams
