@@ -49,6 +49,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
     public function tearDown()
     {
+        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        $userIds = SugarTestUserUtilities::getCreatedUserIds();
+        $GLOBALS['db'] -> query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
@@ -59,18 +64,109 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
     {
         global $current_user;
 
-        //current user is manager
+        //get current timeperiod
+        $timeperiod_id = TimePeriod::getCurrentId();
+
+        //setup opps
+        $managerOpp = SugarTestOpportunityUtilities::createOpportunity();
+        $managerOpp->assigned_user_id = $current_user->id;
+        $managerOpp->timeperiod_id = $timeperiod_id;
+        $managerOpp->amount = 1800;
+        $managerOpp->save();
+
+        $repOpp = SugarTestOpportunityUtilities::createOpportunity();
+        $repOpp->assigned_user_id = $this->reportee->id;
+        $repOpp->timeperiod_id = $timeperiod_id;
+        $repOpp->amount = 1300;
+        $repOpp->save();
+
+        //setup quotas
+        $managerQuota = SugarTestQuotaUtilities::createQuota(2000);
+        $managerQuota->user_id = $current_user->id;
+        $managerQuota->quota_type = "Direct";
+        $managerQuota->timeperiod_id = $timeperiod_id;
+        $managerQuota->save();
+
+        $repQuota = SugarTestQuotaUtilities::createQuota(1500);
+        $repQuota->user_id = $this->reportee->id;
+        $repQuota->quota_type = "Direct";
+        $repQuota->timeperiod_id = $timeperiod_id;
+        $repQuota->save();
+
+        //setup forecasts
+        $managerForecast = new Forecast();
+        $managerForecast->user_id = $current_user->id;
+        $managerForecast->best_case = 1500;
+        $managerForecast->likely_case = 1200;
+        $managerForecast->worst_case = 900;
+        $managerForecast->timeperiod_id = $timeperiod_id;
+        $managerForecast->forecast_type = "Direct";
+        $managerForecast->save();
+
+        $repForecast = new Forecast();
+        $repForecast->user_id = $this->reportee->id;
+        $repForecast->best_case = 1100;
+        $repForecast->likely_case = 900;
+        $repForecast->worst_case = 700;
+        $repForecast->timeperiod_id = $timeperiod_id;
+        $repForecast->forecast_type = "Direct";
+        $repForecast->save();
+
+        //setup worksheets
+        $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $managerWorksheet->user_id = $current_user->id;
+        $managerWorksheet->related_id = $current_user->id;
+        $managerWorksheet->forecast_type = "Direct";
+        $managerWorksheet->timeperiod_id = $timeperiod_id;
+        $managerWorksheet->best_case = 1550;
+        $managerWorksheet->likely_case = 1250;
+        $managerWorksheet->worst_case = 950;
+        $managerWorksheet->forecast = 1;
+        $managerWorksheet->save();
+
+        $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $repWorksheet->user_id = $current_user->id;
+        $repWorksheet->related_id = $this->reportee->id;
+        $repWorksheet->forecast_type = "Rollup";
+        $repWorksheet->timeperiod_id = $timeperiod_id;
+        $repWorksheet->best_case = 1150;
+        $repWorksheet->likely_case = 950;
+        $repWorksheet->worst_case = 750;
+        $repWorksheet->forecast = 1;
+        $repWorksheet->save();
+
+        $managerData = array("amount" => $managerOpp->amount,
+                                "quota" => $managerQuota->amount,
+                                "best_case" => $managerForecast->best_case,
+                                "likely_case" => $managerForecast->likely_case,
+                                "best_adjusted" => $managerWorksheet->best_case,
+                                "likely_adjusted" => $managerWorksheet->likely_case,
+                                "forecast" => intval($managerWorksheet->forecast),
+                                "user_id" => $current_user->id,
+                                "name" => $current_user->first_name . ' ' . $current_user->last_name);
+
+        $repData = array("amount" => $repOpp->amount,
+                        "quota" => $repQuota->amount,
+                        "best_case" => $repForecast->best_case,
+                        "likely_case" => $repForecast->likely_case,
+                        "best_adjusted" => $repWorksheet->best_case,
+                        "likely_adjusted" => $repWorksheet->likely_case,
+                        "forecast" => intval($repWorksheet->forecast),
+                        "user_id" => $this->reportee->id,
+                        "name" => $this->reportee->first_name . ' ' . $this->reportee->last_name);
+
+        //case #1: current user is manager
         $restReply = $this->_restCall("Forecasts/worksheetmanager/");
 
-        $this->assertArrayHasKey($current_user->user_name, $restReply['reply'], "manager's user_name was not found in the Expected place in the rest reply" );
-        $this->assertArrayHasKey($this->reportee->user_name, $restReply['reply'], "reportee's user_name was not found in the Expected place in the rest reply" );
+        $this->assertEquals($managerData, $restReply['reply'][0], "there's no manager's data in the rest reply" );
+        $this->assertEquals($repData, $restReply['reply'][1], "there's no reportee's data in the rest reply" );
 
-        //user in filter is not manager - rest reply should be empty
+        //case #2: user in filter is not manager - rest reply should be empty
         $restReply = $this->_restCall("Forecasts/worksheetmanager?user_id=" . $this->reportee->id);
 
         $this->assertEmpty($restReply['reply'], "rest reply is not empty");
 
-        //current user is not manager - rest reply should be empty
+        //case #3: current user is not manager - rest reply should be empty
         $this->reportee->reports_to_id = '';
         $this->reportee->save();
 
