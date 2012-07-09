@@ -250,6 +250,4 @@ $mod_strings = array (
     // Labels for Data Filters
     'LBL_FORECAST_PERIOD' => 'Forecast Period:',
     'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
-    'LBL_COMMITTED' => 'Committed',
-    'LBL_PIPELINE' => 'Pipeline',
 );

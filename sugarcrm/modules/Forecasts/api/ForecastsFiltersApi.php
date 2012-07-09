@@ -69,9 +69,6 @@ class ForecastsFiltersApi extends ModuleApi {
         $app_list_strings = return_app_list_strings_language($current_language);
         $mod_strings = return_module_language($current_language, 'Forecasts');
 
-        error_log($current_language);
-        error_log(var_export($mod_strings, true));
-
         return array(
             'timeperiod_id' => array(
                 'label' => get_label('LBL_FORECAST_PERIOD', $mod_strings),
@@ -81,10 +78,7 @@ class ForecastsFiltersApi extends ModuleApi {
             'category' => array(
                 'label' => get_label('LBL_FORECAST_CATEGORY', $mod_strings),
                 'default' => 'Committed',
-                'options' => array(
-                    'Committed' => get_label('LBL_COMMITTED', $mod_strings),
-                    'Pipeline' => get_label('LBL_PIPELINE', $mod_strings),
-                ),
+                'options' => $app_list_strings['forecasts_filters_category'],
             ),
         );
     }
@@ -92,26 +86,19 @@ class ForecastsFiltersApi extends ModuleApi {
     public function chartOptions($api, $args) {
         // placeholder for filters
         global $current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
         $mod_strings = return_module_language($current_language, 'Forecasts');
 
         return array(
             'group_by' => array(
                 'label' => get_label('LBL_GROUP_BY', $mod_strings),
                 'default' => 'sales_stage',
-                'options' => array(
-                    'forecast' => get_label('LBL_FORECAST', $mod_strings),
-                    'sales_stage' => get_label('LBL_SALES_STAGE', $mod_strings),
-                    'probability' => get_label('LBL_PROBABILITY', $mod_strings)
-                ),
+                'options' => $app_list_strings['forecasts_chart_options_group'],
             ),
             'dataset' => array(
                 'label' => get_label('LBL_DATA_SET', $mod_strings),
                 'default' => 'likely',
-                'options' => array(
-                    'likely' => get_label('LB_FS_LIKELY_CASE', $mod_strings),
-                    'best' => get_label('LB_FS_BEST_CASE', $mod_strings),
-                    'worst' => get_label('LB_FS_WORST_CASE', $mod_strings)
-                ),
+                'options' => $app_list_strings['forecasts_chart_options_dataset'],
             )
         );
     }
