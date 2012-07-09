@@ -961,7 +961,8 @@ EOHTML;
             sugar_mkdir($path, null, true);
             $defaultPath = $this->getDefaultFontPath();
             foreach(glob($defaultPath ."/*") as $filename) {
-                sugar_file_put_contents($path .'/' . $filename, sugar_file_get_contents($defaultPath . '/' . $filename));
+                $name = substr($filename, strrpos($filename, '/'));
+                sugar_file_put_contents($path . $name, sugar_file_get_contents($filename));
             }
         }
 
