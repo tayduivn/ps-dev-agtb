@@ -32,6 +32,9 @@
         
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.worksheetmanager;
+        
+        //set up base selected user
+    	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
     },
 
     /**
@@ -40,12 +43,12 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-        this.selectedUser = selectedUser.id;
+        this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
         this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
+        this._collection.url = this.createURL() + "?user_id=" + this.selectedUser.id;
         this._collection.fetch();
     },
 
@@ -139,17 +142,13 @@
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var isManager = app.user.get('isManager');
-    	var userId = app.user.get('id');
-    	var selectedUser = userId;
+    	var selectedUser = this.selectedUser;
     	this.show = false;
-    	if(this.selectedUser){
-    		selectedUser = this.selectedUser;
-    	}
-
-    	if(!this.showOpps && isManager && userId.localeCompare(selectedUser) == 0){
+    	
+    	if(!selectedUser.showOpps && selectedUser.isManager){
     		this.show = true;
     	}
+    	
     	return this.show;
     },
 

@@ -29,14 +29,18 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-
+        
+        
         //set expandable behavior to false by default
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
 
         this._collection = this.context.forecasts.worksheet;
-
+        
+        //set up base selected user
+    	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+        
         var TotalModel = Backbone.Model.extend({
 
         });
@@ -82,10 +86,8 @@
 
 
         // INIT tree with logged-in user
-        var selectedUser = {
-            'id' : app.user.get('id')
-        }
-        this.updateWorksheetBySelectedUser(selectedUser);
+       
+        this.updateWorksheetBySelectedUser(this.selectedUser);
     },
 
     createURL:function() {
@@ -97,7 +99,7 @@
 
         if(this.selectedUser)
         {
-           args['user_id'] = this.selectedUser;
+           args['user_id'] = this.selectedUser.id;
         }
 
         var params = '';
@@ -306,14 +308,8 @@
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
-        var userId = app.user.get('id');
-        var selectedUser = userId;
-
-        if(this.selectedUser){
-            selectedUser = this.selectedUser;
-        }
-
-        if(userId.localeCompare(selectedUser) != 0){
+    	var userId = app.user.get('id');
+        if(userId.localeCompare(this.selectedUser.id) != 0){
             return false;
         }
         return true;
@@ -323,10 +319,10 @@
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-        var isManager = app.user.get('isManager');
+    	var selectedUser = this.selectedUser;
     	this.show = false;
-
-    	if(this.showOpps || !isManager || (isManager && !this.isMyWorksheet())){
+    	    	
+    	if(selectedUser.showOpps || !selectedUser.isManager){
     		this.show = true;
     	}
     	
@@ -391,7 +387,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-        this.selectedUser = selectedUser.id;
+        this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
