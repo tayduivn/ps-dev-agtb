@@ -1862,6 +1862,20 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    'forecasts_filters_category' => array(
+        'Committed' => 'Committed',
+        'Pipeline' => 'Pipeline',
+    ),
+    'forecasts_chart_options_group' => array(
+        'forecast' => 'Included In Forecast',
+        'sales_stage' => 'Sales Stage',
+        'probability' => 'Probability'
+    ),
+    'forecasts_chart_options_dataset' => array(
+        'likely' => 'Likely Case',
+        'best' => 'Best Case',
+        'worst' => 'Worst Case'
+    ),
 );
 
 $app_strings = array (

@@ -241,5 +241,13 @@ $mod_strings = array (
 
    //Labels for worksheet totals
    'LBL_INCLUDED_TOTAL' => 'Included Total',
-   'LBL_OVERALL_TOTAL' => 'Overall Total'
+   'LBL_OVERALL_TOTAL' => 'Overall Total',
+
+   // Labels for Chart Options
+    'LBL_DATA_SET' => 'Data Set:',
+    'LBL_GROUP_BY' => 'Group By:',
+
+    // Labels for Data Filters
+    'LBL_FORECAST_PERIOD' => 'Forecast Period:',
+    'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
 );

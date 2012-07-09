@@ -67,45 +67,38 @@ class ForecastsFiltersApi extends ModuleApi {
         // todo: really make this work
         global $app_list_strings, $current_language;
         $app_list_strings = return_app_list_strings_language($current_language);
+        $mod_strings = return_module_language($current_language, 'Forecasts');
 
         return array(
             'timeperiod_id' => array(
-                'label' => 'Forecast Period:',
+                'label' => get_label('LBL_FORECAST_PERIOD', $mod_strings),
                 'default' => TimePeriod::getCurrentId(),
                 'options' => TimePeriod::get_not_fiscal_timeperiods_dom(),
             ),
             'category' => array(
-                'label' => 'Forecast Category:',
+                'label' => get_label('LBL_FORECAST_CATEGORY', $mod_strings),
                 'default' => 'Committed',
-                'options' => array(
-                    'Committed' => 'Committed',
-                    'Pipeline' => 'Pipeline',
-                ),
+                'options' => $app_list_strings['forecasts_filters_category'],
             ),
         );
     }
 
     public function chartOptions($api, $args) {
         // placeholder for filters
-        // todo: really make this work
+        global $current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
+        $mod_strings = return_module_language($current_language, 'Forecasts');
+
         return array(
             'group_by' => array(
-                'label' => 'Group By:',
+                'label' => get_label('LBL_GROUP_BY', $mod_strings),
                 'default' => 'sales_stage',
-                'options' => array(
-                    'forecast' => 'Forecast Category',
-                    'sales_stage' => 'Sales Stage',
-                    'probability' => 'Probability'
-                ),
+                'options' => $app_list_strings['forecasts_chart_options_group'],
             ),
             'dataset' => array(
-                'label' => 'Data Set:',
+                'label' => get_label('LBL_DATA_SET', $mod_strings),
                 'default' => 'likely',
-                'options' => array(
-                    'likely' => 'Likely',
-                    'best' => 'Best',
-                    'worst' => 'Worst'
-                ),
+                'options' => $app_list_strings['forecasts_chart_options_dataset'],
             )
         );
     }
