@@ -40,10 +40,11 @@
       })  
       }
 
-     $("th:contains('Subject')").css("width","50%")
-     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%")
-     $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
-
+      $("th:contains('Subject')").css("width","50%")
+      $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%")
+      $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
+      $("#folded th:contains('Opportunity'),th:contains('Name')").css("width","70%")
+    
       // keybinding
       $(document).keyup(function(e){
           if(e.keyCode === 27) 
@@ -117,12 +118,7 @@
       })
       
       // column collapse
-      $('.thumbnav a').on('click',
-      function () {
-        $(this).toggleClass('active')
-        $('#thedrawer').toggleClass('hide');
-        return false;
-      })
+
 
       $('.btngroup .btn').button()
 
@@ -136,16 +132,29 @@
 
     $('.comment').toggle( 
       function (e) {
-  		  $(this).parent().parent().find('ul').append('<li class="commented">Test</li>');
+  		  $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class=""> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
   		  $(this).addClass('active');
   		  return false; 
 	    },
 	    function (e) {
-  		  $(this).parent().parent().find('.commented').remove();
+  		  $(this).parent().parent().find('.acomment').remove();
   		  $(this).removeClass('active');
   		  return false; 
 	    }
     )
+
+    $(".omnibar").toggle(
+      function (e) {
+   		$(this).addClass('active');
+   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right">Send to <a href="">Everyone</a> &nbsp;</div>'); 
+   		return false;
+      },
+      function (e) {
+        $(this).removeClass('active');
+        $('.inputactions').remove();
+      		return false;  
+    })
+
 
     $('.actions').find('a[data-toggle=tab]').on('click', function (e) {
       $('.nav-tabs').find('li').removeClass('on');
@@ -193,6 +202,8 @@
     //popover
     $("[rel=popover]").popover()
     $("[rel=popoverTop]").popover({placement: "top"})
+    $("[rel=popoverBottom]").popover({placement: "bottom"})
+
 
 $('#moduleActivity .form-search select').chosen()
 
