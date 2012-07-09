@@ -6,7 +6,6 @@
  */
 ({
     show: false,
-    showOpps: false,
     viewModule: {},
     selectedUser: {},
     gTable:'',

@@ -8,7 +8,6 @@
 
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
-    showOpps: false,
     viewModule: {},
     selectedUser: {},
     gTable:'',
