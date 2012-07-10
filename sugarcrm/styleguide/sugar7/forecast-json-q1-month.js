@@ -149,11 +149,11 @@
         "links": ["","",""],
         "goalmarkervalue" : [
             200,
-            250
+            290
         ],
         "goalmarkervaluelabel" : [
             "200K",
-            "250K"
+            "290K"
         ]
 
     }

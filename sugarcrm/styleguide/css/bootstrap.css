@@ -7084,6 +7084,9 @@ date {
 }
 .viz {
   min-height: 300px;
+  float: left;
+  width: 90%;
+  margin-left: 5% !important;
 }
 /* Search Module */
 /* Space out sub-sections more

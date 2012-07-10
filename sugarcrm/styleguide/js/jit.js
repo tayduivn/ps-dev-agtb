@@ -12066,9 +12066,9 @@ $jit.ST.Plot.NodeTypes.implement({
 
                     } else if(goalMarkerType[i] == 'pareto') {
 
-                        var x1 = pos.x - (dataPointSize/2),
+                        var x1 = pos.x + (dataPointSize/2),
                             y1 = (pos.y - goalMarkerDim) + 2;
-                        var r = dataPointSize*1.4;
+                        var r = dataPointSize;
                         if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
 
                             return {
