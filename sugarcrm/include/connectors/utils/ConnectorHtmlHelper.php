@@ -133,23 +133,23 @@ class ConnectorHtmlHelper
             {
                 $dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
                 $code = '<!--not_in_theme!--><img id="dswidget_img" src="' . $dswidget_img . '" width="11" height="7" border="0" alt="'
-                        . $app_strings['LBL_CONNECTORS_POPUPS'] . '" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
+                        . $app_strings['LBL_CONNECTORS_POPUPS'] . '" onclick="return showConnectorMenu2(this);">';
             }
             else
             {
                 $dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
                 $singleIcon = empty($singleIcon) ? $dswidget_img : $singleIcon;
                 $code = '<!--not_in_theme!--><img id="dswidget_img" border="0" src="' . $singleIcon . '" alt="'.$app_strings['LBL_CONNECTORS_POPUPS']
-                        . '" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
+                        . '" onclick="return showConnectorMenu2(this);">';
 
             }
             $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>\n";
             $code .= "<script type='text/javascript'>\n";
-            $code .= "function showConnectorMenu2() {literal} { {/literal}\n";
+            $code .= "function showConnectorMenu2(el) {literal} { {/literal}\n";
 
             $menuParams .= '";';
             $code .= $menuParams . "\n";
-            $code .= "return overlib(menuParams, CENTER, STICKY, MOUSEOFF, 3000, WIDTH, 110, FGCLASS, 'olOptionsFgClass', CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');\n";
+            $code .= "return SUGAR.util.showHelpTips(el,menuParams);\n";
             $code .= "{literal} } {/literal}\n";
             $code .= "</script>\n";
             $code .= $formatterCode;
