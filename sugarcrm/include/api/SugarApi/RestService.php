@@ -408,10 +408,9 @@ class RestService extends ServiceBase {
      * @TODO Handle proper content disposition based on response content type
      * @access protected
      * @param mixed $content
-     * @param string $encoding
      * @param array $args The request arguments
      */
-    protected function sendContent($content, $encoding, $args) {
+    protected function sendContent($content, $args) {
         $response = json_encode($content);
         if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
             $response = htmlentities($response);
