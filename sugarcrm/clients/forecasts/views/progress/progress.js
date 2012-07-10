@@ -25,7 +25,6 @@
         var likelyTotal = this.worksheetCollection.reduce(function(memo, model) {
             // Only add up values that are "included" in the worksheet.
             if ( model.get('forecast') === true && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
-                console.log("adding likely for ", model.get('name'));
                 memo += parseInt(model.get('likely_case_worksheet'), 10);
             }
             return memo;
