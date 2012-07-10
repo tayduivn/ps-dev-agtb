@@ -412,19 +412,11 @@ class RestService extends ServiceBase {
      * @param array $args The request arguments
      */
     protected function sendContent($content, $encoding, $args) {
-        // @TODO: Handle other content types for rendering
-        if ( $encoding !== false ) {
-            header('Content-Encoding: '.$encoding);
-            $gzData = gzencode(json_encode($content));
-            header('Content-Length: '.strlen($gzData));
-            echo $gzData;
-        } else {
-            $response = json_encode($content);
-            if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
-                $response = htmlentities($response);
-            }
-            echo $response;
+        $response = json_encode($content);
+        if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
+            $response = htmlentities($response);
         }
+        echo $response;
     }
 
     /**
@@ -470,24 +462,11 @@ class RestService extends ServiceBase {
         if (!empty($route['rawReply'])) {
             echo $output;
         } else {
-            if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
-                $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
-            }
-            if( headers_sent() || empty($httpAccept) ) {
-                $encoding = false;
-            } else if( strpos($httpAccept,'x-gzip') !== false ) {
-                $encoding = 'x-gzip';
-            } else if( strpos($httpAccept,'gzip') !== false ) {
-                $encoding = 'gzip';
-            } else {
-                $encoding = false;
-            }
-
             // Handle content type header sending
             $this->sendContentTypeHeader($args);
 
             // Send the content
-            $this->sendContent($output, $encoding, $args);
+            $this->sendContent($output, $args);
         }
     }
 }
