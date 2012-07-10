@@ -538,9 +538,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
 
-						var dcmenuSugarCubeX = 0;
-						if (dcmenuSugarCube)
-						    dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
+						var dcmenuSugarCubeX = (dcmenuSugarCube)?dcmenuSugarCube.get('offsetLeft'):0;
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
 
 						setTimeout(function() {
