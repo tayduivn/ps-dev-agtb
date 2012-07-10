@@ -5,7 +5,7 @@
  * @singleton
  */
 class SugarAccess {
-    protected $instance = null;
+    protected static $instance = null;
     protected $client;
 
     /**
@@ -60,6 +60,7 @@ class LicenseServerClient {
     protected $userData;
 
     public function __construct() {
+        if(isset($_SESSION['userData']))$this->userData = $_SESSION['userData'];
     }
 
     /**
@@ -91,8 +92,13 @@ class LicenseServerClient {
             )
         );
 
+        // Save user data to the session
+        $_SESSION["userData"] = $this->userData;
+
         return $this->userData;
     }
+
+
 
     public function getModules($email) {
         return $this->userData["modules"];

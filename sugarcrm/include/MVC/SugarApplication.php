@@ -100,7 +100,7 @@ class SugarApplication
 		}
 
 		$authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
-		$GLOBALS['current_user'] = new User();
+				$GLOBALS['current_user'] = new User();
 		if(isset($_SESSION['authenticated_user_id'])){
 			// set in modules/Users/Authenticate.php
 			if(!$authController->sessionAuthenticate()){
@@ -165,8 +165,9 @@ class SugarApplication
 	public function ACLFilter()
 	{
 		$GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
-        $GLOBALS['moduleList'] = SugarAccess::filterModules($GLOBALS['moduleList']);
-	}
+        $sa = SugarAccess::getInstance();
+        $GLOBALS['moduleList'] = $sa->filterModules($GLOBALS['moduleList']);
+		}
 
 	/**
 	 * setupResourceManagement
