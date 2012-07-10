@@ -10,7 +10,8 @@
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-     //   this.context.get('subnavModel').set('title', 'Create');
+        this.context.off("subnav:save", null, this);
+        this.context.on("subnav:save", this.saveModel, this);
     },
     saveModel: function() {
         var self = this;
@@ -22,7 +23,7 @@
                 app.alert.dismiss('save_edit_view');
                 self.app.navigate(self.context, self.model, 'detail');
             },
-            fieldsToValidate: this.getFields(this.model.module)
+            fieldsToValidate: this.getFields(this.module)
         });
     },
     _renderHtml: function() {
