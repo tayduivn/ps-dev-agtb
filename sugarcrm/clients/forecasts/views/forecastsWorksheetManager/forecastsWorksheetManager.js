@@ -51,7 +51,7 @@
     bindDataChange: function() {
         if(this._collection)
         {
-            this._collection.on("reset", this.refresh, this);
+            this._collection.on("reset", this.render, this);
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
@@ -73,22 +73,11 @@
             }, this);
         }
     },
-    
-    /**
-     * Refresh the view
-     *
-     * This method ensures that we refresh the view after data pulls
-     * @param context
-     */
-    refresh:function(context) {
-        
-    	this.render();
-    },
-    
+
     /**
      * Renders view
      */
-    render:function () {
+    _render:function () {
         var self = this;
         
         if(!this.showMe()){
@@ -96,7 +85,7 @@
         }
         $("#view-sales-rep").hide();
         $("#view-manager").show();
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata

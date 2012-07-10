@@ -243,7 +243,7 @@
     /**
      * Renders view
      */
-    render:function () {
+    _render:function () {
         var self = this;
         
         if(!this.showMe()){
@@ -252,7 +252,7 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
         
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
@@ -295,11 +295,7 @@
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
-    	var userId = app.user.get('id');
-        if(userId.localeCompare(this.selectedUser.id) != 0){
-            return false;
-        }
-        return true;
+        return _.isEqual(app.user.get('id'), this.selectedUser.id);
     },
 
     /**
@@ -363,8 +359,9 @@
             'opp_count' : includedCount,
             'amount' : includedAmount
         };
-        
-        this.context.set("updatedTotals", totals);
+
+
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**

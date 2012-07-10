@@ -6,8 +6,6 @@
  */
 ({
 
-    rendered:false,
-
     jsTree:{},
 
     reporteesEndpoint:'',
@@ -55,7 +53,6 @@
         if(this.currentRootId != selectedUser.id && selectedUser.isManager)  {
             this.currentRootId = selectedUser.id;
             this.currentTreeUrl = this.reporteesEndpoint + selectedUser.id;
-            this.rendered = false;
             this.render();
         }
     },
@@ -63,9 +60,6 @@
      * Render JSTree
      */
     _render:function () {
-
-        // only let this render once.
-        if (this.rendered) return;
 
         app.view.View.prototype._render.call(this);
 
@@ -131,6 +125,5 @@
                 self.context.forecasts.set("selectedUser" , selectedUser);
             });
 
-        this.rendered = true;
     }
 })
