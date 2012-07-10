@@ -30,6 +30,7 @@
 /**
  * @brief Try to test download.php for php notices
  * @ticket 45896
+ * @author mgusev@sugarcrm.com
  */
 class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -45,10 +46,21 @@ class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        if (extension_loaded('suhosin') == true)
+        {
+            $configuration = ini_get_all('suhosin', false);
+            if ($configuration['suhosin.session.encrypt'] == true)
+            {
+                $this->markTestSkipped('We can\'t fake session if encryption of session is used');
+                return true;
+            }
+        }
+
         $this->backup['session.use_cookies'] = ini_get('session.use_cookies');
         ini_set('session.use_cookies', false);
         $this->backup['session.use_only_cookies'] = ini_get('session.use_only_cookies');
         ini_set('session.use_only_cookies', false);
+        session_cache_limiter('');
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
@@ -78,8 +90,10 @@ class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        session_id($this->sessionId);
-        @session_start();
+        session_write_close();
+        session_start();
+        session_regenerate_id();
+        $this->sessionId = session_id();
         $_SESSION['authenticated_user_id'] = $this->user->id;
         $_SESSION['authenticated_user_language'] = $GLOBALS['sugar_config']['default_language'];
         $_SESSION['unique_key'] = $GLOBALS['sugar_config']['unique_key'];
@@ -104,17 +118,15 @@ class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-	/**
+    /**
      * @brief try to download files and to check response for notices
-	 * @dataProvider getQueryString
+    * @dataProvider getQueryString
      * @group 45896
-     * 
-	 * @param array $queryString query string to download any file url
-	 */
-	public function testDownload($queryString)
-	{
-        $this->markTestIncomplete('Need mgusev to fix this test');
-        return;
+     *
+    * @param array $queryString query string to download any file url
+    */
+    public function testDownload($queryString)
+    {
         curl_setopt($this->curl, CURLOPT_HEADER, true);
         curl_setopt($this->curl, CURLOPT_NOBODY, false);
         curl_setopt($this->curl, CURLOPT_URL, $GLOBALS['sugar_config']['site_url'].'?'.$queryString);
@@ -186,7 +198,7 @@ class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
                     $this->fail('Received unknown content type');
                 }
         }
-	}
+    }
 
     /**
      * @brief closing curl connection and restore php.ini parameters
@@ -195,6 +207,10 @@ class Bug45896Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         curl_close($this->curl);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        session_start();
+        session_regenerate_id(true);
         foreach ($this->backup as $k=>$v)
         {
             ini_set($k, $v);
