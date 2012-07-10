@@ -128,7 +128,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast" => 0);
 		
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
-        	$default_data["name"] = $current_module_strings['LBL_MY_OPPORTUNITIES'];
+        	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
 		}
 		else
 		{
