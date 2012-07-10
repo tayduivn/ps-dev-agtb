@@ -295,7 +295,7 @@
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
-        return _.isEqual(app.user.get('id'), this.selectedUser);
+        return _.isEqual(app.user.get('id'), this.selectedUser.id);
     },
 
     /**
