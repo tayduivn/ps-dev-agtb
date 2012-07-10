@@ -36,7 +36,7 @@ class SugarBeanApiHelper
      * @param $options array Currently no options are supported
      * @return array The bean in array format, ready for passing out the API to clients.
      */
-    public function getFormattedBean(SugarBean $bean, array $fieldList = array(), array $options = array() )
+    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array() )
     {
         $sfh = new SugarFieldHandler();
 
