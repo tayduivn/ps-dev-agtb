@@ -322,7 +322,7 @@ class ChartDisplay
         }
         $row_remap['group_text'] = $group_text = (isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? chop($row['cells'][$this->reporter->chart_group_position]['val']) : '';
         $row_remap['group_key'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $row['cells'][$this->reporter->chart_group_position]['key'] : '');
-        $row_remap['count'] = $row['count'];
+        $row_remap['count'] = (isset($row['count'])) ? $row['count'] : 0;
         $row_remap['group_label'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $this->reporter->chart_header_row[$this->reporter->chart_group_position]['label'] : '');
         $row_remap['numerical_label'] = $this->reporter->chart_header_row[$this->reporter->chart_numerical_position]['label'];
         $row_remap['numerical_key'] = $this->reporter->chart_header_row[$this->reporter->chart_numerical_position]['column_key'];
@@ -408,13 +408,16 @@ class ChartDisplay
         }
     }
 
-    public function get_cache_file_name()
+    public function get_cache_file_name($reporter = null)
     {
+        if(is_null($reporter)) {
+            $reporter = $this->reporter;
+        }
         global $current_user;
 
         $xml_cache_dir = sugar_cached("xml/");
-        if ($this->reporter->is_saved_report == true) {
-            $filename = $xml_cache_dir . $this->reporter->saved_report_id . '_saved_chart.xml';
+        if ($reporter->is_saved_report == true) {
+            $filename = $xml_cache_dir . $reporter->saved_report_id . '_saved_chart.xml';
         } else {
             $filename = $xml_cache_dir . $current_user->id . '_' . time() . '_curr_user_chart.xml';
         }
