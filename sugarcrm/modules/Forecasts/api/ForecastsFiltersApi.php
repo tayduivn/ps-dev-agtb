@@ -200,7 +200,7 @@ class ForecastsFiltersApi extends ModuleApi {
                 $current_module_strings = return_module_language($current_language, 'Forecasts');
 
                 $myOpp = array(
-                    'data' => $current_module_strings['LBL_TREE_MY_OPPORTUNITIES'],
+                    'data' => $current_module_strings['LBL_MY_OPPORTUNITIES'],
                     'children' => array(),
                     // Give myOpp the same metadata as the root Manager user
                     'metadata' => array(
