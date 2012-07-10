@@ -280,6 +280,10 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $GLOBALS['module'] = $module_name; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
+                    
+                    // Needed for conversion
+                    require_once 'include/MetaDataManager/MetaDataConverter.php';
+                    $results = MetaDataConverter::toLegacy('list', $results);
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($module_name, $type);
@@ -291,14 +295,14 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require_once($metadataFile);
+                    
+                    // For handling view def conversion
+                    $viewtype = strtolower($view);
 
                     // Handle found view defs in the 6.6 format
-                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)]) {
-                        
+                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]) {
                         // Needed for conversion
-                        require_once 'include/MetaDataManager/MetaDataConverter.php';                        
-                        $viewtype = strtolower($view);
-                        
+                        require_once 'include/MetaDataManager/MetaDataConverter.php';
                         $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
                     } else {
                         //Wireless detail metadata may actually be just edit metadata.

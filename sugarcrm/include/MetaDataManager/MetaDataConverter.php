@@ -114,7 +114,7 @@ class MetaDataConverter {
             }
             
             unset($defs['panels']);
-            $defs['panels'] = array($newpanels);
+            $defs['panels'] = $newpanels;
         }
         
         return $defs;
