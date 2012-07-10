@@ -10,6 +10,7 @@
  */
 require_once('include/MVC/Controller/ControllerFactory.php');
 require_once('include/MVC/View/ViewFactory.php');
+require_once('include/SugarAccess/SugarAccess.php');
 
 /**
  * SugarCRM application
