@@ -29,9 +29,11 @@
 {include file="_head.tpl" theme_template=true}
 <body class="yui-skin-sam">
     <a name="top"></a>
+    {if !$ISPRINT}
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
 	{include file="_dcmenu.tpl" theme_template=true}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
+    {/if}
 
 	<div class="clear"></div>
     <div class="clear"></div>

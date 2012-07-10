@@ -404,6 +404,7 @@ class SugarView
             $ss->assign("ONLOAD", 'onload="set_focus()"');
 
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
+        $ss->assign("ISPRINT",isset($_REQUEST['print'])); //this will be used by header.tpl to hide the megamenu bar when its 'print' view
 
         // get other things needed for page style popup
         if (isset($_SESSION["authenticated_user_id"])) {
