@@ -65,12 +65,11 @@ class ForecastsChartApi extends ChartApi
         $app_strings = return_application_language('en');
         $mod_strings = return_module_language('en', 'Opportunities');
 
-        $mgr = ChartAndWorksheetManager::getInstance();
+        $mgr = new ChartAndWorksheetManager();
         //define worksheet type: 'manager' or 'individual'
         $type =  isset($args['type']) ? $args['type'] : 'individual';
 
-        $report_defs = array();
-        $report_defs = $mgr->getWorksheetDefintion($type, 'opportunities');
+        $report_defs = $mgr->getWorksheetDefinition($type, 'opportunities');
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;

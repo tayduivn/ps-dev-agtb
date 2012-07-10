@@ -87,8 +87,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $this->timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $this->user_id = isset($args['user_id']) ? $args['user_id'] : $user->id;
 		
-        $mgr = ChartAndWorksheetManager::getInstance();
-        $report_defs = $mgr->getWorksheetDefintion('manager', 'opportunities');
+        $mgr = new ChartAndWorksheetManager();
+        $report_defs = $mgr->getWorksheetDefinition('manager', 'opportunities');
 
         $testFilters = array(
             'timeperiod_id' => array('$is' => $this->timeperiod_id),
