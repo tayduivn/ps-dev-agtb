@@ -54,26 +54,44 @@ class SugarAccess {
 class LicenseServerClient {
     const licenseServerUrl = "http://licenseserver";
 
+    /**
+     * @var User data / Instance data
+     */
     protected $userData;
 
     public function __construct() {
-
     }
 
+    /**
+     * Authenticates an email address and returns the necessary information about the user
+     * and his/her instance.
+     * @param $email Email address as account name
+     * @param $password
+     * @return mixed Licensing and instance data related to the user.
+     */
     public function authenticate($email, $password) {
-
-        $info = $this->restCall(self::licenseServerUrl, array(
+        $this->userData = $this->restCall(self::licenseServerUrl, array(
             "action" => "authenticate",
         ));
 
         // MOCK DATA
         $this->userData = array(
             "modules" => array("Accounts", "Contacts", "Opportunities"),
-            "dbconfig" => array(),
-            "instance" => "UNIQUE_INSTANCE_ID"
+            "instanceinfo" => array(
+                "id" => "UNIQUE_INSTANCE_ID",
+                "license_key" => "13984ajdsfsd"
+            ),
+            "userinfo" => array(
+                "id" => "1345",
+                "email" => "email@email.com",
+                "status" => "active",
+                "date_created" => "somedate",
+                "flavor" => "ent",
+                "dbconfig" => array()
+            )
         );
 
-        return $info;
+        return $this->userData;
     }
 
     public function getModules($email) {
