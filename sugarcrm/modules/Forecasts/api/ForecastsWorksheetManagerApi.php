@@ -63,6 +63,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 
         global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
+		$current_module_strings = return_module_language($current_language, 'Forecasts');
 
         if(!User::isManager($current_user->id))
         {
@@ -125,11 +126,17 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "best_adjusted" => 0,
                               "likely_adjusted" => 0,
                               "forecast" => 0);
-
-        $default_data['name'] = $user->first_name . " " . $user->last_name;
-        $default_data['user_id'] = $user->id;
+		
+		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
+        	$default_data["name"] = $current_module_strings['LBL_TREE_MY_OPPORTUNITIES'];
+		}
+		else
+		{
+			$default_data["name"] = $user->first_name . " " . $user->last_name;
+		}
+		
+        $default_data["user_id"] = $user->id;
         $data[$user->user_name] = $default_data;
-
 
         require_once("modules/Forecasts/Common.php");
         $common = new Common();
