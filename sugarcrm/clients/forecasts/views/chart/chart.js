@@ -34,9 +34,6 @@
      */
     bindDataChange:function () {
         var self = this;
-        this.context.on("reset", function() {
-            this.render();
-        });
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id});
         });

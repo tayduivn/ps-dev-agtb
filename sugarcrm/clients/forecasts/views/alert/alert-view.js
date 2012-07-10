@@ -7,7 +7,7 @@
         /**
          * Eo not initially render the alert template
          */
-        render: function() {},
+        _render: function() {},
 
         /**
          * Remove alert from page.

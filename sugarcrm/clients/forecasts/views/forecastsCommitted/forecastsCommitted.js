@@ -11,40 +11,24 @@
 
     _collection : {},
 
+    fullName : '',
+    userId : '',
+    timePeriodId : '',
+    bestCase : 0,
+    likelyCase : 0,
+    historyLog : Array(),
+    totals : null,
+    previousTotals : null,
+    showButton : true,
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        var self = this;
-
-        //Set defaults
+        this._collection = this.context.forecasts.committed;
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
-        this.timePeriodId = '';
-        this.bestCase = 0;
-        this.likelyCase = 0;
-        this.historyLog = Array();
-        this._collection = this.context.forecasts.committed;
-        this._collection.fetch();
-        this.totals = null;
-        this.previousTotals = null;
-        this.showButton = true;
-        this.render();
-        //Add listeners
-        this.context.forecasts.on("change:selectedUser", function(context, user) {
-            self.showButton = app.user.get('id') == user.id; 
-            self.userId = user.id; 
-            self.fullName = user.full_name; self.updateCommitted(); 
-        });
-        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
-            self.timePeriodId = timePeriod.id;
-            self.updateCommitted(); 
-        });
-        this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-            self.totals = totals;
-        });
     },
 
     updateCommitted: function() {
-        this._collection = this.context.forecasts.committed;
         var urlParams = $.param({
             user_id: encodeURIComponent(this.userId),
             timeperiod_id : encodeURIComponent(this.timePeriodId)
@@ -55,15 +39,24 @@
     },
 
     bindDataChange: function() {
-        if(this._collection)
-        {
-           this._collection.on("reset", this.refresh, this);
+        if(this._collection) {
+            this._collection.on("reset", this.buildForecastsCommitted(), this);
         }
-    },
-
-    refresh: function() {
-        var self = this;
-        $.when(self.buildForecastsCommitted(), self.render());
+        if(this.context && this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", function(context, user) {
+                this.showButton = app.user.get('id') == user.id;
+                this.userId = user.id;
+                this.fullName = user.full_name;
+                this.updateCommitted();
+            }, this);
+            this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+                this.timePeriodId = timePeriod.id;
+                this.updateCommitted();
+            }, this);
+            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                this.totals = totals;
+            }, this);
+        }
     },
 
     buildForecastsCommitted: function() {
@@ -102,6 +95,8 @@
         {
            self.moreLog = self.historyLog.splice(2, self.historyLog.length);
         }
+
+        self.render()
     },
 
     createHistoryLog: function(current, previousModel) {
@@ -199,12 +194,5 @@
         forecast.set('opp_count', self.totals.opp_count);
         self.previous = self.totals;
         self._collection.create(forecast);
-        var urlParams = $.param({
-            user_id: encodeURIComponent(this.userId),
-            timeperiod_id : encodeURIComponent(this.timePeriodId)
-        });
-        this._collection.fetch({
-            data: urlParams
-        });
     }
 })

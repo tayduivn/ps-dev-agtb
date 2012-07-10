@@ -10,7 +10,6 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
-        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
 
     bindDataChange: function () {
@@ -18,6 +17,7 @@
         this.worksheetCollection = this.context.forecasts.worksheet;
         this.model.on('change', this.render);
         this.worksheetCollection.on('change reset', this.calculatePipelineSize);
+        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
     
     calculatePipelineSize: function() {
@@ -48,9 +48,9 @@
         this.render();
     },
 
-    render: function () {
+    _render: function () {
         _.extend(this, this.model.toJSON());
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
     },
 
     updateProgressForSelectedUser: function (context, user) {

@@ -250,7 +250,7 @@
     /**
      * Renders view
      */
-    render:function () {
+    _render:function () {
         var self = this;
         
         if(!this.showMe()){
@@ -259,7 +259,7 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
         
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
@@ -303,16 +303,9 @@
      */
     isMyWorksheet: function() {
         var userId = app.user.get('id');
-        var selectedUser = userId;
+        var selectedUser = this.selectedUser || userId;
 
-        if(this.selectedUser){
-            selectedUser = this.selectedUser;
-        }
-
-        if(userId.localeCompare(selectedUser) != 0){
-            return false;
-        }
-        return true;
+        return _.isEqual(userId, selectedUser);
     },
 
     /**
@@ -378,7 +371,7 @@
         };
 
 
-        this.context.set("updatedTotals", totals);
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**
