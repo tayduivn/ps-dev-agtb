@@ -17,19 +17,19 @@
          * Application environment. Possible values: 'dev', 'test', 'prod'
          * @cfg {String}
          */
-        env: 'test',
+        env: 'prod',
 
         /**
          * Flag indicating whether to output Sugar API debug information.
          * @cfg {Boolean}
          */
-        debugSugarApi: true,
+        debugSugarApi: false,
 
         /**
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: 'DEBUG',
+        logLevel: 'TRACE',
 
         /**
          * Logging writer.
@@ -49,7 +49,7 @@
          * The URL can relative or absolute.
          * @cfg {String}
          */
-        serverUrl: '../../rest/v10',
+        serverUrl: '../sugarcrm/rest/v10',
 
         /**
          * Server request timeout (in seconds).
