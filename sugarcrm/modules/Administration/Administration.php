@@ -79,7 +79,10 @@ class Administration extends SugarBean {
         // Check for a cache hit
         if(!empty($settings_cache)) {
             $this->settings = $settings_cache;
-            return $this;
+            if (!empty($this->settings[$category]))
+            {
+                return $this;
+            }
         }
 
         if ( ! empty($category) ) {
@@ -100,6 +103,7 @@ class Administration extends SugarBean {
             else
                 $this->settings[$row['category']."_".$row['name']] = $row['value'];
         }
+        $this->settings[$category] = true;
 
         // outbound email settings
         $oe = new OutboundEmail();
