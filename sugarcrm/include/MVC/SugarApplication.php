@@ -164,6 +164,7 @@ class SugarApplication
 	public function ACLFilter()
 	{
 		$GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
+        $GLOBALS['moduleList'] = SugarAccess::filterModules($GLOBALS['moduleList']);
 	}
 
 	/**
