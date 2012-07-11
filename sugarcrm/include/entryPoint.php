@@ -91,6 +91,7 @@ if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 
 
 // config|_override.php
+/*
 if(is_file('config.php')) {
 	require_once('config.php'); // provides $sugar_config
 }
@@ -99,6 +100,16 @@ if(is_file('config.php')) {
 if(is_file('config_override.php')) {
 	require_once('config_override.php');
 }
+*/
+
+require 'include/SugarAccess/SugarAccess.php';
+
+//echo "entry point";
+$sa = SugarAccess::getInstance();
+$sa->authenticate('bob@burger.com', '123');
+$sugar_config = $sa->getConfig();
+
+
 if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 {
 	    header('Location: install.php');

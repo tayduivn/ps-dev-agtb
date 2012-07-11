@@ -6,26 +6,10 @@ require_once('include/SugarAccess/SugarAccess.php');
 class SugarAccessTest extends PHPUnit_Framework_TestCase{
 
     public function testFilterModules(){
-        $arr = array(0,1,2,3,4,5);
-
+        $arr = array("Accounts","Contacts");
         $sugarAccess = SugarAccess::getInstance();
-
         $arr2 = $sugarAccess->filterModules($arr);
         $this->assertEquals($arr, $arr2);
-        $arr = 'A';
-
-        $arr2 = $sugarAccess->filterModules($arr);
-
-        $this->assertEquals($arr, $arr2);
-
-        $arr = 1;
-
-        $arr2 = $sugarAccess->filterModules($arr);
-
-        $this->assertEquals($arr, $arr2);
-
-
-
     }
 
     public function testAccessAuthenticate(){
@@ -35,17 +19,32 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
 
         $testData = array(
             "modules" => array("Accounts", "Contacts", "Opportunities"),
-            "instanceinfo" => array(
+            "instance" => array(
                 "id" => "UNIQUE_INSTANCE_ID",
-                "license_key" => "13984ajdsfsd"
+                "license_key" => "13984ajdsfsd",
+                "flavor" => "ent",
+                'config' => array(
+                    'dbconfig' =>
+                    array(
+                        'db_host_name' => 'localhost',
+                        'db_host_instance' => '',
+                        'db_user_name' => 'root',
+                        'db_password' => 'root',
+                        'db_name' => 'ent622_1',
+                        'db_type' => 'mysql',
+                        'db_port' => '',
+                        'db_manager' => 'MysqliManager',
+                    ),
+                ),
+
             ),
+
             "userinfo" => array(
                 "id" => "1345",
                 "email" => "email@email.com",
                 "status" => "active",
                 "date_created" => "somedate",
-                "flavor" => "ent",
-                "dbconfig" => array()
+
             )
         );
 
@@ -65,12 +64,34 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
     public function testGetInstanceData(){
         $email = "someone@email.com";
         $licenseServer = new LicenseServerClient();
-
-
         $testEmail = $licenseServer->getInstanceData($email);
+
+        $this->assertArrayHasKey("id",$testEmail);
+        $this->assertArrayHasKey("license_key",$testEmail);
+        $this->assertArrayHasKey("flavor",$testEmail);
+        $this->assertArrayHasKey("config",$testEmail);
+
+        //implement type checking for strings
         $this->assertEquals(array(
-            "id" => "UNIQUE_INSTANCE_ID",
-            "license_key" => "13984ajdsfsd"
+
+                "id" => "UNIQUE_INSTANCE_ID",
+                "license_key" => "13984ajdsfsd",
+                "flavor" => "ent",
+                'config' => array(
+                    'dbconfig' =>
+                    array(
+                        'db_host_name' => 'localhost',
+                        'db_host_instance' => '',
+                        'db_user_name' => 'root',
+                        'db_password' => 'root',
+                        'db_name' => 'ent622_1',
+                        'db_type' => 'mysql',
+                        'db_port' => '',
+                        'db_manager' => 'MysqliManager',
+                    ),
+                ),
+
+
         ), $testEmail);
 
     }
