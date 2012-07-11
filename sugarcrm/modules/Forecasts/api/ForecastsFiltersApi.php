@@ -112,8 +112,7 @@ class ForecastsFiltersApi extends ModuleApi {
      */
 
     public function getReportees($api, $args) {
-        global $app_list_strings, $current_language, $current_user;
-        $app_list_strings = return_app_list_strings_language($current_language);
+        global $current_user;
 
         $id = clean_string($args['userId']);
 
@@ -200,7 +199,8 @@ class ForecastsFiltersApi extends ModuleApi {
                 $current_module_strings = return_module_language($current_language, 'Forecasts');
 
                 $myOpp = array(
-                    'data' => $current_module_strings['LBL_TREE_MY_OPPORTUNITIES'],
+                    'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
+                        array($treeData['metadata']['first_name'] . " " . $treeData['metadata']['last_name'])),
                     'children' => array(),
                     // Give myOpp the same metadata as the root Manager user
                     'metadata' => array(

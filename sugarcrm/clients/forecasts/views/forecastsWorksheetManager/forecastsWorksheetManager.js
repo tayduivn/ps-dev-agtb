@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-    url: 'rest/v10/Forecasts/worksheetmanager',
+	url: 'rest/v10/Forecasts/worksheetmanager',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -32,6 +32,46 @@
         
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+    	
+    	//Setup total subview
+    	var TotalModel = Backbone.Model.extend({
+
+        });
+
+        this.totalModel = new TotalModel(
+            {
+                amount : 0,
+                quota : 0,
+                best_case : 0,
+                best_adjusted : 0,
+                likely_case : 0,
+                likely_adjusted : 0
+            }
+        );
+
+
+        var TotalView = Backbone.View.extend({
+            id : 'summaryManager',
+
+            tagName : 'tfoot',
+
+            /*initialize: function() {
+                self.context.on("change:selectedToggle", function(context, data) {
+                    self.refresh();
+                });
+            },*/
+
+            render: function() {
+                var self = this;
+                var hb = Handlebars.compile("<tr><td>Overall Total</td><td>{{amount}}</td><td>{{quota}}</td><td>{{best_case}}</td><td>{{best_adjusted}}</td><td>{{likely_case}}</td><td>{{likely_adjusted}}</td>");
+                $('#summaryManager').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.totalView = new TotalView({
+            model : this.totalModel
+        });
     },
 
     /**
@@ -45,14 +85,16 @@
         	return false;
         }
         this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL() + "?user_id=" + this.selectedUser.id;
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
     bindDataChange: function() {
         if(this._collection)
         {
-            this._collection.on("reset", this.render, this);
+            this._collection.on("reset", function(){
+            	$.when(this.calculateTotals(), this.render());
+            }, this);
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
@@ -72,6 +114,10 @@
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
+            this.context.forecasts.worksheetmanager.on("change", function() {
+            	this.calculateTotals();
+            	this.totalView.render();
+            }, this);
         }
     },
 
@@ -89,7 +135,7 @@
             field = new app.view.ClickToEditField(field, this);
         }
     },
-
+    
     /**
      * Renders view
      */
@@ -131,7 +177,48 @@
                 }
             });
         }
+        this.totalView.render();
     },
+    
+    calculateTotals: function() {
+        var self = this;
+        var amount = 0;
+        var quota = 0;
+        var best_case = 0;
+        var best_adjusted = 0;
+        var likely_case = 0;
+        var likely_adjusted = 0;
+
+        _.each(self._collection.models, function (model) {
+
+           amount 			+= parseFloat(model.get('amount'));
+           quota 			+= parseFloat(model.get('quota'));
+           best_case 		+= parseFloat(model.get('best_case'));
+           best_adjusted 	+= parseFloat(model.get('best_adjusted'));
+           likely_case 		+= parseFloat(model.get('likely_case'));
+           likely_adjusted 	+= parseFloat(model.get('likely_adjusted'));
+                
+        });
+
+        self.totalModel.set('amount', amount);
+        self.totalModel.set('quota', quota);
+        self.totalModel.set('best_case', best_case);
+        self.totalModel.set('best_adjusted', best_adjusted);
+        self.totalModel.set('likely_case', likely_case);
+        self.totalModel.set('likely_adjusted', likely_adjusted);
+        
+        //in case this is needed later..
+        var totals = {
+            'amount' : amount,
+            'quota' : quota,
+            'best_case' : best_case,
+            'best_adjusted' : best_adjusted,
+            'likely_case' : likely_case,
+            'likely_adjusted' : likely_adjusted
+        };
+        
+    },
+    
     
     /**
      * Determines if this Worksheet should be rendered
@@ -163,17 +250,36 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
-        var model = this.context.forecasts.worksheet;
+    	this.timePeriod = params.id;
+        var model = this.context.forecasts.worksheetmanager;
         if(!this.showMe()){
         	return false;
         }
-        model.url = app.config.serverUrl + "/Forecasts/worksheetmanager?timeperiod_id=" + params.id;
+        model.url = this.createURL();
         model.fetch();
     },
 
-    createURL:function()
-    {
-        var url = app.config.serverUrl + "/Forecasts/worksheetmanager";
+    createURL:function() {
+        var url = this.url;
+        var args = {};
+        if(this.timePeriod) {
+           args['timeperiod_id'] = this.timePeriod;
+        }
+
+        if(this.selectedUser)
+        {
+           args['user_id'] = this.selectedUser.id;
+        }
+
+        var params = '';
+        _.each(args, function (value, key) {
+            params += '&' + key + '=' + encodeURIComponent(value);
+        });
+
+        if(params)
+        {
+            url += '?' + params.substr(1);
+        }
         return url;
     },
 
