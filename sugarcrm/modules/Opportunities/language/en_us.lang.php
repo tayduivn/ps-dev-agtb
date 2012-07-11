@@ -162,6 +162,7 @@ $mod_strings = array (
   'LBL_LIKELY_CASE_WORKSHEET' => 'Likely Case (adjusted)',
   'LBL_WORST_CASE' => 'Worst case',
   'LBL_FORECAST' => 'Include in Forecast',
+  'LBL_COMMIT_STAGE' => 'Commit Stage',
   'LBL_WORKSHEET' => 'Worksheet',
   //END SUGARCRM flav=pro ONLY
 
