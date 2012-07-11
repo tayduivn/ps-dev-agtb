@@ -29,24 +29,14 @@ require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 class ChartAndWorksheetManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-function setUp()
-{
-
-}
-
-function tearDown()
-{
-
-}
-
-/**
- *
- */
-function testChartAndWorksheetManager()
-{
-    $manager = ChartAndWorksheetManager::getInstance();
-    $def = $manager->getWorksheetDefintion('manager', 'opportunities');
-}
+    /**
+     *
+     */
+    function testChartAndWorksheetManager()
+    {
+        $manager = new ChartAndWorksheetManager();
+        $def = $manager->getWorksheetDefintion('manager', 'opportunities');
+    }
 
 
 }

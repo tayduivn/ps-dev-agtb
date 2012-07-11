@@ -65,27 +65,33 @@ class ForecastsChartApi extends ChartApi
         $app_strings = return_application_language('en');
         $mod_strings = return_module_language('en', 'Opportunities');
 
-        $mgr = ChartAndWorksheetManager::getInstance();
+        $mgr = new ChartAndWorksheetManager();
         //define worksheet type: 'manager' or 'individual'
-        $type =  isset($args['type']) ? $args['type'] : 'individual';
+        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == true) ? 'manager' : 'individual';
 
-        $report_defs = array();
-        $report_defs = $mgr->getWorksheetDefintion($type, 'opportunities');
+        $report_defs = $mgr->getWorksheetDefinition($args['type'], 'opportunities');
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $timeperiod_id),
-            'assigned_user_link' => array('id' => $user_id),
-        );
+        if ($args['type'] == "individual") {
+            $filters = array(
+                'timeperiod_id' => array('$is' => $timeperiod_id),
+                'assigned_user_link' => array('id' => $user_id),
+            );
+        } else {
+            $filters = array(
+                'timeperiod_id' => array('$is' => $timeperiod_id),
+                'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id)))
+            );
+        }
 
-        if(isset($args['category']) && $args['category'] == "Committed") {
-            $testFilters['forecast'] = array('$is' => 1);
+        if (isset($args['category']) && $args['category'] == "Committed") {
+            $filters['forecast'] = array('$is' => 1);
         }
 
         // generate the report builder instance
-        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $testFilters, $args);
+        $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $filters, $args);
 
         if (isset($args['chart_type']) && !empty($args['chart_type'])) {
             $rb->setChartType($this->mapChartType($args['chart_type']));
@@ -125,8 +131,13 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        $quota = $quota_bean->getCurrentUserQuota($args['timeperiod_id'], $args['user_id']);
-        $likely_values = $this->getDataSetValues($testFilters, $args);
+        if($args['type'] == "manager") {
+            $quota = $quota_bean->getGroupQuota($timeperiod_id, false, $user_id);
+            $quota = array('amount' => $quota, 'formatted_amount' => format_number($quota, null, null, array('currency_symbol' => true)));
+        } else {
+            $quota = $quota_bean->getCurrentUserQuota($timeperiod_id, $user_id);
+        }
+        $likely_values = $this->getDataSetValues($filters, $args);
 
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
@@ -160,6 +171,18 @@ class ForecastsChartApi extends ChartApi
                 list($likely, $likely_label) = array_values($likely_values[$value['label']]);
             }
 
+            if($args['type'] == "manager") {
+                // fix the names
+                $user = BeanFactory::getBean("Users");
+                $user->retrieve_by_string_fields(array('user_name' => $value['label']));
+
+                if($user->id == $user_id) {
+                    $dataArray['values'][$key]['label'] = "My Opps";
+                } else {
+                    $dataArray['values'][$key]['label'] = $user->get_summary_text();
+                }
+            }
+
             // set the variables
             $dataArray['values'][$key]['goalmarkervalue'] = array(intval($quota['amount']), intval($likely));
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
@@ -188,6 +211,15 @@ class ForecastsChartApi extends ChartApi
 
         $this->processDataset($rb, $args);
 
+        // if the type is manager we need to adjust the group by to be that of user_name to match up with the main report
+        if($args['type'] == "manager") {
+            $rb->removeGroupBy($rb->getGroupBy('date_closed'));
+            $rb->addGroupBy('user_name', 'Users', 'Opportunities:assigned_user_link');
+            $rb->removeSummaryColumn($rb->getSummaryColumns('date_closed'));
+            $rb->removeSummaryColumn($rb->getSummaryColumns('user_name'));
+            $rb->setXAxis($rb->addSummaryColumn('user_name', 'Users', 'Opportunities:assigned_user_link'));
+        }
+
         // run the report
         $report = new Report($rb->toJson());
         $report->run_chart_queries();
@@ -195,9 +227,7 @@ class ForecastsChartApi extends ChartApi
         $results = array();
         $sum = 0;
 
-        //error_log(var_export($report->chart_rows, true));
-
-        // lets build a usable arary
+        // lets build a usable array
         foreach ($report->chart_rows as $row) {
             // ignore the total line
             if (count($row['cells']) != 2) continue;
@@ -280,7 +310,7 @@ class ForecastsChartApi extends ChartApi
             // the group is really a summary column that is made to be the y-axis
             $summary = $rb->addSummaryColumn($args['group_by']);
 
-            if(is_array($summary)) {
+            if (is_array($summary)) {
                 $rb->setYAxis($summary);
             }
 

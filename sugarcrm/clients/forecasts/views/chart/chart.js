@@ -36,6 +36,7 @@
         var self = this;
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id});
+            self.handleRenderOptions({display_manager : (user.showOpps === false && user.isManager === true)});
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
             self.hasSelectedTimePeriod = true;

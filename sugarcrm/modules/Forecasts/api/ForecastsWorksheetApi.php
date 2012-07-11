@@ -87,8 +87,8 @@ class ForecastsWorksheetApi extends ModuleApi {
 
         $app_list_strings = return_app_list_strings_language($current_language);
 
-        $mgr = ChartAndWorksheetManager::getInstance();
-        $report_defs = $mgr->getWorksheetDefintion('individual', 'opportunities');
+        $mgr = new ChartAndWorksheetManager();
+        $report_defs = $mgr->getWorksheetDefinition('individual', 'opportunities');
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
