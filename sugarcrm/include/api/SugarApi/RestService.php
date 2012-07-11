@@ -412,8 +412,8 @@ class RestService extends ServiceBase {
      */
     protected function sendContent($content, $args) {
         $response = json_encode($content);
+        $this->generateETagHeader(md5($response));
         if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
-            $this->generateETagHeader(md5($response));
             $response = htmlentities($response);
         }
         echo $response;
