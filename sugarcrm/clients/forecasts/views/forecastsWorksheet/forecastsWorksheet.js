@@ -108,88 +108,6 @@
     },
 
     /**
-     * Adds the icon and associated events/handlers to the clickToEdit field
-     * @param field
-     * @private
-     */
-    _addCTEIcon: function(field) {
-        // add icon markup
-        var outerElement = field.$el;
-        field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-
-        // add events
-        field.showCteIcon = function(){
-            this.$el.parent().css('overflow-x', 'visible');
-            this.$el.before(this.cteIcon);
-        };
-
-        field.hideCteIcon = function(){
-            this.$el.parent().find(this.cteIcon).detach();
-            this.$el.parent().css('overflow-x', 'hidden');
-        };
-
-        var events = field.events || {};
-        field.events = _.extend(events, {
-            'mouseenter': 'showCteIcon',
-            'mouseleave': 'hideCteIcon'
-        });
-        field.delegateEvents();
-
-    },
-
-    /**
-     * Renders the field as clickToEditable
-     * @private
-     */
-    _renderClickToEditField: function(field) {
-        var self = this;
-        this._addCTEIcon(field);
-
-        field.$el.editable(function(value, settings){
-                return value;
-            },
-            {
-                select: true,
-                field: field,
-                view: self,
-                onedit:function(settings, original){
-                    // hold value for use later in case user enters a +/- percentage
-                    if (settings.field.type == "int"){
-                        settings.field.holder = $(original).html();
-                    }
-                    console.log("onedit");
-                },
-                onreset:function(settings, original){
-                    console.log("onreset");
-                },
-                onsubmit:function(settings, original){
-                    console.log("onsubmit");
-                },
-                callback: function(value, settings) {
-                    try{
-                        // if it's an int, and the user entered a +/- percentage, calculate it
-                        if(settings.field.type == "int"){
-                            orig = settings.field.holder;
-                            if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
-                                value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
-                            } else if (!value.match(/^[0-9]*$/)) {
-                                value = orig;
-                            }
-                        }
-
-                        settings.field.model.set(settings.field.name, value);
-                        settings.field.model.url = self.url;
-                        settings.field.model.save(settings.field.name, value);
-                    } catch (e) {
-                        app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
-                    }
-                    return value;
-                }
-            }
-        );
-    },
-
-    /**
      * Renders a field.
      *
      * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
@@ -199,8 +117,8 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit) {
-            this._renderClickToEditField(field);
+        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit === true) {
+            new app.view.ClickToEditField(field, this);
         }
     },
 
