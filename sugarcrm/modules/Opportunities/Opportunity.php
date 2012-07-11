@@ -642,6 +642,7 @@ class Opportunity extends SugarBean
 
    		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
    		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
+               . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
    		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
    		       . " AND opportunities.deleted = 0";
 

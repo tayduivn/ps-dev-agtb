@@ -85,7 +85,7 @@ class ForecastsProgressApi extends ModuleApi
 
 		$this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
 
-		$this->timeperiod_id = (array_key_exists("timePeriodId", $args) ? $args["timePeriodId"] : TimePeriod::getCurrentId());
+		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
 		$this->should_rollup = (array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : User::isManager($this->user_id));
 		if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
@@ -116,7 +116,6 @@ class ForecastsProgressApi extends ModuleApi
 	protected function formatCaseToStage($caseValue, $stageValue)
 	{
 		$percent = 0;
-		
 		if ( $caseValue <= $stageValue ) {
 			$amount = $stageValue - $caseValue;
 			$isAbove = false;
@@ -239,7 +238,14 @@ class ForecastsProgressApi extends ModuleApi
 
     public function getPipeline( $api, $args )
     {
-   		$this->loadProgressData($args);
-   		return round( ( $this->getRevenue($api, $args) / $this->getLikelyToQuota($api, $args) ), 1);
+        $this->loadProgressData($args);
+
+           $revenue = $this->getRevenue($api, $args);
+           $likelyToClose = $this->forecastData["likely_case"] - $this->closed;
+
+           if($likelyToClose > 0)
+               return round( ( $revenue / $likelyToClose ), 1);
+           else
+               return 0;
    	}
 }
