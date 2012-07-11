@@ -1,3 +1,0 @@
-<div class="clickToEdit">
-    <img src="{{ctePath}}/Pencil-icon.png" alt="pencil icon" class="cteIcon" style="display:none;"/><span name="{{def.name}}" class="cte{{def.cteclass}}">{{value}}</span><img src="{{ctePath}}/undo.png" alt="undo icon" class="cteUndoIcon" style="display:none;"/>
-</div>
