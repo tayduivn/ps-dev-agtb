@@ -17,7 +17,7 @@
             </tr>
         {{/each}}
         </tbody>
-        <tfoot id="summary">
+        <tfoot id="summaryManager">
         </tfoot>
     </table>
     {{/each}}
