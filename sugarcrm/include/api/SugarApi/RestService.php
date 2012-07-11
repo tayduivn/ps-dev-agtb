@@ -311,17 +311,16 @@ class RestService extends ServiceBase {
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+        } else if ( isset($_POST['oauth_token']) ) {
+            $this->sessionId = $_POST['oauth_token'];
+        } else if ( isset($_GET['oauth_token']) ) {
+            $this->sessionId = $_GET['oauth_token'];
+        }
 
+        if ( !empty($this->sessionId) ) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
             $oauthServer->verifyAccessToken($this->sessionId);
-        } else if ( isset($_REQUEST[session_name()]) ) {
-            // They just have a regular web session
-            $this->sessionId = $_REQUEST[session_name()];
-            // The OAuth server starts a session to validate the token, we have to start it manually, like a sucker.
-            session_start();
-        }
-        
-        if ( !empty($this->sessionId) ) {
+
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -409,26 +408,15 @@ class RestService extends ServiceBase {
      * @TODO Handle proper content disposition based on response content type
      * @access protected
      * @param mixed $content
-     * @param string $encoding
      * @param array $args The request arguments
      */
-    protected function sendContent($content, $encoding, $args) {
-    	$response = json_encode($content); 
-        // @TODO: Handle other content types for rendering
-        if ( $encoding !== false ) {
-        	$this->generateETagHeader(md5($response));
-            header('Content-Encoding: '.$encoding);
-            $gzData = gzencode($response);
-            header('Content-Length: '.strlen($gzData));
-            echo $gzData;
-        } else {
+    protected function sendContent($content, $args) {
+        $response = json_encode($content);
+        if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
             $this->generateETagHeader(md5($response));
-            
-            if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
-                $response = htmlentities($response);
-            }
-            echo $response;
+            $response = htmlentities($response);
         }
+        echo $response;
     }
 
     /**
@@ -475,24 +463,11 @@ class RestService extends ServiceBase {
         	$this->generateETagHeader(md5($output));
             echo $output;
         } else {
-            if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
-                $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
-            }
-            if( headers_sent() || empty($httpAccept) ) {
-                $encoding = false;
-            } else if( strpos($httpAccept,'x-gzip') !== false ) {
-                $encoding = 'x-gzip';
-            } else if( strpos($httpAccept,'gzip') !== false ) {
-                $encoding = 'gzip';
-            } else {
-                $encoding = false;
-            }
-
             // Handle content type header sending
             $this->sendContentTypeHeader($args);
 
             // Send the content
-            $this->sendContent($output, $encoding, $args);
+            $this->sendContent($output, $args);
         }
     }
     /**
