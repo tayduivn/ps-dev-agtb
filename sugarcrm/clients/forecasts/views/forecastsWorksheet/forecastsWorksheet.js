@@ -152,6 +152,10 @@
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
+            this.context.forecasts.worksheet.on("change", function() {
+            	this.calculateTotals();
+            	this.totalView.render();
+            }, this);
         }
     },
 
