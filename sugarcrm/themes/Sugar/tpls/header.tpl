@@ -55,5 +55,6 @@ var max_tabs = {$max_tabs};
 
 <div id="main">
     <div id="content">
-    
+        {if $use_table_container}
         <table style="width:100%" id="contentTable"><tr><td>
+        {/if}

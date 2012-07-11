@@ -527,7 +527,7 @@ class ProductTemplate extends SugarBean {
 }
 
 function getProductTypes($focus, $field='type_id', $value,$view='DetailView') {
-	if($view == 'EditView' || $view == 'MassUpdate') {
+	if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate') {
 		
 		$type = new ProductType();
 		$html = "<select id=\"$field\" name=\"$field\">";
@@ -567,7 +567,7 @@ function getPricingFormula($focus, $field='pricing_formula', $value, $view='Deta
 
 function getManufacturers($focus, $field='manufacturer_id', $value, $view='DetailView') {
 
-	if($view == 'EditView' || $view == 'MassUpdate') {
+	if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate') {
 	   $html = "<select id=\"$field\" name=\"$field\">";
 	   
 	   $manufacturer = new Manufacturer();
@@ -588,7 +588,7 @@ function getManufacturers($focus, $field='manufacturer_id', $value, $view='Detai
 }
 
 function getCategories($focus, $field='category_id', $value,$view='DetailView') {
-    if($view == 'EditView' || $view == 'MassUpdate') {
+    if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate') {
 	   $html = "<select id=\"$field\" name=\"$field\">";
 	   
 	   $category = new ProductCategory();
@@ -612,7 +612,7 @@ function getCategories($focus, $field='category_id', $value,$view='DetailView') 
 }
 
 function getSupportTerms($focus, $field='support_term', $value,$view='DetailView') {
-    if($view == 'EditView' || $view == 'MassUpdate') {
+    if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate') {
 	   $html = "<select id=\"$field\" name=\"$field\">";
 	   global $app_list_strings;
 	   $the_term_dom = $app_list_strings['support_term_dom'];

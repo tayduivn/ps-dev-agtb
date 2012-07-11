@@ -1,6 +1,0 @@
-<div class="control-group">
-    <label class="control-label">{{label}}</label>
-    <div class="controls">
-        <input type="number" class="span4" value="{{#eq value ""}}--{{else}}{{value}}{{/eq}}" {{#if def.auto_increment}}readonly{{/if}}/>
-    </div>
-</div>

@@ -6,14 +6,9 @@
  */
 ({
 
-    rendered:false,
-
     jsTree:{},
-
     reporteesEndpoint:'',
-
     currentTreeUrl:'',
-
     currentRootId:'',
 
     /**
@@ -34,15 +29,79 @@
         $('.view-tree').hide();
     },
 
-    /**
-     * Start the rendering of the JS Tree
+    /***
+     * Handles if data changes on the context.forecasts.tree model (and when tree first initializes)
+     * Tree is not handled like other components on Forecasts as it uses a 3rdParty lib (jstree)
+     * to handle it's data model. The event handler is added here only because bindDataChange is
+     * where other event handlers are added in other models and it fires once during initialization
      */
-    render:function () {
+    bindDataChange: function() {
+        if(this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", this.checkRender, this);
+        }
+    },
 
-        // only let this render once.  since if there is more than one view on a layout it renders twice
-        if (this.rendered) return;
+    /***
+     * Function to give a final check before rendering to see if we really need to render
+     * Any time the selectedUser changes on context.forecasts we run through this function to
+     * see if we should render the tree again
+     *
+     * @param context
+     * @param selectedUser {Object} the current selectedUser on the context
+     */
+    checkRender: function(context, selectedUser) {
+        // handle the case for user clicking MyOpportunities first
+        if(selectedUser.showOpps) {
+            var nodeId = 'jstree_node_myopps_' + selectedUser.id;
+            this.selectJSTreeNode(nodeId)
 
-        app.view.View.prototype.render.call(this);
+            // check before render if we're trying to re-render tree with a fresh root user
+            // otherwise do not re-render tree
+            // also make sure we're not re-rendering tree for a rep
+        } else if(this.currentRootId != selectedUser.id) {
+            if(selectedUser.isManager) {
+                // if user is a manager we'll be re-rendering the tree
+                // no need to re-render the tree if not a manager because the dataset
+                // stays the same
+
+                this.currentRootId = selectedUser.id;
+                this.currentTreeUrl = this.reporteesEndpoint + selectedUser.id;
+                this.rendered = false;
+                this.render();
+            } else {
+                // user is not a manager but if this event is coming from the worksheets
+                // we need to "select" the user on the tree to show they're selected
+
+                // create node ID
+                var nodeId = 'jstree_node_' + selectedUser.id;
+
+                // select node only if it is not the already selected node
+                if(this.jsTree.jstree('get_selected').attr('id') != nodeId)  {
+                    this.selectJSTreeNode(nodeId)
+                }
+            }
+        }
+    },
+
+    /***
+     * Function that handles deselecting any selected nodes then selects the nodeId
+     *
+     * @param nodeId {String} the node id starting with "jstree_node_"
+     */
+    selectJSTreeNode: function(nodeId) {
+        // jstree kept trying to hold on to the root node css staying selected when
+        // user clicked a user's name from the worksheet, so explicitly causing a deselection
+        this.jsTree.jstree('deselect_all');
+
+        this.jsTree.jstree('select_node', '#' + nodeId);
+    },
+
+    /**
+     * Renders JSTree
+     */
+    _render:function () {
+
+        app.view.View.prototype._render.call(this);
 
         var self = this;
 
@@ -61,13 +120,17 @@
 
                             //get id of current root user
                             if(data instanceof Array) {
-                                self.rootUserId = data[1].metadata.id;
+                                self.currentRootId = data[1].metadata.id;
                             } else {
-                                self.rootUserId = data.metadata.id;
+                                self.currentRootId = data.metadata.id;
                             }
                         }
                     }
                 }
+            },
+            "ui" : {
+                // when the tree re-renders, initially select the root node
+                "initially_select" : [ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
             },
             "types" : {
                 "types" : {
@@ -84,67 +147,27 @@
                 var jsData = data.inst.get_json();
                 var nodeType = jsData[0].attr.rel;
                 var userData = jsData[0].metadata;
+                var contextUser = self.context.forecasts.get("selectedUser");
 
-                // ONLY do something if this is a different user
-                // My Opportunities will have the same user id as the current user, so allow that as well
-                if(nodeType == "my_opportunities" || self.context.forecasts.get("selectedUser").id != userData.id ) {
+                var showOpps = false;
 
-                    // if user clicked on a "My Opportunities" node
-                    // set this flag true
-                    if(nodeType == "my_opportunities") {
-                        self.context.forecasts.set("showManagerOpportunities", true);
-                    } else if(self.context.forecasts.get("showManagerOpportunities")) {
-                        // resets back to false if user clicks  non-My-Opportunities node
-                        // and showManagerOpportunities was previously set to true
-                        // so we dont unnecessarily change the context when we dont need to
-                        self.context.forecasts.set("showManagerOpportunities", false);
-                    }
-
-                    var selectedUser = {
-                        'id'            : userData.id,
-                        'full_name'     : userData.full_name,
-                        'first_name'    : userData.first_name,
-                        'last_name'     : userData.last_name,
-                        'isManager'     : (nodeType == 'root' || nodeType == 'manager') ? true : false
-                    };
-
-                    // update context with selected user
-                    self.context.forecasts.set( "selectedUser" , selectedUser);
-
-                    // Handle different types of nodes
-                    switch(nodeType) {
-                        case "root":
-                            // If user clicks on the root node, we do not need to re-render tree
-                            break;
-
-                        case "parent_link":
-                        case "manager":
-                            // final check before render, no need to re-render if we've clicked back on the root
-                            // the second level of users (managers underneath the logged-in/root manager) have
-                            // the "manager" rel but they may be at the top ("root") of the tree
-                            // and we dont need to re-render in that case either
-                            if(self.currentRootId != selectedUser.id)  {
-                                self.currentRootId = selectedUser.id;
-                                self.currentTreeUrl = self.reporteesEndpoint + selectedUser.id;
-                                self.rendered = false;
-                                self.render();
-                            }
-                            break;
-
-                        case "my_opportunities":
-                            // Anything special for My Opportunities
-                            break;
-
-                        case "rep":
-                            // Anything special for the Rep
-                            break;
-                    }
-                } else if(self.context.forecasts.get("showManagerOpportunities")) {
-                    // Case for user has selected My Opportunities, then clicks back on the manager user
-                    self.context.forecasts.set("showManagerOpportunities", false)
+                // if user clicked on a "My Opportunities" node
+                // set this flag true
+                if(nodeType == "my_opportunities") {
+                    showOpps = true
                 }
-            });
 
-        this.rendered = true;
+                var selectedUser = {
+                    'id'            : userData.id,
+                    'full_name'     : userData.full_name,
+                    'first_name'    : userData.first_name,
+                    'last_name'     : userData.last_name,
+                    'isManager'     : (nodeType == 'rep') ? false : true,
+                    'showOpps'      : showOpps
+                };
+
+                // update context with selected user which will trigger checkRender
+                self.context.forecasts.set("selectedUser" , selectedUser);
+            });
     }
 })

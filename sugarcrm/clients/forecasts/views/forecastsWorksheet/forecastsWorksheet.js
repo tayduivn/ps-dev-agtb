@@ -8,14 +8,11 @@
 
     url: 'rest/v10/Forecasts/worksheet',
     show: false,
-
     viewModule: {},
-
+    selectedUser: {},
     gTable:'',
-
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
-
     _collection:{},
 
     /**
@@ -28,14 +25,17 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-
+        
         //set expandable behavior to false by default
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
 
         this._collection = this.context.forecasts.worksheet;
-
+        
+        //set up base selected user
+    	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+        
         var TotalModel = Backbone.Model.extend({
 
         });
@@ -79,12 +79,8 @@
             model : this.totalModel
         });
 
-
-        // INIT tree with logged-in user
-        var selectedUser = {
-            'id' : app.user.get('id')
-        }
-        this.updateWorksheetBySelectedUser(selectedUser);
+        // INIT tree with logged-in user       
+        this.updateWorksheetBySelectedUser(this.selectedUser);
     },
 
     createURL:function() {
@@ -96,7 +92,7 @@
 
         if(this.selectedUser)
         {
-           args['user_id'] = this.selectedUser;
+           args['user_id'] = this.selectedUser.id;
         }
 
         var params = '';
@@ -227,16 +223,10 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            // STORY 31921015 - Make the forecastsWorksheet work with the new event from the Forecast Filter
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
-            // END STORY 31921015
-            this.context.forecasts.on("change:showManagerOpportunities",
-                function(context, showOpps) {
-                    this.updateWorksheetByMgrOpportunities(showOpps);
-                }, this);
         }
     },
 
@@ -253,7 +243,7 @@
     /**
      * Renders view
      */
-    render:function () {
+    _render:function () {
         var self = this;
         
         if(!this.showMe()){
@@ -262,7 +252,7 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
         
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
@@ -305,31 +295,20 @@
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
-        var userId = app.user.get('id');
-        var selectedUser = userId;
-
-        if(this.selectedUser){
-            selectedUser = this.selectedUser;
-        }
-
-        if(userId.localeCompare(selectedUser) != 0){
-            return false;
-        }
-        return true;
+        return _.isEqual(app.user.get('id'), this.selectedUser.id);
     },
 
     /**
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-        var isManager = app.user.get('isManager');
+    	var selectedUser = this.selectedUser;
     	this.show = false;
-
-
-    	if(!isManager || (isManager && !this.isMyWorksheet())){
+    	    	
+    	if(selectedUser.showOpps || !selectedUser.isManager){
     		this.show = true;
     	}
-
+    	
     	return this.show;
     },
 
@@ -382,7 +361,7 @@
         };
 
 
-        this.context.set("updatedTotals", totals);
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**
@@ -391,7 +370,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-        this.selectedUser = selectedUser.id;
+        this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
@@ -438,20 +417,6 @@
         this._collection.fetch();
     },
 
-    /***
-     * Event Handler for showing a manager's opportunities
-     *
-     * @param showOpps boolean value to display manager's opportunities or not
-     */
-    updateWorksheetByMgrOpportunities: function(showOpps){
-        // TODO: Add functionality for whatever happens when "My Opportunities" is clicked
-        if(showOpps) {
-            // Show manager's Opportunities (forecastWorksheet for manager's id)
-        } else {
-            // Show manager's worksheet view (forecastWorksheetManager for manager's id)
-        }
-    },
-
     /**
      * Formats the additional details div when a user clicks a row in the grid
      *
@@ -493,7 +458,6 @@
         }
 
         var cols = dTable.fnSettings().aoColumns;
-
         var retColumns = [];
 
         for (var i in cols) {

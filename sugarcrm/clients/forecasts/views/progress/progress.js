@@ -10,7 +10,6 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
-        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
 
     bindDataChange: function () {
@@ -18,6 +17,7 @@
         this.worksheetCollection = this.context.forecasts.worksheet;
         this.model.on('change', this.render);
         this.worksheetCollection.on('change reset', this.calculatePipelineSize);
+        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
     },
     
     calculatePipelineSize: function() {
@@ -25,7 +25,6 @@
         var likelyTotal = this.worksheetCollection.reduce(function(memo, model) {
             // Only add up values that are "included" in the worksheet.
             if ( model.get('forecast') === true && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
-                console.log("adding likely for ", model.get('name'));
                 memo += parseInt(model.get('likely_case_worksheet'), 10);
             }
             return memo;
@@ -48,9 +47,9 @@
         this.render();
     },
 
-    render: function () {
+    _render: function () {
         _.extend(this, this.model.toJSON());
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
     },
 
     updateProgressForSelectedUser: function (context, user) {
@@ -58,7 +57,7 @@
         var urlParams = $.param({
             userId: self.context.forecasts.get("selectedUser").id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
-            shouldRollup: (self.context.forecasts.get("showManagerOpportunities") ? 1 : 0)
+            shouldRollup: 1
         });
         this.model.fetch({
             data: urlParams

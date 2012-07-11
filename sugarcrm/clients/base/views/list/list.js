@@ -11,8 +11,8 @@
         'mouseenter tr': 'showActions',
         'mouseleave tr': 'hideActions'
     },
-    _renderSelf: function() {
-        app.view.View.prototype._renderSelf.call(this);
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
         this.layout.off("list:paginate:success", null, this);

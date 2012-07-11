@@ -356,11 +356,13 @@
 				this.data.core.li_height = this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() || 18;
 
 				this.get_container()
-					.delegate("li > ins", "click.jstree", $.proxy(function (event) {
-							var trgt = $(event.target);
-							// if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
-							this.toggle_node(trgt);
-						}, this))
+                    // REMOVED FROM TREE SRC as it was redrawing the tree under a
+                    // node icon if you clicked on the node icon.
+                    //.delegate("li > ins", "click.jstree", $.proxy(function (event) {
+                    //		var trgt = $(event.target);
+                    // if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
+                    //		this.toggle_node(trgt);
+                    //	}, this))
 					.bind("mousedown.jstree", $.proxy(function () { 
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
 						}, this))

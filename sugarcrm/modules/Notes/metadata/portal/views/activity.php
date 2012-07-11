@@ -10,23 +10,6 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
             'class' => 'loading wide'
         ),
     ),
-    'listNav' =>
-    array(
-        0 =>
-        array(
-            'name' => 'show_more_button_back',
-            'type' => 'navelement',
-            'icon' => 'icon-chevron-left',
-            'label' => ' '
-        ),
-        1 =>
-        array(
-            'name' => 'show_more_button_forward',
-            'type' => 'navelement',
-            'icon' => 'icon-chevron-right',
-            'label' => ' '
-        ),
-    ),
     'panels' =>
     array(
         0 =>

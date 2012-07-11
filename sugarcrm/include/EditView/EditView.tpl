@@ -208,6 +208,10 @@ class="yui-navset"
 			        {{/if}}
 			    {{/foreach}}
 			{{elseif !empty($colData.field.customCode)}}
+                {{if !empty($colData.field.customCodeReadOnly)}}
+                   {{$colData.field.customCodeReadOnly}}
+                {{/if}}
+                </td>
 				<td></td><td></td>
 			{{elseif $fields[$colData.field.name]}}
 			    {{$colData.displayParams}}
@@ -215,7 +219,7 @@ class="yui-navset"
 				{{sugar_field parentFieldArray='fields' tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
 	    {{$colData.field.suffix}}
-		</td>
+		{{if !empty($colData.field.customCode)}}</td>{{/if}}
 		{{/if}}
 
 		{/if}

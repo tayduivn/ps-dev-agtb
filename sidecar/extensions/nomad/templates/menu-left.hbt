@@ -1,7 +1,0 @@
-<li><a href="#Users/{{userId}}"><i class="icon-user"></i>{{userName}}</a></li>
-<li class="divider-horizontal"></li>
-{{#each items}}
-<li><a href="#{{this}}">{{this}}</a></li>
-{{/each}}
-<li class="divider-horizontal"></li>
-<li><a href="#logout">Log Out</a></li>
