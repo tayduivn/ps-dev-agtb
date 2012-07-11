@@ -32,15 +32,28 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
                 'name' => 'Committed'
             ),
         ),
+
         6 => array(
             'view' => 'forecastsWorksheet',
-            'collection' => array(
-                'name' => 'Worksheet',
+
+            'contextCollection' => array(
+                'module' => 'ForecastWorksheets',
+                'name' => 'ForecastWorksheets'
             ),
+
+            'collection' => array(
+                'name' => 'Worksheet'
+            )
         ),
-        
+
         7 => array(
             'view' => 'forecastsWorksheetManager',
+
+            'contextCollection' => array(
+                'module' => 'ForecastManagerWorksheets',
+                'name' => 'ForecastManagerWorksheets'
+            ),
+
             'collection' => array(
                 'name' => 'WorksheetManager',
             ),

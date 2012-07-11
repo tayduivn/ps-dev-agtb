@@ -83,6 +83,7 @@ class Opportunity extends SugarBean
 	var $worst_case;
 	var $likely_case;
 	var $timeperiod_id;
+	var $commit_stage;
 	var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
 
@@ -423,6 +424,22 @@ class Opportunity extends SugarBean
 			$this->forecast = ($this->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
 		}
 
+        //if commit_stage isn't set, set it based on the probability
+        if (!isset($this->commit_stage) && !empty($this->probability))
+        {
+            $commit_stage_arr = $app_list_strings['commit_stage_dom'];
+            ksort($commit_stage_arr);
+            //the keys of this array are upper limit of probability for each stage
+            foreach($commit_stage_arr as $key => $value)
+            {
+                if($this->probability < $key)
+                {
+                    $this->commit_stage = $value;
+                    break;
+                }
+            }
+        }
+        
 		//Set the timeperiod_id value
 		global $timedate;
 

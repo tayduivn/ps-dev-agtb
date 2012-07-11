@@ -48,6 +48,7 @@ class Individual implements IChartAndWorksheet {
         {
             $row['id'] = $row['primaryid'];
             $row['forecast'] = ($row['opportunities_forecast'] == 1) ? true : false;
+            $row['commit_stage'] = $row['opportunities_commit_stage'];
             $row['name'] = $row['opportunities_name'];
             $row['amount'] = $row['opportunities_amount'];
             $row['date_closed'] = $row['opportunities_date_closed'];
@@ -57,8 +58,8 @@ class Individual implements IChartAndWorksheet {
             $row['likely_case'] = $row['opportunities_likely_case'];
             $row['worst_case'] = $row['opportunities_worst_case'];
             $row['is_owner'] = $current_user->id == $row['l1_id'];
+            $row['assigned_user_id'] = $row['l1_id'];
             //Should we unset the data we don't need here so as to limit data sent back?
-
             $opps[] = $row;
         }
 

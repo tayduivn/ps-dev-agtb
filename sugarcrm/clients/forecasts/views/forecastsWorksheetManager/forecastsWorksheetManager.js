@@ -63,7 +63,15 @@
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile("<tr><td>Overall Total</td><td>{{amount}}</td><td>{{quota}}</td><td>{{best_case}}</td><td>{{best_adjusted}}</td><td>{{likely_case}}</td><td>{{likely_adjusted}}</td>");
+                var hb = Handlebars.compile("<tr>" + 
+                								"<td>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts")  + "</td>" +
+                								"<td>{{amount}}</td>" + 
+                								"<td>{{quota}}</td>" + 
+                								"<td>{{best_case}}</td>" + 
+                								"<td>{{best_adjusted}}</td>" +
+                								"<td>{{likely_case}}</td>" + 
+                								"<td>{{likely_adjusted}}</td>" +
+                							"</tr>");
                 $('#summaryManager').html(hb(self.model.toJSON()));
                 return this;
             }
@@ -121,6 +129,21 @@
         }
     },
 
+    /**
+     * Renders a field.
+     *
+     * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
+     * in metadata, it will also render it as clickToEditable.
+     * @param {View.Field} field The field to render
+     * @protected
+     */
+    _renderField: function(field) {
+        app.view.View.prototype._renderField.call(this, field);
+        if (field.viewName !="edit" && field.def.clickToEdit === true) {
+            field = new app.view.ClickToEditField(field, this);
+        }
+    },
+    
     /**
      * Renders view
      */
