@@ -5,7 +5,14 @@
  * @singleton
  */
 class SugarAccess {
+    /**
+     * @var null Singleton instance
+     */
     protected static $instance = null;
+
+    /**
+     * @var LicenseServerClient
+     */
     protected $client;
 
     /**
@@ -34,7 +41,8 @@ class SugarAccess {
      * @return array $moduleList
      */
     public function filterModules($moduleList) {
-        return $moduleList;
+        $permittedModules = $this->client->getModules();
+        return array_intersect($moduleList, $permittedModules);
     }
 
     /**
@@ -45,6 +53,24 @@ class SugarAccess {
      */
     public function authenticate($email, $password) {
         return $this->client->authenticate($email, $password);
+    }
+
+    /**
+     * Returns the sugar_config required to run the instance
+     * @return mixed
+     */
+    public function getConfig() {
+        $instanceData = $this->client->getInstanceData();
+
+        // TODO: MOCKED
+        include('include/SugarAccess/configs/' . $instanceData['flavor'] . '.config.php');
+        $GLOBALS['sugar_config'] = $sugar_config;
+
+        foreach ($instanceData['config'] as $key => $value) {
+            $GLOBALS['sugar_config'][$key] = $value;
+        }
+
+        return $GLOBALS['sugar_config'];
     }
 }
 
@@ -59,8 +85,13 @@ class LicenseServerClient {
      */
     protected $userData;
 
+    /**
+     * Load up session data if the user has already authenticated.
+     */
     public function __construct() {
-        if(isset($_SESSION['userData']))$this->userData = $_SESSION['userData'];
+        if (isset($_SESSION['userData'])) {
+            $this->userData = $_SESSION['userData'];
+        }
     }
 
     /**
@@ -78,37 +109,64 @@ class LicenseServerClient {
         // MOCK DATA
         $this->userData = array(
             "modules" => array("Accounts", "Contacts", "Opportunities"),
-            "instanceinfo" => array(
+            "instance" => array(
                 "id" => "UNIQUE_INSTANCE_ID",
-                "license_key" => "13984ajdsfsd"
+                "license_key" => "13984ajdsfsd",
+                "flavor" => "ent",
+                'config' => array(
+                    'dbconfig' =>
+                    array(
+                        'db_host_name' => 'localhost',
+                        'db_host_instance' => '',
+                        'db_user_name' => 'root',
+                        'db_password' => 'root',
+                        'db_name' => 'ent622_1',
+                        'db_type' => 'mysql',
+                        'db_port' => '',
+                        'db_manager' => 'MysqliManager',
+                    ),
+                ),
+
             ),
+
             "userinfo" => array(
                 "id" => "1345",
                 "email" => "email@email.com",
                 "status" => "active",
                 "date_created" => "somedate",
-                "flavor" => "ent",
-                "dbconfig" => array()
+
             )
         );
 
         // Save user data to the session
         $_SESSION["userData"] = $this->userData;
-
         return $this->userData;
     }
 
-
-
-    public function getModules($email) {
+    /**
+     * Returns modules that this user has access to
+     * @return mixed
+     */
+    public function getModules() {
         return $this->userData["modules"];
     }
 
-    public function getInstanceData($email) {
+    /**
+     * Returns instance information
+     * @return mixed
+     */
+    public function getInstanceData() {
         return $this->userData["instance"];
     }
 
+    /**
+     * Makes a curl call to the license server with supplied url and parameters
+     * @param $url
+     * @param $data
+     * @return mixed
+     */
     protected function restCall($url, $data) {
+        return;
         $curlOp = curl_init($url);
 
         curl_setopt($curlOp, "CURLOPT_RETURNTRANSFER", true);
