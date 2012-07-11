@@ -45,7 +45,6 @@ class Bug51719Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete("Disabling test after speaking to Frank, we will introduce empty and nonempty in the db layer to handle this better");
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
