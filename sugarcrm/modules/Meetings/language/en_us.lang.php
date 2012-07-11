@@ -151,7 +151,7 @@ $mod_strings = array (
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
 
     // create invitee functionallity
-    'LBL_CREATE_INVITEE' => 'Create an invitee',
+    'LBL_CREATE_INVITEE' => 'Create an Invitee',
     'LBL_CREATE_CONTACT' => 'As Contact',
     'LBL_CREATE_LEAD' => 'As Lead',
     'LBL_CREATE_AND_ADD' => 'Create & Add',
