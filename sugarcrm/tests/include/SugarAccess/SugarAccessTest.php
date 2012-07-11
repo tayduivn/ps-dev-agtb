@@ -7,7 +7,8 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
 
     public function testFilterModules(){
         $arr = array("Accounts","Contacts");
-        $sugarAccess = SugarAccess::getInstance();
+        $sugarAccess = new stubbedFunctions();
+
         $arr2 = $sugarAccess->filterModules($arr);
         $this->assertEquals($arr, $arr2);
     }
@@ -166,6 +167,17 @@ class LicenseStubClient {
 
         return $this->userData;
     }
+
+}
+
+class stubbedFunctions {
+
+    public function filterModules($moduleList) {
+        $permittedModules = array("Accounts","Contacts","Opportunities");
+        return array_intersect($moduleList, $permittedModules);
+    }
+
+
 
 }
 ?>
