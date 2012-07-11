@@ -304,11 +304,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'commit_stage',
     'vname' => 'LBL_COMMIT_STAGE',
-    'type' => 'varchar',
+    'type' => 'enum',
+    'options' => 'commit_stage_dom',
     'len' => '20',
-    'calculated' => true,
-    'formula' => 'ifElse(equal($forecast,1),"Include",ifElse(greaterThan($probability,50),"Likely","Omit"))',
-    'enforced' => true,
     'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
   ),
 //END SUGARCRM flav=PRO ONLY
