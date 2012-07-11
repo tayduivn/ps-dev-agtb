@@ -38,7 +38,7 @@ class Individual implements IChartAndWorksheet {
      * @param Report $report
      * @return array
      */
-    public function getGridData($report)
+    public function getGridData(Report $report)
     {
         global $current_user;
         $report->run_query();
@@ -72,6 +72,14 @@ class Individual implements IChartAndWorksheet {
     public function getChartDefinition($id='')
     {
         return $this->getWorksheetDefinition($id);
+    }
+
+    public function getChartFilter($args) {
+
+        return array(
+            'timeperiod_id' => array('$is' => $args['timeperiod_id']),
+            'assigned_user_link' => array('id' => $args['user_id']),
+        );
     }
 
     /**

@@ -94,7 +94,6 @@ class ChartAndWorksheetManager
     {
         try {
             $instance = $this->getDataInstance($type);
-            $this->dataInstances[$type] = $instance;
             return $instance->getFilters($args);
         } catch (Exception $ex) {
             return null;

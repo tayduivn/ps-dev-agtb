@@ -25,7 +25,7 @@ interface IChartAndWorksheet
     /**
      * @abstract
      *
-     * @param $id String Optional string id in the event there may be multiple worksheet data definitions
+     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
      * @return mixed
      */
     public function getChartDefinition($id = '');
@@ -33,10 +33,16 @@ interface IChartAndWorksheet
     /**
      * @abstract
      *
-     * @param $id String Optional string id in the event there may be multiple worksheet data definitions
+     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
      * @return mixed
      */
     public function getWorksheetDefinition($id = '');
+
+    /**
+     * @param Report $report
+     * @return array
+     */
+    public function getGridData(Report $report);
 
 
 }
