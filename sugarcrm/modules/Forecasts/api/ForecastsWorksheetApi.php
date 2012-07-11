@@ -50,15 +50,26 @@ class ForecastsWorksheetApi extends ModuleApi {
                 'shortHelp' => 'A ping',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
             ),
+            'forecastWorksheet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastWorksheets'),
+                'pathVars' => array('',''),
+                'method' => 'forecastWorksheet',
+                'shortHelp' => 'Returns a collection of ForecastWorksheet models',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
+            ),
+            'forecastWorksheetSave' => array(
+                'reqType' => 'PUT',
+                'path' => array('ForecastWorksheets','?'),
+                'pathVars' => array('module','record'),
+                'method' => 'forecastWorksheetSave',
+                'shortHelp' => 'Updates a ForecastWorksheet model',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
+            )
         );
         return $parentApi;
     }
 
-
-    public function worksheetSave($api, $args)
-    {
-
-    }
 
     /**
      * This method returns the result for a sales rep view/manager's opportunities view
@@ -111,4 +122,52 @@ class ForecastsWorksheetApi extends ModuleApi {
         return $mgr->getWorksheetGridData('individual', $report);
     }
 
+
+    public function forecastWorksheet($api, $args) {
+        // Load up a seed bean
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        $seed = new ForecastWorksheet();
+
+        if (!$seed->ACLAccess('list') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+
+        return $this->worksheet($api, $args);
+    }
+
+
+    public function forecastWorksheetSave($api, $args) {
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        $seed = new ForecastWorksheet();
+        $seed->loadFromRow($args);
+        $sfh = new SugarFieldHandler();
+
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
+
+            if(!isset($args[$fieldName]))
+            {
+               continue;
+            }
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName,'save') ) {
+                // No write access to this field, but they tried to edit it
+                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+
+            if($field != null)
+            {
+               $field->save($seed, $args, $fieldName, $properties);
+            }
+        }
+
+        $seed->save();
+        return $seed->id;
+    }
 }
