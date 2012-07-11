@@ -1,0 +1,9 @@
+<div class="tab-content span5" id="folded">
+    <div class="tab-pane active">
+        <div class="block">
+            <h4>Theme Preview</h4>
+            <iframe src="./include/styleguide/preview.html" style="width: 100%; border: 0; height: 50%;" allowtransparency="true"></iframe>
+            
+        </div>
+    </div>
+</div>
