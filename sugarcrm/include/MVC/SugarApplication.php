@@ -162,12 +162,11 @@ class SugarApplication
 
 	}
 
-	public function ACLFilter()
-	{
-		$GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
+	public function ACLFilter() {
+        $GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
         $sa = SugarAccess::getInstance();
         $GLOBALS['moduleList'] = $sa->filterModules($GLOBALS['moduleList']);
-		}
+    }
 
 	/**
 	 * setupResourceManagement
@@ -291,39 +290,54 @@ class SugarApplication
 	function handleAccessControl(){
 		if($GLOBALS['current_user']->isDeveloperForAnyModule())
 			return;
+
 	    if(!empty($_REQUEST['action']) && $_REQUEST['action']=="RetrieveEmail")
             return;
-		if(!is_admin($GLOBALS['current_user']) && !empty($GLOBALS['adminOnlyList'][$this->controller->module])
-		&& !empty($GLOBALS['adminOnlyList'][$this->controller->module]['all'])
-		&& (empty($GLOBALS['adminOnlyList'][$this->controller->module][$this->controller->action]) || $GLOBALS['adminOnlyList'][$this->controller->module][$this->controller->action] != 'allow')) {
-			$this->controller->hasAccess = false;
-			return;
-		}
 
-		// Bug 20916 - Special case for check ACL access rights for Subpanel QuickCreates
-		if(isset($_POST['action']) && $_POST['action'] == 'SubpanelCreates') {
+        if (!is_admin($GLOBALS['current_user'])
+                && !empty($GLOBALS['adminOnlyList'][$this->controller->module])
+                && !empty($GLOBALS['adminOnlyList'][$this->controller->module]['all'])
+                && (empty($GLOBALS['adminOnlyList'][$this->controller->module][$this->controller->action])
+                        || $GLOBALS['adminOnlyList'][$this->controller->module][$this->controller->action] != 'allow')
+        ) {
+            $this->controller->hasAccess = false;
+            return;
+        }
+
+        // Bug 20916 - Special case for check ACL access rights for Subpanel QuickCreates
+        if (isset($_POST['action']) && $_POST['action'] == 'SubpanelCreates') {
             $actual_module = $_POST['target_module'];
-            if(!empty($GLOBALS['modListHeader']) && !in_array($actual_module,$GLOBALS['modListHeader'])) {
+            if (!empty($GLOBALS['modListHeader']) && !in_array($actual_module, $GLOBALS['modListHeader'])) {
                 $this->controller->hasAccess = false;
             }
             return;
         }
 
+        if (!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader'])) {
+            $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+        }
 
-		if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
-			$GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+        // Consolidate me!
+        if (in_array($this->controller->module, $GLOBALS['modInvisList']) &&
+                ((in_array('Activities', $GLOBALS['moduleList']) &&
+                        in_array('Calendar', $GLOBALS['moduleList'])) &&
+                        in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
+        ) {
+            $this->controller->hasAccess = false;
+            return;
+        }
 
-		if(in_array($this->controller->module, $GLOBALS['modInvisList']) &&
-			((in_array('Activities', $GLOBALS['moduleList'])              &&
-			in_array('Calendar',$GLOBALS['moduleList']))                 &&
-			in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
-			){
-				$this->controller->hasAccess = false;
-				return;
-		}
-	}
+        if (!in_array($this->controller->module, $GLOBALS['moduleList']) &&
+                !in_array($this->controller->module, $GLOBALS['modInvisList']) && !((in_array('Activities', $GLOBALS['moduleList']) &&
+                in_array('Calendar', $GLOBALS['moduleList'])) &&
+                in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
+        ) {
+            $this->controller->hasAccess = false;
+            return;
+        }
+    }
 
-	/**
+    /**
 	 * Load only bare minimum of language that can be done before user init and MVC stuff
 	 */
 	static function preLoadLanguages()

@@ -102,9 +102,9 @@ if(is_file('config_override.php')) {
 }
 */
 
+// TODO: MOCK Config, please fix when we have a license server
 require 'include/SugarAccess/SugarAccess.php';
 
-//echo "entry point";
 $sa = SugarAccess::getInstance();
 $sa->authenticate('bob@burger.com', '123');
 $sugar_config = $sa->getConfig();
