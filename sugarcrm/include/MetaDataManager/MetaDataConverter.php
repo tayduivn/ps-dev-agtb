@@ -1,6 +1,6 @@
 <?php
 /**
- * Static class to assist in backporting 6.6 Metadata formats to legacy style to
+ * Assists in backporting 6.6 Metadata formats to legacy style in order to
  * maintain backward compatibility with old clients consuming the V3 and V4 apis.
  */
 class MetaDataConverter {
@@ -12,9 +12,9 @@ class MetaDataConverter {
     protected static $converter = null;
     
     /**
-     * Entry point into the conversion process, will convert $defs to legacy format
-     * $viewtype if there is a converter for it, otherwise will return the defs
-     * as-is with no modification.
+     * Static entry point, will instantiate an object of itself to run the process.
+     * Will convert $defs to legacy format $viewtype if there is a converter for 
+     * it, otherwise will return the defs as-is with no modification.
      * 
      * @static
      * @param string $viewtype One of list|edit|detail
