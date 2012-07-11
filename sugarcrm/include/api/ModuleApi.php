@@ -69,7 +69,7 @@ class ModuleApi extends SugarApi {
      */
     protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
 
-        $errors = ApiHelper::getModuleHelper($bean)->populateFromApi($bean,$args);
+        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
         if ( $errors !== true ) {
             // There were validation errors.
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');

@@ -28,6 +28,16 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 class SugarBeanApiHelper
 {
     /**
+     * This is used when formatting records to do things like provide URI's for objects.
+     */
+    protected $api;
+
+    function __construct(ServiceBase $api)
+    {
+        $this->api = $api;
+    }
+
+    /**
      * Formats the bean so it is ready to be handed back to the API's client. Certian fields will get extra processing
      * to make them easier to work with from the client end.
      *

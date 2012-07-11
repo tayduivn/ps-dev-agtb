@@ -20,44 +20,35 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('data/SugarBeanApiHelper.php');
+
 /**
- * This class is here to provide functions to easily call in to the individual module api helpers
+ * This class is here to add in the file information to the KBDocuments so that it can be easily displayed by remote consumers of the API. Otherwise you have to traverse a number of links to pull up this information.
  */
-class ApiHelper
+class KBDocumentsApiHelper extends SugarBeanApiHelper
 {
-    static $moduleHelpers = array();
 
-    /**
-     * This method looks up the helper class for the bean and will provide the default helper
-     * if there is not one defined for that particular bean
-     *
-     * @param $api ServiceBase The API that will be associated to this helper class
-     *                         This is used so the formatting functions can handle different
-     *                         API's with varying formatting requirements.
-     * @param $bean SugarBean Grab the helper module for this bean
-     * @returns SugarBeanApiHelper A API helper class for beans
-     */
-    public static function getHelper(ServiceBase $api, SugarBean $bean) {
-        $module = $bean->module_dir;
-        if ( !isset(self::$moduleHelpers[$module]) ) {
-        
-            require_once('data/SugarBeanApiHelper.php');
-            $moduleHelperClass = 'SugarBeanApiHelper';
-            
-            if ( file_exists('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php') ) {
-                require_once('custom/modules/'.$module.'/'.$module.'ApiHelperCstm.php');
-                
-                $moduleHelperClass = $module.'ApiHelperCstm';
-            } else if ( file_exists('modules/'.$module.'/'.$module.'ApiHelper.php') ) {
-                require_once('modules/'.$module.'/'.$module.'ApiHelper.php');
-                
-                $moduleHelperClass = $module.'ApiHelper';
+    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array() )
+    {
+        $data = parent::formatForApi($bean, $fieldList, $options);
+
+        if ( empty($fieldList) || in_array('attachment_list',$fieldList) ) {
+            $db = DBManagerFactory::getInstance();
+
+            $query = "SELECT rev.id rev_id, rev.filename filename, kbrev.id docrev_id FROM kbdocument_revisions kbrev LEFT JOIN document_revisions rev ON (kbrev.document_revision_id = rev.id) WHERE kbrev.kbdocument_id = '".$bean->id."' AND kbrev.deleted = 0 AND rev.deleted = 0";
+            $ret = $db->query($query,true);
+            $files = array();
+            while ( $row = $db->fetchByAssoc($ret) ) {
+                $thisFile = array();
+                $thisFile['document_revision_id'] = $row['rev_id'];
+                $thisFile['document_revision_filename'] = $row['filename'];
+                $thisFile['kbdocument_revision_id'] = $row['docrev_id'];
+                $thisFile['file_uri'] = $this->api->getResourceURI(array('DocumentRevisions',$row['rev_id'],'file','filename'));
+                $files[] = $thisFile;
             }
-
-            self::$moduleHelpers[$module] = new $moduleHelperClass($api);
+            $data['attachments_list'] = $files;
         }
-        
-        $moduleHelperClass = self::$moduleHelpers[$module];
-        return $moduleHelperClass;
+
+        return $data;
     }
 }

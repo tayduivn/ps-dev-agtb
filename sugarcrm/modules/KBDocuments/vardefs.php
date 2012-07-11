@@ -472,6 +472,23 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'reportable'=>false,
     'source'=>'non-db'
   ),
+  // Add these two fake fields as a placeholder for the API to populate these fields with related data
+  'attachment_list'=>
+  array (
+      'name' => 'attachment_list',
+      'type' => 'text',
+      'source' => 'non-db',
+      'reportable' => false,
+      'read-only' => true,
+  ),
+  'tag_list'=>
+  array (
+      'name' => 'tag_list',
+      'type' => 'text',
+      'source' => 'non-db',
+      'reportable' => false,
+      'read-only' => true,
+  ),
 
   'parent_id' =>
   array (
