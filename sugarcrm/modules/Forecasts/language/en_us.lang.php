@@ -217,6 +217,7 @@ $mod_strings = array (
     'LBL_CHART_TITLE'=>'Quota vs. Committed vs. Actual',
 
     'LBL_FORECAST' => 'Forecast',
+    'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
