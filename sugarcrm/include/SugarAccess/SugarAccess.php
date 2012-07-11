@@ -17,7 +17,6 @@ class SugarAccess {
         if (self::$instance == null) {
             self::$instance = new SugarAccess();
         }
-
         return self::$instance;
     }
 
@@ -105,13 +104,13 @@ class LicenseServerClient {
     }
 
     public function getInstanceData($email) {
-        return $this->userData["instance"];
+        return $this->userData["instanceinfo"];
     }
 
     protected function restCall($url, $data) {
         $curlOp = curl_init($url);
 
-        curl_setopt($curlOp, "CURLOPT_RETURNTRANSFER", true);
+        curl_setopt($curlOp, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlOp, CURLOPT_POST, 1);
         curl_setopt($curlOp, CURLOPT_POSTFIELDS, $data);
 
