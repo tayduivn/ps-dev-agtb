@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,63 +20,41 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-
-// User is used to store Forecast information.
-class Worksheet extends SugarBean {
+class ForecastWorksheet extends SugarBean {
 
     var $id;
-
-    var $table_name = "worksheet";
-
-    var $object_name = "Worksheet";
+    var $name;
+    var $forecast;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
+    var $object_name = 'ForecastWorksheet';
+    var $module_dir = 'Forecasts';
+    var $table_name = 'opportunities';
     var $disable_custom_fields = true;
 
-    // This is used to retrieve related fields from form posts.
-    var $additional_column_fields = Array('');
-
-
-
-    var $new_schema = true;
-    var $module_dir = 'Forecasts';
-    function Worksheet() {
-        global $current_user;
-        parent::SugarBean();
-        $this->disable_row_level_security =true;
+    function __construct() {
+        parent::__construct();
     }
 
-    function save($check_notify = false){
-        //If related_forecast_type is empty it is an opportunity override so we update the best_case_worksheet and likely_case_worksheet values
-        if (empty($this->related_forecast_type))
-        {
-            $opp = new Opportunity();
-            $opp->retrieve($this->related_id);
-            if(!empty($opp->id))
-            {
-                $opp->best_case = $this->best_case;
-                $opp->likely_case = $this->likely_case;
-                $opp->worst_case = $this->worst_case;
-                $opp->save();
-            }
-        }
-        parent::save($check_notify);
-    }
-
-    function get_summary_text() {
-        return "$this->id";
-    }
-
-    function retrieve($id, $encode=false, $deleted=true){
-        $ret = parent::retrieve($id, $encode, $deleted);
-
-        return $ret;
-    }
-
-    function is_authenticated()
+    /**
+     * Override save here to handle saving to the real tables.  Currently forecast is mapped to opportunities
+     * and likely_case, worst_case and best_case go to both worksheets and opportunities.
+     *
+     *
+     * @param bool $check_notify
+     */
+    function save($check_notify = false)
     {
-        return $this->authenticated;
+        //Update the Opportunities bean
+        $opp = new Opportunity();
+        $opp->retrieve($this->id);
+        $opp->forecast = ($this->forecast) ? 1 : 0;
+        $opp->save();
+
+        //Update the Worksheet bean
+
     }
 
 }
-?>
+

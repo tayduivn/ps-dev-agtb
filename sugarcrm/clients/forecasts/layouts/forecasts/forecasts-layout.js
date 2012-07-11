@@ -52,14 +52,16 @@
         fetchAllModels: function() {
             var self = this;
             _.each(this.componentsMeta, function(component) {
-                if(component.model){
-                    if (component.model.name) {
-                        self.context.forecasts[component.model.name.toLocaleLowerCase()].fetch();
-                    }
-                } else if (component.collection) {
-                    if (component.collection.name) {
-                        self.context.forecasts[component.collection.name.toLocaleLowerCase()].fetch();
-                    }
+                if(component.model && component.model.name){
+                    self.context.forecasts[component.model.name.toLowerCase()].fetch();
+                }
+
+                if(component.contextCollection && component.contextCollection.name) {
+                    self.context.forecasts[component.contextCollection.name.toLowerCase()].fetch();
+                }
+
+                if(component.collection && component.collection.name) {
+                    self.context.forecasts[component.collection.name.toLowerCase()].fetch();
                 }
             });
         },
@@ -76,6 +78,7 @@
             _.each(componentsMetadata, function(component) {
                 var name,
                     modelMetadata = component.model,
+                    context = component.contextCollection,
                     collectionMetadata = component.collection;
                 var module = app.viewModule.toLowerCase();
 
@@ -91,9 +94,15 @@
                     models[module][name] = self.createModel(modelMetadata, app.viewModule);
                 }
 
+                if(context) {
+                    name = context.name.toLowerCase();
+                    self.namespace(models, module);
+                    models[module][name] = app.data.createBeanCollection(context.module);
+                    models[module][name].url = app.config.serverUrl + '/' + context.module;
+                }
+
                 if (collectionMetadata) {
                     name = collectionMetadata.name.toLowerCase();
-
                     self.namespace(models, module);
                     models[module][name] = self.createCollection(collectionMetadata, app.viewModule);
                 }

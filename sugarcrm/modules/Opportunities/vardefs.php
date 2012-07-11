@@ -300,17 +300,17 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'default' => '-1',
     'comment' => 'Integer indicating whether or not record should be included in forecast'
   ),
-    'commit_stage' =>
-    array (
-        'name' => 'commit_stage',
-        'vname' => 'LBL_COMMIT_STAGE',
-        'type' => 'varchar',
-        'len' => '20',
-        'calculated' => true,
-        'formula' => 'ifElse(equal($forecast,1),"Include",ifElse(greaterThan($probability,50),"Likely","Omit"))',
-        'enforced' => true,
-        'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
-    ),
+  'commit_stage' =>
+  array (
+    'name' => 'commit_stage',
+    'vname' => 'LBL_COMMIT_STAGE',
+    'type' => 'varchar',
+    'len' => '20',
+    'calculated' => true,
+    'formula' => 'ifElse(equal($forecast,1),"Include",ifElse(greaterThan($probability,50),"Likely","Omit"))',
+    'enforced' => true,
+    'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
+  ),
 //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (

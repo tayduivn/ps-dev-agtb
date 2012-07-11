@@ -46,6 +46,22 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                 'shortHelp' => 'Worksheet for manager view',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#ping',
             ),
+            'forecastManagerWorksheet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastManagerWorksheets'),
+                'pathVars' => array('',''),
+                'method' => 'forecastManagerWorksheet',
+                'shortHelp' => 'Returns a collection of ForecastManagerWorksheet models',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManager',
+            ),
+            'forecastManagerWorksheetSave' => array(
+                'reqType' => 'PUT',
+                'path' => array('ForecastManagerWorksheets','?'),
+                'pathVars' => array('module','record'),
+                'method' => 'forecastManagerWorksheetSave',
+                'shortHelp' => 'Update a ForecastManagerWorksheet model',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManagerSave',
+            )
         );
         return $parentApi;
     }
@@ -121,11 +137,17 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         //populate output with default data
         $default_data = array("amount" => 0,
                               "quota" => 0,
+                              "quota_id" => '',
                               "best_case" => 0,
                               "likely_case" => 0,
+                              "worst_case" => 0,
                               "best_adjusted" => 0,
                               "likely_adjusted" => 0,
-                              "forecast" => 0);
+                              "worst_case_adjusted" => 0,
+                              "forecast" => 0,
+                              "forecast_id" => '',
+                              "worksheet_id" => '',
+                            );
 		
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
         	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
@@ -164,8 +186,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     protected function getQuota()
     {
         //getting quotas from quotas table
-        $quota_query = "SELECT u.user_name user_name,
-                              q.amount quota
+        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id
                         FROM quotas q, users u
                         WHERE q.user_id = u.id
                         AND (q.user_id = '{$this->user_id}' OR q.user_id IN (SELECT id FROM users WHERE reports_to_id = '{$this->user_id}'))
@@ -177,6 +198,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
+            $data[$row['user_name']]['quota_id'] = $row['quota_id'];
             $data[$row['user_name']]['quota'] = $row['quota'];
         }
 
@@ -188,10 +210,11 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         //getting best/likely values from forecast table
         $forecast_query = "SELECT
         u.user_name,
+        f.id forecast_id,
         f.date_modified,
         f.best_case,
         f.likely_case,
-        f.worst_case worst
+        f.worst_case,
         FROM users u
         INNER JOIN (
         SELECT user_id, max(date_modified) date_modified, best_case, likely_case, worst_case
@@ -210,6 +233,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         {
             $data[$row['user_name']]['best_case'] = $row['best_case'];
             $data[$row['user_name']]['likely_case'] = $row['likely_case'];
+            $data[$row['user_name']]['worst_case'] = $row['worst_case'];
+            $data[$row['user_name']]['forecast_id'] = $row['forecast_id'];
         } 
 
         return $data;
@@ -219,6 +244,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     {
         //getting data from worksheet table for reportees
         $reportees_query = "SELECT u.user_name user_name,
+                            w.id worksheet_id,
                             w.forecast,
                             w.best_case best_adjusted,
                             w.likely_case likely_adjusted,
@@ -235,13 +261,63 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
         {
+            $data[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
             $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
             $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
+            $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
         }             
 
         return $data;
     }
 
+
+    public function forecastManagerWorksheet($api, $args) {
+         // Load up a seed bean
+         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+         $seed = new ForecastManagerWorksheet();
+
+         if (!$seed->ACLAccess('list') ) {
+             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+         }
+
+         return $this->worksheetManager($api, $args);
+     }
+
+
+     public function forecastManagerWorksheetSave($api, $args) {
+         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+         $seed = new ForecastManagerWorksheet();
+         $seed->loadFromRow($args);
+         $sfh = new SugarFieldHandler();
+
+         foreach ($seed->field_defs as $properties)
+         {
+             $fieldName = $properties['name'];
+
+             if(!isset($args[$fieldName]))
+             {
+                continue;
+             }
+
+             //BEGIN SUGARCRM flav=pro ONLY
+             if (!$seed->ACLFieldAccess($fieldName,'save') ) {
+                 // No write access to this field, but they tried to edit it
+                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
+             }
+             //END SUGARCRM flav=pro ONLY
+
+             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+             $field = $sfh->getSugarField($type);
+
+             if($field != null)
+             {
+                $field->save($seed, $args, $fieldName, $properties);
+             }
+         }
+
+         $seed->save();
+         return $seed->id;
+     }
 
 }

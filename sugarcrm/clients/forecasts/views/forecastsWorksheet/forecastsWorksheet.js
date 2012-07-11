@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/Forecasts/worksheet',
+    url: 'rest/v10/ForecastsWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -31,8 +31,6 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.forecasts.worksheet;
-        
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
         
@@ -60,6 +58,7 @@
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
+                    data.model.save();
                     self.refresh();
                 });
             },
@@ -129,11 +128,12 @@
         }
     },
 
-    bindDataChange: function() {
-        if(this._collection)
-        {
-            this._collection.on("reset", this.refresh, this);
-        }
+    bindDataChange: function(params) {
+
+        var self = this;
+        this._collection = this.context.forecasts.forecastworksheets;
+        this._collection.on("reset", function() { self.refresh(); }, this);
+
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
@@ -198,6 +198,7 @@
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
+                "aaSorting": [],
                 "bInfo":false,
                 "bPaginate":false
             }
@@ -290,7 +291,7 @@
         };
 
 
-        this.context.forecasts.set("updatedTotals", totals);
+        this.context.set("updatedTotals", totals);
     },
 
     /**
@@ -303,8 +304,8 @@
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheet;
-        this._collection.url = this.createURL();
+        //this._collection = this.context.get('collection'); //this.context.worksheet;
+        //this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
@@ -341,8 +342,6 @@
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheet;
-        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 

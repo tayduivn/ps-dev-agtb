@@ -603,3 +603,160 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
  )
 
 );
+
+$dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
+'acl_fields' =>false,
+'fields' => array (
+    'id' =>
+    array (
+        'name' => 'id',
+        'vname' => 'LBL_ID',
+        'type' => 'id',
+    ),
+    'assigned_user_id' =>
+    array (
+        'name' => 'assigned_user_id',
+        'vname' => 'LBL_ASSIGNED_USER_ID',
+        'type' => 'id',
+    ),
+    array(
+        'name' => 'forecast',
+        'type' => 'toggle',
+        'vname' => 'LBL_FORECAST',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'commit_stage',
+        'type' => 'varchar',
+        'vname' => 'LBL_COMMIT_STAGE',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'name',
+        'vname' => 'LBL_NAME',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'date_closed',
+        'vname' => 'LBL_DATE_CLOSED',
+        'type' => 'date',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'sales_stage',
+        'vname' => 'LBL_SALES_STAGE',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'probability',
+        'vname' => 'LBL_PROBABILITY',
+        'type' => 'int',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'amount',
+        'vname' => 'LBL_AMOUNT',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'best_case',
+        'vname' => 'LBL_BEST_CASE',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'likely_case',
+        'vname' => 'LBL_LIKELY_CASE',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+),
+);
+
+
+$dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
+'acl_fields' =>false,
+'fields' => array (
+    'id' =>
+    array (
+        'name' => 'id',
+        'vname' => 'LBL_ID',
+        'type' => 'id',
+    ),
+    'quota_id' =>
+    array (
+        'name' => 'quota_id',
+        'vname' => 'LBL_QUOTA_ID',
+        'type' => 'id',
+    ),
+    'forecast_id' =>
+    array (
+        'name' => 'forecast_id',
+        'vname' => 'LBL_FORECAST_ID',
+        'type' => 'id',
+    ),
+    'worksheet_id' =>
+    array (
+        'name' => 'worksheet_id',
+        'vname' => 'LBL_WORKSHEET_ID',
+        'type' => 'id',
+    ),
+    array(
+        'name' => 'name',
+        'vname' => 'LBL_NAME',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'amount',
+        'vname' => 'LBL_AMOUNT',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'quota',
+        'vname' => 'LBL_QUOTA',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'best_case',
+        'vname' => 'LBL_BEST_CASE',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'best_case_adjusted',
+        'vname' => 'LBL_BEST_CASE_ADJUSTED',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'likely_case',
+        'vname' => 'LBL_LIKELY_CASE',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'likely_case_adjusted',
+        'vname' => 'LBL_LIKELY_CASE_ADJUSTED',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'worst_case',
+        'vname' => 'LBL_WORST_CASE',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'worst_case_adjusted',
+        'vname' => 'LBL_WORST_CASE_ADJUSTED',
+        'type' => 'currency',
+        'source' => 'non-db',
+    ),
+),
+);
