@@ -23,7 +23,6 @@
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.committed;
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
     },
@@ -39,9 +38,12 @@
     },
 
     bindDataChange: function() {
-        if(this._collection) {
-            this._collection.on("reset", this.buildForecastsCommitted(), this);
-        }
+
+        var self = this;
+
+        this._collection = this.context.forecasts.committed;
+        this._collection.on("reset", function() { self.buildForecastsCommitted() }, this);
+
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
                 this.showButton = app.user.get('id') == user.id;
@@ -54,7 +56,7 @@
                 this.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                this.totals = totals;
+                self.totals = totals;
             }, this);
         }
     },
@@ -96,7 +98,7 @@
            self.moreLog = self.historyLog.splice(2, self.historyLog.length);
         }
 
-        self.render()
+        self.render();
     },
 
     createHistoryLog: function(current, previousModel) {
