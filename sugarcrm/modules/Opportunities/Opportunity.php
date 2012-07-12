@@ -623,7 +623,7 @@ class Opportunity extends SugarBean
 
 		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
 				. " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
-				. " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
+				. " AND opportunities.sales_stage = " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
 				. " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
 				. " AND opportunities.deleted = 0";
 
@@ -636,6 +636,43 @@ class Opportunity extends SugarBean
 		
 		return $opportunitiesCount;
 	}
+
+
+    /**
+   	 * Get the total amount of likely_case for the given user and timeperiod.  Defaults to the current user
+   	 * and current timeperiod.
+   	 *
+   	 * @param null $user_id
+   	 * @param null $timeperiod_id
+   	 */
+   	public function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL )
+   	{
+   		global $current_user;
+   		$revenue = 0;
+
+   		if ( is_null($user_id) ) {
+   			$user_id = $current_user->id;
+   		}
+   		if ( is_null($timeperiod_id) ) {
+   			$timeperiod_id = TimePeriod::getCurrentId();
+   		}
+
+   		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
+   		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
+               . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
+   		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
+   		       . " AND opportunities.deleted = 0";
+
+   		$query  = $this->create_list_query(NULL, $where);
+
+   		$result = $this->db->query($query);
+
+   		while ( $row = $this->db->fetchByAssoc($result) ) {
+   			$revenue += $row['likely_case'];
+   		}
+
+   		return $revenue;
+   	}
 
 
 	/**

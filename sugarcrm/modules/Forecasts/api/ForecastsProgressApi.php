@@ -38,6 +38,7 @@ class ForecastsProgressApi extends ModuleApi
 	protected $user;
 	protected $timeperiod_id;
 	protected $revenueInPipeline;
+    protected $likelyAmount;
 	protected $should_rollup;
 	protected $quotaData;
 	protected $_loaded;
@@ -82,9 +83,9 @@ class ForecastsProgressApi extends ModuleApi
 		}
 		$this->_loaded = true;
 
-		$this->user_id = (array_key_exists("userId", $args) ? $args["userId"] : $GLOBALS["current_user"]->id);
+		$this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
 
-		$this->timeperiod_id = (array_key_exists("timePeriodId", $args) ? $args["timePeriodId"] : TimePeriod::getCurrentId());
+		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
 		$this->should_rollup = (array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : User::isManager($this->user_id));
 		if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
@@ -99,6 +100,7 @@ class ForecastsProgressApi extends ModuleApi
 		$opportunity = new Opportunity();
 		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id);
 		$this->revenueInPipeline = $opportunity->getPipelineRevenue($this->user_id, $this->timeperiod_id);
+        $this->likelyAmount = $opportunity->getLikelyAmount($this->user_id, $this->timeperiod_id);
 		$this->opportunitiesInPipeline = $opportunity->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id);
 	}
 
@@ -114,7 +116,6 @@ class ForecastsProgressApi extends ModuleApi
 	protected function formatCaseToStage($caseValue, $stageValue)
 	{
 		$percent = 0;
-		
 		if ( $caseValue <= $stageValue ) {
 			$amount = $stageValue - $caseValue;
 			$isAbove = false;
@@ -153,6 +154,7 @@ class ForecastsProgressApi extends ModuleApi
 			),
 			"opportunities" => $this->getOpportunities($api, $args),
 			"revenue"       => $this->getRevenue($api, $args),
+            "pipeline"      => $this->getPipeline($api, $args),
 		);
 
 		return $progressData;
@@ -232,4 +234,18 @@ class ForecastsProgressApi extends ModuleApi
 		
 		return $this->closed;
 	}
+
+
+    public function getPipeline( $api, $args )
+    {
+        $this->loadProgressData($args);
+
+           $revenue = $this->getRevenue($api, $args);
+           $likelyToClose = $this->forecastData["likely_case"] - $this->closed;
+
+           if($likelyToClose > 0)
+               return round( ( $revenue / $likelyToClose ), 1);
+           else
+               return 0;
+   	}
 }
