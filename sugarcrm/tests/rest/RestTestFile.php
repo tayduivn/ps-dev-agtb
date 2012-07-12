@@ -32,10 +32,7 @@ class RestTestFile extends RestTestBase {
 
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
 
         // Create a test contact and a test note
         $contact = new Contact();
@@ -55,7 +52,7 @@ class RestTestFile extends RestTestBase {
     
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
 
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact_id}'");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id = '{$this->_note_id}'");
