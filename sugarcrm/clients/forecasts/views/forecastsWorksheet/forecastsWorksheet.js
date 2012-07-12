@@ -168,6 +168,24 @@
         $.when(this.calculateTotals(), this.render());
     },
 
+    _setForecastColumn: function(fields) {
+        var unusedField;
+        _.each(fields, function(field) {
+            if (app.config.showBuckets) {
+                if (field.name == "forecast") {
+                    field.enabled = false;
+                    unusedField = field;
+                }
+            } else {
+                if (field.name == "commit_stage") {
+                    field.enabled = false;
+                    unusedField = field;
+                }
+            }
+        });
+        return unusedField;
+    },
+
     /**
      * Renders view
      */
@@ -179,20 +197,22 @@
         }
         $("#view-sales-rep").show();
         $("#view-manager").hide();
-        
+
+        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+
         app.view.View.prototype._render.call(this);
-        
+
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
-        var fields = this.meta.panels[0].fields;
+        var fields = _.without(this.meta.panels[0].fields, unusedField);
         var columnKeys = {};
 
-        for( var i = 0; i < fields.length; i++ )  {
-            var name = fields[i].name;
-            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
-            columnKeys[name] = i;
-        }
+        _.each(fields, function(field, key){
+            var name = field.name;
+            columnDefs.push( { "sName": name, "aTargets": [ key ] } );
+            columnKeys[name] = key;
+        });
 
         this.gTable = this.$('.worksheetTable').dataTable(
             {
