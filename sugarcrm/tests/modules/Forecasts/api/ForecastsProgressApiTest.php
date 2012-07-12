@@ -41,7 +41,7 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $manager;
     protected static $quota;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
         //create manager and a sales rep to report to the manager
         self::$manager = SugarTestUserUtilities::createAnonymousUser();
@@ -111,7 +111,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $forecast->opp_weigh_value = 60000 / 3;
         $forecast->save();
 
-        parent::setUpBeforeClass();
+        parent::setUp();
     }
 
     public function tearDown()
