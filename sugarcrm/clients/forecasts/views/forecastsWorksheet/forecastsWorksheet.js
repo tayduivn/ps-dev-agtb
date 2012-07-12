@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/ForecastsWorksheets',
+    url: 'rest/v10/ForecastWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -58,6 +58,7 @@
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
+                    self._collection.url = self.url;
                     data.model.save();
                     self.refresh();
                 });
@@ -151,10 +152,6 @@
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
-            }, this);
-            this.context.forecasts.worksheet.on("change", function() {
-            	this.calculateTotals();
-            	this.totalView.render();
             }, this);
         }
     },
@@ -290,8 +287,7 @@
             'amount' : includedAmount
         };
 
-
-        this.context.set("updatedTotals", totals);
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**
@@ -304,8 +300,7 @@
         if(!this.showMe()){
         	return false;
         }
-        //this._collection = this.context.get('collection'); //this.context.worksheet;
-        //this._collection.url = this.createURL();
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
