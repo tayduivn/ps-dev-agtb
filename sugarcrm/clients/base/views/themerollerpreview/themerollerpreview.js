@@ -21,8 +21,14 @@
                 };
         _.extend(params, this.context.attributes.colors);
         var cssLink = app.api.buildURL('bootstrap.css', '', {}, params);
-        console.log(cssLink);
-        $('iframe').contents().find('link[rel=stylesheet]').attr("href", cssLink);
+        $('iframe').hide();
+        self.$(".ajaxLoading").show();
+        $.get(cssLink)
+            .success(function(data) {
+                $('iframe').contents().find('style').html(data);
+                self.$(".ajaxLoading").hide();
+                $('iframe').show();
+            });
         $('iframe').contents().find('body').css("backgroundColor", "transparent");
     }
 })
