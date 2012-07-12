@@ -95,7 +95,7 @@
 </form>
 <div>
 
-    {if disabledDisplayModules}
+    {if $disabledDisplayModules}
     <br>
     <p>
         {$mod.LBL_PORTAL_DISABLED_MODULES}
