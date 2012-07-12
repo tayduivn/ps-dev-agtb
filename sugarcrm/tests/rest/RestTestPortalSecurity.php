@@ -59,6 +59,7 @@ class RestTestPortalSecurity extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->notes = array();
+        $this->kbdocs = array();
     }
     public function tearDown()
     {
@@ -97,6 +98,11 @@ class RestTestPortalSecurity extends RestTestBase {
             $noteIds[] = $note->id;
         }
         $noteIds = "('".implode("','",$noteIds)."')";
+        $kbdocIds = array();
+        foreach ( $this->kbdocs as $kbdoc ) {
+            $kbdocIds[] = $kbdoc->id;
+        }
+        $kbdocIds = "('".implode("','",$kbdocIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -115,6 +121,8 @@ class RestTestPortalSecurity extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM cases_bugs WHERE bug_id IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
         $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
         
         parent::tearDown();
     }
@@ -264,6 +272,44 @@ class RestTestPortalSecurity extends RestTestBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
+        // Add some KBDocuments
+        for ( $i = 0 ; $i < 5 ; $i++ ) {
+            $kbdoc = new KBDocument();
+            $kbdoc->kbdocument_name = "KBDocument ".($i+1)." - ".create_guid();
+            $kbdoc->body = 'This is a document for the unit test system';
+            $startDate = new DateTime();
+            $startDate->modify('-7 weeks');
+            $endDate = new DateTime();
+            $endDate->modify('+7 weeks');
+            $kbdoc->active_date = $startDate->format('Y-m-d');
+            $kbdoc->exp_date = $endDate->format('Y-m-d');
+            $kbdoc->status_id = 'Published';
+            $kbdoc->is_external_article = '1';
+
+            switch($i) {
+                case 0:
+                    $kbdoc->status_id = 'Not Published';
+                    break;
+                case 1:
+                    $kbdoc->is_external_article = '0';
+                    break;
+                case 2:
+                    // Set the start date to the future.
+                    $startDate->modify('+8 weeks');
+                    $kbdoc->active_date = $startDate->format('Y-m-d');
+                    break;
+                case 3:
+                    // Set the end date to the past
+                    $endDate->modify('-8 weeks');
+                    $kbdoc->exp_date = $endDate->format('Y-m-d');
+                    break;
+            }
+
+            $kbdoc->save();
+            $this->kbdocs[] = $kbdoc;
+        }
+
+
         // How about some cases?
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $acase = new aCase();
@@ -575,6 +621,26 @@ class RestTestPortalSecurity extends RestTestBase {
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
+
+
+        // Validate KBDocuments
+        $restReply = $this->_restCall("KBDocuments/");
+        foreach ( $restReply['reply']['records'] as $kbdoc ) {
+            $this->assertEquals('1',$kbdoc['is_external_article']);
+            $this->assertEquals('Published',$kbdoc['status_id']);
+            $startTime = DateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
+            $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);
+            $endTime = DateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp();
+            $this->assertGreaterThan(time(),$endTime,"Current date is after: ".$kbdoc['exp_date']);
+        }
+        // Should not be able to fetch some of the records, let's test that.
+        for ( $i = 0; $i < 4 ; $i++ ) {
+            $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[$i]->id);
+            $this->assertEquals('not_found',$restReply['reply']['error']);
+        }
+
+        $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[4]->id);
+        $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
 
     }
 }

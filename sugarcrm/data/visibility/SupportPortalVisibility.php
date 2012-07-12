@@ -88,8 +88,11 @@ class SupportPortalVisibility extends SugarVisibility
                 break;
             case 'KBDocuments':
                 // KBDocuments: Any KBDocument where is_external_article = 1 AND ( exp_date is empty or > today ) AND status_id = Published
-                if ( $queryPart == 'where' ) {
-                    $queryPart = " {$table_alias}.is_external_article = 1 AND ( {$table_alias}.exp_date IS NULL OR {$table_alias}.exp_date = '' OR {$table_alias}.exp_date > NOW() ) AND {$table_alias}.status_id = 'Published' ";
+                if ( $queryType == 'where' ) { 
+                    $queryPart = " {$table_alias}.is_external_article = 1 "
+                        ."AND ( {$table_alias}.exp_date IS NULL OR {$table_alias}.exp_date = '' OR {$table_alias}.exp_date > NOW() ) "
+                        ."AND ( {$table_alias}.active_date IS NULL OR {$table_alias}.active_date = '' OR {$table_alias}.active_date < NOW() ) "
+                        ."AND {$table_alias}.status_id = 'Published' ";
                 }
 
                 break;
