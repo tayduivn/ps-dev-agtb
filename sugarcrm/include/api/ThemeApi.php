@@ -72,8 +72,8 @@ class ThemeApi extends SugarApi
     public function generateBootstrapCss($api, $args)
     {
         // Validating arguments
-        $platform = $args['platform'] ? $args['platform'] : "base";
-        $custom = $args['custom'] ? $args['custom'] : null;
+        $platform = isset($args['platform']) ? $args['platform'] : "base";
+        $custom = isset($args['custom']) ? $args['custom'] : null;
 
         $variables = $this->get_less_vars($this->getThemeVarsLocation());
 
@@ -108,8 +108,8 @@ class ThemeApi extends SugarApi
             $output = array();
 
             // Validating arguments
-            $platform = $args['platform'] ? $args['platform'] : "base";
-            $custom = $args['custom'] ? $args['custom'] : null;
+            $platform = isset($args['platform']) ? $args['platform'] : "base";
+            $custom = isset($args['custom']) ? $args['custom'] : null;
 
             if (file_exists($this->getThemeVarsLocation($platform, $custom))) {
                 $variablesLess = file_get_contents($this->getThemeVarsLocation($platform, $custom));
@@ -146,8 +146,8 @@ class ThemeApi extends SugarApi
         }
 
         // Validating arguments
-        $platform = $args['platform'] ? $args['platform'] : "base";
-        $custom = $args['custom'] ? $args['custom'] : null;
+        $platform = isset($args['platform']) ? $args['platform'] : "base";
+        $custom = isset($args['custom']) ? $args['custom'] : null;
 
         // Gets the themes files
         $myTheme = $this->getThemeLocation($platform, $custom);
@@ -158,7 +158,7 @@ class ThemeApi extends SugarApi
         try {
             // if reset=true is passed
             // Override variables.less with the default theme
-            if ($args["reset"] && $args["reset"] == true) {
+            if (isset($args["reset"]) && $args["reset"] == true) {
 
                 $this->write_file($myThemeVars, file_get_contents($defaultThemeVars));
 
@@ -166,7 +166,7 @@ class ThemeApi extends SugarApi
                 // else
                 // Override the custom variables.less with the given vars
 
-                $myThemeVarsFileContents = file_get_contents($myThemeVars);
+                $myThemeVarsFileContents = file_exists($myThemeVars) ? file_get_contents($myThemeVars) : file_get_contents($defaultThemeVars);
                 foreach ($args as $lessVar => $lessValue) {
                     // escape the args that are not less variables
                     if ($lessVar == "platform" || $lessVar == "custom" || $lessVar == "preview") continue;
