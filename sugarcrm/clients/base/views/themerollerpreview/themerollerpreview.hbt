@@ -1,8 +1,13 @@
-<div class="tab-content span5" id="folded">
-    <div class="tab-pane active">
+<div class="tab-content" id="folded">
+    <div class="active hero-unit">
         <div class="block">
             <h4>Theme Preview</h4>
-            <iframe src="./include/styleguide/preview.html" style="width: 100%; border: 0; height: 50%;" allowtransparency="true"></iframe>
+
+            <div class="ajaxLoading" style="margin: 1em;">
+                <p style="text-align: center;">Loading Preview</p>
+                <p style="text-align: center;"><img src="./include/styleguide/img/ajax-loader.gif"></p>
+            </div>
+            <iframe src="./include/styleguide/preview.html" style="width: 100%; border: 0; height: 500px;" allowtransparency="true"></iframe>
             
         </div>
     </div>

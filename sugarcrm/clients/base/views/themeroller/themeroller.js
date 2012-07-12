@@ -61,7 +61,7 @@
         var url = app.api.buildURL('theme', '', {}, {});
         // save the theme
         app.api.call('create', url, params, {success: function(data) {
-            alert('saved');
+            window.location.reload();
         }});
     },
     resetTheme: function() {
@@ -72,7 +72,7 @@
             };
         var url = app.api.buildURL('theme', '', {}, {});
         app.api.call('create', url, params, {success: function(data) {
-            self.loadTheme();
+            window.location.reload();
         }});
     },
     previewTheme: function() {
