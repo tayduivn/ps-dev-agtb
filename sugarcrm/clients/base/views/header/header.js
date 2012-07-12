@@ -9,7 +9,6 @@
     events: {
         'click #moduleList li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
-        'click .cube': 'onHomeClicked',
         'click .typeahead a': 'clearSearch'
     },
 
@@ -64,11 +63,6 @@
         this.$(evt.currentTarget).parent().addClass('active');
         app.router.navigate(moduleHref, {trigger: true});
     },
-    onHomeClicked: function(evt) {
-        // Just removes active on modules for now.
-        // TODO: Maybe we should highlight the "cube"?
-        this.$('#moduleList li').removeClass('active');
-    },
     onCreateClicked: function(evt) {
         var moduleHref, hashModule;
         moduleHref = evt.currentTarget.hash;
@@ -102,9 +96,8 @@
                     if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
                         app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
                     } else {
-                        var singular = (singularModules[loadedModule]) ? singularModules[loadedModule] : loadedModule;
                         if(app.acl.hasAccess('create', loadedModule)) {
-                            self.createListLabels.push({label:'Create '+singular, module: loadedModule});
+                            self.createListLabels.push(loadedModule);
                         }
                     }
                 });

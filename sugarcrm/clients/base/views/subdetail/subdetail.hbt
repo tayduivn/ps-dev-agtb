@@ -2,8 +2,8 @@
 {{#each meta.panels}}
 <div class="tab-pane active">
     <div class="block">
-        <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
-        <h4><span class="label label-note">Note</span> {{../model.attributes.name}}</h4>
+        <a href="javascript:void(0)" data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
+        <h4><span class="label label-{{../module}}">{{str "LBL_MODULE_NAME_SINGULAR" ../module}}</span> {{../model.attributes.name}}</h4>
         <br>
 
         <div class="card2">

@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Bugs',
+  'LBL_MODULE_NAME_SINGULAR'	=> 'Bug',
   'LBL_MODULE_TITLE' => 'Bug Tracker: Home',
   'LBL_MODULE_ID' => 'Bugs',
   'LBL_SEARCH_FORM_TITLE' => 'Bug Search',
@@ -58,6 +59,7 @@ $mod_strings = array (
   'LBL_RESOLUTION' => 'Resolution:',
   'LBL_RELEASE' => 'Release:',
   'LNK_NEW_BUG' => 'Report Bug',
+  'LNK_CREATE'  => 'Report Bug',
   'LNK_BUG_LIST' => 'View Bugs',
   'LBL_SHOW_MORE' => 'Show More Bugs',
   'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this contact from the bug?',

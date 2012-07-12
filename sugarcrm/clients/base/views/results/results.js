@@ -27,6 +27,7 @@
     initialize: function(options) {
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
+        this.moduleListSingular = app.lang.getAppListStrings("moduleListSingular");
     },
 
     /**
@@ -39,7 +40,6 @@
             // Add the records to context's collection
             if(data && data.records && data.records.length) {
                 self.updateCollection(data);
-                
                 app.view.View.prototype._renderHtml.call(self);
                 self.renderSubnav();
             } else {
