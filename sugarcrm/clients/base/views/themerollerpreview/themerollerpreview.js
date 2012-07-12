@@ -21,13 +21,13 @@
                 };
         _.extend(params, this.context.attributes.colors);
         var cssLink = app.api.buildURL('bootstrap.css', '', {}, params);
-        $('iframe').hide();
+        $('iframe#previewTheme').hide();
         self.$(".ajaxLoading").show();
         $.get(cssLink)
             .success(function(data) {
-                $('iframe').contents().find('style').html(data);
+                $('iframe#previewTheme').contents().find('style').html(data);
                 self.$(".ajaxLoading").hide();
-                $('iframe').show();
+                $('iframe#previewTheme').show();
             });
         $('iframe').contents().find('body').css("backgroundColor", "transparent");
     }

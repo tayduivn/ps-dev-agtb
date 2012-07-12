@@ -6,9 +6,9 @@
  */
 ({
     events: {
-        "click [name=save_button]" : "saveTheme",
-        "click [name=reset_button]" : "resetTheme",
-        "blur input" : "previewTheme"
+        "click [name=save_button]": "saveTheme",
+        "click [name=reset_button]": "resetTheme",
+        "blur input": "previewTheme"
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -17,8 +17,8 @@
         this.loadTheme();
     },
     _renderHtml: function() {
-        if (this.lessVars && this.lessVars.rel && this.lessVars.rel.length>0) {
-            _.each(this.lessVars.rel, function (obj, key) {
+        if (this.lessVars && this.lessVars.rel && this.lessVars.rel.length > 0) {
+            _.each(this.lessVars.rel, function(obj, key) {
                 this.lessVars.rel[key].relname = this.lessVars.rel[key].value;
                 this.lessVars.rel[key].relname = this.lessVars.rel[key].relname.replace('@', '');
             }, this);
@@ -27,7 +27,7 @@
         app.view.View.prototype._renderHtml.call(this);
         _.each(this.$('.hexvar[rel=colorpicker]'), function(obj, key) {
             $(obj).blur(function() {
-                $(this).parent().parent().find('.swatch-col').css('backgroundColor', $(this).val() );
+                $(this).parent().parent().find('.swatch-col').css('backgroundColor', $(this).val());
             });
         }, this);
         this.$('.hexvar[rel=colorpicker]').colorpicker();
@@ -52,6 +52,8 @@
                 platform: this.platform,
                 custom: this.customTheme
             };
+        self.showMessage('Saving theme....');
+
         // get the value fron each input
         this.$('input').each(function() {
             var $this = $(this);
@@ -61,7 +63,7 @@
         var url = app.api.buildURL('theme', '', {}, {});
         // save the theme
         app.api.call('create', url, params, {success: function(data) {
-            window.location.reload();
+            self.showMessage('Done', 3000);
         }});
     },
     resetTheme: function() {
@@ -70,9 +72,12 @@
                 platform: this.platform,
                 custom: this.customTheme
             };
+        self.showMessage('Restoring default theme....');
+
         var url = app.api.buildURL('theme', '', {}, {});
         app.api.call('create', url, params, {success: function(data) {
-            window.location.reload();
+            self.showMessage('Done', 3000);
+            self.loadTheme();
         }});
     },
     previewTheme: function() {
@@ -82,5 +87,20 @@
             params[$this.attr("name")] = $this.hasClass('bgvar') ? '"' + $this.val() + '"' : $this.val();
         });
         this.context.set("colors", params);
+    },
+    showMessage: function(message, timer) {
+
+        ajaxStatus = new SUGAR.ajaxStatusClass() || null;
+
+        if (ajaxStatus) {
+            if (timer) {
+                ajaxStatus.flashStatus(message, timer);
+                window.setTimeout('ajaxStatus.hideStatus();', timer);
+            } else {
+                ajaxStatus.showStatus(message);
+            }
+        } else {
+            console.log(message);
+        }
     }
 })
