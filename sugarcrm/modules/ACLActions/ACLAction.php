@@ -55,8 +55,7 @@ class ACLAction  extends SugarBean
                 $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' AND deleted=0 ";
                 $result = $db->query($query);
                 //only add if an action with that name and category don't exist
-                $row=$db->fetchByAssoc($result);
-                if ($row == null) {
+                if ($db->fetchByAssoc($result)) {
                     $action->name = $action_name;
                     $action->category = $category;
                     $action->aclaccess = $action_def['default'];
