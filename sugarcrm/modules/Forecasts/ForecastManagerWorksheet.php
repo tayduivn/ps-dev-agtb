@@ -19,30 +19,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-interface IChartAndWorksheet
-{
 
-    /**
-     * @abstract
-     *
-     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
-     * @return mixed
-     */
-    public function getChartDefinition($id = '');
+class ForecastManagerWorksheet extends SugarBean {
 
-    /**
-     * @abstract
-     *
-     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
-     * @return mixed
-     */
-    public function getWorksheetDefinition($id = '');
+    var $id;
+    var $name;
+    var $forecast;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
+    var $object_name = 'ForecastManagerWorksheet';
+    var $module_dir = 'Forecasts';
+    var $table_name = 'forecasts';
+    var $disable_custom_fields = true;
 
-    /**
-     * @param Report $report
-     * @return array
-     */
-    public function getGridData(Report $report);
+    function __construct() {
+        parent::__construct();
+    }
 
+    function save($check_notify = false)
+    {
+
+    }
 
 }
+

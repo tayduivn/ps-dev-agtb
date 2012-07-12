@@ -19,30 +19,42 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-interface IChartAndWorksheet
-{
+
+class ForecastWorksheet extends SugarBean {
+
+    var $id;
+    var $name;
+    var $forecast;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
+    var $object_name = 'ForecastWorksheet';
+    var $module_dir = 'Forecasts';
+    var $table_name = 'opportunities';
+    var $disable_custom_fields = true;
+
+    function __construct() {
+        parent::__construct();
+    }
 
     /**
-     * @abstract
+     * Override save here to handle saving to the real tables.  Currently forecast is mapped to opportunities
+     * and likely_case, worst_case and best_case go to both worksheets and opportunities.
      *
-     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
-     * @return mixed
-     */
-    public function getChartDefinition($id = '');
-
-    /**
-     * @abstract
      *
-     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
-     * @return mixed
+     * @param bool $check_notify
      */
-    public function getWorksheetDefinition($id = '');
+    function save($check_notify = false)
+    {
+        //Update the Opportunities bean
+        $opp = new Opportunity();
+        $opp->retrieve($this->id);
+        $opp->forecast = ($this->forecast) ? 1 : 0;
+        $opp->save();
 
-    /**
-     * @param Report $report
-     * @return array
-     */
-    public function getGridData(Report $report);
+        //Update the Worksheet bean
 
+    }
 
 }
+

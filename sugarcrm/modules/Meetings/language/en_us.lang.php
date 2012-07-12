@@ -49,6 +49,7 @@ $mod_strings = array (
 	'LBL_DURATION_MINUTES' => 'Duration Minutes:',
 	'LBL_DURATION' => 'Duration:',
 	'LBL_EMAIL' => 'Email',
+  'LBL_ACCOUNT_NAME' => 'Account',
 	'LBL_FIRST_NAME' => 'First Name',
 	'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
 	'LBL_HOURS_ABBREV' => 'h',

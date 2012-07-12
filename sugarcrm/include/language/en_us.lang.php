@@ -65,6 +65,8 @@ $app_list_strings = array (
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
+    'ForecastWorksheets' => 'ForecastWorksheets',
+    'ForecastManagerWorksheets' => 'ForecastManagerWorksheets',
     'MergeRecords'=>'Merge Records',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
@@ -338,6 +340,14 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+  //BEGIN SUGARCRM flav=pro ONLY
+  'commit_stage_dom' =>
+  array (
+    '100' => 'Include',
+    '70' => 'Likely',
+    '50' => 'Omit',
+  ),
+  //END SUGARCRM flav=pro ONLY
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',

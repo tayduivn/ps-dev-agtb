@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/Forecasts/worksheet',
+    url: 'rest/v10/ForecastsWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -31,8 +31,6 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.forecasts.worksheet;
-        
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
         
@@ -60,16 +58,24 @@
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
+                    data.model.save();
                     self.refresh();
                 });
             },
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile("<tr><th colspan='5' style='text-align: right;'>Included Total</th>" +
-                    "<th>{{includedAmount}}</th><th>{{includedBest}}</th><th>{{includedLikely}}</th></tr>" +
-                    "<tr class='overall'><th colspan='5' style='text-align: right;'>Overall Total</th>" +
-                    "<th>{{overallAmount}}</th><th>{{overallBest}}</th><th>{{overallLikely}}</th></tr>");
+                var hb = Handlebars.compile("<tr>" +
+                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
+                								"<th>{{includedAmount}}</th>" + 
+                								"<th>{{includedBest}}</th>" + "<th>{{includedLikely}}</th>" +
+                							"</tr>" +
+                							"<tr class='overall'>" +
+                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
+                    							"<th>{{overallAmount}}</th>" + 
+                    							"<th>{{overallBest}}</th>" + 
+                    							"<th>{{overallLikely}}</th>" + 
+                    						"</tr>");
                 $('#summary').html(hb(self.model.toJSON()));
                 return this;
             }
@@ -108,88 +114,6 @@
     },
 
     /**
-     * Adds the icon and associated events/handlers to the clickToEdit field
-     * @param field
-     * @private
-     */
-    _addCTEIcon: function(field) {
-        // add icon markup
-        var outerElement = field.$el;
-        field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-
-        // add events
-        field.showCteIcon = function(){
-            this.$el.parent().css('overflow-x', 'visible');
-            this.$el.before(this.cteIcon);
-        };
-
-        field.hideCteIcon = function(){
-            this.$el.parent().find(this.cteIcon).detach();
-            this.$el.parent().css('overflow-x', 'hidden');
-        };
-
-        var events = field.events || {};
-        field.events = _.extend(events, {
-            'mouseenter': 'showCteIcon',
-            'mouseleave': 'hideCteIcon'
-        });
-        field.delegateEvents();
-
-    },
-
-    /**
-     * Renders the field as clickToEditable
-     * @private
-     */
-    _renderClickToEditField: function(field) {
-        var self = this;
-        this._addCTEIcon(field);
-
-        field.$el.editable(function(value, settings){
-                return value;
-            },
-            {
-                select: true,
-                field: field,
-                view: self,
-                onedit:function(settings, original){
-                    // hold value for use later in case user enters a +/- percentage
-                    if (settings.field.type == "int"){
-                        settings.field.holder = $(original).html();
-                    }
-                    console.log("onedit");
-                },
-                onreset:function(settings, original){
-                    console.log("onreset");
-                },
-                onsubmit:function(settings, original){
-                    console.log("onsubmit");
-                },
-                callback: function(value, settings) {
-                    try{
-                        // if it's an int, and the user entered a +/- percentage, calculate it
-                        if(settings.field.type == "int"){
-                            orig = settings.field.holder;
-                            if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
-                                value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
-                            } else if (!value.match(/^[0-9]*$/)) {
-                                value = orig;
-                            }
-                        }
-
-                        settings.field.model.set(settings.field.name, value);
-                        settings.field.model.url = self.url;
-                        settings.field.model.save(settings.field.name, value);
-                    } catch (e) {
-                        app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
-                    }
-                    return value;
-                }
-            }
-        );
-    },
-
-    /**
      * Renders a field.
      *
      * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
@@ -199,16 +123,17 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit) {
-            this._renderClickToEditField(field);
+        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit === true) {
+            new app.view.ClickToEditField(field, this);
         }
     },
 
-    bindDataChange: function() {
-        if(this._collection)
-        {
-            this._collection.on("reset", this.refresh, this);
-        }
+    bindDataChange: function(params) {
+
+        var self = this;
+        this._collection = this.context.forecasts.forecastworksheets;
+        this._collection.on("reset", function() { self.refresh(); }, this);
+
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
@@ -226,6 +151,10 @@
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
+            }, this);
+            this.context.forecasts.worksheet.on("change", function() {
+            	this.calculateTotals();
+            	this.totalView.render();
             }, this);
         }
     },
@@ -269,6 +198,7 @@
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
+                "aaSorting": [],
                 "bInfo":false,
                 "bPaginate":false
             }
@@ -361,7 +291,7 @@
         };
 
 
-        this.context.forecasts.set("updatedTotals", totals);
+        this.context.set("updatedTotals", totals);
     },
 
     /**
@@ -374,8 +304,8 @@
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheet;
-        this._collection.url = this.createURL();
+        //this._collection = this.context.get('collection'); //this.context.worksheet;
+        //this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
@@ -412,8 +342,6 @@
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheet;
-        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 

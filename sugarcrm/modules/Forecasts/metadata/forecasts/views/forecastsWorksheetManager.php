@@ -35,6 +35,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                     'label' => 'LBL_QUOTA',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true,
                 ),
                 
                 array(
@@ -60,7 +61,6 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                     'label' => 'LBL_LIKELY_CASE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
                 ),
                 array(
                     'name' => 'likely_adjusted',
