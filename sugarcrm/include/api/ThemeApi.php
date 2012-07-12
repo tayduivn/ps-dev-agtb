@@ -209,6 +209,7 @@ class ThemeApi extends SugarApi
         if ($min === true) {
             $less->setFormatter("compressed");
         }
+        $variables["baseUrl"] = '"' . $GLOBALS['sugar_config']['site_url'] . '/include/styleguide"';
         return $less->parse($variables);
     }
 
