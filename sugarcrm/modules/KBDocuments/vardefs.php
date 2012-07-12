@@ -481,15 +481,6 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
       'reportable' => false,
       'read-only' => true,
   ),
-  'tag_list'=>
-  array (
-      'name' => 'tag_list',
-      'type' => 'text',
-      'source' => 'non-db',
-      'reportable' => false,
-      'read-only' => true,
-  ),
-
   'parent_id' =>
   array (
     'name' => 'parent_id',

@@ -46,7 +46,7 @@ class KBDocumentsApiHelper extends SugarBeanApiHelper
                 $thisFile['file_uri'] = $this->api->getResourceURI(array('DocumentRevisions',$row['rev_id'],'file','filename'));
                 $files[] = $thisFile;
             }
-            $data['attachments_list'] = $files;
+            $data['attachment_list'] = $files;
         }
 
         return $data;
