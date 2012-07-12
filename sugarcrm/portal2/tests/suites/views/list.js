@@ -4,7 +4,7 @@ describe("List View", function() {
     beforeEach(function() {
         var controller;
         //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
-        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/list', 'list', 'js', function(d){ return d;});
+        controller = SugarTest.loadFile('../../../../sugarcrm/clients/base/views/list', 'list', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
         ListView = app.view.declareComponent('view', 'List', null, controller);
