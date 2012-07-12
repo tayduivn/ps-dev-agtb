@@ -434,7 +434,7 @@ class Opportunity extends SugarBean
             {
                 if($this->probability < $key)
                 {
-                    $this->commit_stage = $value;
+                    $this->commit_stage = $key;
                     break;
                 }
             }

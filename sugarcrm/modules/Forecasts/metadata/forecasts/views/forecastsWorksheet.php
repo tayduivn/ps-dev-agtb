@@ -15,6 +15,15 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                 ),
                 array(
+                    'name' => 'commit_stage',
+                    'type' => 'enum',
+                    'view' => 'edit',
+                    'options' => 'commit_stage_dom',
+                    'label' => 'LBL_FORECAST',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
                     'link' => true,
