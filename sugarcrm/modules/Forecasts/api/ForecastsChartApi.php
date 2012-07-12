@@ -186,7 +186,7 @@ class ForecastsChartApi extends ChartApi
             }
 
             // set the variables
-            $dataArray['values'][$key]['goalmarkervalue'] = array(intval($quota['amount']), intval($likely));
+            $dataArray['values'][$key]['goalmarkervalue'] = array(floatval($quota['amount']), floatval($likely));
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
 
