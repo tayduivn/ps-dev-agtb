@@ -27,9 +27,12 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 *}
+<link rel="stylesheet" type="text/css" href="portal2/lib/twitterbootstrap/css/bootstrap.css" />
 <h1>Customize Theme</h1>
-<div id="themes" style=""></div>
-<div class="content"></div>
+<div class="themes" style="">
+    <div class="content"></div>
+</div>
+
 
 
 
@@ -45,7 +48,7 @@
         logLevel:'TRACE',
         logWriter:'ConsoleWriter',
         logFormatter:'SimpleFormatter',
-        serverUrl:'./rest/v10',
+        serverUrl:'{/literal}{$siteURL}{literal}/rest/v10',
         serverTimeout:30,
         maxQueryResult:20,
         maxSearchQueryResult:3,
@@ -73,15 +76,18 @@ SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
             app.AUTH_ACCESS_TOKEN = authAccessToken;
             app.AUTH_REFRESH_TOKEN = authAccessToken;
             app.init({
-                el:"themes",
+                el:".themes",
                 contentEl:".content"
             });
             return app;
         }
     });
 })(SUGAR.App);
-
-//Call initTheme with the session id as token
+// Reset app if it already exists
+if (App){
+    App.destroy();
+}
+// Call initTheme with the session id as token
 var App = SUGAR.App.theme.initTheme({/literal}'{$token}'{literal});
 
 // should already be logged in to sugar, don't need to log in to sidecar.
@@ -95,7 +101,6 @@ App.events.off("app:sync:complete");
 
 //force app sync and load the appropriate view on success
 App.sync(function (data) {
-            console.log("app sync success loading view");
             //TODO the module probably shouldnt be cases
             App.controller.loadView({
                 module:'Cases',

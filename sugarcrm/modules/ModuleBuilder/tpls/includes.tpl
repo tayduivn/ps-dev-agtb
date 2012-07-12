@@ -64,7 +64,7 @@
 <script src='sidecar/lib/sinon/sinon.js'></script>
 <script src='sidecar/lib/sugarapi/sugarapi.js'></script>
 <script src='sidecar/src/app.js'></script>
-<script src='include/javascript/sugarAuthStore.js'></script>
+
 <script src='sidecar/src/utils/utils.js'></script>
 <script src='sidecar/src/core/cache.js'></script>
 <script src='sidecar/src/core/events.js'></script>
@@ -91,6 +91,7 @@
 <script src='sidecar/src/view/alert.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
-
+<script src='include/javascript/sugarAuthStore.js'></script>
+<script src='portal2/lib/twitterbootstrap/js/bootstrap-colorpicker.js'></script>
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />
