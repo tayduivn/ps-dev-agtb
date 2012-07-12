@@ -31,6 +31,7 @@
 <div id='dcmenutop'></div>
 <div id='dcmenu' class='dcmenu dcmenuFloat' style="z-index: 1030;">
 <div id='ie8GradientFix'></div>
+    <div class="inner">
   {include file="_headerModuleList.tpl" theme_template=true}
     
     {if $AUTHENTICATED}
@@ -39,5 +40,6 @@
     {include file="_search.tpl" theme_template=true}
     
 	{/if}
+        </div>
 </div>
 {/if}

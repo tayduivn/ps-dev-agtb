@@ -14,26 +14,17 @@ ul.megamenu, ul.moduleTabMore, ul.sf-sub-modulelist{
 }
 
 .dcmenu{
-    color:blue;
-    height:55px;
-    min-width: 950px;
-    background-color: #0d3a62;
-    height: 55px;
-    background: -moz-linear-gradient(center top,
-    rgba(32,81,124,.9) 0%, rgba(13,58,98,.9) 78%, rgba(0,0,0,.3) 78%, rgba(0,0,0,0) 100%);
-    background-color: transparent;
-    background-image: -webkit-gradient(
-        linear,
-        left top,
-        left bottom,
-        color-stop(0, rgba(32,81,124,.9)),
-        color-stop(0.78, rgba(13,58,98,.9)),
-        color-stop(0.78, rgba(0,0,0,.3)),
-        color-stop(1, rgba(0,0,0,0))
-    );
-
-    height: 43px\9;
+    .inner {
+        height: 44px;
+        min-width: 950px;
+        padding-left:  20px;
+        padding-right: 20px;
+        #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+        @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @red;
+        .box-shadow(@shadow);
+    }
 }
+
 #ie8GradientFix{
     position: absolute;
     z-index: -1;
@@ -379,10 +370,10 @@ ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
 
 
 #moduleList .sf-menu li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
-    padding:  8px 12px;
-    line-height: 1.9;
+    padding:  13px 12px;
+    line-height: 19px;
     text-decoration:none;
-    font-size: 14px;
+    font-size: 12px;
     border-right: none;
 }
 
@@ -455,8 +446,18 @@ ul.sf-sub-modulelist li.sfHover,
 #moduleList .sf-menu li a:focus,
 #moduleList .sf-menu li a:hover,
 #moduleList .sf-menu li a:active {
-    background:		#276499;
-    outline:		0;
+    background-color:  @grayDark; // "transparent" is default to differentiate :hover from .active
+    color: @white;
+    text-decoration: none;
+}
+
+#moduleList .sf-menu > li:hover,
+#moduleList .sf-menu > li.sfHover,
+#moduleList .sf-menu > li > a:focus,
+#moduleList .sf-menu > li > a:hover,
+#moduleList .sf-menu > li > a:active {
+    //text-shadow: 0 -1px 0 rgb(0,0,0);
+
 }
 
 ul.megamenu ul a:hover,
@@ -471,7 +472,15 @@ ul.sf-sub-modulelist li a:hover,
 }
 
 #moduleList .sf-menu > li.current > a {
-    background:		#193f61;
+    color: @white;
+    text-decoration: none;
+    background-color: @black;
+    @shadow: inset 0 -1px 0 rgba(0,0,0,.4);
+    .box-shadow(@shadow);
+    text-shadow: 0 -1px 0 rgb(0,0,0);
+    border-bottom: 4px solid darken(@red,15%);
+    font-weight: bold;
+    padding-bottom: 12px;
 }
 #moduleList .sf-menu li.home a {
     height: 28px;
