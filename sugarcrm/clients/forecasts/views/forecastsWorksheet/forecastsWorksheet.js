@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/ForecastsWorksheets',
+    url: 'rest/v10/ForecastWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -30,6 +30,8 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
+        this._collection = this.context.forecasts.forecastworksheets;
+
 
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -58,6 +60,7 @@
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
+                    self._collection.url = self.url;
                     data.model.save();
                     self.refresh();
                 });
@@ -131,7 +134,7 @@
     bindDataChange: function(params) {
 
         var self = this;
-        this._collection = this.context.forecasts.forecastworksheets;
+
         this._collection.on("reset", function() { self.refresh(); }, this);
 
         // listening for updates to context for selectedUser:change
@@ -151,10 +154,6 @@
             this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
-            }, this);
-            this.context.forecasts.worksheet.on("change", function() {
-            	this.calculateTotals();
-            	this.totalView.render();
             }, this);
         }
     },
@@ -290,8 +289,7 @@
             'amount' : includedAmount
         };
 
-
-        this.context.set("updatedTotals", totals);
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**
@@ -304,8 +302,7 @@
         if(!this.showMe()){
         	return false;
         }
-        //this._collection = this.context.get('collection'); //this.context.worksheet;
-        //this._collection.url = this.createURL();
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
