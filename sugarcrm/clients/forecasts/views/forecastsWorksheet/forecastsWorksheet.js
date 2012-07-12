@@ -30,6 +30,8 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
+        this._collection = this.context.forecasts.forecastworksheets;
+
 
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -132,7 +134,7 @@
     bindDataChange: function(params) {
 
         var self = this;
-        this._collection = this.context.forecasts.forecastworksheets;
+
         this._collection.on("reset", function() { self.refresh(); }, this);
 
         // listening for updates to context for selectedUser:change
