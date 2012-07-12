@@ -24,7 +24,6 @@ class SugarAccess {
         if (self::$instance == null) {
             self::$instance = new SugarAccess();
         }
-
         return self::$instance;
     }
 
@@ -42,6 +41,7 @@ class SugarAccess {
      */
     public function filterModules($moduleList) {
         $permittedModules = $this->client->getModules();
+        print (gettype($permittedModules));
         return array_intersect($moduleList, $permittedModules);
     }
 
@@ -151,13 +151,15 @@ class LicenseServerClient {
         return $this->userData["modules"];
     }
 
+
+    public function getInstanceData($email) {
+        return $this->userData["instance"];
+    }
+
     /**
      * Returns instance information
      * @return mixed
      */
-    public function getInstanceData() {
-        return $this->userData["instance"];
-    }
 
     /**
      * Makes a curl call to the license server with supplied url and parameters
@@ -169,7 +171,7 @@ class LicenseServerClient {
         return;
         $curlOp = curl_init($url);
 
-        curl_setopt($curlOp, "CURLOPT_RETURNTRANSFER", true);
+        curl_setopt($curlOp, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlOp, CURLOPT_POST, 1);
         curl_setopt($curlOp, CURLOPT_POSTFIELDS, $data);
 
