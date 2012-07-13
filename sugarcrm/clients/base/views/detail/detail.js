@@ -12,36 +12,35 @@
     },
     _renderHtml: function() {
         app.view.View.prototype._renderHtml.call(this);
-        var fieldsArray = this.$("form[name=detail]").find("span[sfuuid]") || [];
+        var fieldsArray = this.$("span[sfuuid]") || [];
 
-        var that = this;
-        if (fieldsArray.length > that.fieldsToDisplay) {
+        if (fieldsArray.length > this.fieldsToDisplay) {
             _.each(fieldsArray, function(field, i) {
-                if (i > that.fieldsToDisplay - 1) {
+                if (i > this.fieldsToDisplay - 1) {
                     $(field).hide();
                 }
-            });
+            }, this);
             this.$(".more").removeClass("hide");
         }
     },
     showMore: function() {
-        var fieldsArray = this.$("form[name=detail]").find("span[sfuuid]") || [];
+        var fieldsArray = this.$("span[sfuuid]") || [];
         _.each(fieldsArray, function(field, i) {
             $(field).show();
         });
-        this.$(".more").addClass("hide");
-        this.$(".less").removeClass("hide");
+        this.$(".more").toggleClass("hide");
+        this.$(".less").toggleClass("hide");
     },
     hideMore: function() {
-        var fieldsArray = this.$("form[name=detail]").find("span[sfuuid]") || [];
+        var fieldsArray = this.$("span[sfuuid]") || [];
         var that = this;
         _.each(fieldsArray, function(field, i) {
             if (i > that.fieldsToDisplay - 1) {
                 $(field).hide();
             }
         });
-        this.$(".less").addClass("hide");
-        this.$(".more").removeClass("hide");
+        this.$(".less").toggleClass("hide");
+        this.$(".more").toggleClass("hide");
     },
     bindDataChange: function() {
         if (this.model) {

@@ -57,6 +57,7 @@ class ViewPortalConfig extends SugarView
 	function display() 
 	{
         $userList = get_user_array();
+        $userList[''] = '';
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();

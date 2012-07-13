@@ -1,1 +1,1 @@
-                <h1><a href='#{{context.attributes.module}}'>{{context.attributes.module}}</a></h1>
+                <h1><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
