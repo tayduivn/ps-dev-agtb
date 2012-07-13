@@ -2,10 +2,7 @@
 
 require_once('include/SugarAccess/SugarAccess.php');
 
-
 class SugarAccessTest extends PHPUnit_Framework_TestCase{
-
-
 
     public function testFilterModules(){
         $arr = array("Accounts","Contacts");
@@ -172,9 +169,6 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
     }
 
 }
-
-
-
 class LicenseStubClient {
     const licenseServerUrl = "http://licenseserver";
 
@@ -217,7 +211,6 @@ class LicenseStubClient {
         return $this->userData;
     }
 
-
 }
 
 class stubbedFunctions {
@@ -226,8 +219,6 @@ class stubbedFunctions {
         $permittedModules = array("Accounts","Contacts","Opportunities");
         return array_intersect($moduleList, $permittedModules);
     }
-
-
 
 }
 ?>
