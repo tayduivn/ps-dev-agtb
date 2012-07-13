@@ -25,7 +25,7 @@
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
-        this.category = 'Committed',
+        this.category = 'Committed';
         
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.worksheetmanager;
