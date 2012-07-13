@@ -33,9 +33,9 @@
                                 value = orig;
                             }
                         }
-
+                        
                         settings.field.model.set(settings.field.name, value);
-                        settings.field.model.url = settings.view.url;
+                        settings.field.model.url = settings.view.url + "/" + settings.field.model.get("id");
                         settings.field.model.save(settings.field.name, value);
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);

@@ -50,10 +50,15 @@ class ForecastWorksheet extends SugarBean {
         $opp = new Opportunity();
         $opp->retrieve($this->id);
         $opp->forecast = ($this->forecast) ? 1 : 0;
+        $opp->probability = $this->probability;
         $opp->save();
 
         //Update the Worksheet bean
-
+		/*$worksheet  = new Worksheet();
+		$worksheet->retrieve($this->id);
+        $worksheet->best_case = $this->best_case;
+        $worksheet->likely_case = $this->likely_case;
+        $worksheet->save();*/
     }
 
 }
