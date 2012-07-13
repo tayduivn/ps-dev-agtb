@@ -121,8 +121,8 @@ class ForecastsChartApiTest extends RestTestBase
     {
         return array(
             array(1300, 'best'),
-            array(1100, 'likely'),
-            array(900, 'worst')
+            array(1200, 'likely'),
+            array(1100, 'worst')
         );
     }
 
