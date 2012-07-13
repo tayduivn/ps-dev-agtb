@@ -92,7 +92,12 @@ class MetaDataConverter {
     
     /**
      * Takes in a 6.6+ version of mobile|portal|sidecar edit|detail view metadata and
-     * converts it to pre-6.6 format for legacy clients
+     * converts it to pre-6.6 format for legacy clients.
+     * 
+     * NOTE: This will only work for layouts that have only one field per row. For
+     * the 6.6 upgrade that is sufficient since we were only converting portal
+     * and mobile viewdefs. As is, this method will NOT convert grid layout view
+     * defs that have more than one field per row.
      * 
      * @param array $defs
      * @return array
