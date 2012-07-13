@@ -3050,7 +3050,6 @@ ul.sf-sub-modulelist {
 .dcmenu .inner {
   height: 44px;
   min-width: 950px;
-  padding-left: 20px;
   padding-right: 20px;
   background-color: #303030;
   background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
@@ -3381,7 +3380,6 @@ ul.megamenu li li a,
 ul.moduleTabMore li a,
 ul.sf-sub-modulelist li a {
   padding: 4px 10px;
-  font-size: 13px;
 }
 #moduleList .sf-menu ul li a,
 ul.megamenu li a,
@@ -3409,11 +3407,43 @@ ul.moduleTabMore,
 ul.sf-sub-modulelist,
 #moduleList .sf-menu li ul,
 ul.megamenu {
-  box-shadow: #999 0px 5px 10px;
-  -moz-box-shadow: #999 0px 5px 10px;
-  -webkit-box-shadow: #999 0px 5px 10px;
-  border: 1px solid #999999;
-  border-top: 0px;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+#moduleList .sf-menu > li > ul:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: 9px;
+}
+#moduleList .sf-menu > li > ul:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: 10px;
 }
 ul.megamenu,
 #moduleList .sf-menu li > ul {
@@ -3454,7 +3484,7 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus,
 #moduleList .sf-menu ul a:hover,
 #moduleList .sf-menu ul a:active {
-  background: #355B7E;
+  background-color: #1571ce;
   color: #fff;
   outline: 0;
 }
@@ -3472,7 +3502,7 @@ ul.sf-sub-modulelist li a:hover,
 }
 #moduleList .sf-menu li.home a {
   height: 28px;
-  padding-bottom: 7px;
+  padding: 9px 20px 7px 20px;
 }
 /*** arrows **/
 #moduleList .sf-menu a.sf-with-ul {
@@ -3524,7 +3554,7 @@ ul.moduleTabMore,
 }
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected {
-  background-color: #355b7e;
+  background-color: #1571ce;
   color: #fff;
 }
 /* apply hovers to modern browsers */
@@ -3658,7 +3688,6 @@ ul.megamenu .megawrapper ul li.groupLabel {
 ul.megamenu .megawrapper ul li a,
 #moduleList .sf-menu ul .megawrapper ul li a {
   font-weight: normal;
-  font-size: 13px;
   padding: 4px 10px;
   position: relative;
 }
@@ -3835,7 +3864,6 @@ ul#quickCreateULSubnav,
 #quickCreate ul.clickMenu li ul.subnav li a,
 #globalLinksModule ul.clickMenu li ul.subnav li a {
   padding: 4px 10px !important;
-  font-size: 13px !important;
   color: #666666;
   line-height: 1.45;
 }
