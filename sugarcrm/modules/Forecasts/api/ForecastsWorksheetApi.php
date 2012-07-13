@@ -138,6 +138,7 @@ class ForecastsWorksheetApi extends ModuleApi {
 
     public function forecastWorksheetSave($api, $args) {
         require_once('modules/Forecasts/ForecastWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
         $seed = new ForecastWorksheet();
         $seed->loadFromRow($args);
         $sfh = new SugarFieldHandler();
