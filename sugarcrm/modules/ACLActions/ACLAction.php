@@ -97,7 +97,7 @@ class ACLAction  extends SugarBean
                 }
             }
         }else{
-            sugar_die("FAILED TO REMOVE: $category : $name - TYPE $type NOT DEFINED IN modules/ACLActions/actiondefs.php");
+            sugar_die("FAILED TO REMOVE: - CATEGORY : $category - TYPE $type NOT DEFINED IN modules/ACLActions/actiondefs.php");
         }
     }
 
