@@ -144,6 +144,7 @@ class ForecastsFiltersApi extends ModuleApi {
                 'children' => array(),
                 'metadata' => array(
                     "id" => $row['id'],
+                    "user_name" => $row['user_name'],
                     "full_name" => $fullName,
                     "first_name" => $row['first_name'],
                     "last_name" => $row['last_name'],
@@ -156,7 +157,7 @@ class ForecastsFiltersApi extends ModuleApi {
                     'rel' => 'rep',
 
                     // adding id tag for QA's voodoo tests
-                    'id' => 'jstree_node_' . $row['id']
+                    'id' => 'jstree_node_' . $row['user_name']
                 )
             );
 
@@ -205,6 +206,7 @@ class ForecastsFiltersApi extends ModuleApi {
                     // Give myOpp the same metadata as the root Manager user
                     'metadata' => array(
                         "id" => $treeData['metadata']['id'],
+                        "user_name" => $treeData['metadata']['user_name'],
                         "full_name" => $treeData['metadata']['full_name'],
                         "first_name" => $treeData['metadata']['first_name'],
                         "last_name" => $treeData['metadata']['last_name'],
@@ -216,7 +218,7 @@ class ForecastsFiltersApi extends ModuleApi {
                         'rel' => 'my_opportunities',
 
                         // adding id tag for QA's voodoo tests
-                        'id' => 'jstree_node_myopps_' . $treeData['metadata']['id']
+                        'id' => 'jstree_node_myopps_' . $treeData['metadata']['user_name']
 
                     )
                 );
@@ -236,6 +238,7 @@ class ForecastsFiltersApi extends ModuleApi {
                         // Give myOpp the same metadata as the root Manager user
                         'metadata' => array(
                             "id" => $parentUser->id,
+                            "user_name" => $parentUser->user_name,
                             "full_name" => $parentUser->full_name,
                             "first_name" => $parentUser->first_name,
                             "last_name" => $parentUser->last_name,

@@ -2,9 +2,9 @@
     <div class="span5 tab-content">
         {{#each meta.panels}}
         <div class="tab-pane active">
-            <div class="block" id="">
+            <div class="block">
                 <div class="card2">
-                    <a data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
+                    <a href="javascript:void(0)" data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
                     <h4>{{str "LBL_MODULE_NAME" ../model.attributes._module}}: {{../model.attributes.name}}</h4>
                     {{#each fields}}
                     {{field ../../this}}

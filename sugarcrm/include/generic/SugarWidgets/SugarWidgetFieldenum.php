@@ -29,13 +29,13 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
     public function queryFilterEmpty($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
-        return "(coalesce(length($column),0) = 0 OR $column = '^^')";
+        return "(coalesce(" . $this->reporter->db->convert($column, "length") . ",0) = 0 OR $column = '^^')";
     }
 
     public function queryFilterNot_Empty($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
-        return "(coalesce(length($column),0) > 0 AND $column != '^^' )\n";
+        return "(coalesce(" . $this->reporter->db->convert($column, "length") . ",0) > 0 AND $column != '^^' )\n";
     }
 
 	public function queryFilteris($layout_def) {

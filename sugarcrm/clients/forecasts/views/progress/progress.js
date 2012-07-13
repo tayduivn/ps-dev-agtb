@@ -10,14 +10,20 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
+        this.model = this.context.forecasts.progress;
+        this.worksheetCollection = this.context.forecasts.worksheet;
     },
 
     bindDataChange: function () {
-        this.model = this.context.forecasts.progress;
-        this.worksheetCollection = this.context.forecasts.worksheet;
-        this.model.on('change', this.render);
-        this.worksheetCollection.on('change reset', this.calculatePipelineSize);
-        this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
+        if (this.model) {
+            this.model.on('change', this.render);
+        }
+        if (this.worksheetCollection) {
+            this.worksheetCollection.on('change reset', this.calculatePipelineSize);
+        }
+        if (this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
+        }
     },
     
     calculatePipelineSize: function() {
@@ -55,7 +61,7 @@
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
         var urlParams = $.param({
-            userId: self.context.forecasts.get("selectedUser").id,
+            user_id: self.context.forecasts.get("selectedUser").id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
             shouldRollup: 1
         });

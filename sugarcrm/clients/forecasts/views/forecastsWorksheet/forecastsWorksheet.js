@@ -30,7 +30,7 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.forecastworksheets;
+        this._collection = this.context.forecasts.worksheet;
 
 
         //set up base selected user
@@ -132,10 +132,10 @@
     },
 
     bindDataChange: function(params) {
-
         var self = this;
-
-        this._collection.on("reset", function() { self.refresh(); }, this);
+        if (this._collection) {
+            this._collection.on("reset", function() { self.refresh(); }, this);
+        }
 
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
@@ -168,6 +168,20 @@
         $.when(this.calculateTotals(), this.render());
     },
 
+    _setForecastColumn: function(fields) {
+        var forecastField, commitStageField;
+        _.each(fields, function(field) {
+            if (field.name == "forecast") {
+                field.enabled = !app.config.showBuckets;
+                forecastField = field;
+            } else if (field.name == "commit_stage") {
+                field.enabled = app.config.showBuckets;
+                commitStageField = field;
+            }
+        });
+        return app.config.showBuckets?forecastField:commitStageField;
+    },
+
     /**
      * Renders view
      */
@@ -179,20 +193,22 @@
         }
         $("#view-sales-rep").show();
         $("#view-manager").hide();
-        
+
+        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+
         app.view.View.prototype._render.call(this);
-        
+
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
-        var fields = this.meta.panels[0].fields;
+        var fields = _.without(this.meta.panels[0].fields, unusedField);
         var columnKeys = {};
 
-        for( var i = 0; i < fields.length; i++ )  {
-            var name = fields[i].name;
-            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
-            columnKeys[name] = i;
-        }
+        _.each(fields, function(field, key){
+            var name = field.name;
+            columnDefs.push( { "sName": name, "aTargets": [ key ] } );
+            columnKeys[name] = key;
+        });
 
         this.gTable = this.$('.worksheetTable').dataTable(
             {

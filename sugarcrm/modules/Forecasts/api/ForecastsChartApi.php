@@ -27,11 +27,32 @@ require_once("include/SugarCharts/ReportBuilder.php");
 
 class ForecastsChartApi extends ChartApi
 {
+    /**
+     * X-Axis Label
+     *
+     * @var string
+     */
     protected $xaxisLabel = 'Amount';
+
+    /**
+     * Y-Axis Label
+     *
+     * @var string
+     */
     protected $yaxisLabel = '';
 
+    /**
+     * Pareto Label
+     *
+     * @var string
+     */
     protected $goalParetoLabel = '';
 
+    /**
+     * Rest Api Registration Method
+     *
+     * @return array
+     */
     public function registerApiRest()
     {
         $parentApi = array(
@@ -59,15 +80,16 @@ class ForecastsChartApi extends ChartApi
         require_once('modules/Reports/Report.php');
         require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 
-        global $mod_strings, $app_list_strings, $app_strings, $current_user;
+        global $mod_strings, $app_list_strings, $app_strings, $current_user, $current_language;
 
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
-        $mod_strings = return_module_language('en', 'Opportunities');
+        $app_list_strings = return_app_list_strings_language($current_language);
+        $app_strings = return_application_language($current_language);
+        $mod_strings = return_module_language($current_language, 'Opportunities');
+        $forecast_strings = return_module_language($current_language, 'Forecasts');
 
         $mgr = new ChartAndWorksheetManager();
         //define worksheet type: 'manager' or 'individual'
-        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == true) ? 'manager' : 'individual';
+        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == 'true') ? 'manager' : 'individual';
 
         $report_defs = $mgr->getWorksheetDefinition($args['type'], 'opportunities');
 
@@ -93,12 +115,11 @@ class ForecastsChartApi extends ChartApi
         // generate the report builder instance
         $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $filters, $args);
 
+        $this->processDataset($rb, $args);
+
         if (isset($args['chart_type']) && !empty($args['chart_type'])) {
             $rb->setChartType($this->mapChartType($args['chart_type']));
         }
-
-        // make sure the chart column is the amount field
-        $rb->setChartColumn($rb->getSummaryColumns('amount'));
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
@@ -131,7 +152,7 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        if($args['type'] == "manager") {
+        if ($args['type'] == "manager") {
             $quota = $quota_bean->getGroupQuota($timeperiod_id, false, $user_id);
             $quota = array('amount' => $quota, 'formatted_amount' => format_number($quota, null, null, array('currency_symbol' => true)));
         } else {
@@ -148,6 +169,14 @@ class ForecastsChartApi extends ChartApi
         $dataArray['properties'][0]['goal_marker_label'] = array('Quota', $this->goalParetoLabel);
         $dataArray['properties'][0]['label_name'] = $this->yaxisLabel;
         $dataArray['properties'][0]['value_name'] = $this->xaxisLabel;
+
+        if($args['type'] == "manager") {
+            // always make sure that the columns go from the largest to the smallest
+            // if we are displaying the manager chart
+            usort($dataArray['values'], array($this, 'sortChartColumns'));
+        }
+
+        $likely_sum = 0;
 
         foreach ($dataArray['values'] as $key => $value) {
 
@@ -168,23 +197,28 @@ class ForecastsChartApi extends ChartApi
 
             // extract the values to variables
             if (isset($likely_values[$value['label']])) {
-                list($likely, $likely_label) = array_values($likely_values[$value['label']]);
+                $likely = $likely_values[$value['label']]['amount'];
             }
 
-            if($args['type'] == "manager") {
+            if ($args['type'] == "manager") {
                 // fix the names
                 $user = BeanFactory::getBean("Users");
                 $user->retrieve_by_string_fields(array('user_name' => $value['label']));
 
-                if($user->id == $user_id) {
-                    $dataArray['values'][$key]['label'] = "My Opps";
+                if ($user->id == $user_id) {
+                    $dataArray['values'][$key]['label'] = string_format($forecast_strings['LBL_MY_OPPORTUNITIES'],
+                        array($user->get_summary_text()));
                 } else {
                     $dataArray['values'][$key]['label'] = $user->get_summary_text();
                 }
+                unset($user);
             }
 
+            $likely_sum += floatval($likely);
+            $likely_label = format_number($likely_sum, null, null, array('currency_symbol' => true));
+
             // set the variables
-            $dataArray['values'][$key]['goalmarkervalue'] = array(intval($quota['amount']), intval($likely));
+            $dataArray['values'][$key]['goalmarkervalue'] = array(floatval($quota['amount']), $likely_sum);
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
 
@@ -212,7 +246,7 @@ class ForecastsChartApi extends ChartApi
         $this->processDataset($rb, $args);
 
         // if the type is manager we need to adjust the group by to be that of user_name to match up with the main report
-        if($args['type'] == "manager") {
+        if ($args['type'] == "manager") {
             $rb->removeGroupBy($rb->getGroupBy('date_closed'));
             $rb->addGroupBy('user_name', 'Users', 'Opportunities:assigned_user_link');
             $rb->removeSummaryColumn($rb->getSummaryColumns('date_closed'));
@@ -233,12 +267,12 @@ class ForecastsChartApi extends ChartApi
             if (count($row['cells']) != 2) continue;
 
             // keep a running total of the values
-            $sum += unformat_number($row['cells'][1]['val']);
+            //$sum += unformat_number($row['cells'][1]['val']);
 
             // key is the same that would be used for the main report
             $results[$row['cells'][0]['val']] = array(
-                'amount' => $sum, // use the unformatted number for the value in the chart
-                'amount_formatted' => format_number($sum, null, null, array('currency_symbol' => true)) // format the number for the label
+                'amount' => unformat_number($row['cells'][1]['val']), // use the unformatted number for the value in the chart
+                //'amount_formatted' => format_number($sum, null, null, array('currency_symbol' => true)) // format the number for the label
             );
         }
 
@@ -325,6 +359,8 @@ class ForecastsChartApi extends ChartApi
     }
 
     /**
+     * Process the DataSet parameter
+     *
      * @param ReportBuilder $rb
      * @param $args
      * @return ReportBuilder
@@ -362,6 +398,25 @@ class ForecastsChartApi extends ChartApi
 
         // return!
         return $rb;
+    }
+
+    /**
+     * Method for sorting the dataArray before we return it so that the tallest bar is always first and the
+     * lowest bar is always last.
+     *
+     * @param array $a          The left side of the compare
+     * @param array $b          The right side of the compare
+     * @return int
+     */
+    protected function sortChartColumns($a, $b)
+    {
+        if (intval($a['gvalue']) > intval($b['gvalue'])) {
+            return -1;
+        } else if (intval($a['gvalue']) < intval($b['gvalue'])) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }
