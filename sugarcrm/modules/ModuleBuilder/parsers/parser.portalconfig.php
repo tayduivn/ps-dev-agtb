@@ -93,6 +93,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $portalConfig['on'] = 1;
         } else {
             $portalConfig['appStatus'] = 'offline';
+            $portalConfig['on'] = 0;
         }
 
         foreach ($portalConfig as $fieldKey => $fieldValue) {
