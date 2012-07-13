@@ -41,6 +41,14 @@
     };
 
     /**
+     * 0 Timeout error handler. If server doesn't respond within timeout.
+     */
+    app.error.handleTimeoutError = function(error) {
+        backToLogin(true);
+        app.alert.show("timeout_error", {level: "error", messages: "The request timed out.", title:"Request timeout", autoClose: true});
+    };
+
+    /**
      * 401 Unauthorized error handler. 
      */
     app.error.handleUnauthorizedError = function(error) {

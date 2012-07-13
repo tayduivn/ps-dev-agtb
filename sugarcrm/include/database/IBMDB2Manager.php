@@ -1721,8 +1721,10 @@ EOQ;
                }
            }
 
-           return parent::massageValue($val, $fieldDef);
+           return parent::massageValue($massagedValue, $fieldDef);
        }
+
+       return parent::massageValue($val, $fieldDef);
     }
 
 

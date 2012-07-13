@@ -10,14 +10,7 @@
 
         // do this if greater than 768px page width
         if ($(window).width() > 768) {
-            // specifically place tooltips to bottom
-            this.$('.navbar, .nav, .subnav, .thumbnail').tooltip({
-                selector: "[rel=tooltip]",
-                placement: "bottom"
-            });
-            this.$('body').tooltip({
-                selector: "[rel=tooltip]"
-            });
+            this.$("[rel=tooltip]").tooltip({ placement: "bottom" });
         }
         //popover
         this.$("[rel=popover]").popover();

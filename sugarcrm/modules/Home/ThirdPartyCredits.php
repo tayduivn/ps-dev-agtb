@@ -71,13 +71,13 @@ $credits = array(
             'description' => 'Italian Language Pack by OpenSymbol',
             'website' => 'www.opensymbol.it',
         ),
-         'lt_LT' => array (
+        'lt_LT' => array (
             'name' => 'Lithuanian Language Pack',
             'author' => 'OptimusCRM',
             'description' => 'Lithuanian Language Pack by OptimusCRM',
             'website' => 'www.optimuscrm.lt',
         ),
-        'nb_No' => array (
+        'nb_NO' => array (
             'name' => 'Norwegian Language Pack',
             'author' => 'Redpill Linpro',
             'description' => 'Norwegian Language Pack by Redpill Linpro',
@@ -89,22 +89,19 @@ $credits = array(
             'description' => 'Dutch Language Pack by BrixCRM',
             'website' => 'www.brixcrm.nl',
         ),
-        
         'pt_PT' => array (
             'name' => 'Portuguese Language Pack',
             'author' => 'DRI',
             'description' => 'Portuguese Language Pack by DRI',
             'website' => 'www.dri.pt',
         ),
-        
-         'ro_RO' => array (
+        'ro_RO' => array (
             'name' => 'Romanian Language Pack',
             'author' => 'Mycroft System',
             'description' => 'Romanian Language Pack by Mycroft System',
             'website' => 'www.mycroft-system.com',
         ),
-       
-         'ru_RU' => array (
+        'ru_RU' => array (
             'name' => 'Russian Language Pack',
             'author' => 'Richlode Solutions',
             'description' => 'Russian Language Pack by Richlode Solutions',
@@ -122,11 +119,61 @@ $credits = array(
             'description' => 'Turkish Language Pack by Ultima',
             'website' => 'ultima.com.tr',
         ),
-        
-       
-        
+        'en_UK' => array (
+            'name' => 'UK English Language Pack',
+            'author' => 'Provident CRM',
+            'description' => 'UK English Language Pack by Provident CRM',
+            'website' => 'www.providentcrm.com',
         ),
-	
+        'cs_CZ' => array (
+            'name' => 'Czech Language Pack',
+            'author' => 'ExtendIT',
+            'description' => 'Czech Language Pack by ExtendIT',
+            'website' => 'extendit.cz',
+        ),
+        'et_EE' => array (
+            'name' => 'Estonian Language Pack',
+            'author' => 'Keynote',
+            'description' => 'Estonian Language Pack by Keynote',
+            'website' => 'www.keynote.ee',
+        ),
+        'he_IL' => array (
+            'name' => 'Hebrew Language Pack',
+            'author' => 'Menahem Lurie Consultancy and IT Management',
+            'description' => 'Hebrew Language Pack by Menahem Lurie Consultancy and IT Management',
+            'website' => 'www.cyta.co.il',
+        ),
+        'ja_JP' => array (
+            'name' => 'Japanese Language Pack',
+            'author' => 'OSSCRM',
+            'description' => 'Japanese Language Pack by OSSCRM',
+            'website' => 'www.osscrm.com',
+        ),
+        'pl_PL' => array (
+            'name' => 'Portuguese - Portugal Language Pack',
+            'author' => 'Optineo',
+            'description' => 'Portuguese - Portugal Language Pack by Optineo',
+            'website' => 'www.optineo.com',
+        ),
+        'pt_BR' => array (
+            'name' => 'Portuguese - Brazil Language Pack',
+            'author' => 'Provident CRM',
+            'description' => 'Portuguese - Brazil Language Pack by Provident CRM',
+            'website' => 'www.lampadaglobal.com',
+        ),
+        'ca_ES' => array (
+            'name' => 'Catalan Language Pack',
+            'author' => 'REDK Ingenieria del Software, SL',
+            'description' => 'Catalan Language Pack by REDK Ingenieria del Software, SL',
+            'website' => 'redk.net',
+        ),
+        'sr_RS' => array (
+            'name' => 'Serbian Language Pack',
+            'author' => 'PS Tech',
+            'description' => 'Serbian Language Pack by PS Tech',
+            'website' => 'pstech.rs',
+        ),
+    ),
 	'Modules' => array(
 		'Twitter Connector' => array (
 			'name' => 'Twitter Connector',

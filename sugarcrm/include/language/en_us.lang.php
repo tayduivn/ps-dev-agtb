@@ -3410,12 +3410,12 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
-
-    'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time. You may add a record now.',
-    'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
-
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
+    'LBL_REFINE_LIST' => 'Refine list',
+    'LBL_SEARCH_BY' => 'Search by',
+    'LBL_PREVIEW' => 'Preview',
+    'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

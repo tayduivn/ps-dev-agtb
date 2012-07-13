@@ -30,7 +30,9 @@
 <body class="yui-skin-sam">
     <a name="top"></a>
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
+    {if !$ISPRINT}
 	{include file="_dcmenu.tpl" theme_template=true}
+    {/if}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 
 	<div class="clear"></div>
