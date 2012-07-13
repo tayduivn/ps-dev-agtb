@@ -150,4 +150,35 @@ describe("The forecasts worksheet", function(){
             });
         });
     });
+
+    describe("forecast column", function() {
+        beforeEach(function(){
+            field = [
+                {
+                    name: 'forecast',
+                    enabled: true
+                },
+                {
+                    name: 'commit_stage',
+                    enabled: true
+                }
+            ]
+        });
+
+        it("should be the 'forecasts' field if showBuckets is false", function() {
+            app.config.showBuckets = false;
+            var unused = view._setForecastColumn(field);
+            expect(unused).toEqual(field[1]);
+            expect(field[0].enabled).toBeTruthy();
+            expect(field[1].enabled).toBeFalsy();
+        });
+
+        it("should be the 'commit_stage' field if showBuckets is true", function() {
+            app.config.showBuckets = true;
+            var unused = view._setForecastColumn(field);
+            expect(unused).toEqual(field[0]);
+            expect(field[0].enabled).toBeFalsy();
+            expect(field[1].enabled).toBeTruthy();
+        });
+    })
 });
