@@ -24,13 +24,14 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         
         // This is the structure of the sidecar list meta
         $module = $this->getNormalizedModuleName();
-        $this->sidecarViewdefs[$module][$this->client]['view']['list'] = array(
-            array(
-                'panels' => array(
-                    array(
-                        'label' => 'LBL_PANEL_1',
-                        'fields' => $newdefs,
-                    ),
+        
+        // Clean up client to mobile for wireless clients
+        $client = $this->client == 'wireless' ? 'mobile' : $this->client;
+        $this->sidecarViewdefs[$module][$client]['view']['list'] = array(
+            'panels' => array(
+                array(
+                    'label' => 'LBL_PANEL_1',
+                    'fields' => $newdefs,
                 ),
             ),
         );

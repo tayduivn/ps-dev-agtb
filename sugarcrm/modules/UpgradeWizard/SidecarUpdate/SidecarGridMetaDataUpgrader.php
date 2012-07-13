@@ -80,7 +80,9 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             unset($defs['data']);
             $defs['panels'] = $paneldefs;
             $module = $this->getNormalizedModuleName();
-            $this->sidecarViewdefs[$module][$this->client]['view'][$this->viewtype] = $defs;
+            // Clean up client to mobile for wireless clients
+            $client = $this->client == 'wireless' ? 'mobile' : $this->client;
+            $this->sidecarViewdefs[$module][$client]['view'][$this->viewtype] = $defs;
         }
     }
 }

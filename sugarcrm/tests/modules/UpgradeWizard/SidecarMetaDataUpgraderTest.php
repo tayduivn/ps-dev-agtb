@@ -23,113 +23,138 @@
  ********************************************************************************/
 
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+require_once 'tests/modules/UpgradeWizard/SidecarMetaDataFileBuilder.php';
 
 class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
-    protected $legacyFilePaths = array(
-        'portal' => array(
-            'custom'  => 'custom/portal/',
-            'history' => 'custom/portal/',
-            'working' => 'custom/working/portal/',
-        ),
-        'wireless' => array(
-            'custom'  => 'custom/',
-            'history' => 'custom/history/',
-            'working' => 'custom/working/',
-        ),
-    );
-    
-    protected $modulesToTest = array(
-        'portal' => array(
-            'Bugs' => array('edit', 'list'), 
-            'Cases' => array('detail', 'search'), 
-            'Leads' => array('edit', 'detail', 'list'),
-        ),
-        'wireless' => array(
-            'Accounts' => array('list'), 
-            'Bugs' => array('edit', 'detail'), 
-            'Calls' => array('edit', 'list', 'detail'), 
-            'Notes' => array('edit', 'search'),
-        ),
-    );
-    
-    public $builder;
-    
-    public function setup() {
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->builder = new SidecarMetaDataFileBuilder();
-        
-        foreach ($this->modulesToTest as $client => $modules) {
-            foreach ($modules as $module => $viewtypes) {
-                foreach ($this->legacyFilePaths[$client] as $path) {
-                    foreach ($viewtypes as $viewtype) {
-                        $this->builder->buildFile($path, $module, $viewtype, $client);
-                    }
-                }
-            }
-        }
-    }
-    
-    public function tearDown() {
-        $this->builder->teardownFiles();
-    }
-    
-    public function testLegacyMetadataLocations() {
-        $upgrader = new SidecarMetaDataUpgrader();
-        $upgrader->upgrade();
-    }
-}
-
-class SidecarMetaDataFileBuilder {
-    private $backedup = array();
-    private $created  = array();
-    private $backupSuffix = '_unittext.bak';
-
     /**
-     * Maps of old metadata file names
-     *
-     * @var array
+     * The files builder to bring in legacy files into place and prepare them
+     * for upgrade
+     * 
+     * @var SidecarMetaDataFileBuilder 
      */
-    protected $legacyMetaDataFileNames = array(
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-        'wirelessedit'   => 'wireless.editviewdefs',
-        'wirelessdetail' => 'wireless.detailviewdefs',
-        'wirelesslist'   => 'wireless.listviewdefs',
-        'wirelesssearch' => 'wireless.searchdefs',
-        //END SUGARCRM flav=pro || flav=sales ONLY
-        //BEGIN SUGARCRM flav=ent ONLY
-        'portaledit'     => 'editviewdefs',
-        'portaldetail'   => 'detailviewdefs',
-        'portallist'     => 'listviewdefs',
-        'portalsearch'   => 'searchformdefs',
-        //END SUGARCRM flav=ent ONLY
-    );
+    public static $builder = null;
     
-    public function buildFile($path, $module, $viewtype, $client) {
-        $file = "{$path}modules/$module/metadata/{$this->legacyMetaDataFileName[$client.$viewtype]}.php";
-        $test = 'tests/modules/UpgradeWizard/SidecarMetaDataUpgrader/metadata/' . $module.$viewtype . '.php';
-        
-        // If there is an existing file, just back it up
-        if (file_exists($file)) {
-            if (rename($file, $file . $this->backupSuffix)) {
-                $this->backedup[] = $file;
-            }
+    /**
+     * The upgrader object, called once to set everthing up
+     * 
+     * @var SidecarMetaDataUpgrader 
+     */
+    public static $upgrader = null;
+    
+    /**
+     * Utility method for building and holding the builder object. Because of how
+     * dataProviders are called in the test stack and how this test is using
+     * setUpBeforeClass and tearDownAfterClass, this needs to be done this way.
+     * 
+     * NOTE: dataProvider methods are called before any method in the test. So
+     * allowing the needed objects to be built like this is essential for the 
+     * dataProviders to run as expected.
+     * 
+     * @static
+     * @return SidecarMetaDataFileBuilder
+     */
+    public static function getBuilder() {
+        if (null == self::$builder) {
+            self::$builder = new SidecarMetaDataFileBuilder();
         }
         
-        // Make the test file
-        if (copy($test, $file)) {
-            $this->created[] = $file;
-        }
+        return self::$builder;
     }
     
-    public function teardownFiles() {
-        foreach ($this->created as $file) {
-            // Kill the file we made for testing
-            unlink($file);
-            
-            // Add back in the files that were backed up
-            if (file_exists($file . $this->backupSuffix)) {
-                rename($file . $this->backupSuffix, $file);
-            }
+    /**
+     * Gets the MetaDataUpgrader object. See notes for getBuilder as to why this
+     * is being handled this way.
+     * 
+     * @static
+     * @return SidecarMetaDataUpgrader
+     */
+    public static function getUpgrader() {
+        if (null === self::$upgrader) {
+            self::$upgrader = new SidecarMetaDataUpgrader(); 
         }
+        
+        return self::$upgrader;
+    }
+    
+    public static function setUpBeforeClass() {
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        
+        // Builds all the legacy test files
+        self::getBuilder();
+        self::$builder->buildFiles();
+        
+        // Run the upgrader so everything is in place for testing
+        self::getUpgrader();
+        self::$upgrader->upgrade();
+    }
+    
+    public static function tearDownAfterClass() {
+        self::getBuilder();
+        self::$builder->teardownFiles();
+    }
+    
+    public function testLegacyMetadataFilesForRemoval() {
+        // Get files for removal - these should include our custom legacy files
+        $upgrader = self::getUpgrader();
+        $removals = $upgrader->getFilesForRemoval();
+        
+        // Get legacy file paths
+        $builder = self::getBuilder();
+        $legacyFiles = $builder->getFilesToMake('legacy');
+        
+        $expected = array_intersect($removals, $legacyFiles);
+        sort($expected);
+        sort($legacyFiles);
+        $this->assertEquals($expected, $legacyFiles, 'Legacy files for removal is not the same as legacy files in build');
+    }
+    
+    public function testUpgraderHasNoFailures() {
+        // Get our failures
+        $upgrader = self::getUpgrader();
+        $failures = $upgrader->getFailures();
+        
+        $this->assertEmpty($failures, 'There were upgrade failures');
+    }
+    
+    public function _sidecarFilesInPlaceProvider() {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMake('sidecar', true);
+    }
+    
+    /**
+     * @dataProvider _sidecarFilesInPlaceProvider
+     * @param string $file
+     */
+    public function testSidecarFilesInPlace($file) {
+        $this->assertFileExists($file, "File $file was not upgraded");
+    }
+    
+    public function _sidecarMetadataFormatProvider() {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView(array('list', 'edit', 'detail'));
+    }
+    
+    /**
+     * @dataProvider _sidecarMetadataFormatProvider
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     */
+    public function testSidecarMetadataFormat($module, $view, $type, $filepath) {
+        require $filepath;
+        
+        // Begin assertions
+        $this->assertNotEmpty($viewdefs[$module][$type]['view'][$view], "$view view defs for the $module module are empty");
+        
+        $defs = $viewdefs[$module][$type]['view'][$view];
+        $this->assertArrayHasKey('panels', $defs, 'No panels array found in view defs');
+        $this->assertArrayHasKey('fields', $defs['panels'][0], 'Fields array missing or in incorrect format in view defs');
+        $this->assertNotEmpty($defs['panels'][0]['fields'], 'Fields array is empty');
+        
+        // List view specific test
+        if ($view == 'list') {
+            $this->assertArrayHasKey('name', $defs['panels'][0]['fields'][0], 'No name field found in the first field def');
+        } 
     }
 }

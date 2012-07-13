@@ -196,6 +196,8 @@ abstract class SidecarAbstractMetaDataUpgrader
     /**
      * Handles the actual setting of the new file name and the creating of the 
      * file contents
+     * 
+     * @return int
      */
     public function handleSave() {
         // Get what we need to make our new files
@@ -245,6 +247,13 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return int The number of bytes written to the file or false on failure
      */
     public function save($path, $content) {
+        // If this directory doesn't exist yet, create it
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir_recursive($dir);
+        }
+        
+        // Save the contents to the file
         return sugar_file_put_contents($path, $content);
     }
     
@@ -255,12 +264,15 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return string
      */
     public function getNewFileName($view) {
+        // Clean up client to mobile for wireless clients
+        $client = $this->client == 'wireless' ? 'mobile' : $this->client;
+        
         if ($this->deployed) {
             // Deployed will always use the full key_module name for custom modules 
             $module = $this->getNormalizedModuleName();
-            $newname = MetaDataFiles::getDeployedFileName($view, $module, $this->type, $this->client);
+            $newname = MetaDataFiles::getDeployedFileName($view, $module, $this->type, $client);
         } else {
-            $newname = MetaDataFiles::getUndeployedFileName($view, $this->module, $this->package, $this->type, $this->client);
+            $newname = MetaDataFiles::getUndeployedFileName($view, $this->module, $this->package, $this->type, $client);
         }
         
         // If this is a history file then add the timestamp back on

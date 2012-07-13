@@ -97,7 +97,7 @@ class MetaDataFiles
         MB_PORTALEDITVIEW         => 'edit',
         MB_PORTALDETAILVIEW       => 'detail',
         MB_PORTALLISTVIEW         => 'list',
-        MB_PORTALSEARCHVIEW       => 'searchView',
+        MB_PORTALSEARCHVIEW       => 'search',
         //END SUGARCRM flav=ent ONLY
     );
 

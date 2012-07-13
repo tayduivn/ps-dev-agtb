@@ -136,6 +136,13 @@ class SidecarMetaDataUpgrader
     );
     
     /**
+     * List of failed upgrades
+     * 
+     * @var array
+     */
+    protected $failures = array();
+    
+    /**
      * Sets the list of files that need to be upgraded. Will look in directories 
      * contained in $legacyFilePaths and will also attempt to identify custom
      * modules that are found within modules/
@@ -268,12 +275,33 @@ class SidecarMetaDataUpgrader
                     if (!in_array($file['fullpath'], self::$filesForRemoval)) {
                         self::$filesForRemoval[] = $file['fullpath'];
                     }
+                } else {
+                    $this->registerFailure($file);
                 }
             }
         }
         
         // Add the rest of the OOTB module wireless metadata files to the stack
         $this->cleanupLegacyFiles();
+    }
+    
+    /**
+     * Gets the list of failed upgrades
+     * @return array
+     */
+    public function getFailures()
+    {
+        return $this->failures;
+    }
+    
+    /**
+     * Registers a failed filedata array
+     * 
+     * @param array $file
+     */
+    protected function registerFailure($file)
+    {
+        $this->failures[] = $file;
     }
     
     /**
