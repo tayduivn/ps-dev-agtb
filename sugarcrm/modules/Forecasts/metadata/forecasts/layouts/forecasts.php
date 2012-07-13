@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
 
             'contextCollection' => array(
                 'module' => 'ForecastWorksheets',
-                'name' => 'Worksheets'
+                'name' => 'Worksheet'
             ),
         ),
 

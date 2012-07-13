@@ -30,7 +30,7 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.worksheets;
+        this._collection = this.context.forecasts.worksheet;
 
 
         //set up base selected user
