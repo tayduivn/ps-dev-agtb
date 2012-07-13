@@ -92,7 +92,7 @@
      //Call initForecast with the session id as token
      var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
 
-    App.config.showBuckets = {/literal}'{$opportunity_buckets}' == false;//'1'?true:false;{literal}
+    App.config.showBuckets = {/literal}'{$opportunity_buckets}' == '1'?true:false;{literal}
     App.viewModule = {/literal}'{$module}';{literal}
 
     // get default selections for filter and category
