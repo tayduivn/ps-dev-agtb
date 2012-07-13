@@ -38,12 +38,8 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
 
             'contextCollection' => array(
                 'module' => 'ForecastWorksheets',
-                'name' => 'ForecastWorksheets'
+                'name' => 'Worksheets'
             ),
-
-            'collection' => array(
-                'name' => 'Worksheet'
-            )
         ),
 
         7 => array(
@@ -51,12 +47,9 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
 
             'contextCollection' => array(
                 'module' => 'ForecastManagerWorksheets',
-                'name' => 'ForecastManagerWorksheets'
+                'name' => 'WorksheetManager'
             ),
 
-            'collection' => array(
-                'name' => 'WorksheetManager',
-            ),
         ),
         
         8 => array(

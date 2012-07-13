@@ -30,7 +30,7 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.forecastworksheets;
+        this._collection = this.context.forecasts.worksheets;
 
 
         //set up base selected user
@@ -132,10 +132,10 @@
     },
 
     bindDataChange: function(params) {
-
         var self = this;
-
-        this._collection.on("reset", function() { self.refresh(); }, this);
+        if (this._collection) {
+            this._collection.on("reset", function() { self.refresh(); }, this);
+        }
 
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
