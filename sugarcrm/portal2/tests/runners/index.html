@@ -58,6 +58,7 @@
     <script src='../../../sidecar/lib/jasmine/jasmine-html.js'></script>
     <script src='../../../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
     <script src='../../../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
+  	<script src="../../../sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
 
     <link rel="stylesheet" href="../../../sidecar/lib/jasmine/jasmine.css"/>
 
@@ -84,6 +85,10 @@
 
             jasmineEnv.addReporter(trivialReporter);
 
+            // Allows us to create report in JUnit XML Report format for CI.
+            // I've observed no "slow down" when ran from browser ;=)
+  			jasmineEnv.addReporter(new jasmine.PhantomJSReporter());
+
             jasmineEnv.specFilter = function(spec) {
                 return trivialReporter.specFilter(spec);
             };
@@ -103,8 +108,6 @@
 
         })();
     </script>
-
-
 </head>
 <body>
 
