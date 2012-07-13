@@ -61,7 +61,7 @@
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
                     self._collection.url = self.url;
-                    data.model.save();
+                    data.model.save(null, {wait: true});
                     self.refresh();
                 });
             },

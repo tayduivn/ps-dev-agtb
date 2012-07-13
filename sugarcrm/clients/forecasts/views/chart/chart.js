@@ -10,6 +10,7 @@
     hasSelectedGroupBy:false,
     hasSelectedDataset:false,
     hasSelectedCategory:false,
+    hasSelectedUser:false,
 
     hasFilterOptions:false,
 
@@ -17,6 +18,7 @@
     url:'rest/v10/Forecasts/chart',
 
     chart: null,
+
 
     /**
      * Initialize the View
@@ -36,6 +38,7 @@
         var self = this;
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id});
+            self.hasSelectedUser = true;
             self.handleRenderOptions({display_manager : (user.showOpps === false && user.isManager === true)});
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
@@ -54,6 +57,11 @@
             self.hasSelectedCategory = true;
             self.handleRenderOptions({category: value.id});
         });
+        this.context.forecasts.on('change:updatedTotals', function(context, totals){
+            if (self.canRender()) {
+                self.renderChart();
+            }
+        });
     },
 
     handleRenderOptions:function (options) {
@@ -62,12 +70,18 @@
             self.values[key] = value;
         });
 
-        if (self.hasSelectedTimePeriod &&
-            self.hasSelectedGroupBy &&
-            self.hasSelectedDataset &&
-            self.hasSelectedCategory) {
+        if (self.canRender()) {
             self.renderChart();
         }
+    },
+
+    canRender: function() {
+        var self = this;
+        return (self.hasSelectedTimePeriod &&
+            self.hasSelectedGroupBy &&
+            self.hasSelectedDataset &&
+            self.hasSelectedCategory &&
+            self.hasSelectedUser);
     },
 
     /**
