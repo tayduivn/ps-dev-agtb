@@ -54,6 +54,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'tests/PHPUnit/PHP/CodeCoverage/Report/HTML/Template' => true,
             $prefix.'tests/jssource/minify/expect'  => true,
             $prefix.'tests/jssource/minify/test'    => true,
+            $prefix.'portal2'                       => true,
         );
 
         return $compress_exempt_files;
