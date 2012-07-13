@@ -307,8 +307,9 @@ EOJS;
 				//BEGIN ATHENA CUSTOMIZATION - rsmith
         require_once('modules/MailMerge/merge_query.php');
         $rel_module = empty($_REQUEST['rel_module'])?'': $_REQUEST['rel_module'];
+        $id = empty($_REQUEST['id'])?'': $_REQUEST['id'];
 
-		$query = get_merge_query($seed_bean, $rel_module, $_REQUEST['id']);
+		$query = get_merge_query($seed_bean, $rel_module, $id);
 		$result = $seed_bean->db->query($query,true,"Error retrieving $seed_bean->object_name list: ");
 
 			$list = Array();
