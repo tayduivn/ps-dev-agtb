@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/ForecastsWorksheets',
+    url: 'rest/v10/ForecastWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -30,6 +30,8 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
+        this._collection = this.context.forecasts.forecastworksheets;
+
 
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -58,6 +60,7 @@
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
+                    self._collection.url = self.url;
                     data.model.save();
                     self.refresh();
                 });
@@ -131,7 +134,7 @@
     bindDataChange: function(params) {
 
         var self = this;
-        this._collection = this.context.forecasts.forecastworksheets;
+
         this._collection.on("reset", function() { self.refresh(); }, this);
 
         // listening for updates to context for selectedUser:change
@@ -152,10 +155,6 @@
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
-            this.context.forecasts.worksheet.on("change", function() {
-            	this.calculateTotals();
-            	this.totalView.render();
-            }, this);
         }
     },
 
@@ -169,6 +168,24 @@
         $.when(this.calculateTotals(), this.render());
     },
 
+    _setForecastColumn: function(fields) {
+        var unusedField;
+        _.each(fields, function(field) {
+            if (app.config.showBuckets) {
+                if (field.name == "forecast") {
+                    field.enabled = false;
+                    unusedField = field;
+                }
+            } else {
+                if (field.name == "commit_stage") {
+                    field.enabled = false;
+                    unusedField = field;
+                }
+            }
+        });
+        return unusedField;
+    },
+
     /**
      * Renders view
      */
@@ -180,20 +197,22 @@
         }
         $("#view-sales-rep").show();
         $("#view-manager").hide();
-        
+
+        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+
         app.view.View.prototype._render.call(this);
-        
+
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
-        var fields = this.meta.panels[0].fields;
+        var fields = _.without(this.meta.panels[0].fields, unusedField);
         var columnKeys = {};
 
-        for( var i = 0; i < fields.length; i++ )  {
-            var name = fields[i].name;
-            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
-            columnKeys[name] = i;
-        }
+        _.each(fields, function(field, key){
+            var name = field.name;
+            columnDefs.push( { "sName": name, "aTargets": [ key ] } );
+            columnKeys[name] = key;
+        });
 
         this.gTable = this.$('.worksheetTable').dataTable(
             {
@@ -290,8 +309,7 @@
             'amount' : includedAmount
         };
 
-
-        this.context.set("updatedTotals", totals);
+        this.context.forecasts.set("updatedTotals", totals);
     },
 
     /**
@@ -304,8 +322,7 @@
         if(!this.showMe()){
         	return false;
         }
-        //this._collection = this.context.get('collection'); //this.context.worksheet;
-        //this._collection.url = this.createURL();
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 

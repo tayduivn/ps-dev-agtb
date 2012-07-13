@@ -217,6 +217,7 @@ $mod_strings = array (
     'LBL_CHART_TITLE'=>'Quota vs. Committed vs. Actual',
 
     'LBL_FORECAST' => 'Forecast',
+    'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
@@ -251,4 +252,8 @@ $mod_strings = array (
     // Labels for Data Filters
     'LBL_FORECAST_PERIOD' => 'Forecast Period:',
     'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
+
+    // Labels for toggle buttons
+    'LBL_MORE' => 'More',
+    'LBL_LESS' => 'Less',
 );

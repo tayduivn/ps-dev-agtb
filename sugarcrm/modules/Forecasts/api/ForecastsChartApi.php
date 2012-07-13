@@ -59,15 +59,16 @@ class ForecastsChartApi extends ChartApi
         require_once('modules/Reports/Report.php');
         require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 
-        global $mod_strings, $app_list_strings, $app_strings, $current_user;
+        global $mod_strings, $app_list_strings, $app_strings, $current_user, $current_language;
 
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
-        $mod_strings = return_module_language('en', 'Opportunities');
+        $app_list_strings = return_app_list_strings_language($current_language);
+        $app_strings = return_application_language($current_language);
+        $mod_strings = return_module_language($current_language, 'Opportunities');
+        $forecast_strings = return_module_language($current_language, 'Forecasts');
 
         $mgr = new ChartAndWorksheetManager();
         //define worksheet type: 'manager' or 'individual'
-        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == true) ? 'manager' : 'individual';
+        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == 'true') ? 'manager' : 'individual';
 
         $report_defs = $mgr->getWorksheetDefinition($args['type'], 'opportunities');
 
@@ -93,12 +94,11 @@ class ForecastsChartApi extends ChartApi
         // generate the report builder instance
         $rb = $this->generateReportBuilder('Opportunities', $report_defs[2], $filters, $args);
 
+        $this->processDataset($rb, $args);
+
         if (isset($args['chart_type']) && !empty($args['chart_type'])) {
             $rb->setChartType($this->mapChartType($args['chart_type']));
         }
-
-        // make sure the chart column is the amount field
-        $rb->setChartColumn($rb->getSummaryColumns('amount'));
 
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
@@ -177,14 +177,16 @@ class ForecastsChartApi extends ChartApi
                 $user->retrieve_by_string_fields(array('user_name' => $value['label']));
 
                 if($user->id == $user_id) {
-                    $dataArray['values'][$key]['label'] = "My Opps";
+                    $dataArray['values'][$key]['label'] = string_format($forecast_strings['LBL_MY_OPPORTUNITIES'],
+                        array($user->get_summary_text()));
                 } else {
                     $dataArray['values'][$key]['label'] = $user->get_summary_text();
                 }
+                unset($user);
             }
 
             // set the variables
-            $dataArray['values'][$key]['goalmarkervalue'] = array(intval($quota['amount']), intval($likely));
+            $dataArray['values'][$key]['goalmarkervalue'] = array(floatval($quota['amount']), floatval($likely));
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
 

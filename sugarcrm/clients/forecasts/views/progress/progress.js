@@ -55,7 +55,7 @@
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
         var urlParams = $.param({
-            userId: self.context.forecasts.get("selectedUser").id,
+            user_id: self.context.forecasts.get("selectedUser").id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
             shouldRollup: 1
         });

@@ -37,9 +37,10 @@ class ViewSidecar extends SidecarView
 
     function display()
     {
-        global $current_user;
+        global $current_user, $sugar_config;
         $this->ss->assign("isManager", User::isManager($current_user->id));
-        $this->ss->assign("token", $_REQUEST[session_name()]);
+        $this->ss->assign("token", session_id());
+        $this->ss->assign("opportunity_buckets", $sugar_config['opportunity_buckets']);
         $this->ss->assign("module", $this->module);
         $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
     }
