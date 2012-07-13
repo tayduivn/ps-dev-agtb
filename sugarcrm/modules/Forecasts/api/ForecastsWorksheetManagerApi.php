@@ -147,11 +147,13 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast" => 0,
                               "forecast_id" => '',
                               "worksheet_id" => '',
+                              "show_opps" => false,
                             );
 		
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
         	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
-		}
+            $default_data["show_opps"] = true;
+        }
 		else
 		{
 			$default_data["name"] = $user->first_name . " " . $user->last_name;
@@ -170,6 +172,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $reportee->retrieve($reportee_id);
             $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
             $default_data['user_id'] = $reportee_id;
+            $default_data["show_opps"] = false;
             $data[$reportee->user_name] = $default_data;
         }
 

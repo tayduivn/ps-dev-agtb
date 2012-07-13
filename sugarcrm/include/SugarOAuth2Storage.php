@@ -408,18 +408,18 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 $userBean = BeanFactory::newBean('Users');
                 $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
                 if ( $userBean == null ) {
-                    return false;
+                    throw new SugarApiExceptionNeedLogin();
                 }
                 $this->userBean = $userBean;
                 return array('user_id' => $this->userBean->id);
             } else {
-                return false;
+                throw new SugarApiExceptionNeedLogin();
             }
         } else {
             $portalApiUser = $this->findPortalApiUser($client_id);
             if ( $portalApiUser == null ) {
                 // Can't login as a portal user if there is no API user
-                return false;
+                throw new SugarApiExceptionError('There is no portal user configured in the system or the portal is not enabled for this system.');
             }
             // It's a portal user, log them in against the Contacts table
             $contact = BeanFactory::newBean('Contacts');
@@ -434,7 +434,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 $this->contactBean = $contact;
                 return array('user_id'=>$contact->id);
             } else {
-                return false;
+                throw new SugarApiExceptionNeedLogin();
             }
         }
         

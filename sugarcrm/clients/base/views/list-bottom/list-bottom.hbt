@@ -14,12 +14,12 @@
 <ul class="nav nav-pills actions">
     {{#if context.attributes.isCreateEnabled}}
     <li>
-        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i
+        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}"><i
                 class="icon-plus"></i></a>
     </li>
     {{/if}}
     <li>
-        <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search"><i
+        <a href="javascript:void(0)" rel="tooltip" title="{{str "LBL_REFINE_LIST"}}" class="search"><i
                 class="icon-search"></i></a>
     </li>
 </ul>

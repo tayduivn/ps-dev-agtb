@@ -95,7 +95,7 @@
 </form>
 <div>
 
-    {if disabledDisplayModules}
+    {if $disabledDisplayModules}
     <br>
     <p>
         {$mod.LBL_PORTAL_DISABLED_MODULES}
@@ -114,7 +114,7 @@
 {literal}
 
 <script language='javascript'>
-    $('.chzn-select').chosen();
+    $('.chzn-select').chosen({allow_single_deselect: true});
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
     addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 

@@ -1,5 +1,4 @@
-<form name='{{name}}'>
-    {{#each meta.panels}}
+   {{#each meta.panels}}
     <div class="card2">
         <div class="modelNotLoaded">
             {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
@@ -12,11 +11,10 @@
         {{/each}}
                 <span class="extend">
                   <div class="row-fluid">
-                      <a class="more hide">More <i class="icon-chevron-down"></i></a>
-                      <a class="less hide">Less <i class="icon-chevron-up"></i></a>
+                      <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                      <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
                   </div>
                 </span>
         </div>
     </div>
     {{/each}}
-</form>
