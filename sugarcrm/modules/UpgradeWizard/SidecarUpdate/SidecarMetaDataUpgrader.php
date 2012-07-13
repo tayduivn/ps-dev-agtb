@@ -35,36 +35,26 @@ class SidecarMetaDataUpgrader
     protected $upgradeModules = array();
     
     /**
-     * List of modules that are deployed 
-     * 
-     * @var array
-     */
-    //protected $deployedModules = array();
-    
-    /**
-     * The types of metadata files to be upgraded
-     *
-     * @var array
-     */
-    //protected $fileTypes = array('custom', 'history', 'working',);
-
-    /**
      * The list of paths for both portal and wireless viewdefs under the legacy
      * system.
      *
      * @var array
      */
     protected $legacyFilePaths = array(
+        //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
             'custom'  => 'custom/portal/',
             'history' => 'custom/portal/',
             'working' => 'custom/working/portal/',
         ),
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         'wireless' => array(
             'custom'  => 'custom/',
             'history' => 'custom/history/',
             'working' => 'custom/working/',
         ),
+        //END SUGARCRM flav=pro || flav=sales ONLY
     );
 
     /**
@@ -92,29 +82,6 @@ class SidecarMetaDataUpgrader
         ),
         //END SUGARCRM flav=ent ONLY
     );
-    
-    /**
-     * Legacy metadata variable mapping
-     * 
-     * @var array
-     */
-    protected $legacyMetaDataVars = array(
-        'wireless.editviewdefs'   => 'viewdefs',
-        'wireless.detailviewdefs' => 'viewdefs',
-        'wireless.listviewdefs'   => 'listViewDefs',
-        'wireless.searchdefs'     => 'searchdefs',
-        'editviewdefs'            => 'viewdefs',
-        'detailviewdefs'          => 'viewdefs',
-        'listviewdefs'            => 'viewdefs',
-        'searchformdefs'          => 'viewdefs',
-    );
-
-    /**
-     * Translated legacyFilePaths with the module embedded
-     *
-     * @var array
-     */
-    protected $filePaths = array();
 
     /**
      * Listing of actual metadata files, by client
@@ -382,7 +349,7 @@ class SidecarMetaDataUpgrader
                         $filename = basename($file, '.php');
                     }
                     
-                    if (in_array($filename, $this->legacyMetaDataFileNames[$client])) {
+                    if (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client])) {
                         // Success! We have a full file path. Add this module to the stack
                         $this->addUpgradeModule($module);
                         
@@ -480,7 +447,7 @@ class SidecarMetaDataUpgrader
                 }
                 
                 // If this file name is an upgrade file and it hasn't been stacked, stack it
-                if (in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($filepath, self::$filesForRemoval)) {
+                if (!empty($this->legacyMetaDataFileNames['wireless']) && in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($filepath, self::$filesForRemoval)) {
                     self::$filesForRemoval[] = $filepath;
                 }
             }
@@ -496,7 +463,7 @@ class SidecarMetaDataUpgrader
                 $filename = basename($file, '.php');
                 
                 // If this file name is an upgrade file and it hasn't been stacked, stack it
-                if (in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($file, self::$filesForRemoval)) {
+                if (!empty($this->legacyMetaDataFileNames['wireless']) && in_array($filename, $this->legacyMetaDataFileNames['wireless']) && !in_array($file, self::$filesForRemoval)) {
                     self::$filesForRemoval[] = $file;
                 }
             }
