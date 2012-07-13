@@ -169,21 +169,17 @@
     },
 
     _setForecastColumn: function(fields) {
-        var unusedField;
+        var forecastField, commitStageField;
         _.each(fields, function(field) {
-            if (app.config.showBuckets) {
-                if (field.name == "forecast") {
-                    field.enabled = false;
-                    unusedField = field;
-                }
-            } else {
-                if (field.name == "commit_stage") {
-                    field.enabled = false;
-                    unusedField = field;
-                }
+            if (field.name == "forecast") {
+                field.enabled = !app.config.showBuckets;
+                forecastField = field;
+            } else if (field.name == "commit_stage") {
+                field.enabled = app.config.showBuckets;
+                commitStageField = field;
             }
         });
-        return unusedField;
+        return app.config.showBuckets?forecastField:commitStageField;
     },
 
     /**
