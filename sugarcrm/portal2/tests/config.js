@@ -49,7 +49,7 @@
          * The URL can relative or absolute.
          * @cfg {String}
          */
-        serverUrl: '../../../sugarcrm/rest/v10',
+        serverUrl: '../../rest/v10',
 
         /**
          * Server request timeout (in seconds).
