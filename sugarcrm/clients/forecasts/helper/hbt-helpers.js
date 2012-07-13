@@ -56,7 +56,8 @@
             full_name: '',
             first_name: '',
             last_name: '',
-            isManager: false
+            isManager: false,
+            showOpps: model.get("show_opps")
         };
         var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
         if (uid) {
