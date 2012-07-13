@@ -41,7 +41,7 @@ class SugarAccess {
      */
     public function filterModules($moduleList) {
         $permittedModules = $this->client->getModules();
-        print (gettype($permittedModules));
+        
         return array_intersect($moduleList, $permittedModules);
     }
 

@@ -212,7 +212,6 @@ function get_old_user_tabs($user){
 
 function get_old_tabs($user)
 {
-	global $moduleList;
 	$tabs = $this->get_old_user_tabs($user);
 	$system_tabs = $this->get_system_tabs();
 	foreach($tabs as $tab)
@@ -297,7 +296,7 @@ function get_tabs($user)
 		if(isset($hide_tabs[$key]))
 			unset($hide_tabs[$key]);
 	}
-
+    $display_tabs = array_intersect($display_tabs, $GLOBALS['moduleList']);
 	return array($display_tabs, $hide_tabs, $remove_tabs);
 }
 
