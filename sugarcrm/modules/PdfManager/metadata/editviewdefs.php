@@ -38,6 +38,9 @@ array (
         'form' => array(
                             'footerTpl' => 'modules/PdfManager/tpls/EditViewFooter.tpl',
                             'enctype'=>'multipart/form-data',
+                            'hidden' => array(
+                                '<input type="hidden" name="base_module_history" id="base_module_history" value="{$fields.base_module.value}">',
+                            )
                         ),
       'maxColumns' => '2',
       'widths' =>

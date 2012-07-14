@@ -61,10 +61,14 @@ SUGAR.PdfManager.loadFields = function(moduleName, linkName) {
     }
     
     if (SUGAR.PdfManager.fieldInserted && linkName.length == 0) {
-        alert(SUGAR.language.get('PdfManager', 'LBL_ALERT_SWITCH_BASE_MODULE'));
+        if (!confirm(SUGAR.language.get('PdfManager', 'LBL_ALERT_SWITCH_BASE_MODULE'))) {
+            $('#base_module').val($('#base_module_history').val());
+            return true;
+        }
     }
 
     if (linkName.length == 0 ) {
+        $('#base_module_history').val($('#base_module').val());
         SUGAR.PdfManager.changeHelpTips();
     }
 
