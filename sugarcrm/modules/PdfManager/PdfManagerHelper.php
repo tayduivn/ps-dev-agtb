@@ -306,6 +306,8 @@ class PdfManagerHelper
                 case "url":
                 case "encrypt":
                 case "enum":
+                case "radio":
+                case "multienum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
                     break;
                 case "relate":
