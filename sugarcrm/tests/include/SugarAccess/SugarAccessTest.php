@@ -2,7 +2,6 @@
 
 require_once('include/SugarAccess/SugarAccess.php');
 
-
 class SugarAccessTest extends PHPUnit_Framework_TestCase{
 
     public function testFilterModules(){
@@ -75,22 +74,22 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
         //implement type checking for strings
         $this->assertEquals(array(
 
-                "id" => "UNIQUE_INSTANCE_ID",
-                "license_key" => "13984ajdsfsd",
-                "flavor" => "ent",
-                'config' => array(
-                    'dbconfig' =>
-                    array(
-                        'db_host_name' => 'localhost',
-                        'db_host_instance' => '',
-                        'db_user_name' => 'root',
-                        'db_password' => 'root',
-                        'db_name' => 'ent622_1',
-                        'db_type' => 'mysql',
-                        'db_port' => '',
-                        'db_manager' => 'MysqliManager',
-                    ),
+            "id" => "UNIQUE_INSTANCE_ID",
+            "license_key" => "13984ajdsfsd",
+            "flavor" => "ent",
+            'config' => array(
+                'dbconfig' =>
+                array(
+                    'db_host_name' => 'localhost',
+                    'db_host_instance' => '',
+                    'db_user_name' => 'root',
+                    'db_password' => 'root',
+                    'db_name' => 'ent622_1',
+                    'db_type' => 'mysql',
+                    'db_port' => '',
+                    'db_manager' => 'MysqliManager',
                 ),
+            ),
 
 
         ), $testEmail);
@@ -123,9 +122,53 @@ class SugarAccessTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals($testData, $stub->authenticate($email, $password));
 
     }
+
+    protected static function getMethod($name) {
+        $class = new ReflectionClass('LicenseServerClient');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
+    }
+
+    public function testRestCall() {
+        $licenseServerUrl = "http://localhost:8888/summer/user/123213";
+        $restCallMethod = self::getMethod('restCall');
+        $licenseServerObj = new LicenseServerClient();
+        $result = $restCallMethod->invokeArgs($licenseServerObj, array($licenseServerUrl, array()));
+        $testData =   $userData = array(
+            "modules" => array("Accounts", "Contacts", "Opportunities"),
+            "instance" => array(
+                "id" => "UNIQUE_INSTANCE_ID",
+                "license_key" => "13984ajdsfsd",
+                "flavor" => "ent",
+                'config' => array(
+                    'dbconfig' =>
+                    array(
+                        'db_host_name' => 'localhost',
+                        'db_host_instance' => '',
+                        'db_user_name' => 'root',
+                        'db_password' => 'root',
+                        'db_name' => 'ent622_1',
+                        'db_type' => 'mysql',
+                        'db_port' => '',
+                        'db_manager' => 'MysqliManager',
+                    ),
+                ),
+
+            ),
+
+            "userinfo" => array(
+                "id" => "1345",
+                "email" => "email@email.com",
+                "status" => "active",
+                "date_created" => "somedate",
+
+            )
+        );
+        $this->assertEquals( $testData, $result );
+    }
+
 }
-
-
 class LicenseStubClient {
     const licenseServerUrl = "http://licenseserver";
 
@@ -176,8 +219,6 @@ class stubbedFunctions {
         $permittedModules = array("Accounts","Contacts","Opportunities");
         return array_intersect($moduleList, $permittedModules);
     }
-
-
 
 }
 ?>
