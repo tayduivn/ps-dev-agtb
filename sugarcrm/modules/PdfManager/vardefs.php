@@ -155,6 +155,7 @@ $dictionary['PdfManager'] = array(
             'required' => true,
             'name' => 'author',
             'vname' => 'LBL_AUTHOR',
+            'default' => 'SugarCRM',
             'type' => 'varchar',
             'massupdate' => 0,
             'comments' => '',
@@ -174,7 +175,6 @@ $dictionary['PdfManager'] = array(
         array (
             'required' => false,
             'name' => 'title',
-            'default' => 'SugarCRM',
             'vname' => 'LBL_TITLE',
             'type' => 'varchar',
             'massupdate' => 0,
