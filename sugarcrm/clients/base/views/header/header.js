@@ -9,7 +9,6 @@
     events: {
         'click #moduleList li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
-        'click .cube': 'onHomeClicked',
         'click .typeahead a': 'clearSearch'
     },
 
@@ -20,14 +19,15 @@
         app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
-    _renderSelf: function() {
+    _renderHtml: function() {
         var self = this,
             menuTemplate;
         if (!app.api.isAuthenticated()) return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
-        app.view.View.prototype._renderSelf.call(self);
+        self.setCurrentUserName();
+        app.view.View.prototype._renderHtml.call(self);
 
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
@@ -44,7 +44,7 @@
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
         mlist = app.metadata.getDelimitedModuleList(',', true);
-        params = {query: term, fields: 'name, id', moduleList: mlist, maxNum: app.config.maxSearchQueryResult};
+        params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);
@@ -63,11 +63,6 @@
         this.$(evt.currentTarget).parent().addClass('active');
         app.router.navigate(moduleHref, {trigger: true});
     },
-    onHomeClicked: function(evt) {
-        // Just removes active on modules for now.
-        // TODO: Maybe we should highlight the "cube"?
-        this.$('#moduleList li').removeClass('active');
-    },
     onCreateClicked: function(evt) {
         var moduleHref, hashModule;
         moduleHref = evt.currentTarget.hash;
@@ -80,6 +75,9 @@
     },
     show: function() {
         this.$el.show();
+    },
+    setCurrentUserName: function() {
+        this.fullName = app.user.get('full_name');
     },
     /**
      * Creates the task create drop down list 
@@ -98,9 +96,8 @@
                     if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
                         app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
                     } else {
-                        var singular = (singularModules[loadedModule]) ? singularModules[loadedModule] : loadedModule;
                         if(app.acl.hasAccess('create', loadedModule)) {
-                            self.createListLabels.push({label:'Create '+singular, module: loadedModule});
+                            self.createListLabels.push(loadedModule);
                         }
                     }
                 });

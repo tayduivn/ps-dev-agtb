@@ -27,20 +27,20 @@
     initialize: function(options) {
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
+        this.moduleListSingular = app.lang.getAppListStrings("moduleListSingular");
     },
 
     /**
      * Uses query in context and fires a search request thereafter rendering
      */
-    _renderSelf: function() {
+    _renderHtml: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(data) {
             // Add the records to context's collection
             if(data && data.records && data.records.length) {
                 self.updateCollection(data);
-                
-                app.view.View.prototype._renderSelf.call(self);
+                app.view.View.prototype._renderHtml.call(self);
                 self.renderSubnav();
             } else {
                 self.renderSubnav('No results found for "'+self.lastQuery+'"');
@@ -70,7 +70,7 @@
     fireSearchRequest: function (cb, offset) {
         var mlist = '', self = this, params;
         mlist = app.metadata.getDelimitedModuleList(',', true);
-        params = {query: self.lastQuery, moduleList: mlist, maxNum: app.config.maxQueryResult};
+        params = {q: self.lastQuery, moduleList: mlist, max_num: app.config.maxQueryResult};
         if (offset) params.offset = offset;
 
         app.api.search(params, {

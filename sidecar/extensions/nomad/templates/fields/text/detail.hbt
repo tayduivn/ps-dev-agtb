@@ -1,4 +1,0 @@
-{{#nothing}}
-<label class="control-label">{{label}}</label>:
-{{/nothing}}
-<span class="value">{{value}}</span>

@@ -1,4 +1,4 @@
-                    <div class="dataTables_filter">
-                        <label class="hide">Search:</label> <input class="span4" placeholder="Refine list ..."
-                                                                   type="text" aria-controls="DataTables_Table_0">
-                    </div>
+<div class="dataTables_filter">
+    <label class="hide">{{str "LBL_SEARCH_FORM_TITLE" module}}</label>
+    <input class="span4" placeholder="{{#if searchFields}}{{str "LBL_SEARCH_BY"}}: {{arrayJoin searchFields ", "}}{{else}}{{str "LBL_REFINE_LIST"}}{{/if}}" type="text" aria-controls="DataTables_Table_0">
+</div>

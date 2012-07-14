@@ -1,7 +1,0 @@
-<article id="{{model.module}}{{model.id}}" class="menu-item">
-    <div>
-        {{#with fields.[0]}}
-        {{field ../view ../model}}
-        {{/with}}
-    </div>
-</article>

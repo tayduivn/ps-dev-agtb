@@ -63,6 +63,7 @@ SugarWidgetListView.prototype.display = function() {
 	html += '<th width="20%" nowrap="nowrap">'+GLOBAL_REGISTRY['meeting_strings']['LBL_NAME']+'</th>';
 	html += '<th width="20%" nowrap="nowrap">'+GLOBAL_REGISTRY['meeting_strings']['LBL_EMAIL']+'</th>';
 	html += '<th width="20%" nowrap="nowrap">'+GLOBAL_REGISTRY['meeting_strings']['LBL_PHONE']+'</th>';
+    html += '<th width="20%" nowrap="nowrap">'+GLOBAL_REGISTRY['meeting_strings']['LBL_ACCOUNT_NAME']+'</th>';
 	html += '<th width="18%" nowrap="nowrap">&nbsp;</th>';
 	html += '</tr>';
 	//var html = '<table width="100%" cellpadding="0" cellspacing="0">';
@@ -88,12 +89,15 @@ SugarWidgetListView.prototype.display = function() {
 		if(typeof (bean.fields.phone_work) == 'undefined' || bean.fields.phone_work == "") {
 			bean.fields.phone_work = '&nbsp;';
 		}
-
+		if (!bean.fields.account_name || typeof (bean.fields.account_name) == 'undefined' || bean.fields.account_name == 'null') {
+			bean.fields.account_name = '&nbsp;';
+		}
 		html += '<tr class="'+className+'">';
 		html += '<td><img src="'+GLOBAL_REGISTRY.config['site_url']+'/index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName='+bean.module+'s.gif"/></td>';
 		html += '<td>'+bean.fields.full_name+'</td>';
 		html += '<td>'+bean.fields.email1+'</td>';
 		html += '<td>'+bean.fields.phone_work+'</td>';
+        html += '<td>'+bean.fields.account_name+'</td>';
 		html += '<td align="right">';
 		//	hidden = 'hidden';
 		hidden = 'visible';
@@ -146,6 +150,11 @@ SugarWidgetSchedulerSearch.submit = function(form) {
 	//construct query obj:
 	var conditions	= new Array();
 
+	var queryModules = ["Users","Contacts"
+        //BEGIN SUGARCRM flav!=sales ONLY
+        ,"Leads"
+        //END SUGARCRM flav!=sales ONLY
+    ];
 	if(form.search_first_name.value != '') {
 		conditions[conditions.length] = {"name":"first_name","op":"starts_with","value":form.search_first_name.value}
 	}
@@ -155,12 +164,12 @@ SugarWidgetSchedulerSearch.submit = function(form) {
 	if(form.search_email.value != '') {
 		conditions[conditions.length] = {"name":"email1","op":"starts_with","value":form.search_email.value}
 	}
+	if (form.search_account_name.value != '') {
+		conditions[conditions.length] = {"name" : "account_name","op" : "starts_with","value" : form.search_account_name.value}
+        var queryModules = [ "Contacts", "Leads" ];
+	}
 
-	var query = {"modules":["Users","Contacts"
-        //BEGIN SUGARCRM flav!=sales ONLY
-        ,"Leads"
-        //END SUGARCRM flav!=sales ONLY
-        ],"group":"and","field_list":['id','full_name','email1','phone_work'],"conditions":conditions};
+	var query = {"modules":queryModules,"group":"and","field_list":['id','full_name','email1','phone_work','account_name'],"conditions":conditions};
 	global_request_registry[req_count] = [this,'display'];
 	req_id = global_rpcClient.call_method('query',query);
 	global_request_registry[req_id] = [ GLOBAL_REGISTRY['widget_element_map'][form.id],'refresh_list'];
@@ -191,6 +200,7 @@ SugarWidgetSchedulerSearch.prototype.display = function() {
 	html += '<td scope="col" nowrap><label for="search_first_name">'+GLOBAL_REGISTRY['meeting_strings']['LBL_FIRST_NAME']+':</label>&nbsp;&nbsp;<input  name="search_first_name" id="search_first_name" value="" type="text" size="10"></td>';
 	html += '<td scope="col" nowrap><label for="search_last_name">'+GLOBAL_REGISTRY['meeting_strings']['LBL_LAST_NAME']+':</label>&nbsp;&nbsp;<input  name="search_last_name" id="search_last_name" value="" type="text" size="10"></td>';
 	html += '<td scope="col" nowrap><label for="search_email">'+GLOBAL_REGISTRY['meeting_strings']['LBL_EMAIL']+':</label>&nbsp;&nbsp;<input name="search_email" id="search_email" type="text" value="" size="15"></td>';
+	html += '<td scope="col" nowrap><label for="search_account_name">'+GLOBAL_REGISTRY['meeting_strings']['LBL_ACCOUNT_NAME']+':</label>&nbsp;&nbsp;<input  name="search_account_name" id="search_account_name" type="text" value="" size="15"></td>';
 	//html += '<td valign="center"><input type="submit" onclick="SugarWidgetSchedulerSearch.submit(this.form);" value="Search" ></td></tr></tbody></table></form>';
 	html += '<td valign="center"><input id="invitees_search" type="submit" class="button" value="'+GLOBAL_REGISTRY['meeting_strings']['LBL_SEARCH_BUTTON']+'" ></td></tr>';
 	html += '</table>';

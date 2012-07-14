@@ -12,7 +12,7 @@
         'click [name=show_more_button]': 'showMoreRecords',
         'click .search': 'showSearch'
     },
-    _renderSelf: function() {
+    _renderHtml: function() {
         if (app.acl.hasAccess('create', this.module)) {
             this.context.set('isCreateEnabled', true);
         }
@@ -21,7 +21,7 @@
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
 
-        app.view.View.prototype._renderSelf.call(this);
+        app.view.View.prototype._renderHtml.call(this);
 
         // We listen for if the search filters are opened or not. If so, when 
         // user clicks show more button, we treat this as a search, otherwise,
