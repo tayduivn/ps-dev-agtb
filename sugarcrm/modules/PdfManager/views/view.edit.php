@@ -42,6 +42,9 @@ class PdfManagerViewEdit extends ViewEdit
     public function display()
     {
     
+        // Disable VCR Control
+        $this->ev->showVCRControl = false;
+
         // Default Team as Global
         if ((empty($this->bean->id))  && !$this->ev->isDuplicate) {
             $this->bean->team_id = 1;
