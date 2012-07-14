@@ -177,7 +177,7 @@
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-        syncConfig: false
+        syncConfig: true
     }, false);
 
 })(SUGAR.App);
