@@ -466,7 +466,7 @@ class PdfManagerHelper
                ) {
                 $fields_module[$name] = $GLOBALS['sugar_config']['upload_dir']."/".$value;
             } elseif (is_string($value)) {
-                $fields_module[$name] = htmlspecialchars_decode(stripslashes($value), ENT_QUOTES);
+                $fields_module[$name] = htmlspecialchars_decode(nl2br(stripslashes($value)), ENT_QUOTES);
             }
         }
 
