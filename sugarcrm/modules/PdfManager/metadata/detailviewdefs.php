@@ -95,16 +95,6 @@ array (
         array (
           0 =>
           array (
-            'name' => 'field',
-            'studio' => 'visible',
-            'label' => 'LBL_FIELD',
-          ),
-          1 => '',
-        ),
-        4 =>
-        array (
-          0 =>
-          array (
             'name' => 'body_html',
             'studio' => 'visible',
             'label' => 'LBL_BODY_HTML',
