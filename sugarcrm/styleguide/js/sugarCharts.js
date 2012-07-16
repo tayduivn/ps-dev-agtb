@@ -155,7 +155,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //dynamically add legend to list
                         var list = $jit.id('legend'+chartId);
                         var legend = barChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+                            cols = 3,
+//                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
                             rows = Math.ceil(legend["name"].length/cols),
                             table = "";
                         if(legend['wmlegend'] != "undefined") {
