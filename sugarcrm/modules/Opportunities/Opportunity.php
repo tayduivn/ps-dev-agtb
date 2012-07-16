@@ -453,7 +453,7 @@ class Opportunity extends SugarBean
         // we only do this if no timeperiod_id is set.  This happens by default form the UI but when running a UnitTest,
         // we don't want to override any set timeperiod_id
         if(empty($this->timeperiod_id)) {
-            $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$date_close_db}' AND end_date > '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
+            $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$date_close_db}' AND end_date >= '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
             if ( !empty($timeperiod) ) {
                 $this->timeperiod_id = $timeperiod;
             }
