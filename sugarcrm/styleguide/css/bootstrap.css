@@ -4697,18 +4697,19 @@ input[type="submit"].btn.btn-mini {
   background-repeat: repeat-x;
 }
 .waterMark {
-  width: 19px;
-  height: 18px;
+  width: 10px;
+  height: 10px;
   background-image: url(../img/watermark-white.png);
   background-repeat: no-repeat;
   margin-right: 10px;
+  margin-top: 3px;
 }
 .waterMark.pareto {
   background-image: url(../img/pareto-white.png);
 }
 .query-color {
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   display: inline-block;
   margin-right: 10px;
   border: 1px solid #999;
@@ -4721,7 +4722,7 @@ input[type="submit"].btn.btn-mini {
   display: block;
 }
 .legend table td.label {
-  padding: 2px 20px 0 0px;
+  padding: 0px 20px 0 0px;
   text-align: left;
   background-color: transparent;
   color: #313130;
@@ -7022,6 +7023,9 @@ tr:hover .actions {
 }
 .topline .icon-arrow-down:before {
   color: #e61718;
+}
+.topline .icon-arrow-up:before {
+  color: #3fb300;
 }
 #riskPreview .progress {
   position: relative;

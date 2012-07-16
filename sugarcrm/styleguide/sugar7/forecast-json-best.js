@@ -23,7 +23,7 @@
         ]
         ,
         "goal_marker_color": [
-            "#3FB300",
+            "#000000",
             "#7D12B2"
         ]
         ,       "goal_marker_label" : [

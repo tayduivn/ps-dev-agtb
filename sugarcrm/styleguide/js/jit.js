@@ -11750,7 +11750,12 @@ $jit.ST.Plot.NodeTypes.implement({
           }
 
           ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle= "rgba(255,255,255,1)";
+            ctx.fillRect(xCoord, yCoord, chartBarWidth, 1);
+            ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
+
           ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
+
           ctx.globalCompositeOperation = "source-over";
 
           // add labels inside bar with rounded filled background
