@@ -68,17 +68,19 @@ class ThemeApi extends SugarApi
      * Generate bootstrap.css
      * @param $api
      * @param $args
+     * @return plain text/css
      */
     public function generateBootstrapCss($api, $args)
     {
         // Validating arguments
-        $platform = isset($args['platform']) ? $args['platform'] : "base";
-        $custom = isset($args['custom']) ? $args['custom'] : null;
+        $platform = isset($args['platform']) ? $args['platform'] : 'base';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
+        $minify = isset($args['min']) ? true : false;
 
         $variables = $this->get_less_vars($this->getThemeVarsLocation());
 
-        if (isset($args['platform']) || isset($args['custom'])) {
-            $customTheme = $this->get_less_vars($this->getThemeVarsLocation($platform, $custom));
+        if (isset($args['platform']) || isset($args['themeName'])) {
+            $customTheme = $this->get_less_vars($this->getThemeVarsLocation($platform, $themeName));
             $variables = array_merge($variables, $customTheme);
         }
 
@@ -86,14 +88,10 @@ class ThemeApi extends SugarApi
             $variables = array_merge($variables, $args);
         }
 
-        try {
-            $css = $this->compileBootstrapCss($variables, $args["min"]);
-            header("Content-type: text/css");
-            exit($css);
 
-        } catch (exception $ex) {
-            exit('lessc fatal error:<br />' . $ex->getMessage());
-        }
+        $css = $this->compileBootstrapCss($variables, $minify);
+        header('Content-type: text/css');
+        exit($css);
     }
 
     /**
@@ -104,32 +102,28 @@ class ThemeApi extends SugarApi
      */
     public function getCustomThemeVars($api, $args)
     {
-        try {
-            $output = array();
+        $output = array();
 
-            // Validating arguments
-            $platform = isset($args['platform']) ? $args['platform'] : "base";
-            $custom = isset($args['custom']) ? $args['custom'] : null;
+        // Validating arguments
+        $platform = isset($args['platform']) ? $args['platform'] : 'base';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
-            if (file_exists($this->getThemeVarsLocation($platform, $custom))) {
-                $variablesLess = file_get_contents($this->getThemeVarsLocation($platform, $custom));
-            } else {
-                $variablesLess = file_get_contents($this->getThemeVarsLocation());
-            }
-
-            // Parses the hex colors     @varName:      #aaaaaa;
-            $output["hex"] = $this->parse_file("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
-            // Parses the rgba colors     @varName:      rgba(0,0,0,0);
-            $output["rgba"] = $this->parse_file("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);
-            // Parses the related colors     @varName:      @relatedVar;
-            $output["rel"] = $this->parse_file("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess, true);
-            // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
-            $output["bg"] = $this->parse_file("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $variablesLess, true);
-
-            return $output;
-        } catch (exception $ex) {
-            exit('unable to override variables.less:<br />' . $ex->getMessage());
+        if (file_exists($this->getThemeVarsLocation($platform, $themeName))) {
+            $variablesLess = file_get_contents($this->getThemeVarsLocation($platform, $themeName));
+        } else {
+            $variablesLess = file_get_contents($this->getThemeVarsLocation());
         }
+
+        // Parses the hex colors     @varName:      #aaaaaa;
+        $output['hex'] = $this->parse_file("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
+        // Parses the rgba colors     @varName:      rgba(0,0,0,0);
+        $output['rgba'] = $this->parse_file("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);
+        // Parses the related colors     @varName:      @relatedVar;
+        $output['rel'] = $this->parse_file("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess, true);
+        // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
+        $output['bg'] = $this->parse_file("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $variablesLess, true);
+
+        return $output;
     }
 
     /**
@@ -141,60 +135,59 @@ class ThemeApi extends SugarApi
      */
     public function updateCustomTheme($api, $args)
     {
+        if(!is_admin($GLOBALS['current_user'])) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
         if (empty($args)) {
             throw new SugarApiExceptionMissingParameter('Missing colors');
         }
 
         // Validating arguments
-        $platform = isset($args['platform']) ? $args['platform'] : "base";
-        $custom = isset($args['custom']) ? $args['custom'] : null;
+        $platform = isset($args['platform']) ? $args['platform'] : 'base';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
         // Gets the themes files
-        $myTheme = $this->getThemeLocation($platform, $custom);
-        $myThemeVars = $this->getThemeVarsLocation($platform, $custom);
-        $myThemeCss = $this->getThemeCssLocation($platform, $custom);
+        $myTheme = $this->getThemeLocation($platform, $themeName);
+        $myThemeVars = $this->getThemeVarsLocation($platform, $themeName);
+        $myThemeCss = $this->getThemeCssLocation($platform, $themeName);
         $defaultThemeVars = $this->getThemeVarsLocation();
 
-        try {
-            // if reset=true is passed
-            // Override variables.less with the default theme
-            if (isset($args["reset"]) && $args["reset"] == true) {
+        // if reset=true is passed
+        // Override variables.less with the default theme
+        if (isset($args['reset']) && $args['reset'] == true) {
 
-                $this->write_file($myThemeVars, file_get_contents($defaultThemeVars));
+            $this->write_file($myThemeVars, file_get_contents($defaultThemeVars));
 
-            } else {
-                // else
-                // Override the custom variables.less with the given vars
+        } else {
+            // else
+            // Override the custom variables.less with the given vars
 
-                $myThemeVarsFileContents = file_exists($myThemeVars) ? file_get_contents($myThemeVars) : file_get_contents($defaultThemeVars);
-                foreach ($args as $lessVar => $lessValue) {
-                    // escape the args that are not less variables
-                    if ($lessVar == "platform" || $lessVar == "custom" || $lessVar == "preview") continue;
+            $myThemeVarsFileContents = file_exists($myThemeVars) ? file_get_contents($myThemeVars) : file_get_contents($defaultThemeVars);
+            foreach ($args as $lessVar => $lessValue) {
+                // escape the args that are not less variables
+                if ($lessVar == 'platform' || $lessVar == 'custom' || $lessVar == 'preview') continue;
 
-                    // override the variables
-                    $lessValue = html_entity_decode($lessValue);
-                    $myThemeVarsFileContents = preg_replace("/@$lessVar:(.*);/", "@$lessVar: $lessValue;", $myThemeVarsFileContents);
-                }
-                $myThemeVarsFileContents = str_replace('\n', '', $myThemeVarsFileContents);
-
-                // overwrite the theme
-                $this->write_file($myThemeVars, $myThemeVarsFileContents);
+                // override the variables
+                $lessValue = html_entity_decode($lessValue);
+                $myThemeVarsFileContents = preg_replace("/@$lessVar:(.*);/", "@$lessVar: $lessValue;", $myThemeVarsFileContents);
             }
+            $myThemeVarsFileContents = str_replace('\n', '', $myThemeVarsFileContents);
 
-            // Write the bootstrap.css file
-            $variables = $this->get_less_vars($defaultThemeVars);
-            $customTheme = $this->get_less_vars($myThemeVars);
-            $variables = array_merge($variables, $customTheme);
-            $css = $this->compileBootstrapCss($variables);
-            $this->write_file($myThemeCss, $css);
-
-            // saves the bootstrap.css URL in the portal settings
-            $GLOBALS ['system_config']->saveSetting('portal', "css", json_encode($GLOBALS['sugar_config']['site_url'] . "/" . $myThemeCss));
-            exit();
-
-        } catch (exception $ex) {
-            exit('unable to override $myTheme:<br />' . $ex->getMessage());
+            // overwrite the theme
+            $this->write_file($myThemeVars, $myThemeVarsFileContents);
         }
+
+        // Write the bootstrap.css file
+        $variables = $this->get_less_vars($defaultThemeVars);
+        $customTheme = $this->get_less_vars($myThemeVars);
+        $variables = array_merge($variables, $customTheme);
+        $css = $this->compileBootstrapCss($variables);
+        $this->write_file($myThemeCss, $css);
+
+        // saves the bootstrap.css URL in the portal settings
+        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($GLOBALS['sugar_config']['site_url'] . '/' . $myThemeCss));
+        exit();
     }
 
     /**
@@ -205,12 +198,19 @@ class ThemeApi extends SugarApi
      */
     private function compileBootstrapCss($variables, $min = true)
     {
-        $less = new lessc("include/styleguide/less/bootstrap.less");
+        $less = new lessc('include/styleguide/less/bootstrap.less');
         if ($min === true) {
-            $less->setFormatter("compressed");
+            $less->setFormatter('compressed');
         }
-        $variables["baseUrl"] = '"' . $GLOBALS['sugar_config']['site_url'] . '/include/styleguide"';
-        return $less->parse($variables);
+        $variables['baseUrl'] = '"' . $GLOBALS['sugar_config']['site_url'] . '/include/styleguide"';
+
+        try {
+            $css = $less->parse($variables);
+            return $css;
+
+        } catch (exception $e) {
+            throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
+        }
     }
 
     /**
@@ -226,7 +226,7 @@ class ThemeApi extends SugarApi
         preg_match_all($regex, $input, $match, PREG_PATTERN_ORDER);
         foreach ($match[1] as $key => $lessVar) {
             if ($formatAsCollection) {
-                $output[] = array("name" => $lessVar, "value" => $match[3][$key]);
+                $output[] = array('name' => $lessVar, 'value' => $match[3][$key]);
             } else {
                 $output[$lessVar] = $match[3][$key];
             }
@@ -240,7 +240,7 @@ class ThemeApi extends SugarApi
      * @param $filename
      * @return array
      */
-    private function get_less_vars($filename)
+    public function get_less_vars($filename)
     {
         $output = array();
         $variablesLess = file_get_contents($filename);
@@ -262,51 +262,53 @@ class ThemeApi extends SugarApi
     /**
      * Builds the URL of the theme folder
      * @param string $platform
-     * @param null $custom
+     * @param null $themeName
      * @param bool $onlyPath
      * @return string
      */
-    private function getThemeLocation($platform = "base", $custom = null)
+    private function getThemeLocation($platform = 'base', $customThemeName = null)
     {
-        if (!$custom) {
-            return "themes/clients/$platform/";
+        $themeName = $customThemeName ? $customThemeName : 'default';
+        if (!$customThemeName) {
+            return "themes/clients/$platform/$themeName/";
         } else {
-            return "custom/themes/clients/$platform/$custom/";
+            return "custom/themes/clients/$platform/$themeName/";
         }
     }
 
     /**
      * Builds the URL of the variables.less file of the theme
      * @param string $platform
-     * @param null $custom
+     * @param null $themeName
      * @return string
      */
-    private function getThemeVarsLocation($platform = "base", $custom = null)
+    private function getThemeVarsLocation($platform = 'base', $customThemeName = null)
     {
-        return $this->getThemeLocation($platform, $custom) . "variables.less";
+        return $this->getThemeLocation($platform, $customThemeName) . 'variables.less';
     }
 
     /**
      * Builds the URL of the bootstrap.css file of the theme
      * @param string $platform
-     * @param null $custom
+     * @param null $themeName
      * @return string
      */
-    private function getThemeCssLocation($platform = "base", $custom = null)
+    private function getThemeCssLocation($platform = 'base', $customThemeName = null)
     {
-        return $this->getThemeLocation($platform, $custom) . "bootstrap.css";
+        return $this->getThemeLocation($platform, $customThemeName) . 'bootstrap.css';
     }
 
-    private function write_file($file, $contents) {
-        if ( !file_put_contents( $file , $contents ) ) {
-        	$paths = explode ('/', $file);
-        	$root = '';
-        	foreach ($paths as $key => $dir) {
-        		if ($key == sizeof($paths)-1) break;
-        		$root .= $dir . '/';
-        		if (!is_dir($root)) mkdir($root);
-        	}
-            file_put_contents( $file , $contents );
+    private function write_file($file, $contents)
+    {
+        if (!file_put_contents($file, $contents)) {
+            $paths = explode('/', $file);
+            $root = '';
+            foreach ($paths as $key => $dir) {
+                if ($key == sizeof($paths) - 1) break;
+                $root .= $dir . '/';
+                if (!is_dir($root)) mkdir($root);
+            }
+            file_put_contents($file, $contents);
         }
     }
 }
