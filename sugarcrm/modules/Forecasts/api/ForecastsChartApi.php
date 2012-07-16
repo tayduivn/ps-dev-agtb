@@ -214,6 +214,9 @@ class ForecastsChartApi extends ChartApi
         $dataArray['properties'][0]['label_name'] = $this->yaxisLabel;
         $dataArray['properties'][0]['value_name'] = $this->xaxisLabel;
 
+        // remove the title
+        $dataArray['properties'][0]['title'] = null;
+
         $likely_sum = 0;
 
         foreach ($dataArray['values'] as $key => $value) {
