@@ -63,13 +63,17 @@
         backToLogin(true);
         app.alert.show("forbidden_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
     };
-
     
     /**
      * 404 Not Found handler. 
      */
     app.error.handleNotFoundError = function(error) {
-        app.router.navigate('error/404', {trigger: true});
+        app.controller.loadView({
+            layout: "error",
+            errorType: "404",
+            module: "Error",
+            create: true
+        });    
     };
 
     /**
@@ -94,14 +98,15 @@
      * 500 Internal server error handler. 
      */
     app.error.handleServerError = function(error) {
-        // Since we can get a 500 before app synced we 
-        // may not have stared backbone history.
         if(!Backbone.History.started) {
-            window.location.href = '#error/500';
             app.router.start();
-        } else { 
-            app.router.navigate('error/500', {trigger: true});
-        }
+        } 
+        app.controller.loadView({
+            layout: "error",
+            errorType: "500",
+            module: "Error",
+            create: true
+        });
     };
 
 })(SUGAR.App);
