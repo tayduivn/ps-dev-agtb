@@ -1,7 +1,7 @@
 <div class="row-fluid control-group">
     <div class="span2">{{label}}</div>
     <div class="span4">
-        <select data-placeholder=" " name="{{name}}" id="{{name}}" {{#if def.multi}} multiple {{/if}}>
+        <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}}>
             <option value="" selected></option>
             {{#eachOptions def.options}}
             <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
