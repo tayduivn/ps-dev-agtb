@@ -8,7 +8,6 @@
     initialize: function(options) {
 
         app.view.View.prototype.initialize.call(this, options);
-        this.platform = "portal";
         this.customTheme = "default";
         this.context.on("change", this.reloadIframeBootstrap, this);
     },
@@ -16,8 +15,8 @@
         var self = this;
         var params = {
                     preview: new Date().getTime(),
-                    platform: this.platform,
-                    custom: this.customTheme
+                    platform: app.config.platform,
+                    themeName: this.customTheme
                 };
         _.extend(params, this.context.attributes.colors);
         var cssLink = app.api.buildURL('bootstrap.css', '', {}, params);

@@ -12,7 +12,6 @@
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.platform = "portal";
         this.customTheme = "default";
         this.loadTheme();
     },
@@ -35,8 +34,8 @@
     },
     loadTheme: function() {
         var params = {
-            platform: this.platform,
-            custom: this.customTheme
+            platform: app.config.platform,
+            themeName: this.customTheme
         };
         var url = app.api.buildURL('theme', '', {}, params);
         var self = this;
@@ -49,8 +48,8 @@
     saveTheme: function() {
         var self = this,
             params = {
-                platform: this.platform,
-                custom: this.customTheme
+                platform: app.config.platform,
+                themeName: this.customTheme
             };
         self.showMessage('Saving theme....');
 
@@ -69,8 +68,8 @@
     resetTheme: function() {
         var self = this,
             params = { "reset": true,
-                platform: this.platform,
-                custom: this.customTheme
+                platform: app.config.platform,
+                themeName: this.customTheme
             };
         self.showMessage('Restoring default theme....');
 
