@@ -798,7 +798,8 @@ EOHTML;
 		$img_width = null,
 		$img_height = null,
 		$img_alt = '',
-		$img_placement = 'imageonly'
+		$img_placement = 'imageonly',
+        $font_icon = ''
     )
     {
 
@@ -813,7 +814,9 @@ EOHTML;
 				case 'right':	$inner_html = "<span class='title'>".$title."</span>".$img; break;
 				default:		$inner_html = $img; break;
 			}
-		} else {
+		} else if($font_icon) {
+            $inner_html = $font_icon;
+        } else {
 			$inner_html = $title;
 		}
 
