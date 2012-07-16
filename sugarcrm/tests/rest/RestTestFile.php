@@ -183,7 +183,10 @@ class RestTestFile extends RestTestBase {
 
         $filedata = file_get_contents($args['filename']);
 
-        $auth = (!empty($this->authToken)) ? "oauth_token: $this->authToken\r\n" : '';
+        if ( empty($this->authToken) ) {
+            $this->_restLogin();
+        }
+        $auth = "oauth_token: $this->authToken\r\n";
         $options = array(
             'http' => array(
                 'method' => 'PUT',
