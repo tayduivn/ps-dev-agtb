@@ -5668,22 +5668,22 @@ table.dataTable td.dataTables_empty {
   margin-left: 10px;
 }
 .paginate_enabled_previous {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_enabled.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_enabled.png') no-repeat top left;
 }
 .paginate_enabled_previous:hover {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_enabled_hover.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_enabled_hover.png') no-repeat top left;
 }
 .paginate_disabled_previous {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_disabled.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_disabled.png') no-repeat top left;
 }
 .paginate_enabled_next {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_enabled.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_enabled.png') no-repeat top right;
 }
 .paginate_enabled_next:hover {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_enabled_hover.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_enabled_hover.png') no-repeat top right;
 }
 .paginate_disabled_next {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_disabled.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_disabled.png') no-repeat top right;
 }
 /* Full number pagination */
 .paging_full_numbers {
@@ -5738,7 +5738,7 @@ table.dataTable td.dataTables_empty {
 }
 /* Sorting */
 .sorting {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_both.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_both.png') no-repeat center right;
   padding-right: 25px !important;
 }
 .sorting_asc,
@@ -5749,16 +5749,16 @@ table.dataTable td.dataTables_empty {
   padding-right: 25px !important;
 }
 .sorting_asc {
-  background: #f5f5f5 url('../../../index.php?entryPoint=getImage&imageName=sort_asc.png') no-repeat center right;
+  background: #f5f5f5 url('../../../../index.php?entryPoint=getImage&imageName=sort_asc.png') no-repeat center right;
 }
 .sorting_desc {
-  background: #f5f5f5 url('../../../index.php?entryPoint=getImage&imageName=sort_desc.png') no-repeat center right;
+  background: #f5f5f5 url('../../../../index.php?entryPoint=getImage&imageName=sort_desc.png') no-repeat center right;
 }
 .sorting_asc_disabled {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_asc_disabled.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_asc_disabled.png') no-repeat center right;
 }
 .sorting_desc_disabled {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_desc_disabled.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_desc_disabled.png') no-repeat center right;
 }
 table th.nosort {
   background: none;
