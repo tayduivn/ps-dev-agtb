@@ -61,7 +61,7 @@
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, data) {
                     self._collection.url = self.url;
-                    data.model.save();
+                    data.model.save(null, {wait: true});
                     self.refresh();
                 });
             },
@@ -335,7 +335,10 @@
                 function(oSettings, aData, iDataIndex)
                 {
                     var val = $(aData[0]).html();
-                    return /checked/.test(val);
+                    //until commit_stage field is a textfield check on "100" what means "Included"
+                    return /(100|checked)/.test(val);
+                    //when commit_stage is displayed as dropdown then will be next check
+                    //return /(value="100" selected=""|checked)/.test(val);
                 }
             );
         } else {

@@ -49,6 +49,13 @@ class ForecastsChartApi extends ChartApi
     protected $goalParetoLabel = '';
 
     /**
+     * Do we need to display the manager chart?
+     *
+     * @var bool
+     */
+    protected $isManager = false;
+
+    /**
      * Rest Api Registration Method
      *
      * @return array
@@ -89,14 +96,14 @@ class ForecastsChartApi extends ChartApi
 
         $mgr = new ChartAndWorksheetManager();
         //define worksheet type: 'manager' or 'individual'
-        $args['type'] = (isset($args['display_manager']) && $args['display_manager'] == 'true') ? 'manager' : 'individual';
+        $this->isManager = (isset($args['display_manager']) && $args['display_manager'] == 'true') ? true : false;
 
-        $report_defs = $mgr->getWorksheetDefinition($args['type'], 'opportunities');
+        $report_defs = $mgr->getWorksheetDefinition(($this->isManager) ? 'manager' : 'individual', 'opportunities');
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        if ($args['type'] == "individual") {
+        if (!$this->isManager) {
             $filters = array(
                 'timeperiod_id' => array('$is' => $timeperiod_id),
                 'assigned_user_link' => array('id' => $user_id),
@@ -152,7 +159,7 @@ class ForecastsChartApi extends ChartApi
         // since we have data let get the quota line
         /* @var $quota_bean Quota */
         $quota_bean = BeanFactory::getBean('Quotas');
-        if ($args['type'] == "manager") {
+        if ($this->isManager) {
             $quota = $quota_bean->getGroupQuota($timeperiod_id, false, $user_id);
             $quota = array('amount' => $quota, 'formatted_amount' => format_number($quota, null, null, array('currency_symbol' => true)));
         } else {
@@ -163,6 +170,43 @@ class ForecastsChartApi extends ChartApi
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
 
+
+        if(!$this->isManager) {
+            $validTimePeriods = $this->getTimePeriodMonths($timeperiod_id);
+
+            if(count($validTimePeriods) != count($dataArray['values'])) {
+                // we need to add in the values
+                $num_of_items = count($dataArray['label']);
+                $empty_array = array(
+                    'label' => '',
+                    'gvalue' => '',
+                    'gvaluelabel' => '',
+                    'values' => array_pad(array(), $num_of_items, 0),
+                    'valuelabels' => array_pad(array(), $num_of_items, "0"),
+                    'links' => array_pad(array(), $num_of_items, ""),
+
+                );
+                $current_values = $dataArray['values'];
+                $new_values = array_combine($validTimePeriods, array_pad(array(), count($validTimePeriods), $empty_array));
+
+                foreach($current_values as $c_val) {
+                    $new_values[$c_val['label']] = $c_val;
+                }
+
+                // fix the labels
+                array_walk($new_values, function(&$item, $key) {
+                    $item['label'] = $key;
+                });
+
+
+                $dataArray['values'] = array_values($new_values);
+            }
+        } else {
+            // always make sure that the columns go from the largest to the smallest
+            // if we are displaying the manager chart
+            usort($dataArray['values'], array($this, 'sortChartColumns'));
+        }
+
         // add the goal marker stuff
         $dataArray['properties'][0]['goal_marker_type'] = array('group', 'pareto');
         $dataArray['properties'][0]['goal_marker_color'] = array('#3FB300', '#7D12B2');
@@ -170,18 +214,14 @@ class ForecastsChartApi extends ChartApi
         $dataArray['properties'][0]['label_name'] = $this->yaxisLabel;
         $dataArray['properties'][0]['value_name'] = $this->xaxisLabel;
 
-        if($args['type'] == "manager") {
-            // always make sure that the columns go from the largest to the smallest
-            // if we are displaying the manager chart
-            usort($dataArray['values'], array($this, 'sortChartColumns'));
-        }
+        // remove the title
+        $dataArray['properties'][0]['title'] = null;
 
         $likely_sum = 0;
 
         foreach ($dataArray['values'] as $key => $value) {
 
             $likely = 0;
-            $likely_label = 0;
 
             //$dataArray['values'][$key]['sales_stage'] = $dataArray['label'];
 
@@ -200,7 +240,7 @@ class ForecastsChartApi extends ChartApi
                 $likely = $likely_values[$value['label']]['amount'];
             }
 
-            if ($args['type'] == "manager") {
+            if ($this->isManager) {
                 // fix the names
                 $user = BeanFactory::getBean("Users");
                 $user->retrieve_by_string_fields(array('user_name' => $value['label']));
@@ -246,7 +286,7 @@ class ForecastsChartApi extends ChartApi
         $this->processDataset($rb, $args);
 
         // if the type is manager we need to adjust the group by to be that of user_name to match up with the main report
-        if ($args['type'] == "manager") {
+        if ($this->isManager) {
             $rb->removeGroupBy($rb->getGroupBy('date_closed'));
             $rb->addGroupBy('user_name', 'Users', 'Opportunities:assigned_user_link');
             $rb->removeSummaryColumn($rb->getSummaryColumns('date_closed'));
@@ -417,6 +457,23 @@ class ForecastsChartApi extends ChartApi
         } else {
             return 0;
         }
+    }
+
+    protected function getTimePeriodMonths($timeperiod_id)
+    {
+        /* @var $timeperiod TimePeriod */
+        $timeperiod = BeanFactory::getBean('TimePeriods', $timeperiod_id);
+
+        $months = array();
+
+        $start = strtotime($timeperiod->start_date);
+        $end = strtotime($timeperiod->end_date);
+        while ($start < $end) {
+            $months[] = date('F Y', $start);
+            $start = strtotime("+1 month", $start);
+        }
+
+        return $months;
     }
 
 }

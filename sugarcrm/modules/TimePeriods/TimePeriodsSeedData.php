@@ -75,7 +75,7 @@ public static function populateSeedData()
     $timeperiod4 = new TimePeriod();
     $timeperiod4->name = "Q3 ".$year;
     $timeperiod4->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-    $timeperiod4->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
+    $timeperiod4->end_date =  $timedate->asDbDate($now->get_day_end(31, 9, $year));
     $timeperiod4->is_fiscal_year =0;
     $timeperiod4->parent_id=$fiscal_year_id;
     $current_timeperiod_id = $timeperiod4->save();
@@ -121,7 +121,7 @@ public static function populateSeedData()
     $timeperiod9 = new TimePeriod();
     $timeperiod9->name = "Q3 ".$year;
     $timeperiod9->start_date = $timedate->asDbDate($now->get_day_begin(1, 7, $year));
-    $timeperiod9->end_date =  $timedate->asDbDate($now->get_day_end(31, 10, $year));
+    $timeperiod9->end_date =  $timedate->asDbDate($now->get_day_end(31, 9, $year));
     $timeperiod9->is_fiscal_year =0;
     $timeperiod9->parent_id=$fiscal_year_id;
     $current_timeperiod_id = $timeperiod9->save();
