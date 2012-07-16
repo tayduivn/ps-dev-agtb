@@ -173,6 +173,11 @@ class RestTestFile extends RestTestBase {
     }
 
     protected function _restCallPut($urlPart, $args, $passInQueryString = true) {
+        // Auth check early to prevent work when not needed
+        if ( empty($this->authToken) ) {
+            $this->_restLogin();
+        }
+        
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
@@ -183,9 +188,6 @@ class RestTestFile extends RestTestBase {
 
         $filedata = file_get_contents($args['filename']);
 
-        if ( empty($this->authToken) ) {
-            $this->_restLogin();
-        }
         $auth = "oauth_token: $this->authToken\r\n";
         $options = array(
             'http' => array(
