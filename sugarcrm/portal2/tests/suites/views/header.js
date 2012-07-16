@@ -4,7 +4,7 @@ describe("Header View", function() {
     beforeEach(function() {
         var controller;
         //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
-        controller = SugarTest.loadFile('../../../../../sugarcrm/clients/base/views/header', 'header', 'js', function(d){ return d;});
+        controller = SugarTest.loadFile('../../../../sugarcrm/clients/base/views/header', 'header', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
         HeaderView = app.view.declareComponent('view', 'Header', null, controller);
@@ -28,8 +28,13 @@ describe("Header View", function() {
     });
 
     it("should set the current module list", function() {
-        var result = fixtures.metadata.moduleList, options, view;
+        var originalModuleList, result = fixtures.metadata.moduleList, options, view;
+
+        // Temporarily reset the display modules to our fixture's module list.
+        originalModuleList = app.config.displayModules;
+        app.config.displayModules = _.toArray(result);
         delete result._hash;
+
         options = {
             context: {get: function() {
                 return 'cases';
@@ -42,6 +47,8 @@ describe("Header View", function() {
         view = new HeaderView(options);
         view.setModuleInfo();
         expect(view.moduleList).toEqual(_.toArray(result));
+        // Set back original display modules.
+        app.config.displayModules = originalModuleList;
     });
 
     it("should properly set the create task list dropdown", function() {
