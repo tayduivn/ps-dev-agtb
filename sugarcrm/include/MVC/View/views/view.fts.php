@@ -66,7 +66,7 @@ class ViewFts extends SugarView
         {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
-        $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : FALSE;
+        $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : TRUE;
         $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => $append_wildcard);
 
         if( $this->fullView || $refreshModuleFilter)
