@@ -6091,6 +6091,9 @@ table.dataTable th:active {
 .jstree-sugar li[rel="rep"] > ins::before {
   content: "\f007";
 }
+.jstree-sugar li[rel="my_opportunities"] > ins::before {
+  content: "\f007";
+}
 .jstree-sugar .jstree-clicked {
   color: #58595b !important;
 }
