@@ -21,7 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 class ForecastManagerWorksheet extends SugarBean {
-
+	
+	var $args;
     var $id;
     var $name;
     var $forecast;
@@ -39,8 +40,41 @@ class ForecastManagerWorksheet extends SugarBean {
 
     function save($check_notify = false)
     {
-
+    	//save forecast
+		$forecast = new Forecast();
+		$forecast->retrieve($this->id);
+		$forecast->best_case = $this->best_case;
+		$forecast->likely_case = $this->likely_case;
+		$forecast->forecast = ($this->forecast) ? 1 : 0;
+		$forecast->save();
+		
+		//save quota
+		$quota = new Quota();
+		$quota->retrieve($this->args["quota_id"]);
+		$quota->timeperiod_id = $forecast->timeperiod_id;
+		$quota->user_id = $forecast->user_id;
+		$quota->quota_type = 'Direct';
+		$quota->amount = $this->args["amount"];
+		
+		//save worksheet
+		$worksheet  = new Worksheet();
+		$worksheet->retrieve($this->args["worksheet_id"]);
+		$worksheet->timeperiod_id = $forecast->timeperiod_id;
+		$worksheet->user_id = $forecast->user_id;
+		$worksheet->forecast = ($this->forecast) ? 1 : 0;
+        $worksheet->best_case = $this->best_case;
+        $worksheet->likely_case = $this->likely_case;
+        $worksheet->forecast_type = "Rollup";
+        $worksheet->related_id = $forecast->user_id;
+        $worksheet->save();
     }
+    
+    /**
+     * Sets Worksheet args so that we save the supporting tables.
+     */
+	function setWorksheetArgs($args){
+		$this->args = $args;
+	}
 
 }
 

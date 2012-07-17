@@ -176,7 +176,7 @@ class ForecastsWorksheetApi extends ModuleApi {
                $field->save($seed, $args, $fieldName, $properties);
             }
         }
-		$seed->setWorksheetId($args["worksheet_id"]);
+		$seed->setWorksheetArgs($args);
         $seed->save();
         return $seed->id;
     }
