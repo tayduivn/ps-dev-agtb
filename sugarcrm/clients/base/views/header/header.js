@@ -35,7 +35,7 @@
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
-            followOnEnterKey: function(hrefOrTerm, isHref) {
+            onEnterFn: function(hrefOrTerm, isHref) {
                 // if full href treat as user clicking link
                 if(isHref) {
                     window.location = hrefOrTerm;

@@ -7,4 +7,8 @@
                             <li>
                                 <a href="#search/{{term}}"><strong>{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
                             </li>
+                        {{else}}
+                            <li>
+                                <a href="#search/{{term}}"><strong>{{str "LNK_SEARCH_NO_RESULTS"}}</a>
+                            </li>
                         {{/notEq}}
