@@ -185,69 +185,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         //load JSON data.
                         barChart.loadJSON(data);
 
-                        //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = barChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols),
-                            table = "";
-                        if(legend['wmlegend'] != "undefined") {
-                            var wmcols = 2,
-                                wmrows = Math.ceil(legend["wmlegend"]["name"].length/wmcols);
-                            table += "<table cellpadding='0' cellspacing='0' align='left' width='100%'><tr><td width='70%'>";
-                        }
-                        table += "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 0;
-                        for(var i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
-
-                                table += '<td valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
-
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
-
-                                table += '</td>';
-                                j++;
-                            }
-
-
-
-                            table += "</tr>";
-                        }
-                        table += "</table>";
-                        if(legend['wmlegend'] != "undefined") {
-                            table += "</td>";
-                            table += "<td width='30%'>";
-
-                            table += "<table cellpadding='0' cellspacing='0' align='right'>"
-                            for(var i=0;i<wmrows;i++) {
-                                table += "<tr>";
-                                for(var i=0;i<legend['wmlegend']['name'].length;i++) {
-                                    table += "<td valign='top' rowspan><div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
-                                    table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
-                                }
-                                table += "</tr>";
-                            }
-                            table += "</table>";
-
-                            table += "</td>";
-                            table += "</tr></table>";
-                        }
-
-                        list.innerHTML = table;
-
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth)
-                        })
+                        var list = SUGAR.charts.generateLegend(barChart, chartId);
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
@@ -373,36 +311,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                          });
                          */
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = lineChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols),
-                            table = "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 0;
-                        for(i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
 
-                                table += '<td width=\'16\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
-
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
-
-                                table += '</td>';
-                                j++;
-                            }
-                            table += "</tr>";
-                        }
-
-                        table += "</table>";
-                        list.innerHTML = table;
+                        var list = SUGAR.charts.generateLegend(lineChart, chartId);
 
 
                         //save canvas to image for pdf consumption
@@ -497,36 +407,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         pieChart.loadJSON(data);
                         //end
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = pieChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols);
-                        table = "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 0;
-                        for(i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
-
-                                table += '<td width=\'16\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
-
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
-
-                                table += '</td>';
-                                j++;
-                            }
-                            table += "</tr>";
-                        }
-
-                        table += "</table>";
-                        list.innerHTML = table;
+                        var list = SUGAR.charts.generateLegend(pieChart, chartId);
 
 
                         //save canvas to image for pdf consumption
@@ -640,36 +521,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                          });
                          */
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = funnelChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols);
-                        table = "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 0;
-                        for(i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
-
-                                table += '<td width=\'16\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
-
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
-
-                                table += '</td>';
-                                j++;
-                            }
-                            table += "</tr>";
-                        }
-
-                        table += "</table>";
-                        list.innerHTML = table;
+                        var list = SUGAR.charts.generateLegend(funnelChart, chartId);
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -761,38 +613,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         //load JSON data.
                         gaugeChart.loadJSON(data);
 
-
-                        var list = $jit.id('legend'+chartId);
-                        var legend = gaugeChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols);
-                        table = "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 1;
-                        for(i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
-
-                                table += '<td width=\'16\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
-
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
-
-                                table += '</td>';
-                                j++;
-                            }
-                            table += "</tr>";
-                        }
-
-                        table += "</table>";
-                        list.innerHTML = table;
-
+                        var list = SUGAR.charts.generateLegend(gaugeChart, chartId);
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -836,6 +657,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         SUGAR = {};
     }
     SUGAR.charts = {
+
+        chart : null,
         /**
          * Execute callback function if specified
          *
@@ -843,8 +666,83 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
          */
         callback: function(callback) {
             if (callback) {
-                callback();
+                // if the call back is fired, include the chart as the only param
+                callback(this.chart);
             }
+        },
+
+        /**
+         * Handle the Legend Generation
+         *
+         * @param chart
+         * @param chartId
+         * @return {*}
+         */
+        generateLegend: function(chart, chartId) {
+            var list = $jit.id('legend'+chartId);
+            var legend = chart.getLegend(),
+                cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+                rows = Math.ceil(legend["name"].length/cols),
+                table = "";
+            if(legend['wmlegend'] != "undefined") {
+                var wmcols = 2,
+                    wmrows = Math.ceil(legend["wmlegend"]["name"].length/wmcols);
+                table += "<table cellpadding='0' cellspacing='0' align='left' width='100%'><tr><td width='70%'>";
+            }
+            table += "<table cellpadding='0' cellspacing='0' align='left'>";
+            var j = 0;
+            for(var i=0;i<rows;i++) {
+                table += "<tr>";
+                for(td=0;td<cols;td++) {
+
+                    table += '<td valign=\'top\'>';
+                    if(legend["name"][j] != undefined) {
+                        table += '<div class=\'query-color\' style=\'background-color:'
+                            + legend["color"][j] +'\'>&nbsp;</div>';
+                    }
+
+                    table += '</td>';
+                    table += '<td class=\'label\' valign=\'top\'>';
+                    if(legend["name"][j] != undefined) {
+                        table += legend["name"][j];
+                    }
+
+                    table += '</td>';
+                    j++;
+                }
+
+
+
+                table += "</tr>";
+            }
+            table += "</table>";
+            if(legend['wmlegend'] != "undefined") {
+                table += "</td>";
+                table += "<td width='30%'>";
+
+                table += "<table cellpadding='0' cellspacing='0' align='right'>"
+                for(var i=0;i<wmrows;i++) {
+                    table += "<tr>";
+                    for(var i=0;i<legend['wmlegend']['name'].length;i++) {
+                        table += "<td valign='top' rowspan><div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
+                        table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
+                    }
+                    table += "</tr>";
+                }
+                table += "</table>";
+
+                table += "</td>";
+                table += "</tr></table>";
+            }
+
+            list.innerHTML = table;
+
+            jQuery('#legend'+chartId).ready(function() {
+                var chartWidth = jQuery('#'+chartId).width() - 20;
+                $('#legend'+chartId).width(chartWidth)
+            });
+
+            return list;
         },
 
         /**
@@ -942,10 +840,11 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         update: function(chart, url, params, callback) {
             var self = this;
             params = params ? params : {};
+            self.chart = chart;
             this.get(url, params, function(data) {
                 if(self.isDataEmpty(data)){
-                    chart.busy = false;
-                    chart.updateJSON(data);
+                    self.chart.busy = false;
+                    self.chart.updateJSON(data);
                     self.callback(callback);
                 }
             });
