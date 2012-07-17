@@ -4696,30 +4696,50 @@ input[type="submit"].btn.btn-mini {
   background-image: url(../img/chartBg.png);
   background-repeat: repeat-x;
 }
-.waterMark {
+.legend {
+  padding: 0;
+  width: 100%;
+  float: left;
+  margin-left: 20px;
+}
+.legend .waterMark {
   width: 10px;
   height: 10px;
   background-image: url(../img/watermark-white.png);
   background-repeat: no-repeat;
-  margin-right: 10px;
+  margin-right: 5px;
   margin-top: 3px;
+  float: left;
 }
-.waterMark.pareto {
+.legend .waterMark.pareto {
   background-image: url(../img/pareto-white.png);
 }
-.query-color {
+.legend .query-color {
   width: 10px;
   height: 10px;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 5px;
   border: 1px solid #999;
+  float: left;
 }
-.legend {
-  padding: 0;
-  width: 50%;
-  text-align: center;
-  margin: 0 auto 20px;
-  display: block;
+.legend .col {
+  float: left;
+  width: 70%;
+}
+.legend .col2 {
+  float: left;
+  width: 30%;
+  text-align: right;
+}
+.legend .label {
+  float: left;
+  background-color: transparent;
+  color: #313130;
+  font-size: 12px;
+  margin-right: 10px;
+}
+.legend .legendGroup {
+  display: inline-block;
 }
 .legend table td.label {
   padding: 0px 20px 0 0px;
