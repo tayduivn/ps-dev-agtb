@@ -78,29 +78,18 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         //BEGIN SUGARCRM flav=pro ONLY
         $opp->team_id = $account->team_id;
         $opp->team_set_id = $account->team_set_id;
-        $worst_case = array("2500", "7500", "15000", "25000");
-        $likely_case = array("5000", "10000", "20000", "50000");
-        $best_case = array("7500", "12500", "25000", "60000");
-        $key = array_rand($best_case);
-        $opp->worst_case = $worst_case[$key];
-        $opp->likely_case = $likely_case[$key];
-        $opp->best_case = $best_case[$key];
         //END SUGARCRM flav=pro ONLY
 
-        $forecast= array('-1', '0', '1');
-        $key = array_rand($forecast);
-        $opp->forecast = $forecast[$key];
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
         $opp->name = substr($account->name." - 1000 units", 0, 50);
-        $opp->date_closed = create_date();
+
+        // If the deal is already done, make the date closed occur in the past.
+        $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
+                            ? create_past_date()
+                            : create_date();
         $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
         $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
-        // If the deal is already one, make the date closed occur in the past.
-        if($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
-        {
-            $opp->date_closed = create_past_date();
-        }
         $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
         $amount = array("10000", "25000", "50000", "75000");
         $key = array_rand($amount);
@@ -108,6 +97,11 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $probability = array("10", "70", "40", "60");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
+        //BEGIN SUGARCRM flav=pro ONLY
+        $opp->likely_case = $opp->amount * $opp->probability / 100;
+        $opp->worst_case = $opp->likely_case * .8;
+        $opp->best_case = $opp->likely_case * 1.2;
+        //END SUGARCRM flav=pro ONLY
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);

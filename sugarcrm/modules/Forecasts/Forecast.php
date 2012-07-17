@@ -188,7 +188,7 @@ class Forecast extends SugarBean
 	{
 		global $current_user;
 		$ret_array           = array();
-		$ret_array['select'] = "SELECT  tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ";
+		$ret_array['select'] = "SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ";
 		$ret_array['from']   = " FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ";
 		$ret_array['where']  = !empty($where) ? ' WHERE ' . $where : '';
 
@@ -255,8 +255,6 @@ class Forecast extends SugarBean
 		}
 		
 		$query = $this->create_new_list_query(NULL, $where);
-		
-		$GLOBALS['log']->log('FATAL', $query);
 		
 		$result = $this->db->query($query, true, 'Error retrieving user forecast information: ');
 		
