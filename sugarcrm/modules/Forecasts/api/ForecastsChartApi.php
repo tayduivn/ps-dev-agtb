@@ -207,6 +207,14 @@ class ForecastsChartApi extends ChartApi
             usort($dataArray['values'], array($this, 'sortChartColumns'));
         }
 
+        if($args['group_by'] == "forecast") {
+            // fix the labels
+            $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
+            if(isset($dataArray['label'][1])) {
+                $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
+            }
+        }
+
         // add the goal marker stuff
         $dataArray['properties'][0]['goal_marker_type'] = array('group', 'pareto');
         $dataArray['properties'][0]['goal_marker_color'] = array('#3FB300', '#7D12B2');
