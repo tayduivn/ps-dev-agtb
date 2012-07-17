@@ -4,13 +4,13 @@ describe("List View", function() {
     beforeEach(function() {
         var controller;
         //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
-        controller = SugarTest.loadFile('../../../../sugarcrm/clients/base/views/list', 'list', 'js', function(d){ return d;});
+        controller = SugarTest.loadFile('../../../clients/base/views/list', 'list', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
         ListView = app.view.declareComponent('view', 'List', null, controller);
     });
     
-    it("should set order by", function() {
+    it("should set order by based on fieldname and orderby field properties", function() {
         var event, x;
         var context = app.context.getContext();
         var collection = {
@@ -28,20 +28,38 @@ describe("List View", function() {
             template: "asdf"
         };
 
-        context.set({collection: collection});
-        var view = new app.view.views.ListView(options); 
+        // test that orderBy property takes precedence over fieldName property
+        var dataProvider = [
+            {
+                'fieldName': 'date_modified',
+                'orderBy': '',
+                'expectedOrderByField': 'date_modified'
+            },
+            {
+                'fieldName': 'full_name',
+                'orderBy': 'last_name',
+                'expectedOrderByField': 'last_name'
+            }
+        ];
 
-        view.$el.html('<div id="test" data-fieldname="bob"></div>');
+        $.each(dataProvider, function(index, value) {
+            context.set({collection: collection});
+            var view = new app.view.views.ListView(options);
 
-        x = view.$el.children('#test');
-        event = {target: x};
-        view.setOrderBy(event);
+            view.$el.html('<div id="test" data-fieldname="'+value.fieldName+'" data-orderby="'+value.orderBy+'"></div>');
 
-        expect(collection.orderBy.direction).toEqual('desc');
-        expect(collection.orderBy.field).toEqual('bob');
-        view.setOrderBy(event);
+            x = view.$el.children('#test');
+            event = {target: x};
+            view.setOrderBy(event);
 
-        expect(collection.orderBy.direction).toEqual('asc');
-        expect(collection.orderBy.field).toEqual('bob');
+            expect(collection.orderBy.direction).toEqual('desc');
+            expect(collection.orderBy.field).toEqual(value.expectedOrderByField);
+            expect(collection.orderBy.columnName).toEqual(value.fieldName);
+            view.setOrderBy(event);
+
+            expect(collection.orderBy.direction).toEqual('asc');
+            expect(collection.orderBy.field).toEqual(value.expectedOrderByField);
+            expect(collection.orderBy.columnName).toEqual(value.fieldName);
+        });
     });
 });
