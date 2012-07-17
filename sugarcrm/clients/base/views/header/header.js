@@ -110,7 +110,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.moduleList = _.toArray(app.metadata.getModuleList({visible: true}));
+        this.moduleList = app.metadata.getModuleNames(true);
     },
 
     /**
