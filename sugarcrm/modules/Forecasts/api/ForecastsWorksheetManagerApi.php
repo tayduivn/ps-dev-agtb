@@ -233,7 +233,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
                             WHERE w.related_id = u.id
                             AND w.timeperiod_id = '{$this->timeperiod_id}'
                             AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))";
+                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Rollup'))";
 
         $result = $GLOBALS['db']->query($reportees_query);
 
