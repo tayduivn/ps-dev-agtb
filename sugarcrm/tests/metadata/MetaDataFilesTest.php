@@ -33,6 +33,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         'Accountsmobilelistviewbase'   => 'modules/Accounts/metadata/mobile/views/list.php',
         'Accountsmobilelistviewcustom' => 'custom/modules/Accounts/metadata/mobile/views/list.php',
         'Bugsportaleditviewworking'    => 'custom/working/modules/Bugs/metadata/portal/views/edit.php',
+        'Bugsmobilesearchviewbase'     => 'modules/Bugs/metadata/mobile/views/search.php',
         'Casesportaldetailviewhistory' => 'custom/history/modules/Cases/metadata/portal/views/detail.php',
         'Callsbasesearchviewbase'      => 'modules/Calls/metadata/base/views/search.php',
     );
@@ -42,6 +43,8 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         'Leadseditviewcustommobile' => 'custom/modules/Leads/metadata/mobile/views/editviewdefs.php',
         'Notesdetailviewworkingportal' => 'custom/working/modules/Notes/metadata/portal/views/detailviewdefs.php',
         'Quotesadvanced_searchhistory' => 'custom/history/modules/Quotes/metadata/searchdefs.php',
+        'Meetingsbasic_searchbase'  => 'modules/Meetings/metadata/searchdefs.php',
+        'Bugswireless_advanced_searchbasemobile' => 'modules/Bugs/metadata/mobile/views/search.php',
     );
 
     public $undeployedFileNames = array(
@@ -102,6 +105,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
             array('Accounts', 'list', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
             array('Accounts', 'list', MB_CUSTOMMETADATALOCATION, MB_WIRELESS, 'view'),
             array('Bugs', 'edit', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'),
+            array('Bugs', 'search', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
             array('Cases', 'detail', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'),
             array('Calls', 'search', MB_BASEMETADATALOCATION, 'base', 'view'),
         );
@@ -113,6 +117,8 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
             array(MB_EDITVIEW, 'Leads', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
             array(MB_DETAILVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL),
             array(MB_ADVANCEDSEARCH, 'Quotes', MB_HISTORYMETADATALOCATION, ''),
+            array(MB_BASICSEARCH, 'Meetings', MB_BASEMETADATALOCATION, ''),
+            array(MB_WIRELESSADVANCEDSEARCH, 'Bugs', MB_BASEMETADATALOCATION, MB_WIRELESS),
         );
     }
 
