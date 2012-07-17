@@ -290,7 +290,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         } // if
         if($deleted){
             $deleted = -1;
-        }        
+        }
         if($using_cp){
             $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
         }else
