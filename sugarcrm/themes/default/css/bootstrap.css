@@ -5039,6 +5039,8 @@ ul#quickCreateULSubnav,
   color: #313130;
   text-shadow: none;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .legend table td.label:hover {
   color: #313130;
@@ -6087,6 +6089,9 @@ table.dataTable th:active {
   content: "\f062";
 }
 .jstree-sugar li[rel="rep"] > ins::before {
+  content: "\f007";
+}
+.jstree-sugar li[rel="my_opportunities"] > ins::before {
   content: "\f007";
 }
 .jstree-sugar .jstree-clicked {
