@@ -293,6 +293,7 @@ class ProductTemplate extends SugarBean {
 
 	function save_relationship_changes($is_update)
     {
+        parent::save_relationship_changes($is_update);
     }
 
 	function clear_note_product_template_relationship($product_template_id)
