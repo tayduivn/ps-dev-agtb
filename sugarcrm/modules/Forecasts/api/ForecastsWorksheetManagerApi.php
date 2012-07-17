@@ -204,7 +204,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     {
         //getting best/likely values from forecast table
         $forecast_query = "SELECT u.user_name, max(f.date_modified) date_modified, f.id forecast_id, f.best_case, f.likely_case, f.worst_case FROM forecasts f INNER JOIN users u ON f.user_id = u.id
-AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AND f.user_id = '{$this->user_id}' AND (u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}') GROUP BY u.user_name";
+AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AND (u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}') GROUP BY u.user_name";
 
         $result = $GLOBALS['db']->query($forecast_query);
 
