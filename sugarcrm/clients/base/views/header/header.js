@@ -34,7 +34,7 @@
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
-            buttonElement: '.navbar-search a.btn'
+            buttonElement: '.navbar-search span.add-on'
         });
     },
     /** 
@@ -48,6 +48,10 @@
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);
+            },
+            error:function(error) {
+                app.error.handleHttpError(error, plugin);
+                app.logger.error("Failed to fetch search results in search ahead. " + error);
             }
         });
     },
