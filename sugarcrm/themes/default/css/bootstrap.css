@@ -3099,6 +3099,61 @@ ul.sf-sub-modulelist {
   /* ie hack, width must be defined or else it goes off the screen */
 
 }
+.navbar-search {
+  position: relative;
+  float: left;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+.navbar-search .search-query {
+  padding: 4px 9px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1;
+  color: #f5f5f5;
+  background: #ffffff;
+  border: 1px solid #111;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.navbar-search .search-query :-moz-placeholder {
+  color: #f5f5f5;
+}
+.navbar-search .search-query ::-webkit-input-placeholder {
+  color: #f5f5f5;
+}
+.navbar-search .search-query:hover {
+  color: #ffffff;
+  background-color: #cdcccb;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.navbar-search .search-query:focus,
+.navbar-search .search-query.focused {
+  color: #343433;
+  text-shadow: 0 1px 0 #ffffff;
+  background-color: #ffffff;
+  border: 1px solid #58595b;
+  outline: 0;
+}
+.navbar .btn,
+.navbar .btn-group {
+  margin: 0 10px 0;
+}
+.navbar .btn-group .btn {
+  margin-top: 0;
+}
+.navbar .advanced .btn {
+  line-height: 19px;
+  height: 18px;
+  margin-right: 0px;
+}
 #dcboxbody .hd #dctitle {
   float: left;
   height: 38px;
@@ -3124,20 +3179,6 @@ ul.sf-sub-modulelist {
 #dcmenuSugarCube img.icon,
 #glblSearchBtn img.icon {
   border: 0px;
-}
-#glblSearchBtn {
-  display: block;
-  position: absolute;
-  right: 19px;
-  top: 1px;
-  width: 32px;
-}
-#glblSearchBtn .searchIconLink {
-  width: 32px;
-  overflow: hidden;
-  display: block;
-  position: relative;
-  cursor: pointer;
 }
 #glblSearchBtn .searchicon {
   position: relative;
@@ -3166,7 +3207,7 @@ span.dcmenuitem:hover {
   height: 43px;
 }
 #dcmenuSugarCube:hover {
-  background-color: #276499;
+  background-color: #343433;
 }
 #notifDivider {
   float: right;
@@ -3463,7 +3504,7 @@ ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul {
   color: #fff !important;
-  background: #355B7E;
+  background-color: #343433;
 }
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
 ul.megamenu .MMShortcuts li.sfHover,
@@ -3805,7 +3846,6 @@ ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 }
 #dcmenuSearchDiv {
   float: right;
-  margin-top: 8px;
   height: 26px;
   width: 275px;
   position: relative;
@@ -3815,7 +3855,7 @@ ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
   height: 43px;
 }
 #globalLinksModule:hover {
-  background-color: #276499;
+  background-color: #343433;
 }
 #globalLinksCtrl img {
   border: 0px;
@@ -3840,7 +3880,9 @@ ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 }
 #globalLinksModule ul.clickMenu li:hover span,
 #quickCreate ul.clickMenu > li:hover {
-  background-color: #276499;
+  background-color: #343433;
+  color: #ffffff;
+  text-shadow: 0 -1px 0 #000000;
 }
 ul#globalLinksSubnav li {
   min-width: 120px;
@@ -5626,22 +5668,22 @@ table.dataTable td.dataTables_empty {
   margin-left: 10px;
 }
 .paginate_enabled_previous {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_enabled.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_enabled.png') no-repeat top left;
 }
 .paginate_enabled_previous:hover {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_enabled_hover.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_enabled_hover.png') no-repeat top left;
 }
 .paginate_disabled_previous {
-  background: url('../../../index.php?entryPoint=getImage&imageName=back_disabled.png') no-repeat top left;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=back_disabled.png') no-repeat top left;
 }
 .paginate_enabled_next {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_enabled.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_enabled.png') no-repeat top right;
 }
 .paginate_enabled_next:hover {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_enabled_hover.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_enabled_hover.png') no-repeat top right;
 }
 .paginate_disabled_next {
-  background: url('../../../index.php?entryPoint=getImage&imageName=forward_disabled.png') no-repeat top right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=forward_disabled.png') no-repeat top right;
 }
 /* Full number pagination */
 .paging_full_numbers {
@@ -5696,7 +5738,7 @@ table.dataTable td.dataTables_empty {
 }
 /* Sorting */
 .sorting {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_both.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_both.png') no-repeat center right;
   padding-right: 25px !important;
 }
 .sorting_asc,
@@ -5707,16 +5749,16 @@ table.dataTable td.dataTables_empty {
   padding-right: 25px !important;
 }
 .sorting_asc {
-  background: #f5f5f5 url('../../../index.php?entryPoint=getImage&imageName=sort_asc.png') no-repeat center right;
+  background: #f5f5f5 url('../../../../index.php?entryPoint=getImage&imageName=sort_asc.png') no-repeat center right;
 }
 .sorting_desc {
-  background: #f5f5f5 url('../../../index.php?entryPoint=getImage&imageName=sort_desc.png') no-repeat center right;
+  background: #f5f5f5 url('../../../../index.php?entryPoint=getImage&imageName=sort_desc.png') no-repeat center right;
 }
 .sorting_asc_disabled {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_asc_disabled.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_asc_disabled.png') no-repeat center right;
 }
 .sorting_desc_disabled {
-  background: url('../../../index.php?entryPoint=getImage&imageName=sort_desc_disabled.png') no-repeat center right;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=sort_desc_disabled.png') no-repeat center right;
 }
 table th.nosort {
   background: none;
@@ -8091,9 +8133,8 @@ color: @red;
 }
 .navbar .advanced {
   position: absolute;
-  top: -8px;
-  right: -20px;
-  line-height: 18px;
+  right: 2px;
+  top: -2px;
 }
 .navbar .advanced .dropdown-menu {
   right: 35px;

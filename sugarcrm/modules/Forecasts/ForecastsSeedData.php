@@ -49,13 +49,6 @@ public static function populateSeedData($timeperiods)
     		//create forecast schedule using this record becuse there will be one
     		//direct entry per user, and some user will have a Rollup entry too.
     		if ($commit_type_array[1] == 'Direct') {
-    			$fcst_schedule = new ForecastSchedule();
-    			$fcst_schedule->timeperiod_id=$timeperiod_id;
-    			$fcst_schedule->user_id=$commit_type_array[0];
-    			$fcst_schedule->cascade_hierarchy=0;
-    			$fcst_schedule->forecast_start_date=$timeperiod_id;
-    			$fcst_schedule->status='Active';
-    			$fcst_schedule->save();
 
     			//commit a direct forecast for this user and timeperiod.
     			$forecastopp = new ForecastOpportunities();
@@ -63,15 +56,27 @@ public static function populateSeedData($timeperiods)
     			$forecastopp->current_user_id = $commit_type_array[0];
     			$opp_summary_array= $forecastopp->get_opportunity_summary(false);
 
+                if($opp_summary_array['OPPORTUNITYCOUNT'] == 0)
+                {
+                    continue;
+                }
+                $fcst_schedule = new ForecastSchedule();
+                $fcst_schedule->timeperiod_id=$timeperiod_id;
+                $fcst_schedule->user_id=$commit_type_array[0];
+                $fcst_schedule->cascade_hierarchy=0;
+                $fcst_schedule->forecast_start_date=$timeperiod_id;
+                $fcst_schedule->status='Active';
+                $fcst_schedule->save();
+
     			$forecast = new Forecast();
     			$forecast->timeperiod_id=$timeperiod_id;
     			$forecast->user_id =  $commit_type_array[0];
     			$forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
     			$forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
                 $multiplier = mt_rand(1,6);
-    			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+    			$forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier+1) * 100);
     			$forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-    			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+    			$forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier-1) * 100);
     			$forecast->forecast_type='Direct';
     			$forecast->date_committed = $timedate->asDb($timedate->getNow());
     			$forecast->save();
@@ -94,8 +99,10 @@ public static function populateSeedData($timeperiods)
     			$quota->user_id = $commit_type_array[0];
     			$quota->quota_type='Direct';
     			$quota->currency_id=-99;
-    			$quota->amount=500;
-    			$quota->amount_base_currency=500;
+                $ratio = array('.8','1','1.2','1.4');
+                $key = array_rand($ratio);
+    			$quota->amount = ($opp_summary_array['TOTAL_AMOUNT'] * $ratio[$key]) / 2;
+    			$quota->amount_base_currency = $quota->amount;
     			$quota->committed=1;
     			$quota->set_created_by = false;
     			if ($commit_type_array[0] == 'seed_sarah_id' || $commit_type_array[0] == 'seed_will_id' || $commit_type_array[0] == 'seed_jim_id')
@@ -124,9 +131,10 @@ public static function populateSeedData($timeperiods)
     			$forecast->user_id =  $commit_type_array[0];
     			$forecast->opp_count= $DirReportsFocus->total_opp_count;
     			$forecast->opp_weigh_value=$DirReportsFocus->total_weigh_value_number;
-    			$forecast->likely_case=$DirReportsFocus->total_weigh_value_number + 500;
-    			$forecast->best_case=$DirReportsFocus->total_weigh_value_number + 500;
-    			$forecast->worst_case=$DirReportsFocus->total_weigh_value_number + 500;
+                $multiplier = mt_rand(1,6);
+    			$forecast->likely_case=$DirReportsFocus->total_weigh_value_number + (($multiplier+1) * 100);
+    			$forecast->best_case=$DirReportsFocus->total_weigh_value_number + ($multiplier * 100);
+    			$forecast->worst_case=$DirReportsFocus->total_weigh_value_number + (($multiplier-1) * 100);
     			$forecast->forecast_type='Rollup';
     			$forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
     			$forecast->save();
@@ -137,9 +145,9 @@ public static function populateSeedData($timeperiods)
     			$quota->quota_type='Rollup';
     			$quota->currency_id=-99;
     			$quota->amount=$quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-    			if (!isset($quota->amount)) $quota->amount = 0;
+    			if (!isset($quota->amount)) $quota->amount = $multiplier * 1000;
     			$quota->amount_base_currency=$quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-    			if (!isset($quota->amount_base_currency)) $quota->amount_base_currency = 0;
+    			if (!isset($quota->amount_base_currency)) $quota->amount_base_currency = $quota->amount;
     			$quota->committed=1;
     			$quota->save();
     		}

@@ -304,7 +304,6 @@
             'likely_case' : includedLikely,
             'best_case' : includedBest,
             'timeperiod_id' : self.timePeriod,
-            'forecast_type' : 'Direct',
             'opp_count' : includedCount,
             'amount' : includedAmount
         };

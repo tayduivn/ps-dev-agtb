@@ -311,6 +311,10 @@ class ListViewData {
         if(!isset($params['custom_where'])) $params['custom_where'] = '';
         if(!isset($params['custom_order_by'])) $params['custom_order_by'] = '';
 		$main_query = $ret_array['select'] . $params['custom_select'] . $ret_array['from'] . $params['custom_from'] . $ret_array['inner_join']. $ret_array['where'] . $params['custom_where'] . $ret_array['order_by'] . $params['custom_order_by'];
+
+        //Prevent multiple (same) ACLAccess calls
+        $seedACL['ListView'] = $this->seed->ACLAccess('ListView');
+
 		//C.L. - Fix for 23461
 		if(empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
           	   $_SESSION['export_where'] = $ret_array['where'];
@@ -329,7 +333,7 @@ class ListViewData {
             	$totalCount = $this->getTotalCount($main_query);
             	$offset = (floor(($totalCount -1) / $limit)) * $limit;
             }
-            if($this->seed->ACLAccess('ListView')) {
+            if($seedACL['ListView']) {
                 $result = $this->db->limitQuery($main_query, $offset, $limit + 1);
             }
             else {
@@ -439,10 +443,14 @@ class ListViewData {
 
 				$temp->ACLFilterFieldList($data[$dataIndex]);
 				//END SUGARCRM flav=pro ONLY
-			    $pageData['rowAccess'][$dataIndex] = array('view' => $temp->ACLAccess('DetailView'), 'edit' => $temp->ACLAccess('EditView'));
-			    $additionalDetailsAllow = $this->additionalDetails && $temp->ACLAccess('DetailView') && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
+                //Preventing multiple (same) ACLAccess calls
+                $tempACL['EditView'] = $temp->ACLAccess('EditView');
+                $tempACL['DetailView'] = $temp->ACLAccess('DetailView');
+
+                $pageData['rowAccess'][$dataIndex] = array('view' => $tempACL['DetailView'], 'edit' => $tempACL['EditView']);
+                $additionalDetailsAllow = $this->additionalDetails && $tempACL['DetailView'] && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
 			    //if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
-			    $additionalDetailsEdit = $temp->ACLAccess('EditView');
+			    $additionalDetailsEdit = $tempACL['EditView'];
 				if($additionalDetailsAllow) {
                     if($this->additionalDetailsAjax) {
 					   $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID']);
@@ -492,7 +500,7 @@ class ListViewData {
         $pageData['stamp'] = $this->stamp;
         $pageData['access'] = array('view' => $this->seed->ACLAccess('DetailView'), 'edit' => $this->seed->ACLAccess('EditView'));
 		$pageData['idIndex'] = $idIndex;
-        if(!$this->seed->ACLAccess('ListView')) {
+        if(!$seedACL['ListView']) {
             $pageData['error'] = 'ACL restricted access';
         }
         
