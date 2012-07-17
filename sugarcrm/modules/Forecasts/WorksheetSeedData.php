@@ -115,6 +115,19 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                 //END SUGARCRM flav=ent ONLY
             }
 
+            //this is the direct worksheet for the manager
+            $worksheet = new Worksheet();
+            $worksheet->user_id = $user_id;
+            $worksheet->timeperiod_id = $timeperiod_id;
+            $worksheet->forecast_type = 'Direct';
+            $worksheet->related_id = $user_id;
+            $worksheet->related_forecast_type = 'Direct';
+            $worksheet->best_case = $best;
+            $worksheet->likely_case = $likely;
+            $worksheet->worst_case = $worst;
+            $worksheet->save();
+            $created_ids[] = $worksheet->id;
+
             //This is the rollup worksheet for the manager
             $increment = 500;
 
