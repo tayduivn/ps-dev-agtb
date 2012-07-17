@@ -46,8 +46,9 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
      * @param string searchLayout	The type of search layout, e.g., MB_BASICSEARCH or MB_ADVANCEDSEARCH
      * @param string moduleName     The name of the module to which this listview belongs
      * @param string packageName    If not empty, the name of the package to which this listview belongs
+     * @param string client         The client type
      */
-    function __construct ($searchLayout, $moduleName , $packageName = '')
+    function __construct ($searchLayout, $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct( $searchLayout , $moduleName , $packageName )" ) ;
 
@@ -66,11 +67,11 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
         	if (empty ( $packageName ))
         	{
             	require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
-            	$this->implementation = new DeployedMetaDataImplementation ( $searchLayout, $moduleName ) ;
+            	$this->implementation = new DeployedMetaDataImplementation ( $searchLayout, $moduleName, $client ) ;
         	} else
         	{
             	require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
-            	$this->implementation = new UndeployedMetaDataImplementation ( $searchLayout, $moduleName, $packageName ) ;
+            	$this->implementation = new UndeployedMetaDataImplementation ( $searchLayout, $moduleName, $packageName, $client ) ;
         	}
         } catch (Exception $e)
         {
