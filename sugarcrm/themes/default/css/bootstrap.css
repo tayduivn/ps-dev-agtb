@@ -5039,6 +5039,8 @@ ul#quickCreateULSubnav,
   color: #313130;
   text-shadow: none;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .legend table td.label:hover {
   color: #313130;

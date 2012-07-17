@@ -29,6 +29,8 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
         this.handleRenderOptions({user_id: app.user.get('id')});
+        this.hasSelectedUser = true;
+        this.handleRenderOptions({display_manager : app.user.get('isManager')});
     },
 
     /**
@@ -59,7 +61,7 @@
         });
         this.context.forecasts.on('change:updatedTotals', function(context, totals){
             if (self.canRender()) {
-                self.renderChart();
+                self.updateChart();
             }
         });
     },
@@ -88,11 +90,17 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        //if (this.chart === null) {
-            this.chart = this._initializeChart();
-        //} else {
-        //    updateChart(this.url, this.chart, this.values);
-        //}
+        this.chart = this._initializeChart();
+    },
+
+    /**
+     * Only update the json on the chart
+     */
+    updateChart: function() {
+        var self = this;
+        SUGAR.charts.update(self.chart, self.url, self.values, function(chart){
+            SUGAR.charts.generateLegend(chart, chart.config.injectInto)
+        });
     },
 
     /**
@@ -124,5 +132,4 @@
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
     }
-
 })
