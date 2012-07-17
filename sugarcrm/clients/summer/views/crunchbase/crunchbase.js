@@ -8,38 +8,31 @@
     events: {
     },
 
-
-
     initialize: function(options) {
+        console.log('initialize');
+        console.log(this);
+        console.log(options);
         app.view.View.prototype.initialize.call(this,options);
-
-
         var lid = this.options.lid || ""; // Layout Id
 
+        console.log(this);
+        console.log(options);
+
     },
-
-
-
 
     reset: function(context) {
         // If creating a new screen, lets hide the div.
         this.$el.toggle(!(context.id === "new"));
-
         this.model = context.data;
         this.model.bind("change", this.getData);
         this.getData();
     },
 
-
-
     _render: function() {
+
+        console.log('render');
         this.$el.show();
-
         app.view.View.prototype._render.call(this);
-
-
-
-
         this.$("a.googledoc-fancybox").fancybox({
             'width': '95%',
             'height': '95%',
@@ -48,9 +41,6 @@
             'transitionOut': 'fadeOut',
             'type': 'iframe'
         });
-
-
-
     },
 
 
@@ -63,6 +53,7 @@
 
 
     getData: function() {
+        console.log('getData');
         var url;
         var name = this.model.get("name");
         if(!name)name = this.model.get('account_name');
@@ -71,6 +62,7 @@
 
         name = "sugarCRM";
 
+        console.log(name);
         if (name) {
             url = "http://api.crunchbase.com/v/1/company/" + name.toLowerCase().replace(/ /g, "-") + ".js?callback=?";
             $.ajax({
@@ -87,9 +79,13 @@
     },
 
     bindDataChange: function() {
+        console.log('bindData');
+        console.log(this);
         var self = this;
         if (this.model) {
+//this.model.on does not exist...
             this.model.on("change", function() {
+
                 self.getData();
             }, this);
         }
