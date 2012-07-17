@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-	url: 'rest/v10/Forecasts/worksheetmanager',
+	url: 'rest/v10/ForecastManagerWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},

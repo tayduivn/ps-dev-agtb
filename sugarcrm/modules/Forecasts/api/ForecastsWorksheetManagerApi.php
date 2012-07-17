@@ -38,14 +38,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'worksheetmanager' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','worksheetmanager'),
-                'pathVars' => array('',''),
-                'method' => 'worksheetManager',
-                'shortHelp' => 'Worksheet for manager view',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#ping',
-            ),
             'forecastManagerWorksheet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastManagerWorksheets'),
@@ -143,7 +135,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "worst_case" => 0,
                               "best_adjusted" => 0,
                               "likely_adjusted" => 0,
-                              "worst_case_adjusted" => 0,
+                              "worst_adjusted" => 0,
                               "forecast" => 0,
                               "forecast_id" => '',
                               "worksheet_id" => '',
@@ -211,23 +203,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     protected function getForecastBestLikely()
     {
         //getting best/likely values from forecast table
-        $forecast_query = "SELECT
-        u.user_name,
-        f.id forecast_id,
-        f.date_modified,
-        f.best_case,
-        f.likely_case,
-        f.worst_case,
-        FROM users u
-        INNER JOIN (
-        SELECT user_id, max(date_modified) date_modified, best_case, likely_case, worst_case
-        FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}'
-        AND forecast_type = 'Direct'
-        group by user_id
-        ) as f
-        ON f.user_id = u.id
-        WHERE u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}'
-        AND u.deleted=0 AND u.status = 'Active'";
+        $forecast_query = "SELECT u.user_name, max(f.date_modified) date_modified, f.id forecast_id, f.best_case, f.likely_case, f.worst_case FROM forecasts f INNER JOIN users u ON f.user_id = u.id
+AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AND f.user_id = '{$this->user_id}' AND (u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}') GROUP BY u.user_name";
 
         $result = $GLOBALS['db']->query($forecast_query);
 

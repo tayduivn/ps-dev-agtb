@@ -134,8 +134,7 @@ require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
 
-require_once('modules/Forecasts/ForecastsSeedData.php');
-ForecastsSeedData::populateSeedData($timeperiods);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	ACCOUNTS
@@ -783,9 +782,9 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
     //END SUGARCRM flav=com ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //Create at least 100 Opportunities
+    //Create at least 300 Opportunities
     $products = $account->build_related_list('SELECT id FROM products', new Product(), 0, 50);
-    $opportunity_ids = OpportunitiesSeedData::populateSeedData(($number_companies < 100 ? 100 : $number_companies), $app_list_strings, $accounts, $products, $sugar_demodata['users']);
+    $opportunity_ids = OpportunitiesSeedData::populateSeedData(($number_companies < 100 ? 300 : $number_companies), $app_list_strings, $accounts, $products, $sugar_demodata['users']);
     //END SUGARCRM flav=pro ONLY
 
     foreach($contacts as $id)
@@ -797,6 +796,9 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
     }
 
 //BEGIN SUGARCRM flav=ent ONLY
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::populateSeedData($timeperiods);
+
     include('install/seed_data/entreport_SeedData.php');
     require_once('modules/Forecasts/WorksheetSeedData.php');
     WorksheetSeedData::populateSeedData();
