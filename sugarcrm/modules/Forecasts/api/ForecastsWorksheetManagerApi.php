@@ -214,7 +214,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
             $data[$row['user_name']]['best_case'] = $row['best_case'];
             $data[$row['user_name']]['likely_case'] = $row['likely_case'];
             $data[$row['user_name']]['worst_case'] = $row['worst_case'];
-            $data[$row['user_name']]['forecast_id'] = $row['forecast_id'];
+            $data[$row['user_name']]['id'] = $row['forecast_id'];
         } 
 
         return $data;
@@ -267,6 +267,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
 
      public function forecastManagerWorksheetSave($api, $args) {
          require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+         require_once('include/SugarFields/SugarFieldHandler.php');
          $seed = new ForecastManagerWorksheet();
          $seed->loadFromRow($args);
          $sfh = new SugarFieldHandler();
@@ -295,7 +296,8 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
                 $field->save($seed, $args, $fieldName, $properties);
              }
          }
-
+         
+		 $seed->setWorksheetArgs($args);
          $seed->save();
          return $seed->id;
      }
