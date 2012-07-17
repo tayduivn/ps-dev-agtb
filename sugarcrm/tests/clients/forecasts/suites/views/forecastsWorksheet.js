@@ -223,7 +223,7 @@ describe("The forecasts worksheet", function(){
             _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
             view._renderField(field);
             expect(_setUpCommitStageSpy).toHaveBeenCalled();
-            _setUpCommitStageSpy.restore()
+            _setUpCommitStageSpy.restore();
             testMethodStub.restore();
         });
 
@@ -234,7 +234,7 @@ describe("The forecasts worksheet", function(){
             _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
             view._renderField(field);
             expect(_setUpCommitStageSpy).not.toHaveBeenCalled();
-            _setUpCommitStageSpy.restore()
+            _setUpCommitStageSpy.restore();
             testMethodStub.restore();
         });
     })
