@@ -472,7 +472,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'reportable'=>false,
     'source'=>'non-db'
   ),
-  // Add these two fake fields as a placeholder for the API to populate these fields with related data
+  // Add a fake field as a placeholder for the API to populate with related data
   'attachment_list'=>
   array (
       'name' => 'attachment_list',
@@ -480,6 +480,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
       'source' => 'non-db',
       'reportable' => false,
       'read-only' => true,
+      'studio' => false,
   ),
   'parent_id' =>
   array (

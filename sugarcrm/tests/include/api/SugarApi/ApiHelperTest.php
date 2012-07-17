@@ -38,6 +38,7 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('SugarBeanApiHelper',get_class($helper));
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     public function testFindModuleHelper()
     {
         $api = new RestService();
@@ -48,4 +49,5 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('KBDocumentsApiHelper',get_class($helper));
     }
+//END SUGARCRM flav=pro ONLY
 }
