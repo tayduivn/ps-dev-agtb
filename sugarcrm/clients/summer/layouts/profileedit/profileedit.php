@@ -1,5 +1,5 @@
 <?php
-$viewdefs['base']['layout']['profileedit'] = array(
+$viewdefs['summer']['layout']['profileedit'] = array(
     'type' => 'simple',
     'components' =>
     array(

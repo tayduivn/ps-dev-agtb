@@ -1,5 +1,5 @@
 <?php
-$viewdefs['base']['layout']['error'] = array(
+$viewdefs['summer']['layout']['error'] = array(
     'type' => 'simple',
     'components' =>
     array(

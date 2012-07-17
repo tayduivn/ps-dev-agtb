@@ -1,5 +1,5 @@
 <?php
-$viewdefs['base']['layout']['list'] = array(
+$viewdefs['summer']['layout']['list'] = array(
     'type' => 'fluid',
     'components' =>
     array(

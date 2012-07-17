@@ -1,5 +1,5 @@
 <?php
-$viewdefs['base']['layout']['profile'] = array(
+$viewdefs['summmer']['layout']['profile'] = array(
     'type' => 'simple',
     'components' =>
     array(

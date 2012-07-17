@@ -8,16 +8,10 @@
     events: {
     },
 
+
     initialize: function(options) {
-        console.log('initialize');
-        console.log(this);
-        console.log(options);
         app.view.View.prototype.initialize.call(this,options);
         var lid = this.options.lid || ""; // Layout Id
-
-        console.log(this);
-        console.log(options);
-
     },
 
     reset: function(context) {
@@ -29,8 +23,7 @@
     },
 
     _render: function() {
-
-        console.log('render');
+        if (this.name != 'crunchbase'){
         this.$el.show();
         app.view.View.prototype._render.call(this);
         this.$("a.googledoc-fancybox").fancybox({
@@ -41,6 +34,7 @@
             'transitionOut': 'fadeOut',
             'type': 'iframe'
         });
+        }
     },
 
 
@@ -53,25 +47,26 @@
 
 
     getData: function() {
-        console.log('getData');
         var url;
         var name = this.model.get("name");
         if(!name)name = this.model.get('account_name');
         if(!name)name = this.model.get('full_name');
         var self = this;
 
-        name = "sugarCRM";
+        //name = 'SugarCRM';
 
-        console.log(name);
         if (name) {
             url = "http://api.crunchbase.com/v/1/company/" + name.toLowerCase().replace(/ /g, "-") + ".js?callback=?";
             $.ajax({
                 url: url,
                 dataType: "jsonp",
                 success: function(data){
-                    if(data.image)data['image'] = data.image.available_sizes[0][1];
+                    if(data.image) {
+                        data['image'] = data.image.available_sizes[0][1];
+                    }
                     self = _.extend(self, data);
-                    app.view.View.prototype._renderSelf.call(self);
+
+                    app.view.View.prototype._renderHtml.call(self);
                 },
                 context: this
             });
@@ -79,13 +74,9 @@
     },
 
     bindDataChange: function() {
-        console.log('bindData');
-        console.log(this);
         var self = this;
         if (this.model) {
-//this.model.on does not exist...
             this.model.on("change", function() {
-
                 self.getData();
             }, this);
         }
