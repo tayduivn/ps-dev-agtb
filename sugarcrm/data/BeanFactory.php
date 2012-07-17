@@ -51,11 +51,6 @@ class BeanFactory {
      */
     public static function getBean($module, $id = null, $params = array(), $deleted = true)
     {
-
-    	// See if someone has passed an empty $params array
-    	if (empty($params)) {
-    		$params = array();
-    	}
     	
     	// Check if params is an array, if not use old arguments
     	if (isset($params) && !is_array($params)) {
