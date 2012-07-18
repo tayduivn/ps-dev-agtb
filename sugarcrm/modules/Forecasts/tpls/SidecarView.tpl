@@ -81,9 +81,11 @@
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
                     el: "forecasts",
-                    contentEl: ".content"
-                    //keyValueStore: app.sugarAuthStore //override the keyValueStore
-                    //todo need to move App.start in here
+                    contentEl: ".content",
+                    //keyValueStore: app.sugarAuthStore, //override the keyValueStore
+                    callback: function(app) {
+                        app.start();
+                    }
                 });
                 return app;
             }
@@ -109,6 +111,5 @@
     };
 
     App.api.debug = App.config.debugSugarApi;
-    App.start();
 </script>
 {/literal}
