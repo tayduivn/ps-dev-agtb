@@ -63,6 +63,7 @@ class SugarAccess {
         $instanceData = $this->client->getInstanceData();
 
         if (!$instanceData) {
+            print_r($instanceData);
             die("No instance Data");
         }
 
@@ -82,7 +83,7 @@ class SugarAccess {
  * Client for Licensing Server
  */
 class LicenseServerClient {
-    const licenseServerUrl = "http://localhost:8888/summer/users/1";
+    const licenseServerUrl = "http://localhost:8888/summer/";
 
     /**
      * @var User data / Instance data
@@ -106,8 +107,11 @@ class LicenseServerClient {
      * @return mixed Licensing and instance data related to the user.
      */
     public function authenticate($email, $password) {
-        $this->userData = $this->restCall(self::licenseServerUrl, array(
+        $urlAction = "users/1";
+        $this->userData = $this->restCall(self::licenseServerUrl . $urlAction, array(
             "action" => "authenticate",
+            "email" => $email,
+            "pw" => $password
         ));
 
         // MOCK DATA
