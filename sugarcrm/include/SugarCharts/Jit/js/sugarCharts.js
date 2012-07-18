@@ -681,66 +681,51 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         generateLegend: function(chart, chartId) {
             var list = $jit.id('legend'+chartId);
             var legend = chart.getLegend(),
-                cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                rows = Math.ceil(legend["name"].length/cols),
-                table = "";
-            if(legend['wmlegend'] != "undefined") {
-                var wmcols = 2,
-                    wmrows = Math.ceil(legend["wmlegend"]["name"].length/wmcols);
-                table += "<table cellpadding='0' cellspacing='0' align='left' width='100%'><tr><td width='70%'>";
-            }
-            table += "<table cellpadding='0' cellspacing='0' align='left'>";
-            var j = 0;
-            for(var i=0;i<rows;i++) {
-                table += "<tr>";
-                for(td=0;td<cols;td++) {
-
-                    table += '<td valign=\'top\'>';
-                    if(legend["name"][j] != undefined) {
-                        table += '<div class=\'query-color\' style=\'background-color:'
-                            + legend["color"][j] +'\'>&nbsp;</div>';
-                    }
-
-                    table += '</td>';
-                    table += '<td class=\'label\' valign=\'top\'>';
-                    if(legend["name"][j] != undefined) {
-                        table += legend["name"][j];
-                    }
-
-                    table += '</td>';
-                    j++;
+                table = "<div class='col'>";
+            for(var i=0;i<legend['name'].length;i++) {
+                if(legend["name"][i] != undefined) {
+                    table += "<div class='legendGroup'>";
+                    table += '<div class=\'query-color\' style=\'background-color:'
+                        + legend["color"][i] +'\'></div>';
+                    table += '<div class=\'label\'>';
+                    table += legend["name"][i];
+                    table += '</div>';
+                    table += "</div>";
                 }
-
-
-
-                table += "</tr>";
             }
-            table += "</table>";
+
+            table += "</div>";
+
+
             if(legend['wmlegend'] != "undefined") {
-                table += "</td>";
-                table += "<td width='30%'>";
 
-                table += "<table cellpadding='0' cellspacing='0' align='right'>"
-                for(var i=0;i<wmrows;i++) {
-                    table += "<tr>";
-                    for(var i=0;i<legend['wmlegend']['name'].length;i++) {
-                        table += "<td valign='top' rowspan><div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div></td>";
-                        table += "<td valign='top' class='label'>"+ legend["wmlegend"]['name'][i] +"</td>";
-                    }
-                    table += "</tr>";
+                table += "<div class='col2'>";
+                for(var i=0;i<legend['wmlegend']['name'].length;i++) {
+                    table += "<div class='legendGroup'>";
+                    table += "<div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div>";
+                    table += "<div class='label'>"+ legend["wmlegend"]['name'][i] +"</div>";
+                    table += "</div>";
                 }
-                table += "</table>";
+                table += "</div>";
 
-                table += "</td>";
-                table += "</tr></table>";
             }
 
             list.innerHTML = table;
 
+
+            //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
                 var chartWidth = jQuery('#'+chartId).width() - 20;
-                $('#legend'+chartId).width(chartWidth)
+                $('#legend'+chartId).width(chartWidth);
+                var legendGroupWidth = new Array();
+                $('.col .legendGroup').each(function(index) {
+                    legendGroupWidth[index] = $(this).width();
+                });
+                var largest = Math.max.apply(Math, legendGroupWidth);
+                $('.col .legendGroup').width(largest);
             });
+
+
 
             return list;
         },
@@ -816,6 +801,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         setTimeout(function() {
                             // measure container width
                             var width = container.offsetWidth;
+                            var chartWidth = width - 20;
+                            $('#legend'+chartId).width(chartWidth);
 
                             // display widget before resize, otherwise
                             // it will be rendered incorrectly in IE
