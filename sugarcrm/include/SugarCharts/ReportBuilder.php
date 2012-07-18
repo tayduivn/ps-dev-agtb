@@ -24,6 +24,8 @@ require_once('modules/Reports/Report.php');
 
 /**
  * PHP Report Builder.  This will create a report on the fly to run via the API
+ *
+ * @api
  */
 class ReportBuilder
 {

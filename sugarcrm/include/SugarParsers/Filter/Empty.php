@@ -23,6 +23,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
  * This class is used when the field check is empty or not empty
+ * @api
  */
 class SugarParsers_Filter_Empty extends SugarParsers_Filter_AbstractFilter
 {

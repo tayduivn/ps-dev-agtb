@@ -26,6 +26,8 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
  * This is for when a string will contain part of this string.
  *
  * Ex: %<string>%
+ *
+ * @api
  */
 class SugarParsers_Filter_Contains extends SugarParsers_Filter_AbstractFilter
 {

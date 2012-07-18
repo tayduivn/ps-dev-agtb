@@ -21,6 +21,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
+/**
+ * Handles Module Links
+ * @api
+ */
 class SugarParsers_Filter_Link extends SugarParsers_Filter_AbstractFilter
 {
     /**

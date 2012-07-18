@@ -23,6 +23,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
  * This is used for handling arrays that might contain something in a list
+ * @api
  */
 class SugarParsers_Filter_In extends SugarParsers_Filter_AbstractFilter
 {

@@ -21,6 +21,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once("include/SugarParsers/Converter/AbstractConverter.php");
+/**
+ * Convert the Filters into the Reporting Engine Format
+ *
+ * @api
+ */
 class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConverter
 {
 
