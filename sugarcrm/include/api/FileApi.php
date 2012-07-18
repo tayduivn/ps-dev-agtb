@@ -300,8 +300,9 @@ class FileApi extends SugarApi {
                 // This isn't needed in this return
                 unset($fileinfo['path']);
 
-                // Add it to the return
-                $list[$field] = $fileinfo;
+                // Add it to the return, as an object so that if it is empty it
+                // is still an object in json responses
+                $list[$field] = (object) $fileinfo;
             }
         }
 

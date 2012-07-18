@@ -204,10 +204,12 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) {
 	$args = array();
 	$report_def = array();
+    $report_name = '';
 	if ( ! empty($_REQUEST['report_def'])) {
 		$report_def = html_entity_decode($_REQUEST['report_def']);
 		$panels_def = html_entity_decode($_REQUEST['panels_def']);
 		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
+        $report_name = html_entity_decode($_REQUEST['save_report_as']);
 	}
 
 	if (!empty($_REQUEST['id'])) {
@@ -229,7 +231,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	if (empty($args['reporter']->saved_report_id)) {
 		$newReport = true;
 	} // if
-   	$args['reporter']->save($_REQUEST['save_report_as']);
+   	$args['reporter']->save($report_name);
 	$sugar_smarty->assign("record", $args['reporter']->saved_report->id);
 	// Put this newly created report in the report_cache table so that in the list view of reports it will be shown first
 	$newArray = array();

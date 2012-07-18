@@ -525,7 +525,13 @@ class Link2 {
      */
     protected function getRelatedBean($id = false)
     {
-        return BeanFactory::getBean($this->getRelatedModuleName(), $id);
+        $params = array('encode' => true, 'deleted' => true);
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Set disable_row_level_security to true, so we can load the related bean
+        // even when the bean doesn't belong to the users teams (for flav=pro and above)
+        $params['disable_row_level_security'] = true;
+        //END SUGARCRM flav=pro ONLY
+        return BeanFactory::getBean($this->getRelatedModuleName(), $id, $params);
     }
 
     public function &__get($name)

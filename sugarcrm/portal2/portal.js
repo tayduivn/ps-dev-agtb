@@ -958,7 +958,7 @@
             var self = this;
             // TODO: Will it ever happen: app.config == undefined?
             // app.config should always be present because the logger depends on it
-            if (_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) {
+            if ((_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) && params.layout != 'login') {
                 var callback = function(data) {
                     var params = {
                         module: "Login",
