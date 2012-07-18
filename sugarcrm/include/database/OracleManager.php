@@ -1013,11 +1013,15 @@ class OracleManager extends DBManager
 			        $addColumns[] = $col;
 			    }
 			}
-			if(!empty($addColumns)) {
-        	    $columns = "(" . implode(",", $addColumns) . ")";
-			} else {
-			    $columns = '';
-			}
+            $columns = '';
+            if (count($addColumns) == 1)
+            {
+                $columns = $addColumns[0];
+            }
+            else if (!empty($addColumns))
+            {
+                $columns = "(" . implode(",", $addColumns) . ")";
+            }
         } else {
             $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
