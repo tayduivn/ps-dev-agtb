@@ -31,25 +31,8 @@ class ForecastsWorksheetApi extends ModuleApi {
 
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'worksheet' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','worksheet'),
-                'pathVars' => array('',''),
-                'method' => 'worksheet',
-                'shortHelp' => 'A ping',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
-            ),
-            'worksheetSave' => array(
-                'reqType' => 'PUT',
-                'path' => array('Forecasts','worksheet'),
-                'pathVars' => array('',''),
-                'method' => 'worksheetSave',
-                'shortHelp' => 'A ping',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#ping',
-            ),
             'forecastWorksheet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastWorksheets'),
@@ -72,14 +55,22 @@ class ForecastsWorksheetApi extends ModuleApi {
 
 
     /**
-     * This method returns the result for a sales rep view/manager's opportunities view
+     * This method handles the /ForecastsWorksheet REST endpoint and returns an Array of worksheet data Array entries
      *
-     * @param $api
-     * @param $args
-     * @return array
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
      */
-    public function worksheet($api, $args)
-    {
+    public function forecastWorksheet($api, $args) {
+        // Load up a seed bean
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        $seed = new ForecastWorksheet();
+
+        if (!$seed->ACLAccess('list') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+
         require_once('modules/Reports/Report.php');
         require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 
@@ -122,20 +113,14 @@ class ForecastsWorksheetApi extends ModuleApi {
         return $mgr->getWorksheetGridData('individual', $report);
     }
 
-
-    public function forecastWorksheet($api, $args) {
-        // Load up a seed bean
-        require_once('modules/Forecasts/ForecastWorksheet.php');
-        $seed = new ForecastWorksheet();
-
-        if (!$seed->ACLAccess('list') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-        }
-
-        return $this->worksheet($api, $args);
-    }
-
-
+    /**
+     * This method handles saving data for the /ForecastsWorksheet REST endpoint
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
+     */
     public function forecastWorksheetSave($api, $args) {
         require_once('modules/Forecasts/ForecastWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
