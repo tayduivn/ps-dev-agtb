@@ -77,13 +77,24 @@
     (function(app) {
          app.augment("forecasts", {
             initForecast: function(authAccessToken) {
+
+                var forecastData = {/literal} {$initData} {literal};
+
+                // get default selections for filter and category
+                app.defaultSelections = forecastData.defaultSelections;
+                app.initData = forecastData.initData;
+                app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
+                app.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
                 app.init({
                     el: "forecasts",
-                    contentEl: ".content"
-                    //keyValueStore: app.sugarAuthStore //override the keyValueStore
-                    //todo need to move App.start in here
+                    contentEl: ".content",
+                    //keyValueStore: app.sugarAuthStore, //override the keyValueStore
+                    callback: function(app) {
+                        app.user.set(app.initData.selectedUser);
+                        app.start();
+                    }
                 });
                 return app;
             }
@@ -93,22 +104,12 @@
     //Call initForecast with the session id as token
     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
 
-    App.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
-    App.viewModule = {/literal}'{$module}';{literal}
-
-    var forecastData = {/literal} {$initData} {literal};
-
-    // get default selections for filter and category
-    App.defaultSelections = forecastData.defaultSelections;
-    App.initData = forecastData.initData;
-
     // should already be logged in to sugar, don't need to log in to sidecar.
+    // TODO: we will need to remove this when we get the OAuth stuff working...
     App.api.isAuthenticated = function() {
-        App.user.set(App.initData.selectedUser);
         return true;
     };
 
     App.api.debug = App.config.debugSugarApi;
-    App.start();
 </script>
 {/literal}
