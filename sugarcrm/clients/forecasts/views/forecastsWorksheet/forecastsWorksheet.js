@@ -378,6 +378,7 @@
         if(!this.showMe()){
         	return false;
         }
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 
