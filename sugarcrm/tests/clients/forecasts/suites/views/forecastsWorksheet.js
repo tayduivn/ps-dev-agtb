@@ -1,6 +1,6 @@
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, testMethodStub;
+    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -179,6 +179,63 @@ describe("The forecasts worksheet", function(){
             expect(unused).toEqual(field[0]);
             expect(field[0].enabled).toBeFalsy();
             expect(field[1].enabled).toBeTruthy();
+        });
+
+    });
+
+    describe("commit_stage fields", function() {
+
+        beforeEach(function() {
+            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
+            _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
+
+            field = {
+                viewName:'worksheet',
+                name:'commit_stage',
+                type:'enum',
+                def: {
+                    clickToEdit: 'false'
+                }
+            };
+        });
+
+        afterEach(function(){
+            _renderClickToEditStub.restore();
+            _renderFieldStub.restore();
+        });
+
+        it("should have a save handler", function() {
+            expect(field._save).not.toBeDefined();
+            field = view._setUpCommitStage(field);
+            expect(field._save).toBeDefined();
+        })
+
+        it("should respond to change events on the select", function(){
+            field = view._setUpCommitStage(field);
+            expect(field.events["change select"]).toBeDefined();
+            expect(field.events["change select"]).toEqual("_save");
+        });
+
+        it("should be rendered on a user's own worksheet", function() {
+            testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
+                return true;
+            });
+            _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
+            view._renderField(field);
+            expect(_setUpCommitStageSpy).toHaveBeenCalled();
+            _setUpCommitStageSpy.restore();
+            testMethodStub.restore();
+        });
+
+        it("should not be rendered when a user is viewing a worksheet that is not their own", function() {
+            testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
+                return false;
+            });
+            _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
+            view._renderField(field);
+            expect(_setUpCommitStageSpy).not.toHaveBeenCalled();
+            _setUpCommitStageSpy.restore();
+            testMethodStub.restore();
         });
     })
 });

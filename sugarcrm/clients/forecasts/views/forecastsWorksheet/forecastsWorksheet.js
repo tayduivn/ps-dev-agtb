@@ -117,6 +117,21 @@
     },
 
     /**
+     * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
+     * @param field the commit_stage field
+     * @return {*}
+     * @private
+     */
+    _setUpCommitStage: function (field) {
+        field._save = function(event, input) {
+            this.model.set('commit_stage', input.selected);
+            this.view.context.set('selectedToggle', { 'model' : this.model });
+        };
+        field.events = _.extend({"change select": "_save"}, field.events);
+        return field;
+    },
+
+    /**
      * Renders a field.
      *
      * This method sets field's view element and invokes render on the given field.  If clickToEdit is set to true
@@ -125,7 +140,13 @@
      * @protected
      */
     _renderField: function(field) {
+
+        if (this.isMyWorksheet() && field.name == "commit_stage") {
+            field = this._setUpCommitStage(field);
+        }
+
         app.view.View.prototype._renderField.call(this, field);
+
         if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit === true) {
             new app.view.ClickToEditField(field, this);
         }
@@ -361,6 +382,7 @@
         if(!this.showMe()){
         	return false;
         }
+        this._collection.url = this.createURL();
         this._collection.fetch();
     },
 

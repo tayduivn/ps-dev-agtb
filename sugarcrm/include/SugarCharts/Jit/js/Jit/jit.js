@@ -11630,6 +11630,7 @@ Options.BarChart = {
   renderBackground: false,
   orientation: 'horizontal',
   showAggregates: true,
+  segmentStacked: false,
   showLabels: true,
   dataPointSize: 10,
   Ticks: {
@@ -11744,7 +11745,7 @@ $jit.ST.Plot.NodeTypes.implement({
               xCoord = x;
               yCoord = y - acum - dimArray[i];
               chartBarWidth = width;
-              chartBarHeight = dimArray[i];
+              chartBarHeight = dimArray[i] - ((config.segmentStacked) ? 1 : 0);
           }
 
           ctx.globalCompositeOperation = "destination-over";
@@ -12064,9 +12065,9 @@ $jit.ST.Plot.NodeTypes.implement({
 
                     } else if(goalMarkerType[i] == 'pareto') {
 
-                        var x1 = pos.x - (dataPointSize/2),
+                        var x1 = pos.x + (dataPointSize/2),
                             y1 = (pos.y - goalMarkerDim) + 2;
-                        var r = dataPointSize*1.4;
+                        var r = dataPointSize;
                         if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
 
                             return {

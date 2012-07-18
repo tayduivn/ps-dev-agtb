@@ -1,1 +1,1 @@
-{{#if def.link}}<a href="{{moduleHref context model def.route}}">{{value}}</a>{{else}}{{value}}{{/if}}
+{{#if def.link}}<a href="{{moduleHref context model def.route}}">{{{value}}}</a>{{else}}{{{value}}}{{/if}}
