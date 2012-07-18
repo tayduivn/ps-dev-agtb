@@ -83,56 +83,30 @@
                     el: "forecasts",
                     contentEl: ".content"
                     //keyValueStore: app.sugarAuthStore //override the keyValueStore
+                    //todo need to move App.start in here
                 });
                 return app;
             }
          });
      })(SUGAR.App);
 
-     //Call initForecast with the session id as token
-     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
+    //Call initForecast with the session id as token
+    var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
 
     App.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
     App.viewModule = {/literal}'{$module}';{literal}
 
+    var forecastData = {/literal} {$initData} {literal};
+
     // get default selections for filter and category
-    App.defaultSelections = {};
-    $.ajax(App.config.serverUrl + '/Forecasts/filters', {
-        dataType: "json"
-    }).done(function(data){
-            App.defaultSelections.timeperiod_id = {
-                'id': data.timeperiod_id.default
-            };
-            App.defaultSelections.category = {
-                'id': data.category.default
-            };
-        });
-    // get default selections for group_by and dataset
-    $.ajax(App.config.serverUrl + '/Forecasts/chartoptions', {
-        dataType: "json"
-    }).done(function(data){
-        App.defaultSelections.group_by = {
-            'id': data.group_by.default
-        };
-        App.defaultSelections.dataset = {
-            'id': data.dataset.default
-        };
-    });
+    App.defaultSelections = forecastData.defaultSelections;
+    App.initData = forecastData.initData;
 
     // should already be logged in to sugar, don't need to log in to sidecar.
     App.api.isAuthenticated = function() {
-
-        // Grab user data
-        var userData = $.ajax(App.config.serverUrl + '/Forecasts/me', {
-            dataType: "json"
-        }).done(function(data){
-            //  Set current User data
-            App.user.set(data.current_user);
-        });
-
+        App.user.set(App.initData.selectedUser);
         return true;
     };
-
 
     App.api.debug = App.config.debugSugarApi;
     App.start();
