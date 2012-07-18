@@ -304,6 +304,11 @@ class SugarTestHelper
     protected static $systemVars = array();
 
     /**
+     * @var array of modules which we should refresh on tearDown.
+     */
+    protected static $cleanModules = array();
+
+    /**
      * @var bool is SugarTestHelper inited or not. Just to skip initialization on the second and others call of init method
      */
     protected static $isInited = false;
@@ -618,6 +623,105 @@ class SugarTestHelper
     {
         self::$registeredVars['mod_strings'] = true;
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $params[0]);
+        return true;
+    }
+
+    /**
+     * Registration of $dictionary in global scope
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected static function setUp_dictionary()
+    {
+        self::$registeredVars['dictionary'] = true;
+
+        global $dictionary;
+        $dictionary = array();
+        $moduleInstaller = new ModuleInstaller();
+        $moduleInstaller->silent = true;
+        $moduleInstaller->rebuild_tabledictionary();
+        require 'modules/TableDictionary.php';
+        return true;
+    }
+
+    /**
+     * Reinitialization of $dictionary in global scope because we can't unset that variable
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected static function tearDown_dictionary()
+    {
+        return self::setUp_dictionary();
+    }
+
+    /**
+     * Cleaning caches and refreshing vardefs
+     *
+     * @static
+     * @param string $lhs_module left module from relation
+     * @param string $rhs_module right module from relation
+     * @return bool are caches refreshed or not
+     */
+    protected static function setUp_relation(array $params)
+    {
+        if (empty($params[0]) || empty($params[1]))
+        {
+            throw new SugarTestHelperException('setUp("relation") requires two parameters');
+        }
+        list($lhs_module, $rhs_module) = $params;
+        self::$registeredVars['relation'] = true;
+        self::$cleanModules[] = $lhs_module;
+
+        LanguageManager::clearLanguageCache($lhs_module);
+        if ($lhs_module != $rhs_module)
+        {
+            self::$cleanModules[] = $rhs_module;
+            LanguageManager::clearLanguageCache($rhs_module);
+        }
+
+        self::setUp('dictionary');
+
+        VardefManager::$linkFields = array();
+        VardefManager::clearVardef();
+        VardefManager::refreshVardefs($lhs_module, BeanFactory::getObjectName($lhs_module));
+        if ($lhs_module != $rhs_module)
+        {
+            VardefManager::refreshVardefs($rhs_module, BeanFactory::getObjectName($rhs_module));
+        }
+        SugarRelationshipFactory::rebuildCache();
+
+        return true;
+    }
+
+    /**
+     * Doing the same things like setUp but for initialized list of modules
+     *
+     * @static
+     * @return bool are caches refreshed or not
+     */
+    protected static function tearDown_relation()
+    {
+        SugarRelationshipFactory::deleteCache();
+
+        $modules = array_unique(self::$cleanModules);
+        foreach ($modules as $module)
+        {
+            LanguageManager::clearLanguageCache($module);
+        }
+
+        self::tearDown('dictionary');
+
+        VardefManager::$linkFields = array();
+        VardefManager::clearVardef();
+        foreach($modules as $module)
+        {
+            VardefManager::refreshVardefs($module, BeanFactory::getBeanName($module));
+        }
+        SugarRelationshipFactory::rebuildCache();
+
+        self::$cleanModules = array();
         return true;
     }
 }
