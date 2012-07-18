@@ -27,7 +27,7 @@
 
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
+function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
                 //Bug#45831
                 if(document.getElementById(chartId) == null) {
@@ -47,6 +47,40 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         var json = data;
                         var properties = $jit.util.splat(data.properties)[0];
                         var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
+
+                        // Bug #49732 : Bars in charts overlapping
+                        // if to many data to display fix canvas width and set up width to container to allow overflow
+                        /*
+                        if (chartConfig["orientation"] == 'vertical')
+                        {
+                            function fixChartContainer(event, itemsCount)
+                            {
+                                var region = YAHOO.util.Dom.getRegion('content');
+                                if ( region && region.width )
+                                {
+                                    // one bar needs about 40 px to correct display data and labels
+                                    var realWidth = itemsCount * 40;
+                                    if ( realWidth > region.width )
+                                    {
+                                        var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
+                                        var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
+                                        if ( chartContainer.length > 0 && chartCanvas.length > 0 )
+                                        {
+                                            chartContainer = YAHOO.util.Dom.get(chartContainer[0])
+                                            YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
+                                            chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
+                                            YAHOO.util.Dom.setStyle(chartCanvas, 'width', realWidth+'px');
+                                            if (!event)
+                                            {
+                                                YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            fixChartContainer(null, json.values.length);
+                        }  */
+
                         //init BarChart
                         var barChart = new $jit.BarChart({
                             //id of the visualization container
@@ -110,6 +144,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                             //whether to show the aggregation of the values
                             showAggregates: (chartConfig["showAggregates"] != undefined) ? chartConfig["showAggregates"] : true,
                             showNodeLabels: (chartConfig["showNodeLabels"] != undefined) ? chartConfig["showNodeLabels"] : true,
+                            segmentStacked: (chartConfig["segmentStacked"] != undefined) ? chartConfig["segmentStacked"] : false,
                             //whether to show the labels for the bars
                             showLabels:true,
                             //labels style
@@ -152,53 +187,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //load JSON data.
                         barChart.loadJSON(data);
 
-                        //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = barChart.getLegend(),
-
-                        table = "<div class='col'>";
-                            for(var i=0;i<legend['name'].length;i++) {
-                                if(legend["name"][i] != undefined) {
-                                    table += "<div class='legendGroup'>";
-                                        table += '<div class=\'query-color\' style=\'background-color:'
-                                            + legend["color"][i] +'\'></div>';
-                                        table += '<div class=\'label\'>';
-                                        table += legend["name"][i];
-                                        table += '</div>';
-                                    table += "</div>";
-                                }
-                            }
-
-                        table += "</div>";
-
-
-                        if(legend['wmlegend'] != "undefined") {
-
-                            table += "<div class='col2'>";
-                            for(var i=0;i<legend['wmlegend']['name'].length;i++) {
-                                table += "<div class='legendGroup'>";
-                                    table += "<div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div>";
-                                    table += "<div class='label'>"+ legend["wmlegend"]['name'][i] +"</div>";
-                                table += "</div>";
-                            }
-                            table += "</div>";
-
-                        }
-
-                        list.innerHTML = table;
-
-
-                        //adjust legend width to chart width
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth);
-                            var legendGroupWidth = new Array();
-                            $('.col .legendGroup').each(function(index) {
-                                legendGroupWidth[index] = $(this).width();
-                            });
-                            var largest = Math.max.apply(Math, legendGroupWidth);
-                            $('.col .legendGroup').width(largest);
-                        });
+                        var list = SUGAR.charts.generateLegend(barChart, chartId);
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
@@ -208,10 +197,11 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         that.chartObject = barChart;
 
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
-
+				
 			case "lineChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
                     if(SUGAR.charts.isDataEmpty(data)){
@@ -323,36 +313,9 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                          });
                          */
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = lineChart.getLegend();
-                        table = "<div class='col'>";
-                        for(var i=0;i<legend['name'].length;i++) {
-                            if(legend["name"][i] != undefined) {
-                                table += "<div class='legendGroup'>";
-                                table += '<div class=\'query-color\' style=\'background-color:'
-                                    + legend["color"][i] +'\'></div>';
-                                table += '<div class=\'label\'>';
-                                table += legend["name"][i];
-                                table += '</div>';
-                                table += "</div>";
-                            }
-                        }
 
-                        table += "</div>";
+                        var list = SUGAR.charts.generateLegend(lineChart, chartId);
 
-                        table += "</table>";
-                        list.innerHTML = table;
-                        //adjust legend width to chart width
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth);
-                            var legendGroupWidth = new Array();
-                            $('.col .legendGroup').each(function(index) {
-                                legendGroupWidth[index] = $(this).width();
-                            });
-                            var largest = Math.max.apply(Math, legendGroupWidth);
-                            $('.col .legendGroup').width(largest);
-                        });
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -360,6 +323,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(lineChart, chartId, data);
                         that.chartObject = lineChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
                 break;
@@ -445,34 +409,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         pieChart.loadJSON(data);
                         //end
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = pieChart.getLegend(),
-                            table = "<div class='col'>";
-                        for(var i=0;i<legend['name'].length;i++) {
-                            if(legend["name"][i] != undefined) {
-                                table += "<div class='legendGroup'>";
-                                table += '<div class=\'query-color\' style=\'background-color:'
-                                    + legend["color"][i] +'\'></div>';
-                                table += '<div class=\'label\'>';
-                                table += legend["name"][i];
-                                table += '</div>';
-                                table += "</div>";
-                            }
-                        }
+                        var list = SUGAR.charts.generateLegend(pieChart, chartId);
 
-                        table += "</div>";
-                        list.innerHTML = table;
-                        //adjust legend width to chart width
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth);
-                            var legendGroupWidth = new Array();
-                            $('.col .legendGroup').each(function(index) {
-                                legendGroupWidth[index] = $(this).width();
-                            });
-                            var largest = Math.max.apply(Math, legendGroupWidth);
-                            $('.col .legendGroup').width(largest);
-                        });
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -480,6 +418,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(pieChart, chartId, data);
                         that.chartObject = pieChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -584,40 +523,15 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                          });
                          */
                         //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = funnelChart.getLegend(),
-                            table = "<div class='col'>";
-                        for(var i=0;i<legend['name'].length;i++) {
-                            if(legend["name"][i] != undefined) {
-                                table += "<div class='legendGroup'>";
-                                table += '<div class=\'query-color\' style=\'background-color:'
-                                    + legend["color"][i] +'\'></div>';
-                                table += '<div class=\'label\'>';
-                                table += legend["name"][i];
-                                table += '</div>';
-                                table += "</div>";
-                            }
-                        }
+                        var list = SUGAR.charts.generateLegend(funnelChart, chartId);
 
-                        table += "</div>";
-                        list.innerHTML = table;
-                        //adjust legend width to chart width
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth);
-                            var legendGroupWidth = new Array();
-                            $('.col .legendGroup').each(function(index) {
-                                legendGroupWidth[index] = $(this).width();
-                            });
-                            var largest = Math.max.apply(Math, legendGroupWidth);
-                            $('.col .legendGroup').width(largest);
-                        });
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
                         SUGAR.charts.trackWindowResize(funnelChart, chartId, data);
                         that.chartObject = funnelChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -701,37 +615,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         //load JSON data.
                         gaugeChart.loadJSON(data);
 
-
-                        var list = $jit.id('legend'+chartId);
-                        var legend = gaugeChart.getLegend(),
-                            table = "<div class='col'>";
-                        for(var i=0;i<legend['name'].length;i++) {
-                            if(legend["name"][i] != undefined) {
-                                table += "<div class='legendGroup'>";
-                                table += '<div class=\'query-color\' style=\'background-color:'
-                                    + legend["color"][i] +'\'></div>';
-                                table += '<div class=\'label\'>';
-                                table += legend["name"][i];
-                                table += '</div>';
-                                table += "</div>";
-                            }
-                        }
-
-                        table += "</div>";
-
-                        table += "</table>";
-                        list.innerHTML = table;
-                        //adjust legend width to chart width
-                        jQuery('#legend'+chartId).ready(function() {
-                            var chartWidth = jQuery('#'+chartId).width() - 20;
-                            $('#legend'+chartId).width(chartWidth);
-                            var legendGroupWidth = new Array();
-                            $('.col .legendGroup').each(function(index) {
-                                legendGroupWidth[index] = $(this).width();
-                            });
-                            var largest = Math.max.apply(Math, legendGroupWidth);
-                            $('.col .legendGroup').width(largest);
-                        });
+                        var list = SUGAR.charts.generateLegend(gaugeChart, chartId);
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -739,6 +623,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
                         SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
                         that.chartObject = gaugeChart;
                     }
+                    SUGAR.charts.callback(callback);
                 });
 
 				break;
@@ -746,8 +631,11 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params) {
 			}
 		}
 
+
+//changed function for style guide, does not go into production
 function updateChart(chart) {
-    chart.updateJSON(chart.json);
+            chart.updateJSON(chart.json);
+
 }
 
 function swapChart(chartId,jsonFilename,css,chartConfig){
@@ -768,6 +656,79 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         SUGAR = {};
     }
     SUGAR.charts = {
+
+        chart : null,
+        /**
+         * Execute callback function if specified
+         *
+         * @param callback
+         */
+        callback: function(callback) {
+            if (callback) {
+                // if the call back is fired, include the chart as the only param
+                callback(this.chart);
+            }
+        },
+
+        /**
+         * Handle the Legend Generation
+         *
+         * @param chart
+         * @param chartId
+         * @return {*}
+         */
+        generateLegend: function(chart, chartId) {
+            var list = $jit.id('legend'+chartId);
+            var legend = chart.getLegend(),
+                table = "<div class='col'>";
+            for(var i=0;i<legend['name'].length;i++) {
+                if(legend["name"][i] != undefined) {
+                    table += "<div class='legendGroup'>";
+                    table += '<div class=\'query-color\' style=\'background-color:'
+                        + legend["color"][i] +'\'></div>';
+                    table += '<div class=\'label\'>';
+                    table += legend["name"][i];
+                    table += '</div>';
+                    table += "</div>";
+                }
+            }
+
+            table += "</div>";
+
+
+            if(legend['wmlegend'] != "undefined") {
+
+                table += "<div class='col2'>";
+                for(var i=0;i<legend['wmlegend']['name'].length;i++) {
+                    table += "<div class='legendGroup'>";
+                    table += "<div class='waterMark  "+ legend["wmlegend"]['type'][i] +"' style='background-color: "+ legend["wmlegend"]['color'][i] +";'></div>";
+                    table += "<div class='label'>"+ legend["wmlegend"]['name'][i] +"</div>";
+                    table += "</div>";
+                }
+                table += "</div>";
+
+            }
+
+            list.innerHTML = table;
+
+
+            //adjust legend width to chart width
+            jQuery('#legend'+chartId).ready(function() {
+                var chartWidth = jQuery('#'+chartId).width() - 20;
+                $('#legend'+chartId).width(chartWidth);
+                var legendGroupWidth = new Array();
+                $('.col .legendGroup').each(function(index) {
+                    legendGroupWidth[index] = $(this).width();
+                });
+                var largest = Math.max.apply(Math, legendGroupWidth);
+                $('.col .legendGroup').width(largest+2);
+            });
+
+
+
+            return list;
+        },
+
         /**
          * Calls the server to retrieve chart data
          *
@@ -851,6 +812,27 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         }, 0);
                     }
                 }, delay);
+            });
+        },
+
+        /**
+         * Update chart with new data from server
+         *
+         * @param chart
+         * @param url
+         * @param params
+         * @param callback
+         */
+        update: function(chart, url, params, callback) {
+            var self = this;
+            params = params ? params : {};
+            self.chart = chart;
+            this.get(url, params, function(data) {
+                if(self.isDataEmpty(data)){
+                    self.chart.busy = false;
+                    self.chart.updateJSON(data);
+                    self.callback(callback);
+                }
             });
         }
     }

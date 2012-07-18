@@ -4681,7 +4681,7 @@ input[type="submit"].btn.btn-mini {
 }
 .chartContainer {
   float: left;
-  margin: 8px auto 20px;
+  margin: 8px auto 20px!important;
   width: 100%;
 }
 .chartContainer .scrollBars {
@@ -4740,17 +4740,6 @@ input[type="submit"].btn.btn-mini {
 }
 .legend .legendGroup {
   display: inline-block;
-}
-.legend table td.label {
-  padding: 0px 20px 0 0px;
-  text-align: left;
-  background-color: transparent;
-  color: #313130;
-  text-shadow: none;
-  font-size: 12px;
-}
-.legend table td.label:hover {
-  color: #313130;
 }
 /*TOOLTIPS*/
 .tip {

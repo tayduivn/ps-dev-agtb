@@ -11630,6 +11630,7 @@ Options.BarChart = {
   renderBackground: false,
   orientation: 'horizontal',
   showAggregates: true,
+  segmentStacked: false,
   showLabels: true,
   dataPointSize: 10,
   Ticks: {
@@ -11696,7 +11697,6 @@ $jit.ST.Plot.NodeTypes.implement({
         	acum += (dimArray[i] || 0);
         }
       }
-      
        //drop shadow 
        if(config.shadow.enable) {
        shadowThickness = config.shadow.size;
@@ -11746,12 +11746,12 @@ $jit.ST.Plot.NodeTypes.implement({
               xCoord = x;
               yCoord = y - acum - dimArray[i];
               chartBarWidth = width;
-              chartBarHeight = dimArray[i];
+              chartBarHeight = dimArray[i] - ((config.segmentStacked) ? 1 : 0);
           }
 
           ctx.globalCompositeOperation = "destination-over";
-            ctx.fillStyle= "rgba(255,255,255,1)";
-            ctx.fillRect(xCoord, yCoord, chartBarWidth, 1);
+            //ctx.fillStyle= "rgba(255,255,255,1)";
+            //ctx.fillRect(xCoord, yCoord, chartBarWidth, 1);
             ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
 
           ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
