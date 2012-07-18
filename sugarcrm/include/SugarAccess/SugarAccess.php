@@ -82,7 +82,7 @@ class SugarAccess {
  * Client for Licensing Server
  */
 class LicenseServerClient {
-    const licenseServerUrl = "http://localhost:8888/summer/user/123213";
+    const licenseServerUrl = "http://localhost:8888/summer/users/1";
 
     /**
      * @var User data / Instance data

@@ -1,0 +1,13 @@
+<div class="row-fluid">
+    <div class="span2">{{label}}</div>
+    <div class="span4" name="{{name}}">
+        {{value.street}}<br>
+        {{value.city}}<br>
+        {{value.postalcode}}<br>
+        {{value.state}}<br>
+        {{value.country}}<br>
+        {{#if gmap}}{{#if value.city}}{{#if value.street}}
+        <iframe width="{{def.gmap_width}}" height="{{def.gmap_height}}" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed"></iframe>
+        {{/if}}{{/if}}{{/if}}
+    </div>
+</div>

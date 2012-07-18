@@ -9,37 +9,23 @@
     },
 
 
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this,options);
-
-
         var lid = this.options.lid || ""; // Layout Id
-
     },
-
-
-
 
     reset: function(context) {
         // If creating a new screen, lets hide the div.
         this.$el.toggle(!(context.id === "new"));
-
         this.model = context.data;
         this.model.bind("change", this.getData);
         this.getData();
     },
 
-
-
     _render: function() {
+        if (this.name != 'crunchbase'){
         this.$el.show();
-
         app.view.View.prototype._render.call(this);
-
-
-
-
         this.$("a.googledoc-fancybox").fancybox({
             'width': '95%',
             'height': '95%',
@@ -48,9 +34,7 @@
             'transitionOut': 'fadeOut',
             'type': 'iframe'
         });
-
-
-
+        }
     },
 
 
@@ -69,7 +53,7 @@
         if(!name)name = this.model.get('full_name');
         var self = this;
 
-        name = "sugarCRM";
+        name = 'SugarCRM';
 
         if (name) {
             url = "http://api.crunchbase.com/v/1/company/" + name.toLowerCase().replace(/ /g, "-") + ".js?callback=?";
@@ -77,9 +61,12 @@
                 url: url,
                 dataType: "jsonp",
                 success: function(data){
-                    if(data.image)data['image'] = data.image.available_sizes[0][1];
+                    if(data.image) {
+                        data['image'] = data.image.available_sizes[0][1];
+                    }
                     self = _.extend(self, data);
-                    app.view.View.prototype._renderSelf.call(self);
+
+                    app.view.View.prototype._renderHtml.call(self);
                 },
                 context: this
             });

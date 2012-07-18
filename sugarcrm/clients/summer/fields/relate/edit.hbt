@@ -1,0 +1,12 @@
+<div class="row-fluid control-group">
+    <div class="span2">{{label}}</div>
+    <div class="span4">
+        <select data-placeholder="{{str "LBL_MODULE_NAME" def.module}}" name="{{name}}" class="relateEdit" {{#if multi}} multiple {{/if}}>
+            <option value="{{this.value}}" selected>{{this.value}}</option>
+            {{#eachOptions options}}
+            <option value="{{getValue this "id"}}">{{getValue this ../this.def.rname}}</option>
+            {{/eachOptions}}
+        </select>
+        <p class="help-block"></p>
+    </div>
+</div>

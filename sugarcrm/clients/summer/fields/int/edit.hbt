@@ -1,0 +1,11 @@
+<div class="row-fluid control-group">
+    <div class="span2">{{label}}</div>
+    <div class="span4">
+        {{#if def.auto_increment}}
+        {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
+        {{else}}
+        <input type="text" class="input-xlarge" value="{{value}}">
+        {{/if}}
+        <p class="help-block"></p>
+    </div>
+</div>
