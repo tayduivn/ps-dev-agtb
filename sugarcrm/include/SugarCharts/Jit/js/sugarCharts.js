@@ -143,6 +143,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             //whether to show the aggregation of the values
                             showAggregates: (chartConfig["showAggregates"] != undefined) ? chartConfig["showAggregates"] : true,
                             showNodeLabels: (chartConfig["showNodeLabels"] != undefined) ? chartConfig["showNodeLabels"] : true,
+                            segmentStacked: (chartConfig["segmentStacked"] != undefined) ? chartConfig["segmentStacked"] : false,
                             //whether to show the labels for the bars
                             showLabels:true,
                             //labels style
@@ -722,7 +723,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     legendGroupWidth[index] = $(this).width();
                 });
                 var largest = Math.max.apply(Math, legendGroupWidth);
-                $('.col .legendGroup').width(largest);
+                $('.col .legendGroup').width(largest+2);
             });
 
 
