@@ -20,46 +20,63 @@
 	background-repeat:repeat-x;
 }
 
-.waterMark {
-    width: 19px;
-    height: 18px;
-    background-image: url(../../../../index.php?entryPoint=getImage&imageName=watermark-white.png);
-    background-repeat: no-repeat;
-    margin-right: 10px;
-}
 
-.waterMark.pareto {
-    background-image: url(../../../../index.php?entryPoint=getImage&imageName=pareto-white.png);
-}
-
-.query-color {
-width: 16px;
-height: 16px;
-display: inline-block;
-margin-right: 10px;
-border: 1px solid #999;
-}
 
 .legend {
 padding: 0;
-width: 50%;
-text-align: center;
-margin: 0 auto 20px;
-display: block;
+width: 100%;
+float: left;
+margin-left: 20px;
+
+    .waterMark {
+        width: 10px;
+        height: 10px;
+        background-image: url(../../../../index.php?entryPoint=getImage&imageName=watermark-white.png);
+        background-repeat: no-repeat;
+        margin-right: 5px;
+        margin-top: 3px;
+        float: left;
+    }
+
+    .waterMark.pareto {
+        background-image: url(../../../../index.php?entryPoint=getImage&imageName=pareto-white.png);
+    }
+
+    .query-color {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-right: 5px;
+        border: 1px solid #999;
+        float: left;
+    }
+
+    .col {
+        float: left;
+        width: 70%;
+    }
+
+    .col2 {
+        float: left;
+        width: 30%;
+        text-align: right;
+    }
+
+    .label {
+        float: left;
+        background-color: transparent;
+        color: @grayDarker;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    .legendGroup {
+        display: inline-block;
+
+    }
+
 }
 
-.legend table td.label {
-padding: 2px 20px 0 0px;
-text-align: left;
-    background-color: transparent;
-    color: @grayDarker;
-    text-shadow: none;
-    font-size: 12px;
-}
-
-.legend table td.label:hover {
-	color: @grayDarker;	
-}
 
 /*TOOLTIPS*/
 .tip {

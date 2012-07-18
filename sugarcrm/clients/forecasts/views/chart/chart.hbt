@@ -1,4 +1,3 @@
-<div class="span7">
     <div class="tcenter">
         <div id="chart" class="tcenter">
             <div class="chartContainer">
@@ -9,4 +8,3 @@
             </div>
         </div>
     </div>
-</div>

@@ -83,13 +83,14 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
         $opp->name = substr($account->name." - 1000 units", 0, 50);
+        $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
+        $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
 
         // If the deal is already done, make the date closed occur in the past.
         $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
-                            ? create_past_date()
-                            : create_date();
-        $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
-        $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+            ? create_past_date()
+            : create_date();
+        
         $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
         $amount = array("10000", "25000", "50000", "75000");
         $key = array_rand($amount);
