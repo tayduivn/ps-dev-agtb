@@ -664,6 +664,14 @@ function upgrade_custom_duration_defs()
 
         //now lets get rid of the duration fields in any custom editview defs
         //the view def will alrady have the input files as hidden, so lets get rid of the duplicates
+
+        //these fields will be replaced inline in the form instead of being added to the end
+        $fieldsToReplaceInline = array(
+            'duration_hours' => 'duration',
+            'reminder_checked' => 'reminder_time'
+        );
+
+
         foreach ($modsToCheck as $mods)
         {
             $filestr = 'custom/modules/' . $mods . 's/metadata/';
@@ -673,13 +681,13 @@ function upgrade_custom_duration_defs()
             );
             foreach ($files as $file => $key)
             {
+            		$fieldPositions = array();
                 $rewrite = false;
                 $viewdefs = array();
                 if (file_exists($filestr . $file))
                 {
                     //custom view exists, lets get rid of the dupes
                     include($filestr . $file);
-
                     $fieldsList = array();
                     $iterator = new RecursiveArrayIterator($viewdefs[$mods.'s'][$key]['panels']);
                     $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
@@ -700,11 +708,17 @@ function upgrade_custom_duration_defs()
                             {
                                 if (!empty($fields['name']))
                                 {
-                                    if (array_key_exists($fields['name'], $fieldsForReplacement) && in_array($fieldsForReplacement[$fields['name']], $fieldsList))
+                                    //check to see if this is the new field we need to move
+                                    if( in_array($fields['name'], $fieldsToReplaceInline)){
+                                        //we've located the position of a field that needs to be move to replace another, let's hang on to the position
+                                        $fieldPositions['new'][$fields['name']] = array('key'=>$key, 'panelName'=>$panelName,'rowctr'=>$rowctr,'fieldctr'=>$fieldctr);
+                                    }
+                                    //else, lets check to see if this field is marked for deletion
+                                    elseif (array_key_exists($fields['name'], $fieldsForReplacement) && in_array($fieldsForReplacement[$fields['name']], $fieldsList))
                                     {
-                                        //unset this field (the original duration fields)
-                                        unset($viewdefs[$mods . 's'][$key]['panels'][$panelName][$rowctr][$fieldctr]);
-                                        $rewrite = true;
+                                            //mark the position of this field for deletion
+                                           $fieldPositions['old'][$fields['name']] = array('key'=>$key, 'panelName'=>$panelName,'rowctr'=>$rowctr,'fieldctr'=>$fieldctr);
+                                           $rewrite = true;
                                     }
                                 }
                             }
@@ -712,9 +726,34 @@ function upgrade_custom_duration_defs()
                     }
                 }
 
-                //rewrite custom file
+                //changes are needed, let's rewrite the custom file
                 if ($rewrite)
                 {
+
+                    //lets unset and replace fields as needed
+                    foreach ($fieldPositions['old'] as $k=>$unsetPos){
+                        //check to see if this field is set to be replaced
+                        if(!empty($fieldsToReplaceInline[$k])){
+                            //check to see if replacement position has been located
+                            if(!empty($fieldPositions['new'][$fieldsToReplaceInline[$k]])){
+                                //get the value of the replacement position
+                                $replPos = $fieldPositions['new'][$fieldsToReplaceInline[$k]];
+
+                                //copy the new field over to the position of the old field
+                                $viewdefs[$mods . 's'][$unsetPos['key']]['panels'][$unsetPos['panelName']][$unsetPos['rowctr']][$unsetPos['fieldctr']] =
+                                $viewdefs[$mods . 's'][$replPos['key']]['panels'][$replPos['panelName']][$replPos['rowctr']][$replPos['fieldctr']] ;
+
+                                //now lets remove the replacement from it's previous position
+                                unset($viewdefs[$mods . 's'][$replPos['key']]['panels'][$replPos['panelName']][$replPos['rowctr']][$replPos['fieldctr']]);
+                            }else{
+                                //field is set to be removed, but the replacement field was NOT located, don't do anything with it (keep the original field)
+                            }
+                        }else{
+                            //field is not marked for replacment and just needs to be removed, unset the position of the old field
+                            unset($viewdefs[$mods . 's'][$unsetPos['key']]['panels'][$unsetPos['panelName']][$unsetPos['rowctr']][$unsetPos['fieldctr']]);
+                        }
+                    }
+
                     if (!write_array_to_file("viewdefs['{$mods}s']['" . $key . "']", $viewdefs[$mods.'s'][$key], $filestr . $file, 'w'))
                     {
                         logThis("could not write $mods dictionary to {$filestr}{$file}", $path);
