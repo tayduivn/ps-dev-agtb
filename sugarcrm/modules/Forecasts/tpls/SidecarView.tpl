@@ -87,13 +87,12 @@
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
-                app.user.set(app.initData.selectedUser);
                 app.init({
                     el: "forecasts",
                     contentEl: ".content",
                     //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                     callback: function(app) {
-
+                        app.user.set(app.initData.selectedUser);
                         app.start();
                     }
                 });
