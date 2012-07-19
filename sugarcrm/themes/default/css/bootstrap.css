@@ -5892,7 +5892,7 @@ table.dataTable th:active {
  */
 .jstree-default li,
 .jstree-default ins {
-  background-image: url("../../../index.php?entryPoint=getImage&imageName=d.png");
+  background-image: url("../../../../index.php?entryPoint=getImage&imageName=d.png");
   background-repeat: no-repeat;
   background-color: transparent;
 }
@@ -5926,7 +5926,7 @@ table.dataTable th:active {
   background-position: -56px -19px;
 }
 .jstree-default a.jstree-loading .jstree-icon {
-  background: url("../../../index.php?entryPoint=getImage&imageName=throbber.gif") center center no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=throbber.gif") center center no-repeat !important;
 }
 .jstree-default.jstree-focused {
   background: #ffffee;
@@ -5975,13 +5975,13 @@ table.dataTable th:active {
   background: transparent !important;
 }
 #vakata-dragged.jstree-default .jstree-ok {
-  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -2px -53px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=jstree.png") -2px -53px no-repeat !important;
 }
 #vakata-dragged.jstree-default .jstree-invalid {
-  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -18px -53px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=jstree.png") -18px -53px no-repeat !important;
 }
 #jstree-marker.jstree-default {
-  background: url("../../../index.php?entryPoint=getImage&imageName=jstree.png") -41px -57px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=jstree.png") -41px -57px no-repeat !important;
   text-indent: -100px;
 }
 .jstree-default a.jstree-search {
@@ -6033,7 +6033,7 @@ table.dataTable th:active {
 #vakata-dragged.jstree-default .jstree-invalid,
 #vakata-dragged.jstree-default .jstree-ok,
 #jstree-marker.jstree-default {
-  _background-image: url("../../../index.php?entryPoint=getImage&imageName=jstree.png");
+  _background-image: url("../../../../index.php?entryPoint=getImage&imageName=jstree.png");
 }
 .jstree-default .jstree-open ins {
   _background-position: -72px 0;
@@ -6113,7 +6113,7 @@ table.dataTable th:active {
   content: "\f007";
 }
 .jstree-sugar a.jstree-loading .jstree-icon {
-  background: url("../../../index.php?entryPoint=getImage&imageName=throbber.gif") center center no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=throbber.gif") center center no-repeat !important;
 }
 .jstree-sugar .jstree-no-dots li,
 .jstree-sugar .jstree-no-dots .jstree-leaf > ins {
@@ -6159,13 +6159,13 @@ table.dataTable th:active {
   background: transparent !important;
 }
 #vakata-dragged.jstree-sugar .jstree-ok {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -2px -53px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=d.png") -2px -53px no-repeat !important;
 }
 #vakata-dragged.jstree-sugar .jstree-invalid {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -18px -53px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=d.png") -18px -53px no-repeat !important;
 }
 #jstree-marker.jstree-sugar {
-  background: url("../../../index.php?entryPoint=getImage&imageName=d.png") -41px -57px no-repeat !important;
+  background: url("../../../../index.php?entryPoint=getImage&imageName=d.png") -41px -57px no-repeat !important;
   text-indent: -100px;
 }
 .jstree-sugar a.jstree-search {
@@ -6609,6 +6609,9 @@ ul.clickMenu.show {
 .iphone-toggle-buttons label {
   margin: 0px;
   cursor: pointer;
+}
+.iphone-toggle-buttons label.disabled {
+  cursor: default;
 }
 .iphone-toggle-buttons input[type="checkbox"],
 .iphone-toggle-buttons input[type="radio"] {
