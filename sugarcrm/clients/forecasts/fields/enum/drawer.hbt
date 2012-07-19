@@ -1,0 +1,14 @@
+<div class="row-fluid">
+    <div class="span12">{{label}}</div>
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}}>
+            <option value="" selected></option>
+            {{#eachOptions def.options}}
+            <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
+            {{/eachOptions}}
+        </select>
+        <p class="help-block"></p>
+    </div>
+</div>
