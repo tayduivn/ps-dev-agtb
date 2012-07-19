@@ -40,6 +40,7 @@ $viewdefs['Contacts']['summer']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
+                'email1',
                 array(
                     'name' => 'phone_mobile',
                     'width' => '15',

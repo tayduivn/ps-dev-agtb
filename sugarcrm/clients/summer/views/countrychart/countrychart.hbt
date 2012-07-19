@@ -1,0 +1,12 @@
+  <h2>Sales
+  <div style='float:right'>
+    {{#if urls}}
+      <select class="chartSelector">
+          {{#each urls}}
+              <option value="{{this.url}}">{{this.title}}</option>
+          {{/each}}
+      </select>
+    {{/if}}
+  </div>
+  </h2>
+  <div id="{{guid}}"></div>

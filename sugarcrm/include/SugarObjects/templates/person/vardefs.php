@@ -99,6 +99,14 @@ $vardefs =array(
 			'len' => '100',
 			'comment' => 'The title of the contact'
 		),
+    'linkedin' =>
+   		array (
+   			'name' => 'linkedin',
+   			'vname' => 'LBL_LINKEDIN',
+   			'type' => 'varchar',
+   			'len' => '100',
+   			'comment' => 'The linkedin name of the user'
+   		),
 	'department' =>
 		array (
 			'name' => 'department',

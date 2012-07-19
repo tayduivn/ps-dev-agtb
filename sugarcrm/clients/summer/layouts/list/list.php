@@ -19,5 +19,8 @@ $viewdefs['summer']['layout']['list'] = array(
         array(
             'view' => 'list-bottom',
         ),
+        array(
+            'view'=>'countrychart'
+         ),
     ),
 );

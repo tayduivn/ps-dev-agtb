@@ -1,6 +1,0 @@
-<div class="row-fluid">
-    <div class="span2">{{label}}</div>
-    <div class="span4" name="{{name}}">
-        {{#if value}}<iframe src="{{value}}" height="{{def.height}}" width="{{def.width}}"</iframe>{{/if}}
-    </div>
-</div>

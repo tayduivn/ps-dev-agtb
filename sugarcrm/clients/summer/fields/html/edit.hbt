@@ -1,4 +1,0 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span10">{{{def.default_value}}}</div>
-</div>

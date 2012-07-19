@@ -1,3 +1,0 @@
-<a href="{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}
-{{else}}javascript:void(0){{/if}}" name="{{def.name}}" class="{{def.class}} {{#eq name "show_more_button_forward"}}{{#eq ../collection.next_offset "-1"}}hide{{/eq}}{{/eq}}{{#eq name "show_more_button_back"}}{{#eq ../collection.page "1"}}hide{{/eq}}{{/eq}}">
-{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{label}}</a>

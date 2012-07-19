@@ -77,4 +77,5 @@ $mod_strings = array(
 //BEGIN SUGARCRM flav!=com ONLY
 'LBL_PICTURE_FILE' => 'Picture',
 //END SUGARCRM flav!=com ONLY
+'LBL_LINKEDIN'=>'Linkedin Name',
 );
