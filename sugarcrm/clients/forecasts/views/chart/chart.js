@@ -70,7 +70,11 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        this.chart = this._initializeChart();
+        if(_.isEmpty(this.chart)) {
+            this.chart = this._initializeChart();
+        } else {
+            this.updateChart();
+        }
     },
 
     /**
