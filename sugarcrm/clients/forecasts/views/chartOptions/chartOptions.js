@@ -36,7 +36,7 @@
 
             self.$el.find(self.viewSelector).append($chosenPlaceholder);
 
-            chosen.options.viewName = 'edit';
+            chosen.options.viewName = 'drawer';
             chosen.label = modelData.label;
 
             if (modelData.default) {
