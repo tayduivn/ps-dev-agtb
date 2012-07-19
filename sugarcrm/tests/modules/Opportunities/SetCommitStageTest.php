@@ -41,7 +41,9 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $this->opp = SugarTestOpportunityUtilities::createOpportunity();
+        unset($this->opp->probability);
+        unset($this->opp->commit_stage);
     }
 
     public function tearDown()
@@ -72,15 +74,13 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
-     *
      * @dataProvider probabilityProvider
      */
     public function testSetCommitStage($probability, $commit_stage)
     {
         //Test setting field 'commit_stage'
-        $opp = new Opportunity();
-        $opp->probability = $probability;
-        $opp->save();
-        $this->assertEquals($opp->commit_stage, $commit_stage, "commit stage should be $commit_stage");
+        $this->opp->probability = $probability;
+        $this->opp->save();
+        $this->assertEquals($this->opp->commit_stage, $commit_stage, "commit stage should be $commit_stage");
     }
 }
