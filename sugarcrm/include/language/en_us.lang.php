@@ -3365,6 +3365,9 @@ $app_strings = array (
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
 
+    'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
+
+    //for sidecar
     'LBL_TIME_AGO_NOW' => 'right now',
     'LBL_TIME_AGO_SECONDS' => 'less than a minute ago',
     'LBL_TIME_AGO_MINUTE' => 'about 1 minute ago',
@@ -3375,15 +3378,16 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
-    'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
     'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time. You may add a record now.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
-    'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+
+    //for portal
+    'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
     'LBL_PORTAL_SIGNUP' => 'A customer service representative will contact you shortly to configure your account.',
@@ -3401,7 +3405,7 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
 
-
+    //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
     'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
     'ERR_HTTP_DEFAULT_TEXT' => 'Unknown error.',
