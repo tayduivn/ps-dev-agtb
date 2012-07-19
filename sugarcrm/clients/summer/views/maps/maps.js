@@ -33,6 +33,8 @@
     },
 
     getData: function() {
+        console.log('hellooooo');
+
         var self = this;
         var address;
         //Load configure meta from modules/{Module}/metadata/base/views/googlemap.php
@@ -79,7 +81,10 @@
                 this.geocoder.geocode({
                     'address': address
                 }, function(results, status) {
+                    console.log(results);
+
                     if (status == google.maps.GeocoderStatus.OK) {
+
                         self.renderHtml(results);
                     }
                 });
@@ -89,6 +94,7 @@
         }
 
     },
+
     renderHtml: function(results) {
         this.$("#map_panel .title").text(results[0].formatted_address);
         this.$('#map_panel').show();
@@ -105,6 +111,41 @@
             position: results[0].geometry.location
         });
     },
+
+    resetClock: function(offset, el) {
+        // First stop the existing clock
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+
+        if (offset) {
+            this.startClock(offset, el);
+            this.timer = setInterval(_.bind(function() { this.startClock(offset, el); }, this), 30000);
+        }
+    },
+
+    startClock: function(offset, el) {
+        var currentTime = new Date();
+        var meridian = "am";
+        var currentHours = currentTime.getUTCHours();
+        var currentMinutes = currentTime.getUTCMinutes();
+
+        currentHours += offset;
+        if (currentHours > 24) {
+            currentHours -= 24;
+        } else if (currentHours < 0) {
+            currentHours += 24;
+        }
+
+        currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+        meridian = (currentHours > 12) ? "pm" : "am";
+        currentHours = (currentHours > 12) ? currentHours - 12 : currentHours;
+
+        var time = currentHours + ":" + currentMinutes + meridian;
+
+        this.$(el).html(time);
+    },
+
     bindDataChange: function() {
         var self = this;
         if (this.model) {

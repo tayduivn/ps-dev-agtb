@@ -61,7 +61,7 @@ $viewdefs['summer']['layout']['detail'] = array(
                                 'components' =>
                                 array(
                                     0 => array(
-                                        'view' => 'maps',
+                                        'view' => 'linkedin',
                                 ),
                             ),
                         ),
