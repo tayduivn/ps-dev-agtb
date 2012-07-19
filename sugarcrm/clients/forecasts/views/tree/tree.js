@@ -105,69 +105,64 @@
 
         var self = this;
 
-        this.jsTree = $(".jstree-sugar").jstree({
-            "plugins":["json_data", "ui", "crrm", "types", "themes"],
-            "json_data" : {
-                "ajax" : {
-                    "url" : self.currentTreeUrl,
-                    "success" : function(data)  {
-                        // IF this user has children (is a manager/has reportees) then show the tree view
-                        // 1st if line is true if Parent link has been returned
-                        // 2nd if line is true if no Parent link has been returned
-                        if( (data instanceof Array && data[1].children.length > 0) ||
-                            (data.hasOwnProperty('children') && data.children.length > 0)) {
-                            $('.view-tree').show();
-
-                            //get id of current root user
-                            if(data instanceof Array) {
-                                self.currentRootId = data[1].metadata.id;
-                            } else {
-                                self.currentRootId = data.metadata.id;
+        $.when(app.api.call('read', self.currentTreeUrl, null, {
+            success : function(data) {
+                treeData = data;
+            }
+        })).then(
+            function() {
+                self.jsTree = $(".jstree-sugar").jstree({
+                    "plugins":["json_data", "ui", "crrm", "types", "themes"],
+                    "json_data" : {
+                        "data" : treeData
+                    },
+                    "ui" : {
+                        // when the tree re-renders, initially select the root node
+                        "initially_select" : [ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
+                    },
+                    "types" : {
+                        "types" : {
+                            "types" : {
+                                "parent_link" : {},
+                                "manager" : {},
+                                "my_opportunities" : {},
+                                "rep" : {},
+                                "root" : {}
                             }
                         }
                     }
+                }).on("select_node.jstree", function(event, data){
+                        var jsData = data.inst.get_json();
+                        var nodeType = jsData[0].attr.rel;
+                        var userData = jsData[0].metadata;
+                        var contextUser = self.context.forecasts.get("selectedUser");
+
+                        var showOpps = false;
+
+                        // if user clicked on a "My Opportunities" node
+                        // set this flag true
+                        if(nodeType == "my_opportunities") {
+                            showOpps = true
+                        }
+
+                        var selectedUser = {
+                            'id'            : userData.id,
+                            'full_name'     : userData.full_name,
+                            'first_name'    : userData.first_name,
+                            'last_name'     : userData.last_name,
+                            'isManager'     : (nodeType == 'rep') ? false : true,
+                            'showOpps'      : showOpps
+                        };
+
+                        // update context with selected user which will trigger checkRender
+                        self.context.forecasts.set("selectedUser" , selectedUser);
+                    });
+
+                if(treeData && treeData.children.length > 0)
+                {
+                    $('.view-tree').show();
+                    self.currentRootId = treeData.metadata.id;
                 }
-            },
-            "ui" : {
-                // when the tree re-renders, initially select the root node
-                "initially_select" : [ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
-            },
-            "types" : {
-                "types" : {
-                    "types" : {
-                        "parent_link" : {},
-                        "manager" : {},
-                        "my_opportunities" : {},
-                        "rep" : {},
-                        "root" : {}
-                    }
-                }
-            }
-        }).on("select_node.jstree", function(event, data){
-                var jsData = data.inst.get_json();
-                var nodeType = jsData[0].attr.rel;
-                var userData = jsData[0].metadata;
-                var contextUser = self.context.forecasts.get("selectedUser");
-
-                var showOpps = false;
-
-                // if user clicked on a "My Opportunities" node
-                // set this flag true
-                if(nodeType == "my_opportunities" || nodeType == "rep") {
-                    showOpps = true
-                }
-
-                var selectedUser = {
-                    'id'            : userData.id,
-                    'full_name'     : userData.full_name,
-                    'first_name'    : userData.first_name,
-                    'last_name'     : userData.last_name,
-                    'isManager'     : (nodeType == 'rep') ? false : true,
-                    'showOpps'      : showOpps
-                };
-
-                // update context with selected user which will trigger checkRender
-                self.context.forecasts.set("selectedUser" , selectedUser);
             });
     }
 })
