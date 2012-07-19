@@ -59,6 +59,27 @@ class PdfManagerHelper
         return $bannedPdfManagerFieldsAndLinks;
     }
 
+
+    /**
+     * Returns a list of banned modules for PdfManager
+     *
+     * @return array
+     */
+
+    public static function getBannnedModules()
+    {
+    
+        $bannedPdfManagerModules = array();
+
+        include 'modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        
+        if (file_exists('custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php')) {
+            include 'custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        }
+            
+        return $bannedPdfManagerModules;
+    }
+
     /**
      * Returns a list of available modules for PdfManager
      *
@@ -66,13 +87,18 @@ class PdfManagerHelper
      */
     public static function getAvailableModules()
     {
+
+        $bannedModules = PdfManagerHelper::getBannnedFieldsAndLinks();
+
         $module_names = array_change_key_case ($GLOBALS['app_list_strings']['moduleList']);
         require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
         $studio_browser = new StudioBrowser();
         $studio_browser->loadModules();
         $studio_modules = array_keys($studio_browser->modules);
         foreach ($studio_modules as $module_name) {
-            $available_modules[$module_name] = isset($module_names[strtolower($module_name)]) ? $module_names[strtolower($module_name)] : strtolower($module_name);
+            if (!in_array($module_name, $bannedModules)) {
+                $available_modules[$module_name] = isset($module_names[strtolower($module_name)]) ? $module_names[strtolower($module_name)] : strtolower($module_name);
+            }
         }
         asort($available_modules);
 
@@ -131,7 +157,7 @@ class PdfManagerHelper
         global $app_list_strings;
         
         $bannedFieldsAndLinks = PdfManagerHelper::getBannnedFieldsAndLinks();
-        
+
         $focus = BeanFactory::newBean($module);
         $focus->id = create_guid();
 

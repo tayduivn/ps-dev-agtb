@@ -49,3 +49,8 @@ $bannedPdfManagerFieldsAndLinks['Employees'] = array (
         'oauth_tokens',
     ),
 );
+
+// For $bannedPdfManagerModules, list of banned modules for PdfManager
+$bannedPdfManagerModules[] = 'KBDocuments';
+$bannedPdfManagerModules[] = 'Users';
+$bannedPdfManagerModules[] = 'Employees';
