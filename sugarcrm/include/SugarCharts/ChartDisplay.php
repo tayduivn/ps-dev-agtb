@@ -27,10 +27,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-//require_once("modules/Reports/templates/templates_chart.php");
 
 /**
  * Handle setting up the Charting for Display
+ *
+ * @api
  */
 class ChartDisplay
 {

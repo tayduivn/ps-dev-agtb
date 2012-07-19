@@ -23,7 +23,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Forecasts/data/IChartAndWorksheet.php');
 
 /**
- * Individual Worksheet Info
+ * Individual.php
+ *
+ * This class is the IChartAndWorksheet implementation for individual chart and worksheet data.  It uses a predefined
+ * report definition that accepts timeperiod_id and assigned_user_link (assigned_user_id) filters
+ *
  */
 class Individual implements IChartAndWorksheet {
 
@@ -35,7 +39,9 @@ class Individual implements IChartAndWorksheet {
     );
 
     /**
-     * @param Report $report
+     * This method returns an Array of individual worksheet Array data based off of data derived from the report bean instance
+     *
+     * @param $report Report bean instance
      * @return array
      */
     public function getGridData(Report $report)
@@ -54,9 +60,9 @@ class Individual implements IChartAndWorksheet {
             $row['date_closed'] = $row['opportunities_date_closed'];
             $row['probability'] = $row['opportunities_probability'];
             $row['sales_stage'] = $row['opportunities_sales_stage'];
-            $row['best_case'] = $row['opportunities_best_case'];
-            $row['likely_case'] = $row['opportunities_likely_case'];
-            $row['worst_case'] = $row['opportunities_worst_case'];
+            $row['best_case'] = intval($row['opportunities_best_case']) == 0 ? $row['amount'] : $row['opportunities_best_case'];
+            $row['likely_case'] = intval($row['opportunities_likely_case']) == 0 ? $row['amount'] : $row['opportunities_likely_case'];
+            $row['worst_case'] = intval($row['opportunities_worst_case']) == 0 ? $row['amount'] : $row['opportunities_worst_case'];
             $row['is_owner'] = $current_user->id == $row['l1_id'];
             $row['assigned_user_id'] = $row['l1_id'];
             //Should we unset the data we don't need here so as to limit data sent back?
@@ -67,16 +73,23 @@ class Individual implements IChartAndWorksheet {
     }
 
     /**
-     * @param string $id
-     * @return array|mixed
+     * This method returns the chart definition for the given id
+     *
+     * @param $id String of chart definition id
+     * @return Array the chart definition
      */
     public function getChartDefinition($id='')
     {
         return $this->getWorksheetDefinition($id);
     }
 
+    /**
+     * This method returns the chart filters used for the data given the filter values
+     *
+     * @param $args Array of filter values
+     * @return array Array of chart filter definition
+     */
     public function getChartFilter($args) {
-
         return array(
             'timeperiod_id' => array('$is' => $args['timeperiod_id']),
             'assigned_user_link' => array('id' => $args['user_id']),
@@ -84,8 +97,10 @@ class Individual implements IChartAndWorksheet {
     }
 
     /**
-     * @param string $id
-     * @return array|mixed
+     * This method returns the worksheet definition for the given id
+     *
+     * @param $id String of the worksheet definition id
+     * @return Array the worksheet definition
      */
     public function getWorksheetDefinition($id='')
     {

@@ -25,6 +25,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
  * This is for when a string will be at the end of a string
  *
  * Ex: %<string>
+ * @api
  */
 class SugarParsers_Filter_Ends extends SugarParsers_Filter_AbstractFilter
 {

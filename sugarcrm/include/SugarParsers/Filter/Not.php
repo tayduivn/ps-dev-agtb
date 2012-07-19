@@ -23,6 +23,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
  * This is the control key to trigger when something is not something
+ * @api
  */
 class SugarParsers_Filter_Not extends SugarParsers_Filter_AbstractFilter
 {
