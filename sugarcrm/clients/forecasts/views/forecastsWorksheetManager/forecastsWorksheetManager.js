@@ -249,7 +249,12 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         this.category = params.id;
-        this.render();
+        var model = this.context.forecasts.worksheetmanager;
+        if(!this.showMe()){
+            return false;
+        }
+        model.url = this.createURL();
+        model.fetch();
     },
 
     /**
@@ -272,6 +277,10 @@
         var args = {};
         if(this.timePeriod) {
            args['timeperiod_id'] = this.timePeriod;
+        }
+
+        if(this.category) {
+            args['category'] = this.category;
         }
 
         if(this.selectedUser)

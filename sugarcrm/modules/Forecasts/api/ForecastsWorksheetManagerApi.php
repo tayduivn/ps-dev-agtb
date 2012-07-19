@@ -103,6 +103,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
         );
 
+        if (isset($args['category']) && $args['category'] == 'Committed')
+        {
+            $this->committed = 1;
+            $testFilters['forecast'] = array('$is' => $this->committed);
+        }
+
         require_once('include/SugarParsers/Filter.php');
         require_once("include/SugarParsers/Converter/Report.php");
         require_once("include/SugarCharts/ReportBuilder.php");
