@@ -41,9 +41,10 @@ class BugsApiHelper extends SugarBeanApiHelper
             }
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
             $account = $contact->account_id;
-            $bean->account_id = $account;
             $bean->load_relationship('contacts');
             $bean->contacts->add($contact->id);
+            $bean->load_relationship('accounts');
+            $bean->accounts->add($account);
         }
         return $data;
     }
