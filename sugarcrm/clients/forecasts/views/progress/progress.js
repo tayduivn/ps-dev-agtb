@@ -121,7 +121,6 @@
 
     calculateBases: function () {
         var currentUser = this.context.forecasts.get("selectedUser");
-        console.log(currentUser);
 
         if(currentUser.isManager === false || currentUser.showOpps === true) {
           this.likelyTotal = this.reduceWorksheet('likely_case');
@@ -133,7 +132,6 @@
             this.bestTotal = this.reduceWorksheetManager('best_case');
             this.model.set('revenue', this.reduceWorksheetManager('amount'));
             this.revenue = this.model.get('revenue');
-            console.log(this);
         }
     },
     
@@ -168,8 +166,6 @@
 
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
-        console.log(user);
-        console.log(context);
         var urlParams = $.param({
             user_id: self.context.forecasts.get("selectedUser").id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
