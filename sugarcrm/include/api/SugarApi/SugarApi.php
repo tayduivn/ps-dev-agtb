@@ -63,7 +63,8 @@ abstract class SugarApi {
             $this->htmlDecodeReturn($data);
         }
         elseif(!empty($data)) {
-            $data = html_entity_decode($data);
+            // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
+            $data = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES);
         }
 
         return $data;
@@ -78,7 +79,8 @@ abstract class SugarApi {
                 $this->htmlDecodeReturn($value);
             }
             elseif(!empty($data) && !empty($value)) {
-                $data[$key] = html_entity_decode($value);
+                // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
+                $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES);
             }
             else {
                 $data[$key] = $value;
