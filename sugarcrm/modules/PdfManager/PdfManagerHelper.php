@@ -80,6 +80,16 @@ class PdfManagerHelper
     }
 
     /**
+     * Returns a public name of a module
+     *
+     * @return string
+     */
+    public static function getModuleName($moduleKey)
+    {        
+        return translate('moduleList', 'application', $moduleKey);
+    }
+
+    /**
      * Takes an module name and returns a list of fields and links available for this module in PdfManager
      *
      * @param  string  $moduleName
