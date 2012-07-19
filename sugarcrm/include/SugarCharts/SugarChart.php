@@ -127,16 +127,18 @@ class SugarChart {
 		$this->data_set = $dataSet;
 	}
 
-	function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on'){
-		$this->chart_properties['title'] = $title;
-		$this->chart_properties['subtitle'] = $subtitle;
-		$this->chart_properties['type'] = $type;
-		$this->chart_properties['legend'] = $legend;
-		$this->chart_properties['labels'] = $labels;
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->chart_properties['print'] = $print;
-		//END SUGARCRM flav=pro ONLY
-	}
+    function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on', $thousands = false)
+    {
+        $this->chart_properties['title'] = $title;
+        $this->chart_properties['subtitle'] = $subtitle;
+        $this->chart_properties['type'] = $type;
+        $this->chart_properties['legend'] = $legend;
+        $this->chart_properties['labels'] = $labels;
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->chart_properties['print'] = $print;
+        //END SUGARCRM flav=pro ONLY
+        $this->chart_properties['thousands'] = $thousands;
+    }
 
 	function setDisplayProperty($property, $value){
 		$this->chart_properties[$property] = $value;

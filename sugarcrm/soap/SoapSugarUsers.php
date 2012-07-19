@@ -341,9 +341,6 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	if($offset == '' || $offset == -1){
 		$offset = 0;
 	}
-	if($deleted){
-	    $deleted = -1;
-	}	
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
