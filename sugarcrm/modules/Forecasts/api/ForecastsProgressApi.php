@@ -64,7 +64,15 @@ class ForecastsProgressApi extends ModuleApi
 				'shortHelp' => 'Progress data',
 				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
 			),
-		);
+            'closed' => array(
+         				'reqType'   => 'GET',
+         				'path'      => array('Forecasts', 'closed'),
+         				'pathVars'  => array('', ''),
+         				'method'    => 'closed',
+         				'shortHelp' => 'Closed data',
+         				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#closed',
+         			),
+        );
 		return $parentApi;
 	}
 
@@ -98,9 +106,9 @@ class ForecastsProgressApi extends ModuleApi
 		$this->quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id, $this->should_rollup);
 
 		$opportunity = new Opportunity();
-		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id);
+		$this->closed      = $opportunity->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup);
 		$this->revenueInPipeline = $opportunity->getPipelineRevenue($this->user_id, $this->timeperiod_id);
-        $this->likelyAmount = $opportunity->getLikelyAmount($this->user_id, $this->timeperiod_id);
+        $this->likelyAmount = $opportunity->getLikelyAmount($this->user_id, $this->timeperiod_id, $this->should_rollup);
 		$this->opportunitiesInPipeline = $opportunity->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id);
 	}
 
@@ -136,7 +144,6 @@ class ForecastsProgressApi extends ModuleApi
 		);
 	}
 
-
 	public function progress( $api, $args )
 	{
 		$this->loadProgressData($args);
@@ -157,9 +164,10 @@ class ForecastsProgressApi extends ModuleApi
             "pipeline"      => $this->getPipeline($api, $args),
 		);
 
+
+
 		return $progressData;
 	}
-
 
 	public function getQuota( $api, $args )
 	{

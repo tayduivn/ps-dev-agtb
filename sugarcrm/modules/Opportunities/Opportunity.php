@@ -573,18 +573,22 @@ class Opportunity extends SugarBean
 	 *
 	 * @return int
 	 */
-	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL )
+	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false )
 	{
 		$amountSum = 0;
 		$where     = "opportunities.sales_stage='" . Opportunity::STAGE_CLOSED_WON . "'";
 
-		if ( !is_null($user_id) ) {
+        if ($should_rollup and !is_null($user_id)) {
+           $where .= " AND opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
+        } else if ( !is_null($user_id) ) {
 			$where .= " AND opportunities.assigned_user_id='$user_id'";
 		}
 
 		if ( !is_null($timeperiod_id) ) {
 			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
 		}
+
+        error_log($where);
 
 		$query  = $this->create_list_query(NULL, $where);
 		$result = $this->db->query($query);
@@ -645,7 +649,7 @@ class Opportunity extends SugarBean
    	 * @param null $user_id
    	 * @param null $timeperiod_id
    	 */
-   	public function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL )
+   	public function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false )
    	{
    		global $current_user;
    		$revenue = 0;
@@ -653,23 +657,33 @@ class Opportunity extends SugarBean
    		if ( is_null($user_id) ) {
    			$user_id = $current_user->id;
    		}
+
+        if( $should_rollup ) {
+            $where = "opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
+        } else {
+            $where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id);
+        }
+
    		if ( is_null($timeperiod_id) ) {
    			$timeperiod_id = TimePeriod::getCurrentId();
    		}
 
-   		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
-   		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
+   		$where .= " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
                . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
    		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
    		       . " AND opportunities.deleted = 0";
 
    		$query  = $this->create_list_query(NULL, $where);
 
+           error_log($where);
+
    		$result = $this->db->query($query);
 
    		while ( $row = $this->db->fetchByAssoc($result) ) {
    			$revenue += $row['likely_case'];
    		}
+
+           error_log('revenue'.$revenue);
 
    		return $revenue;
    	}

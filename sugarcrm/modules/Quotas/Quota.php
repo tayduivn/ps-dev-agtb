@@ -408,7 +408,7 @@ class Quota extends SugarBean
 	function getRollupQuota( $timeperiod_id, $user_id = NULL, $should_rollup = FALSE )
 	{
 		global $current_user;
-		$rollup_filter = '';
+		$rollup_filter = "AND quotas.quota_type = 'Direct' ";
 
 		if ( is_null($user_id) ) {
 			$user_id = $current_user->id;
