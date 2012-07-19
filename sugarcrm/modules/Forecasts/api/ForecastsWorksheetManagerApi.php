@@ -140,6 +140,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast_id" => '',
                               "worksheet_id" => '',
                               "show_opps" => false,
+                              "id" => ""
                             );
 		
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
@@ -215,6 +216,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
             $data[$row['user_name']]['likely_case'] = $row['likely_case'];
             $data[$row['user_name']]['worst_case'] = $row['worst_case'];
             $data[$row['user_name']]['id'] = $row['forecast_id'];
+            $data[$row['user_name']]['forecast_id'] = $row['forecast_id'];
         } 
 
         return $data;
