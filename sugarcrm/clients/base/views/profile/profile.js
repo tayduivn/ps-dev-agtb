@@ -39,6 +39,8 @@
             success: function(data) {
                 app.alert.dismiss('fetch_contact_record');
                 cb(data);
+                self.$('.modelNotLoaded').hide();
+                self.$('.modelLoaded').show();
             },
             error: function(error) {
                 app.alert.dismiss('fetch_contact_record');
