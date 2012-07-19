@@ -63,7 +63,6 @@ class Individual implements IChartAndWorksheet {
             $row['best_case'] = intval($row['opportunities_best_case']) == 0 ? $row['amount'] : $row['opportunities_best_case'];
             $row['likely_case'] = intval($row['opportunities_likely_case']) == 0 ? $row['amount'] : $row['opportunities_likely_case'];
             $row['worst_case'] = intval($row['opportunities_worst_case']) == 0 ? $row['amount'] : $row['opportunities_worst_case'];
-            $row['is_owner'] = $current_user->id == $row['l1_id'];
             $row['assigned_user_id'] = $row['l1_id'];
             //Should we unset the data we don't need here so as to limit data sent back?
             $opps[] = $row;
