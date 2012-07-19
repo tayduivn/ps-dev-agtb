@@ -28,9 +28,21 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.handleRenderOptions({user_id: app.user.get('id')});
-        this.hasSelectedUser = true;
-        this.handleRenderOptions({display_manager : app.user.get('isManager')});
+    },
+
+    _render: function() {
+        app.view.View.prototype._render.call(this);
+
+        var values = {
+            user_id: app.user.get('id'),
+            display_manager : app.user.get('isManager'),
+            timeperiod_id : app.defaultSelections.timeperiod_id.id,
+            group_by : app.defaultSelections.group_by.id,
+            dataset : app.defaultSelections.dataset.id,
+            category : app.defaultSelections.category.id
+        };
+
+        this.handleRenderOptions(values);
     },
 
     /**
@@ -39,28 +51,22 @@
     bindDataChange:function () {
         var self = this;
         this.context.forecasts.on('change:selectedUser', function (context, user) {
-            self.handleRenderOptions({user_id: user.id});
-            self.hasSelectedUser = true;
-            self.handleRenderOptions({display_manager : (user.showOpps === false && user.isManager === true)});
+            self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
-            self.hasSelectedTimePeriod = true;
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            self.hasSelectedGroupBy = true;
             self.handleRenderOptions({group_by: groupBy.id});
         });
         this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            self.hasSelectedDataset = true;
             self.handleRenderOptions({dataset: dataset.id});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.hasSelectedCategory = true;
             self.handleRenderOptions({category: value.id});
         });
         this.context.forecasts.on('change:updatedTotals', function(context, totals){
-            if (self.canRender()) {
+            if(!_.isEmpty(self.chart)) {
                 self.updateChart();
             }
         });
@@ -72,9 +78,7 @@
             self.values[key] = value;
         });
 
-        if (self.canRender()) {
-            self.renderChart();
-        }
+        self.renderChart();
     },
 
     canRender: function() {
@@ -128,7 +132,6 @@
                 "saveImageTo":"",
                 "dataPointSize":"5"
             };
-        app.view.View.prototype.render.call(this);
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
     }

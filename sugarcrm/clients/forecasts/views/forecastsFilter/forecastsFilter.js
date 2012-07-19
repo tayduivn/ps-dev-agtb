@@ -40,26 +40,14 @@
             default_values[key] = '';
             if (modelData.default) {
                 chosen.model.set(key, modelData.default);
-                default_values.id = modelData.default;
-                default_values.label = modelData.options[modelData.default];
             }
             chosen.def.options = modelData.options;
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
             if (key == 'timeperiod_id') {
-                var defaultTimePeriod = {
-                    "id" : modelData.default,
-                    "label" : modelData.options[modelData.default]
-                }
-                self.context.forecasts.set("selectedTimePeriod", defaultTimePeriod);
                 self.handleTimePeriodEvents($chosenPlaceholder);
             } else if (key == 'category') {
-                var defaultCategory = {
-                    "id" : modelData.default,
-                    "label" : modelData.options[modelData.default]
-                }
-                self.context.forecasts.set("selectedCategory", defaultCategory);
                 self.handleCategoryEvents($chosenPlaceholder);
             }
         });
