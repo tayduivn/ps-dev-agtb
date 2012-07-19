@@ -158,10 +158,14 @@
                         self.context.forecasts.set("selectedUser" , selectedUser);
                     });
 
-                if(treeData && treeData.children.length > 0)
+                if(treeData && (treeData instanceof Array || treeData.children.length > 0))
                 {
                     $('.view-tree').show();
-                    self.currentRootId = treeData.metadata.id;
+                    if(treeData instanceof Array) {
+                        self.currentRootId = treeData[1].metadata.id;
+                    } else {
+                        self.currentRootId = treeData.metadata.id;
+                    }
                 }
             });
     }
