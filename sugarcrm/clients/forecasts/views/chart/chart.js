@@ -5,31 +5,16 @@
  * @extends View.View
  */
 ({
-
-    hasSelectedTimePeriod:false,
-    hasSelectedGroupBy:false,
-    hasSelectedDataset:false,
-    hasSelectedCategory:false,
-    hasSelectedUser:false,
-
-    hasFilterOptions:false,
-
     values:{},
     url:'rest/v10/Forecasts/chart',
 
     chart: null,
 
-
     /**
-     * Initialize the View
+     * Override the _render function
      *
-     * @constructor
-     * @param {Object} options
+     * @private
      */
-    initialize:function (options) {
-        app.view.View.prototype.initialize.call(this, options);
-    },
-
     _render: function() {
         app.view.View.prototype._render.call(this);
 
@@ -79,15 +64,6 @@
         });
 
         self.renderChart();
-    },
-
-    canRender: function() {
-        var self = this;
-        return (self.hasSelectedTimePeriod &&
-            self.hasSelectedGroupBy &&
-            self.hasSelectedDataset &&
-            self.hasSelectedCategory &&
-            self.hasSelectedUser);
     },
 
     /**
