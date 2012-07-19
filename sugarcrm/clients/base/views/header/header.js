@@ -44,8 +44,7 @@
                     // so this is essentially the term typed
                     app.router.navigate('#search/'+hrefOrTerm, {trigger: true});
                 }
-            },
-            minChars: 1  //defaults to 3
+            }
         });
     },
     /** 
