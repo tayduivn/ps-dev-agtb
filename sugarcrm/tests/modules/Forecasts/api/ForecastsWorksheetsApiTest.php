@@ -229,15 +229,16 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testForecastWorksheetManagerSave(){
-    	
+    	self::$managerQuota->amount = self::$managerQuota->amount + 100;
+    	self::$managerWorksheet->best_case = self::$managerWorksheet->best_case + 100;
     	$postData = array("amount" => self::$managerOpp->amount,
-                             "quota" => self::$managerQuota->amount + 100,
+                             "quota" => self::$managerQuota->amount,
                              "quota_id" => self::$managerQuota->id,
                              "best_case" => self::$managerForecast->best_case,
                              "likely_case" => self::$managerForecast->likely_case,
                              "worst_case" => self::$managerForecast->worst_case,
-                             "best_adjusted" => self::$managerWorksheet->best_case + 100,
-                             "likely_adjusted" => self::$managerWorksheet->likely_case + 100,
+                             "best_adjusted" => self::$managerWorksheet->best_case,
+                             "likely_adjusted" => self::$managerWorksheet->likely_case,
                              "worst_adjusted" => self::$managerWorksheet->worst_case,
                              "forecast" => intval(self::$managerWorksheet->forecast),
                              "forecast_id" => self::$managerForecast->id,
@@ -250,20 +251,46 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                         );
        
 		$response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerForecast->id, json_encode($postData), "PUT");
-		//$response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerForecast->id . "&" . http_build_query($postData), "", "PUT");
-				
-		// now get the data back and see if it was saved to all the proper tables.
+						
+		// now get the data back to see if it was saved to all the proper tables.
 		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager->id . "&timeperiod_id=" . self::$timeperiod->id);
 		
 		//check to see if the data to the Quota table was saved
-		$this->assertEquals($response["reply"][0]["quota"], self::$managerQuota->amount + 100, "Quota was not saved.");
+		$this->assertEquals($response["reply"][0]["quota"], self::$managerQuota->amount, "Quota data was not saved.");
 		
 		//check to see if the data to the Worksheet table was saved
-		$this->assertEquals($response["reply"][0]["best_adjusted"], self::$managerWorksheet->best_case + 100, "Worksheet data (best_case) was not saved.");
-		$this->assertEquals($response["reply"][0]["likely_adjusted"], self::$managerWorksheet->likely_case + 100, "Worksheet data (likely_case) was not saved.");
+		$this->assertEquals($response["reply"][0]["best_adjusted"], self::$managerWorksheet->best_case, "Worksheet data was not saved.");
+				
+    }
+    
+    /**
+     * @group forecastapi
+     */
+    public function testForecastWorksheetSave(){
+    	
+    	self::$repWorksheet->best_case = self::$repWorksheet->best_case + 100;
+    	self::$repOpp->probability = self::$repOpp->probability + 10;
+    	
+    	$postData = array("amount" => self::$repOpp->amount,
+                             "best_case" => self::$repWorksheet->best_case,
+                             "likely_case" => self::$repWorksheet->likely_case,                            
+                             "forecast" => intval(self::$repWorksheet->forecast),
+                             "id" => self::$repOpp->id,
+                             "worksheet_id" => self::$repWorksheet->id,
+                             "probability" => self::$repOpp->probability,                             
+                             "timeperiod_id" => self::$timeperiod->id
+                        );
+       
+		$response = $this->_restCall("ForecastWorksheets/" . self::$repOpp->id, json_encode($postData), "PUT");
+				
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastWorksheets?user_id=". self::$reportee->id . "&timeperiod_id=" . self::$timeperiod->id);
 		
-		//reset our beans for other tests.
-		self::$managerQuota->save();
-		self::$managerWorksheet->save();
+		//check to see if the data to the Opportunity table was saved
+		$this->assertEquals($response["reply"][0]["probability"], self::$repOpp->probability, "Opportunity data was not saved.");
+		
+		//check to see if the data to the Worksheet table was saved
+		$this->assertEquals($response["reply"][0]["best_case"], self::$repWorksheet->best_case, "Worksheet data was not saved.");
+				
     }
 }

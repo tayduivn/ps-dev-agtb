@@ -29,6 +29,7 @@ class ForecastWorksheet extends SugarBean {
     var $best_case;
     var $likely_case;
     var $worst_case;
+    var $sales_stage;
     var $object_name = 'ForecastWorksheet';
     var $module_dir = 'Forecasts';
     var $table_name = 'opportunities';
@@ -52,6 +53,7 @@ class ForecastWorksheet extends SugarBean {
         $opp->retrieve($this->id);
         $opp->forecast = ($this->forecast) ? 1 : 0;
         $opp->probability = $this->probability;
+        $opp->sales_stage = $this->sales_stage;
         $opp->save();
 
         //Update the Worksheet bean
