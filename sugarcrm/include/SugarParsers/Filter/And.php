@@ -24,6 +24,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
 
 /**
  * This class is used when the key doesn't contain any keys
+ * @api
  */
 class SugarParsers_Filter_And extends SugarParsers_Filter_AbstractFilter
 {

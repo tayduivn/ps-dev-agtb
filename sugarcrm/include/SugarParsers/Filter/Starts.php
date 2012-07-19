@@ -25,6 +25,7 @@ require_once("include/SugarParsers/Filter/AbstractFilter.php");
  * This is for when a string will start part of a string.
  *
  * Ex: <string>%
+ * @api
  */
 class SugarParsers_Filter_Starts extends SugarParsers_Filter_AbstractFilter
 {

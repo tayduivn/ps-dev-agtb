@@ -8,25 +8,25 @@
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
         componentsMeta: {},
+        initDataModel: {},
 
         initialize: function(options) {
             this.componentsMeta = app.metadata.getLayout("Forecasts").forecasts.meta.components;
 
             options.context = _.extend(options.context, this.initializeAllModels());
 
-            options.context.forecasts.set("selectedTimePeriod", app.defaultSelections.timeperiod_id);
-            options.context.forecasts.set("selectedCategory", app.defaultSelections.category);
-            options.context.forecasts.set("selectedGroupBy", app.defaultSelections.group_by);
-            options.context.forecasts.set("selectedDataSet", app.defaultSelections.dataset);
-            options.context.forecasts.set("selectedUser", {
-                'id'            : app.user.get('id'),
-                'full_name'     : app.user.get('full_name'),
-                'isManager'     : app.user.get('isManager'),
-                'showOpps'      : false,
-                // first and last name are not passed through /Forecasts/me
-                'first_name'    : '',
-                'last_name'     : ''
-            });
+            var defaultSelections = app.defaultSelections;
+            options.context.forecasts.set("selectedTimePeriod", defaultSelections.timeperiod_id);
+            options.context.forecasts.set("selectedCategory", defaultSelections.category);
+            options.context.forecasts.set("selectedGroupBy", defaultSelections.group_by);
+            options.context.forecasts.set("selectedDataSet", defaultSelections.dataset);
+            options.context.forecasts.set("selectedUser", defaultSelections.selectedUser);
+
+            // grab a copy of the init data for forecasts to use
+            this.initDataModel = app.initData;
+
+            // then get rid of the data from app
+            app.initData = null;
 
             app.view.Layout.prototype.initialize.call(this, options);
 

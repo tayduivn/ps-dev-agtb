@@ -425,16 +425,16 @@ class Opportunity extends SugarBean
 		}
 
         //if commit_stage isn't set, set it based on the probability
-        if (!isset($this->commit_stage) && !empty($this->probability))
+        if (empty($this->commit_stage) && isset($this->probability))
         {
             $commit_stage_arr = $app_list_strings['commit_stage_dom'];
             ksort($commit_stage_arr);
             //the keys of this array are upper limit of probability for each stage
             foreach($commit_stage_arr as $key => $value)
             {
+                $this->commit_stage = $key;
                 if($this->probability < $key)
                 {
-                    $this->commit_stage = $key;
                     break;
                 }
             }

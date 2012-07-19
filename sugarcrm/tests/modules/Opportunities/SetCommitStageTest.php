@@ -1,5 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,61 +26,61 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/SugarParsers/Filter/AbstractFilter.php");
+require_once('modules/Opportunities/Opportunity.php');
 
 /**
- * This is used for handling arrays that might contain something in a list
- * @api
+ * SetCommitStageTest.php
+ *
+ * This is a test to check that the probability value for an opportunity correctly adjusts the commit_stage value
+ * during a save operation.
+ *
  */
-class SugarParsers_Filter_Between extends SugarParsers_Filter_AbstractFilter
+class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * Which Variables trigger this class
-     *
-     * @var array
-     */
-    protected $variables = array('$between');
+    var $opp;
 
-    /**
-     * Text Operator
-     *
-     * @var string
-     */
-    protected $operator_text = "between";
-
-    /**
-     * Not Text Operator
-     *
-     * @var string
-     */
-    protected $operator_not_text = "not_between";
-
-    /**
-     * Save the value as an array since the value of the field must be in the array
-     *
-     * @param array $value
-     */
-    public function filter($value)
+    public function setUp()
     {
-        // make sure that the value is an array.
-        // if it's not make it an array
-        if (!is_array($value)) {
-            $value = array($value);
-        }
-
-        // save the array value to the keys
-        $this->value = $value;
+        $this->opp = SugarTestOpportunityUtilities::createOpportunity();
+        unset($this->opp->probability);
+        unset($this->opp->commit_stage);
     }
 
-    public function getValueInputs($field_name, $table_key, $operator)
+    public function tearDown()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+    }
+
+    public static function setupBeforeClass()
+    {
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+    }
+
+    public static function tearDownAfterClass()
+    {
+        unset($GLOBALS['app_list_strings']);
+    }
+
+    public function probabilityProvider()
     {
         return array(
-            "name" => $field_name,
-            "table_key" => $table_key,
-            "qualifier_name" => $operator,
-            "input_name0" => $this->value[0],
-            "input_name1" => $this->value[1]
+            array(0, "50"),
+            array(25, "50"),
+            array(65, "70"),
+            array(85, "100"),
+            array(100, "100")
         );
     }
 
+    /**
+     * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
+     * @dataProvider probabilityProvider
+     */
+    public function testSetCommitStage($probability, $commit_stage)
+    {
+        //Test setting field 'commit_stage'
+        $this->opp->probability = $probability;
+        $this->opp->save();
+        $this->assertEquals($this->opp->commit_stage, $commit_stage, "commit stage should be $commit_stage");
+    }
 }

@@ -92,14 +92,8 @@
          * @cfg {Array}
          */
         additionalComponents: {
-            header: {
-                target: '#header'
-            },
             alert: {
                 target: '#alert'
-            },
-            subnav: {
-                target: '#subnav'
             }
         },
         
