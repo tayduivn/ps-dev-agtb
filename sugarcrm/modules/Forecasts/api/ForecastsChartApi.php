@@ -213,6 +213,10 @@ class ForecastsChartApi extends ChartApi
             if(isset($dataArray['label'][1])) {
                 $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
             }
+        } else if($args['group_by'] == "probability") {
+            foreach($dataArray['label'] as $key => $value) {
+                $dataArray['label'][$key] = $value . '%';
+            }
         }
 
         // add the goal marker stuff
