@@ -1,5 +1,4 @@
 <?php
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -29,16 +28,33 @@
 
 require_once('modules/Opportunities/Opportunity.php');
 
-// Test check if commit_stage is set properly based on probability
-
+/**
+ * SetCommitStageTest.php
+ *
+ * This is a test to check that the probability value for an opportunity correctly adjusts the commit_stage value
+ * during a save operation.
+ *
+ */
 class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setup()
+    var $opp;
+
+    public function setUp()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+    }
+
+    public function tearDown()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+    }
+
+    public static function setupBeforeClass()
     {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         unset($GLOBALS['app_list_strings']);
     }
@@ -55,6 +71,8 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
+     *
      * @dataProvider probabilityProvider
      */
     public function testSetCommitStage($probability, $commit_stage)
