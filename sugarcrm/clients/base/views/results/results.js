@@ -43,7 +43,7 @@
                 app.view.View.prototype._renderHtml.call(self);
                 self.renderSubnav();
             } else {
-                self.renderSubnav('No results found for "'+self.lastQuery+'"');
+                self.renderSubnav(app.lang.getAppString('LNK_SEARCH_NO_RESULTS'));
             }
         });
     },

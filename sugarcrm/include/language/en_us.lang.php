@@ -2852,6 +2852,7 @@ $app_strings = array (
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
     'LNK_BASIC_SEARCH' => 'Basic Search',
+    'LNK_SEARCH_NO_RESULTS' => 'No results were found.',
     'LNK_SEARCH_FTS_VIEW_ALL' => 'View all results',
     'LNK_SEARCH_NONFTS_VIEW_ALL' => 'Show All',
     'LNK_CLOSE' => 'close',
