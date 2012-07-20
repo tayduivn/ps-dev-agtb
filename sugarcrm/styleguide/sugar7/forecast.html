@@ -120,6 +120,7 @@
     <div class="row-fluid">
       <div class="span8 content">
         <a href="forecast.html" class="btn pull-right" style="margin-left: 10px;margin-right: -20px;"><i class="icon-cog"></i></a>
+        <a href="#" class="btn pull-right" style="margin-left: 10px;" id="edit-worksheet"><i class="icon-pencil"></i> Edit</a>
         <a href="forecast.html" class="btn btn-primary pull-right"><i class="icon-upload"></i> Commit</a>
         <h1>Sabra Khan's Forecast</h1>
         <div class="topline">
@@ -315,8 +316,8 @@
   <script src="../js/bootstrapx-clickover.js"></script>          
   <script src="../js/jquery.dataTables.js"></script>
 
-  <script src="../js/wicked.js"></script>        
-  <script src="../js/jquery.jeditable.js"></script>        
+  <script src="../js/wicked.js"></script>
+  <script src="../js/jquery.jeditable.js"></script>
   <script src="../js/editable.js"></script>
   <script src="../js/chosen.jquery.min.js"></script>
   <script src="../js/jquery.jstree.js"></script>
@@ -324,7 +325,7 @@
   <script src="../js/jit.js"></script>
   <script src="../js/sugarCharts.js"></script>
   <script src="../js/cookie.js"></script>
-  <script src="../js/application.js"></script>   
+  <script src="../js/application.js"></script>
 
 
     <script>
@@ -378,7 +379,7 @@
             //$('#date_filter').ready(function(){
             $.fn.dataTableExt.afnFiltering.push(
                     function( oSettings, aData, iDataIndex ) {
-                        var probability = parseFloat(aData[4].replace(/<div class='inline-edit'><span class='click'>/,'').replace(/<\/span><\/div>/,''));
+                        var probability = parseFloat(aData[4].replace(/<div class='sugareditable'><span class='click'>/,'').replace(/<\/span><\/div>/,''));
                         var probability_select = 0;
   //                      var probability_select = $('#probability_filter')[0].value;
 
@@ -464,21 +465,21 @@
                     { "sTitle": "Probability",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='inline-edit'><span class='click'>" + sReturn + "</span></div>";
+                            var ret = "<div class='sugareditable'><span class='click'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     },
                     { "sTitle": "Best",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='inline-edit'><span class='click format'>" + sReturn + "</span></div>";
+                            var ret = "<div class='sugareditable'><span class='click format'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     },
                     { "sTitle": "Likely",
                         "fnRender": function(obj) {
                             var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='inline-edit'><span class='click format'>" + sReturn + "</span></div>";
+                            var ret = "<div class='sugareditable'><span class='click format'>" + sReturn + "</span></div>";
                             return ret;
                         }
                     }
@@ -588,8 +589,8 @@
                     for ( var i=iStart ; i<iEnd ; i++ )
                     {
                         //amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
-                        bestTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div class='inline-edit'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
-                        likelyTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div class='inline-edit'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
+                        bestTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
+                        likelyTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div>/,''));
                     }
 
                     /* Modify the footer row to match what we want */
@@ -619,6 +620,7 @@
                         //loadurl: "load.php",
                         indicator : 'Saving ...',
                         cssclass   : "editable",
+//                        onblur : "ignore",
                         callback : function(value, settings) {
                             var val  = parseInt(value.replace(/,/,''));
                             //updateChart("forecast-json-update.js",forecast.chartObject);
@@ -660,6 +662,7 @@
                         divParentWidth = $(divParent).width();
                 $(divParent).addClass('focus');
 
+
                 },
 
                 blur: function() {
@@ -672,21 +675,40 @@
 
             });
 
-             // editable example
-            /*
-            $(".inline-edit click").live({
 
-                mouseenter:function(){
-                    $(this).before('<span class="span2" style=" border-right: medium none; position: absolute; left: -15px; top: 0px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
-                } ,
-                mouseleave:function(){
-                    $('span.span2').remove();
-                }
-            });
-                  */
+             // sugareditable example
+
+            var addEditIcon = function() {
+                $("body").on("mouseenter","span.click", function() {
+                        $(this).before('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; top: 12px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+                });
+                $("body").on("mouseleave","span.click", function() {
+                        $('span.span2').remove();
+                });
+            };
+
+            var removeEditIcon = function() {
+
+                $("body").off('mouseenter',"span.click");
+                $("body").off('mouseleave',"span.click");
+            };
+
+            addEditIcon();
 
 
+     $('#edit-worksheet').click(function(){
+                 var ison = $('div.sugareditable').hasClass('edit-mode');
+                 if(ison) {
+                    $('div.sugareditable').removeClass('edit-mode');
+                    $(this).removeClass('down');
+                     showEditIcon();
+                 }   else {
+                    $('div.sugareditable').addClass('edit-mode');
+                     $(this).addClass('down');
 
+                 }
+             }
+         );
 
     //$('.datatableInput ').dataTable({ aoColumnDefs: [{ bSortable: false, aTargets: [0,8]}],"bPaginate": false,"bFilter": true,"bInfo": false,"bAutoWidth": false });
 

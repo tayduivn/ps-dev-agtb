@@ -1483,7 +1483,7 @@ table .span24 {
   width: 1884px;
   margin-left: 0;
 }
-div.inline-edit {
+div.sugareditable.edit-mode {
   padding: 4px;
   position: relative;
   font-size: 12px;
@@ -1507,7 +1507,21 @@ div.inline-edit {
   float: left;
   min-width: 30px;
 }
-div.inline-edit.focus {
+div.sugareditable {
+  padding: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  border: 1px solid transparent;
+  float: left;
+}
+div.inline-edit.hideInput {
+  border: 0px;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+div.sugareditable.focus {
   border: 0px;
   padding: 0px;
 }
@@ -2499,6 +2513,35 @@ button.close {
 }
 .btn:first-child {
   *margin-left: 0;
+}
+.btn.down {
+  background-color: #f0f0f0;
+  background-image: -moz-linear-gradient(top, #e6e6e6, #ffffff);
+  background-image: -ms-linear-gradient(top, #e6e6e6, #ffffff);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e6e6e6), to(#ffffff));
+  background-image: -webkit-linear-gradient(top, #e6e6e6, #ffffff);
+  background-image: -o-linear-gradient(top, #e6e6e6, #ffffff);
+  background-image: linear-gradient(top, #e6e6e6, #ffffff);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e6e6e6', endColorstr='#ffffff', GradientType=0);
+  border-color: #ffffff #ffffff #d9d9d9;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #ffffff;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.btn.down:hover,
+.btn.down:active,
+.btn.down.active,
+.btn.down.disabled,
+.btn.down[disabled] {
+  background-color: #ffffff;
+  *background-color: #f2f2f2;
+}
+.btn.down:active,
+.btn.down.active {
+  background-color: #e6e6e6 \9;
 }
 .btn:hover {
   color: #343433;

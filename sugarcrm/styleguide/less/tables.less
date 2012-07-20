@@ -176,7 +176,7 @@ table {
 }
 
 
-div.inline-edit {
+div.sugareditable.edit-mode {
     padding: 4px;
     position: relative;
     font-size: @baseFontSize;
@@ -194,7 +194,23 @@ div.inline-edit {
     min-width:30px;
 }
 
-div.inline-edit.focus {
+div.sugareditable {
+    padding: 4px;
+    font-size: @baseFontSize;
+    line-height: @baseLineHeight;
+    border: 1px solid transparent;
+    float: left;
+}
+
+div.inline-edit.hideInput {
+    border: 0px;
+    background-color: transparent;
+    .box-shadow(none);
+}
+
+
+
+div.sugareditable.focus {
     border: 0px;
     padding: 0px;
 }
