@@ -417,50 +417,7 @@ class Opportunity extends SugarBean
 			}
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		//if forecast value equals to -1, set it to 0 or 1 based on probability
-		global $sugar_config;
-		if ( $this->forecast == -1 ) {
-			$this->forecast = ($this->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
-		}
-
-        //if commit_stage isn't set, set it based on the probability
-        if (empty($this->commit_stage) && isset($this->probability))
-        {
-            $commit_stage_arr = $app_list_strings['commit_stage_dom'];
-            ksort($commit_stage_arr);
-            //the keys of this array are upper limit of probability for each stage
-            foreach($commit_stage_arr as $key => $value)
-            {
-                $this->commit_stage = $key;
-                if($this->probability < $key)
-                {
-                    break;
-                }
-            }
-        }
-        
-		//Set the timeperiod_id value
-		global $timedate;
-
-		if ( $timedate->check_matching_format($this->date_closed, $timedate::DB_DATE_FORMAT) ) {
-			$date_close_db = $this->date_closed;
-		}
-		else {
-			$date_close_db = $timedate->to_db_date($this->date_closed);
-		}
-
-        // we only do this if no timeperiod_id is set.  This happens by default form the UI but when running a UnitTest,
-        // we don't want to override any set timeperiod_id
-        if(empty($this->timeperiod_id)) {
-            $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$date_close_db}' AND end_date >= '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
-            if ( !empty($timeperiod) ) {
-                $this->timeperiod_id = $timeperiod;
-            }
-        }
-		//END SUGARCRM flav=pro ONLY
-
-		require_once('modules/Opportunities/SaveOverload.php');
+		require_once(get_custom_file_if_exists('modules/Opportunities/SaveOverload.php'));
 
 		perform_save($this);
 
