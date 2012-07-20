@@ -61,7 +61,7 @@
     /**
      * Uses MixedBeanCollection to fetch search results.
      */
-    fireSearchRequest: function (cb /*, offset*/) {
+    fireSearchRequest: function (cb, offset) {
         var mlist = '', 
             self = this, 
             options;
@@ -81,8 +81,7 @@
             },
             silent: true
         };
-        //if (offset) options.offset = offset;
-
+        if (offset) options.offset = offset;
         this.collection.fetch(options);
     },
     bindDataChange: function() {
@@ -145,8 +144,7 @@
                 app.view.View.prototype.render.call(self);
                 self.renderSubnav();
             } 
-        });
-        //}, this.collection.next_offset);
+        }, this.collection.next_offset);
     }
 
 })
