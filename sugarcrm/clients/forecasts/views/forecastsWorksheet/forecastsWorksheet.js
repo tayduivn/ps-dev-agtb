@@ -59,9 +59,11 @@
             tagName : 'tfoot',
 
             initialize: function() {
-                self.context.on("change:selectedToggle", function(context, data) {
+                self.context.on("change:selectedToggle", function(context, toggle) {
                     self._collection.url = self.url;
-                    data.model.save(null, {wait: true});
+                    model = toggle.model;
+                    model.set('forecast', (toggle.value === true) ? false : true);
+                    model.save(null, {wait: true});
                     self.refresh();
                 });
             },
@@ -125,7 +127,7 @@
     _setUpCommitStage: function (field) {
         field._save = function(event, input) {
             this.model.set('commit_stage', input.selected);
-            this.view.context.set('selectedToggle', { 'model' : this.model });
+            this.view.context.set('selectedToggle', field);
         };
         field.events = _.extend({"change select": "_save"}, field.events);
         return field;
@@ -176,6 +178,10 @@
                 this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
                 this.updateWorksheetBySelectedCategory({id: defaultValues.category});
             }, this);
+            this.context.forecasts.worksheet.on("change", function() {
+            	this.calculateTotals();
+            	this.totalView.render();
+            }, this);
         }
     },
 
@@ -190,13 +196,22 @@
     },
 
     _setForecastColumn: function(fields) {
+        var self = this;
         var forecastField, commitStageField;
+        var isOwner = self.isMyWorksheet();
+
         _.each(fields, function(field) {
             if (field.name == "forecast") {
                 field.enabled = !app.config.showBuckets;
+                //Set the viewName to use based on whether or not isOwner is true
+                field.view = isOwner ? 'default' : 'detail';
                 forecastField = field;
             } else if (field.name == "commit_stage") {
                 field.enabled = app.config.showBuckets;
+                if(!isOwner)
+                {
+                   field.view = 'default';
+                }
                 commitStageField = field;
             }
         });
@@ -355,10 +370,7 @@
                 function(oSettings, aData, iDataIndex)
                 {
                     var val = $(aData[0]).html();
-                    //until commit_stage field is a textfield check on "100" what means "Included"
-                    return /(100|checked)/.test(val);
-                    //when commit_stage is displayed as dropdown then will be next check
-                    //return /(value="100" selected=""|checked)/.test(val);
+                    return /(value="100" selected=""|checked)/.test(val);
                 }
             );
         } else {

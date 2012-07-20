@@ -23,11 +23,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ForecastWorksheet extends SugarBean {
 
     var $id;
+    var $worksheet_id;
     var $name;
     var $forecast;
     var $best_case;
     var $likely_case;
     var $worst_case;
+    var $sales_stage;
     var $object_name = 'ForecastWorksheet';
     var $module_dir = 'Forecasts';
     var $table_name = 'opportunities';
@@ -50,11 +52,28 @@ class ForecastWorksheet extends SugarBean {
         $opp = new Opportunity();
         $opp->retrieve($this->id);
         $opp->forecast = ($this->forecast) ? 1 : 0;
+        $opp->probability = $this->probability;
+        $opp->sales_stage = $this->sales_stage;
         $opp->save();
 
         //Update the Worksheet bean
-
+		$worksheet  = new Worksheet();
+		$worksheet->retrieve($this->worksheet_id);
+		$worksheet->timeperiod_id = $opp->timeperiod_id;
+		$worksheet->user_id = $opp->assigned_user_id;
+		$worksheet->forecast = ($this->forecast) ? 1 : 0;
+        $worksheet->best_case = $this->best_case;
+        $worksheet->likely_case = $this->likely_case;
+        $worksheet->forecast_type = "Direct";
+        $worksheet->related_id = $this->id;
+        $worksheet->save();
     }
-
+    
+    /**
+     * Sets Worksheet ID so that we can grab it from the DB and update it.
+     */
+	function setWorksheetId($worksheetId){
+		$this->worksheet_id = $worksheetId;
+	}
 }
 

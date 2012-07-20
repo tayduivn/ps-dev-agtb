@@ -76,6 +76,7 @@
             linkStr = $('<a href="#">'+this.value +'</a>');
             linkStr.on("click", function(){
                 context.forecasts.set("selectedUser", selectedUser);
+                return false;
             });
         } else {
             linkStr = this.value;

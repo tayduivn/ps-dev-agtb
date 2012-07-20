@@ -21,7 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 class ForecastManagerWorksheet extends SugarBean {
-
+	
+	var $args;
     var $id;
     var $name;
     var $forecast;
@@ -39,8 +40,48 @@ class ForecastManagerWorksheet extends SugarBean {
 
     function save($check_notify = false)
     {
-
+    	//skip this because nothing in the click to edit makes the worksheet modify the forecasts.
+    	//leaving this here just in case we need it in the future.
+    	//save forecast
+    	/*if(isset($this->id)){
+	    	$forecast = new Forecast();
+			$forecast->retrieve($this->args["forecast_id"]);
+			$forecast->best_case = $this->best_case;
+			$forecast->likely_case = $this->likely_case;
+			$forecast->forecast = ($this->forecast) ? 1 : 0;
+			$forecast->save();
+    	}*/
+		
+		//save quota
+		$quota = new Quota();
+		$quota->retrieve($this->args["quota_id"]);
+		$quota->timeperiod_id = $this->args["timeperiod_id"];
+		$quota->user_id = $this->args["user_id"];
+		$quota->quota_type = 'Direct';
+		$quota->amount = $this->args["quota"];
+		$quota->save();
+		
+		//save worksheet
+		$worksheet  = new Worksheet();
+		$worksheet->retrieve($this->args["worksheet_id"]);
+		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
+		$worksheet->user_id = $this->args["user_id"];
+		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
+        $worksheet->best_case = $this->args["best_adjusted"];
+        $worksheet->likely_case = $this->args["likely_adjusted"];
+        $worksheet->forecast_type = "Rollup";
+        $worksheet->related_forecast_type = "Direct";
+        $worksheet->worst_case = $this->worst_case;
+        $worksheet->related_id = $this->args["user_id"];
+        $worksheet->save();
     }
+    
+    /**
+     * Sets Worksheet args so that we save the supporting tables.
+     */
+	function setWorksheetArgs($args){
+		$this->args = $args;
+	}
 
 }
 

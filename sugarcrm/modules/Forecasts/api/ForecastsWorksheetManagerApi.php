@@ -103,6 +103,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
         );
 
+        if (isset($args['category']) && $args['category'] == 'Committed')
+        {
+            $this->committed = 1;
+            $testFilters['forecast'] = array('$is' => $this->committed);
+        }
+
         require_once('include/SugarParsers/Filter.php');
         require_once("include/SugarParsers/Converter/Report.php");
         require_once("include/SugarCharts/ReportBuilder.php");
@@ -140,6 +146,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast_id" => '',
                               "worksheet_id" => '',
                               "show_opps" => false,
+                              "id" => ""
                             );
 		
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
@@ -214,6 +221,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
             $data[$row['user_name']]['best_case'] = $row['best_case'];
             $data[$row['user_name']]['likely_case'] = $row['likely_case'];
             $data[$row['user_name']]['worst_case'] = $row['worst_case'];
+            $data[$row['user_name']]['id'] = $row['forecast_id'];
             $data[$row['user_name']]['forecast_id'] = $row['forecast_id'];
         } 
 
@@ -233,7 +241,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
                             WHERE w.related_id = u.id
                             AND w.timeperiod_id = '{$this->timeperiod_id}'
                             AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))";
+                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Rollup'))";
 
         $result = $GLOBALS['db']->query($reportees_query);
 
@@ -267,6 +275,7 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
 
      public function forecastManagerWorksheetSave($api, $args) {
          require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+         require_once('include/SugarFields/SugarFieldHandler.php');
          $seed = new ForecastManagerWorksheet();
          $seed->loadFromRow($args);
          $sfh = new SugarFieldHandler();
@@ -295,7 +304,8 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
                 $field->save($seed, $args, $fieldName, $properties);
              }
          }
-
+         
+		 $seed->setWorksheetArgs($args);
          $seed->save();
          return $seed->id;
      }

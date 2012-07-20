@@ -107,6 +107,11 @@
 
         $.when(app.api.call('read', self.currentTreeUrl, null, {
             success : function(data) {
+                // make sure we're using an array
+                // if the data coming from the endpoint is an array with one element
+                // it gets converted to a JS object in the process of getting here
+                if(!jQuery.isArray(data))
+                    data = [ data ];
                 treeData = data;
             }
         })).then(
@@ -158,11 +163,39 @@
                         self.context.forecasts.set("selectedUser" , selectedUser);
                     });
 
-                if(treeData && treeData.children.length > 0)
-                {
-                    $('.view-tree').show();
-                    self.currentRootId = treeData.metadata.id;
-                }
+                    if(treeData)
+                    {
+                        var showTree = false;
+                        var rootId = -1;
+
+                        if(treeData.length == 1)
+                        {
+                            // this case appears when "Parent" is not present
+
+                            rootId = treeData[0].metadata.id;
+
+                            if(treeData[0].children.length > 0)
+                            {
+                                showTree = true;
+                            }
+                        }
+                        else if(treeData.length == 2)
+                        {
+                            // this case appears with a "Parent" link label in the return set
+
+                            // always show tree if we have a Parent link in the set
+                            // only happens when you've clicked another Manager link
+                            showTree = true;
+
+                            // treeData[0] is the Parent link, treeData[1] is our root user node
+                            rootId = treeData[1].metadata.id;
+                        }
+
+                        self.currentRootId = rootId;
+                        if(showTree)  {
+                            $('.view-tree').show();
+                        }
+                    }
             });
     }
 })

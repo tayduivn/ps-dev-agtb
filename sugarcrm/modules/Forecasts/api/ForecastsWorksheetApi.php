@@ -110,7 +110,16 @@ class ForecastsWorksheetApi extends ModuleApi {
         // create the json for the reporting engine to use
         $chart_contents = $rb->toJson();
         $report = new Report($chart_contents);
-        return $mgr->getWorksheetGridData('individual', $report);
+        $returnData = $mgr->getWorksheetGridData('individual', $report);
+       	
+       	$index = 0;
+       	foreach($returnData as $data)
+        {
+        	$returnData[$index]["worksheet_id"] = $this->getRelatedWorksheetID($data["id"]);
+        	$index++;	
+        }  
+       
+        return $returnData;
     }
 
     /**
@@ -152,8 +161,31 @@ class ForecastsWorksheetApi extends ModuleApi {
                $field->save($seed, $args, $fieldName, $properties);
             }
         }
-
+		$seed->setWorksheetId($args['worksheet_id']);
         $seed->save();
         return $seed->id;
+    }
+    
+    /**
+     * This function gets the worksheet id related to opportunities
+     * @param string oppId Opportunity ID
+     */
+    protected function getRelatedWorksheetID($oppId)
+    {
+        //getting data from worksheet table for reportees
+        $sql = "SELECT w.id worksheet_id
+                            FROM worksheet w
+                            WHERE w.related_id = '{$oppId}' AND w.forecast_type = 'Direct'";
+		
+        $result = $GLOBALS['db']->query($sql);
+
+        $data = '';
+
+        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        {
+            $data = $row['worksheet_id'];
+        }             
+
+        return $data;
     }
 }
