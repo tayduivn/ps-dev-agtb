@@ -160,7 +160,7 @@ table tfoot td {
 }
 
 .modal .brand, .thumbnail .brand {
-  background: url(../img/sugar-red.png) 50% 50% no-repeat;
+  background: url(@{baseUrl}/img/sugar-red.png) 50% 50% no-repeat;
   text-indent: -7000px;
   margin: 0 auto;
   width: 220px;
@@ -232,7 +232,7 @@ table tfoot td {
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url(../img/badge_256g.png) 50% 8px no-repeat;
+  background: url(@{baseUrl}/img/badge_256g.png) 50% 8px no-repeat;
   float: left;
   height: 19px;
   width: 56px;
@@ -242,8 +242,8 @@ table tfoot td {
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
-  filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
-  -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
+  filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
+  -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
   }
 
 .navbar .navbar-inner {
@@ -311,7 +311,7 @@ z-index: 1;
 }
 
 .logo {
-  background: url(../img/sugar-red-sm.png) 0 0 no-repeat;
+  background: url(@{baseUrl}/img/sugar-red-sm.png) 0 0 no-repeat;
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
