@@ -57,6 +57,9 @@
 
     calculateLikelyToQuota: function () {
         var quota = this.model.get('quota');
+        if(quota == undefined) {
+            quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+        }
         quota.amount = parseInt(quota.amount, 10);
 
         quota.likely_case.amount = this.getAbsDifference(this.likelyTotal, quota.amount);
@@ -68,6 +71,9 @@
 
     calculateBestToQuota: function () {
         var quota = this.model.get('quota');
+        if(quota == undefined) {
+            quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+        }
         quota.amount = parseInt(quota.amount, 10);
 
         quota.best_case.amount = this.getAbsDifference(this.bestTotal, quota.amount);
@@ -79,6 +85,10 @@
 
     calculateLikelyToClose: function () {
         var closed = this.model.get('closed');
+
+        if(closed == undefined) {
+            closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+        }
         closed.amount = parseInt(closed.amount, 10);
 
         closed.likely_case.amount = this.getAbsDifference(this.likelyTotal, closed.amount);
@@ -90,6 +100,9 @@
 
     calculateBestToClose: function () {
         var closed = this.model.get('closed');
+        if(closed == undefined) {
+            closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+        }
         closed.amount = parseInt(closed.amount, 10);
 
         closed.best_case.amount = this.getAbsDifference(this.bestTotal, closed.amount);
@@ -112,9 +125,7 @@
     reduceWorksheetManager: function(attr) {
       return this.worksheetManagerCollection.reduce(function(memo, model) {
                           // Only add up values that are "included" in the worksheet.
-                        if ( model.get('forecast') === true) {
-                          memo += parseInt(model.get(attr), 10);
-                        }
+                        memo += parseInt(model.get(attr), 10);
                         return memo;
                       }, 0);
     },
@@ -122,15 +133,15 @@
     calculateBases: function () {
         var currentUser = this.context.forecasts.get("selectedUser");
 
-        if(currentUser.isManager === false || currentUser.showOpps === true) {
-          this.likelyTotal = this.reduceWorksheet('likely_case');
-          this.bestTotal = this.reduceWorksheet('best_case');
-          this.model.set('revenue', this.reduceWorksheet('amount'));
-          this.revenue = this.model.get('revenue');
-        } else {
+        if(currentUser.isManager === true && currentUser.showOpps === false) {
             this.likelyTotal = this.reduceWorksheetManager('likely_case');
             this.bestTotal = this.reduceWorksheetManager('best_case');
             this.model.set('revenue', this.reduceWorksheetManager('amount'));
+            this.revenue = this.model.get('revenue');
+        } else {
+            this.likelyTotal = this.reduceWorksheet('likely_case');
+            this.bestTotal = this.reduceWorksheet('best_case');
+            this.model.set('revenue', this.reduceWorksheet('amount'));
             this.revenue = this.model.get('revenue');
         }
     },
@@ -146,7 +157,7 @@
         }
 
         // This value is used in the template.
-        this.pipelineSize = ps;
+        this.model.set('pipeline',ps);
     },
 
     recalculate: function () {
@@ -166,10 +177,16 @@
 
     updateProgressForSelectedUser: function (context, user) {
         var self = this;
+        var getRollup = false;
+        var selectedUser = self.context.forecasts.get("selectedUser");
+
+        if(selectedUser.isManager === true && selectedUser.showOpps === false)
+            getRollup = true;
+
         var urlParams = $.param({
-            user_id: self.context.forecasts.get("selectedUser").id,
+            user_id: selectedUser.id,
             timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
-            shouldRollup: (self.context.forecasts.get("selectedUser").isManager === true && self.context.forecasts.get("selectedUser").show_opps === false) ? 1 : 0
+            shouldRollup: getRollup ? 1 : 0
         });
         this.model.fetch({
             data: urlParams
