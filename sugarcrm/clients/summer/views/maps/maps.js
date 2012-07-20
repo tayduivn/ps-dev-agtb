@@ -15,7 +15,6 @@
                 other_params:'sensor=false',
                 callback: function(){
                     self.apiLoaded = true;
-
                     self.getData();
                 }
             });
@@ -25,7 +24,6 @@
                 url: 'https://www.google.com/jsapi',
                 dataType: 'script',
                 success: function () {
-
                     self._init();
                 }
             });
@@ -33,8 +31,6 @@
     },
 
     getData: function() {
-        console.log('hellooooo');
-
         var self = this;
         var address;
         //Load configure meta from modules/{Module}/metadata/base/views/googlemap.php
@@ -82,9 +78,7 @@
                     'address': address
                 }, function(results, status) {
                     console.log(results);
-
                     if (status == google.maps.GeocoderStatus.OK) {
-
                         self.renderHtml(results);
                     }
                 });
@@ -92,11 +86,49 @@
                 this._init();
             }
         }
+    },
 
+    findLocalHour: function(l){
+        var off = Math.round(Math.abs(l) * 24 / 360);
+        var time = new Date();
+        var hours = time.getUTCHours();
+
+        //add or subtract based on west/east of prime meridian
+        hours = hours + (off*(l/Math.abs(l)));
+        if (hours > 23){
+            hours = hours - 24;
+        }
+        var month = time.getMonth();
+
+        //daylight saving time adjustments.
+        if (month < 11 && month > 2){
+            if (month == 3 && time.getDate() >= 14){
+                hours++;
+            }
+            else if (month>3){
+                hours++;
+            }
+        }
+        return hours;
     },
 
     renderHtml: function(results) {
-        this.$("#map_panel .title").text(results[0].formatted_address);
+        var self = this;
+        //find hours of local time based on longitude
+        var localHour = self.findLocalHour(results[0].geometry.location.$a);
+        var time = new Date();
+        var localMinutes = time.getMinutes();
+        var ampm = 'AM';
+        if (localHour > 12){
+            localHour = localHour-12;
+            ampm = 'PM';
+        }
+        var dateString = localHour + ":" + localMinutes + " " + ampm;
+        console.log(dateString);
+
+
+
+        this.$("#map_panel .title").text(results[0].formatted_address + " " + dateString);
         this.$('#map_panel').show();
         if(this.map) {
             this.map.setCenter(results[0].geometry.location);
@@ -112,39 +144,7 @@
         });
     },
 
-    resetClock: function(offset, el) {
-        // First stop the existing clock
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
 
-        if (offset) {
-            this.startClock(offset, el);
-            this.timer = setInterval(_.bind(function() { this.startClock(offset, el); }, this), 30000);
-        }
-    },
-
-    startClock: function(offset, el) {
-        var currentTime = new Date();
-        var meridian = "am";
-        var currentHours = currentTime.getUTCHours();
-        var currentMinutes = currentTime.getUTCMinutes();
-
-        currentHours += offset;
-        if (currentHours > 24) {
-            currentHours -= 24;
-        } else if (currentHours < 0) {
-            currentHours += 24;
-        }
-
-        currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
-        meridian = (currentHours > 12) ? "pm" : "am";
-        currentHours = (currentHours > 12) ? currentHours - 12 : currentHours;
-
-        var time = currentHours + ":" + currentMinutes + meridian;
-
-        this.$(el).html(time);
-    },
 
     bindDataChange: function() {
         var self = this;
@@ -154,4 +154,5 @@
             }, this);
         }
     }
+
 })
