@@ -861,6 +861,7 @@
         // Load the search results route.
         app.router.route("search/:query", "search", function(query) {
             app.controller.loadView({
+                mixed: true,
                 module: "Search",
                 layout: "search",
                 query: query
