@@ -3897,7 +3897,7 @@ protected function checkQuery($sql, $object_name = false)
             $fieldsTop = "$fieldsTop, 1 as $level";
             $fieldsBottom = "$fieldsBottom, sg.$level + 1";
         }
-		
+
         $sql = "WITH search_graph AS (
                    SELECT $fieldsTop
                    FROM $tablename e
@@ -3912,7 +3912,7 @@ protected function checkQuery($sql, $object_name = false)
         return $sql;
     }
 
-    /*
+    /**
      * Returns a DB specific FROM clause which can be used to select against functions.
      * Note that depending on the database that this may also be an empty string.
      * @abstract
