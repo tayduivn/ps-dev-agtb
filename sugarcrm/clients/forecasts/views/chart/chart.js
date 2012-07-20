@@ -109,11 +109,25 @@
                 "dataPointSize":"5"
             };
 
-
         var oldChart = $("#" + chartId + "-canvaswidget");
         if(!_.isEmpty(oldChart)) {
             oldChart.remove();
         }
+        app.view.View.prototype.render.call(this);
+
+        SUGAR.charts = $.extend(SUGAR.charts,
+            {
+              get : function(url, params, success)
+              {
+                  var data = {
+                      r: new Date().getTime()
+                  };
+                  data = $.extend(data, params);
+
+                  app.api.call('read', url, data, {success : success}, {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+              }
+            }
+        );
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;

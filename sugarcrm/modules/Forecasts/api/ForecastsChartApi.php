@@ -207,7 +207,8 @@ class ForecastsChartApi extends ChartApi
             usort($dataArray['values'], array($this, 'sortChartColumns'));
         }
 
-        if($args['group_by'] == "forecast") {
+        if(isset($args['group_by']) && ($args['group_by'] == "forecast"))
+        {
             // fix the labels
             $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
             if(isset($dataArray['label'][1])) {

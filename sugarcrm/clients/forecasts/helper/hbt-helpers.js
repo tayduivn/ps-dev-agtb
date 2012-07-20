@@ -61,6 +61,7 @@
         };
         var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
         if (uid) {
+            /*
             $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
                 dataType: 'json',
                 context: selectedUser,
@@ -72,6 +73,22 @@
                     this.isManager = data.isManager;
                 }
             });
+            */
+
+            var options = {
+                dataType: 'json',
+                context: selectedUser,
+                success: function(data) {
+                    this.id = data.id;
+                    this.full_name = data.full_name;
+                    this.first_name = data.first_name;
+                    this.last_name = data.last_name;
+                    this.isManager = data.isManager;
+                }
+            };
+
+            myURL = app.api.buildURL('Forecasts', 'user/' + uid, {},  {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+            app.api.call('read', myURL, null, options);
 
             linkStr = $('<a href="#">'+this.value +'</a>');
             linkStr.on("click", function(){
