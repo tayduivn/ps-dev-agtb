@@ -65,7 +65,7 @@ class ForecastManagerWorksheet extends SugarBean {
 		$worksheet  = new Worksheet();
 		$worksheet->retrieve($this->args["worksheet_id"]);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
-		$worksheet->user_id = $this->args["user_id"];
+		$worksheet->user_id = $this->args["current_user"];
 		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
         $worksheet->best_case = $this->args["best_adjusted"];
         $worksheet->likely_case = $this->args["likely_adjusted"];
