@@ -146,7 +146,7 @@
 
                         // if user clicked on a "My Opportunities" node
                         // set this flag true
-                        if(nodeType == "my_opportunities") {
+                        if(nodeType == "my_opportunities" || nodeType == "rep") {
                             showOpps = true
                         }
 
