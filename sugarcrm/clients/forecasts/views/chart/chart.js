@@ -70,11 +70,7 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        if(_.isEmpty(this.chart)) {
-            this.chart = this._initializeChart();
-        } else {
-            this.updateChart();
-        }
+        this.chart = this._initializeChart();
     },
 
     /**
@@ -112,6 +108,13 @@
                 "saveImageTo":"",
                 "dataPointSize":"5"
             };
+
+
+        var oldChart = $("#" + chartId + "-canvaswidget");
+        if(!_.isEmpty(oldChart)) {
+            oldChart.remove();
+        }
+
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
     }
