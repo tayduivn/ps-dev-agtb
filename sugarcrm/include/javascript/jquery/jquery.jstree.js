@@ -356,17 +356,19 @@
 				this.data.core.li_height = this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() || 18;
 
 				this.get_container()
-                    // REMOVED FROM TREE SRC as it was redrawing the tree under a
-                    // node icon if you clicked on the node icon.
-                    //.delegate("li > ins", "click.jstree", $.proxy(function (event) {
-                    //		var trgt = $(event.target);
-                    // if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
-                    //		this.toggle_node(trgt);
-                    //	}, this))
+                    .delegate("li > ins", "click.jstree", $.proxy(function (event) {
+                        // CUSTOM CODE -- thubbard -- sugarcrm
+                        // had to add this code in here to toggle the node when an icon is selected
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                        if(!$(event.currentTarget).hasClass("jstree-loading")) {
+                            this.select_node(event.currentTarget, true, event);
+                        }
+                    }, this))
 					.bind("mousedown.jstree", $.proxy(function () { 
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
 						}, this))
-					.bind("dblclick.jstree", function (event) { 
+					.bind("dblclick.jstree", function (event) {
 						var sel;
 						if(document.selection && document.selection.empty) { document.selection.empty(); }
 						else {
