@@ -1,5 +1,0 @@
-<div class="btn-group hide" data-toggle="buttons-checkbox">
-    <a href="#{{model.module}}/{{{getFieldValue model "id"}}}" class="btn btn-mini"><i class="icon-list-alt"></i></a>
-    <a href="#{{model.module}}/{{{getFieldValue model "id"}}}/edit" class="btn btn-mini"><i class="icon-pencil"></i></a>
-    <a href="#{{model.module}}/{{{getFieldValue model "id"}}}/delete" class="btn btn-mini"><i class="icon-trash"></i></a>
-</div>

@@ -48,9 +48,9 @@ $viewdefs['Opportunities']['summer']['view']['list'] = array(
                     'enabled' => true
                 ),
                 array(
-                    'name' => 'amount_usdollar',
+                    'name' => 'amount',
                     'width' => '10',
-                    'label' => 'LBL_LIST_AMOUNT_USDOLLAR',
+                    'label' => 'LBL_LIST_AMOUNT',
                     'align' => 'right',
                     'default' => true,
                     'enabled' => true,
@@ -62,24 +62,7 @@ $viewdefs['Opportunities']['summer']['view']['list'] = array(
                     'label' => 'LBL_TYPE',
                     'default' => false,
                 ),
-                array(
-                    'name' => 'lead_source',
-                    'width' => '15',
-                    'label' => 'LBL_LEAD_SOURCE',
-                    'default' => false,
-                ),
-                array(
-                    'name' => 'next_step',
-                    'width' => '10',
-                    'label' => 'LBL_NEXT_STEP',
-                    'default' => false,
-                ),
-                array(
-                    'name' => 'probability',
-                    'width' => '10',
-                    'label' => 'LBL_PROBABILITY',
-                    'default' => false,
-                ),
+
                 array(
                     'name' => 'date_closed',
                     'width' => '10',
@@ -93,34 +76,7 @@ $viewdefs['Opportunities']['summer']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                 ),
-                array(
-                    'name' => 'created_by_name',
-                    'width' => '10',
-                    'label' => 'LBL_CREATED',
-                    'default' => false,
-                ),
-//BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'width' => '5',
-                    'label' => 'LBL_LIST_TEAM',
-                    'default' => true,
-                    'enabled' => true
-                ),
-//END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'assigned_user_name',
-                    'width' => '5',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'default' => true,
-                    'enabled' => true
-                ),
-                array(
-                    'name' => 'modified_by_name',
-                    'width' => '5',
-                    'label' => 'LBL_MODIFIED',
-                    'default' => false,
-                )
+
             )
         )
     )

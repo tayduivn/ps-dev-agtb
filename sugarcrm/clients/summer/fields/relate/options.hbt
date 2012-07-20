@@ -1,3 +1,0 @@
-{{#each options}}
-    <option value="{{getFieldValue this ../this.def.rname ""}}" id="{{getFieldValue this "id" ""}}">{{getFieldValue this ../this.def.rname ""}}</option>
-{{/each}}
