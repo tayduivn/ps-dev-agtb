@@ -35,6 +35,27 @@ $viewdefs['Contacts']['summer']['view']['edit'] = array(
             array('label' => '10', 'field' => '30'),
         ),
     ),
+    'buttons' =>
+    array(
+        array(
+            'name' => 'save_button',
+            'type' => 'button',
+            'label' => 'Save',
+            'value' => 'save',
+            'primary' => true,
+        ),
+        array(
+            'name' => 'cancel_button',
+            'type' => 'button',
+            'label' => 'Cancel',
+            'value' => 'cancel',
+            'events' =>
+            array(
+                'click' => 'function(){ window.history.back(); }',
+            ),
+            'primary' => false,
+        ),
+    ),
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',

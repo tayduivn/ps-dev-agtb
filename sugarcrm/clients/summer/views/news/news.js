@@ -34,9 +34,6 @@
         if(!name)name = this.model.get('account_name');
         if(!name)name = this.model.get('full_name');
         var self = this;
-
-        name = 'SugarCRM';
-
         if (name) {
             url = "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase();
             $.ajax({

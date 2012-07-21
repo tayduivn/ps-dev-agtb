@@ -53,8 +53,6 @@
         if(!name)name = this.model.get('full_name');
         var self = this;
 
-        name = 'SugarCRM';
-
         if (name) {
             url = "http://api.crunchbase.com/v/1/company/" + name.toLowerCase().replace(/ /g, "-") + ".js?callback=?";
             $.ajax({
