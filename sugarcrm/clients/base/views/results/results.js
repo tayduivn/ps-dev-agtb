@@ -76,8 +76,6 @@
             moduleList: mlist,
             error:function(error) {
                 cb(null); // lets callback know to dismiss the alert
-                app.error.handleHttpError(error, self);
-                app.logger.error("Failed to fetch search results " + this + "\n" + error);
             },
             silent: true
         };
