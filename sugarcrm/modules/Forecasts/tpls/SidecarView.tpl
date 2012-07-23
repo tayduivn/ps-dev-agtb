@@ -1,6 +1,7 @@
 <script src='clients/forecasts/config.js'></script>
 <script src='clients/forecasts/helper/hbt-helpers.js'></script>
 <script src='clients/forecasts/lib/ClickToEdit.js'></script>
+<script src='clients/forecasts/lib/BucketGridEnum.js'></script>
 <script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/forecasts/views/tree/tree.js'></script>
