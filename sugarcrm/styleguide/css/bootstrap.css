@@ -4927,44 +4927,44 @@ a.badge:hover {
 .badge-Log[href] {
   background-color: #3f4041;
 }
-.label-Document,
-.badge-Document {
+.label-Documents,
+.badge-Documents {
   background-color: #7d12b2;
 }
-.label-Document[href],
-.badge-Document[href] {
+.label-Documents[href],
+.badge-Documents[href] {
   background-color: #5c0d84;
 }
-.label-File,
-.badge-File {
+.label-Files,
+.badge-Files {
   background-color: #e57417;
 }
-.label-File[href],
-.badge-File[href] {
+.label-Files[href],
+.badge-Files[href] {
   background-color: #b75d12;
 }
-.label-Contact,
-.badge-Contact {
+.label-Contacts,
+.badge-Contacts {
   background-color: #177ee5;
 }
-.label-Contact[href],
-.badge-Contact[href] {
+.label-Contacts[href],
+.badge-Contacts[href] {
   background-color: #1264b7;
 }
-.label-Lead,
-.badge-Lead {
+.label-Leads,
+.badge-Leads {
   background-color: #3fb300;
 }
-.label-Lead[href],
-.badge-Lead[href] {
+.label-Leads[href],
+.badge-Leads[href] {
   background-color: #2d8000;
 }
-.label-Note,
-.badge-Note {
+.label-Notes,
+.badge-Notes {
   background-color: #6e5e0c;
 }
-.label-Note[href],
-.badge-Note[href] {
+.label-Notes[href],
+.badge-Notes[href] {
   background-color: #403707;
 }
 @-webkit-keyframes progress-bar-stripes {
