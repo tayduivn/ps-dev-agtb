@@ -35,7 +35,7 @@
 
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
-        
+
         var TotalModel = Backbone.Model.extend({
 
         });
@@ -132,6 +132,8 @@
 
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
+        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this.updateWorksheetBySelectedTimePeriod(app.defaultSelections.timeperiod_id)
     },
 
     createURL:function() {
@@ -218,10 +220,6 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
-                this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
-                this.updateWorksheetBySelectedCategory({id: defaultValues.category});
-            }, this);
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
             	this.totalView.render();
@@ -298,11 +296,6 @@
                 "bPaginate":false
             }
         );
-
-        /*if(unusedField.name == "forecast") {
-            // add a listener to the first row
-            $('.worksheetTable tr td:first-child').css('overflow-y', 'hidden').hover(function(){ this.style.overflowX='visible'; this.style.overflowY='visible'}, function(){ this.style.overflowX='hidden';  this.style.overflowY='hidden'});
-        }*/
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
