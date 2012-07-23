@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Forecast: James Joplin for Q1 2012 - SugarCRM</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- styles -->
+  <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+</head>
+<body id="forecast">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+            <li>
+              <a href="accounts.html">Accounts</a>
+            </li>
+            <li class="">
+              <a href="contacts.html">Contacts</a>
+            </li>              
+            <li>
+              <a href="opportunity.html">Opportunities</a>
+            </li>              
+            <li class="active">
+              <a href="#">Forecasts</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+                <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
+                <li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
+                <li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
+                <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
+                <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Filter Menu By</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav pull-right">
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
+              <ul class="dropdown-menu">
+                <li><a href="">System-wide maintenance &hellip;</a></li>
+                <li class="divider"></li>
+                <li><a href="">Upgrade to 7.0!</a></li>
+                <li class="divider"></li>                       
+                <li><a href="">Please take our survey.</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="profile_skhan.html">Profile</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Advanced</a></li>
+                <li><a href="#">External Accounts</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Log Out</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Create Account</a></li>
+                <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
+                <li><a href="#">Create Opportunity</a></li>
+              </ul>
+            </li>              
+          </ul>
+          <form class="navbar-search pull-right" action="">
+            <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+          </form>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+  <div class="subnav">
+    <div class="btn-toolbar pull-left">
+      <h1>Forecast: James Joplin for Q1 2012</h1>
+    </div>
+    <div class="btn-toolbar pull-right">
+      <!-- <div class="btn-group">
+        <a href="forecast_james.html" class="btn active">Opportunity</a>
+        <a href="forecast_james_line.html" class="btn">Line Item</a>
+      </div> -->
+      <div class="btn-group">
+        <a class="btn btn-success" href="#">Save</a>
+        <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Duplicate</a></li>
+          <li class="divider"></li>
+          <li><a href="#">Email</a></li>
+          <li><a href="#">PDF</a></li>
+          <li><a href="#">CSV</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>         
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span2" id="drawer">
+        <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
+        <div class="bordered">
+          <div class="block">
+            <h4>Filters</h4>
+            <div class="control-group">
+              <label for="select01" class="control-label">Forecast Period:</label>
+              <div class="controls ">
+                <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
+                  <option value="pk" selected="selected">Q1 2012</option> 
+                  <option value="pk">Q2 2012</option>
+                  <option value="pk">Q3 2012</option>
+                  <option value="pk">Q4 2012</option> 
+                </select>
+              </div>
+            </div>  
+            <div class="control-group">
+              <label for="select01" class="control-label">Sales Stage:</label>
+              <div class="controls">
+                <select data-placeholder="Choose a account..." class="chzn-select span12" multiple tabindex="2">
+                  <option value="pk" selected="selected">Closed</option>
+                  <option value="pk" selected="selected">Proposal</option>
+                  <option value="pk" selected="selected">Negotiation</option>
+                  <option value="pk" selected="selected">Qualified</option>
+                </select>
+              </div>
+            </div>  
+            <div class="control-group">
+              <label for="select01" class="control-label">Probability:</label>
+              <div class="controls">
+                <select data-placeholder="Choose a account..." class="chzn-select span12" tabindex="2">
+                  <option value="pk">10%</option>
+                  <option value="pk">20%</option>
+                  <option value="pk">30%</option>
+                  <option value="pk">40%</option> 
+                  <option value="pk">50%</option> 
+                  <option value="pk">60%</option>
+                  <option value="pk" selected="selected">70%</option>  
+                  <option value="pk">80%</option> 
+                  <option value="pk">90%</option> 
+                  <option value="pk">100%</option> 
+                </select>
+              </div>
+            </div>  
+          </ul>
+        </div>
+        <div class="block">
+          <h4>Chart Options</h4>
+          <div class="control-group">
+            <label for="select01" class="control-label">Group By:</label>
+            <div class="controls">
+              <select data-placeholder="Choose a grouping..." class="chzn-select span12" tabindex="2">
+                <option value="pk" selected="selected">Sales Stage</option> 
+                <option value="pk">Probability</option> 
+                <option value="pk">Forecast to Pipeline</option> 
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="select01" class="control-label">Data Set:</label>
+            <div class="controls">
+              <select data-placeholder="Choose a y-axis..." class="chzn-select span12" tabindex="2">
+                <option value="pk" selected="selected">All</option> 
+                <option value="pk">Best</option> 
+                <option value="pk">Likely</option> 
+                <option value="pk">Worst</option> 
+              </select>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+    <div id="charts" class="span10">
+      <div class="row-fluid">
+        <div class="span7">            
+          <div id="chart" class="tcenter">
+            <div class="chartContainer">
+                <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
+                    <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="chartCanvas" style="width: 99%; height: 300px;"></div>
+                </div>
+                <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
+            </div>
+          </div>
+        </div>
+        <div class="span5">
+          <div class="block thumbnail">
+            <h4>Progress</h4>
+            <div class="row-fluid" id="countdown">
+              <div class="span3">
+                Quota<br>
+                <h3 class="alert">200,000</h3>
+              </div>
+              <div class="span3">
+                Closed<br>
+                <h3 class="alert alert-success">90,000</h3>
+              </div>
+              <div class="span3">
+                To Go<br>
+                <h3 class="alert alert-warning">110,000</h3>
+              </div>
+              <div class="span3">
+                Days Left<br>
+                <h3 class="alert alert-danger">10</h3>
+              </div>
+            </div>
+            <div class="row-fluid" id="changeLog">
+              <div class="span12">
+                <strong>Last Update:</strong>
+            <ul class="listed">
+              <li>
+                Forecast Likely 10k <i class="icon-arrow-up"></i> <date class="date">2012/02/02 12:15 PM EST</date>
+              </li>
+              <div class="extend hide">
+              <li>
+                Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/02/01 10:15 PM EST</date>
+              </li>
+              <li>
+                Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/01/02 1:15 PM EST</date>
+              </li>
+                <li>
+                  Forecast Likely 20k <i class="icon-arrow-down"></i>  <date class="date">2012/01/01 12:15 PM EST</date>
+                </li>
+                <li>
+                  Forecast Likely 40k <i class="icon-arrow-down"></i>  <date class="date">2012/01/01 12:00 PM EST</date>
+                </li>
+              </div>
+              <li>
+                <a href="" class="more">More  <i class="icon-chevron-down"></i></a>
+              </li>
+            </ul>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topline thumbnail">
+        <div class="row-fluid">
+            <div class="span2">
+                James Joplin's<br>
+                <h2>Forecast</h2>
+            </div>
+            <div class="span3">
+                Quota<br>
+                <h2>200,000</h2>
+            </div>
+            <div class="span3">
+                Best<br>
+                <h2>215,000</h2>
+            </div>
+            <div class="span3">
+                Likely<br>
+                <h2>195,000</h2>
+            </div>
+            <div class="span1"><a href="forecast.html" class="btn btn-primary">Commit</a></div>
+          </div>
+        <hr>
+        <table class="table table-striped datatableInput">
+          <thead>
+            <tr>
+              <th class="tcenter"><b rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b></th>
+              <th>Opportunity</th>
+              <th>Expected Close</th>
+              <th>Stage</th>
+              <th>Probability</th>
+              <th>Amount</th>
+              <th>Best</th>
+              <th>Likely</th>
+              <th><i class="icon-cog pull-right"></i></th>
+            </tr>
+          </thead>
+          <tbody id="listed">
+            <tr>
+              <td class="tcenter"><input type="checkbox" checked="checked"></td>
+              <td><a href="100seat.html">Opp A</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a>
+              </td>
+              <td>3/12/2012</td>
+              <td>Proposal</td> 
+              <td><span class="dblclick">60%</span></td>
+              <td>100,000</td>
+              <td><span class="dblclick">60,000</span></td>
+              <td><span class="dblclick">50,000</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td class="tcenter"><input type="checkbox" checked="checked"></td>
+              <td><a href="100seat.html">Opp B</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>                          
+              <td>3/13/2012</td>
+              <td>Negotiation</td>
+              <td><span class="dblclick">70%</span></td>
+              <td>100,000</td>
+              <td><span class="dblclick">65,000</span></td>
+              <td><span class="dblclick">55,000</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td class="tcenter"><input type="checkbox" checked="checked"></td>
+              <td><a href="100seat.html">Opp C</a> <a href="" rel="clickoverTop" data-title="Opp A Snapshot <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>" data-content="HRMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr>FMS <span class='pull-right'>2,000, 2%, 4,500, $50,000</span><hr><p>Cross Sell with:<br>Supply Chain Managment, Projects</p>" class='pull-right'><i class="icon-search label label-warn"></i></a></td>     
+              <td>3/14/2012</td>
+              <td>Closed</td>               
+              <td><span class="dblclick">100%</span></td>
+              <td>100,000</td>
+              <td><span class="dblclick">90,000</span></td>
+              <td><span class="dblclick">90,000</span></td>
+              <td></td>
+            </tr>              
+          </tbody> 
+          <tfoot>
+            <tr>
+              <td></td>              
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>300,000</td>
+              <td>215,000</td>
+              <td>195,000</td>
+              <td></td>
+            </tr>    
+          </tfoot>                                                                     
+        </table>
+      </div>
+    </div>
+  </div>
+</div>                         
+</div>
+<footer>
+  <div class="row-fluid">
+    <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
+    <div class="span6">
+      <div class="btn-toolbar pull-right">
+          <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+          <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a> 
+          <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../../bootstrap/js/bootstrap-transition.js"></script>
+<script src="../../bootstrap/js/bootstrap-alert.js"></script>
+<script src="../../bootstrap/js/bootstrap-modal.js"></script>
+<script src="../../bootstrap/js/bootstrap-collapse.js"></script>
+<script src="../../bootstrap/js/bootstrap-dropdown.js"></script>
+<script src="../../bootstrap/js/bootstrap-scrollspy.js"></script>
+<script src="../../bootstrap/js/bootstrap-tab.js"></script>
+<script src="../../bootstrap/js/bootstrap-tooltip.js"></script>
+<script src="../../bootstrap/js/bootstrap-popover.js"></script>
+<script src="../../bootstrap/js/bootstrap-button.js"></script>
+<script src="../../bootstrap/js/bootstrap-typeahead.js"></script>
+<script src="../../bootstrap/js/bootstrapx-clickover.js"></script>
+<script src="../js/jquery.datatables.js"></script>     
+
+<script src="../js/wicked.js"></script>        
+<script src="../js/jquery.jeditable.js"></script>        
+<script src="../js/editable.js"></script>
+<script src="../js/chosen.jquery.min.js"></script>
+<script src="../js/jit.js"></script>
+<script src="../js/sugarCharts.js"></script>
+<script src="../js/cookie.js"></script>
+<script src="../js/application.js"></script>   
+
+
+  <script>
+      var chartId = 'db620e51-8350-c596-06d1-4f866bfcfd5b';
+      var css = new Array();
+      var chartConfig = new Array();
+      css["gridLineColor"] = '#cccccc';
+      css["font-family"] = 'Arial';
+      css["color"] = '#000000';
+      chartConfig["orientation"] = 'vertical';
+      chartConfig["barType"] = 'stacked';
+      chartConfig["tip"] = 'name';
+      chartConfig["chartType"] ='barChart';
+      chartConfig["imageExportType"] = 'png';
+      chartConfig["showNodeLabels"] = false;
+      chartConfig["showAggregates"] = false;
+      chartConfig["saveImageTo"] = "";
+  </script>
+
+<script>
+$(document).ready(function(){
+
+  $('.datatableInput ').dataTable({ aoColumnDefs: [{ bSortable: false, aTargets: [0,8]}],"bPaginate": false,"bFilter": true,"bInfo": false,"bAutoWidth": false });
+
+  //init chart
+  var forecast = null;
+  forecast = new loadSugarChart(chartId,'forecast-json-month.js',css,chartConfig);
+
+  //chart types
+  $('.icon-align-left').parent().click(function(e){
+    e.preventDefault();
+    chartConfig["orientation"] = 'horizontal';
+    forecast = swapChart(chartId,'forecast-json-month.js',css,chartConfig);
+    var that = this;
+    $('#chartType .btn-group').children("a").each(function() {
+      $(this).removeClass('active');
+      $(that).addClass('active');
+    });
+  });
+
+  $('.icon-signal').parent().click(function(e){
+    e.preventDefault();
+    chartConfig["orientation"] = 'vertical';
+    forecast = swapChart(chartId,'forecast-json-month.js',css,chartConfig);
+    var that = this;
+    $('#chartType .btn-group').children("a").each(function() {
+      $(this).removeClass('active');
+      $(that).addClass('active');
+    });
+  });
+
+  $("#x-axis").chosen().change(function(data){
+    forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
+  });
+
+  // editable demo
+  $(".dblclick").editable('save.php',{
+    //loadurl: "load.php",
+    indicator : 'Saving ...',
+    cssclass   : "editable",
+    callback : function(value, settings) {
+
+      updateChart("forecast-json-update.js",forecast.chartObject);
+
+      //return (value);
+    }
+  })
+});
+
+
+</script>  
+</body>
+</html>
