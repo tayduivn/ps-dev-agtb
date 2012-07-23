@@ -16,10 +16,14 @@
             {{/each}}
             </tr>
         {{/each}}
-        <tr id="expected_opportunities">
-        </tr>
         </tbody>
         <tfoot id="summary">
+            <tr id="expected_opportunities">
+            </tr>
+            <tr id="included_totals">
+            </tr>
+            <tr id="overall_totals" class="overall">
+            </tr>
         </tfoot>
     </table>
     {{/each}}

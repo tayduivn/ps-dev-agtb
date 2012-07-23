@@ -36,27 +36,28 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
-        var TotalModel = Backbone.Model.extend({
-
-        });
-
-        this.totalModel = new TotalModel(
+        this.includedModel = new Backbone.Model(
             {
                 includedAmount : 0,
                 includedBest : 0,
                 includedLikely : 0,
-                includedCount : 0,
+                includedCount : 0
+            }
+        );
+
+        this.overallModel = new Backbone.Model(
+            {
                 overallAmount : 0,
                 overallBest : 0,
                 overallLikely : 0
             }
-        );
+        )
 
 
-        var TotalView = Backbone.View.extend({
-            id : 'summary',
+        var IncludedView = Backbone.View.extend({
+            id : 'included_totals',
 
-            tagName : 'tfoot',
+            tagName : 'tr',
 
             initialize: function() {
                 self.context.on("change:selectedToggle", function(context, toggle) {
@@ -70,41 +71,51 @@
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile("<tr>" +
+                var hb = Handlebars.compile(
                 								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
-                								"<th>{{includedAmount}}</th>" + 
-                								"<th>{{includedBest}}</th>" + "<th>{{includedLikely}}</th>" +
-                							"</tr>" +
-                							"<tr class='overall'>" +
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
-                    							"<th>{{overallAmount}}</th>" + 
-                    							"<th>{{overallBest}}</th>" + 
-                    							"<th>{{overallLikely}}</th>" + 
-                    						"</tr>");
-                $('#summary').html(hb(self.model.toJSON()));
+                								"<th>{{includedAmount}}</th>" +
+                								"<th>{{includedBest}}</th>" +
+                                                "<th>{{includedLikely}}</th>"
+                    );
+                $('#included_totals').html(hb(self.model.toJSON()));
                 return this;
             }
         });
 
-        this.totalView = new TotalView({
-            model : this.totalModel
+        this.includedView = new IncludedView({
+            model : this.includedModel
         });
 
 
-        //Create the Expected Opportunities model and view
-        var ExpectedOpportuntiesModel = Backbone.Model.extend({
+        var OverallView = Backbone.View.extend({
+            id : 'overall_totals',
 
-        });
+            tagName : 'tr',
 
-        this.expectedOpportuniesModel = new ExpectedOpportuntiesModel(
-            {
-                expectedBestCase : 0,
-                expectedLikelyCase : 0
+            initialize: function() {
+
+            },
+
+            render: function() {
+                var self = this;
+                var hb = Handlebars.compile(
+                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
+                    							"<th>{{overallAmount}}</th>" +
+                    							"<th>{{overallBest}}</th>" +
+                    							"<th>{{overallLikely}}</th>"
+                    );
+                $('#overall_totals').html(hb(self.model.toJSON()));
+                return this;
             }
-        );
+        });
+
+        this.overallView = new OverallView({
+            model : this.overallModel
+        });
 
 
         var ExpectedOpportunitiesView = Backbone.View.extend({
+
             id : 'expected_opportunities',
 
             tagName : 'tr',
@@ -115,18 +126,21 @@
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile("<tr class='overall'>" +
-                								"<th colspan='6' style='text-align: right;'>" + app.lang.get("LBL_EXPECTED_OPPORTUNITIES", "ForecastSchedule") + "</th>" +
-                    							"<th>{{expectedBestCase}}</th>" +
-                    							"<th>{{expectedLikelyCase}}</th>" +
-                    						"</tr>");
-                $('#expected_opportunities').html(hb(self.model.toJSON()));
+                var hb = Handlebars.compile(
+                                                "<th>checkbox</th>" +
+                                                "<th colspan='4' style='text-align: right;'><i>" + app.lang.get("LBL_EXPECTED_OPPORTUNITIES", "ForecastSchedule") + "</i></th>" +
+                							    "<th>55</th>" +
+                							    "<th>55</th>" +
+                                                "<th>55</th>"
+                );
+
+                $('#expected_opportunities').html(hb());
                 return this;
             }
         });
 
         this.expectedOpportunitiesView = new ExpectedOpportunitiesView({
-            model : this.expectedOpportuniesModel
+            collection : this.context.forecasts.forecastschedule
         });
 
 
@@ -222,7 +236,7 @@
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
-            	this.totalView.render();
+            	this.includedView.render();
             }, this);
         }
     },
@@ -308,7 +322,9 @@
             });
         }
 
-        this.totalView.render();
+        this.expectedOpportunitiesView.render();
+        this.includedView.render();
+        this.overallView.render();
 
     },
 

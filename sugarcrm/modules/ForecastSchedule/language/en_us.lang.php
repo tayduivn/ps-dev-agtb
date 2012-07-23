@@ -185,7 +185,12 @@ $mod_strings = array (
   'LBL_QC_COMMIT_LIKELY_CASE'=>'Commit Amount (Likely Case):',
   'LBL_QC_COMMIT_WORST_CASE'=>'Commit Amount (Worst Case):',
   'LBL_EDIT_LAYOUT' => 'Edit Layout', /*for 508 compliance fix*/
-  'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities'
+  'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
+  'LBL_EXPECTED_BEST_CASE' => 'Expected Best Case',
+  'LBL_EXPECTED_LIKELY_CASE' => 'Expected Likely Case',
+  'LBL_EXPECTED_WORST_CASE' => 'Expected Worst Case',
+  'LBL_EXPECTED_AMOUNT' => 'Expected Amount',
+  'LBL_INCLUDE_EXPECTED' => 'Include Expected'
 );
 
 
