@@ -37,7 +37,14 @@ $vardefs= array (
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
   ),
-   
+    'linkedin' =>
+    array (
+        'name' => 'linkedin',
+        'vname' => 'LBL_LINKEDIN',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The linkedin name of the company'
+    ),
    strtolower($object_name).'_type' => 
   array (
     'name' => strtolower($object_name).'_type',

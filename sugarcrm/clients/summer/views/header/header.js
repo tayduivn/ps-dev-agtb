@@ -38,7 +38,7 @@
             buttonElement: '.navbar-search span.add-on'
         });
     },
-    onPromoClick: function(){
+    onPromoClicked: function(){
             
 
 
