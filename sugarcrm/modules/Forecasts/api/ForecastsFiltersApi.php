@@ -119,7 +119,8 @@ class ForecastsFiltersApi extends ModuleApi {
         // Boolean do we want to return a Parent link with the result set
         $returnParent = false;
 
-        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
+        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
+            'id, user_name, first_name, last_name, reports_to_id, _level, deleted',
             false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
         );
 
@@ -131,6 +132,12 @@ class ForecastsFiltersApi extends ModuleApi {
         $flatUsers = array();
         while($row = $GLOBALS['db']->fetchByAssoc($result))
         {
+            // since RecursiveSelect doesnt recursively check the "deleted = 0" part,
+            // do not add any deleted users to our results
+            if($row['deleted'] == 1) {
+                continue;
+            }
+
             if(empty($users[$row['_level']]))  {
                 $users[$row['_level']] = array();
             }
