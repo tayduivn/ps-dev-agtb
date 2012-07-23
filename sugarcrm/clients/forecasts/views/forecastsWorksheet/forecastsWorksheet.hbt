@@ -16,6 +16,8 @@
             {{/each}}
             </tr>
         {{/each}}
+        <tr id="expected_opportunities">
+        </tr>
         </tbody>
         <tfoot id="summary">
         </tfoot>

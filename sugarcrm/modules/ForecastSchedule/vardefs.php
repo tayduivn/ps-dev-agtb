@@ -108,7 +108,37 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     'type' => 'bool',
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
-  ),  
+  ),
+
+  /*
+   * expected_base_case is used to store the value of the user's expected best case
+   */
+  'expected_best_case' =>
+   array (
+       'name' => 'expected_best_case',
+       'vname' => 'LBL_EXPECTED_BEST_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+   'expected_likely_case' =>
+   array(
+       'name' => 'expected_likely_case',
+       'vname' => 'LBL_EXPECTED_LIKELY_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+   'expected_worst_case' =>
+   array(
+       'name' => 'expected_worst_case',
+       'vname' => 'LBL_EXPECTED_WORST_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
  )
 , 'indices' => array (
        array('name' =>'forecastschedulepk', 'type' =>'primary', 'fields'=>array('id'))

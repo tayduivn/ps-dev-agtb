@@ -45,6 +45,9 @@ class ForecastSchedule extends SugarBean {
 	var $created_by;
 	var $date_entered;
 	var $date_modified;
+    var $expected_best_case;
+    var $expected_likely_case;
+    var $expected_worst_case;
 
 	var $module_dir = 'ForecastSchedule';
 	var $object_name = "ForecastSchedule";

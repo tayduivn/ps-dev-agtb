@@ -90,6 +90,46 @@
             model : this.totalModel
         });
 
+
+        //Create the Expected Opportunities model and view
+        var ExpectedOpportuntiesModel = Backbone.Model.extend({
+
+        });
+
+        this.expectedOpportuniesModel = new ExpectedOpportuntiesModel(
+            {
+                expectedBestCase : 0,
+                expectedLikelyCase : 0
+            }
+        );
+
+
+        var ExpectedOpportunitiesView = Backbone.View.extend({
+            id : 'expected_opportunities',
+
+            tagName : 'tr',
+
+            initialize: function() {
+
+            },
+
+            render: function() {
+                var self = this;
+                var hb = Handlebars.compile("<tr class='overall'>" +
+                								"<th colspan='6' style='text-align: right;'>" + app.lang.get("LBL_EXPECTED_OPPORTUNITIES", "ForecastSchedule") + "</th>" +
+                    							"<th>{{expectedBestCase}}</th>" +
+                    							"<th>{{expectedLikelyCase}}</th>" +
+                    						"</tr>");
+                $('#expected_opportunities').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.expectedOpportunitiesView = new ExpectedOpportunitiesView({
+            model : this.expectedOpportuniesModel
+        });
+
+
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
     },

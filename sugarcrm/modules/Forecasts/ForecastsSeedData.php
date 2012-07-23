@@ -65,6 +65,9 @@ public static function populateSeedData($timeperiods)
                 $fcst_schedule->user_id=$commit_type_array[0];
                 $fcst_schedule->cascade_hierarchy=0;
                 $fcst_schedule->forecast_start_date=$timeperiod_id;
+                $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
+                $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
+                $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
                 $fcst_schedule->status='Active';
                 $fcst_schedule->save();
 
