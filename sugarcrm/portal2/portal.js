@@ -973,8 +973,11 @@
                         autoclose: false
                     });
                 };
-
-                app.logout({success: callback, error: callback});
+                if(app.api.isAuthenticated()) {
+                    app.logout({success: callback, error: callback});
+                } else {
+                    callback();
+                }
                 return;
             }
             app.Controller.__super__.loadView.call(this, params);
