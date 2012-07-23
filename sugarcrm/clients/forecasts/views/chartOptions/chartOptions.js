@@ -48,10 +48,8 @@
             chosen.render();
 
             if (key === 'group_by') {
-                self.context.forecasts.set('selectedGroupBy', default_values);
                 self.handleGroupByEvents($chosenPlaceholder);
             } else if (key === 'dataset') {
-                self.context.forecasts.set('selectedDataSet', default_values);
                 self.handleDataSetEvents($chosenPlaceholder);
             }
 

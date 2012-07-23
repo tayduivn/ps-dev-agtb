@@ -36,6 +36,7 @@
                         
                         settings.field.model.set(settings.field.name, value);
                         settings.field.model.set("timeperiod_id", settings.field.context.forecasts.get("selectedTimePeriod").id);
+                        settings.field.model.set("current_user", app.user.get('id'));
                         settings.field.model.url = settings.view.url + "/" + settings.field.model.get("id");
                         settings.field.model.save(settings.field.name, value);
                     } catch (e) {
