@@ -306,6 +306,11 @@ input[type="checkbox"][readonly] {
   .formFieldState(@successText, @successText, @successBackground);
 }
 
+.control-group.error input,
+.control-group.error textarea {
+    width: 180px;
+}
+
 // HTML5 invalid states
 // Shares styles with the .control-group.error above
 input:focus:required:invalid,

@@ -936,6 +936,10 @@ input[type="checkbox"][readonly] {
   background-color: #dff0d8;
   border-color: #28471c;
 }
+.control-group.error input,
+.control-group.error textarea {
+  width: 180px;
+}
 input:focus:required:invalid,
 textarea:focus:required:invalid,
 select:focus:required:invalid {
