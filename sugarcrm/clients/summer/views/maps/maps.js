@@ -123,6 +123,11 @@
             localHour = localHour-12;
             ampm = 'PM';
         }
+
+        if (localHour < 0){
+            localHour = localHour + 12;
+            ampm = 'PM';
+        }
         var dateString = localHour + ":" + localMinutes + " " + ampm;
         console.log(dateString);
 
