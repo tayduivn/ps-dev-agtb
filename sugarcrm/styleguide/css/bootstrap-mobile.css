@@ -3883,6 +3883,30 @@ a.badge:hover {
 .badge-Notes[href] {
   background-color: #403707;
 }
+.label-Cases,
+.badge-Cases {
+  background-color: #4397ec;
+}
+.label-Cases[href],
+.badge-Cases[href] {
+  background-color: #177ee5;
+}
+.label-Bugs,
+.badge-Bugs {
+  background-color: #b81213;
+}
+.label-Bugs[href],
+.badge-Bugs[href] {
+  background-color: #890e0e;
+}
+.label-KBDocuments,
+.badge-KBDocuments {
+  background-color: #b23eec;
+}
+.label-KBDocuments[href],
+.badge-KBDocuments[href] {
+  background-color: #9e17e0;
+}
 @-webkit-keyframes progress-bar-stripes {
   from {
     background-position: 0 0;
