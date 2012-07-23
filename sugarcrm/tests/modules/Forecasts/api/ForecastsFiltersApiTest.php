@@ -89,6 +89,26 @@ class ForecastsFiltersApiTest extends RestTestBase
         $this->assertContains($this->employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
     }
 
+    public function testDeletedReportees() {
+        // delete one user for this test
+        $this->employee2->deleted = 1;
+        $this->employee2->save();
+
+        $restReply = $this->_restCall("Forecasts/reportees/" . $this->currentUser->id);
+
+        $fullNames = array();
+
+        foreach($restReply['reply']['children'] as $children ) {
+            array_push($fullNames, $children['data']);
+        }
+
+        $this->assertNotContains($this->employee2->full_name, $fullNames, "Deleted employee2 was found in the rest reply when it should not have been" );
+
+        // Undelete user if needed for other tests
+        $this->employee2->deleted = 0;
+        $this->employee2->save();
+    }
+
     public function testTimeperiods()
     {
         $restReply = $this->_restCall("Forecasts/filters/");

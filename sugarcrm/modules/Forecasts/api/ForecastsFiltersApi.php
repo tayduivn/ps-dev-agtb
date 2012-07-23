@@ -119,8 +119,9 @@ class ForecastsFiltersApi extends ModuleApi {
         // Boolean do we want to return a Parent link with the result set
         $returnParent = false;
 
-        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id','id, user_name, first_name, last_name, reports_to_id, _level',
-            false, "id = '{$id}' AND status = 'Active' AND deleted = 0"
+        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
+            'id, user_name, first_name, last_name, reports_to_id, _level', false,
+            "id = '{$id}' AND status = 'Active' AND deleted = 0", null, " AND status = 'Active' AND deleted = 0"
         );
 
         $result = $GLOBALS['db']->query($sql);
