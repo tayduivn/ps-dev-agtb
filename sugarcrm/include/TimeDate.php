@@ -92,6 +92,7 @@ class TimeDate
 
        	'i' => '%M',
        	's' => '%S',
+
     );
 
     /**
@@ -840,6 +841,121 @@ class TimeDate
     public function fromTimestamp($ts)
     {
         return new SugarDateTime("@$ts");
+    }
+
+    /**
+     * Output the date and time in ISO-8601 format
+     * @param DateTime $date The date object to output in ISO-8601 format
+     * @param User $user
+     * @return string The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-0700)
+     */
+    public function asIso(DateTime $date, User $user = null)
+    {
+        $this->tzUser($date, $user);
+        return $date->format('Y-m-d\TH:i:s').$this->getIsoOffset($date);
+    }
+
+    /**
+     * Output the date in ISO-8601 format
+     * @param DateTime $date The date object to output in ISO-8601 format
+     * @param boolean $tz Perform TZ conversion?
+     * @param User $user
+     * @return string Just the date in ISO-8601 format (aka 2012-10-11)
+     */
+    public function asIsoDate(DateTime $date, $tz = false, User $user = null)
+    {
+        return $this->asDbDate($date,$tz,$user);
+    }
+
+    /**
+     * Output the time in ISO-8601 format
+     * @param DateTime $date The date object to output in ISO-8601 format
+     * @param User $user
+     * @return string Just the time in ISO-8601 format (aka 13:01:45-0700)
+     */
+    public function asIsoTime(DateTime $date, User $user = null)
+    {
+        $this->tzUser($date, $user);
+        return $date->format('H:i:s').$this->getIsoOffset($date);
+    }
+
+    /**
+     * Build a new SugarDateTime object from the input date and time
+     * @param string $inputDate The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-0700)
+     * @param User $user (Optional) The user object for timezone-less conversions (will use the user's timezone if none is specified)
+     * @return SugarDateTime DateTime object representing the input date
+     */
+    public function fromIso($inputDate, User $user = null)
+    {
+        try {
+            // The ISO-8601 format will have at least 20 chars if it has an offset attached
+            if ( length($inputDate) > 19 ) {
+                // This has the attached offset, when 5.3 comes around we can stop messing with manually
+                // tweaking the offset manually and just throw an "O" on the end of the format string.
+                $date = SugarDateTime::createFromFormat('Y-m-d\TH:i:s',substr($inputDate,0,19),self::$gmtTimezone);
+                $date->adjustByIsoOffset(substr($inputDate,19));
+                
+                return $date;
+            } else {
+                // This time doesn't have an attached offset, convert it according to the user's date and time
+                return SugarDateTime::createFromFormat('Y-m-d\TH:i:s',$inputDate,$this->_getUserTZ($user));
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("fromIsoTime: Conversion of $inputDate from ISO Time failed. {$e->getMessage()}");
+        }
+
+    }
+
+    /**
+     * Build a new SugarDateTime object from the input date
+     * @param string $inputDate Just the date in ISO-8601 format (aka 2012-10-11)
+     * @param User $user (Optional) The user object for timezone-less conversions (will use the user's timezone if none is specified)
+     * @return SugarDateTime DateTime object representing the input date
+     */
+    public function fromIsoDate($inputDate, User $user = null)
+    {
+        // The ISO standard matches up with our "DB" date format
+        return $this->fromDbDate($inputDate);
+    }
+
+    /**
+     * Build a new SugarDateTime object from the input time
+     * @param string $inputDate Just the time in ISO-8601 format (aka 13:01:45-0700)
+     * @param User $user (Optional) The user object for timezone-less conversions (will use the user's timezone if none is specified)
+     * @return SugarDateTime DateTime object representing the input date
+     */
+    public function fromIsoTime($inputDate, User $user = null)
+    {
+        try {
+            if ( length($inputDate) > 8 ) {
+                // This time does have an attached offset
+                $date = SugarDateTime::createFromFormat("H:i:s",substr($inputDate,0,8),self::$gmtTimezone);
+                $date->adjustByIsoOffset(substr($inputDate,8));
+                
+                return $date;
+            } else {
+                // This time doesn't have an attached offset, convert it according to the user's date and time
+                return SugarDateTime::createFromFormat("H:i:s",$inputDate,$this->_getUserTZ($user));
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("fromIsoTime: Conversion of $inputDate from ISO Time failed. {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * This function converts the offset of the date object into a ISO-8601 compatible format
+     * @param DateTime $date The date object
+     * @return string The offset of date object in ISO-8601 compatible format (aka -0700)
+     */
+    public function getIsoOffset(DateTime $date)
+    {
+        $offsetSec = $date->getOffset();
+        $offsetType = ($offsetSec>-1)?'+':'-';
+        $offsetSec = abs($offsetSec);
+        $offsetMin = floor($offsetSec/60);
+        $offsetHour = floor($offsetMin/60);
+        $offsetMin = $offsetMin%60;
+        return sprintf("%s%02d%02d",$offsetType,$offsetHour,$offsetMin);
     }
 
     /**
