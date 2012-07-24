@@ -45,6 +45,14 @@ $vardefs= array (
         'len' => '100',
         'comment' => 'The linkedin name of the company'
     ),
+    'facebook' =>
+    array (
+        'name' => 'facebook',
+        'vname' => 'LBL_FACEBOOK',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The facebook name of the company'
+    ),
    strtolower($object_name).'_type' => 
   array (
     'name' => strtolower($object_name).'_type',
