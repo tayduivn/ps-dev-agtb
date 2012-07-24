@@ -95,7 +95,7 @@
         //add or subtract based on west/east of prime meridian
         hours = hours + (off*(l/Math.abs(l)));
         if (hours > 23){
-            hours = hours - 24;
+            hours = hours - 11;
         }
         var month = time.getMonth();
 
@@ -118,6 +118,7 @@
         var time = new Date();
         var localMinutes = time.getMinutes();
         var ampm = 'AM';
+
         if (localHour > 12){
             localHour = localHour-12;
             ampm = 'PM';
@@ -126,6 +127,10 @@
         if (localHour < 0){
             localHour = localHour + 12;
             ampm = 'PM';
+        }
+
+        if (localMinutes < 10){
+            localMinutes = '0' + localMinutes;
         }
         var dateString = localHour + ":" + localMinutes + " " + ampm;
 
