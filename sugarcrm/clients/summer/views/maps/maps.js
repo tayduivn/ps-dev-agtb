@@ -77,7 +77,6 @@
                 this.geocoder.geocode({
                     'address': address
                 }, function(results, status) {
-                    console.log(results);
                     if (status == google.maps.GeocoderStatus.OK) {
                         self.renderHtml(results);
                     }
@@ -129,7 +128,6 @@
             ampm = 'PM';
         }
         var dateString = localHour + ":" + localMinutes + " " + ampm;
-        console.log(dateString);
 
 
 
