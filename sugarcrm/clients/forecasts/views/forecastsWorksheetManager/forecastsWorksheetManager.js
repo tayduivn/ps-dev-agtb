@@ -153,7 +153,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit === true) {
+        if (field.viewName !="edit" && field.def.clickToEdit === true && this.selectedUser.id.localeCompare(app.user.get('id')) == 0) {
             field = new app.view.ClickToEditField(field, this);
         }
     },
