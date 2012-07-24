@@ -1,7 +1,6 @@
 (function(app) {
 
     app.view.BucketGridEnum = function (field, view) {
-        console.log(field.delegateEvents());
         this.field = field;
         this.view = view;
         return this.render();
