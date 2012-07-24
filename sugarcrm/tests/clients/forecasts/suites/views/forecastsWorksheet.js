@@ -6,6 +6,7 @@ describe("The forecasts worksheet", function(){
         app = SugarTest.app;
         view = SugarTest.loadFile("../../../../clients/forecasts/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
         var cte = SugarTest.loadFile("../../../../clients/forecasts/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        var bge = SugarTest.loadFile("../../../../clients/forecasts/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
     });
 
     describe("clickToEdit field", function() {
@@ -195,7 +196,8 @@ describe("The forecasts worksheet", function(){
                 type:'enum',
                 def: {
                     clickToEdit: 'false'
-                }
+                },
+                delegateEvents: function() {}
             };
         });
 
