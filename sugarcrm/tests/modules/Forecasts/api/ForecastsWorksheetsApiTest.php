@@ -32,57 +32,67 @@ require_once('tests/rest/RestTestBase.php');
 class ForecastsWorksheetsApiTest extends RestTestBase
 {
 	/**
-	 * @var object Manager user
+	 * @var User Manager user
 	 */
 	protected static $manager;
 	
 	/**
-	 * @var object Reportee user
+	 * @var User Reportee user
 	 */
 	protected static $reportee;
 	
 	/**
-	 * @var string Timeperiod ID
+	 * @var Timeperiod Timeperiod ID
 	 */
 	protected static $timeperiod;
 	
 	/**
-	 * @var	object Manager Opportunity;
+	 * @var	Opportunity Manager Opportunity;
 	 */
 	protected static $managerOpp;
 	
 	/**
-	 * @var object Rep Opportunity;
+	 * @var Opportunity Rep Opportunity;
 	 */
 	protected static $repOpp;
 	
 	/**
-	 * @var object Manager Quota;
+	 * @var Quota Manager Quota;
 	 */
 	protected static $managerQuota;
 	
 	/**
-	 * @var object Rep Quota;
+	 * @var Quota Manager Quota Rollup version
+	 */ 
+	protected static $managerQuotaRollup;
+	
+	/**
+	 * @var Quota Rep Quota;
 	 */
 	protected static $repQuota;
 	
 	/**
-	 * @var object Manager Forecast;
+	 * @var Forecast Manager Forecast
 	 */
 	protected static $managerForecast;
 	
 	/**
-	 * @var object Rep Forecast;
+	 * @var Forecast Rep Forecast;
 	 */
 	protected static $repForecast;
 	
 	/**
-	 * @var object Manager Worksheet;
+	 * @var Worksheet Manager Worksheet;
 	 */
 	protected static $managerWorksheet;
 	
 	/**
-	 * @var object Rep Worksheet;
+	 * @var Worksheet Manager Worksheet for the reportee;
+	 */
+	protected static $managerWorksheetRep;
+	
+	/**
+	 * @var Worksheet Rep Worksheet;
 	 */
 	protected static $repWorksheet;
 
@@ -124,6 +134,12 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         self::$managerQuota->quota_type = "Direct";
         self::$managerQuota->timeperiod_id = self::$timeperiod->id;
         self::$managerQuota->save();
+        
+        self::$managerQuotaRollup = SugarTestQuotaUtilities::createQuota(20000);
+        self::$managerQuotaRollup->user_id = self::$manager->id;
+        self::$managerQuotaRollup->quota_type = "Rollup";
+        self::$managerQuotaRollup->timeperiod_id = self::$timeperiod->id;
+        self::$managerQuotaRollup->save();
 
         self::$repQuota = SugarTestQuotaUtilities::createQuota(1500);
         self::$repQuota->user_id = self::$reportee->id;
@@ -162,6 +178,18 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         self::$managerWorksheet->worst_case = 950;
         self::$managerWorksheet->forecast = 1;
         self::$managerWorksheet->save();
+        
+        self::$managerWorksheetRep = SugarTestWorksheetUtilities::createWorksheet();
+        self::$managerWorksheetRep->user_id = self::$manager->id;
+        self::$managerWorksheetRep->related_id = self::$reportee->id;
+        self::$managerWorksheetRep->forecast_type = "Rollup";
+        self::$managerWorksheetRep->related_forecast_type = "Direct";
+        self::$managerWorksheetRep->timeperiod_id = self::$timeperiod->id;
+        self::$managerWorksheetRep->best_case = 1550;
+        self::$managerWorksheetRep->likely_case = 1250;
+        self::$managerWorksheetRep->worst_case = 950;
+        self::$managerWorksheetRep->forecast = 1;
+        self::$managerWorksheetRep->save();
 
         self::$repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
         self::$repWorksheet->user_id = self::$reportee->id;
@@ -247,6 +275,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                              "show_opps" => false,
                              "name" => self::$manager->first_name . ' ' . self::$manager->last_name,
                              "user_id" => self::$manager->id,
+                             "current_user" => self::$manager->id,
                              "timeperiod_id" => self::$timeperiod->id
                         );
        
@@ -293,4 +322,38 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 		$this->assertEquals($response["reply"][0]["best_case"], self::$repWorksheet->best_case, "Worksheet data was not saved.");
 				
     }
+    
+    /**
+     * @group forecastapi
+     */
+     public function testForecastWorksheetQuotaRecalc(){
+     	self::$repQuota->amount = 5000;
+    	  
+    	$postData = array("amount" => self::$repOpp->amount,
+                             "quota" => self::$repQuota->amount,
+                             "quota_id" => self::$repQuota->id,
+                             "best_case" => self::$repForecast->best_case,
+                             "likely_case" => self::$repForecast->likely_case,
+                             "worst_case" => self::$repForecast->worst_case,
+                             "best_adjusted" => self::$managerWorksheetRep->best_case,
+                             "likely_adjusted" => self::$managerWorksheetRep->likely_case,
+                             "worst_adjusted" => self::$managerWorksheetRep->worst_case,
+                             "forecast" => intval(self::$managerWorksheetRep->forecast),
+                             "forecast_id" => self::$repForecast->id,
+                             "id" => self::$repForecast->id,
+                             "worksheet_id" => self::$managerWorksheetRep->id,
+                             "show_opps" => false,
+                             "name" => self::$reportee->first_name . ' ' . self::$reportee->last_name,
+                             "user_id" => self::$reportee->id,
+                             "current_user" => self::$manager->id,
+                             "timeperiod_id" => self::$timeperiod->id
+                        );
+        $response = $this->_restCall("ForecastManagerWorksheets/" . self::$repForecast->id, json_encode($postData), "PUT");
+						
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager->id . "&timeperiod_id=" . self::$timeperiod->id);
+		
+		//check to see if the Quota was auto calculated
+		$this->assertEquals($response["reply"][0]["quota"], self::$managerQuotaRollup->amount - self::$repQuota->amount, "Quota data was not auto calculated.");
+     }
 }
