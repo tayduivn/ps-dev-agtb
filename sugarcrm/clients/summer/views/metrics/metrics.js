@@ -4,19 +4,6 @@
         app.view.View.prototype.initialize.call(this,options);
     },
 
-    reset: function(context) {
-        console.log("resetting");
-        this.$el.hide();
-        this.getData();
-        this._render();
-    },
-
-    _render: function(o) {
-        console.log("Metrics Render");
-        this.$el.show();
-        app.view.View.prototype._render.call(this);
-    },
-
     getData: function() {
 
         var url = 'rest/Reports/data/boxStats';

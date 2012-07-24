@@ -33,8 +33,6 @@
         }
     },
 
-
-
     bindDataChange: function() {
         var self = this;
         if (this.model) {
