@@ -241,7 +241,8 @@ $mod_strings = array (
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
-    //Labels for worksheet totals
+    //Labels for worksheet expected opportunities and totals
+    'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
 

@@ -123,7 +123,15 @@
         return label;
     });
 
-
+    /**
+     * Output the tag as a Handlebar variable tag.  This function is needed for our forecasting templates for sub
+     * views since the first loading of the Handlebar interprets the Handlebar tag as a variable and substitutes the
+     * variable into the tag.  We want to retain the tags in the output so we simply re-output the templates.
+     *
+     */
+    Handlebars.registerHelper("output_as_hb_tag", function(tag) {
+        return '{{' + tag + '}}';
+    });
 
 
 })(SUGAR.App);

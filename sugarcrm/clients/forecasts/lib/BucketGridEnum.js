@@ -16,8 +16,6 @@
             this.$el.parent().css('overflow', 'hidden');
         };
 
-        this.field.disableOverFlow();
-
         var events = this.field.events || {};
         this.field.events = _.extend(events, {
             'mouseenter': 'enableOverFlow',

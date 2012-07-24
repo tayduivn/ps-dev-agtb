@@ -15,6 +15,21 @@
     isExpandableRows:'',
     _collection:{},
 
+
+    /**
+     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
+     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
+     * to handle persisting the changes
+     *
+     * @param model Backbone model entry that was affected by the toggle event
+     */
+    toggleIncludeInForecast:function(model)
+    {
+        var self = this;
+        self._collection.url = self.url;
+        model.save(null, { success:_.bind(function() { this.calculateTotals(), this.render(); }, this)});
+    },
+
     /**
      * Initialize the View
      *
@@ -25,7 +40,7 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-        
+
         //set expandable behavior to false by default
         this.isExpandableRows = false;
 
@@ -36,6 +51,7 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
+        //Create a Backbone.Model instance to represent the included amounts
         this.includedModel = new Backbone.Model(
             {
                 includedAmount : 0,
@@ -45,7 +61,8 @@
             }
         );
 
-        this.overallModel = new Backbone.Model(
+        //Create a Backbone.Model instance to represent the overall amounts
+        self.overallModel = new Backbone.Model(
             {
                 overallAmount : 0,
                 overallBest : 0,
@@ -56,85 +73,102 @@
 
         var IncludedView = Backbone.View.extend({
             id : 'included_totals',
-
             tagName : 'tr',
 
             initialize: function() {
-                self.context.on("change:selectedToggle", function(context, toggle) {
-                    self._collection.url = self.url;
-                    model = toggle.model;
-                    model.set('forecast', (toggle.value === true) ? false : true);
-                    model.save(null, {wait: true});
-                    self.refresh();
-                });
+                _.bindAll(this, 'render');
+                this.model.bind('change', this.render);
             },
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile(
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
-                								"<th>{{includedAmount}}</th>" +
-                								"<th>{{includedBest}}</th>" +
-                                                "<th>{{includedLikely}}</th>"
-                    );
+                var source = $("#included_template").html();
+                var hb = Handlebars.compile(source);
                 $('#included_totals').html(hb(self.model.toJSON()));
                 return this;
             }
         });
 
         this.includedView = new IncludedView({
-            model : this.includedModel
+            model : self.includedModel
         });
 
 
         var OverallView = Backbone.View.extend({
             id : 'overall_totals',
-
             tagName : 'tr',
 
             initialize: function() {
-
+                _.bindAll(this, 'render');
+                this.model.bind('change', this.render);
             },
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile(
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
-                    							"<th>{{overallAmount}}</th>" +
-                    							"<th>{{overallBest}}</th>" +
-                    							"<th>{{overallLikely}}</th>"
-                    );
+                var source = $("#overall_template").html();
+                var hb = Handlebars.compile(source);
                 $('#overall_totals').html(hb(self.model.toJSON()));
                 return this;
             }
         });
 
-        this.overallView = new OverallView({
-            model : this.overallModel
+        self.overallView = new OverallView({
+            model : self.overallModel
         });
 
 
-        var ExpectedOpportunitiesView = Backbone.View.extend({
-
+        var ExpectedOpportunitiesView = app.view.View.extend({
             id : 'expected_opportunities',
-
             tagName : 'tr',
 
             initialize: function() {
+                //app.view.View.prototype.initialize.call(this, options);
+                _.bindAll(this, 'render');
+                this.collection.bind('change', this.render);
+            },
 
+            _renderField: function(field) {
+                app.view.View.prototype._renderField.call(self, field);
+
+                if (self.isMyWorksheet() && field.viewName != "edit" && field.def.clickToEdit === true) {
+                    new app.view.ClickToEditField(field, this);
+                }
             },
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile(
-                                                "<th>checkbox</th>" +
-                                                "<th colspan='4' style='text-align: right;'><i>" + app.lang.get("LBL_EXPECTED_OPPORTUNITIES", "ForecastSchedule") + "</i></th>" +
-                							    "<th>55</th>" +
-                							    "<th>55</th>" +
-                                                "<th>55</th>"
-                );
+                var source   = $("#expected_template").html();
+                //var hb = Handlebars.compile(source);
+                //$('#expected_opportunities').html(hb("{test:'hello'}"));
 
-                $('#expected_opportunities').html(hb());
+                var fields = [
+                    {
+                        name : 'expected_amount',
+                        sfId : 'expected_amount_sf_id',
+                        viewName : 'detail',
+                        type : 'int',
+                        field : { def: { clickToEdit : true }}
+                    },
+                    {
+                        name : 'expected_best_case',
+                        sfId : 'expected_best_case_sf_id',
+                        viewName : 'detail',
+                        type : 'int',
+                        field : { def: { clickToEdit : true }}
+                    },
+                    {
+                        name : 'expected_likely_case',
+                        sfId : 'expected_likely_case_sf_id',
+                        viewName : 'detail',
+                        type : 'int',
+                        field : { def: { clickToEdit : true }}
+                    }
+                ];
+
+                _.each(fields, function (value, key) {
+                    //app.view.View.prototype._renderField.call(self, value);
+                });
+
                 return this;
             }
         });
@@ -218,7 +252,24 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.refresh(); }, this);
+
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(element, index){
+                    if(element.hasChanged("forecast")) {
+                        this.toggleIncludeInForecast(element);
+                    }
+                }, this);
+            }, this);
         }
+
+        this.context.on("change:selectedToggle",
+            function(context, toggle) {
+                self._collection.url = self.url;
+                model = toggle.model;
+                model.set('forecast', (toggle.value === true) ? false : true);
+                model.save(null, {wait: true});
+                self.refresh();
+            }, this);
 
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
@@ -259,8 +310,6 @@
         _.each(fields, function(field) {
             if (field.name == "forecast") {
                 field.enabled = !app.config.showBuckets;
-                //Set the viewName to use based on whether or not isOwner is true
-                field.view = isOwner ? 'default' : 'detail';
                 forecastField = field;
             } else if (field.name == "commit_stage") {
                 field.enabled = app.config.showBuckets;
@@ -279,7 +328,7 @@
      */
     _render:function () {
         var self = this;
-        
+
         if(!this.showMe()){
         	return false;
         }
@@ -329,6 +378,20 @@
     },
 
     /**
+     * Add a click event listener to the commit button
+     */
+    events: {
+        "div a[id=include_expected]" : "includeExpected"
+    },
+
+    /**
+     * Function to handle the toggle state of including/excluding expected amounts
+     */
+    includeExpected: function() {
+        debugger;
+    },
+
+    /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
      * or whether to render the clickToEdit field
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
@@ -343,11 +406,11 @@
     showMe: function(){
     	var selectedUser = this.selectedUser;
     	this.show = false;
-    	    	
+
     	if(selectedUser.showOpps || !selectedUser.isManager){
     		this.show = true;
     	}
-    	
+
     	return this.show;
     },
 
@@ -371,7 +434,7 @@
             var likely = parseFloat(model.get('likely_case'));
             var best = parseFloat(model.get('best_case'));
 
-            if(included)
+            if(included == true || included == 1)
             {
                 includedAmount += amount;
                 includedLikely += likely;
@@ -383,12 +446,13 @@
             overallBest += best;
         });
 
-        self.totalModel.set('includedAmount', includedAmount);
-        self.totalModel.set('includedBest', includedBest);
-        self.totalModel.set('includedLikely', includedLikely);
-        self.totalModel.set('overallAmount', overallAmount);
-        self.totalModel.set('overallBest', overallBest);
-        self.totalModel.set('overallLikely', overallLikely);
+        self.includedModel.set('includedAmount', includedAmount);
+        self.includedModel.set('includedBest', includedBest);
+        self.includedModel.set('includedLikely', includedLikely);
+
+        self.overallModel.set('overallAmount', overallAmount);
+        self.overallModel.set('overallBest', overallBest);
+        self.overallModel.set('overallLikely', overallLikely);
 
         var totals = {
             'likely_case' : includedLikely,
