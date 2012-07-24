@@ -36,10 +36,9 @@
     _renderHtml: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
-        self.fireSearchRequest(function(data) {
+        self.fireSearchRequest(function(collection) {
             // Add the records to context's collection
-            if(data && data.records && data.records.length) {
-                self.updateCollection(data);
+            if(collection && collection.length) {
                 app.view.View.prototype._renderHtml.call(self);
                 self.renderSubnav();
             } else {
@@ -47,13 +46,7 @@
             }
         });
     },
-    /**
-     * Updates the collection with search results.
-     */
-    updateCollection: function(data) {
-        this.collection.add(data.records, {silent: true});
-        this.collection.next_offset = this.nextOffset = data.next_offset ? data.next_offset : -1;
-    },
+
     /**
      * Renders subnav based on search message appropriate for query term.
      */
@@ -64,25 +57,30 @@
             });
         }
     },
+
     /**
-     * Helper to call api.search
+     * Uses MixedBeanCollection to fetch search results.
      */
     fireSearchRequest: function (cb, offset) {
-        var mlist = '', self = this, params;
-        mlist = app.metadata.getDelimitedModuleList(',', true);
-        params = {q: self.lastQuery, moduleList: mlist, max_num: app.config.maxQueryResult};
-        if (offset) params.offset = offset;
+        var mlist = '', 
+            self = this, 
+            options;
 
-        app.api.search(params, {
-            success:function(data) {
-                cb(data);
+        mlist = app.metadata.getModuleNames(true); // visible
+
+        options = {
+            query: self.lastQuery, 
+            success:function(collection) {
+                cb(collection);
             },
+            moduleList: mlist,
             error:function(error) {
-                cb(null); // dismiss the alert
-                app.error.handleHttpError(error, self);
-                app.logger.error("Failed to fetch search results " + this + "\n" + error);
-            }
-        });
+                cb(null); // lets callback know to dismiss the alert
+            },
+            silent: true
+        };
+        if (offset) options.offset = offset;
+        this.collection.fetch(options);
     },
     bindDataChange: function() {
         if (this.collection) {
@@ -136,12 +134,11 @@
         var self = this;
         app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
 
-        self.fireSearchRequest(function(data) {
+        self.fireSearchRequest(function(collection) {
             app.alert.dismiss('show_more_search_results');
 
             // Add the records to context's collection
-            if(data && data.records && data.records.length) {
-                self.updateCollection(data);
+            if(collection && collection.length) {
                 app.view.View.prototype.render.call(self);
                 self.renderSubnav();
             } 
