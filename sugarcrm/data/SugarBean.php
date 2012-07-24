@@ -2744,6 +2744,8 @@ function save_relationship_changes($is_update, $exclude=array())
     $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0)
     {
         global $layout_edit_mode;
+        $query_array = array();
+
         if(isset($layout_edit_mode) && $layout_edit_mode)
         {
             $response = array();
@@ -2762,7 +2764,18 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         $this->load_relationship($related_field_name);
-        $query_array = $this->$related_field_name->getQuery(true);
+        
+        if ($this->$related_field_name instanceof Link) {
+            
+            $query_array = $this->$related_field_name->getQuery(true);
+        } else {
+            
+            $query_array = $this->$related_field_name->getQuery(array(
+                "return_as_array" => true,
+                'where' => '1=1' // hook for 'where' clause in M2MRelationship file
+                    ));
+        }
+
         $entire_where = $query_array['where'];
         if(!empty($where))
         {
