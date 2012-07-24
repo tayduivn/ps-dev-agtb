@@ -1,0 +1,6 @@
+<div class="exchangerates-widget">
+<a href="http://www.forexpros.com" target="_blank"><img src="http://c1802182.cdn.cloudfiles.rackspacecloud.com/forexpros_en_logo.png" alt="ForexPros" title="ForexPros" style="float:left" /></a>
+<br/>
+<iframe frameborder="0" scrolling="auto" height="170" width="555" allowtransparency="true" marginwidth="0" marginheight="0" src="http://fxrates.forexpros.com/index_exchange.php?params&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&inner-text-color=%23000000&currency-name-color=%23000000&header-text-color=%23FFFFFF" align="center">
+</iframe><br />
+</div>
