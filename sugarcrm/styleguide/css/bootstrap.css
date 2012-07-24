@@ -6475,15 +6475,15 @@ table tfoot td {
 #dashboard #folded .tab-pane.active .thumbnail {
   margin: 0 20px 20px;
 }
-.layout_Cases .tab-pane.active {
+.layout_Cases #folded .tab-pane.active {
   height: 50%;
   overflow: hidden;
 }
-.layout_Cases .tab-pane.active > .block {
+.layout_Cases #folded .tab-pane.active > .block {
   position: relative;
   height: 100%;
 }
-.layout_Cases .tab-pane.active > .block #card2 {
+.layout_Cases #folded .tab-pane.active > .block .card2 {
   height: 100%;
   overflow: scroll;
 }
