@@ -61,8 +61,8 @@ class RegisterLeadApi extends SugarApi {
                 $field->save($bean, $args, $fieldName, $properties);
             }
         }
-
-        $bean->save();
+        // Bug 54516 users not getting notified on new record creation
+        $bean->save(true);
 
         /*
          * Refresh the bean with the latest data.
