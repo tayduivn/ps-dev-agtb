@@ -16,7 +16,8 @@
                 mixed: true,
                 module: "Search",
                 layout: "search",
-                query: query
+                query: query,
+                silent: true
             });
         });
 

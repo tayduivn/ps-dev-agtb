@@ -53,7 +53,7 @@
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
-        mlist = app.metadata.getModuleNames(true); // visible
+        mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
 
         app.api.search(params, {

@@ -28,7 +28,6 @@
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
-        this.moduleListSingular = app.lang.getAppListStrings("moduleListSingular");
     },
     /**
      * Uses query in context and fires a search request thereafter rendering
@@ -62,12 +61,8 @@
      * Uses MixedBeanCollection to fetch search results.
      */
     fireSearchRequest: function (cb, offset) {
-        var mlist = '', 
-            self = this, 
-            options;
-
+        var mlist = null, self = this, options;
         mlist = app.metadata.getModuleNames(true); // visible
-
         options = {
             query: self.lastQuery, 
             success:function(collection) {
@@ -76,16 +71,25 @@
             moduleList: mlist,
             error:function(error) {
                 cb(null); // lets callback know to dismiss the alert
-            },
-            silent: true
+            }
         };
         if (offset) options.offset = offset;
         this.collection.fetch(options);
     },
-    bindDataChange: function() {
-        if (this.collection) {
-            this.collection.on("reset", this.render, this);
-        }
+    /**
+     * Show more search results
+     */
+    showMoreResults: function() {
+        var self = this, options = {};
+        app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
+        options.add = true;
+        options.success = function() {
+            app.alert.dismiss('show_more_search_results');
+            console.log(self.collection);
+            app.view.View.prototype._render.call(self);
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
     },
     gotoDetail: function(evt) {
         var href = this.$(evt.currentTarget).parent().parent().attr('href');
@@ -126,21 +130,5 @@
     },
     removePointer: function(evt) {
         this.$(evt.currentTarget).css('cursor', 'none');
-    },
-    /**
-     * Show more search results
-     */
-    showMoreResults: function() {
-        var self = this;
-        app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
-        self.fireSearchRequest(function(collection) {
-            app.alert.dismiss('show_more_search_results');
-
-            // Add the records to context's collection
-            if(collection && collection.length) {
-                app.view.View.prototype._render.call(self);
-                self.renderSubnav();
-            } 
-        }, this.collection.next_offset);
     }
 })
