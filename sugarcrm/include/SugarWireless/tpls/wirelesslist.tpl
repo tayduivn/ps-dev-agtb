@@ -62,7 +62,9 @@
 		{foreach from=$displayColumns key=col item=params}				
 		<td class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
 				{if $params.link && !$params.customCode}
-					<a href="index.php?module={$MODULE}&action=wirelessdetail&record={$rowData.ID}">{$rowData.$col}</a>
+                    {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$MODULE}{/if}{/capture}
+                    {capture assign=linkRecord}{$rowData[$params.id]|default:$rowData.ID}{/capture}
+                    <a href="index.php?module={$linkModule}&action=wirelessdetail&record={$linkRecord}">{$rowData.$col}</a>
                 {elseif $params.customCode} 
 					{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
 				{elseif $params.currency_format} 
