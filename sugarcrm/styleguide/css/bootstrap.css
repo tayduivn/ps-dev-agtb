@@ -6475,6 +6475,7 @@ table tfoot td {
 #dashboard #folded .tab-pane.active .thumbnail {
   margin: 0 20px 20px;
 }
+/* Temporary for cases, to be removed when general note preview gets fixed */
 .layout_Cases #folded .tab-pane.active {
   height: 50%;
   overflow: hidden;
