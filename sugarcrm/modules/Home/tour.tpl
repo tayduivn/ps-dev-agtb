@@ -28,7 +28,7 @@
     
     <div class="modal-footer">
     <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
-    <a href="#" class="btn">{$APP.LBL_TOUR_SKIP}</a>
+    <a href="#" class="btn btn-invisible">{$APP.LBL_TOUR_SKIP}</a>
     </div>
 </div>
 <div id="tourEnd" style="display: none;">

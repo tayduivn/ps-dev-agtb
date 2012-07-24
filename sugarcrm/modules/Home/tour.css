@@ -58,17 +58,24 @@ padding-top: 9px;
 .popover a {
 	text-decoration: none;
 }
-.modal-footer .btn,
-.popover-footer .btn {
-	color: #262627;
+
+.modal-footer .btn-invisible {
+    float: left;
+    margin-left: 0px;
+}
+.modal-body   {
+    font-size: 16px;
+    padding-bottom: 30px;
 }
 
-.modal-body   {font-size: 16px;}
 .modal-footer .btn.btn-primary, 
 .popover-footer .btn.btn-primary {
 	color: #fff;
 }
 
+.modal-footer {
+    padding-left: 0px;
+}
 
 .modal ul li {
 	line-height: 18px;	

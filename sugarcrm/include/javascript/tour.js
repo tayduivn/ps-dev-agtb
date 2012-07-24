@@ -182,7 +182,7 @@ var tourModal;
                         var content = $('<div></div>')
                         var footer = $("<div class=\"modal-footer\"></div>");
 
-                        var skip = $("<a href=\"#\" class=\"btn-link\" id=\"skipTour\">"+SUGAR.language.get('app_strings', 'LBL_TOUR_SKIP')+"</a>");
+                        var skip = $("<a href=\"#\" class=\"btn btn-invisible\" id=\"skipTour\">"+SUGAR.language.get('app_strings', 'LBL_TOUR_SKIP')+"</a>");
                         var next = $('<a class="btn btn-primary" id="nextModal'+i+'" href="#">'+SUGAR.language.get('app_strings', 'LBL_TOUR_NEXT')+' <i class="icon-play icon-xsm"></i></a>');
                         content.append(footer);
                         footer.append(skip).append(next);
