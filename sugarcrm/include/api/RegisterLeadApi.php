@@ -61,6 +61,19 @@ class RegisterLeadApi extends SugarApi {
                 $field->save($bean, $args, $fieldName, $properties);
             }
         }
+
+        // Bug 54515: Set modified by and created by users to assigned to user. If not set default to admin.
+        $bean->update_modified_by = false;
+        $bean->set_created_by = false;
+        if(isset($bean->assigned_user_id) && !empty($bean->assigned_user_id)) {
+            $bean->created_by = $bean->assigned_user_id;
+            $bean->modified_user_id = $bean->assigned_user_id;
+        }
+        else {
+            $bean->created_by = '1';
+            $bean->modified_user_id = '1';
+        }
+
         // Bug 54516 users not getting notified on new record creation
         $bean->save(true);
 
@@ -87,8 +100,9 @@ class RegisterLeadApi extends SugarApi {
         $bean = BeanFactory::newBean('Leads');
         // we force team and teamset because there is no current user to get them from
         $fields = array(
-            'team_set_id'=>'1',
-            'team_id'=>'1'
+            'team_set_id' => '1',
+            'team_id' => '1',
+            'lead_source' => 'Support Portal User Registration',
         );
 
         $admin = new Administration();
