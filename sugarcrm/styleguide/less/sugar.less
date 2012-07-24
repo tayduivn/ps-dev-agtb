@@ -205,6 +205,21 @@ table tfoot td {
 #folded [data-toggle="tab"].actions {top: 0; color: @gray;}
 #dashboard  #folded .tab-pane.active .thumbnail {margin: 0 20px 20px;}
 
+.layout_Cases {
+    .tab-pane.active {
+        height:50%;
+        overflow:hidden;
+        &>.block {
+            position:relative;
+            height:100%;
+            #card2 {
+                height:100%;
+                overflow:scroll;
+            }
+        }
+    }
+}
+
 #searchActivity {margin-top: -12px;}
 .subhead {margin-top: 20px;}
 .subnav-fixed {
