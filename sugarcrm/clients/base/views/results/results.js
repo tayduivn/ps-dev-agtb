@@ -27,19 +27,19 @@
     initialize: function(options) {
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
         this.moduleListSingular = app.lang.getAppListStrings("moduleListSingular");
     },
-
     /**
      * Uses query in context and fires a search request thereafter rendering
      */
-    _renderHtml: function() {
+    _render: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(collection) {
             // Add the records to context's collection
             if(collection && collection.length) {
-                app.view.View.prototype._renderHtml.call(self);
+                app.view.View.prototype._render.call(self);
                 self.renderSubnav();
             } else {
                 self.renderSubnav(app.lang.getAppString('LNK_SEARCH_NO_RESULTS'));
@@ -133,16 +133,14 @@
     showMoreResults: function() {
         var self = this;
         app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
-
         self.fireSearchRequest(function(collection) {
             app.alert.dismiss('show_more_search_results');
 
             // Add the records to context's collection
             if(collection && collection.length) {
-                app.view.View.prototype.render.call(self);
+                app.view.View.prototype._render.call(self);
                 self.renderSubnav();
             } 
         }, this.collection.next_offset);
     }
-
 })
