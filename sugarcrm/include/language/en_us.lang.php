@@ -270,6 +270,9 @@ $app_list_strings = array (
     'Word of mouth' => 'Word of mouth',
     'Email' => 'Email',
     'Campaign'=>'Campaign',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'Support Portal User Registration' => 'Support Portal User Registration',
+    //END SUGARCRM flav=ent ONLY
     'Other' => 'Other',
   ),
   'opportunity_type_dom' =>
