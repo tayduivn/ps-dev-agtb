@@ -124,7 +124,21 @@
             }, this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
-            	this.totalView.render();
+            	var renderAll = false;
+            	$.each(this.context.forecasts.worksheetmanager.models, function(index, element){
+            		if(element.hasChanged("quota"))
+            		{
+            			renderAll = true;
+            		}
+            	});
+            	if(renderAll){
+            		this.context.forecasts.worksheetmanager.url = this.createURL();
+            		this.context.forecasts.worksheetmanager.fetch();
+            	}
+            	else{            		
+            		this.totalView.render();
+            	}
+            	
             }, this);
         }
     },

@@ -482,7 +482,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 ),
  'indices' => array (
        array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id, timeperiod_id')),
+       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
        )
 );
 
