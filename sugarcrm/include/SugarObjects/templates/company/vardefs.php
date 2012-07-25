@@ -61,6 +61,14 @@ $vardefs= array (
         'len' => '100',
         'comment' => 'The twitter name of the company'
     ),
+    'google_plus' =>
+    array (
+        'name' => 'google_plus',
+        'vname' => 'LBL_GOOGLEPLUS',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The Google Plus name of the company'
+    ),
    strtolower($object_name).'_type' => 
   array (
     'name' => strtolower($object_name).'_type',

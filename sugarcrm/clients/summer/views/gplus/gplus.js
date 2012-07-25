@@ -3,8 +3,11 @@
         app.view.View.prototype.initialize.call( this, options );
     },
 
-    getAbout: function ( api_key, googlePlus_id ) {
+    getData: function () {
         var self = this;
+        var api_key = "AIzaSyCIXeFNDztbmOPSX9jA1eRAzGzDmCmM9Ig";  // kdao api_key
+        //var googlePlus_id = "100975726761624703436";   // sugarcrm id
+        var googlePlus_id = this.model.get('google_plus');
         $.ajax ({
             url : "https://www.googleapis.com/plus/v1/people/" + googlePlus_id + "?key=" + api_key,
             dataType: "json",
@@ -15,40 +18,29 @@
             },
             error: function () {
                 console.log ( 'failed' );
-            }
+            },
+            context: this
         });
 
-    },
-
-    getActivities: function ( api_key, googlePlus_id ) {
-        var self = this;
-        this.gPlustPosts = [];
-        var gPlusPosts = this.gPlustPosts;
         $.ajax ({
             url : "https://www.googleapis.com/plus/v1/people/" + googlePlus_id + "/activities/public?key=" + api_key + "&maxResults=5",
             dataType: "json",
             success: function ( data ) {
+                self.gPlusPosts = [];
                 for (var i=0; i < data.items.length; i++ ) {
-                    gPlusPosts.push ( {
+                    self.gPlusPosts.push ( {
                         content: data.items[i].title,
                         author: data.items[i].object.displayName,
                         attachments: data.items[i].object.attachments
                     });
                 }
+                self.render();
             },
             error: function () {
                 console.log ( 'failed' );
-            }
+            },
+            context: this
         });
-    },
-
-    getData: function () {
-        var self = this;
-        var api_key = "AIzaSyCIXeFNDztbmOPSX9jA1eRAzGzDmCmM9Ig"; // kdao api_key
-        var googlePlus_id = "100975726761624703436";
-        self.gPlusAbout = self.getAbout( api_key, googlePlus_id );
-        self.gPlusActivities = self.getActivities( api_key, googlePlus_id );
-        app.view.View.prototype._renderHtml( self );
     },
 
     bindDataChange: function () {

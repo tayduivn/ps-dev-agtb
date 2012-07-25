@@ -114,6 +114,7 @@ $mod_strings = array (
     'LBL_LINKEDIN' => 'Linkedin Company ID',
     'LBL_FACEBOOK' => 'Facebook Company Account',
     'LBL_TWITTER' => 'Twitter Company Account',
+    'LBL_GOOGLEPLUS' => 'Google Plus Company ID',
 
 	'LNK_ACCOUNT_LIST' => 'Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
