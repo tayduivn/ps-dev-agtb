@@ -27,6 +27,22 @@ describe("The forecasts manager worksheet", function(){
         })
 
         describe("should render", function() {
+            beforeEach(function() {
+                debugger;
+                view.selectedUser.id = "test_user_id";
+                testMethodStub = sinon.stub(app.user, "get", function(property){
+                    var user = {
+                        id: "test_user_id"
+                    }
+                    return user[property];
+                });
+            });
+
+            afterEach(function() {
+                view.selectedUser.id = null;
+                testMethodStub.restore();
+            })
+
             it("has clickToEdit set to true in metadata", function() {
                 view._renderField(field);
                 expect(_renderFieldStub).toHaveBeenCalled();
