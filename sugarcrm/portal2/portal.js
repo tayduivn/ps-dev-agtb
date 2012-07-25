@@ -211,7 +211,7 @@
                     field: fileField,
                     success: function() {
                         filesToUpload--;
-                        if (filesToUpload==0) {
+                        if (filesToUpload===0) {
                             app.alert.dismiss('upload');
                             if (callbacks.success) callbacks.success();
                         }
