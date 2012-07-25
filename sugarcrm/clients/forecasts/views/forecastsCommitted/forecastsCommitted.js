@@ -146,9 +146,12 @@
               if(count == 1)
               {
                   var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  self.previousText = hb({'likely_case' : model.get('likely_case')});
+                  //self.previousText = hb({'likely_case' : model.get('likely_case')});
+                  self.previousText = hb;
                   self.previousLikelyCase = model.get('likely_case');
                   self.previousBestCase = model.get('best_case');
+                  var dateEntered = new Date(model.get('date_entered'));
+                  self.previousDateEntered = App.utils.date.format(dateEntered, App.user.get('datepref') + ' ' + App.user.get('timepref'));
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
