@@ -101,7 +101,7 @@
         if(this._collection)
         {
             this._collection.on("reset", function(){
-            	$.when(this.calculateTotals(), this.render());
+            	this.render();
             }, this);
         }
         // listening for updates to context for selectedUser:change
@@ -199,6 +199,7 @@
                 }
             });
         }
+        this.calculateTotals();
         this.totalView.render();
     },
     
