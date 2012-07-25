@@ -20,7 +20,7 @@
         var self = this;
 
         self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { this.calculateTotals(), this.render(); }, this)});
+        model.save(null, { success:_.bind(function() { this.render(); }, this)});
     },
 
     /**
@@ -161,7 +161,7 @@
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() { self.refresh(); }, this);
+            this._collection.on("reset", function() { self.render(); }, this);
 
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element, index){
@@ -191,16 +191,6 @@
             	this.totalView.render();
             }, this);
         }
-    },
-
-    /**
-     * Refresh the view
-     *
-     * This method ensures that we first calculate the totals from the collection before calling render to redraw results
-     * @param context
-     */
-    refresh:function(context) {
-        $.when(this.calculateTotals(), this.render());
     },
 
     _setForecastColumn: function(fields) {
@@ -272,8 +262,8 @@
             });
         }
 
+        this.calculateTotals()
         this.totalView.render();
-
     },
 
     /**
@@ -383,7 +373,7 @@
             //Remove the filters
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
         }
-        this.refresh();
+        this.render();
     },
 
     /**

@@ -57,12 +57,14 @@ $string = <<<EOQ
     'Campaign'=>'Campaign',
     'Other' => 'Other',
   ),
+  //BEGIN SUGARCRM flav=pro ONLY
   'opportunity_type_dom' =>
   array (
     '' => '',
     'Existing Business' => 'Existing Business',
     'New Business' => 'New Business',
   ),
+  //END SUGARCRM flav=pro ONLY
   'moduleList' =>
   array (
     'Home' => 'Home',
@@ -159,7 +161,12 @@ function test_dropdown_fixed() {
 
     unset($GLOBALS['app_list_strings']);
     require('custom/include/language/en_us.lang.php');
+    //BEGIN SUGARCRM flav=pro ONLY
     $this->assertEquals(3, count($GLOBALS['app_list_strings']));
+    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=com ONLY
+    $this->assertEquals(2, count($GLOBALS['app_list_strings']));
+    //END SUGARCRM flav=com ONLY
     $this->assertTrue(isset($GLOBALS['app_list_strings']['moduleList']['my_personal_module']));
     $this->assertEquals($GLOBALS['app_list_strings']['moduleList']['Accounts'],'Accounts Module');
     $this->assertEquals(count($GLOBALS['app_strings']),1);
