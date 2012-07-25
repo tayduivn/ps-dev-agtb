@@ -6,6 +6,9 @@
     getImages: function () {
         var self = this;
         var user = "kdao@sugarcrm.com";
+        var name = this.model.get("name");
+        if(!name)name = this.model.get('account_name');
+        if(!name)name = this.model.get('full_name');
         var pwd = "+CTtuUW+uJeXKskFMauJguo7bcagh5RvculJnKu9kuA=";
         $.support.cors = true;
         $.ajax ({
@@ -15,7 +18,8 @@
                 var base64 = Crypto.util.bytesToBase64( bytes );
                 xhr.setRequestHeader("Authorization", "Basic " + base64);
             },
-            url: "https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Image?Query=%27prague%27&$top=12&$format=json",
+
+            url: "https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Image?Query=%27" + name + "%27&$top=12&$format=json",
             dataType: "json",
             success: function ( data ) { // this == success function
                 self.pictures = [];
