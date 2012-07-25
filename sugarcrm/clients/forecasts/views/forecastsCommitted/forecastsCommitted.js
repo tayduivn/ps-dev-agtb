@@ -72,13 +72,27 @@
      */
     showButton : true,
 
+    /**
+     * Template to use when updating the bestCase on the committed bar
+     */
+    bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
+
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
-        this.forecastType = app.user.get('isManager') ? 'Rollup' : 'Direct';
+        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
+        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+
+        this.bestCase = 0;
+        this.likelyCase = 0;
     },
 
     updateCommitted: function() {
@@ -106,6 +120,7 @@
 
         this._collection = this.context.forecasts.committed;
         this._collection.on("reset", function() { self.buildForecastsCommitted() }, this);
+        this._collection.on("change", function() { self.buildForecastsCommitted(); }, this);
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
@@ -113,6 +128,7 @@
                 self.userId = user.id;
                 self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                self.selectedUser = user;
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
@@ -120,9 +136,76 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                self.totals = totals;
+                var user = this.context.forecasts.get('selectedUser');
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                    return;
+                }
+                self.updateTotals(totals);
+            }, this);
+            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+                if(self.selectedUser.isManager && self.selectedUser.showOpps == false) {
+                    self.updateTotals(totals);
+                }
             }, this);
         }
+    },
+
+    /**
+     * Common code to update the totals
+     *
+     * @param totals
+     */
+    updateTotals : function (totals) {
+        var self = this;
+        if(self.totals != totals) {
+            this.$el.find('a[id=commit_forecast]').removeClass('disabled');
+
+            var best = {};
+            var likely = {};
+            // get the last committed value
+            var previousCommit = _.first(this._collection.models);
+            if(_.isEmpty(previousCommit)) return;
+            if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                // management view
+                best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
+                best.bestCase = totals.best_adjusted;
+                likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
+                likely.likelyCase = totals.likely_adjusted;
+            } else {
+                // sales rep view
+                best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
+                best.bestCase = totals.best_case;
+                likely.likelyCaseCls = this.getColorArrow(totals.likely_case, previousCommit.get('likely_case'));
+                likely.likelyCase = totals.likely_case;
+            }
+
+            self.bestCaseCls = best.bestCaseCls;
+            self.bestCase = best.bestCase;
+            self.likelyCaseCls = likely.likelyCaseCls;
+            self.likelyCase = likely.likelyCase;
+
+            $('h2#best').html(this.bestTemplate(best));
+            $('h2#likely').html(this.likelyTemplate(likely));
+        }
+
+        self.totals = totals;
+    },
+
+    /**
+     * Utility method to get the arrow and color depending on how the values match up.
+     *
+     * @param newValue
+     * @param currentValue
+     * @return {String}
+     */
+    getColorArrow: function(newValue, currentValue)
+    {
+        var cls = '';
+
+        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        cls = (newValue == currentValue) ? '' : cls;
+
+        return cls
     },
 
     buildForecastsCommitted: function() {
@@ -136,16 +219,12 @@
         self.previousText = "Previous Commit: 0";
         self.previousLikelyCase = 0;
         self.previousBestCase = 0;
-        self.bestCase = 0;
-        self.likelyCase = 0;
 
         _.each(self._collection.models, function(model)
         {
             //Get the first entry
             if(count == 0)
             {
-              self.bestCase = model.get('best_case');
-              self.likelyCase = model.get('likely_case');
               previousModel = model;
             } else {
               if(count == 1)
@@ -168,6 +247,8 @@
         }
 
         self.render();
+
+        this.$el.find('a[id=commit_forecast]').addClass('disabled');
     },
 
     createHistoryLog: function(current, previousModel) {
@@ -243,33 +324,37 @@
     commitForecast: function() {
         var self = this;
 
+        var btn = this.$el.find('a[id=commit_forecast]');
+
+        if(btn.hasClass('disabled')) {
+            return false;
+        }
+
+        btn.addClass('disabled');
+
         //If the totals have not been set, don't save
         if(!self.totals)
         {
            return;
         }
 
-        //If there was a previous entry, check to make sure values have changed
-        if(self.previous &&
-            (self.totals.best_case == self.previous.best_case &&
-             self.totals.likely_case == self.previous.likely_case &&
-             self.totals.timeperiod_id == self.previous.timeperiod_id))
-        {
-           return;
-        }
-
         var forecast = new Backbone.Model();
         forecast.url = self.url;
-        forecast.set('best_case', self.totals.best_case);
-        forecast.set('likely_case', self.totals.likely_case);
-        forecast.set('timeperiod_id', self.totals.timeperiod_id);
+        var user = this.context.forecasts.get('selectedUser');
+        if(user.isManager == true && user.showOpps == false) {
+            forecast.set('best_case', self.totals.best_adjusted);
+            forecast.set('likely_case', self.totals.likely_adjusted);
+        } else {
+            forecast.set('best_case', self.totals.best_case);
+            forecast.set('likely_case', self.totals.likely_case);
+        }
+        forecast.set('timeperiod_id', self.timePeriodId);
         forecast.set('forecast_type', self.forecastType);
         forecast.set('amount', self.totals.amount);
         forecast.set('opp_count', self.totals.opp_count);
         forecast.save();
         self.previous = self.totals;
         self._collection.url = self.url;
-        self._collection.add(forecast);
-        self.updateCommitted();
+        self._collection.unshift(forecast);
     }
 })

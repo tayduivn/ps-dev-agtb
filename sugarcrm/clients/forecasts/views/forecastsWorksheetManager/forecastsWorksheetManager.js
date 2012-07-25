@@ -101,7 +101,7 @@
         if(this._collection)
         {
             this._collection.on("reset", function(){
-            	$.when(this.calculateTotals(), this.render());
+            	this.render();
             }, this);
         }
         // listening for updates to context for selectedUser:change
@@ -153,7 +153,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit === true && this.selectedUser.id.localeCompare(app.user.get('id')) == 0) {
+        if (field.viewName !="edit" && field.def.clickToEdit === true && _.isEqual(this.selectedUser.id, app.user.get('id'))) {
             field = new app.view.ClickToEditField(field, this);
         }
     },
@@ -199,6 +199,7 @@
                 }
             });
         }
+        this.calculateTotals();
         this.totalView.render();
     },
     
@@ -238,7 +239,8 @@
             'likely_case' : likely_case,
             'likely_adjusted' : likely_adjusted
         };
-        
+
+        this.context.forecasts.set("updatedManagerTotals", totals);
     },
     
     
