@@ -613,8 +613,9 @@ class SugarApplication
         }
 
 		if($row_count == 0 && empty($GLOBALS['sugar_config']['disc_client'])){
+			$sugar_version = $GLOBALS['sugar_version'];
 			if ( $dieOnFailure )
-				sugar_die($GLOBALS['app_strings']['ERR_DB_VERSION']);
+				sugar_die("Sugar CRM $sugar_version Files May Only Be Used With A Sugar CRM $sugar_db_version Database.");
 			else
 			    return false;
 		}
