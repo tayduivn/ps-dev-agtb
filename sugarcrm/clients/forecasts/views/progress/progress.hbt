@@ -71,7 +71,7 @@
 		</td>
 		<td>
 			<div>Pipeline Size</div>
-			<div>{{pipelineSize}}x</div>
+			<div>{{pipeline}}x</div>
 		</td>
 	</tfoot>
 </table>
