@@ -10,6 +10,9 @@
         if(!name)name = this.model.get('full_name');
         var self = this;
 
+
+        name = 'SugarCRM';
+
         if (name){
             console.log(name);
             var script= "";

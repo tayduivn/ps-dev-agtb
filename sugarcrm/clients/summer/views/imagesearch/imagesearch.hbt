@@ -2,11 +2,11 @@
 
 
 
- <div class="imagesearch-widget">
+ <div class="imagesearch-widget" style="width: 450px">
         {{#each pictures}}
 
         <a href="{{this.sourceUrl}}" target="_blank">
-            <img src="{{this.mediaUrl}}" style="height:100px; width:100px"/ alt>
+            <img src="{{this.mediaUrl}}" style="height:100px; width:100px"/>
          </a>
 
         {{/each}}
