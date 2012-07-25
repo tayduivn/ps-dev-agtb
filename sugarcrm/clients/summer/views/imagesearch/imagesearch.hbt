@@ -1,6 +1,6 @@
 
 
-
+<h2>Images</h2>
 
  <div class="imagesearch-widget" style="width: 450px">
         {{#each pictures}}

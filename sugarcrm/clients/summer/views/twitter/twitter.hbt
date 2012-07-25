@@ -1,3 +1,8 @@
 <div class="twitter-profile">
-test
+    <h2>Tweets</h2>
+    {{#each tweets}}
+    {{#if this.source}}
+        <a href={{this.source}} target="_blank">{{this.text}}</a></br><br>
+    {{/if}}
+    {{/each}}
 </div>
