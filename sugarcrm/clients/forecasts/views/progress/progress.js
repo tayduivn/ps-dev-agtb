@@ -15,6 +15,8 @@
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
         this.model = this.context.forecasts.progress;
+        this.selectedUser = this.context.forecasts.get("selectedUser");
+        this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
         this.likelyTotal = 0;
         this.bestTotal = 0;
         this.worksheetCollection = this.context.forecasts.worksheet;
@@ -33,7 +35,15 @@
             this.worksheetManagerCollection.on('change reset', this.recalculate);
         }
         if (this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser change:selectedTimePeriod", this.updateProgressForSelectedUser);
+            this.context.forecasts.on("change:selectedUser",
+            function(context, selectedUser) {
+                this.updateProgressForSelectedUser(selectedUser);
+            }, this);
+
+            this.context.forecasts.on("change:selectedTimePeriod",
+            function(context, selectedTimePeriod) {
+                this.updateProgressForSelectedTimePeriod(selectedTimePeriod);
+            }, this);
         }
     },
 
@@ -55,8 +65,7 @@
         return 0;
     },
 
-    calculateLikelyToQuota: function () {
-        var quota = this.model.get('quota');
+    calculateLikelyToQuota: function (quota) {
         if(quota == undefined) {
             quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
         }
@@ -66,11 +75,10 @@
         quota.likely_case.above = this.checkIsAbove(this.likelyTotal, quota.amount);
         quota.likely_case.percent = this.getPercent(this.likelyTotal, quota.amount);
 
-        this.model.set('quota', quota);
+        return quota;
     },
 
-    calculateBestToQuota: function () {
-        var quota = this.model.get('quota');
+    calculateBestToQuota: function (quota) {
         if(quota == undefined) {
             quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
         }
@@ -80,11 +88,10 @@
         quota.best_case.above = this.checkIsAbove(this.bestTotal, quota.amount);
         quota.best_case.percent = this.getPercent(this.bestTotal, quota.amount);
 
-        this.model.set('quota', quota);
+        return quota;
     },
 
-    calculateLikelyToClose: function () {
-        var closed = this.model.get('closed');
+    calculateLikelyToClose: function (closed) {
 
         if(closed == undefined) {
             closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
@@ -92,24 +99,23 @@
         closed.amount = parseInt(closed.amount, 10);
 
         closed.likely_case.amount = this.getAbsDifference(this.likelyTotal, closed.amount);
-        closed.likely_case.above = this.checkIsAbove(this.likelyTotal, closed.amount);
-        closed.likely_case.percent = this.getPercent(this.likelyTotal, closed.amount);
+        closed.likely_case.above = this.checkIsAbove(closed.amount, this.likelyTotal );
+        closed.likely_case.percent = this.getPercent(closed.amount, this.likelyTotal);
 
-        this.model.set('closed', closed);
+        return closed;
     },
 
-    calculateBestToClose: function () {
-        var closed = this.model.get('closed');
+    calculateBestToClose: function (closed) {
         if(closed == undefined) {
             closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
         }
         closed.amount = parseInt(closed.amount, 10);
 
         closed.best_case.amount = this.getAbsDifference(this.bestTotal, closed.amount);
-        closed.best_case.above = this.checkIsAbove(this.bestTotal, closed.amount);
-        closed.best_case.percent = this.getPercent(this.bestTotal, closed.amount);
+        closed.best_case.above = this.checkIsAbove(closed.amount, this.bestTotal);
+        closed.best_case.percent = this.getPercent(closed.amount, this.bestTotal);
 
-        this.model.set('closed', closed);
+        return closed
     },
 
     reduceWorksheet: function(attr) {
@@ -131,61 +137,77 @@
     },
 
     calculateBases: function () {
-        var currentUser = this.context.forecasts.get("selectedUser");
+        var quota = this.model.get('quota');
 
-        if(currentUser.isManager === true && currentUser.showOpps === false) {
+        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
             this.likelyTotal = this.reduceWorksheetManager('likely_case');
             this.bestTotal = this.reduceWorksheetManager('best_case');
             this.model.set('revenue', this.reduceWorksheetManager('amount'));
             this.revenue = this.model.get('revenue');
+            quota.amount = this.reduceWorksheetManager('quota');
         } else {
             this.likelyTotal = this.reduceWorksheet('likely_case');
             this.bestTotal = this.reduceWorksheet('best_case');
-            this.model.set('revenue', this.reduceWorksheet('amount'));
+            this.model.set('quota', this.reduceWorksheet('amount'));
             this.revenue = this.model.get('revenue');
+            //quota.amount = this.reduceWorksheet('quota');
         }
+
+        this.model.set('quota', quota);
+        this.quota = quota;
     },
-    
-    calculatePipelineSize: function () {
+
+    calculatePipelineSize: function (likelyTotal, revenue) {
         var ps = 0;
 
-        if ( this.likelyTotal > 0 ) {
-            ps = this.model.get('revenue') / this.likelyTotal;
+        if ( likelyTotal > 0 ) {
+            ps = revenue / likelyTotal;
 
             // Round to 1 decimal place
             ps = Math.round( ps * 10 )/10;
         }
 
         // This value is used in the template.
-        this.model.set('pipeline',ps);
+        return ps;
     },
 
     recalculate: function () {
         this.calculateBases();
-        this.calculatePipelineSize();
-        this.calculateBestToClose();
-        this.calculateBestToQuota();
-        this.calculateLikelyToClose();
-        this.calculateLikelyToQuota();
+        this.model.set('pipeline', this.calculatePipelineSize(this.likeTotal, this.model.get('revenue')));
+        this.model.set('closed', this.calculateBestToClose(this.model.get('closed')));
+        this.model.set('quota', this.calculateBestToQuota(this.model.get('quota')));
+        this.model.set('closed', this.calculateLikelyToClose(this.model.get('closed')));
+        this.model.set('quota', this.calculateLikelyToQuota(this.model.get('quota')));
         this.render();
     },
 
     _render: function () {
+        console.log(this);
         _.extend(this, this.model.toJSON());
         app.view.View.prototype._render.call(this);
     },
 
-    updateProgressForSelectedUser: function (context, user) {
-        var self = this;
-        var getRollup = false;
-        var selectedUser = self.context.forecasts.get("selectedUser");
+    updateProgressForSelectedTimePeriod: function (selectedTimePeriod) {
+        this.seletedTimePeriod = selectedTimePeriod;
+        this.updateProgress();
 
-        if(selectedUser.isManager === true && selectedUser.showOpps === false)
+    },
+
+    updateProgressForSelectedUser: function (selectedUser) {
+        this.selectedUser = selectedUser;
+        this.updateProgress();
+    },
+
+    updateProgress: function () {
+        var getRollup = false;
+        var self = this;
+
+        if(self.selectedUser.isManager === true && self.selectedUser.showOpps === false)
             getRollup = true;
 
         var urlParams = $.param({
-            user_id: selectedUser.id,
-            timePeriodId: self.context.forecasts.get("selectedTimePeriod").id,
+            user_id: self.selectedUser.id,
+            timePeriodId: self.selectedTimePeriod.id,
             shouldRollup: getRollup ? 1 : 0
         });
         this.model.fetch({
