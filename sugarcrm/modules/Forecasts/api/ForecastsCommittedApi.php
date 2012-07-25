@@ -118,6 +118,9 @@ class ForecastsCommittedApi extends ModuleApi {
     public function forecastsCommit($api, $args)
     {
         global $current_user;
+
+        $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
+
         $forecast = BeanFactory::getBean('Forecasts');
         $forecast->user_id = $current_user->id;
         $forecast->timeperiod_id = $args['timeperiod_id'];
