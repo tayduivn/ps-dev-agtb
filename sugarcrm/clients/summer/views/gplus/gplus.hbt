@@ -1,1 +1,23 @@
-test
+<h2>G+</h2>
+
+<div class='activityContainer'>
+    <ul class="gmail-list">
+        {{#each items}}
+        <li>
+            <div class="mailentry">
+                <div class="gplusActorImage"><img src="{{this.attributes.actor.image.url}}" style=""></div>
+                <div class="gplusPost">
+                    <div class="gmail-from"><strong>{{this.attributes.actor.displayName}}</strong><span
+                            class="from"></span></div>
+                    <div class=""><span class="gplusStreamAddtional">{{this.attributes.title}}</span></div>
+                    <div class="timeago"><span class="gplusStreamLink">{{formatdate this.attributes.published}}
+                            &nbsp;<a href="{{this.attributes.url}}" target="_blank">More info...</a></div>
+                </div>
+            </div>
+            </a>
+        </li>
+        {{/each}}
+    </ul>
+
+</div>
+</div>
