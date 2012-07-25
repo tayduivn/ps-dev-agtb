@@ -77,7 +77,7 @@
 
         app.view.View.prototype._renderField.call(this, field);
 
-        /*
+
         if (this.isMyWorksheet() && field.def.clickToEdit === true) {
             new app.view.ClickToEditField(field, this);
         }
@@ -85,7 +85,7 @@
         if( this.isMyWorksheet() && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this);
         }
-        */
+
     },
 
     bindDataChange: function(params) {

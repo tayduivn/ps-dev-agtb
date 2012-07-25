@@ -190,6 +190,36 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $restReply = $this->_restCall("ForecastManagerWorksheets/");
 
         $this->assertEmpty($restReply['reply'], "rest reply is not empty");
+
+        //bug 54619:
+        //Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers
+        //if no update was done by sales manager
+
+        $this->reportee->reports_to_id = $GLOBALS['current_user']->id;
+        $this->reportee->save();
+
+        $repWorksheet->deleted = 1;
+        $repWorksheet->save();
+
+        $repData['best_adjusted'] = $repData['best_case'];
+        $repData['likely_adjusted'] = $repData['likely_case'];
+        $repData['worst_adjusted'] = $repData['worst_case'];
+        $repData['forecast'] = 0;
+        $repData['worksheet_id'] = '';
+
+        $restReply = $this->_restCall("ForecastManagerWorksheets/");
+
+        $this->assertEquals($repData, $restReply['reply'][1], "Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers" );
+
+        //bug 54655:
+        //Blank line in the manager data grid after deleting user
+
+        $this->reportee->deleted = 1;
+        $this->reportee->save();
+
+        $restReply = $this->_restCall("ForecastManagerWorksheets/");
+
+        $this->assertNull($restReply['reply'][1], "deleted user's data should not be listed in worksheet table");;
     }
 
 }

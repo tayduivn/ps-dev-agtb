@@ -67,5 +67,12 @@
         };
         options.limit = this.limit;
         this.collection.paginate(options);
+    },
+    _render: function(){
+        // Bug 54597 activity view not respecting list ACL
+        var oViewName = this.name;
+        this.name = 'list';
+        app.view.View.prototype._render.call(this);
+        this.name = oViewName;
     }
 })

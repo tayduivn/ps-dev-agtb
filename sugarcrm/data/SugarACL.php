@@ -40,7 +40,7 @@ class SugarACL
     /**
      * Load bean from context
      * @static
-     * @param $module
+     * @param string $module
      * @param array $context
      * @return SugarBean
      */
@@ -211,7 +211,7 @@ class SugarACL
      * @param string $module
      * @param array $list list of fields, keys are field names
      * @param array $context
-     * @param array options Filtering options:
+     * @param array $options Filtering options:
      * - blank_value (bool) - instead of removing inaccessible field put '' there
      * - add_acl (bool) - instead of removing fields add 'acl' value with access level
      * - suffix (string) - strip suffix from field names

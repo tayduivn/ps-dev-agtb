@@ -48,8 +48,8 @@ class BeanVisibility
     protected $bean;
 
     /**
-     * @param array $metadata
      * @param SugarBean $bean
+     * @param array $metadata
      */
     public function __construct($bean, $metadata)
     {
