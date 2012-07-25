@@ -1,4 +1,7 @@
 (function($){
+	/**
+	 * Custom sort method for checkboxes. Set sSortDataType:"dom-checkbox" to use
+	 */
 	$.fn.dataTableExt.afnSortData['dom-checkbox'] = function  ( oSettings, iColumn )
 	{
 		var aData = [];

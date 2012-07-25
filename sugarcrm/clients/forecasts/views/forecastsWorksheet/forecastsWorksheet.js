@@ -251,12 +251,10 @@
             var fieldDef = { "sName": name, "aTargets": [ key ] };
             if(typeof(field.type) != "undefined" && field.type == "bool"){
             	fieldDef["sSortDataType"] = "dom-checkbox";
-            	console.log("here");
             }
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
         });
-        console.log(columnDefs);
         
         this.gTable = this.$('.worksheetTable').dataTable(
             {
