@@ -829,6 +829,9 @@ class MssqlManager extends DBManager
 				if($containsCommaPos !== false) {
 					$col_name = substr($col_name, $containsCommaPos+1);
 				}
+                //add the "asc/desc" order back
+                $col_name = $col_name. " ". $asc_desc;
+
                 //return column name
                 return $col_name;
             }
