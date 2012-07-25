@@ -113,6 +113,18 @@ function get_row_remap(& $row, & $reporter) {
     $row_remap['group_base_text'] = strip_tags($row_remap['group_base_text']);
     //end jclark fix
 
+    // Bug #54294: We should add currency symbol to row_remap
+    $row_remap['numerical_is_currency'] = false;
+    if (!empty($row['cells'][$reporter->chart_numerical_position]['key']))
+    {
+        $fieldKey = $row['cells'][$reporter->chart_numerical_position]['key'];
+        $fieldDef = $reporter->all_fields[$fieldKey];
+        if ($fieldDef['type'] == 'currency')
+        {
+            $row_remap['numerical_is_currency'] = true;
+        }
+    }
+
     return $row_remap;
 
 }
@@ -289,8 +301,10 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 
 		$sugarChart = SugarChartFactory::getInstance('','Reports');
 
-        $sugarChart->setData($chart_rows);
-		$sugarChart->setProperties($chartTitle, '', $chartType,'on','value','on',$reporter->label_name,$reporter->value_name);
+
+		$sugarChart->setData($chart_rows);
+
+        $sugarChart->setProperties($chartTitle, '', $chartType, 'on', 'value', 'on', $do_thousands, $reporter->label_name, $reporter->value_name);
 
 		$xmlFile = get_cache_file_name($reporter);
 

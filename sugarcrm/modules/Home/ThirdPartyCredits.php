@@ -71,6 +71,12 @@ $credits = array(
             'description' => 'Italian Language Pack by OpenSymbol',
             'website' => 'www.opensymbol.it',
         ),
+        'lv_LV' => array (
+                    'name' => 'Latvian Language Pack',
+                    'author' => 'Exigen Services',
+                    'description' => 'Latvian Language Pack by Exigen Services',
+                    'website' => 'www.exigenservices.com',
+        ),
         'lt_LT' => array (
             'name' => 'Lithuanian Language Pack',
             'author' => 'OptimusCRM',

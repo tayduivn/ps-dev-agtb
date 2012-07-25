@@ -31,7 +31,7 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $api = new RestService();
 
-        $bugsBean = BeanFactory::newBean('Bugs');
+        $bugsBean = BeanFactory::newBean('Accounts');
 
         $helper = ApiHelper::getHelper($api,$bugsBean);
 
