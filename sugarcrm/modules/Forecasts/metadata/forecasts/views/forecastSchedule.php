@@ -18,6 +18,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_amount',
                     'label' => 'LBL_EXPECTED_AMOUNT',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true

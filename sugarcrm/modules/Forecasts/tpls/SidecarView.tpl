@@ -53,7 +53,6 @@
                           <div>
                               <div id="view-sales-rep" style="display:none">
                                   <div class="view-forecastsWorksheet"></div>
-                                  <div class="view-forecastSchedule"></div>
                               </div>
                               <div id="view-manager" style="display:none">
                                   <div class="view-forecastsWorksheetManager"></div>

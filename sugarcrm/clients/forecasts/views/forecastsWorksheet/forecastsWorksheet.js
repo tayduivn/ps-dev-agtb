@@ -301,9 +301,15 @@
             });
         }
 
+        var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
+        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta});
+        $(".view-forecastSchedule").empty();
+        $(".view-forecastSchedule").html(view.el);
+        //$(".view-forecastSchedule").append(view.$el);
+        view.render();
+
         this.includedView.render();
         this.overallView.render();
-
     },
 
     /**

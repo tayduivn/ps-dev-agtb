@@ -1,13 +1,14 @@
 /**
- * View that displays header for current app
- * @class View.Views.WorksheetView
- * @alias SUGAR.App.layout.WorksheetView
+ * View that displays expected opportunities
  * @extends View.View
  */
 ({
 
     url: 'rest/v10/ForecastSchedule',
-    viewSelector: '.forecastSchedule',
+    tagName: 'tr',
+    class: 'view-forecastSchedule',
+    id: 'expected_opportunities',
+    //viewSelector: '.forecastSchedule',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -74,18 +75,15 @@
      * @protected
      */
     _renderField: function(field) {
-
         app.view.View.prototype._renderField.call(this, field);
 
-
-        if (this.isMyWorksheet() && field.def.clickToEdit === true) {
+        if (this.showMe() && field.def.clickToEdit === true) {
             new app.view.ClickToEditField(field, this);
         }
 
-        if( this.isMyWorksheet() && field.name == "commit_stage") {
+        if( this.showMe() && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this);
         }
-
     },
 
     bindDataChange: function(params) {
@@ -125,37 +123,6 @@
         });
         return app.config.showBuckets?forecastField:commitStageField;
     },
-
-
-    _renderHtml: function(ctx, options) {
-        if (this.template) {
-            try {
-                this.$el = $("expected_opportunities");
-                debugger;
-                this.$el.html(this.template(ctx || this, options || this.options.templateOptions));
-                this.delegateEvents();
-            } catch (e) {
-                app.logger.error("Failed to render " + this + "\n" + e);
-                // TODO: trigger app event to render an error message
-            }
-        }
-    },
-
-    /*
-    _render: function () {
-        if(!this.showMe())
-        {
-        	return false;
-        }
-        var self = this;
-        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
-        app.view.View.prototype._render.call(this);
-        var source = $("#expected_template").html();
-        var hb = Handlebars.compile(source);
-        $("#expected_opportunities").html(hb(self._collection.toJSON()));
-        return this;
-    },
-    */
 
     /**
      * Add a click event listener to the commit button

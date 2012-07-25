@@ -1,10 +1,9 @@
-OUTER
 {{#each meta.panels}}
-    PANELS
     {{#each ../_collection.models}}
-        COLLECTION
         {{#each ../fields}}
-            {{#if enabled}}<td>{{field ../../../../this ../../this}}</td>{{/if}}
+            {{#if enabled}}
+                <td>{{field ../../../../this ../../this}}</td>
+            {{/if}}
         {{/each}}
     {{/each}}
 {{/each}}
