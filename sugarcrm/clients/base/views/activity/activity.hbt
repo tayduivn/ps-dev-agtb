@@ -37,6 +37,5 @@
                 </div>
                 {{/notEq}}
                 {{/if}}
-            </div>
-        </div>
-    </div>
+
+

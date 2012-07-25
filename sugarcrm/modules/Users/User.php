@@ -854,9 +854,9 @@ EOQ;
 	    if(empty($user_hash)) return false;
 	    if($user_hash[0] != '$' && strlen($user_hash) == 32) {
 	        // Old way - just md5 password
-	        return strtolower($password_md5) == $user_hash;
+	        return strtolower($password_md5) === $user_hash;
 	    }
-	    return crypt(strtolower($password_md5), $user_hash) == $user_hash;
+	    return crypt(strtolower($password_md5), $user_hash) === $user_hash;
 	}
 
 	/**

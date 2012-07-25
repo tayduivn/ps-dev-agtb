@@ -3947,7 +3947,7 @@ protected function checkQuery($sql, $object_name = false)
         return $sql;
     }
 
-    /*
+    /**
      * Returns a DB specific FROM clause which can be used to select against functions.
      * Note that depending on the database that this may also be an empty string.
      * @abstract
