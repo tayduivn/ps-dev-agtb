@@ -238,7 +238,8 @@
             'likely_case' : likely_case,
             'likely_adjusted' : likely_adjusted
         };
-        
+
+        this.context.forecasts.set("updatedManagerTotals", totals);
     },
     
     

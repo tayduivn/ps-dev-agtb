@@ -62,12 +62,6 @@ class ForecastsCommittedApi extends ModuleApi {
 
         $timedate = TimeDate::getInstance();
 
-        $forecast_type = 'Direct';
-        if(isset($args['forecast_type']))
-        {
-           $forecast_type = clean_string($args['forecast_type']);
-        }
-
         $user_id = $current_user->id;
         if(isset($args['user_id']) && $args['user_id'] != $current_user->id)
         {
@@ -77,6 +71,12 @@ class ForecastsCommittedApi extends ModuleApi {
                $GLOBALS['log']->error(string_format($mod_strings['LBL_ERROR_NOT_MANAGER'], array($current_user->id, $user_id)));
                return array();
            }
+        }
+
+        $forecast_type = (User::isManager($user_id)) ? 'Rollup' : 'Direct';
+        if(isset($args['forecast_type']))
+        {
+           $forecast_type = clean_string($args['forecast_type']);
         }
 
         $timeperiod_id = TimePeriod::getCurrentId();
@@ -101,7 +101,7 @@ class ForecastsCommittedApi extends ModuleApi {
             $order_by = clean_string($args['order_by']);
         }
 
-        $bean = new Forecast();
+        $bean = BeanFactory::getBean('Forecasts');;
         $query = $bean->create_new_list_query($order_by, $where, array(), array(), $include_deleted);
         $results = $GLOBALS['db']->query($query);
 
@@ -118,7 +118,7 @@ class ForecastsCommittedApi extends ModuleApi {
     public function forecastsCommit($api, $args)
     {
         global $current_user;
-        $forecast = new Forecast();
+        $forecast = BeanFactory::getBean('Forecasts');
         $forecast->user_id = $current_user->id;
         $forecast->timeperiod_id = $args['timeperiod_id'];
         $forecast->best_case = $args['best_case'];
@@ -130,6 +130,8 @@ class ForecastsCommittedApi extends ModuleApi {
             $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
         }
         $forecast->save();
+
+        return $forecast->toArray(true);
     }
 
 }
