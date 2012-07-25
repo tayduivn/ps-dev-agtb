@@ -72,6 +72,16 @@
      */
     showButton : true,
 
+    /**
+     * Template to use when updating the bestCase on the committed bar
+     */
+    bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
+
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
@@ -79,6 +89,10 @@
         this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
+        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+
+        this.bestCase = 0;
+        this.likelyCase = 0;
     },
 
     updateCommitted: function() {
@@ -114,6 +128,7 @@
                 self.userId = user.id;
                 self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                self.selectedUser = user;
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
@@ -122,26 +137,75 @@
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
                 var user = this.context.forecasts.get('selectedUser');
-                if(user.isManager == true && user.showOpps === false) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                var user = this.context.forecasts.get('selectedUser');
-                if(user.isManager && user.showOpps == false) {
+                if(self.selectedUser.isManager && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
             }, this);
         }
     },
 
+    /**
+     * Common code to update the totals
+     *
+     * @param totals
+     */
     updateTotals : function (totals) {
         var self = this;
-        if(!_.isEmpty(self.totals) && self.totals != totals) {
+        if(self.totals != totals) {
             this.$el.find('a[id=commit_forecast]').removeClass('disabled');
+
+            var best = {};
+            var likely = {};
+            // get the last committed value
+            var previousCommit = _.first(this._collection.models);
+            if(_.isEmpty(previousCommit)) return;
+            if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                // management view
+                best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
+                best.bestCase = totals.best_adjusted;
+                likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
+                likely.likelyCase = totals.likely_adjusted;
+            } else {
+                // sales rep view
+                best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
+                best.bestCase = totals.best_case;
+                likely.likelyCaseCls = this.getColorArrow(totals.likely_case, previousCommit.get('likely_case'));
+                likely.likelyCase = totals.likely_case;
+            }
+
+            self.bestCaseCls = best.bestCaseCls;
+            self.bestCase = best.bestCase;
+            self.likelyCaseCls = likely.likelyCaseCls;
+            self.likelyCase = likely.likelyCase;
+
+            $('h2#best').html(this.bestTemplate(best));
+            $('h2#likely').html(this.likelyTemplate(likely));
         }
+
         self.totals = totals;
+    },
+
+    /**
+     * Utility method to get the arrow and color depending on how the values match up.
+     *
+     * @param newValue
+     * @param currentValue
+     * @return {String}
+     */
+    getColorArrow: function(newValue, currentValue)
+    {
+        var cls = '';
+
+        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        cls = (newValue == currentValue) ? '' : cls;
+
+        return cls
     },
 
     buildForecastsCommitted: function() {
@@ -155,16 +219,12 @@
         self.previousText = "Previous Commit: 0";
         self.previousLikelyCase = 0;
         self.previousBestCase = 0;
-        self.bestCase = 0;
-        self.likelyCase = 0;
 
         _.each(self._collection.models, function(model)
         {
             //Get the first entry
             if(count == 0)
             {
-              self.bestCase = model.get('best_case');
-              self.likelyCase = model.get('likely_case');
               previousModel = model;
             } else {
               if(count == 1)
@@ -173,12 +233,6 @@
                   self.previousText = hb({'likely_case' : model.get('likely_case')});
                   self.previousLikelyCase = model.get('likely_case');
                   self.previousBestCase = model.get('best_case');
-
-                  self.bestCaseCls = (self.bestCase > self.previousBestCase) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-                  self.bestCaseCls = (self.bestCase == self.previousBestCase) ? '' : self.bestCaseCls;
-                  self.likelyCaseCls = (self.likelyCase > self.previousLikelyCase) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-                  self.likelyCaseCls = (self.likelyCase == self.previousLikelyCase) ? '' : self.likelyCaseCls;
-
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
