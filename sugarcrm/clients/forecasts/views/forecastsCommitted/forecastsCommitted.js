@@ -156,7 +156,9 @@
                   self.previousLikelyCase = model.get('likely_case');
                   self.previousBestCase = model.get('best_case');
                   var dateEntered = new Date(model.get('date_entered'));
-                  self.previousDateEntered = App.utils.date.format(dateEntered, App.user.get('datepref') + ' ' + App.user.get('timepref'));
+                  //self.previousDateEntered = App.utils.date.format(dateEntered, App.user.get('datepref') + ' ' + App.user.get('timepref'));
+                  // TODO: user preferences are not working for formatting dates, hard code for now
+                  self.previousDateEntered = App.utils.date.format(dateEntered, 'Y-m-d \\at g:i a');
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
