@@ -117,67 +117,6 @@
         });
 
 
-        var ExpectedOpportunitiesView = app.view.View.extend({
-            id : 'expected_opportunities',
-            tagName : 'tr',
-
-            initialize: function() {
-                //app.view.View.prototype.initialize.call(this, options);
-                _.bindAll(this, 'render');
-                this.collection.bind('change', this.render);
-            },
-
-            _renderField: function(field) {
-                app.view.View.prototype._renderField.call(self, field);
-
-                if (self.isMyWorksheet() && field.viewName != "edit" && field.def.clickToEdit === true) {
-                    new app.view.ClickToEditField(field, this);
-                }
-            },
-
-            render: function() {
-                var self = this;
-                var source   = $("#expected_template").html();
-                //var hb = Handlebars.compile(source);
-                //$('#expected_opportunities').html(hb("{test:'hello'}"));
-
-                var fields = [
-                    {
-                        name : 'expected_amount',
-                        sfId : 'expected_amount_sf_id',
-                        viewName : 'detail',
-                        type : 'int',
-                        field : { def: { clickToEdit : true }}
-                    },
-                    {
-                        name : 'expected_best_case',
-                        sfId : 'expected_best_case_sf_id',
-                        viewName : 'detail',
-                        type : 'int',
-                        field : { def: { clickToEdit : true }}
-                    },
-                    {
-                        name : 'expected_likely_case',
-                        sfId : 'expected_likely_case_sf_id',
-                        viewName : 'detail',
-                        type : 'int',
-                        field : { def: { clickToEdit : true }}
-                    }
-                ];
-
-                _.each(fields, function (value, key) {
-                    //app.view.View.prototype._renderField.call(self, value);
-                });
-
-                return this;
-            }
-        });
-
-        this.expectedOpportunitiesView = new ExpectedOpportunitiesView({
-            collection : this.context.forecasts.forecastschedule
-        });
-
-
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
@@ -261,15 +200,6 @@
                 }, this);
             }, this);
         }
-
-        this.context.on("change:selectedToggle",
-            function(context, toggle) {
-                self._collection.url = self.url;
-                model = toggle.model;
-                model.set('forecast', (toggle.value === true) ? false : true);
-                model.save(null, {wait: true});
-                self.refresh();
-            }, this);
 
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
@@ -371,7 +301,6 @@
             });
         }
 
-        this.expectedOpportunitiesView.render();
         this.includedView.render();
         this.overallView.render();
 
@@ -449,6 +378,7 @@
         self.includedModel.set('includedAmount', includedAmount);
         self.includedModel.set('includedBest', includedBest);
         self.includedModel.set('includedLikely', includedLikely);
+        self.includedModel.set('includedCount', includedCount);
 
         self.overallModel.set('overallAmount', overallAmount);
         self.overallModel.set('overallBest', overallBest);

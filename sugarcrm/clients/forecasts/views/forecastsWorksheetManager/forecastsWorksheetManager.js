@@ -63,15 +63,8 @@
 
             render: function() {
                 var self = this;
-                var hb = Handlebars.compile("<tr>" + 
-                								"<td>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts")  + "</td>" +
-                								"<td>{{amount}}</td>" + 
-                								"<td>{{quota}}</td>" + 
-                								"<td>{{best_case}}</td>" + 
-                								"<td>{{best_adjusted}}</td>" +
-                								"<td>{{likely_case}}</td>" + 
-                								"<td>{{likely_adjusted}}</td>" +
-                							"</tr>");
+                var source = $("#overall_manager_template").html();
+                var hb = Handlebars.compile(source);
                 $('#summaryManager').html(hb(self.model.toJSON()));
                 return this;
             }

@@ -24,17 +24,13 @@ require_once('include/api/ModuleApi.php');
 
 class ForecastScheduleApi extends ModuleApi {
 
-    public function __construct()
-    {
-
-    }
-
     /**
      *
      * @return array Array of api definitions for ForecastSchedule module
      */
     public function registerApiRest()
     {
+
         $parentApi= array (
             'forecastSchedule' => array(
                 'reqType' => 'GET',
@@ -54,6 +50,8 @@ class ForecastScheduleApi extends ModuleApi {
             )
         );
         return $parentApi;
+
+        return parent::registerApiRest();
     }
 
     /**
@@ -89,7 +87,8 @@ class ForecastScheduleApi extends ModuleApi {
         {
             $data[] = $row;
         }
-        return $data;
+
+        return array('next_offset'=>1, 'records'=>$data);
     }
 
     /**

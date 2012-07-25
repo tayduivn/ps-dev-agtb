@@ -1,15 +1,3 @@
-<script id="expected_template" type="text/x-handlebars-template">
-    <th>
-    <div style="width: 100%; text-align: center">
-    <input type="checkbox" name="include_expected" class="checkbox">
-    </div>
-    </th>
-    <th colspan='4' style='text-align: right;'><i>{{str "LBL_EXPECTED_OPPORTUNITIES" "Forecasts"}}</i></th>
-    <th><span sfuuid='expected_amount_sf_id'>{{output_as_hb_tag "expected_amount"}}</span></th>
-    <th><span sfuuid='expected_best_case_sf_id'>{{output_as_hb_tag "expected_best_case"}}</span></th>
-    <th><span sfuuid='expected_likely_case_sf_id'>{{output_as_hb_tag "expected_likely_case"}}</span></th>
-</script>
-
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
     <th>{{output_as_hb_tag "includedAmount"}}</th>
@@ -19,9 +7,9 @@
 
 <script id="overall_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{output_as_hb_tag overallAmount}}</th>
-    <th>{{output_as_hb_tag overallBest}}</th>
-    <th>{{output_as_hb_tag overallLikely}}</th>
+    <th>{{output_as_hb_tag "overallAmount"}}</th>
+    <th>{{output_as_hb_tag "overallBest"}}</th>
+    <th>{{output_as_hb_tag "overallLikely"}}</th>
 </script>
 
 <div class="subhead">

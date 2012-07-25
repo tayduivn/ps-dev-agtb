@@ -1,0 +1,7 @@
+{{#each meta.panels}}
+    {{#each ../_collection.models}}
+        {{#each ../fields}}
+            {{#if enabled}}<td>{{field ../../../../this ../../this}}</td>{{/if}}
+        {{/each}}
+    {{/each}}
+{{/each}}

@@ -4,6 +4,7 @@
 <script src='clients/forecasts/lib/BucketGridEnum.js'></script>
 <script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
 <script src='clients/forecasts/views/tree/tree.js'></script>
 <script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
@@ -52,11 +53,10 @@
                           <div>
                               <div id="view-sales-rep" style="display:none">
                                   <div class="view-forecastsWorksheet"></div>
-                                  <div class="view-summary"></div>
+                                  <div class="view-forecastSchedule"></div>
                               </div>
                               <div id="view-manager" style="display:none">
                                   <div class="view-forecastsWorksheetManager"></div>
-                                  <div class="view-summary"></div>
                               </div>
                           </div>
                         </div>
