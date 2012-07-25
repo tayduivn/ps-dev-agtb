@@ -5,12 +5,12 @@
     </div>
     <div class="datapoint1">
         {{str "LBL_BEST_CASE" "Forecasts"}}<br>
-        <h2 id="best">{{bestCase}}</h2>
+        <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
     </div>
     <div class="divider"></div>
     <div class="datapoint2">
         {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
-        <h2 id="likely">{{likelyCase}}</h2>
+        <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
     </div>
     {{#if showButton}}
     <a class="btn btn-primary" id="commit_forecast">
