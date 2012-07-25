@@ -28,7 +28,6 @@ describe("The forecasts manager worksheet", function(){
 
         describe("should render", function() {
             beforeEach(function() {
-                debugger;
                 view.selectedUser.id = "test_user_id";
                 testMethodStub = sinon.stub(app.user, "get", function(property){
                     var user = {
