@@ -77,7 +77,7 @@
         this._collection = this.context.forecasts.committed;
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
-        this.forecastType = app.user.get('isManager') ? 'Rollup' : 'Direct';
+        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
     },
 
@@ -106,6 +106,7 @@
 
         this._collection = this.context.forecasts.committed;
         this._collection.on("reset", function() { self.buildForecastsCommitted() }, this);
+        this._collection.on("change", function() { self.buildForecastsCommitted(); }, this);
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
@@ -120,9 +121,27 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                self.totals = totals;
+                var user = this.context.forecasts.get('selectedUser');
+                if(user.isManager == true && user.showOpps === false) {
+                    return;
+                }
+                self.updateTotals(totals);
+            }, this);
+            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+                var user = this.context.forecasts.get('selectedUser');
+                if(user.isManager && user.showOpps == false) {
+                    self.updateTotals(totals);
+                }
             }, this);
         }
+    },
+
+    updateTotals : function (totals) {
+        var self = this;
+        if(!_.isEmpty(self.totals) && self.totals != totals) {
+            this.$el.find('a[id=commit_forecast]').removeClass('disabled');
+        }
+        self.totals = totals;
     },
 
     buildForecastsCommitted: function() {
@@ -154,6 +173,12 @@
                   self.previousText = hb({'likely_case' : model.get('likely_case')});
                   self.previousLikelyCase = model.get('likely_case');
                   self.previousBestCase = model.get('best_case');
+
+                  self.bestCaseCls = (self.bestCase > self.previousBestCase) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+                  self.bestCaseCls = (self.bestCase == self.previousBestCase) ? '' : self.bestCaseCls;
+                  self.likelyCaseCls = (self.likelyCase > self.previousLikelyCase) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+                  self.likelyCaseCls = (self.likelyCase == self.previousLikelyCase) ? '' : self.likelyCaseCls;
+
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
@@ -168,6 +193,8 @@
         }
 
         self.render();
+
+        this.$el.find('a[id=commit_forecast]').addClass('disabled');
     },
 
     createHistoryLog: function(current, previousModel) {
@@ -243,33 +270,37 @@
     commitForecast: function() {
         var self = this;
 
+        var btn = this.$el.find('a[id=commit_forecast]');
+
+        if(btn.hasClass('disabled')) {
+            return false;
+        }
+
+        btn.addClass('disabled');
+
         //If the totals have not been set, don't save
         if(!self.totals)
         {
            return;
         }
 
-        //If there was a previous entry, check to make sure values have changed
-        if(self.previous &&
-            (self.totals.best_case == self.previous.best_case &&
-             self.totals.likely_case == self.previous.likely_case &&
-             self.totals.timeperiod_id == self.previous.timeperiod_id))
-        {
-           return;
-        }
-
         var forecast = new Backbone.Model();
         forecast.url = self.url;
-        forecast.set('best_case', self.totals.best_case);
-        forecast.set('likely_case', self.totals.likely_case);
-        forecast.set('timeperiod_id', self.totals.timeperiod_id);
+        var user = this.context.forecasts.get('selectedUser');
+        if(user.isManager == true && user.showOpps == false) {
+            forecast.set('best_case', self.totals.best_adjusted);
+            forecast.set('likely_case', self.totals.likely_adjusted);
+        } else {
+            forecast.set('best_case', self.totals.best_case);
+            forecast.set('likely_case', self.totals.likely_case);
+        }
+        forecast.set('timeperiod_id', self.timePeriodId);
         forecast.set('forecast_type', self.forecastType);
         forecast.set('amount', self.totals.amount);
         forecast.set('opp_count', self.totals.opp_count);
         forecast.save();
         self.previous = self.totals;
         self._collection.url = self.url;
-        self._collection.add(forecast);
-        self.updateCommitted();
+        self._collection.unshift(forecast);
     }
 })
