@@ -113,6 +113,7 @@ $mod_strings = array (
 	'LBL_WEBSITE' => 'Website:',
     'LBL_LINKEDIN' => 'Linkedin Company ID',
     'LBL_FACEBOOK' => 'Facebook Company Account',
+    'LBL_TWITTER' => 'Twitter Company Account',
 
 	'LNK_ACCOUNT_LIST' => 'Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',

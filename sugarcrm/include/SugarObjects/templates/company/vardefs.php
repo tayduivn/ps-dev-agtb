@@ -53,6 +53,14 @@ $vardefs= array (
         'len' => '100',
         'comment' => 'The facebook name of the company'
     ),
+    'twitter' =>
+    array (
+        'name' => 'twitter',
+        'vname' => 'LBL_TWITTER',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The twitter name of the company'
+    ),
    strtolower($object_name).'_type' => 
   array (
     'name' => strtolower($object_name).'_type',

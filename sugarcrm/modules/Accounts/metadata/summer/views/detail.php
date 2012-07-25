@@ -76,6 +76,7 @@ $viewdefs['Accounts']['summer']['view']['detail'] = array(
                 //END SUGARCRM flav=pro ONLY
                 'linkedin',
                 'facebook',
+                'twitter',
             ),
         ),
     ),
