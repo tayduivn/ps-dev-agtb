@@ -38,7 +38,7 @@ class ForecastManagerWorksheet extends SugarBean {
         parent::__construct();
     }
 
-    function save($check_notify = false)
+    public function save($check_notify = false)
     {
     	//skip this because nothing in the click to edit makes the worksheet modify the forecasts.
     	//leaving this here just in case we need it in the future.
@@ -61,6 +61,9 @@ class ForecastManagerWorksheet extends SugarBean {
 		$quota->amount = $this->args["quota"];
 		$quota->save();
 		
+		//recalc manager quota if necessary
+		$this->recalcQuota();
+		
 		//save worksheet
 		$worksheet  = new Worksheet();
 		$worksheet->retrieve($this->args["worksheet_id"]);
@@ -69,8 +72,8 @@ class ForecastManagerWorksheet extends SugarBean {
 		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
         $worksheet->best_case = $this->args["best_adjusted"];
         $worksheet->likely_case = $this->args["likely_adjusted"];
-        $worksheet->forecast_type = "Rollup";
-        $worksheet->related_forecast_type = "Direct";
+        $worksheet->forecast_type = ($this->args["user_id"] == $GLOBALS['current_user']->id) ? "Direct" : "Rollup";
+        $worksheet->related_forecast_type = $worksheet->forecast_type;
         $worksheet->worst_case = $this->worst_case;
         $worksheet->related_id = $this->args["user_id"];
         $worksheet->save();
@@ -78,10 +81,105 @@ class ForecastManagerWorksheet extends SugarBean {
     
     /**
      * Sets Worksheet args so that we save the supporting tables.
+     * @param array $args Arguments passed to save method through PUT
      */
-	function setWorksheetArgs($args){
+	public function setWorksheetArgs($args){
 		$this->args = $args;
 	}
+	
+	/**
+	 * Gets a sum of the current user's reportees quotas for a specific timeperiod
+	 * 
+	 * @return int Sum of quota amounts.
+	 */
+	private function getQuotaSum(){
+		$sql = "SELECT sum(q.amount) amount " .
+				"FROM `quotas` q " .
+				"INNER JOIN users u ON u.reports_to_id = '" . $this->args["current_user"] . "' " .
+				"AND q.user_id = u.id " .
+				"AND q.timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
+				"AND q.quota_type = 'direct'";
+		$amount = 0;
+				
+		$result = $GLOBALS['db']->query($sql);
+		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
+			$amount = $row['amount'];
+		}
+		
+		return $amount;
+	}
+	
+	/**
+	 * Gets the current manager user's comitted quota value and direct quota ID
+	 * 
+	 * @return array id, Quota value
+	 */
+	private function getManagerQuota(){
+		/*
+		 * This info is in two rows, and either of them might not exist.  The union 
+		 * is here to make sure data is returned if one or the other exists.  This statement
+		 * lets us grab both bits with one call to the db rather than two separate smaller
+		 * calls.
+		 * 
+		 * We are looking for the ID of the quota where quota_type = Direct
+		 * and the AMOUNT of the quota where quota_type = Rollup
+		 */
+		$sql = "SELECT q1.amount, q2.id FROM quotas q1 " .
+				"left outer join quotas q2 " .
+					"on q1.user_id = q2.user_id " .
+					"and q1.timeperiod_id = q2.timeperiod_id " .
+					"and q2.quota_type = 'Direct' " .
+				"where q1.user_id = '" . $this->args["current_user"] . "' " .
+					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
+					"and q1.quota_type = 'Rollup' " .
+				"union all " .
+				"SELECT q2.amount, q1.id FROM quotas q1 " .
+				"left outer join quotas q2 " .
+					"on q1.user_id = q2.user_id " .
+					"and q1.timeperiod_id = q2.timeperiod_id " .
+					"and q2.quota_type = 'Rollup' " .
+				"where q1.user_id = '" . $this->args["current_user"] . "' " .
+					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
+					"and q1.quota_type = 'Direct'";
+		
+		$quota = array();
+				
+		$result = $GLOBALS["db"]->query($sql);
+		while(($row=$GLOBALS["db"]->fetchByAssoc($result))!=null){
+			$quota["amount"] = $row["amount"];
+			$quota["id"] = $row["id"];
+		}
+		
+		return $quota;
+	}
+	
+	/**
+	 * Recalculates manager quota based on committed values and reportees' quota values
+	 */
+	 private function recalcQuota(){
+	 	
+	 	//don't recalc if we are editing the manager row
+	 	if($this->args["user_id"] != $this->args["current_user"]){
+		 			 			 	
+		 	$reporteeTotal = $this->getQuotaSum();
+		 	$managerQuota = $this->getManagerQuota();
+		 	$managerAmount = ($managerQuota["amount"]) ? $managerQuota["amount"] : 0;
+		 	$newTotal = $managerAmount - $reporteeTotal;
+		 			 	
+		 	if($newTotal < 0){
+		 		$newTotal = 0;
+		 	}
+		 	
+		 	//save quota
+		 	if(isset($managerQuota["id"])){
+				$quota = new Quota();
+				$quota->retrieve($managerQuota["id"]);
+				$quota->amount = $newTotal;
+				$quota->save();
+		 	}
+	 	}
+	 }
+		
 
 }
 

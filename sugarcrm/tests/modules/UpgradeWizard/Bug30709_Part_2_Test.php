@@ -159,7 +159,7 @@ function test_dropdown_fixed() {
 
     unset($GLOBALS['app_list_strings']);
     require('custom/include/language/en_us.lang.php');
-    $this->assertEquals(count($GLOBALS['app_list_strings']),2);
+    $this->assertEquals(3, count($GLOBALS['app_list_strings']));
     $this->assertTrue(isset($GLOBALS['app_list_strings']['moduleList']['my_personal_module']));
     $this->assertEquals($GLOBALS['app_list_strings']['moduleList']['Accounts'],'Accounts Module');
     $this->assertEquals(count($GLOBALS['app_strings']),1);

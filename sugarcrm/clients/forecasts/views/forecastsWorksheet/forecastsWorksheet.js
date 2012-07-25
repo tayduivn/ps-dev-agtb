@@ -15,6 +15,14 @@
     isExpandableRows:'',
     _collection:{},
 
+    toggleIncludeInForecast:function(model)
+    {
+        var self = this;
+
+        self._collection.url = self.url;
+        model.save(null, { success:_.bind(function() { this.calculateTotals(), this.render(); }, this)});
+    },
+
     /**
      * Initialize the View
      *
@@ -25,7 +33,7 @@
         var self = this;
 
         this.viewModule = app.viewModule;
-        
+
         //set expandable behavior to false by default
         this.isExpandableRows = false;
 
@@ -58,28 +66,18 @@
 
             tagName : 'tfoot',
 
-            initialize: function() {
-                self.context.on("change:selectedToggle", function(context, toggle) {
-                    self._collection.url = self.url;
-                    model = toggle.model;
-                    model.set('forecast', (toggle.value === true) ? false : true);
-                    model.save(null, {wait: true});
-                    self.refresh();
-                });
-            },
-
             render: function() {
                 var self = this;
                 var hb = Handlebars.compile("<tr>" +
                 								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
-                								"<th>{{includedAmount}}</th>" + 
+                								"<th>{{includedAmount}}</th>" +
                 								"<th>{{includedBest}}</th>" + "<th>{{includedLikely}}</th>" +
                 							"</tr>" +
                 							"<tr class='overall'>" +
                 								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
-                    							"<th>{{overallAmount}}</th>" + 
-                    							"<th>{{overallBest}}</th>" + 
-                    							"<th>{{overallLikely}}</th>" + 
+                    							"<th>{{overallAmount}}</th>" +
+                    							"<th>{{overallBest}}</th>" +
+                    							"<th>{{overallLikely}}</th>" +
                     						"</tr>");
                 $('#summary').html(hb(self.model.toJSON()));
                 return this;
@@ -164,6 +162,14 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.refresh(); }, this);
+
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(element, index){
+                    if(element.hasChanged("forecast")) {
+                        this.toggleIncludeInForecast(element);
+                    }
+                }, this);
+            }, this);
         }
 
         // listening for updates to context for selectedUser:change
@@ -205,8 +211,6 @@
         _.each(fields, function(field) {
             if (field.name == "forecast") {
                 field.enabled = !app.config.showBuckets;
-                //Set the viewName to use based on whether or not isOwner is true
-                field.view = isOwner ? 'default' : 'detail';
                 forecastField = field;
             } else if (field.name == "commit_stage") {
                 field.enabled = app.config.showBuckets;
@@ -225,7 +229,7 @@
      */
     _render:function () {
         var self = this;
-        
+
         if(!this.showMe()){
         	return false;
         }
@@ -287,11 +291,11 @@
     showMe: function(){
     	var selectedUser = this.selectedUser;
     	this.show = false;
-    	    	
+
     	if(selectedUser.showOpps || !selectedUser.isManager){
     		this.show = true;
     	}
-    	
+
     	return this.show;
     },
 
@@ -315,7 +319,7 @@
             var likely = parseFloat(model.get('likely_case'));
             var best = parseFloat(model.get('best_case'));
 
-            if(included)
+            if(included == true || included == 1)
             {
                 includedAmount += amount;
                 includedLikely += likely;

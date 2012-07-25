@@ -124,7 +124,21 @@
             }, this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
-            	this.totalView.render();
+            	var renderAll = false;
+            	$.each(this.context.forecasts.worksheetmanager.models, function(index, element){
+            		if(element.hasChanged("quota"))
+            		{
+            			renderAll = true;
+            		}
+            	});
+            	if(renderAll){
+            		this.context.forecasts.worksheetmanager.url = this.createURL();
+            		this.context.forecasts.worksheetmanager.fetch();
+            	}
+            	else{            		
+            		this.totalView.render();
+            	}
+            	
             }, this);
         }
     },
@@ -139,7 +153,7 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit === true) {
+        if (field.viewName !="edit" && field.def.clickToEdit === true && this.selectedUser.id.localeCompare(app.user.get('id')) == 0) {
             field = new app.view.ClickToEditField(field, this);
         }
     },
@@ -224,7 +238,8 @@
             'likely_case' : likely_case,
             'likely_adjusted' : likely_adjusted
         };
-        
+
+        this.context.forecasts.set("updatedManagerTotals", totals);
     },
     
     

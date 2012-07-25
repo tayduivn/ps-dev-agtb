@@ -1019,11 +1019,11 @@ class OracleManager extends DBManager
 			        $addColumns[] = $col;
 			    }
 			}
-			if(!empty($addColumns)) {
-        	    $columns = "(" . implode(",", $addColumns) . ")";
-			} else {
-			    $columns = '';
-			}
+            if(!empty($addColumns)) {
+                     $columns = "(" . implode(",", $addColumns) . ")";
+              } else {
+                $columns = '';
+          }
         } else {
             $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }

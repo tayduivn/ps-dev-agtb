@@ -277,7 +277,7 @@ class Common {
     function retrieve_direct_downline($user_id)
     {
         //find the direct reports_to users
-        $query = "SELECT id FROM users WHERE reports_to_id = '$user_id'";
+        $query = "SELECT id FROM users WHERE reports_to_id = '$user_id' AND deleted = 0 AND status = 'Active'";
         $result = $this->db->query($query,true," Error fetching user's reporting hierarchy: ");
         while (($row  =  $this->db->fetchByAssoc($result)) != null)
         {

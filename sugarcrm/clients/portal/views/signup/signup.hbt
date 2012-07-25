@@ -1,0 +1,30 @@
+<form name='{{name}}'>
+    <div class="container welcome">
+        <div class="row">
+            <div class="span4 offset4 thumbnail">
+                <div class="modal-header tcenter">
+                    <h2 class="brand" {{#if logoURL}} style=" background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
+                </div>
+                {{#each meta.panels}}
+                <div class="modal-body tcenter">
+                    {{#if ../signup_success}}
+                    <div class="alert alert-success tleft">
+                        <p><strong>{{str "LBL_PORTAL_SIGNUP_TITLE"}}</strong><p>
+                        <p>{{str "LBL_PORTAL_SIGNUP"}}</p>
+                    </div>
+                    {{else}}
+                    {{#each fields}}
+                    {{field ../../../this ../../../model}}
+                    {{/each}}
+                    {{/if}}
+                </div>
+                {{/each}}
+                <div class="modal-footer">
+                    {{#each meta.buttons}}
+                    {{field ../this ../model}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
