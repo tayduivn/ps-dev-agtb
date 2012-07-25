@@ -94,11 +94,11 @@
 
         //add or subtract based on west/east of prime meridian
         hours = hours + (off*(l/Math.abs(l)));
+
         if (hours > 23){
-            hours = hours - 11;
+            hours = hours - 24;
         }
         var month = time.getMonth();
-
         //daylight saving time adjustments.
         if (month < 11 && month > 2){
             if (month == 3 && time.getDate() >= 14){
@@ -114,7 +114,7 @@
     renderHtml: function(results) {
         var self = this;
         //find hours of local time based on longitude
-        var localHour = self.findLocalHour(results[0].geometry.location.$a);
+        var localHour = self.findLocalHour(results[0].geometry.location.ab);
         var time = new Date();
         var localMinutes = time.getMinutes();
         var ampm = 'AM';
