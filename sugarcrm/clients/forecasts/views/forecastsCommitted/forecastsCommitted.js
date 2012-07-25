@@ -133,6 +133,11 @@
         //Reset the history log
         self.historyLog = [];
         self.moreLog = [];
+        self.previousText = "Previous Commit: 0";
+        self.previousLikelyCase = 0;
+        self.previousBestCase = 0;
+        self.bestCase = 0;
+        self.likelyCase = 0;
 
         _.each(self._collection.models, function(model)
         {

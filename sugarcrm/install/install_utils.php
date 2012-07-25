@@ -878,7 +878,7 @@ function handleSugarConfig() {
         ),
         'serverUrl' => $sugar_config['site_url'].'/rest/v10',
         'unsecureRoutes' => array('signup', 'error'),
-        'clientID' => 'sugar'
+        'clientID' => 'support_portal'
     );
     $configString = json_encode($portalConfig);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';

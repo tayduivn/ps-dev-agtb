@@ -274,6 +274,9 @@ $app_list_strings = array (
     'Word of mouth' => 'Word of mouth',
     'Email' => 'Email',
     'Campaign'=>'Campaign',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'Support Portal User Registration' => 'Support Portal User Registration',
+    //END SUGARCRM flav=ent ONLY
     'Other' => 'Other',
   ),
   'opportunity_type_dom' =>
@@ -2661,7 +2664,7 @@ $app_strings = array (
     'LBL_MODIFIED_BY_USER'=>'Modified by User',
     'LBL_MODIFIED_USER'=>'Modified by User',
     'LBL_MODIFIED' => 'Modified by',
-    'LBL_MODIFIED_NAME'=>'Modified By Name',
+    'LBL_MODIFIED_NAME'=>'Modified By',
     'LBL_MODIFIED_ID'=>'Modified By Id',
     'LBL_MORE' => 'More',
     'LBL_MY_ACCOUNT' => 'My Settings',
@@ -2886,6 +2889,7 @@ $app_strings = array (
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
     'LNK_BASIC_SEARCH' => 'Basic Search',
+    'LNK_SEARCH_NO_RESULTS' => 'No results were found.',
     'LNK_SEARCH_FTS_VIEW_ALL' => 'View all results',
     'LNK_SEARCH_NONFTS_VIEW_ALL' => 'Show All',
     'LNK_CLOSE' => 'close',
@@ -3400,6 +3404,9 @@ $app_strings = array (
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
 
+    'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
+
+    //for sidecar
     'LBL_TIME_AGO_NOW' => 'right now',
     'LBL_TIME_AGO_SECONDS' => 'less than a minute ago',
     'LBL_TIME_AGO_MINUTE' => 'about 1 minute ago',
@@ -3410,13 +3417,45 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
-    'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
-
+    'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time. You may add a record now.',
+    'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
-    );
+    'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+
+    //for portal
+    'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
+    'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
+    'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
+    'LBL_PORTAL_SIGNUP' => 'A customer service representative will contact you shortly to configure your account.',
+    'LBL_PORTAL_SIGNUP_FIRST_NAME' => 'First name',
+    'LBL_PORTAL_SIGNUP_LAST_NAME' => 'Last name',
+    'LBL_PORTAL_SIGNUP_EMAIL' => 'Email',
+    'LBL_PORTAL_SIGNUP_PHONE' => '(###) ###-#### (optional)',
+    'LBL_PORTAL_SIGNUP_COUNTRY' => 'Country',
+    'LBL_PORTAL_SIGNUP_STATE' => 'State',
+    'LBL_PORTAL_SIGNUP_COMPANY' => 'Company',
+    'LBL_PORTAL_SIGNUP_JOBTITLE' => 'Job title (optional)',
+    'LNK_PORTAL_LOGIN_FORGOTPASSWORD' => 'Forgot password?',
+    'LBL_PORTAL_LOGIN_FORGOTPASSWORD_TITLE' => 'Forgot Your Password?',
+    'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
+    'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
+    'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
+
+    //sidecar errors
+    'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
+    'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
+    'ERR_HTTP_DEFAULT_TEXT' => 'Unknown error.',
+    'ERR_HTTP_404_TYPE' => '404',
+    'ERR_HTTP_404_TITLE' => 'HTTP: 404 Not Found',
+    'ERR_HTTP_404_TEXT' => 'We\'re sorry but the resource you asked for cannot be found.',
+    'ERR_HTTP_500_TYPE' => '500',
+    'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
+    'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
+
+);
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');

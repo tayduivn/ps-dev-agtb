@@ -5050,6 +5050,9 @@ ul#quickCreateULSubnav,
   font-size: 12px;
   margin-right: 10px;
 }
+.legend .label:hover {
+  color: #313130 !important;
+}
 .legend .legendGroup {
   display: inline-block;
 }

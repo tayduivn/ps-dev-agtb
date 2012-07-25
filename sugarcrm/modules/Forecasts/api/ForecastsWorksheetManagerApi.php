@@ -171,7 +171,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $reportee->retrieve($reportee_id);
             $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
             $default_data['user_id'] = $reportee_id;
-            $default_data["show_opps"] = false;
+            $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
             $data[$reportee->user_name] = $default_data;
         }
 
@@ -181,6 +181,15 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $forecast = $this->getForecastBestLikely();
         $worksheet = $this->getWorksheetBestLikelyAdjusted();
         $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
+
+        //bug 54619:
+        //Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers
+        foreach($data_grid as $rep => $val)
+        {
+            $data_grid[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
+            $data_grid[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
+            $data_grid[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
+        }
         return array_values($data_grid);
     }
 
@@ -241,7 +250,8 @@ AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AN
                             WHERE w.related_id = u.id
                             AND w.timeperiod_id = '{$this->timeperiod_id}'
                             AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Rollup'))";
+                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))
+                            AND w.deleted = 0";
 
         $result = $GLOBALS['db']->query($reportees_query);
 
