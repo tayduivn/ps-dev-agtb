@@ -97,6 +97,12 @@ class RegisterLeadApi extends SugarApi {
      * @return array properties on lead bean formatted for display
      */
     public function createLeadRecord($api, $args) {
+
+        // Bug 54647 Lead registration can create empty leads
+        if (!isset($args['last_name'])) {
+            throw new SugarApiExceptionMissingParameter();
+        }
+
         $bean = BeanFactory::newBean('Leads');
         // we force team and teamset because there is no current user to get them from
         $fields = array(
