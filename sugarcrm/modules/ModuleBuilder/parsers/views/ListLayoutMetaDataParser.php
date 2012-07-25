@@ -195,21 +195,12 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {
             if (is_array($def['studio']))
             {
-                // Bug 54507 - Need to set the view properly for portal and mobile
-                if (empty($_REQUEST['view'])) {
-                    $view = $this->view;
-                } else {
-                    // Even if the requested view is set, if it is different 
-                    // than $this->view, fall to $this->view. This allows portal
-                    // editor to use portallistview as the view, as opposed to
-                    // ListView, as is passed in the request
-                    if (strtolower($_REQUEST['view']) != strtolower($this->view)) {
-                        $view = $this->view;
-                    } else {
-                        $view = $_REQUEST['view'];
-                    }
-                }
-                // End Bug 54507
+                // Bug 54507 - Need to set the view properly for portal
+                // Portal editor requests vary in that the requested view is ListView
+                // but what we really need is portallistview, which is in $this->view
+                // All other instances of ListLayoutMetaDataParser set $this->view
+                // to $_REQUEST['view']
+                $view = $this->view;
                 
             	// fix for removing email1 field from studio popup searchview - bug 42902
                 if($view == 'popupsearch' && $key == 'email1')
