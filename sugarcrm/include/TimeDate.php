@@ -889,7 +889,7 @@ class TimeDate
     {
         try {
             // The ISO-8601 format will have at least 20 chars if it has an offset attached
-            if ( length($inputDate) > 19 ) {
+            if ( strlen($inputDate) > 19 ) {
                 // This has the attached offset, when 5.3 comes around we can stop messing with manually
                 // tweaking the offset manually and just throw an "O" on the end of the format string.
                 $date = SugarDateTime::createFromFormat('Y-m-d\TH:i:s',substr($inputDate,0,19),self::$gmtTimezone);
@@ -927,7 +927,7 @@ class TimeDate
     public function fromIsoTime($inputDate, User $user = null)
     {
         try {
-            if ( length($inputDate) > 8 ) {
+            if ( strlen($inputDate) > 8 ) {
                 // This time does have an attached offset
                 $date = SugarDateTime::createFromFormat("H:i:s",substr($inputDate,0,8),self::$gmtTimezone);
                 $date->adjustByIsoOffset(substr($inputDate,8));
