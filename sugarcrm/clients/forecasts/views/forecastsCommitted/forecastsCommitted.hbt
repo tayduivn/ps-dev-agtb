@@ -5,12 +5,12 @@
     </div>
     <div class="datapoint1">
         {{str "LBL_BEST_CASE" "Forecasts"}}<br>
-        <h2 id="best">{{bestCase}}</h2>
+        <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
     </div>
     <div class="divider"></div>
     <div class="datapoint2">
         {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
-        <h2 id="likely">{{likelyCase}}</h2>
+        <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
     </div>
     {{#if showButton}}
     <a class="btn btn-primary" id="commit_forecast">
@@ -33,7 +33,7 @@
         <i class="icon-chevron-down"></i>
     </div>
 </div>
-<div class="extend hide">
+<div class="extend results hide">
 {{#each historyLog}}
    <article>
    {{this.text}}
@@ -42,8 +42,8 @@
    </article>
 {{/each}}
 {{#if moreLog.length}}
-<div class="title" id="more">{{str "LBL_MORE" "Forecasts"}}</div>
-<div class="extend hide">
+<div class="title" id="more"><p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br /></div>
+<div class="extend results hide">
 {{#each moreLog}}
    <article>
    {{this.text}}
@@ -72,12 +72,12 @@
     $('#more').toggle(
     function (e) {
         $(this).next('.extend').removeClass('hide');
-        $(this).html('{{str "LBL_LESS" "Forecasts"}}');
+        $(this).html('<p><span class=" icon-minus-sign">&nbsp;{{str "LBL_LESS" "Forecasts"}}</span></p><br />');
         return false;
     },
     function (e) {
         $(this).next('.extend').addClass('hide');
-        $(this).html('{{str "LBL_MORE" "Forecasts"}}');
+        $(this).html('<p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br />');
         return false;
     })
 </script>

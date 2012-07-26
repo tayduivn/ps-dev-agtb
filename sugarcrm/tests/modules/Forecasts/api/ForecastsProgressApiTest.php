@@ -169,4 +169,37 @@ class ForecastsProgressApiTest extends RestTestBase
         $this->assertEquals($revenue, $restReply['revenue'], "Revenue didn't match calculated amount. expected: ".$revenue." received: ".$restReply['revenue']);
         $this->assertEquals($pipeline, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: ".$pipeline." received: ".$restReply['pipeline']);
     }
+
+    /**
+     * @group forecastapi
+     */
+    public function testProgressNewUser() {
+        $newUser = SugarTestUserUtilities::createAnonymousUser();
+        $newUser->reports_to_id = self::$manager->id;
+        $newUser->save();
+        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . $newUser->id;
+
+        $restResponse = $this->_restCall($url);
+
+        $restReply = $restResponse['reply'];
+
+        //check best/likely numbers
+        // to quota
+        $this->assertEquals(0, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(0, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
+
+        $this->assertEquals(0, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
+
+        // to close
+        $this->assertEquals(0, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
+
+        $this->assertEquals(0, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
+
+        $this->assertEquals(0, $restReply['revenue'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['revenue']);
+        $this->assertEquals(0, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['pipeline']);
+    }
 }

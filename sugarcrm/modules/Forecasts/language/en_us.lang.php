@@ -227,7 +227,7 @@ $mod_strings = array (
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
-    'LBL_PREVIOUS_COMMIT' => 'Previous Commit: {{likely_case}}',
+    'LBL_PREVIOUS_COMMIT' => 'Latest Commit: {{likely_case}}',
     'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely {3} {4} to {5}',
     'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely stayed the same',
     'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast best stayed the same and likely {0} {1} to {2}',
@@ -241,19 +241,45 @@ $mod_strings = array (
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
-    //Labels for worksheet totals
+    //Labels for worksheet expected opportunities and totals
+    'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
     'LBL_GROUP_BY' => 'Group By:',
+    'LBL_CHART_OPTIONS' => 'Chart Options',
 
     // Labels for Data Filters
     'LBL_FORECAST_PERIOD' => 'Forecast Period:',
     'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
+    'LBL_FILTERS' => 'Filters',
 
     // Labels for toggle buttons
     'LBL_MORE' => 'More',
     'LBL_LESS' => 'Less',
+
+    // Labels for Progress
+    'LBL_PROJECTED' => 'Projected',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA' => 'Distance Above: Likely from Quota',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA' => 'Distance Left: Likely to Quota',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA' => 'Distance Above: Best from Quota',
+    'LBL_DISTANCE_LEFT_BEST_TO_QUOTA' => 'Distance Left: Best to Quota',
+    'LBL_CLOSED' => 'Closed',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED' => 'Distance Above: Likely from Closed',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED' => 'Distance Left: Likely to Closed',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED' => 'Distance Above: Best from Closed',
+    'LBL_DISTANCE_LEFT_BEST_TO_CLOSED' => 'Distance Left: Best to Closed',
+    'LBL_REVENUE' => 'Revenue',
+    'LBL_PIPELINE_SIZE' => 'Pipeline Size',
+    'LBL_LOADING' => 'Loading',
+
+    'LBL_ACTIONS' => 'Actions',
+    'LBL_DUPLICATE' => 'Duplicate',
+    'LBL_SAVE' => 'Save',
+    'LBL_NOTE' => 'Note',
+    'LBL_EMAIL' => 'Email',
+    'LBL_PDF' => 'PDF',
+    'LBL_CSV' => 'CSV',
 );

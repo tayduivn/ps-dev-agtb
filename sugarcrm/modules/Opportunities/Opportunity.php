@@ -417,50 +417,7 @@ class Opportunity extends SugarBean
 			}
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		//if forecast value equals to -1, set it to 0 or 1 based on probability
-		global $sugar_config;
-		if ( $this->forecast == -1 ) {
-			$this->forecast = ($this->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
-		}
-
-        //if commit_stage isn't set, set it based on the probability
-        if (empty($this->commit_stage) && isset($this->probability))
-        {
-            $commit_stage_arr = $app_list_strings['commit_stage_dom'];
-            ksort($commit_stage_arr);
-            //the keys of this array are upper limit of probability for each stage
-            foreach($commit_stage_arr as $key => $value)
-            {
-                $this->commit_stage = $key;
-                if($this->probability < $key)
-                {
-                    break;
-                }
-            }
-        }
-        
-		//Set the timeperiod_id value
-		global $timedate;
-
-		if ( $timedate->check_matching_format($this->date_closed, $timedate::DB_DATE_FORMAT) ) {
-			$date_close_db = $this->date_closed;
-		}
-		else {
-			$date_close_db = $timedate->to_db_date($this->date_closed);
-		}
-
-        // we only do this if no timeperiod_id is set.  This happens by default form the UI but when running a UnitTest,
-        // we don't want to override any set timeperiod_id
-        if(empty($this->timeperiod_id)) {
-            $timeperiod = $this->db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$date_close_db}' AND end_date >= '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
-            if ( !empty($timeperiod) ) {
-                $this->timeperiod_id = $timeperiod;
-            }
-        }
-		//END SUGARCRM flav=pro ONLY
-
-		require_once('modules/Opportunities/SaveOverload.php');
+		require_once(get_custom_file_if_exists('modules/Opportunities/SaveOverload.php'));
 
 		perform_save($this);
 
@@ -567,35 +524,6 @@ class Opportunity extends SugarBean
 	}
 
 
-	/**
-	 * @param null $user_id
-	 * @param null $timeperiod_id
-	 *
-	 * @return int
-	 */
-	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL )
-	{
-		$amountSum = 0;
-		$where     = "opportunities.sales_stage='" . Opportunity::STAGE_CLOSED_WON . "'";
-
-		if ( !is_null($user_id) ) {
-			$where .= " AND opportunities.assigned_user_id='$user_id'";
-		}
-
-		if ( !is_null($timeperiod_id) ) {
-			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
-		}
-
-		$query  = $this->create_list_query(NULL, $where);
-		$result = $this->db->query($query);
-
-		while ( $row = $this->db->fetchByAssoc($result) ) {
-			$amountSum += $row["amount"];
-		}
-
-		return $amountSum;
-	}
-
 
 	//BEGIN SUGARCRM flav=ent ONLY
 	/**
@@ -607,108 +535,6 @@ class Opportunity extends SugarBean
 	public function getProducts()
 	{
 		return $this->get_linked_beans('products', new Product());
-	}
-
-
-	public function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL )
-	{
-		global $current_user;
-
-		if ( is_null($user_id) ) {
-			$user_id = $current_user->id;
-		}
-		if ( is_null($timeperiod_id) ) {
-			$timeperiod_id = TimePeriod::getCurrentId();
-		}
-
-		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
-				. " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
-				. " AND opportunities.sales_stage = " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
-				. " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
-				. " AND opportunities.deleted = 0";
-
-		$query = $this->create_list_query(NULL, $where);
-		$query = $this->create_list_count_query($query);
-		
-		$result = $this->db->query($query);
-		$row = $this->db->fetchByAssoc($result);
-		$opportunitiesCount = $row['c'];
-		
-		return $opportunitiesCount;
-	}
-
-
-    /**
-   	 * Get the total amount of likely_case for the given user and timeperiod.  Defaults to the current user
-   	 * and current timeperiod.
-   	 *
-   	 * @param null $user_id
-   	 * @param null $timeperiod_id
-   	 */
-   	public function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL )
-   	{
-   		global $current_user;
-   		$revenue = 0;
-
-   		if ( is_null($user_id) ) {
-   			$user_id = $current_user->id;
-   		}
-   		if ( is_null($timeperiod_id) ) {
-   			$timeperiod_id = TimePeriod::getCurrentId();
-   		}
-
-   		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
-   		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
-               . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
-   		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
-   		       . " AND opportunities.deleted = 0";
-
-   		$query  = $this->create_list_query(NULL, $where);
-
-   		$result = $this->db->query($query);
-
-   		while ( $row = $this->db->fetchByAssoc($result) ) {
-   			$revenue += $row['likely_case'];
-   		}
-
-   		return $revenue;
-   	}
-
-
-	/**
-	 * Get the total revenue for the given user and timeperiod.  Defaults to the current user
-	 * and current timeperiod.
-	 *
-	 * @param null $user_id
-	 * @param null $timeperiod_id
-	 */
-	public function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL )
-	{
-		global $current_user;
-		$revenue = 0;
-
-		if ( is_null($user_id) ) {
-			$user_id = $current_user->id;
-		}
-		if ( is_null($timeperiod_id) ) {
-			$timeperiod_id = TimePeriod::getCurrentId();
-		}
-		
-		$where = "opportunities.assigned_user_id = " . $this->db->quoted($user_id)
-		       . " AND opportunities.timeperiod_id = " . $this->db->quoted($timeperiod_id)
-		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_WON)
-		       . " AND opportunities.sales_stage != " . $this->db->quoted(Opportunity::STAGE_CLOSED_LOST)
-		       . " AND opportunities.deleted = 0";
-		
-		$query  = $this->create_list_query(NULL, $where);
-
-		$result = $this->db->query($query);
-
-		while ( $row = $this->db->fetchByAssoc($result) ) {
-			$revenue += $row['amount'];
-		}
-
-		return $revenue;
 	}
 
 	/**

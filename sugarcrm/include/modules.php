@@ -65,6 +65,7 @@ $moduleList[] = 'Bugs';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'ForecastWorksheets';
 $moduleList[] = 'ForecastManagerWorksheets';
+$moduleList[] = 'ForecastSchedule';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Contracts';

@@ -23,7 +23,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         4 => array(
             'view' => 'progress',
 			'model' => array(
-				'name' => 'Progress'
+				'name' => 'Progress',
 			)
         ),
         5 => array(
@@ -54,6 +54,15 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         
         8 => array(
             'view' => 'forecastsSubnav',
+        ),
+
+        9 => array(
+            'view' => 'forecastSchedule',
+
+            'contextCollection' => array(
+                'module' => 'ForecastSchedule',
+                'name' => 'forecastschedule'
+            )
         )
     )
 );

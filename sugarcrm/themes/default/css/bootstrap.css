@@ -6744,8 +6744,14 @@ footer {
 .green {
   background-color: #3fb300;
 }
+.font-green {
+  color: #3fb300;
+}
 .red {
   background-color: #e61718;
+}
+.font-red {
+  color: #e61718;
 }
 .yellow {
   background-color: #eae82f;
@@ -6888,9 +6894,6 @@ article:nth-child(even) {
 #sActivity article {
   padding: 10px 45px 10px 0;
   position: relative !important;
-}
-article:hover {
-  background: #e1f0fa;
 }
 table tbody tr:last-child td:last-child,
 table tbody tr:last-child td:first-child,

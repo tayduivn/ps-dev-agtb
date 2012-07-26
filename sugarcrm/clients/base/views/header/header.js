@@ -23,7 +23,7 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
-        if (!app.api.isAuthenticated()) return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
