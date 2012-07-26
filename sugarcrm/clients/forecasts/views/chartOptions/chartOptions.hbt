@@ -1,2 +1,2 @@
-<h4>Chart Options</h4>
+<h4>{{str "LBL_CHART_OPTIONS" "Forecasts"}}</h4>
 <div class="chartOptions"></div>

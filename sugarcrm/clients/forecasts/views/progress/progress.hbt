@@ -1,20 +1,20 @@
 {{#if quota}}
 <table class="table">
 	<thead>
-		<th>Projected</th>
+		<th>{{str "LBL_PROJECTED" "Forecasts"}}</th>
 	</thead>
 	<tbody>
 		<tr>
-			<td>Quota</td>
+			<td>{{str "LBL_QUOTA" "Forecasts"}}</td>
 			<td></td>
 			<td>{{formatNumber quota.amount}}</td>
 		</tr>
 		<tr>
 			<td>
 				{{#if quota.likely_case.above}}
-					Distance Above: Likely from Quota
+					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA" "Forecasts"}}
 				{{else}}
-					Distance Left: Likely to Quota
+					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA" "Forecasts"}}
 				{{/if}}
 			</td>
 			<td>{{formatPercentage quota.likely_case.percent}}</td>
@@ -23,9 +23,9 @@
 		<tr>
 			<td>
 				{{#if quota.best_case.above}}
-					Distance Above: Best from Quota
+					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA" "Forecasts"}}
 				{{else}}
-					Distance Left: Best to Quota
+					{{str "LBL_DISTANCE_LEFT_BEST_TO_QUOTA" "Forecasts"}}
 				{{/if}}
 			</td>
 			<td>{{formatPercentage quota.best_case.percent}}</td>
@@ -33,16 +33,16 @@
 		</tr>
 
 		<tr>
-			<th>Closed</th>
+			<th>{{str "LBL_CLOSED" "Forecasts"}}</th>
 			<th></th>
 			<th>{{formatNumber closed.amount}}</th>
 		</tr>
 		<tr>
 			<td>
 				{{#if closed.likely_case.above}}
-					Distance Above: Likely from Closed
+					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED" "Forecasts"}}
 				{{else}}
-					Distance Left: Likely to Closed
+					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED" "Forecasts"}}
 				{{/if}}
 			</td>
 			<td>{{formatPercentage closed.likely_case.percent}}</td>
@@ -51,9 +51,9 @@
 		<tr>
 			<td>
 				{{#if closed.best_case.above}}
-					Distance Above: Best from Closed
+					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED" "Forecasts"}}
 				{{else}}
-					Distance Left: Best to Closed
+					{{str "LBL_DISTANCE_LEFT_BEST_TO_CLOSED" "Forecasts"}}
 				{{/if}}
 			</td>
 			<td>{{formatPercentage closed.best_case.percent}}</td>
@@ -62,19 +62,19 @@
 	</tbody>
 	<tfoot>
 		<td>
-			<div>Opportunities</div>
+			<div>{{str "LBL_LV_OPPORTUNITIES" "Forecasts"}}</div>
 			<div>{{formatNumber opportunities}}</div>
 		</td>
 		<td>
-			<div>Revenue</div>
+			<div>{{str "LBL_REVENUE" "Forecasts"}}</div>
 			<div>{{formatNumber revenue}}</div>
 		</td>
 		<td>
-			<div>Pipeline Size</div>
+			<div>{{str "LBL_PIPELINE_SIZE" "Forecasts"}}</div>
 			<div>{{pipeline}}x</div>
 		</td>
 	</tfoot>
 </table>
 {{else}}
-	<strong>Loading&hellip;</strong>
+	<strong>{{str "LBL_LOADING" "Forecasts"}}&hellip;</strong>
 {{/if}}
