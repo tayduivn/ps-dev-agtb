@@ -427,8 +427,6 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	global $theme, $current_user;
 
 
-
-
 	require_once('include/formbase.php');
 
 	global $timedate;
@@ -445,16 +443,22 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	} else {
 
         $focus = populateFromPost($prefix, $focus);
-        $oldPassword = '';
+        $oldPassword = null;
 
         if (isset($focus->id)) {
-            $contact = BeanFactory::newBean('Contacts');
-            $contact->retrieve($focus->id);
+            $contact = BeanFactory::getBean('Contacts', $focus->id);
             $oldPassword = $contact->portal_password;
         }
 
+        // update password
         if (!empty($focus->portal_password) && $focus->portal_password != $oldPassword && $focus->portal_password != 'value_setvalue_setvalue_set') {
             $focus->portal_password = User::getPasswordHash($focus->portal_password);
+        // clear password
+        } elseif(empty($focus->portal_password)){
+            $focus->portal_password = null;
+        // keep existing password
+        } else {
+            $focus->portal_password = $oldPassword;
         }
 
 		if (!isset($_POST[$prefix.'email_opt_out'])) $focus->email_opt_out = 0;
