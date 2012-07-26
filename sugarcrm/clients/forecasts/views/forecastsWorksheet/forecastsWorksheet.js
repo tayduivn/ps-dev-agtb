@@ -310,19 +310,6 @@
         this.overallView.render();
     },
 
-    /**
-     * Add a click event listener to the commit button
-     */
-    events: {
-        "div a[id=include_expected]" : "includeExpected"
-    },
-
-    /**
-     * Function to handle the toggle state of including/excluding expected amounts
-     */
-    includeExpected: function() {
-        this.calculateTotals()
-    },
 
     /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,

@@ -123,20 +123,6 @@
     },
 
     /**
-     * Add a click event listener to the commit button
-     */
-    events: {
-        "div a[id=include_expected]" : "includeExpected"
-    },
-
-    /**
-     * Function to handle the toggle state of including/excluding expected amounts
-     */
-    includeExpected: function() {
-        debugger;
-    },
-
-    /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
      * or whether to render the clickToEdit field
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
