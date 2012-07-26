@@ -70,54 +70,6 @@
             }
         )
 
-        var IncludedView = Backbone.View.extend({
-            id : 'included_totals',
-            tagName : 'tr',
-
-            initialize: function() {
-                _.bindAll(this, 'render');
-                //self._collection.bind('change', self.render);
-                this.model.bind('change', this.render);
-            },
-
-            render: function() {
-                var self = this;
-                var source = $("#included_template").html();
-                var hb = Handlebars.compile(source);
-                $('#included_totals').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.includedView = new IncludedView({
-            model : self.includedModel
-        });
-
-
-        var OverallView = Backbone.View.extend({
-            id : 'overall_totals',
-            tagName : 'tr',
-
-            initialize: function() {
-                _.bindAll(this, 'render');
-                //self._collection.bind('change', self.render);
-                this.model.bind('change', this.render);
-            },
-
-            render: function() {
-                var self = this;
-                var source = $("#overall_template").html();
-                var hb = Handlebars.compile(source);
-                $('#overall_totals').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        self.overallView = new OverallView({
-            model : self.overallModel
-        });
-
-
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
@@ -306,9 +258,67 @@
         $("#summary").prepend(view.$el);
         view.render();
 
+        this.createSubViews();
+
         this.includedView.render();
         this.overallView.render();
     },
+
+
+    /**
+     * Creates the "included totals" and "overall totals" subviews for the worksheet
+     */
+    createSubViews: function() {
+        var self = this;
+
+        var IncludedView = Backbone.View.extend({
+            id : 'included_totals',
+            tagName : 'tr',
+
+            initialize: function() {
+                _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
+                this.model.bind('change', this.render);
+            },
+
+            render: function() {
+                var self = this;
+                var source = $("#included_template").html();
+                var hb = Handlebars.compile(source);
+                $('#included_totals').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.includedView = new IncludedView({
+            model : self.includedModel
+        });
+
+
+        var OverallView = Backbone.View.extend({
+            id : 'overall_totals',
+            tagName : 'tr',
+
+            initialize: function() {
+                _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
+                this.model.bind('change', this.render);
+            },
+
+            render: function() {
+                var self = this;
+                var source = $("#overall_template").html();
+                var hb = Handlebars.compile(source);
+                $('#overall_totals').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.overallView = new OverallView({
+            model : self.overallModel
+        });
+    },
+
 
 
     /**
