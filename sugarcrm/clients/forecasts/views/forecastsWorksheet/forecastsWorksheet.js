@@ -238,7 +238,7 @@
     _render:function () {
         var self = this;
 
-        if(this.selectedUser && !this.selectedUser.showOpps){
+        if(!this.showMe()){
         	return false;
         }
         $("#view-sales-rep").show();
@@ -292,7 +292,6 @@
         view.render();
 
         this.createSubViews();
-
         this.includedView.render();
         this.overallView.render();
     },
@@ -497,7 +496,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        if(this.selectedUser && !this.selectedUser.showOpps){
+        if(!this.showMe()){
         	return false;
         }
         this._collection.url = this.createURL();
