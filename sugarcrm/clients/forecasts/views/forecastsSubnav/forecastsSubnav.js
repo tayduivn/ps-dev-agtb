@@ -5,10 +5,20 @@
  * @extends View.View
  */
 ({
+    /**
+     * Stores the full name of the user to display in subnav template
+     */
+    fullName:'',
+
+    /**
+     * Stores the timeperiod label to display in the subnav template
+     */
+    timePeriod:'',
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.fullName = app.user.get('full_name');
+        this.timePeriod = this.context.forecasts.get("selectedTimePeriod").label;
     },
 
     bindDataChange: function() {

@@ -15,12 +15,19 @@
     isExpandableRows:'',
     _collection:{},
 
+
+    /**
+     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
+     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
+     * to handle persisting the changes
+     *
+     * @param model Backbone model entry that was affected by the toggle event
+     */
     toggleIncludeInForecast:function(model)
     {
         var self = this;
-
         self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { this.render(); }, this)});
+        model.save(null, { success:_.bind(function() { this.calculateTotals(); this.render(); }, this)});
     },
 
     /**
@@ -44,49 +51,24 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
-        var TotalModel = Backbone.Model.extend({
-
-        });
-
-        this.totalModel = new TotalModel(
+        //Create a Backbone.Model instance to represent the included amounts
+        this.includedModel = new Backbone.Model(
             {
                 includedAmount : 0,
                 includedBest : 0,
                 includedLikely : 0,
-                includedCount : 0,
+                includedCount : 0
+            }
+        );
+
+        //Create a Backbone.Model instance to represent the overall amounts
+        self.overallModel = new Backbone.Model(
+            {
                 overallAmount : 0,
                 overallBest : 0,
                 overallLikely : 0
             }
-        );
-
-
-        var TotalView = Backbone.View.extend({
-            id : 'summary',
-
-            tagName : 'tfoot',
-
-            render: function() {
-                var self = this;
-                var hb = Handlebars.compile("<tr>" +
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
-                								"<th>{{includedAmount}}</th>" +
-                								"<th>{{includedBest}}</th>" + "<th>{{includedLikely}}</th>" +
-                							"</tr>" +
-                							"<tr class='overall'>" +
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
-                    							"<th>{{overallAmount}}</th>" +
-                    							"<th>{{overallBest}}</th>" +
-                    							"<th>{{overallLikely}}</th>" +
-                    						"</tr>");
-                $('#summary').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.totalView = new TotalView({
-            model : this.totalModel
-        });
+        )
 
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
@@ -161,7 +143,7 @@
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() { self.render(); }, this);
+            this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
 
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element, index){
@@ -188,7 +170,10 @@
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
-            	this.totalView.render();
+            }, this);
+            this.context.forecasts.forecastschedule.on("change", function() {
+                this.calculateTotals();
+                this.render();
             }, this);
         }
     },
@@ -220,7 +205,7 @@
     _render:function () {
         var self = this;
 
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser.showOpps){
         	return false;
         }
         $("#view-sales-rep").show();
@@ -266,9 +251,75 @@
             });
         }
 
-        this.calculateTotals()
-        this.totalView.render();
+        var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
+        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta});
+
+        $("#expected_opportunities").remove();
+        $("#summary").prepend(view.$el);
+        view.render();
+
+        this.createSubViews();
+
+        this.includedView.render();
+        this.overallView.render();
     },
+
+
+    /**
+     * Creates the "included totals" and "overall totals" subviews for the worksheet
+     */
+    createSubViews: function() {
+        var self = this;
+
+        var IncludedView = Backbone.View.extend({
+            id : 'included_totals',
+            tagName : 'tr',
+
+            initialize: function() {
+                _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
+                this.model.bind('change', this.render);
+            },
+
+            render: function() {
+                var self = this;
+                var source = $("#included_template").html();
+                var hb = Handlebars.compile(source);
+                $('#included_totals').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.includedView = new IncludedView({
+            model : self.includedModel
+        });
+
+
+        var OverallView = Backbone.View.extend({
+            id : 'overall_totals',
+            tagName : 'tr',
+
+            initialize: function() {
+                _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
+                this.model.bind('change', this.render);
+            },
+
+            render: function() {
+                var self = this;
+                var source = $("#overall_template").html();
+                var hb = Handlebars.compile(source);
+                $('#overall_totals').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.overallView = new OverallView({
+            model : self.overallModel
+        });
+    },
+
+
 
     /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
@@ -325,12 +376,38 @@
             overallBest += best;
         });
 
-        self.totalModel.set('includedAmount', includedAmount);
-        self.totalModel.set('includedBest', includedBest);
-        self.totalModel.set('includedLikely', includedLikely);
-        self.totalModel.set('overallAmount', overallAmount);
-        self.totalModel.set('overallBest', overallBest);
-        self.totalModel.set('overallLikely', overallLikely);
+        //Now see if we need to add the expected opportunity amounts
+        if(this.context.forecasts.forecastschedule.models)
+        {
+           _.each(this.context.forecasts.forecastschedule.models, function(model) {
+               if(model.get('status') == 'Active')
+               {
+                    var amount = parseFloat(model.get('expected_amount'));
+                    var likely = parseFloat(model.get('expected_likely_case'));
+                    var best = parseFloat(model.get('expected_best_case'));
+                    if(model.get('include_expected') == 1)
+                    {
+                        includedAmount += amount;
+                        includedLikely += likely;
+                        includedBest += best;
+                    }
+                    overallAmount += amount;
+                    overallLikely += likely;
+                    overallBest += best;
+               }
+           });
+        }
+
+        self.includedModel.set('includedAmount', includedAmount);
+        self.includedModel.set('includedBest', includedBest);
+        self.includedModel.set('includedLikely', includedLikely);
+        self.includedModel.set('includedCount', includedCount);
+        self.includedModel.change();
+
+        self.overallModel.set('overallAmount', overallAmount);
+        self.overallModel.set('overallBest', overallBest);
+        self.overallModel.set('overallLikely', overallLikely);
+        self.overallModel.change();
 
         var totals = {
             'likely_case' : includedLikely,
@@ -350,7 +427,7 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser){
         	return false;
         }
         this._collection.url = this.createURL();
@@ -387,7 +464,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser.showOpps){
         	return false;
         }
         this._collection.url = this.createURL();
