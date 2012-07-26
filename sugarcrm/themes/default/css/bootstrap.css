@@ -6895,9 +6895,6 @@ article:nth-child(even) {
   padding: 10px 45px 10px 0;
   position: relative !important;
 }
-article:hover {
-  background: #e1f0fa;
-}
 table tbody tr:last-child td:last-child,
 table tbody tr:last-child td:first-child,
 table tfoot tr:last-child td:last-child,

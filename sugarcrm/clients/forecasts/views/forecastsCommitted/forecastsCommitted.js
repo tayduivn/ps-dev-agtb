@@ -136,13 +136,14 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                var user = this.context.forecasts.get('selectedUser');
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                if(self.selectedUser.isManager && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
             }, this);
@@ -173,15 +174,15 @@
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view
                 best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
-                best.bestCase = totals.best_adjusted;
+                best.bestCase = App.utils.formatNumber(totals.best_adjusted, 0, 0, ',', '.');
                 likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
-                likely.likelyCase = totals.likely_adjusted;
+                likely.likelyCase = App.utils.formatNumber(totals.likely_adjusted, 0, 0, ',', '.');
             } else {
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
-                best.bestCase = totals.best_case;
+                best.bestCase = App.utils.formatNumber(totals.best_case, 0, 0, ',', '.');
                 likely.likelyCaseCls = this.getColorArrow(totals.likely_case, previousCommit.get('likely_case'));
-                likely.likelyCase = totals.likely_case;
+                likely.likelyCase = App.utils.formatNumber(totals.likely_case, 0, 0, ',', '.');
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -241,9 +242,9 @@
               if(count == 1)
               {
                   var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  self.previousText = hb({'likely_case' : model.get('date_created')});
-                  self.previousLikelyCase = previousModel.get('likely_case');
-                  self.previousBestCase = previousModel.get('best_case');
+                  self.previousText = hb({'likely_case' : previousModel.get('date_created')});
+                  self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
+                  self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
@@ -272,24 +273,38 @@
         var args = Array();
         var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
 
+        var best_arrow = '';
+        if(best_direction == "LBL_UP") {
+            best_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
+        } else if(best_direction == "LBL_DOWN") {
+            best_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
+        }
+
+        var likely_arrow = '';
+        if(likely_direction == "LBL_UP") {
+            likely_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
+        } else if(likely_direction == "LBL_DOWN") {
+            likely_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
+        }
+
         if(best_changed && likely_changed)
         {
-            args[0] = App.lang.get(best_direction, 'Forecasts');
-            args[1] = Math.abs(best_difference);
-            args[2] = previousModel.get('best_case');
-            args[3] = App.lang.get(likely_direction, 'Forecasts');
-            args[4] = Math.abs(likely_difference);
-            args[5] = previousModel.get('likely_case');
+            args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
+            args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
+            args[2] = "$" + App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
+            args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
+            args[4] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
+            args[5] = "$" + App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
             text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
         } else if (!best_changed && likely_changed) {
-            args[0] = App.lang.get(likely_direction, 'Forecasts');
-            args[1] = Math.abs(likely_difference);
-            args[2] = current.get('likely_case');
+            args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
+            args[1] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
+            args[2] = "$" + App.utils.formatNumber(current.get('likely_case'), 0, 0, ',', '.');
             text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
         } else if (best_changed && !likely_changed) {
-            args[0] = App.lang.get(best_direction, 'Forecasts');
-            args[1] = Math.abs(best_difference);
-            args[2] = current.get('best_case');
+            args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
+            args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
+            args[2] = "$" + App.utils.formatNumber(current.get('best_case'), 0, 0, ',', '.');
             text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
         }
 
@@ -316,7 +331,9 @@
           text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
         }
 
-        return {'text' : text, 'text2' : text2};
+        // need to tell Handelbars not to escape the string when it renders it, since there might be
+        // html in the string
+        return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
 
     },
 

@@ -33,7 +33,7 @@
         <i class="icon-chevron-down"></i>
     </div>
 </div>
-<div class="extend hide">
+<div class="extend results hide">
 {{#each historyLog}}
    <article>
    {{this.text}}
@@ -42,8 +42,8 @@
    </article>
 {{/each}}
 {{#if moreLog.length}}
-<div class="title" id="more">{{str "LBL_MORE" "Forecasts"}}</div>
-<div class="extend hide">
+<div class="title" id="more"><p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br /></div>
+<div class="extend results hide">
 {{#each moreLog}}
    <article>
    {{this.text}}
@@ -72,12 +72,12 @@
     $('#more').toggle(
     function (e) {
         $(this).next('.extend').removeClass('hide');
-        $(this).html('{{str "LBL_LESS" "Forecasts"}}');
+        $(this).html('<p><span class=" icon-minus-sign">&nbsp;{{str "LBL_LESS" "Forecasts"}}</span></p><br />');
         return false;
     },
     function (e) {
         $(this).next('.extend').addClass('hide');
-        $(this).html('{{str "LBL_MORE" "Forecasts"}}');
+        $(this).html('<p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br />');
         return false;
     })
 </script>
