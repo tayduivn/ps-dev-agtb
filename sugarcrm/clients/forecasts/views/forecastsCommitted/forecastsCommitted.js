@@ -136,14 +136,13 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                var user = this.context.forecasts.get('selectedUser');
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager && self.selectedUser.showOpps == false) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     self.updateTotals(totals);
                 }
             }, this);
