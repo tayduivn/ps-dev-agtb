@@ -332,10 +332,7 @@ class ForecastsProgressApi extends ModuleApi
 	public function getQuota( $api, $args )
 	{
 		$this->loadProgressData($args);
-        if(isset($this->quotaData["ammount"]))
-		    return $this->quotaData["amount"];
-        else
-            return 0;
+        return isset($this->quotaData["amount"]) ? $this->quotaData["amount"] :  0;
 	}
 
 
