@@ -83,4 +83,18 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         $this->opp->save();
         $this->assertEquals($this->opp->commit_stage, $commit_stage, "commit stage should be $commit_stage");
     }
+
+    /**
+     * Tests the forecast and commit_stage to be updated when sales_stage is "Closed Lost"
+     */
+    public function testUpdateForecastAndCommitStage()
+    {
+        $this->opp->sales_stage = "Closed Lost";
+        $this->opp->save();
+
+        $this->assertEquals($this->opp->forecast, 0, "forecast should be set to 0");
+        
+        $omit_commit_stage = min(array_keys($GLOBALS['app_list_strings']['commit_stage_dom']));
+        $this->assertEquals($this->opp->commit_stage, $omit_commit_stage, "commit_stage should be set to Omit");
+    }
 }
