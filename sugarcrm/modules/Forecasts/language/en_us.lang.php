@@ -249,12 +249,37 @@ $mod_strings = array (
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
     'LBL_GROUP_BY' => 'Group By:',
+    'LBL_CHART_OPTIONS' => 'Chart Options',
 
     // Labels for Data Filters
     'LBL_FORECAST_PERIOD' => 'Forecast Period:',
     'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
+    'LBL_FILTERS' => 'Filters',
 
     // Labels for toggle buttons
     'LBL_MORE' => 'More',
     'LBL_LESS' => 'Less',
+
+    // Labels for Progress
+    'LBL_PROJECTED' => 'Projected',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA' => 'Distance Above: Likely from Quota',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA' => 'Distance Left: Likely to Quota',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA' => 'Distance Above: Best from Quota',
+    'LBL_DISTANCE_LEFT_BEST_TO_QUOTA' => 'Distance Left: Best to Quota',
+    'LBL_CLOSED' => 'Closed',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED' => 'Distance Above: Likely from Closed',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED' => 'Distance Left: Likely to Closed',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED' => 'Distance Above: Best from Closed',
+    'LBL_DISTANCE_LEFT_BEST_TO_CLOSED' => 'Distance Left: Best to Closed',
+    'LBL_REVENUE' => 'Revenue',
+    'LBL_PIPELINE_SIZE' => 'Pipeline Size',
+    'LBL_LOADING' => 'Loading',
+
+    'LBL_ACTIONS' => 'Actions',
+    'LBL_DUPLICATE' => 'Duplicate',
+    'LBL_SAVE' => 'Save',
+    'LBL_NOTE' => 'Note',
+    'LBL_EMAIL' => 'Email',
+    'LBL_PDF' => 'PDF',
+    'LBL_CSV' => 'CSV',
 );
