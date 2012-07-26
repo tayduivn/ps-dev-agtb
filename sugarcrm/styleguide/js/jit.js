@@ -11806,7 +11806,7 @@ $jit.ST.Plot.NodeTypes.implement({
       if(goalMarkerType != undefined) {
           for (var i=0; i<goalMarker.length; i++){
               ctx.strokeStyle = goalMarkerColor[i];
-              ctx.lineWidth   = 4;
+              ctx.lineWidth   = 3;
 
               var goalMarkerDim = chartDim/maxTickValue * goalMarker[i],
                   goalMarkerNextDim = chartDim/maxTickValue * goalMarkerNext[i];
