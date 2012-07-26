@@ -1,0 +1,7 @@
+<div class="control-group">
+    <label class="hide">{{label}}</label>
+    <div class="controls">
+    <input type="text" class="center" value="{{value}}" placeholder="{{label}}">
+    </div>
+    <p class="help-block"></p>
+</div>

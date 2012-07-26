@@ -60,11 +60,6 @@ class BeanFactory {
     	// Pull values from $params array
     	$encode = isset($params['encode']) ? $params['encode'] : true;
     	$deleted = isset($params['deleted']) ? $params['deleted'] : $deleted;
-    	//BEGIN SUGARCRM flav=pro ONLY
-    	if (isset($params['disable_row_level_security']) && $params['disable_row_level_security'] === true) {
-    		$bean->disable_row_level_security = true;	
-    	}
-    	//END SUGARCRM flav=pro ONLY
     	
         if (!isset(self::$loadedBeans[$module])) {
             self::$loadedBeans[$module] = array();
@@ -80,6 +75,13 @@ class BeanFactory {
             if (empty(self::$loadedBeans[$module][$id]))
             {
                 $bean = new $beanClass();
+                //BEGIN SUGARCRM flav=pro ONLY
+                // Pro+ versions, to disable team check if we have rights
+                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
+                if (isset($params['disable_row_level_security']) && $params['disable_row_level_security'] === true) {
+                    $bean->disable_row_level_security = true;	
+                }
+                //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
                 if($result == null)
                     return FALSE;

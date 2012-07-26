@@ -229,6 +229,13 @@ class Importer
                 }
             }
 
+// Handle email field, if it's a semi-colon separated export
+             if ($field == 'email') {
+               if (strpos($rowValue, ';') !== false) {
+                 $rowValue = explode(';', $rowValue);
+                 $rowValue = array_slice($rowValue, 0, -1);
+               }
+             }
             // Handle email1 and email2 fields ( these don't have the type of email )
             if ( $field == 'email1' || $field == 'email2' )
             {
@@ -272,8 +279,19 @@ class Importer
             if( !empty($rowValue) )
             {
                 //Start
-                $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
-                if ($rowValue === FALSE) {
+                // If it's an array of non-primary e-mails, check each mail
+                 if ($field == "email" && is_array($rowValue)) {
+                   for ($i = 0; $i < sizeof($rowValue); $i++) {
+                     $rowValue[$i] = $this->sanitizeFieldValueByType($rowValue[$i], $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
+                     if ($rowValue[$i] === FALSE) {
+                       $rowValue = false;
+                         $do_save = false;
+                         break;
+             }
+                   }
+                 } else {
+                   $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
+                 }                if ($rowValue === FALSE) {
 					/* BUG 51213 - jeff @ neposystems.com */
                     $do_save = false;
                     continue;

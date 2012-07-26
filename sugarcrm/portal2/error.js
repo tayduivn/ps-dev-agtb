@@ -12,7 +12,7 @@
     /**
      * This is caused by attempt to login with invalid creds. 
      */
-    app.error.handleNeedsLoginError = function(error) {
+    app.error.handleNeedLoginError = function(error) {
         backToLogin(true);
         app.alert.show("needs_login_error", {level: "error", messages: "The username/password combination provided is incorrect, please try again.", title:"Invalid Credentials", autoClose: true});
     };

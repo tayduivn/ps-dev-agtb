@@ -78,7 +78,7 @@
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>
-                <select data-placeholder="Select a user..." class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
+                <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
                 {foreach from=$userList item=user key=userId}
                     <option value="{$userId}" {if $userId == $defaultUser}selected{/if}>{$user}</option>
                 {/foreach}
