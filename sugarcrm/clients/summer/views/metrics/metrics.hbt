@@ -1,16 +1,22 @@
-    <h2>Stats</h2>
-    {{#each counts}}
-    <div class="stat right-align">
-        <span id="days" class="stat-{{this.style}} stat-number">{{this.val}}</span>
-        <br>
-        <span class="stat-label inline-label">{{this.label}}</span>
-    </div>
-    {{/each}}
+<div class="widget">
 
-    {{#each amounts}}
-    <div class="stat right-align">
-        <span id="days" class="stat-{{this.style}} stat-number">{{this.val}}</span>
-        <br>
-        <span class="stat-label">{{this.label}}</span>
-    </div>
-    {{/each}}
+    <div class="metrics-widget">
+        <h2>Stats</h2>
+        {{#each counts}}
+        <div class="stat right-align">
+            <span id="days" class="stat-{{this.style}} stat-number">{{this.val}}</span>
+            <br>
+            <span class="stat-label inline-label">{{this.label}}</span>
+         </div>
+        {{/each}}
+
+        {{#each amounts}}
+        <div class="stat right-align">
+            <span id="days" class="stat-{{this.style}} stat-number">{{this.val}}</span>
+            <br>
+            <span class="stat-label">{{this.label}}</span>
+        </div>
+        {{/each}}
+        </div>
+
+</div>

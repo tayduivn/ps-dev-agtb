@@ -136,8 +136,8 @@
 
 
 
-        this.$("#map_panel .title").text(results[0].formatted_address + " " + dateString);
-        this.$('#map_panel').show();
+        this.$(".maps-widget .title").text(results[0].formatted_address + " " + dateString);
+        this.$('.maps-widget').show();
         if(this.map) {
             this.map.setCenter(results[0].geometry.location);
         } else {

@@ -17,7 +17,7 @@
             //var linkedin_account = "reidhoffman"; // mock data
             var script = "<script src='http://localhost:8888/Mango/ent/sugarcrm/clients/summer/views/linkedin/in.js' type='text/javascript'></script>";
             script += "<script type='IN/MemberProfile' data-id='http://www.linkedin.com/in/" + linkedin_account + "' data-format='inline' data-related='false'></script>";
-            this.$(".linkedinmemberprofile").append(script);
+            this.$(".linkedin-widget").append(script);
         }
 
         // Module is Accounts
@@ -26,12 +26,12 @@
             //var linkedin_company_id = "17345"; // mock data
             var script = "<script src='http://localhost:8888/Mango/ent/sugarcrm/clients/summer/views/linkedin/in.js' type='text/javascript'></script>";
             script += "<script type='IN/CompanyProfile' data-id='" + linkedin_company_id + "' data-format='inline'></script>";
-            this.$(".linkedinmemberprofile").append(script);
+            this.$(".linkedin-widget").append(script);
         }
 
         // Module is Unknown
         else {
-            this.$(".linkedinmemberprofile").html("No LinkedIn profile found");
+            this.$(".linkedin-widget").html("No LinkedIn profile found");
         }
     },
 
