@@ -8,6 +8,7 @@
 
     likelyTotal: 0,
     bestTotal: 0,
+    defaultModel: {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}},
 
     initialize: function (options) {
         _.bindAll(this); // Don't want to worry about keeping track of "this"
@@ -24,6 +25,8 @@
     },
 
     bindDataChange: function () {
+
+        var self = this;
 
         if (this.model) {
             this.model.on('change', this.render);
@@ -44,6 +47,12 @@
             function(context, selectedTimePeriod) {
                 this.updateProgressForSelectedTimePeriod(selectedTimePeriod);
             }, this);
+            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                self.recalculate();
+            });
+            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+                self.recalculate();
+            });
         }
     },
 
@@ -67,7 +76,7 @@
 
     calculateLikelyToQuota: function (quota) {
         if(quota == undefined) {
-            quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+            quota = this.defaultModel;
         }
         quota.amount = parseInt(quota.amount, 10);
 
@@ -80,7 +89,7 @@
 
     calculateBestToQuota: function (quota) {
         if(quota == undefined) {
-            quota = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+            quota = this.defaultModel;
         }
         quota.amount = parseInt(quota.amount, 10);
 
@@ -94,7 +103,7 @@
     calculateLikelyToClose: function (closed) {
 
         if(closed == undefined) {
-            closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+            closed = this.defaultModel;
         }
         closed.amount = parseInt(closed.amount, 10);
 
@@ -107,7 +116,7 @@
 
     calculateBestToClose: function (closed) {
         if(closed == undefined) {
-            closed = {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}};
+            closed = this.defaultModel;
         }
         closed.amount = parseInt(closed.amount, 10);
 
@@ -121,8 +130,18 @@
     reduceWorksheet: function(attr) {
       return this.worksheetCollection.reduce(function(memo, model) {
                           // Only add up values that are "included" in the worksheet.
-                          if ( model.get('forecast') === true && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
+                          if ( (model.get('forecast') === true || model.get('forecast') === '1') && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
                               memo += parseInt(model.get(attr), 10);
+                          }
+                          return memo;
+                      }, 0);
+    },
+
+    countWorksheetOpportunities: function() {
+      return this.worksheetCollection.reduce(function(memo, model) {
+                          // Only add up values that are "included" in the worksheet.
+                          if ( (model.get('forecast') === true || model.get('forecast') === '1')&& !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
+                              memo ++;
                           }
                           return memo;
                       }, 0);
@@ -151,6 +170,7 @@
             this.bestTotal = this.reduceWorksheet('best_case');
             this.model.set('quota', this.reduceWorksheet('amount'));
             this.revenue = this.model.get('revenue');
+            this.model.set('opportunities', this.countWorksheetOpportunities());
         }
 
         this.model.set('quota', quota);
@@ -173,7 +193,7 @@
 
     recalculate: function () {
         this.calculateBases();
-        this.model.set('pipeline', this.calculatePipelineSize(this.likeTotal, this.model.get('revenue')));
+        this.model.set('pipeline', this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue')));
         this.model.set('closed', this.calculateBestToClose(this.model.get('closed')));
         this.model.set('quota', this.calculateBestToQuota(this.model.get('quota')));
         this.model.set('closed', this.calculateLikelyToClose(this.model.get('closed')));
