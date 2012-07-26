@@ -120,7 +120,7 @@
         {
             label = label.replace('{' + x + '}', args[x]);
         }
-        return label;
+        return new Handlebars.SafeString(label);
     });
 
     /**
