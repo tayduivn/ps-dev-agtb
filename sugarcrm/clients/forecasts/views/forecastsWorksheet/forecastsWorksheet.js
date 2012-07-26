@@ -11,6 +11,7 @@
     viewModule: {},
     selectedUser: {},
     gTable:'',
+    aaSorting:[],
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
@@ -27,7 +28,11 @@
     {
         var self = this;
         self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { this.calculateTotals(); this.render(); }, this)});
+        model.save(null, { success:_.bind(function() { 
+        	this.calculateTotals();
+        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
+        	this.render(); 
+        }, this)});
     },
 
     /**
@@ -234,7 +239,7 @@
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
-                "aaSorting": [],
+                "aaSorting": this.aaSorting,
                 "bInfo":false,
                 "bPaginate":false
             }
