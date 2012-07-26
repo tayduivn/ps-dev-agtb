@@ -227,7 +227,7 @@ $mod_strings = array (
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
-    'LBL_PREVIOUS_COMMIT' => 'Previous Commit: {{likely_case}}',
+    'LBL_PREVIOUS_COMMIT' => 'Latest Commit: {{likely_case}}',
     'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely {3} {4} to {5}',
     'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely stayed the same',
     'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast best stayed the same and likely {0} {1} to {2}',
@@ -241,7 +241,8 @@ $mod_strings = array (
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
-    //Labels for worksheet totals
+    //Labels for worksheet expected opportunities and totals
+    'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
 

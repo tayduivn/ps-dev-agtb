@@ -27,10 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
-
 class ForecastSchedule extends SugarBean {
 
 	var $id;
@@ -45,6 +41,9 @@ class ForecastSchedule extends SugarBean {
 	var $created_by;
 	var $date_entered;
 	var $date_modified;
+    var $expected_best_case;
+    var $expected_likely_case;
+    var $expected_worst_case;
 
 	var $module_dir = 'ForecastSchedule';
 	var $object_name = "ForecastSchedule";
@@ -160,12 +159,13 @@ class ForecastSchedule extends SugarBean {
 		$query = $this->create_new_list_query($order_by, $where);
 		return $this->process_full_list_query($query, $check_dates);
 	}
-	
+
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;
 		}
 		return false;
 	}
+
 }
 ?>
