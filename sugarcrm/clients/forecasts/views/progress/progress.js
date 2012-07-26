@@ -144,13 +144,13 @@
             this.bestTotal = this.reduceWorksheetManager('best_case');
             this.model.set('revenue', this.reduceWorksheetManager('amount'));
             this.revenue = this.model.get('revenue');
-            quota.amount = this.reduceWorksheetManager('quota');
+            if(quota != undefined)
+                quota.amount = this.reduceWorksheetManager('quota');
         } else {
             this.likelyTotal = this.reduceWorksheet('likely_case');
             this.bestTotal = this.reduceWorksheet('best_case');
             this.model.set('quota', this.reduceWorksheet('amount'));
             this.revenue = this.model.get('revenue');
-            //quota.amount = this.reduceWorksheet('quota');
         }
 
         this.model.set('quota', quota);
@@ -182,7 +182,6 @@
     },
 
     _render: function () {
-        console.log(this);
         _.extend(this, this.model.toJSON());
         app.view.View.prototype._render.call(this);
     },
