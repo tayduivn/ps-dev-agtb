@@ -27,7 +27,7 @@
     {
         var self = this;
         self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { this.calculateTotals(), this.render(); }, this)});
+        model.save(null, { success:_.bind(function() { this.calculateTotals(); this.render(); }, this)});
     },
 
     /**
@@ -70,13 +70,13 @@
             }
         )
 
-
         var IncludedView = Backbone.View.extend({
             id : 'included_totals',
             tagName : 'tr',
 
             initialize: function() {
                 _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
                 this.model.bind('change', this.render);
             },
 
@@ -100,6 +100,7 @@
 
             initialize: function() {
                 _.bindAll(this, 'render');
+                //self._collection.bind('change', self.render);
                 this.model.bind('change', this.render);
             },
 
@@ -190,7 +191,7 @@
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() { self.refresh(); }, this);
+            this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
 
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element, index){
@@ -217,19 +218,12 @@
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
-            	this.includedView.render();
+            }, this);
+            this.context.forecasts.forecastschedule.on("change", function() {
+                this.calculateTotals();
+                this.render();
             }, this);
         }
-    },
-
-    /**
-     * Refresh the view
-     *
-     * This method ensures that we first calculate the totals from the collection before calling render to redraw results
-     * @param context
-     */
-    refresh:function(context) {
-        $.when(this.calculateTotals(), this.render());
     },
 
     _setForecastColumn: function(fields) {
@@ -259,7 +253,7 @@
     _render:function () {
         var self = this;
 
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser.showOpps){
         	return false;
         }
         $("#view-sales-rep").show();
@@ -303,9 +297,9 @@
 
         var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
         var view = app.view.createView({name:"forecastSchedule", meta:viewmeta});
-        $(".view-forecastSchedule").empty();
-        $(".view-forecastSchedule").html(view.el);
-        //$(".view-forecastSchedule").append(view.$el);
+
+        $("#expected_opportunities").remove();
+        $("#summary").prepend(view.$el);
         view.render();
 
         this.includedView.render();
@@ -323,7 +317,7 @@
      * Function to handle the toggle state of including/excluding expected amounts
      */
     includeExpected: function() {
-        debugger;
+        this.calculateTotals()
     },
 
     /**
@@ -381,14 +375,38 @@
             overallBest += best;
         });
 
+        //Now see if we need to add the expected opportunity amounts
+        if(this.context.forecasts.forecastschedule.models)
+        {
+           _.each(this.context.forecasts.forecastschedule.models, function(model) {
+               if(model.get('status') == 'Active')
+               {
+                    var amount = parseFloat(model.get('expected_amount'));
+                    var likely = parseFloat(model.get('expected_likely_case'));
+                    var best = parseFloat(model.get('expected_best_case'));
+                    if(model.get('include_expected') == 1)
+                    {
+                        includedAmount += amount;
+                        includedLikely += likely;
+                        includedBest += best;
+                    }
+                    overallAmount += amount;
+                    overallLikely += likely;
+                    overallBest += best;
+               }
+           });
+        }
+
         self.includedModel.set('includedAmount', includedAmount);
         self.includedModel.set('includedBest', includedBest);
         self.includedModel.set('includedLikely', includedLikely);
         self.includedModel.set('includedCount', includedCount);
+        self.includedModel.change();
 
         self.overallModel.set('overallAmount', overallAmount);
         self.overallModel.set('overallBest', overallBest);
         self.overallModel.set('overallLikely', overallLikely);
+        self.overallModel.change();
 
         var totals = {
             'likely_case' : includedLikely,
@@ -408,7 +426,7 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser){
         	return false;
         }
         this._collection.url = this.createURL();
@@ -435,7 +453,7 @@
             //Remove the filters
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
         }
-        this.refresh();
+        this.render();
     },
 
     /**
@@ -445,7 +463,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        if(!this.showMe()){
+        if(this.selectedUser && !this.selectedUser.showOpps){
         	return false;
         }
         this._collection.url = this.createURL();

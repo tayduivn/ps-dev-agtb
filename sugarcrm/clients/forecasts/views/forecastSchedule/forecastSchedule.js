@@ -41,28 +41,24 @@
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
     },
 
-    createURL:function() {
-        var url = this.url;
+    /**
+     * This is a helper function to fetch the collection given the existing filters for timeperiod and selected user
+     */
+    fetchCollection: function()
+    {
         var args = {};
         if(this.timePeriod) {
-           args['timeperiod_id'] = this.timePeriod;
+           args.timeperiod_id = this.timePeriod;
         }
 
         if(this.selectedUser)
         {
-           args['user_id'] = this.selectedUser.id;
+           args.user_id = this.selectedUser.id;
         }
 
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
+        this._collection.fetch({
+            params : args
         });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }
-        return url;
     },
 
 
@@ -75,15 +71,36 @@
      * @protected
      */
     _renderField: function(field) {
+
+        var show = this.showMe();
+
+        //Set to the default view if we can't show the include_expected checkbox
+        /*
+        if(field.name == "include_expected" && !show) {
+           field.view = field.viewName = 'default';
+        }
+        */
+
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.showMe() && field.def.clickToEdit === true) {
-            new app.view.ClickToEditField(field, this);
+        /*
+        if(field.def.name == "include_expected" && !show) {
+           field.options.viewName = 'default';
+        }
+        */
+
+        if(show)
+        {
+            if (field.def.clickToEdit === true) {
+                new app.view.ClickToEditField(field, this);
+            }
+
+            if (field.name == "commit_stage") {
+                new app.view.BucketGridEnum(field, this);
+            }
         }
 
-        if( this.showMe() && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this);
-        }
+
     },
 
     bindDataChange: function(params) {
@@ -169,12 +186,10 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
-        if(!this.showMe())
+        if(this.selectedUser.showOpps)
         {
-        	return false;
+            this.fetchCollection();
         }
-        this._collection.url = this.createURL();
-        this._collection.fetch();
     },
 
     /**
@@ -184,11 +199,10 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        if(!this.showMe()){
-        	return false;
+        if(this.selectedUser && this.selectedUser.showOpps)
+        {
+            this.fetchCollection();
         }
-        this._collection.url = this.createURL();
-        this._collection.fetch();
     }
 
 })

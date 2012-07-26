@@ -124,14 +124,30 @@
     });
 
     /**
-     * Output the tag as a Handlebar variable tag.  This function is needed for our forecasting templates for sub
-     * views since the first loading of the Handlebar interprets the Handlebar tag as a variable and substitutes the
-     * variable into the tag.  We want to retain the tags in the output so we simply re-output the templates.
+     * Output the code as a Handlebar variable tag.  This function is needed for our forecasting templates for sub
+     * views since the first loading of the Handlebar interprets the Handlebar code as a variable and substitutes the
+     * variable into the handlebar tag format.  We want to retain the tags in the output so we simply re-output the code.
      *
      */
-    Handlebars.registerHelper("output_as_hb_tag", function(tag) {
-        return '{{' + tag + '}}';
+    Handlebars.registerHelper("output_as_hb_tag", function(code) {
+        return '{{' + code + '}}';
     });
 
+
+    /**
+     * Render the expected opportunities.  Moved the code to handle rendering the expected opportunities into a helper
+     * function since we have to iterate through the collection
+     *
+     */
+    Handlebars.registerHelper("expected_opportunity_column", function(tag) {
+        if(this.name == 'include_expected')
+        {
+           //return tag == 'start' ? '<th>' : '</th>';
+           return tag == 'start' ? '<th><div style="width: 100%; text-align: center;">' : '</div></th>';
+        } else if (this.name == 'expected_amount') {
+           return tag == 'start' ? ('<th colspan="4" style="text-align: right;"><i>' + app.lang.get('LBL_EXPECTED_OPPORTUNITIES', 'Forecasts') + '</i></th><th>') : '</th>';
+        }
+        return tag == 'start' ? '<th>' : '</th>';
+    });
 
 })(SUGAR.App);

@@ -165,8 +165,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
    array(
        'name' => 'include_expected',
        'vname' => 'LBL_INCLUDE_EXPECTED',
-       'type' => 'int',
-       'dbType' => 'tinyint',
+       'type' => 'bool',
        'default' => '0',
    ),
 

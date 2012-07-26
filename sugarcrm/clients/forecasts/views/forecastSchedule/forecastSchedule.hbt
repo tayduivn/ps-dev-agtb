@@ -2,7 +2,9 @@
     {{#each ../_collection.models}}
         {{#each ../fields}}
             {{#if enabled}}
-                <td>{{field ../../../../this ../../this}}</td>
+                {{{expected_opportunity_column "start"}}}
+                    {{field ../../../../this ../../this}}
+                {{{expected_opportunity_column "end"}}}
             {{/if}}
         {{/each}}
     {{/each}}
