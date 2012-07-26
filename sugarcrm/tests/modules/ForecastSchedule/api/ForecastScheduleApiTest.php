@@ -95,6 +95,11 @@ class ForecastScheduleApiTest extends RestTestBase
 
     }
 
+    public function tearDown()
+    {
+
+    }
+
     /**
      * This method is to test the retrieval function from the /ForecastSchedule REST endpoint
      * @outputBuffering disabled
