@@ -1,12 +1,12 @@
 <script id="overall_manager_template" type="text/x-handlebars-template">
     <tr>
         <td>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
-        <td>{{output_as_hb_tag "amount"}}</td>
-        <td>{{output_as_hb_tag "quota"}}</td>
-        <td>{{output_as_hb_tag "best_case"}}</td>
-        <td>{{output_as_hb_tag "best_adjusted"}}</td>
-        <td>{{output_as_hb_tag "likely_case"}}</td>
-        <td>{{output_as_hb_tag "likely_adjusted"}}</td>
+        <td>{{output_as_hb_tag "formatNumber amount"}}</td>
+        <td>{{output_as_hb_tag "formatNumber quota"}}</td>
+        <td>{{output_as_hb_tag "formatNumber best_case"}}</td>
+        <td>{{output_as_hb_tag "formatNumber best_adjusted"}}</td>
+        <td>{{output_as_hb_tag "formatNumber likely_case"}}</td>
+        <td>{{output_as_hb_tag "formatNumber likely_adjusted"}}</td>
     </tr>
 </script>
 
