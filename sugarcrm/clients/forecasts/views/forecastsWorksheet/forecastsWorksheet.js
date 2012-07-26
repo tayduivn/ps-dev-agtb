@@ -238,10 +238,14 @@
 
         _.each(fields, function(field, key){
             var name = field.name;
-            columnDefs.push( { "sName": name, "aTargets": [ key ] } );
+            var fieldDef = { "sName": name, "aTargets": [ key ] };
+            if(typeof(field.type) != "undefined" && field.type == "bool"){
+            	fieldDef["sSortDataType"] = "dom-checkbox";
+            }
+            columnDefs.push(fieldDef);
             columnKeys[name] = key;
         });
-
+        
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,

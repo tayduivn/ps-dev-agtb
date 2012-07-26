@@ -136,14 +136,13 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                var user = this.context.forecasts.get('selectedUser');
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager && self.selectedUser.showOpps == false) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                     self.updateTotals(totals);
                 }
             }, this);
@@ -158,7 +157,13 @@
     updateTotals : function (totals) {
         var self = this;
         if(self.totals != totals) {
-            this.$el.find('a[id=commit_forecast]').removeClass('disabled');
+
+            var commitBtn = this.$el.find('a[id=commit_forecast]');
+
+            // if the self.totals is empty we don't want the commit button to enable it self.
+            if(!_.isEmpty(self.totals)) {
+               commitBtn.removeClass('disabled');
+            }
 
             var best = {};
             var likely = {};
@@ -186,6 +191,12 @@
 
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
+
+            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && commitBtn.hasClass('disabled')) {
+                // it's different so we should enable the commit button
+                commitBtn.removeClass('disabled');
+            }
+
         }
 
         self.totals = totals;
@@ -230,9 +241,9 @@
               if(count == 1)
               {
                   var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  self.previousText = hb({'likely_case' : model.get('likely_case')});
-                  self.previousLikelyCase = model.get('likely_case');
-                  self.previousBestCase = model.get('best_case');
+                  self.previousText = hb({'likely_case' : model.get('date_created')});
+                  self.previousLikelyCase = previousModel.get('likely_case');
+                  self.previousBestCase = previousModel.get('best_case');
               }
               self.historyLog.push(self.createHistoryLog(model, previousModel));
               previousModel = model;
@@ -353,6 +364,11 @@
         forecast.set('amount', self.totals.amount);
         forecast.set('opp_count', self.totals.opp_count);
         forecast.save();
+
+        // clear out the arrows
+        self.likelyCaseCls = '';
+        self.bestCaseCls = '';
+
         self.previous = self.totals;
         self._collection.url = self.url;
         self._collection.unshift(forecast);
