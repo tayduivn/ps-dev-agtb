@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-		<meta http-equiv="x-ua-compatible" content="IE=8">
+        <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
 
         <!-- Third party library scripts -->
@@ -38,6 +38,7 @@
 		<script src='config.js'></script>
 		<script src='../sidecar/src/data/bean.js'></script>
 		<script src='../sidecar/src/data/bean-collection.js'></script>
+		<script src='../sidecar/src/data/mixed-bean-collection.js'></script>
         <script src='../sidecar/src/data/data-manager.js'></script>
 		<script src='../sidecar/src/data/validation.js'></script>
         <script src='../sidecar/src/view/hbt-helpers.js'></script>
@@ -93,7 +94,18 @@
 
                 </div>
                 <div id="content">
-                    
+                    <div class="container welcome">
+                        <div class="row">
+                            <div class="span4 offset4 thumbnail">
+                                <div class="modal-header tcenter">
+                                    <img src="lib/twitterbootstrap/img/throbber.gif"></img>
+                                </div>
+                                <div class="modal-footer">
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="footer">
 

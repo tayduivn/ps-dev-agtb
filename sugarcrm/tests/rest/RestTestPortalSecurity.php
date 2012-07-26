@@ -643,4 +643,52 @@ class RestTestPortalSecurity extends RestTestBase {
         $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
 
     }
+
+    public function testPortalSecurityNoAccount() {
+        for ( $i = 0 ; $i < 10 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+
+            if ( $i == 5 ) {
+                // This guy is our guy
+                $contact->portal_active = true;
+                $contact->portal_name = "unittestportal";
+                $contact->portal_password = User::getPasswordHash("unittest");
+                
+                $this->portalGuy = $contact;
+            }
+            $this->contacts[$i] = $contact;
+
+            $contact->save();
+        }
+
+
+        // Negative test: Try and fetch a Contact you shouldn't be able to see
+        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
+        // Positive test: Fetch a Contact that you should be able to see
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals($this->portalGuy->id,$restReply['reply']['id']);
+
+        // Positive test: Should be able to change the name of our Contact
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+
+        // Negative test: Should not be able to create a new Contact
+        $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+        
+        // Fetch contacts, make sure we can only see the correct one.
+        $restReply = $this->_restCall("Contacts");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals($this->portalGuy->id,$record['id']);
+        }
+
+    }
 }
