@@ -135,8 +135,8 @@
         var dateString = localHour + ":" + localMinutes + " " + ampm;
 
 
-
-        this.$("#map_panel .title").text(results[0].formatted_address + " " + dateString);
+        this.$('#map_time').append("<h2 align=left>" + dateString + "</h2>" );
+        this.$("#map_panel .title").text(results[0].formatted_address);
         this.$('#map_panel').show();
         if(this.map) {
             this.map.setCenter(results[0].geometry.location);
