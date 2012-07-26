@@ -1,10 +1,14 @@
-<!--<script id="crunchbase-template" type="text/html">-->
+<div class="widget">
 
-<h2>Overview</h2>
-{{#if image}}
-<img src="http://crunchbase.com/{{image}}"/>
-{{/if}}
-{{{overview}}}
-<p>View <a class="googledoc-fancybox" href="http://www.crunchbase.com/company/{{name}}" title="{{name}} on CrunchBase">{{name}} on Crunchbase</a></p>
-<div class="clear"></div>
-<!--</script>-->
+    <div class="crunchbase-widget">
+        <h2>Overview</h2>
+        {{#if image}}
+            <img src="http://crunchbase.com/{{image}}"/>
+        {{/if}}
+
+        {{{overview}}}
+        <p>View <a class="googledoc-fancybox" href="http://www.crunchbase.com/company/{{name}}" title="{{name}} on CrunchBase">{{name}} on Crunchbase</a></p>
+        <div class="clear"></div>
+    </div>
+
+</div>

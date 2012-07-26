@@ -1,8 +1,7 @@
+<div class="widget">
 
-
-<h2>Images</h2>
-
- <div class="imagesearch-widget" style="width: 450px">
+    <div class="imagesearch-widget" style="width: 450px">
+        <h2>Images</h2>
         {{#each pictures}}
 
         <a href="{{this.sourceUrl}}" target="_blank">
@@ -10,7 +9,7 @@
          </a>
 
         {{/each}}
-
+    </div>
 
 
 </div>

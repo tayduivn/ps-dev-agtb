@@ -1,8 +1,13 @@
-<div class="twitter-profile">
-    <h2>Tweets</h2>
-    {{#each tweets}}
-    {{#if this.source}}
+
+<div class="widget">
+
+    <div class="twitter-widget">
+        <h2>Tweets</h2>
+        {{#each tweets}}
+        {{#if this.source}}
         {{{this.text}}}</br><br>
-    {{/if}}
-    {{/each}}
+        {{/if}}
+        {{/each}}
+    </div>
+
 </div>
