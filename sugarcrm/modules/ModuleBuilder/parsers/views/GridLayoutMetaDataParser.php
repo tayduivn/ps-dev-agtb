@@ -526,15 +526,15 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 $newRow = array ( ) ;
                 foreach ( $row as $colID => $fieldname )
                 {
-                	if ($fieldname == null || !isset($fielddefs[$fieldname]))
-                	   continue;
-                    
                     //Backwards compatibility and a safeguard against multiple calls to _convertToCanonicalForm
-                	   if(is_array($fieldname))
+                    if(is_array($fieldname))
                     {
-                    	$newRow [ $colID - $offset ] = $fieldname;
-                    	continue;
+                        $newRow [ $colID - $offset ] = $fieldname;
+                        continue;
                     }
+
+                    if ($fieldname == null || !isset($fielddefs[$fieldname]))
+                       continue;                    
                 	
                 	//Replace (filler) with the empty string
                 	if ($fieldname == $this->FILLER[ 'name' ]) {
