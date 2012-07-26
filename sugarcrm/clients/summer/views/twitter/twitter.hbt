@@ -1,6 +1,5 @@
 
 <div class="widget">
-
     <div class="twitter-widget">
         <h2>Tweets</h2>
         {{#each tweets}}
@@ -9,5 +8,4 @@
         {{/if}}
         {{/each}}
     </div>
-
 </div>
