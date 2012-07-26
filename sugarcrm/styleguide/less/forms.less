@@ -306,9 +306,11 @@ input[type="checkbox"][readonly] {
   .formFieldState(@successText, @successText, @successBackground);
 }
 
-.control-group.error input,
-.control-group.error textarea {
-    width: 180px;
+form[name="signupView"] { 
+    .control-group.error input,
+    .control-group.error textarea {
+        width: 180px;
+    }
 }
 
 // HTML5 invalid states
