@@ -1,3 +1,17 @@
+<script id="included_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedAmount"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedBest"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedLikely"}}</th>
+</script>
+
+<script id="overall_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallAmount"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallBest"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallLikely"}}</th>
+</script>
+
 <div class="subhead">
     {{#each meta.panels}}
     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatable worksheetTable">
@@ -18,6 +32,12 @@
         {{/each}}
         </tbody>
         <tfoot id="summary">
+            <tr id="expected_opportunities" class="view-forecastSchedule">
+            </tr>
+            <tr id="included_totals">
+            </tr>
+            <tr id="overall_totals" class="overall">
+            </tr>
         </tfoot>
     </table>
     {{/each}}

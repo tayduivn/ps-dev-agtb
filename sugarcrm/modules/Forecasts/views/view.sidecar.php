@@ -88,8 +88,13 @@ class ViewSidecar extends SidecarView
         $returnInitData["initData"]["filters"] = $filters;
 
         // add filter defaults
-        $defaultSelections["timeperiod_id"]["id"] = $filters["timeperiod_id"]["default"];
-        $defaultSelections["category"]["id"] = $filters["category"]["default"];
+        $defaultTimePeriodId = $filters["timeperiod_id"]["default"];
+        $defaultSelections["timeperiod_id"]["id"] = $defaultTimePeriodId;
+        $defaultSelections["timeperiod_id"]["label"] = $filters["timeperiod_id"]["options"][$defaultTimePeriodId];
+
+        $defaultCategoryId = $filters["category"]["default"];
+        $defaultSelections["category"]["id"] = $defaultCategoryId;
+        $defaultSelections["category"]["label"] = $filters["category"]["options"][$defaultCategoryId];
 
         /***
          * CHART OPTIONS
@@ -101,8 +106,14 @@ class ViewSidecar extends SidecarView
         $returnInitData["initData"]["chartOptions"] = $chartOptions;
 
         // add chartoptions defaults
-        $defaultSelections["group_by"]["id"] = $chartOptions["group_by"]["default"];
-        $defaultSelections["dataset"]["id"] = $chartOptions["dataset"]["default"];
+        $defaultGroupById = $chartOptions["group_by"]["default"];
+        $defaultSelections["group_by"]["id"] = $defaultGroupById;
+        $defaultSelections["group_by"]["label"] = $chartOptions["group_by"]["options"][$defaultGroupById];
+
+
+        $defaultDatasetId = $chartOptions["dataset"]["default"];
+        $defaultSelections["dataset"]["id"] = $defaultDatasetId;
+        $defaultSelections["dataset"]["label"] = $chartOptions["dataset"]["options"][$defaultDatasetId];
 
 
         // push in defaultSelections

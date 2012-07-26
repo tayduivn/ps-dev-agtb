@@ -65,8 +65,8 @@ $app_list_strings = array (
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
-    'ForecastWorksheets' => 'ForecastWorksheets',
-    'ForecastManagerWorksheets' => 'ForecastManagerWorksheets',
+    'ForecastWorksheets' => 'Forecast Worksheets',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
@@ -170,6 +170,8 @@ $app_list_strings = array (
     'Products' => 'Product',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
+    'ForecastWorksheets' => 'Forecast Worksheet',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
     'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'Teams' => 'Team',
@@ -3423,6 +3425,10 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+
+    //SugarApiExceptionNotAuthorized language string
+    'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
+
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
 
     //for portal
@@ -3456,6 +3462,7 @@ $app_strings = array (
     'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
 
 );
+
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');

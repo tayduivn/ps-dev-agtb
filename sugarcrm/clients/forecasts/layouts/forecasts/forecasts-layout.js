@@ -7,7 +7,16 @@
      */
     app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
+        /**
+         * Holds the metadata for each of the components used in forecasts
+         */
         componentsMeta: {},
+
+        /**
+         * Stores the initial data models coming from view.sidecar.php
+         * todo: use this to populate models that we already have data for; currently only holds filters, chartoptions, & user
+         *
+         */
         initDataModel: {},
 
         initialize: function(options) {
@@ -16,11 +25,16 @@
             options.context = _.extend(options.context, this.initializeAllModels());
 
             var defaultSelections = app.defaultSelections;
-            options.context.forecasts.set("selectedTimePeriod", defaultSelections.timeperiod_id);
-            options.context.forecasts.set("selectedCategory", defaultSelections.category);
-            options.context.forecasts.set("selectedGroupBy", defaultSelections.group_by);
-            options.context.forecasts.set("selectedDataSet", defaultSelections.dataset);
-            options.context.forecasts.set("selectedUser", defaultSelections.selectedUser);
+
+            // Set initial selected data on the context
+            options.context.forecasts.set({
+                selectedTimePeriod : defaultSelections.timeperiod_id,
+                selectedCategory: defaultSelections.category,
+                selectedGroupBy : defaultSelections.group_by,
+                selectedDataSet: defaultSelections.dataset,
+                selectedUser : defaultSelections.selectedUser
+
+            });
 
             // grab a copy of the init data for forecasts to use
             this.initDataModel = app.initData;
@@ -177,7 +191,7 @@
 
     app.view.Field = app.view.Field.extend({
         _render: function() {
-            if (this.name == "forecast") {
+            if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
                 this.options = this.options || {};
                 this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'default';
             }
