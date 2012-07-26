@@ -82,6 +82,8 @@
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
+    savedTotal : null,
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
@@ -136,13 +138,13 @@
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
             }, this);
@@ -156,8 +158,31 @@
      */
     updateTotals : function (totals) {
         var self = this;
-        if(self.totals != totals) {
 
+        var allZero = true;
+        _.each(totals, function(value, key) {
+            if(key == "timeperiod_id") return;
+            if(value != 0) {
+                allZero = false;
+            }
+        });
+
+        if(allZero == true) return;
+
+        // these fields don't matter when it comes to tracking these values so just 0 them out.
+        // we don't care about this field
+        if(!_.isUndefined(totals.quota)) {
+            totals.quota = 0;
+        }
+        // we don't care about this field
+        if(!_.isUndefined(totals.amount)) {
+            totals.amount = 0;
+        }
+
+        if(!_.isEqual(self.totals, totals)) {
+
+            console.log(self.totals);
+            console.log(totals);
             var commitBtn = this.$el.find('a[id=commit_forecast]');
 
             // if the self.totals is empty we don't want the commit button to enable it self.
@@ -169,7 +194,11 @@
             var likely = {};
             // get the last committed value
             var previousCommit = _.first(this._collection.models);
-            if(_.isEmpty(previousCommit)) return;
+            if(_.isEmpty(previousCommit)) {
+                self.savedTotal = totals;
+                return;
+            }
+            if(!_.isEmpty(self.savedTotal)) self.savedTotal = null;
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view
                 best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
@@ -236,17 +265,14 @@
             //Get the first entry
             if(count == 0)
             {
-              previousModel = model;
+                previousModel = model;
+                var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
+                self.previousText = hb({'likely_case' : previousModel.get('date_created')});
+                self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
+                self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
             } else {
-              if(count == 1)
-              {
-                  var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  self.previousText = hb({'likely_case' : model.get('date_created')});
-                  self.previousLikelyCase = previousModel.get('likely_case');
-                  self.previousBestCase = previousModel.get('best_case');
-              }
-              self.historyLog.push(self.createHistoryLog(model, previousModel));
-              previousModel = model;
+                self.historyLog.push(self.createHistoryLog(model, previousModel));
+                previousModel = model;
             }
             count++;
         });
@@ -260,6 +286,10 @@
         self.render();
 
         this.$el.find('a[id=commit_forecast]').addClass('disabled');
+
+        if(!_.isEmpty(self.savedTotal)) {
+            self.updateTotals(self.savedTotal);
+        }
     },
 
     createHistoryLog: function(current, previousModel) {
@@ -316,7 +346,7 @@
           text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
         }
 
-        return {'text' : text, 'text2' : text2};
+        return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
 
     },
 

@@ -103,10 +103,9 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
         );
 
-        if (isset($args['category']) && $args['category'] == 'Committed')
-        {
-            $this->committed = 1;
-            $testFilters['forecast'] = array('$is' => $this->committed);
+        // since the default is Committed, we need to use this if it's not set or if it is set to Committed
+        if (!isset($args['category']) || $args['category'] == 'Committed') {
+            $testFilters['forecast'] = array('$is' => 1);
         }
 
         require_once('include/SugarParsers/Filter.php');
