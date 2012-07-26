@@ -8,8 +8,6 @@
     tagName: 'tr',
     class: 'view-forecastSchedule',
     id: 'expected_opportunities',
-    //viewSelector: '.forecastSchedule',
-    show: false,
     viewModule: {},
     selectedUser: {},
     _collection:{},
@@ -37,7 +35,7 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.forecastschedule;
-        this.selectedUser = app.user;
+        this.selectedUser = this.context.forecasts.get('selectedUser');
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
     },
 
@@ -72,24 +70,9 @@
      */
     _renderField: function(field) {
 
-        var show = this.showMe();
-
-        //Set to the default view if we can't show the include_expected checkbox
-        /*
-        if(field.name == "include_expected" && !show) {
-           field.view = field.viewName = 'default';
-        }
-        */
-
         app.view.View.prototype._renderField.call(this, field);
 
-        /*
-        if(field.def.name == "include_expected" && !show) {
-           field.options.viewName = 'default';
-        }
-        */
-
-        if(show)
+        if(this.isMyWorksheet() && this.showMe())
         {
             if (field.def.clickToEdit === true) {
                 new app.view.ClickToEditField(field, this);
@@ -99,8 +82,6 @@
                 new app.view.BucketGridEnum(field, this);
             }
         }
-
-
     },
 
     bindDataChange: function(params) {
@@ -111,11 +92,11 @@
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
                 function(context, selectedUser) {
-                    this.updateWorksheetBySelectedUser(selectedUser);
+                    this.updateScheduleBySelectedUser(selectedUser);
                 }, this);
             this.context.forecasts.on("change:selectedTimePeriod",
                 function(context, timePeriod) {
-                    this.updateWorksheetBySelectedTimePeriod(timePeriod);
+                    this.updateScheduleBySelectedTimePeriod(timePeriod);
                 }, this);
         }
     },
@@ -167,15 +148,9 @@
     /**
      * Determines if this Worksheet should be rendered
      */
-    showMe: function(){
-    	var selectedUser = this.selectedUser;
-    	this.show = false;
-
-    	if(selectedUser.showOpps || !selectedUser.isManager){
-    		this.show = true;
-    	}
-
-    	return this.show;
+    showMe: function()
+    {
+        return this.selectedUser.showOpps || !this.selectedUser.isManager;
     },
 
 
@@ -184,7 +159,7 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedUser:function (selectedUser) {
+    updateScheduleBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
         if(this.selectedUser.showOpps)
         {
@@ -197,7 +172,7 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedTimePeriod:function (params) {
+    updateScheduleBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
         if(this.selectedUser && this.selectedUser.showOpps)
         {
