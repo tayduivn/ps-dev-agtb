@@ -199,7 +199,7 @@ class Forecast extends SugarBean
 			$order_by = '';
 		}
 
-		$ret_array['order_by'] = !empty($order_by) ? ' ORDER BY ' . $order_by : '  ORDER BY forecasts.date_entered';
+		$ret_array['order_by'] = !empty($order_by) ? ' ORDER BY ' . $order_by : '  ORDER BY forecasts.date_entered desc';
 
 		if ( $return_array ) {
 			return $ret_array;
