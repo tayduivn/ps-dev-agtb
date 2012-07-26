@@ -1,15 +1,15 @@
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
-    <th>{{output_as_hb_tag "includedAmount"}}</th>
-    <th>{{output_as_hb_tag "includedBest"}}</th>
-    <th>{{output_as_hb_tag "includedLikely"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedAmount"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedBest"}}</th>
+    <th>{{output_as_hb_tag "formatNumber includedLikely"}}</th>
 </script>
 
 <script id="overall_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{output_as_hb_tag "overallAmount"}}</th>
-    <th>{{output_as_hb_tag "overallBest"}}</th>
-    <th>{{output_as_hb_tag "overallLikely"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallAmount"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallBest"}}</th>
+    <th>{{output_as_hb_tag "formatNumber overallLikely"}}</th>
 </script>
 
 <div class="subhead">

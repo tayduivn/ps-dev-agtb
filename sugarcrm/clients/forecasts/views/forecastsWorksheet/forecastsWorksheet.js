@@ -70,6 +70,34 @@
             }
         )
 
+
+        var TotalView = Backbone.View.extend({
+            id : 'summary',
+
+            tagName : 'tfoot',
+
+            render: function() {
+                var self = this;
+                var hb = Handlebars.compile("<tr>" +
+                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
+                								"<th>{{formatNumber includedAmount}}</th>" +
+                								"<th>{{formatNumber includedBest}}</th>" + "<th>{{formatNumber includedLikely}}</th>" +
+                							"</tr>" +
+                							"<tr class='overall'>" +
+                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
+                    							"<th>{{formatNumber overallAmount}}</th>" +
+                    							"<th>{{formatNumber overallBest}}</th>" +
+                    							"<th>{{formatNumber overallLikely}}</th>" +
+                    						"</tr>");
+                $('#summary').html(hb(self.model.toJSON()));
+                return this;
+            }
+        });
+
+        this.totalView = new TotalView({
+            model : this.totalModel
+        });
+
         // INIT tree with logged-in user       
         this.updateWorksheetBySelectedUser(this.selectedUser);
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);

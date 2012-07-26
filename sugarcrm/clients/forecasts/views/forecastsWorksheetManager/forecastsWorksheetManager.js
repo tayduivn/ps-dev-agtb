@@ -25,13 +25,16 @@
         var self = this;
         //set expandable behavior to false by default
         this.isExpandableRows = false;
-        this.category = 'Committed';
         
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.worksheetmanager;
-        
+
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+        this.timePeriod = app.defaultSelections.timeperiod_id.id
+        this.category = app.defaultSelections.category.id
+
+        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection.url = this.createURL();
     	
     	//Setup total subview
     	var TotalModel = Backbone.Model.extend({
