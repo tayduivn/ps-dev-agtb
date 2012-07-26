@@ -3,15 +3,15 @@
 </div>
 <div class="btn-toolbar pull-right">
     <div class="dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">{{str "LBL_ACTIONS" "Forecasts"}} <i class="icon caret"></i></a>
         <ul class="dropdown-menu menu">
-            <li><a href="#">Duplicate</a></li>
-            <li><a href="#">Save</a></li>
+            <li><a href="#">{{str "LBL_DUPLICATE" "Forecasts"}}</a></li>
+            <li><a href="#">{{str "LBL_SAVE" "Forecasts"}}</a></li>
             <li class="divider"></li>
-            <li><a href="#">Note</a></li>
-            <li><a href="#">Email</a></li>
-            <li><a href="#">PDF</a></li>
-            <li><a href="#">CSV</a></li>
+            <li><a href="#">{{str "LBL_NOTE" "Forecasts"}}</a></li>
+            <li><a href="#">{{str "LBL_EMAIL" "Forecasts"}}</a></li>
+            <li><a href="#">{{str "LBL_PDF" "Forecasts"}}</a></li>
+            <li><a href="#">{{str "LBL_CSV" "Forecasts"}}</a></li>
         </ul>
     </div>
 </div>
