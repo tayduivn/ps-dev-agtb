@@ -2,7 +2,7 @@
 <h4>Click on a theme name to build bootstrap.css (styleguide only) according to the theme</h4>
 <?php
 $themesRoot = '../themes';
-$clientsDir = array_diff( scandir($themesRoot . '/clients'), array(".", "..") );
+$clientsDir = array_diff( scandir($themesRoot . '/clients'), array(".", "..", ".DS_Store") );
 
 $themes = array();
 
@@ -13,7 +13,7 @@ foreach ($clientsDir as $platform) {
     
     $themes[$platform] = array();
     $root = $themesRoot . '/clients/' . $platform;
-    $themesDir = array_diff( scandir($root), array(".", "..") );
+    $themesDir = array_diff( scandir($root), array(".", "..", ".DS_Store") );
 
     /**
      * Loop the clients/__client__/ dir to list all themes
