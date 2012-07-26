@@ -2,39 +2,39 @@
 
     <div class="gplus-widget">
         <h2>G+ Activity</h2>
-            <br>
+        <br>
 
         {{#if gPlusId}}
-            <div class='activityContainer' style="width:400px">
-                <ul class="gmail-list" style="margin:0 0 0 0">
+        <div class='activityContainer' style="width:400px">
+            <ul class="gmail-list" style="margin:0 0 0 0">
 
 
-                    {{#if gPlusPosts}}
-                        {{#each gPlusPosts}}
+                {{#if gPlusPosts}}
+                {{#each gPlusPosts}}
 
 
-                            <div class="mailentry">
-                                <img src={{this.image}} style="float:left; margin:0 10px 0 0;">
-                                <div class="gplusPost">
-                                    <div class="gmail-from"><strong>{{this.author}}</strong>
-                                        <span class="from"></span></div>
-                                    <div class=""><span class="gplusStreamAddtional">{{{this.content}}}</span></div>
-                                    <div class="timeago"><span class="gplusStreamLink">{{this.published}}
+                <div class="mailentry">
+                    <img src={{this.image}} style="float:left; margin:0 10px 0 0;">
+                    <div class="gplusPost">
+                        <div class="gmail-from"><strong>{{this.author}}</strong>
+                            <span class="from"></span></div>
+                        <div class=""><span class="gplusStreamAddtional">{{{this.content}}}</span></div>
+                        <div class="timeago"><span class="gplusStreamLink">{{this.published}}
                                     &nbsp;<a href="{{this.url}}" target="_blank">More info...</a></span></div>
-                                </div>
-                            </div>
-                            </a>
-                            <br><br>
-                        {{/each}}
-                    {{else}}
-                        {{gPlusDisplayName}} has no activity at this time
-                    {{/if}}
-                </ul>
+                    </div>
+                </div>
+                </a>
+                <br><br>
+                {{/each}}
+                {{else}}
+                {{gPlusDisplayName}} has no activity at this time
+                {{/if}}
+            </ul>
 
-            </div>
+        </div>
 
         {{else}}
-            No Google Plus account found
+        No Google Plus account found
         {{/if}}
 
     </div>
