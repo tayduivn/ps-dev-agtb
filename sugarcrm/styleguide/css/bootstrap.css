@@ -6338,6 +6338,15 @@ article:nth-child(even) {
 article:hover {
   background: #e1f0fa;
 }
+.btn-link {
+  color: #1571ce;
+  font-weight: normal;
+}
+.btn-invisible.btn-link:hover {
+  text-decoration: underline;
+  background: none;
+  border-color: transparent;
+}
 table tbody tr:last-child td:last-child,
 table tbody tr:last-child td:first-child,
 table tfoot tr:last-child td:last-child,
@@ -6452,19 +6461,20 @@ table tfoot td {
   right: 0;
   background-image: "../img/light_toast.png";
   height: 100%;
+  overflow: auto;
   width: inherit;
   padding: 20px 0;
   border-left: 3px solid #cdcccb;
 }
 #folded .tab-pane.active {
   position: fixed !important;
-  top: 93px;
+  top: 113px;
   right: 0;
   background-image: url("../img/light_toast.png");
   height: 100%;
   width: inherit;
   padding: 20px 0;
-  border-left: 1px solid #ebebeb;
+  border-left: 2px solid #cdcccb;
 }
 #folded .tab-pane .block span.label {
   margin: 0 10px 0 0;
@@ -6479,6 +6489,19 @@ table tfoot td {
 }
 #dashboard #folded .tab-pane.active .thumbnail {
   margin: 0 20px 20px;
+}
+/* Temporary for cases, to be removed when general note preview gets fixed */
+.layout_Cases #folded .tab-pane.active {
+  height: 50%;
+  overflow: hidden;
+}
+.layout_Cases #folded .tab-pane.active > .block {
+  position: relative;
+  height: 100%;
+}
+.layout_Cases #folded .tab-pane.active > .block .card2 {
+  height: 100%;
+  overflow: scroll;
 }
 #searchActivity {
   margin-top: -12px;
@@ -6555,9 +6578,6 @@ table tfoot td {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4), inset 1px 1px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.8);
-  -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4), inset 1px 1px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.8);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4), inset 1px 1px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.8);
 }
 .avatar.thumbnail {
   padding: 3px;
@@ -6699,6 +6719,7 @@ textarea[readonly] {
 .block.tabs-left .nav-tabs {
   float: none;
   margin: 9px 0;
+  padding: 0;
   border: none;
 }
 .block.thumbnail .nav-tabs {
@@ -6885,7 +6906,7 @@ table.datatable tr td .actions a:hover {
 .card2 {
   margin: 0 0 20px;
 }
-.card2 .row-fluid .btn {
+.card2 .row-fluid .btn-small {
   margin-top: -4px;
   margin-right: 8px;
   height: 16px;
@@ -7083,8 +7104,8 @@ tr:hover .actions {
   background-image: linear-gradient(top, #ffffff, #f3f2f2);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f3f2f2', GradientType=0);
-  border-top: 2px solid #cdcccb;
-  border-bottom: 2px solid #cdcccb;
+  border-top: 1px solid #cdcccb;
+  border-bottom: 1px solid #cdcccb;
   color: #58595b !important;
   margin-right: -21px;
 }
@@ -7149,11 +7170,6 @@ tr:hover .actions {
 .vcard span {
   display: block;
 }
-.block span.label {
-  width: 20px;
-  height: 30px;
-  margin: -6px 10px 0 -10px;
-}
 .vcard span.tel,
 .vcard span.url,
 .vcard span.email,
@@ -7211,7 +7227,7 @@ footer {
   background-image: linear-gradient(top, #ffffff, #ebebeb);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ebebeb', GradientType=0);
-  border-bottom: 1px solid #e1e1e1;
+  border-bottom: 1px solid #cdcccb;
   position: relative;
   -webkit-box-shadow: 0 1px 0 #ffffff;
   -moz-box-shadow: 0 1px 0 #ffffff;
@@ -7230,6 +7246,12 @@ footer {
   border: solid #cdcccb 1px;
   /* drop the border on the fixed edges */
 
+}
+header .subnav {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: solid #cdcccb 1px;
 }
 .subnav .nav {
   margin: 0;
@@ -7662,6 +7684,9 @@ color: @red;
   color: #ffffff !important;
   font-size: 14px;
 }
+.navbar .nav.pull-right#userList {
+  margin: 0;
+}
 .navbar .advanced {
   position: absolute;
   top: -9px;
@@ -7773,9 +7798,9 @@ color: @red;
   background-image: linear-gradient(top, #1a1a1a, #262626);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1a1a1a', endColorstr='#262626', GradientType=0);
-  -webkit-box-shadow: inset 0 -1px 20px #000000, inset 0 -12px 0 #e61718, inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  -moz-box-shadow: inset 0 -1px 20px #000000, inset 0 -12px 0 #e61718, inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 -1px 20px #000000, inset 0 -12px 0 #e61718, inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow: inset 0 -1px 20px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: inset 0 -1px 20px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 -1px 20px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .topline {
   margin-top: 20px;
