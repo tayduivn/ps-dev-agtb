@@ -163,8 +163,6 @@
             this.bestTotal = this.reduceWorksheetManager('best_case');
             this.model.set('revenue', this.reduceWorksheetManager('amount'));
             this.revenue = this.model.get('revenue');
-            if(quota != undefined)
-                quota.amount = this.reduceWorksheetManager('quota');
         } else {
             this.likelyTotal = this.reduceWorksheet('likely_case');
             this.bestTotal = this.reduceWorksheet('best_case');
