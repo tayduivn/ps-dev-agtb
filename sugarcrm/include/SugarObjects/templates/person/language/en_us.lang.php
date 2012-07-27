@@ -77,5 +77,8 @@ $mod_strings = array(
 //BEGIN SUGARCRM flav!=com ONLY
 'LBL_PICTURE_FILE' => 'Picture',
 //END SUGARCRM flav!=com ONLY
-'LBL_LINKEDIN'=>'Linkedin Account',
+'LBL_LINKEDIN'=>'Linkedin Member Account',
+'LBL_FACEBOOK' => 'Facebook Account',
+'LBL_TWITTER' => 'Twitter Account',
+'LBL_GOOGLEPLUS' => 'Google Plus ID',
 );
