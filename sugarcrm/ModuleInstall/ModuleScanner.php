@@ -84,7 +84,6 @@ class ModuleScanner{
     'basename',
 	'passthru',
     'clearstatcache',
-    'delete',
     'dirname',
     'disk_free_space',
     'disk_total_space',
