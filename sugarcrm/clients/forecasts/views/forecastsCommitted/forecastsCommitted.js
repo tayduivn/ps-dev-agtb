@@ -84,6 +84,10 @@
 
     savedTotal : null,
 
+    commitButtonDisabled : true,
+
+    runningFetch : false,
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
@@ -104,6 +108,8 @@
             forecast_type : this.forecastType
         });
 
+        this.runningFetch = true;
+
         this._collection.fetch({
             data: urlParams
         });
@@ -121,7 +127,10 @@
         var self = this;
 
         this._collection = this.context.forecasts.committed;
-        this._collection.on("reset", function() { self.buildForecastsCommitted() }, this);
+        this._collection.on("reset", function() {
+            self.runningFetch = false;
+            self.buildForecastsCommitted();
+        }, this);
         this._collection.on("change", function() { self.buildForecastsCommitted(); }, this);
 
         if(this.context && this.context.forecasts) {
@@ -144,6 +153,7 @@
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
@@ -181,22 +191,17 @@
 
         if(!_.isEqual(self.totals, totals)) {
 
-            var commitBtn = this.$el.find('a[id=commit_forecast]');
-
-            // if the self.totals is empty we don't want the commit button to enable it self.
-            if(!_.isEmpty(self.totals)) {
-               commitBtn.removeClass('disabled');
-            }
-
             var best = {};
             var likely = {};
             // get the last committed value
             var previousCommit = _.first(this._collection.models);
-            if(_.isEmpty(previousCommit)) {
+            if(_.isEmpty(previousCommit) || this.runningFetch == true) {
                 self.savedTotal = totals;
                 return;
             }
+
             if(!_.isEmpty(self.savedTotal)) self.savedTotal = null;
+
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view
                 best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
@@ -219,9 +224,14 @@
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
 
-            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && commitBtn.hasClass('disabled')) {
+            var commitBtn = this.$el.find('a[id=commit_forecast]');
+            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && self.commitButtonDisabled == true) {
                 // it's different so we should enable the commit button
+                self.commitButtonDisabled = false;
                 commitBtn.removeClass('disabled');
+            } else if(_.isEmpty(self.bestCaseCls) && _.isEmpty(self.likelyCaseCls) && self.commitButtonDisabled == false) {
+                self.commitButtonDisabled = true;
+                commitBtn.addClass('disabled');
             }
 
         }
@@ -292,7 +302,12 @@
 
         self.render();
 
-        this.$el.find('a[id=commit_forecast]').addClass('disabled');
+        var btn = this.$el.find('a[id=commit_forecast]');
+        if(self.commitButtonDisabled === false && btn.hasClass('disabled')) {
+            btn.removeClass('disabled');
+        } else if(self.commitButtonDisabled === true && !btn.hasClass('disabled')) {
+            btn.addClass('disabled');
+        }
 
         if(!_.isEmpty(self.savedTotal)) {
             self.updateTotals(self.savedTotal);
@@ -395,6 +410,7 @@
         }
 
         btn.addClass('disabled');
+        self.commitButtonDisabled = true;
 
         //If the totals have not been set, don't save
         if(!self.totals)

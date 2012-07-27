@@ -208,6 +208,20 @@
         var likely_case = 0;
         var likely_adjusted = 0;
 
+        if(!this.showMe()){
+            // if we don't show this worksheet set it all to zero
+        	this.context.forecasts.set("updatedManagerTotals", {
+                'amount' : amount,
+                'quota' : quota,
+                'best_case' : best_case,
+                'best_adjusted' : best_adjusted,
+                'likely_case' : likely_case,
+                'likely_adjusted' : likely_adjusted
+            });
+            return false;
+        }
+
+
         _.each(self._collection.models, function (model) {
 
            amount 			+= parseFloat(model.get('amount'));
