@@ -448,6 +448,8 @@ class ForecastsChartApi extends ChartApi
 
         }
 
+        $this->xaxisLabel = $this->goalParetoLabel;
+
         // return!
         return $rb;
     }
