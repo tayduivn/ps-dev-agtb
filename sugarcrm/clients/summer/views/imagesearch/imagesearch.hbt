@@ -12,7 +12,7 @@
             <div class="modal-body">
             {{#each pictures}}
                     <a class="highlightit">
-                    <img src="{{this.mediaUrl}}" style="height:100px; width:100px" id = "{{this.mediaUrl}}" onclick="selectImage()"/>
+                    <img src="{{this.mediaUrl}}" style="height:100px; width:100px" id="{{this.mediaUrl}}" class="imagesearch-widget-choice"/>
                     </a>
 
                 {{/each}}
