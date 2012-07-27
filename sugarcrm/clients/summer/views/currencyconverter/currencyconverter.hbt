@@ -1,9 +1,12 @@
+<div class="widget">
 
-<div class=".currencyconverter-widget">
-<a href="http://www.forexpros.com" target="_blank"><img src="http://c1802182.cdn.cloudfiles.rackspacecloud.com/forexpros_en_logo.png" alt="ForexPros" title="ForexPros" style="float:left" /></a>
-<br/>
-<iframe frameborder="0" scrolling="no" height="375" width="197" allowtransparency="true" marginwidth="0" marginheight="0" src="http://tools.forexpros.com/currency-converter/index.php?from=17&to=12">
-</iframe>
+    <div class="currencyconverter-widget">
+        <a href="http://www.forexpros.com" target="_blank">
+            <img src="http://c1802182.cdn.cloudfiles.rackspacecloud.com/forexpros_en_logo.png" alt="ForexPros" title="ForexPros" style="float:left" />
+        </a>
+        <br/>
+        <iframe frameborder="0" scrolling="no" height="375" width="197" allowtransparency="true" marginwidth="0" marginheight="0" src="http://tools.forexpros.com/currency-converter/index.php?from=17&to=12">
+        </iframe>
+    </div>
 
 </div>
-

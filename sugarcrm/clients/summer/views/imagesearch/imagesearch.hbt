@@ -1,18 +1,56 @@
+<link rel="stylesheet" href="../clients/summer/views/imagesearch/highlightit.css" xmlns="http://www.w3.org/1999/html">
 
+<div class="widget">
 
-<h2>Images</h2>
+    <div class="imagesearch-widget" style="height:150px; width:150px">
 
- <div class="imagesearch-widget" style="width: 450px">
-        {{#each pictures}}
+        <div id="imagesearch" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3>Select a Photo</h3>
+            </div>
+            <div class="modal-body">
+            {{#each pictures}}
+                    <a class="highlightit">
+                    <img src="{{this.mediaUrl}}" style="height:100px; width:100px" id = "{{this.mediaUrl}}" onclick="selectImage()"/>
+                    </a>
 
-        <a href="{{this.sourceUrl}}" target="_blank">
-            <img src="{{this.mediaUrl}}" style="height:100px; width:100px"/>
-         </a>
+                {{/each}}
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal" >Close</a>
+                <a href="#" class="btn btn-primary">Save changes</a>
+            </div>
+        </div>
+        
+        <h2></h2>
+        <a data-toggle="modal" href="#imagesearch" class="thumbnail">
+            <img src="http://images2.udemy.com/user/200_H/anonymous.jpg" id = "profile" alt=""/>
+        </a>
 
-        {{/each}}
-
+    </div>
 
 
 </div>
 
+<script type="text/javascript">
+    function selectImage()
+    {
+        srcElement = window.event.srcElement;
+        console.log('hello');
+    }
+
+//    function highlightImage() {
+//            console.log(window.event.srcElement);
+//            srcElement = window.event.srcElement;
+//
+//                var linkName = srcElement.name;
+//                fadeout(linkName);
+//
+//
+//    }
+
+
+
+</script>
 

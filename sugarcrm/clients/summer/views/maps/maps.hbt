@@ -2,8 +2,20 @@
     #map_panel { display:none; }
     .canvas { height:300px; }
 </style>
-<div id='map_panel' class='thumbnail'>
-    <h4 class="title">Location</h4>
-    <div id="map_canvas" class="canvas">
+
+
+
+
+<div class="widget">
+
+    <div class="maps-widget">
+        <div id='map_time'></div>
+        <div id='map_panel' class='thumbnail'>
+            <h4 class="title">Location</h4>
+            <div id="map_canvas" class="canvas">
+        </div>
+
     </div>
+
+</div>
 </div>
