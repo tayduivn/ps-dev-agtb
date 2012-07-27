@@ -66,6 +66,34 @@
     </div>
 </div>
 
+{literal}
+<script id="included_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+    <th>{{formatNumber includedAmount}}</th>
+    <th>{{formatNumber includedBest}}</th>
+    <th>{{formatNumber includedLikely}}</th>
+</script>
+
+<script id="overall_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+    <th>{{formatNumber overallAmount}}</th>
+    <th>{{formatNumber overallBest}}</th>
+    <th>{{formatNumber overallLikely}}</th>
+</script>
+
+<script id="overall_manager_template" type="text/x-handlebars-template">
+    <tr>
+        <td>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
+        <td>{{formatNumber amount}}</td>
+        <td>{{formatNumber quota}}</td>
+        <td>{{formatNumber best_case}}</td>
+        <td>{{formatNumber best_adjusted}}</td>
+        <td>{{formatNumber likely_case}}</td>
+        <td>{{formatNumber likely_adjusted}}</td>
+    </tr>
+</script>
+{/literal}
+
 <div class="content"></div>
 
 {literal}

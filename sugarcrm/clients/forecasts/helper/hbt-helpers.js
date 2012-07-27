@@ -123,16 +123,6 @@
         return new Handlebars.SafeString(label);
     });
 
-    /**
-     * Output the code as a Handlebar variable tag.  This function is needed for our forecasting templates for sub
-     * views since the first loading of the Handlebar interprets the Handlebar code as a variable and substitutes the
-     * variable into the handlebar tag format.  We want to retain the tags in the output so we simply re-output the code.
-     *
-     */
-    Handlebars.registerHelper("output_as_hb_tag", function(code) {
-        return '{{' + code + '}}';
-    });
-
 
     /**
      * Render the expected opportunities.  Moved the code to handle rendering the expected opportunities into a helper

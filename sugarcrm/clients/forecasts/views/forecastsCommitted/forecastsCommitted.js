@@ -269,8 +269,17 @@
                 self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
                 self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
             } else {
-                self.historyLog.push(self.createHistoryLog(model, previousModel));
-                previousModel = model;
+              if(count == 1)
+              {
+                  self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
+                  self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
+                  self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
+                  var dateEntered = App.utils.date.parse(model.get('date_entered'));
+                  // TODO: user preferences are not working for formatting dates, hard code for now
+                  self.previousDateEntered = App.utils.date.format(dateEntered, 'Y-m-d \\at g:i a');
+              }
+              self.historyLog.push(self.createHistoryLog(model, previousModel));
+              previousModel = model;
             }
             count++;
         });

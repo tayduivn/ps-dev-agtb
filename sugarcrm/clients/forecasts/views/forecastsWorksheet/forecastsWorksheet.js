@@ -238,7 +238,7 @@
     _render:function () {
         var self = this;
 
-        if(this.selectedUser && !this.selectedUser.showOpps){
+        if(!this.showMe()){
         	return false;
         }
         $("#view-sales-rep").show();
@@ -292,7 +292,6 @@
         view.render();
 
         this.createSubViews();
-
         this.includedView.render();
         this.overallView.render();
     },
@@ -415,9 +414,15 @@
            _.each(this.context.forecasts.forecastschedule.models, function(model) {
                if(model.get('status') == 'Active')
                {
-                    var amount = parseFloat(model.get('expected_amount'));
-                    var likely = parseFloat(model.get('expected_likely_case'));
-                    var best = parseFloat(model.get('expected_best_case'));
+                    var amount = model.get('expected_amount');
+                    var likely = model.get('expected_likely_case');
+                    var best = model.get('expected_best_case');
+
+                    //Check for null condition and, if so, set to 0
+                    amount = amount != null ? parseFloat(amount) : 0;
+                    likely = likely != null ? parseFloat(likely) : 0;
+                    best = best != null ? parseFloat(best) : 0;
+
                     if(model.get('include_expected') == 1)
                     {
                         includedAmount += amount;
@@ -497,7 +502,7 @@
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
-        if(this.selectedUser && !this.selectedUser.showOpps){
+        if(!this.showMe()){
         	return false;
         }
         this._collection.url = this.createURL();
