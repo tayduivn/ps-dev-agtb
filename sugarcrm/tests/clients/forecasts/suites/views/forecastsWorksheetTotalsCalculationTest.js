@@ -95,4 +95,30 @@ describe("The forecasts worksheet totals calculation test", function(){
             view.calculateTotals();
         });
     });
+
+
+    describe("updateTotals worksheet calculation test with null values in expected opportunities", function() {
+
+        it("should default the included values to 0 when the amounts are null", function() {
+            //Expected opportunities model
+            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : null, expected_best_case : null, expected_likely_case : null});
+            var expectedCollection = new Backbone.Collection([expectedModel]);
+
+            context = app.context.getContext({module:'Forecasts'});
+            view.context = { forecasts :
+                {
+                        forecastschedule : expectedCollection,
+
+                        set : function(model, updatedTotals) {
+                            expect(model).toEqual('updatedTotals');
+                            expect(updatedTotals.best_case).toEqual(100);
+                            expect(updatedTotals.likely_case).toEqual(100);
+                            expect(updatedTotals.amount).toEqual(100);
+                            expect(updatedTotals.opp_count).toEqual(1);
+                        }
+                }
+            };
+            view.calculateTotals();
+        });
+    });
 });
