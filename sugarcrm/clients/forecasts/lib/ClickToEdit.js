@@ -55,7 +55,7 @@
 
     app.view.ClickToEditField.prototype._addCTEIcon = function(){
         // add icon markup
-        this.field.cteIcon = $('<span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+        this.field.cteIcon = $('<div style="position:absolute; margin-left:-10px"><span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span></div>');
 
         // add events
         this.field.showCteIcon = function(){
