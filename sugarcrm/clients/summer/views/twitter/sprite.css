@@ -1,0 +1,73 @@
+.postdate {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    float: left;
+}
+.month, .day, .year {
+    position: absolute;
+    text-indent: -1000em;
+    background-image: url(dates.png);
+    background-repeat: no-repeat;
+}
+.month { top: 2px; left: 0; width: 32px; height: 24px;}
+.day { top: 25px; left: 0; width: 32px; height: 25px;}
+.year { bottom: 0; right: 0; width: 17px; height: 48px;}
+
+.m-Jan { background-position: 0 4px;}
+.m-Feb { background-position: 0 -28px;}
+.m-Mar { background-position: 0 -59px;}
+.m-Apr { background-position: 0 -90px;}
+.m-May { background-position: 0 -121px;}
+.m-Jun { background-position: 0 -152px;}
+.m-Jul { background-position: 0 -183px;}
+.m-Aug { background-position: 0 -214px;}
+.m-Sep { background-position: 0 -245px;}
+.m-Oct { background-position: 0 -276px;}
+.m-Nov { background-position: 0 -307px;}
+.m-Dec { background-position: 0 -338px;}
+
+
+.d-01 { background-position: -50px 0;}
+.d-02 { background-position: -50px -31px;}
+.d-03 { background-position: -50px -93px;}
+.d-04 { background-position: -50px -124px;}
+.d-05 { background-position: -50px -155px;}
+.d-06 { background-position: -50px -186px;}
+.d-07 { background-position: -50px -217px;}
+.d-08 { background-position: -50px -248px;}
+.d-09 { background-position: -50px -279px;}
+.d-10 { background-position: -50px -310px;}
+.d-11 { background-position: -50px -341px;}
+.d-12 { background-position: -50px -372px;}
+.d-13 { background-position: -50px -403px;}
+.d-14 { background-position: -50px -434px;}
+.d-15 { background-position: -50px -465px;}
+.d-16 { background-position: -50px -496px;}
+.d-17 { background-position: -100px 0;}
+.d-18 { background-position: -100px -31px;}
+.d-19 { background-position: -100px -93px;}
+.d-20 { background-position: -100px -124px;}
+.d-21 { background-position: -100px -155px;}
+.d-22 { background-position: -100px -186px;}
+.d-23 { background-position: -100px -217px;}
+.d-24 { background-position: -100px -248px;}
+.d-25 { background-position: -100px -279px;}
+.d-26 { background-position: -100px -310px;}
+.d-27 { background-position: -100px -341px;}
+.d-28 { background-position: -100px -372px;}
+.d-29 { background-position: -100px -403px;}
+.d-30 { background-position: -100px -434px;}
+.d-31 { background-position: -100px -465px;}
+
+
+
+.y-2006 { background-position: -150px 0;}
+.y-2007 { background-position: -150px -50px;}
+.y-2008 { background-position: -150px -100px;}
+.y-2009 { background-position: -150px -150px;}
+.y-2010 { background-position: -150px -200px;}
+.y-2011 { background-position: -150px -250px;}
+.y-2012 { background-position: -150px -300px;}
+.y-2013 { background-position: -150px -350px;}
+.y-2014 { background-position: -150px -400px;}

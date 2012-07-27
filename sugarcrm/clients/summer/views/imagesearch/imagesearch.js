@@ -33,7 +33,9 @@
                     var sourceUrl = data.d.results[i].SourceUrl;
                     pictures.push( {mediaUrl: mediaUrl, sourceUrl: sourceUrl} );
                 }
+                if (!self.profile){
                 self.profile = "../clients/summer/views/imagesearch/anonymous.jpg";
+                }
                 app.view.View.prototype._renderHtml.call( self );
             },
             error: function ( jqXHR, textStatus, errorThrown ) {
@@ -59,6 +61,7 @@
         var chosenImageUrl = ( $(event.target)[0].getAttribute('src') );
         self.profile = chosenImageUrl;
         self._render();
+        self.model.save();
 
 
     }
