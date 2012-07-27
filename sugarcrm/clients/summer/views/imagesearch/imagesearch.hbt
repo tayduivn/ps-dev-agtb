@@ -25,7 +25,7 @@
         
         <h2></h2>
         <a data-toggle="modal" href="#imagesearch" class="thumbnail">
-            <img src="http://images2.udemy.com/user/200_H/anonymous.jpg" id = "profile" alt=""/>
+            <img src={{profile}} id = "profile" alt=""/>
         </a>
 
     </div>
@@ -33,22 +33,14 @@
 
 </div>
 
+
 <script type="text/javascript">
     function selectImage()
     {
         srcElement = window.event.srcElement;
-        console.log('hello');
+        console.log(this);
     }
 
-//    function highlightImage() {
-//            console.log(window.event.srcElement);
-//            srcElement = window.event.srcElement;
-//
-//                var linkName = srcElement.name;
-//                fadeout(linkName);
-//
-//
-//    }
 
 
 

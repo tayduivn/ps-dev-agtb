@@ -33,6 +33,7 @@
                     var sourceUrl = data.d.results[i].SourceUrl;
                     pictures.push( {mediaUrl: mediaUrl, sourceUrl: sourceUrl} );
                 }
+                self.profile = "../clients/summer/views/imagesearch/anonymous.jpg";
                 app.view.View.prototype._renderHtml.call( self );
             },
             error: function ( jqXHR, textStatus, errorThrown ) {
