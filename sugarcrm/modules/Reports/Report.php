@@ -1099,7 +1099,7 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-        $from2 = $from = "SELECT * FROM {$focus->table_name} as {$alias}2 ";
+        $from2 = $from = "SELECT * FROM {$focus->table_name} {$alias}2 ";
         $focus->addVisibilityFrom($from, array('table_alias' => $alias."2"));
         if($from2 != $from) {
         	$query .= " AND EXISTS($from WHERE {$alias}.id={$alias}2.id)\n";
