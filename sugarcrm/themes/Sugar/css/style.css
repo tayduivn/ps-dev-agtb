@@ -6850,7 +6850,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	padding: 10px 0px;
 	border: 1px solid #999;
 	width: auto;
-    min-width: 100%;
+    min-width: 150px;
 }
 
 #quickCreate ul.clickMenu li ul.subnav {
