@@ -28,8 +28,7 @@
     {
         var self = this;
         self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { 
-        	this.calculateTotals();
+        model.save(null, { success:_.bind(function() {
         	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
         	this.render(); 
         }, this)});
@@ -205,7 +204,6 @@
             	this.calculateTotals();
             }, this);
             this.context.forecasts.forecastschedule.on("change", function() {
-                this.calculateTotals();
                 this.render();
             }, this);
         }
@@ -290,6 +288,8 @@
         $("#expected_opportunities").remove();
         $("#summary").prepend(view.$el);
         view.render();
+
+        this.calculateTotals();
 
         this.createSubViews();
         this.includedView.render();
@@ -381,6 +381,9 @@
      * @param selectedUser
      */
     calculateTotals: function() {
+
+
+
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
@@ -389,6 +392,19 @@
         var overallBest = 0;
         var overallLikely = 0;
         var includedCount = 0;
+
+
+        if(!this.showMe()){
+            // if we don't show this worksheet set it all to zero
+        	this.context.forecasts.set("updatedTotals", {
+                'likely_case' : includedLikely,
+                'best_case' : includedBest,
+                'timeperiod_id' : self.timePeriod,
+                'opp_count' : includedCount,
+                'amount' : includedAmount
+            });
+            return false;
+        }
 
         _.each(self._collection.models, function (model) {
             var included = model.get('forecast');
