@@ -83,11 +83,22 @@ class ForecastScheduleApi extends ModuleApi {
 
         $result = $seed->db->query($query);
         $data = array();
+        
         while($row = $seed->db->fetchByAssoc($result))
         {
             $data[] = $row;
         }
-
+        
+		if(empty($data)){
+			$data[] = array("expected_best_case" => "0.0",
+        				 "expected_likely_case" => "0.0",
+        				 "expected_worst_case" => "0.0",
+        				 "expected_amount" => "0.0",
+        				 "cascade_hierarchy" => 0,
+        				 "status" => "Active",
+        				 "user_id" => $user_id,
+        				 "timeperiod_id" => $timeperiod_id);
+		}
         return array('next_offset'=>1, 'records'=>$data);
     }
 
