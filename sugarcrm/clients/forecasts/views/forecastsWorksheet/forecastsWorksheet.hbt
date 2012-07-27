@@ -1,17 +1,3 @@
-<script id="included_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
-    <th>{{output_as_hb_tag "includedAmount"}}</th>
-    <th>{{output_as_hb_tag "includedBest"}}</th>
-    <th>{{output_as_hb_tag "includedLikely"}}</th>
-</script>
-
-<script id="overall_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{output_as_hb_tag "overallAmount"}}</th>
-    <th>{{output_as_hb_tag "overallBest"}}</th>
-    <th>{{output_as_hb_tag "overallLikely"}}</th>
-</script>
-
 <div class="subhead">
     {{#each meta.panels}}
     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatable worksheetTable">
