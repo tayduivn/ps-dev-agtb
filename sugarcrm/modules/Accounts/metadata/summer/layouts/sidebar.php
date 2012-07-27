@@ -7,7 +7,6 @@ $layout->push('main', array('view'=>'maps'));
 $layout->push('main', array('view'=>'news'));
 $layout->push('main', array('view'=>'twitter'));
 $layout->push('main', array('view'=>'facebook'));
-$layout->push('main', array('view'=>'gplus'));
 $layout->push('main', array('view'=>'linkedin'));
 $layout->push('main', array('view'=>'imagesearch'));
 $layout->push('main', array('view'=>'trends'));
