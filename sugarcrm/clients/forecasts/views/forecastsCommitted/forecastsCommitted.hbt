@@ -20,7 +20,7 @@
 {{#if previousText.length}}
 <div class="log drawer">
     <div class="title">
-    <strong>{{previousText}}</strong>
+    <strong>{{previousText}}</strong> {{previousDateEntered}}
     </div>
     <div class="datapoint1">
     {{previousBestCase}}
