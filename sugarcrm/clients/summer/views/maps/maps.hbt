@@ -9,7 +9,7 @@
 <div class="widget">
 
     <div class="maps-widget">
-        <div id='map_time'></div>
+        <div id='map_time'><h2 align=left></h2></div>
         <div id='map_panel' class='thumbnail'>
             <h4 class="title">Location</h4>
             <div id="map_canvas" class="canvas">

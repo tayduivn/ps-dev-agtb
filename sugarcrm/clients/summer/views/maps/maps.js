@@ -135,8 +135,15 @@
         var dateString = localHour + ":" + localMinutes + " " + ampm;
 
 
+        var _title = this.$("h2");
 
-        this.$('#map_time').append("<h2 align=left>" + dateString + "</h2>" );
+
+            _title.html(dateString);
+
+
+
+
+
 
 
 
@@ -155,6 +162,7 @@
             map: this.map,
             position: results[0].geometry.location
         });
+
     },
 
 
