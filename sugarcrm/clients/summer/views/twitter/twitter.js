@@ -6,7 +6,19 @@
 
     getTweets: function () {
         var self = this;
-        var twitter = this.model.get('twitter')
+        var twitter = this.model.get("name");
+        if(!twitter)twitter = this.model.get('account_name');
+        if(!twitter)twitter = this.model.get('full_name');
+
+
+        if (this.model.get('twitter')) {
+            twitter = this.model.get('twitter');
+        } else {
+            twitter = this.model.get('name').replace(" ", "");
+            if(!twitter)twitter = this.model.get('account_name').replace(" ", "");
+            if(!twitter)twitter = this.model.get('full_name').replace(" ", "");
+        }
+
         $.ajax({
             url: "http://twitter.com/statuses/user_timeline/" + twitter + ".json?count=6&callback=?",
             dataType: "jsonp",
@@ -16,6 +28,11 @@
                 self.tweets = [];
                 var tweets = self.tweets;
                 for (var i=0; i < data.length; i++) {
+                    console.log(data[i]);
+                    var day = data[i].created_at.substring(8,10);
+                    var month = data[i].created_at.substring(4,7);
+                    var year = data[i].created_at.substring(data[i].created_at.length-4, data[i].created_at.length);
+
                     var text = data[i].text;
                     var sourceUrl = data[i].source;
 
@@ -34,10 +51,9 @@
                         text2+=temp[k];
                         text2+=" ";
                     }
-                    console.log(text2);
 
 
-                    tweets.push({text: text2, source: sourceUrl} );
+                    tweets.push({text: text2, source: sourceUrl, day: day, month: month, year: year} );
                 }
 
 

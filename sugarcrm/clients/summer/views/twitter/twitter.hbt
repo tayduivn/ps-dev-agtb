@@ -1,13 +1,24 @@
 
-<div class="widget">
 
+<link rel="stylesheet" href="../clients/summer/views/twitter/sprite.css" xmlns="http://www.w3.org/1999/html">
+<div class="widget">
     <div class="twitter-widget">
         <h2>Tweets</h2>
         {{#each tweets}}
         {{#if this.source}}
-        {{{this.text}}}</br><br>
+        <ul style="margin-left: 0px">
+        <div class="postdate" style="margin: 0 10px 0 0">
+            <div class="month m-{{{this.month}}}">{{this.month}}</div>
+            <div class="day d-{{{this.day}}}">{{this.day}}</div>
+            <div class="year y-{{{this.year}}}">{{this.year}}</div>
+        </div>
+        <div class="tweet">
+        {{{this.text}}}</br><br></div>
+            </ul>
+        {{else}}
+            No tweets at this time.
+
         {{/if}}
         {{/each}}
     </div>
-
 </div>

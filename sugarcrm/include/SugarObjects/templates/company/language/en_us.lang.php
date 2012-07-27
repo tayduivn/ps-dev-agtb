@@ -112,9 +112,9 @@ $mod_strings = array (
 	'LBL_VIEW_FORM_TITLE' => 'Account View',
 	'LBL_WEBSITE' => 'Website:',
     'LBL_LINKEDIN' => 'Linkedin Company ID',
-    'LBL_FACEBOOK' => 'Facebook Company Account',
-    'LBL_TWITTER' => 'Twitter Company Account',
-    'LBL_GOOGLEPLUS' => 'Google Plus Company ID',
+    'LBL_FACEBOOK' => 'Facebook Account',
+    'LBL_TWITTER' => 'Twitter Account',
+    'LBL_GOOGLEPLUS' => 'Google Plus ID',
 
 	'LNK_ACCOUNT_LIST' => 'Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
