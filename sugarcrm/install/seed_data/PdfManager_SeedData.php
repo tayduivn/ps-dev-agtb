@@ -50,33 +50,37 @@ if (defined(PDF_HEADER_LOGO)) {
     $modStringSrc['pdf_template_invoice']['body_html'] = str_replace('./themes/default/images/pdf_logo.jpg', $logo, $modStringSrc['pdf_template_invoice']['body_html']);
 }
 
-$pdfTemplate = new PdfManager();
-$pdfTemplate->base_module = 'Quotes';
-$pdfTemplate->name = $modStringSrc['pdf_template_quote']['name'];
-$pdfTemplate->description = $modStringSrc['pdf_template_quote']['description'];
-$pdfTemplate->body_html = to_html($modStringSrc['pdf_template_quote']['body_html']);
-$pdfTemplate->template_name = $modStringSrc['pdf_template_quote']['template_name'];;
-$pdfTemplate->author = PDF_AUTHOR;
-$pdfTemplate->title = PDF_HEADER_TITLE;
-$pdfTemplate->subject = PDF_SUBJECT;
-$pdfTemplate->keywords = PDF_KEYWORDS;
-$pdfTemplate->published = 'yes';
-$pdfTemplate->deleted = 0;
-$pdfTemplate->team_id = 1;
-$pdfTemplate->save();
+include_once('modules/PdfManager/PdfManagerHelper.php');
+$templatesArray = PdfManagerHelper::getPublishedTemplatesForModule('Quotes');
+if (empty($templatesArray)) {
+    $pdfTemplate = new PdfManager();
+    $pdfTemplate->base_module = 'Quotes';
+    $pdfTemplate->name = $modStringSrc['pdf_template_quote']['name'];
+    $pdfTemplate->description = $modStringSrc['pdf_template_quote']['description'];
+    $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_quote']['body_html']);
+    $pdfTemplate->template_name = $modStringSrc['pdf_template_quote']['template_name'];;
+    $pdfTemplate->author = PDF_AUTHOR;
+    $pdfTemplate->title = PDF_HEADER_TITLE;
+    $pdfTemplate->subject = PDF_SUBJECT;
+    $pdfTemplate->keywords = PDF_KEYWORDS;
+    $pdfTemplate->published = 'yes';
+    $pdfTemplate->deleted = 0;
+    $pdfTemplate->team_id = 1;
+    $pdfTemplate->save();
 
-$pdfTemplate = new PdfManager();
-$pdfTemplate->base_module = 'Quotes';
-$pdfTemplate->name = $modStringSrc['pdf_template_invoice']['name'];
-$pdfTemplate->description = $modStringSrc['pdf_template_invoice']['description'];
-$pdfTemplate->body_html = to_html($modStringSrc['pdf_template_invoice']['body_html']);
-$pdfTemplate->template_name = $modStringSrc['pdf_template_invoice']['template_name'];;
-$pdfTemplate->author = PDF_AUTHOR;
-$pdfTemplate->title = PDF_HEADER_TITLE;
-$pdfTemplate->subject = PDF_SUBJECT;
-$pdfTemplate->keywords = PDF_KEYWORDS;
-$pdfTemplate->published = 'yes';
-$pdfTemplate->deleted = 0;
-$pdfTemplate->team_id = 1;
-$pdfTemplate->save();
+    $pdfTemplate = new PdfManager();
+    $pdfTemplate->base_module = 'Quotes';
+    $pdfTemplate->name = $modStringSrc['pdf_template_invoice']['name'];
+    $pdfTemplate->description = $modStringSrc['pdf_template_invoice']['description'];
+    $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_invoice']['body_html']);
+    $pdfTemplate->template_name = $modStringSrc['pdf_template_invoice']['template_name'];;
+    $pdfTemplate->author = PDF_AUTHOR;
+    $pdfTemplate->title = PDF_HEADER_TITLE;
+    $pdfTemplate->subject = PDF_SUBJECT;
+    $pdfTemplate->keywords = PDF_KEYWORDS;
+    $pdfTemplate->published = 'yes';
+    $pdfTemplate->deleted = 0;
+    $pdfTemplate->team_id = 1;
+    $pdfTemplate->save();
+}
 

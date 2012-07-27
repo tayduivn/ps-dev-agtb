@@ -162,6 +162,8 @@ if($ce_to_pro_ent)
     	$GLOBALS['db']->full_text_indexing_setup();
     }
 }
+
+addPdfManagerTemplate();
 //END SUGARCRM flav=pro ONLY
 
 logThis(" Start Rebuilding the config file again", $path);

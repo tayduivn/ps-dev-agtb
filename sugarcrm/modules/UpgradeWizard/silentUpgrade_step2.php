@@ -520,6 +520,9 @@ if($ce_to_pro_ent) {
     }
 }
 
+//BEGIN SUGARCRM flav=pro ONLY
+addPdfManagerTemplate();
+//END SUGARCRM flav=pro ONLY
 
 /*
 //BEGIN SUGARCRM flav=int ONLY
