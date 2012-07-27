@@ -136,7 +136,7 @@
 
 
 
-        this.$('#map_time').append("<h2 align=left>" + dateString + "</h2>" );
+        this.$('#map_time').html("<h2 align=left>" + dateString + "</h2>" );
 
 
 

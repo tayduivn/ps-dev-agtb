@@ -6,7 +6,7 @@
 
     getTweets: function () {
         var self = this;
-        var twitter = 'sugarcrm';
+        var twitter = this.model.get('twitter')
         $.ajax({
             url: "http://twitter.com/statuses/user_timeline/" + twitter + ".json?count=6&callback=?",
             dataType: "jsonp",

@@ -9,7 +9,7 @@ class SideBarLayout
     }
 
     protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array());
-    protected $spans = array('main' => 7, 'side' => 5);
+    protected $spans = array('main' => 8, 'side' => 4);
     protected $layout = array(
         'type' => 'simple',
         'components' =>
@@ -65,7 +65,12 @@ class SideBarLayout
     }
 
     function getLayout()
+
     {
+        if (empty($this->containers['side'])) {
+            $this->spans['main'] = 12;
+
+        }
         $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
 
         return $this->layout;
