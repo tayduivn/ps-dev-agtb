@@ -88,7 +88,7 @@ class PdfManagerHelper
     public static function getAvailableModules()
     {
 
-        $bannedModules = PdfManagerHelper::getBannnedFieldsAndLinks();
+        $bannedModules = PdfManagerHelper::getBannnedModules();
 
         $module_names = array_change_key_case ($GLOBALS['app_list_strings']['moduleList']);
         require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
