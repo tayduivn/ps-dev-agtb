@@ -217,35 +217,23 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     
     protected function getForecastBestLikely()
     {
-        $ids = array();
 
-        $db = DBManagerFactory::getInstance();
+        //getting best/likely values from forecast table
+        $forecast_query = "SELECT u.user_name, max(f.date_modified) date_modified, f.id forecast_id, f.best_case, f.likely_case, f.worst_case FROM forecasts f INNER JOIN users u ON f.user_id = u.id
+AND f.forecast_type = 'DIRECT' AND f.timeperiod_id = '{$this->timeperiod_id}' AND (u.id = '{$this->user_id}' OR u.reports_to_id = '{$this->user_id}') GROUP BY u.user_name";
 
-        $query = "SELECT id FROM users WHERE reports_to_id = '{$this->user_id}' AND deleted = 0";
-        $result = $db->query($query);
-        while($row=$db->fetchByAssoc($result)) {
-            $ids[] = $row['id'];
-        }
-
-        $ids[] = $this->user_id;
+        $result = $GLOBALS['db']->query($forecast_query);
 
         $data = array();
-
-        foreach($ids as $id) {
-            $user = BeanFactory::getBean("Users", $id);
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}' AND forecast_type = 'DIRECT' AND user_id = '{$id}' AND deleted = 0 ORDER BY date_modified DESC";
-
-            $result = $db->limitQuery($forecast_query, 0, 1);
-
-            while($row=$db->fetchByAssoc($result))
-            {
-                $data[$user->user_name]['best_case'] = $row['best_case'];
-                $data[$user->user_name]['likely_case'] = $row['likely_case'];
-                $data[$user->user_name]['worst_case'] = $row['worst_case'];
-                $data[$user->user_name]['id'] = $row['id'];
-                $data[$user->user_name]['forecast_id'] = $row['id'];
-            }
+        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        {
+            $data[$row['user_name']]['best_case'] = $row['best_case'];
+            $data[$row['user_name']]['likely_case'] = $row['likely_case'];
+            $data[$row['user_name']]['worst_case'] = $row['worst_case'];
+            $data[$row['user_name']]['id'] = $row['forecast_id'];
+            $data[$row['user_name']]['forecast_id'] = $row['forecast_id'];
         }
+
         return $data;
     }
 
