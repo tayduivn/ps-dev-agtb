@@ -60,7 +60,6 @@
      * 403 Forbidden error handler. 
      */
     app.error.handleForbiddenError = function(error) {
-        backToLogin(true);
         app.alert.show("forbidden_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
     };
     
