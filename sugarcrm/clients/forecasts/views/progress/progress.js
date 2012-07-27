@@ -167,8 +167,6 @@
             this.likelyTotal = this.reduceWorksheet('likely_case');
             this.bestTotal = this.reduceWorksheet('best_case');
             this.model.set('quota', this.reduceWorksheet('amount'));
-            this.revenue = this.model.get('revenue');
-            this.model.set('opportunities', this.countWorksheetOpportunities());
         }
 
         this.model.set('quota', quota);

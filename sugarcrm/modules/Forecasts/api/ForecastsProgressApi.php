@@ -103,8 +103,7 @@ class ForecastsProgressApi extends ModuleApi
    		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
    				. " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
    				. " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-   				. " AND opportunities.deleted = 0"
-               . " AND opportunities.forecast = 1";
+   				. " AND opportunities.deleted = 0";
 
    		$query = $this->opportunity->create_list_query(NULL, $where);
    		$query = $this->opportunity->create_list_count_query($query);
@@ -222,8 +221,7 @@ class ForecastsProgressApi extends ModuleApi
    		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
    		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
    		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-   		       . " AND opportunities.deleted = 0"
-               . " AND opportunities.forecast = 1";
+   		       . " AND opportunities.deleted = 0";
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
 
