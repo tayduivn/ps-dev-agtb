@@ -57,9 +57,9 @@
     saveModel: function ( event ) {
         var self = this;
         var chosenImageUrl = ( $(event.target)[0].getAttribute('src') );
-        console.log(chosenImageUrl);
         self.profile = chosenImageUrl;
         self._render();
+
 
     }
 

@@ -6,7 +6,12 @@
 
     getTweets: function () {
         var self = this;
-        var twitter = 'sugarcrm';
+
+        var twitter = this.model.get("name");
+        if(!twitter)twitter = this.model.get('account_name');
+        if(!twitter)twitter = this.model.get('full_name');
+
+
         $.ajax({
             url: "http://twitter.com/statuses/user_timeline/" + twitter + ".json?count=6&callback=?",
             dataType: "jsonp",
