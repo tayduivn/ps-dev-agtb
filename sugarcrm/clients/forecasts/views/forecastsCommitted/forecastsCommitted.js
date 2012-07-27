@@ -240,13 +240,10 @@
             } else {
               if(count == 1)
               {
-                  var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  //self.previousText = hb({'likely_case' : model.get('likely_case')});
-                  self.previousText = hb;
+                  self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
                   self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
                   self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
-                  var dateEntered = new Date(model.get('date_entered'));
-                  //self.previousDateEntered = App.utils.date.format(dateEntered, App.user.get('datepref') + ' ' + App.user.get('timepref'));
+                  var dateEntered = App.utils.date.parse(model.get('date_entered'));
                   // TODO: user preferences are not working for formatting dates, hard code for now
                   self.previousDateEntered = App.utils.date.format(dateEntered, 'Y-m-d \\at g:i a');
               }
