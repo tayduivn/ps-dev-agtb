@@ -1,6 +1,0 @@
-<select data-placeholder=" " name="{{name}}" style="width: 100px;" {{#if def.multi}} multiple {{/if}}>
-    <option value="" selected></option>
-    {{#eachOptions def.options}}
-    <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
-    {{/eachOptions}}
-</select>
