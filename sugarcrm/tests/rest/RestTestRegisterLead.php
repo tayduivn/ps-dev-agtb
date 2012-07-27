@@ -68,4 +68,14 @@ class RestTestRegisterLead extends RestTestBase
             "Rest Reply and Bean Do Not Match.");
     }
 
+    public function testCreateEmpty()
+    {
+        $leadProps = array(
+        );
+        $restReply = $this->_restCall("Leads/register",
+            json_encode($leadProps),
+            'POST');
+        $this->assertEquals($restReply['info']['http_code'], 412);
+    }
+
 }
