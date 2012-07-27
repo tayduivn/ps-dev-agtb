@@ -84,7 +84,9 @@
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
 }
-
+.jstree-sugar {
+    padding: 10px;
+}
 .jstree-sugar li.jstree-last { background:transparent; }
 .jstree-sugar li.jstree-open > a > ins,
 .jstree-sugar li.jstree-closed > a > ins,
@@ -102,6 +104,7 @@
 .jstree-sugar .jstree-clicked { color: @gray !important; }
 .jstree-sugar li, .jstree-sugar a  {color: @blueDark !important;}
 .jstree-sugar a .jstree-icon:before { content: "\f007"; }
+.jstree-sugar .jstree-leaf.parent a .jstree-icon:before {content: "\f062";}
 .jstree-sugar a.jstree-loading .jstree-icon { background:url("../img/throbber.gif") center center no-repeat !important; }
 
 .jstree-sugar.jstree-focused {  }

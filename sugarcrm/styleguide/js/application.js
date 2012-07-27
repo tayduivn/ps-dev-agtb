@@ -109,11 +109,13 @@
       // column collapse
       $('.drawerTrig').on('click',
       function () {
-        $(this).toggleClass('pull-right').toggleClass('pull-left');
+       // $(this).toggleClass('pull-right').toggleClass('pull-left');
         $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-        $('#drawer').toggleClass('span2');
-        $('.bordered').toggleClass('hide');
-        $('#charts').toggleClass('span10').toggleClass('span12');
+        $(this).parent("div").toggleClass("span12").toggleClass("span8");
+        $('#overview').toggleClass('hide');
+        $('.content').toggleClass("span12").toggleClass("span8");
+        //$('.bordered').toggleClass('hide');
+       // $('#charts').toggleClass('span10').toggleClass('span12');
         return false;
       })
       

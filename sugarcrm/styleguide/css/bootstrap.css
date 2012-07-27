@@ -5924,6 +5924,9 @@ div.purpose {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
 }
+.jstree-sugar {
+  padding: 10px;
+}
 .jstree-sugar li.jstree-last {
   background: transparent;
 }
@@ -5954,6 +5957,9 @@ div.purpose {
 }
 .jstree-sugar a .jstree-icon:before {
   content: "\f007";
+}
+.jstree-sugar .jstree-leaf.parent a .jstree-icon:before {
+  content: "\f062";
 }
 .jstree-sugar a.jstree-loading .jstree-icon {
   background: url("../img/throbber.gif") center center no-repeat !important;
@@ -6457,7 +6463,7 @@ table tfoot td {
 }
 #dashboard #folded .tab-pane.active {
   position: fixed !important;
-  top: 106px;
+  top: 107px;
   right: 0;
   background-image: "../img/light_toast.png";
   height: 100%;
@@ -6465,6 +6471,9 @@ table tfoot td {
   width: inherit;
   padding: 20px 0;
   border-left: 3px solid #cdcccb;
+}
+#dashboard #folded .tab-pane.active.hide {
+  display: none;
 }
 #folded .tab-pane.active {
   position: fixed !important;
@@ -6540,6 +6549,59 @@ table tfoot td {
   background-color: #f5f5f5;
   height: 60px;
   z-index: 1000;
+}
+#headerbar h1 {
+  float: left;
+  margin-top: 9px;
+  margin-left: 12px;
+}
+#headerbar .btn-toolbar {
+  margin-top: 15px;
+  margin-right: 10px;
+  padding-left: 5px;
+}
+#headerbar .dropdown-toggle {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+#headerbar .dropdown-menu.carettop:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: 10px;
+}
+#headerbar .dropdown-menu.carettop:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: 9px;
+}
+#headerbar .drawerTrig {
+  background-color: #fff;
+  background-image: none;
+  padding: 5px 15px 2px 15px;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+  height: 14px;
+  border-bottom: 0px none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  top: -11px;
+}
+#headerbar .span12 {
+  margin-left: 0px;
 }
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
@@ -6780,7 +6842,6 @@ h4 i {
   -webkit-border-radius: 0 2px 2px 0;
   -moz-border-radius: 0 2px 2px 0;
   border-radius: 0 2px 2px 0;
-  margin-right: -26px;
   position: relative;
 }
 .drawerTrig.pull-left {
@@ -7019,7 +7080,6 @@ tr:hover .actions {
 }
 .topline {
   position: relative;
-  margin: 0 -12px 0 -20px;
 }
 .results {
   position: relative;
@@ -7806,8 +7866,10 @@ color: @red;
   margin-top: 20px;
 }
 .content {
-  padding-left: 10px;
   position: relative;
+}
+.content.span12 {
+  padding-right: 20px;
 }
 .content .btn-toolbar {
   margin: 0 0 8px !important;
