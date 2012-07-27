@@ -1097,6 +1097,17 @@ class Report
         $where_clause .= ')';
     }
 
+    protected function addSecurity($query, $focus, $alias)
+    {
+        $from2 = $from = "SELECT * FROM {$focus->table_name} as {$alias}2";
+        $focus->addVisibilityFrom($from, array('table_alias' => $alias."2"));
+        if($from2 != $from) {
+        	$query .= " AND EXISTS($from WHERE {$alias}.id={$alias}2.id)\n";
+        }
+        $focus->addVisibilityWhere($query);
+        return $query;
+    }
+
     function create_where()
     {
         $where_arr = array();
@@ -1106,15 +1117,16 @@ class Report
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         //BEGIN SUGARCRM flav!=sales ONLY
-        if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
-            if (!empty($where_clause)) {
-                $where_clause .= " AND";
-            }
-            $where_clause .= " " . $this->focus->table_name . ".team_set_id IN (SELECT tst.team_set_id FROM
-                                team_sets_teams tst INNER JOIN team_memberships team_memberships ON
-                                tst.team_id = team_memberships.team_id AND team_memberships.user_id =
-                                '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-        }
+        $where_clause = $this->addSecurity($where_clause, $this->focus, $this->focus->table_name);
+        //         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
+//             if (!empty($where_clause)) {
+//                 $where_clause .= " AND";
+//             }
+//             $where_clause .= " /* Report WHERE */" . $this->focus->table_name . ".team_set_id IN (SELECT tst.team_set_id FROM
+//                                 team_sets_teams tst INNER JOIN team_memberships team_memberships ON
+//                                 tst.team_id = team_memberships.team_id AND team_memberships.user_id =
+//                                 '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
+//         }
         //END SUGARCRM flav!=sales ONLY
         $this->where = $where_clause;
         /*
@@ -1625,12 +1637,14 @@ return str_replace(' > ','_',
             require_once($beanFiles[$table_def['bean_name']]);
             $focus = new $table_def['bean_name']();
             //BEGIN SUGARCRM flav!=sales ONLY
-            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
-                $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
-                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id =
-                                    team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-                //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
-            }
+            $this->from = $this->addSecurity($this->from, $focus, $params['join_table_alias']);
+
+//            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
+//                 $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
+//                                     tst INNER JOIN team_memberships team_memberships ON tst.team_id =
+//                                     team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
+//                //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
+//           }
             //END SUGARCRM flav!=sales ONLY
         }
         foreach ($this->selected_loaded_custom_links as $custom_table => $params)
@@ -2126,7 +2140,7 @@ return str_replace(' > ','_',
                 $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
                 $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-                
+
                 // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
                 // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
                 if (strpos($display_column['name'], '_usdoll') !== false && $display_column['type'] == 'currency') {
@@ -2146,7 +2160,7 @@ return str_replace(' > ','_',
 						$display = $currency->convertToDollar($fields[$amount]);
 					}
                 }
-                
+
                 // Call the conversion to prefered currency
                 $display = currency_format_number($display, $params);
 
