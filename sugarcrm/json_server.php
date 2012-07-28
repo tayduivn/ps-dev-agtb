@@ -220,7 +220,8 @@ function authenticate() {
 	return $result;
 }
 
-function construct_where(&$query_obj, $table='',$module=null) {
+function construct_where(&$query_obj, $table='',$module=null)
+{
 	if(! empty($table)) {
 		$table .= ".";
 	}
@@ -260,8 +261,12 @@ function construct_where(&$query_obj, $table='',$module=null) {
 	if($table == 'users.') {
 		$cond_arr[] = $table."status='Active'";
 	}
+	$group = strtolower(trim($query_obj['group']));
+	if($group != "and" && $group != "or") {
+	    $group = "and";
+	}
 
-	return implode(" {$query_obj['group']} ",$cond_arr);
+	return implode(" $group ",$cond_arr);
 }
 
 ////	END UTILS
