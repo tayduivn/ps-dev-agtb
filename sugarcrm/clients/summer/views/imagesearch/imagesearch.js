@@ -1,4 +1,10 @@
 ({
+
+    events: {
+        "click .imagesearch-widget-choice": "saveModel"
+    },
+
+
     initialize: function ( options ) {
         app.view.View.prototype.initialize.call( this, options );
     },
@@ -51,9 +57,6 @@
         this.model.on( "change", self.getImages, this );
     },
 
-    events: {
-        "click .imagesearch-widget-choice": "saveModel"
-    },
 
 
     saveModel: function ( event ) {

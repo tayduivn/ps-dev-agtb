@@ -4,7 +4,7 @@
 
     <div class="imagesearch-widget" style="height:150px; width:150px">
 
-        <div id="imagesearch" class="modal hide fade">
+        <div id="imagesearch" class="modal hide">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h3>Select a Photo</h3>
