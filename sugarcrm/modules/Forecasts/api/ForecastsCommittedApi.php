@@ -105,27 +105,6 @@ class ForecastsCommittedApi extends ModuleApi {
         $query = $bean->create_new_list_query($order_by, $where, array(), array(), $include_deleted);
         $results = $GLOBALS['db']->query($query);
 
-        //bug #54756:
-        //Commit button does not get activated when changing best/likely numbers using inline editing for sales rep
-        //without default data previous_commit is undefined thus updateTotals() doesn't work
-        $default_data = array(
-            'timeperiod_name' => '',
-            'start_date' => '',
-            'end_date' => '',
-            'id' => '',
-            'timeperiod_id' => $timeperiod_id,
-            'forecast_type' => $forecast_type,
-            'opp_count' => 0,
-            'opp_weigh_value' => 0,
-            'best_case' => 0,
-            'likely_case' => 0,
-            'worst_case' => 0,
-            'user_id' => $user_id,
-            'date_entered' => '',
-            'date_modified' => '',
-            'deleted' => 0,
-        );
-
         $forecasts = array();
         while(($row = $GLOBALS['db']->fetchByAssoc($results)))
         {
@@ -134,7 +113,26 @@ class ForecastsCommittedApi extends ModuleApi {
 
         if(empty($forecasts))
         {
-            $forecasts[] = $default_data;
+            //bug #54756:
+            //Commit button does not get activated when changing best/likely numbers using inline editing for sales rep
+            //without default data previous_commit is undefined thus updateTotals() doesn't work
+            return array(
+                'timeperiod_name' => '',
+                'start_date' => '',
+                'end_date' => '',
+                'id' => '',
+                'timeperiod_id' => $timeperiod_id,
+                'forecast_type' => $forecast_type,
+                'opp_count' => 0,
+                'opp_weigh_value' => 0,
+                'best_case' => 0,
+                'likely_case' => 0,
+                'worst_case' => 0,
+                'user_id' => $user_id,
+                'date_entered' => '',
+                'date_modified' => '',
+                'deleted' => 0,
+            );
         }
 
         return $forecasts;
