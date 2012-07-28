@@ -20,7 +20,7 @@
     },
 
     _render: function() {
-
+        var self = this;
         console.log('render');
         this.$el.show();
         app.view.View.prototype._render.call(this);
@@ -49,10 +49,12 @@
                       minValue: 0,
                       colors: ['gray', '#4D90FE']}
                 };
-             var chart = new google.visualization.GeoChart(document.getElementById(this.guid));
+             console.log(self.guid);
+             var chart = new google.visualization.GeoChart(document.getElementById(self.guid));
              chart.draw(data, options);
 
         }});
+
     },
 
 

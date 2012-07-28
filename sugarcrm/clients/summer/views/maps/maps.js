@@ -143,11 +143,6 @@
 
 
 
-
-
-
-
-
         this.$(".maps-widget .title").text(results[0].formatted_address);
         this.$('#map_panel').show();
         if(this.map) {

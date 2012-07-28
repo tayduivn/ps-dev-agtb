@@ -127,7 +127,7 @@ class SugarChart {
 		$this->data_set = $dataSet;
 	}
 
-	function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on', $label_name='', $value_name=''){
+	function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on', $thousands=false, $label_name='', $value_name=''){
 		$this->chart_properties['title'] = $title;
 		$this->chart_properties['subtitle'] = $subtitle;
 		$this->chart_properties['type'] = $type;
@@ -135,6 +135,7 @@ class SugarChart {
 		$this->chart_properties['labels'] = $labels;
 		$this->chart_properties['label_name'] = $label_name;
 		$this->chart_properties['value_name'] = $value_name;
+		$this->chart_properties['thousands'] = $thousands;
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->chart_properties['print'] = $print;
 		//END SUGARCRM flav=pro ONLY

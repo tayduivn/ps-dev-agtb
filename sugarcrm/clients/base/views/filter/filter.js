@@ -38,13 +38,13 @@
         term = self.$(evt.currentTarget).val();
         self.setPreviousTerm(term, this.module);
 
-        if(term && term.length > 2) {
+        if(term && term.length) {
             _.delay(function() {
                 self.fireSearchRequest(term);
             }, app.config.requiredElapsed);
 
-        // If user removing characters and down to 2 chars reset table to all data
-        } else if(previousTerm && term.length && term.length === 2 && term.length < previousTerm.length) {
+        // If user removing characters and down to 0 chars reset table to all data
+        } else if(previousTerm && !term.length) {
             this.collection.fetch({limit: this.context.get('limit') || null });
 
         // Edge case - just in case user might highlight the input and hit 'Back' to delete.
