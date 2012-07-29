@@ -126,6 +126,9 @@ function json_query($request_id, $params) {
 		$list_arr[$i]['module']= $list_return[$i]->object_name;
 
 		foreach($args['field_list'] as $field) {
+		    if(!empty($list_return[$i]->field_name_map[$field]['sensitive'])) {
+		        continue;
+		    }
 			// handle enums
 			if(	(isset($list_return[$i]->field_name_map[$field]['type']) && $list_return[$i]->field_name_map[$field]['type'] == 'enum') ||
 				(isset($list_return[$i]->field_name_map[$field]['custom_type']) && $list_return[$i]->field_name_map[$field]['custom_type'] == 'enum')) {
@@ -232,7 +235,9 @@ function construct_where(&$query_obj, $table='',$module=null)
 	}
 
 	foreach($query_obj['conditions'] as $condition) {
-
+        if($condition['name'] == 'user_hash') {
+            continue;
+        }
 		if ($condition['name']=='email1' or $condition['name']=='email2') {
 
 			$email1_value=strtoupper($condition['value']);
