@@ -1,0 +1,32 @@
+<link rel="stylesheet" type="text/css" media="all" href="styles.css" />
+
+<h2>FileDrag</h2>
+<form id="upload" action="upload.php" method="POST" enctype="multipart/form-data">
+
+    <fieldset>
+        <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
+        <div>
+            <label for="fileselect">Files to upload:</label>
+            <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" />
+            <div id="filedrag" style="width:300px; height:300px; border-style: solid; border-width: 2px; background:url(../clients/summer/views/filedrag/drop-icon.png) no-repeat center center;">
+
+            </div>
+        </div>
+
+        <div id="submitbutton">
+            <button type="submit">Upload Files</button>
+        </div>
+
+    </fieldset>
+
+</form>
+
+<div id="progress"></div>
+
+<div id="messages">
+    <p>Status Messages</p>
+</div>
+
+<script src="../clients/summer/views/filedrag/filedrag.js"></script>
+
+
