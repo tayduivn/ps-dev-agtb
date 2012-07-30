@@ -10,6 +10,10 @@
         this._addCTEIcon(this.field);
 
         this.field.$el.editable(function(value, settings){
+                // set back to original value if user manages to undefine or enters in a blank value.
+                if(value == undefined || value == "") {
+                    value = settings.field.holder;
+                }
                 return value;
             },
             {
@@ -17,16 +21,14 @@
                 field: this.field,
                 view: this.view,
                 onedit:function(settings, original){
-                    // hold value for use later in case user enters a +/- percentage
-                    if (settings.field.type == "int"){
-                        settings.field.holder = $(original).html();
-                    }
+                    // hold value for use later in case user enters a +/- percentage, or user enters an empty value
+                    settings.field.holder = $(original).html();
                 },
                 callback: function(value, settings) {
                     try{
+                        var orig = settings.field.holder;
                         // if it's an int, and the user entered a +/- percentage, calculate it
                         if(settings.field.type == "int"){
-                            orig = settings.field.holder;
                             if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
                                 value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
                             } else if (!value.match(/^[0-9]*$/)) {
