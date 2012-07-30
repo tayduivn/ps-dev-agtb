@@ -316,7 +316,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
     $buttons = array();
     $buttons[] = <<<EOD
         <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings['LBL_RUN_REPORT_BUTTON_KEY']}" title="{$mod_strings['LBL_RUN_BUTTON_TITLE']}"
-               onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
+               onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_xls.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
 EOD
     ;
     //BEGIN SUGARCRM flav=sales ONLY
@@ -330,7 +330,7 @@ EOD
     if ($report_edit_access) {
         $buttons[] = <<<EOD
             <input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}" title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}"
-               onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
+               onclick="this.form.to_pdf.value='';this.form.to_xls.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
 EOD
         ;
     }
@@ -347,7 +347,14 @@ EOD
     if ($report_export_access) {
         $buttons[] = <<<EOD
         <input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings['LBL_VIEW_PDF_BUTTON_KEY']}" value="{$app_strings['LBL_VIEW_PDF_BUTTON_LABEL']}" title="{$app_strings['LBL_VIEW_PDF_BUTTON_TITLE']}"
-               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
+               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_xls.value='';this.form.to_pdf.value='on'">
+EOD
+        ;
+    }
+    if ($report_export_access && isReportMatrix($reporter)) {
+        $buttons[] = <<<EOD
+        <input type="submit" class="button" name="exportXLSButton" id="exportXLSButton" accessKey="{$app_strings['LBL_VIEW_XLS_BUTTON_KEY']}" value="{$app_strings['LBL_VIEW_XLS_BUTTON_LABEL']}" title="{$app_strings['LBL_VIEW_XLS_BUTTON_TITLE']}"
+               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='';this.form.to_xls.value='on'">
 EOD
         ;
     }
@@ -362,7 +369,7 @@ EOD
     if ($report_delete_access) {
         $buttons[] = <<<EOD
         <input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}" title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
-               onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();}">
+               onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){this.form.to_pdf.value='';this.form.to_xls.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();}">
 EOD
         ;
     }

@@ -57,6 +57,7 @@
 <input type="hidden" name="is_delete" value="0">
 <input type="hidden" name="to_pdf" value="{$to_pdf}"/>
 <input type="hidden" name="to_csv" value="{$to_csv}"/>
+<input type="hidden" name="to_xls" value="{$to_xls}"/>
 <input type="hidden" name="save_report" value=""/>
 <input type="hidden" name='showReportDetails' value ="{$showReportDetails}">
 <input type="hidden" name='showChart' value ="{$showChart}">
