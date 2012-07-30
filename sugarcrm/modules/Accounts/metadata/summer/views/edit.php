@@ -86,7 +86,7 @@ $viewdefs['Accounts']['summer']['view']['edit'] = array(
                 'linkedin',
                 'facebook',
                 'twitter',
-                'google_plus',
+                'googleplus',
             ),
         ),
     ),

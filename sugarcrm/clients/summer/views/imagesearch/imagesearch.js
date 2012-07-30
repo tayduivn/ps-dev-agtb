@@ -1,4 +1,10 @@
 ({
+
+    events: {
+        "click .imagesearch-widget-choice": "saveModel"
+    },
+
+
     initialize: function ( options ) {
         app.view.View.prototype.initialize.call( this, options );
     },
@@ -33,6 +39,9 @@
                     var sourceUrl = data.d.results[i].SourceUrl;
                     pictures.push( {mediaUrl: mediaUrl, sourceUrl: sourceUrl} );
                 }
+                if (!self.profile){
+                self.profile = "../clients/summer/views/imagesearch/anonymous.jpg";
+                }
                 app.view.View.prototype._renderHtml.call( self );
             },
             error: function ( jqXHR, textStatus, errorThrown ) {
@@ -46,6 +55,18 @@
     bindDataChange: function () {
         var self = this;
         this.model.on( "change", self.getImages, this );
+    },
+
+
+
+    saveModel: function ( event ) {
+        var self = this;
+        var chosenImageUrl = ( $(event.target)[0].getAttribute('src') );
+        self.profile = chosenImageUrl;
+        self._render();
+        self.model.save();
+
+
     }
 
 })

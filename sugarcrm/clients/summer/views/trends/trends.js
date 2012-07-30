@@ -9,12 +9,7 @@
         if(!name)name = this.model.get('account_name');
         if(!name)name = this.model.get('full_name');
         var self = this;
-
-
-        name = 'SugarCRM';
-
         if (name){
-            console.log(name);
             var script= "";
             script+= "<iframe src=";
             script+= "http://www.gmodules.com/ig/ifr?url=http://www.google.com/ig/modules/trends_gadget.xml&amp;source=imag&amp;up_is_init=true&amp;up_cur_term=";
@@ -31,8 +26,7 @@
             script+=" scrolling=";
             script+=" no";
             script+="></iframe>";
-            console.log('hello');
-            this.$(".trendsprofile").append(script);
+            this.$(".trendsprofile").html(script);
         }
     },
 
