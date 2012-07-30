@@ -125,6 +125,10 @@
             'Opportunities': {
                 field: 'name',
                 direction: 'desc'
+            },
+            'Notes': {
+                field: 'name',
+                direction: 'desc'
             }
         },
  
@@ -164,7 +168,8 @@
         displayModules : [
             'Accounts',
             'Contacts',
-            'Opportunities'
+            'Opportunities',
+            'Notes'
         ],
         /**
          * Client ID for oAuth
