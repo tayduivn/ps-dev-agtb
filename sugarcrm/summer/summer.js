@@ -873,6 +873,7 @@
                 layout: "profile"
             });
         });
+
         // Loadds profile edit
         app.router.route("profile/edit", "profileedit", function() {
             app.controller.loadView({

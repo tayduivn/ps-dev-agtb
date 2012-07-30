@@ -4,14 +4,14 @@
             <div class="nav-collapse">
                 <ul class="nav" id="moduleList">
                     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-                    {{#each promoList}}
-                                        <li class="promo {{this.name}}" data-url="{{this.url}}">
-                                            {{this.name}}
-                                        </li>
-                    {{/each}}
                     {{#each moduleList}}
                     <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}">
                         <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
+                    </li>
+                    {{/each}}
+                    {{#each promoList}}
+                    <li class="promo {{this.name}}" data-url="{{this.url}}">
+                        <a style="color: #666; cursor: pointer;">{{this.name}}</a>
                     </li>
                     {{/each}}
                 </ul>
