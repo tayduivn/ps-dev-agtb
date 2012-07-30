@@ -342,16 +342,19 @@ class Quota extends SugarBean
 		$result = $this->db->query($qry, true, 'Error retrieving Current User Quota Information: ');
 
 		$row = $this->db->fetchByAssoc($result);
-		if ( !empty($row) ) {
-			if ( $row['currency_id'] == -99 ) // print the default currency
-			{
-				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
-			}
-			else // print the foreign currency, must retrieve currency symbol
-			{
-				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
-			}
-		}
+		if ( empty($row) ) {
+            $row['amount'] = 0.00;
+            $row['currency_id'] = -99;
+        }
+
+        if ( $row['currency_id'] == -99 ) // print the default currency
+        {
+            $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
+        }
+        else // print the foreign currency, must retrieve currency symbol
+        {
+            $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
+        }
 
 		return $row;
 	}
