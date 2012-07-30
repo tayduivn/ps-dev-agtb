@@ -30,7 +30,7 @@
                     try{
                         var orig = settings.field.holder;
                         // if it's an int, and the user entered a +/- percentage, calculate it
-                        if(settings.numberTypes.indexOf(settings.field.type) !== -1) {
+                        if(_.include(settings.numberTypes, settings.field.type)) {
                             if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
                                 value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
                             } else if (!value.match(/^[0-9]*$/)) {
