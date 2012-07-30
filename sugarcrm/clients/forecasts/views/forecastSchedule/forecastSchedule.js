@@ -13,20 +13,6 @@
     _collection:{},
 
     /**
-     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
-     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
-     * to handle persisting the changes
-     *
-     * @param model Backbone model entry that was affected by the toggle event
-     */
-    toggleIncludeInForecast:function(model)
-    {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() { self.render(); }, this)});
-    },
-
-    /**
      * Initialize the View
      *
      * @constructor
@@ -87,7 +73,17 @@
     bindDataChange: function(params) {
         var self = this;
         this._collection = this.context.forecasts.forecastschedule;
-        this._collection.on("reset", function() { self.render() }, this);
+
+        if (this._collection) {
+            this._collection.on("reset", function() { self.render() }, this);
+
+            this._collection.on("change:include_expected", function() {
+                _.each(this._collection.models, function(model){
+                    model.save();
+                }, this);
+            }, this);
+        }
+
 
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
