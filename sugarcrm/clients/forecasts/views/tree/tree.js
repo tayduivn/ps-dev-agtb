@@ -106,97 +106,94 @@
         var self = this;
         var treeData;
 
-        $.when(app.api.call('read', self.currentTreeUrl, null, {
-            success : function(data) {
+        app.api.call('read', self.currentTreeUrl, null, {
+            success:function (data) {
                 // make sure we're using an array
                 // if the data coming from the endpoint is an array with one element
                 // it gets converted to a JS object in the process of getting here
-                if(!jQuery.isArray(data))
+                if (!jQuery.isArray(data)) {
                     data = [ data ];
+                }
+
                 treeData = data;
-            }
-        })).then(
-            function() {
+
                 self.jsTree = $(".jstree-sugar").jstree({
                     "plugins":["json_data", "ui", "crrm", "types", "themes"],
-                    "json_data" : {
-                        "data" : treeData
+                    "json_data":{
+                        "data":treeData
                     },
-                    "ui" : {
+                    "ui":{
                         // when the tree re-renders, initially select the root node
-                        "initially_select" : [ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
+                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
                     },
-                    "types" : {
-                        "types" : {
-                            "types" : {
-                                "parent_link" : {},
-                                "manager" : {},
-                                "my_opportunities" : {},
-                                "rep" : {},
-                                "root" : {}
+                    "types":{
+                        "types":{
+                            "types":{
+                                "parent_link":{},
+                                "manager":{},
+                                "my_opportunities":{},
+                                "rep":{},
+                                "root":{}
                             }
                         }
                     }
-                }).on("select_node.jstree", function(event, data){
-                        var jsData = data.inst.get_json();
-                        var nodeType = jsData[0].attr.rel;
-                        var userData = jsData[0].metadata;
-                        var contextUser = self.context.forecasts.get("selectedUser");
+                }).on("select_node.jstree", function (event, data) {
+                    var jsData = data.inst.get_json();
+                    var nodeType = jsData[0].attr.rel;
+                    var userData = jsData[0].metadata;
+                    var contextUser = self.context.forecasts.get("selectedUser");
 
-                        var showOpps = false;
+                    var showOpps = false;
 
-                        // if user clicked on a "My Opportunities" node
-                        // set this flag true
-                        if(nodeType == "my_opportunities" || nodeType == "rep") {
-                            showOpps = true
-                        }
+                    // if user clicked on a "My Opportunities" node
+                    // set this flag true
+                    if (nodeType == "my_opportunities" || nodeType == "rep") {
+                        showOpps = true
+                    }
 
-                        var selectedUser = {
-                            'id'            : userData.id,
-                            'full_name'     : userData.full_name,
-                            'first_name'    : userData.first_name,
-                            'last_name'     : userData.last_name,
-                            'isManager'     : (nodeType == 'rep') ? false : true,
-                            'showOpps'      : showOpps
-                        };
+                    var selectedUser = {
+                        'id':userData.id,
+                        'full_name':userData.full_name,
+                        'first_name':userData.first_name,
+                        'last_name':userData.last_name,
+                        'isManager':(nodeType == 'rep') ? false : true,
+                        'showOpps':showOpps
+                    };
 
-                        // update context with selected user which will trigger checkRender
-                        self.context.forecasts.set("selectedUser" , selectedUser);
-                    });
+                    // update context with selected user which will trigger checkRender
+                    self.context.forecasts.set("selectedUser", selectedUser);
+                });
 
-                    if(treeData)
-                    {
-                        var showTree = false;
-                        var rootId = -1;
+                if (treeData) {
+                    var showTree = false;
+                    var rootId = -1;
 
-                        if(treeData.length == 1)
-                        {
-                            // this case appears when "Parent" is not present
+                    if (treeData.length == 1) {
+                        // this case appears when "Parent" is not present
 
-                            rootId = treeData[0].metadata.id;
+                        rootId = treeData[0].metadata.id;
 
-                            if(treeData[0].children.length > 0)
-                            {
-                                showTree = true;
-                            }
-                        }
-                        else if(treeData.length == 2)
-                        {
-                            // this case appears with a "Parent" link label in the return set
-
-                            // always show tree if we have a Parent link in the set
-                            // only happens when you've clicked another Manager link
+                        if (treeData[0].children.length > 0) {
                             showTree = true;
-
-                            // treeData[0] is the Parent link, treeData[1] is our root user node
-                            rootId = treeData[1].metadata.id;
-                        }
-
-                        self.currentRootId = rootId;
-                        if(showTree)  {
-                            $('.view-tree').show();
                         }
                     }
-            });
+                    else if (treeData.length == 2) {
+                        // this case appears with a "Parent" link label in the return set
+
+                        // always show tree if we have a Parent link in the set
+                        // only happens when you've clicked another Manager link
+                        showTree = true;
+
+                        // treeData[0] is the Parent link, treeData[1] is our root user node
+                        rootId = treeData[1].metadata.id;
+                    }
+
+                    self.currentRootId = rootId;
+                    if (showTree) {
+                        $('.view-tree').show();
+                    }
+                }
+            }
+        });
     }
 })
