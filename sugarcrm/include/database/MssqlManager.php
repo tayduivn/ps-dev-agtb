@@ -1532,7 +1532,7 @@ EOSQL;
             break;
         case 'primary':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
+                $sql = "ALTER TABLE {$table} DROP CONSTRAINT {$name}";
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
             break;
