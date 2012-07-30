@@ -250,10 +250,13 @@ class JsChart extends SugarChart {
 		$content = $this->tab("\"label\": [\n",1);
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
-		foreach($xml->data->group[0]->subgroups->group as $group) {
-			$labels[] = $this->tab("\"".$this->processSpecialChars($group->title)."\"",2);
-		}
-		$content .= join(",\n",$labels)."\n";
+          if(isset($this->data->group)) {
+            foreach($xml->data->group[0]->subgroups->group as $group) {
+                $labels[] = $this->tab("\"".$this->processSpecialChars($group->title)."\"",2);
+            }
+
+		    $content .= join(",\n",$labels)."\n";
+          }
 		$content .= $this->tab("],\n",1);
 		return $content;
 	}

@@ -270,7 +270,6 @@ class ForecastsChartApi extends ChartApi
             $likely_label = format_number($likely_sum, null, null, array('currency_symbol' => true));
 
             // set the variables
-            $quota['formatted_amount'] = (is_null($quota['formatted_amount'])) ? '0.00' : $quota['formatted_amount'];
             $dataArray['values'][$key]['goalmarkervalue'] = array(floatval($quota['amount']), $likely_sum);
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
