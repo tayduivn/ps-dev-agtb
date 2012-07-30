@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Accounts - List - SugarCRM</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- styles -->
+  <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+            <li class="active">
+              <a href="accounts.html">Accounts</a>
+            </li>
+            <li>
+              <a href="contacts.html">Contacts</a>
+            </li>              
+            <li>
+              <a href="opportunity.html">Opportunities</a>              
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+                <li id="gen21"><a href="forecast.html">Forecasts</a></li>
+                <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
+                <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
+                <li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
+                <li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
+                <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
+                <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Filter Menu By</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav pull-right">
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
+              <ul class="dropdown-menu">
+                <li><a href="">System-wide maintenance &hellip;</a></li>
+                <li class="divider"></li>
+                <li><a href="">Upgrade to 7.0!</a></li>
+                <li class="divider"></li>                       
+                <li><a href="">Please take our survey.</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="profile_skhan.html">Profile</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Advanced</a></li>
+                <li><a href="#">External Accounts</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Log Out</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
+              <ul class="dropdown-menu quick">
+                <li><a href="create_account.html">Create Account</a></li>
+                <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
+                <li><a href="create.html">Create Opportunity</a></li>
+              </ul>
+            </li>              
+          </ul>
+          <form class="navbar-search pull-right" action="">
+            <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+          </form>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+  <div class="subnav">
+    <div class="btn-toolbar pull-left">
+      <div class="btn-group">
+        <a class="btn btn-success" href="#">Save</a>
+        <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Duplicate</a></li>
+          <li class="divider"></li>
+          <li><a href="#">Email</a></li>
+          <li><a href="#">PDF</a></li>
+          <li><a href="#">CSV</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="btn-toolbar pull-right">
+      <div class="btn-group">
+        <a class="btn btn-success" href="#">Save</a>
+        <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Duplicate</a></li>
+          <li class="divider"></li>
+          <li><a href="#">Email</a></li>
+          <li><a href="#">PDF</a></li>
+          <li><a href="#">CSV</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>  
+  <div class="container-fluid subhead">
+    <div class="row-fluid">
+      <div class="span2">
+        <div class="bordered">
+          <div class="block">
+              <a data-toggle="modal"href="#adminFilter" title="Admin options" class="btn btn-primary"><i class="icon-plus icon-sm"></i> Create Filter</a>
+              </p>
+              <ul class="list">
+                <li>
+                  <a href="">Default Filter</a> <a href="" class="pull-right"><i class="icon-remove icon-sm"></i></a>
+                </li>
+              </ul>         
+          </div>
+          <div class="block">
+            <h4>Views:</h4>
+            <br>
+            <div class="btn-group"> 
+              <a class="btn active" href="accounts.html" rel="tooltip" title="List view"><i class="icon-align-justify"></i></a>
+              <a class="btn" href="accounts_activity.html" rel="tooltip" title="Activity view"><i class="icon-th-list"></i></a>
+            </div>
+          </div>
+          <div class="block">         
+            <h4>My History:</h4>
+            <ul class="list">
+              <li>Added Perkin Kleiners opportunity</li>
+              <li>Removed TYCO account</li>
+              <li>Added Peter Weyland contact</li>
+              <li>Added Weyland account</li>
+            </ul>         
+          </div>
+          <div class="block">
+            <h4>My Tasks:</h4>
+            <ul class="list">
+              <li><a href="">Forecast trends</a></li>
+              <li><a href="">Close bad leads</a></li>
+              <li><a href="">Update contacts</a></li>
+              <li><a href="">Adjust accounts for new channel</a></li>
+              <li><a href="">Share reports with Tina</a></li>
+            </ul>
+            <ul class="nav nav-pills actions">
+              <li>  
+               <a data-toggle="modal" rel="tooltip" title="Add a task" href="#addTask"><i class="icon-plus"></i></a>
+              </li>
+            </ul> 
+          </div>          
+        </div>                      
+      </div>
+      <div class="span10">
+        <table class="table datatable">
+          <thead>
+            <tr>
+              <th class="nosort">
+                <div class="btn-group">
+                  <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Email</a></li>
+                    <li><a href="#">Mass Update</a></li>
+                    <li><a href="#">Merge</a></li>
+                    <li><a href="#">Export</a></li>
+                  </ul>
+                </div>
+              </th>
+              <th>Name</th>
+              <th>City</th>
+              <th>Country</th>
+              <th>Phone</th>
+              <th>User</th>
+              <th>Email</th>
+              <th class="nosort"></th>
+            </tr>
+          </thead>
+          <tbody id="listed">
+            <tr>
+              <td><input type="checkbox"> <i class="icon-star"></i></td>
+              <td><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></td>
+              <td><span class="dblclick">Cupertino</span></td>
+              <td><span class="dblclick">USA</span></td>
+              <td><span class="dblclick">(408) 555-5271</span></td>
+              <td><a href="contact_mark.html">Mark Edwin</a></td>
+              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+              <td>
+                <span class="hide actions dropdown pull-right">
+                  <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="index.html">Edit</a></li>
+                    <li><a href="index.html">Delete</a></li>
+                  </ul>
+                </span>
+              </td>
+            </tr>   
+            <tr>
+              <td><input type="checkbox"> <i class="icon-star"></i></td>
+              <td><a href="detail_underwater.html">Underwater Mining Inc.</a></td>
+              <td><span class="dblclick">San Francisco</span></td>
+              <td><span class="dblclick">USA</span></td>
+              <td><span class="dblclick">	(202) 312-5472</span></td>
+              <td><a href="contact_sarah_smith.html">Sarah Smith</a></td>
+              <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
+              <td>
+                <span class="hide actions dropdown pull-right">
+                  <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="index.html">Edit</a></li>
+                    <li><a href="index.html">Delete</a></li>
+                  </ul>
+                </span>
+              </td>
+            </tr>                                                                                                                                                                                                                                                                                                                                                                           
+          </tbody>
+        </table>
+      </div>    
+    </div>
+  </div>  
+  <footer>
+    <div class="row-fluid">
+      <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
+      <div class="span6">
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group">
+            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
+            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
+            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
+          </div>
+          <div class="btn-group">
+            <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="modal hide" id="systemTour">
+
+  </div>    
+  <div class="modal hide" id="adminHistory">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h3>Manage History</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="control-group">
+            <label for="input01" class="control-label">Filter Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Account</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>                    
+          <div class="control-group">
+            <label for="select01" class="control-label">Result Amount</label>
+            <div class="controls">
+              <select id="select01">
+                <option>something</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="textarea" class="control-label">Keywords</label>
+            <div class="controls">
+              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="index.html" class="btn btn-primary">Save</a>
+      <a href="index.html" class="btn" data-dismiss="modal">Cancel</a>
+    </div>
+  </div>
+  <div class="modal hide" id="adminTasks">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h3>Manage Tasks</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="control-group">
+            <label for="input01" class="control-label">Filter Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Account</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>                    
+          <div class="control-group">
+            <label for="select01" class="control-label">Result Amount</label>
+            <div class="controls">
+              <select id="select01">
+                <option>something</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="textarea" class="control-label">Keywords</label>
+            <div class="controls">
+              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="index.html" class="btn btn-primary">Save</a>
+      <a href="index.html" class="btn" data-dismiss="modal">Cancel</a>
+    </div>
+  </div>
+
+  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../../bootstrap/js/bootstrap-transition.js"></script>
+  <script src="../../bootstrap/js/bootstrap-alert.js"></script>
+  <script src="../../bootstrap/js/bootstrap-modal.js"></script>
+  <script src="../../bootstrap/js/bootstrap-collapse.js"></script>
+  <script src="../../bootstrap/js/bootstrap-dropdown.js"></script>
+  <script src="../../bootstrap/js/bootstrap-scrollspy.js"></script>
+  <script src="../../bootstrap/js/bootstrap-tab.js"></script>
+  <script src="../../bootstrap/js/bootstrap-tooltip.js"></script>
+  <script src="../../bootstrap/js/bootstrap-popover.js"></script>
+  <script src="../../bootstrap/js/bootstrap-button.js"></script>
+  <script src="../../bootstrap/js/bootstrap-typeahead.js"></script>
+  <script src="../js/jquery.datatables.js"></script>  
+  <script src="../js/wicked.js"></script>        
+  <script src="../js/jquery.jeditable.js"></script>        
+  <script src="../js/editable.js"></script>
+  <script src="../js/chosen.jquery.min.js"></script>
+  <script src="../js/application.js"></script>
+</body>
+</html>
