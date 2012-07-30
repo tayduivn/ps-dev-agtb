@@ -203,11 +203,6 @@ if(! empty($_REQUEST['to_csv'])){
 	template_handle_export($args['reporter']);
 	return;
 } // if
-if (!empty($_REQUEST['to_xls'])){
-    require_once('modules/Reports/templates/templates_spreadsheet.php');
-	template_handle_spreadsheet($args['reporter']);
-	return;
-} // if
 
 // create report obj with the seed
 $args['list_nav'] = '';

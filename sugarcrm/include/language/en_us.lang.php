@@ -2850,9 +2850,6 @@ $app_strings = array (
     'LBL_VIEW_PDF_BUTTON_KEY' => 'P',
     'LBL_VIEW_PDF_BUTTON_LABEL' => 'Print as PDF',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
-    'LBL_VIEW_XLS_BUTTON_KEY' => 'x',
-    'LBL_VIEW_XLS_BUTTON_LABEL' => 'Download Excel File',
-    'LBL_VIEW_XLS_BUTTON_TITLE' => 'Download Excel File',
 
 
     'LNK_ABOUT' => 'About',

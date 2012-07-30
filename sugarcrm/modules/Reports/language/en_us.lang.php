@@ -281,7 +281,6 @@ $mod_strings = array (
   'LBL_GROUP_BY' => 'Group By',
   'LBL_ADD_COLUMN' => 'Add Column',
   'LBL_GRAND_TOTAL' => 'Grand Total',
-  'ERR_MATRIX_REPORT_WRONG_GROUPING_FIELDS' => 'Unable to render report containing {0} grouping columns',
    'LBL_SEARCH_FORM_TITLE' => 'Reports Search',
  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_FORECAST_REPORTS' => 'Forecast Reports',
