@@ -16,14 +16,14 @@
         this.$("[rel=popover]").popover();
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
-        if ($.fn.timeago)
+        if ($.fn.timeago) {
             $("span.relativetime").timeago({
                 logger: SUGAR.App.logger,
                 date: SUGAR.App.utils.date,
                 lang: SUGAR.App.lang,
                 template: SUGAR.App.template
             });
-
+        }
     };
 
     /**
@@ -36,5 +36,18 @@
         __superViewInit__.call(this, options);
         $('.popover, .tooltip').remove();
     };
+
+    /**
+     * Overrides Field::_render() to fix placeholders on IE and old browsers
+     */
+    var __superFieldRender__ = app.view.Field.prototype._render;
+    app.view.Field.prototype._render = function() {
+
+        __superFieldRender__.call(this);
+
+        this.$("input").placeholder();
+    };
+
+
 
 })(SUGAR.App);

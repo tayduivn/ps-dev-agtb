@@ -104,6 +104,7 @@
         app.view.View.prototype._render.call(this);
 
         var self = this;
+        var treeData;
 
         $.when(app.api.call('read', self.currentTreeUrl, null, {
             success : function(data) {

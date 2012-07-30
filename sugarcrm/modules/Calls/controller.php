@@ -19,22 +19,48 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Save.php 13782 2006-06-06 17:58:55Z majed $
- * Description:  Saves an Account record and then redirects the browser to the 
- * defined return URL.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-require_once('modules/Meetings/MeetingFormBase.php');
-$formBase = new MeetingFormBase();
-if ($formBase->prepareRecurring()) {
-    if ($limit = $formBase->checkRecurringLimitExceeded()) {
-        echo str_replace('$limit', $limit, $GLOBALS['mod_strings']['LBL_REPEAT_LIMIT_ERROR']);
-        sugar_cleanup(true);
+class CallsController extends SugarController
+{
+    protected function action_editView()
+    {
+        $this->view = 'edit';
+       
+        require_once "modules/Calendar/CalendarUtils.php";
+        $editAllRecurrences = isset($_REQUEST['edit_all_recurrences']) ? $_REQUEST['edit_all_recurrences'] : false;
+        $this->view_object_map['repeatData'] = CalendarUtils::getRepeatData($this->bean, $editAllRecurrences);
+        
+        return true;
+    }
+    
+    protected function action_editAllRecurrences()
+    {
+        if (!empty($this->bean->repeat_parent_id)) {
+            $id = $this->bean->repeat_parent_id;
+        } else {
+            $id = $this->bean->id;
+        }
+        header("Location: index.php?module=Calls&action=EditView&record={$id}&edit_all_recurrences=true");
+    }
+    
+    protected function action_removeAllRecurrences()
+    {
+        if (!empty($this->bean->repeat_parent_id)) {
+            $id = $this->bean->repeat_parent_id;
+            $this->bean->retrieve($id);
+        } else {
+            $id = $this->bean->id;
+        }
+        
+        if (!$this->bean->ACLAccess('Delete')) {
+            ACLController::displayNoAccess(true);
+            sugar_cleanup(true);
+        }
+        
+        require_once "modules/Calendar/CalendarUtils.php";
+        CalendarUtils::markRepeatDeleted($this->bean);
+        $this->bean->mark_deleted($id);
+        
+        header("Location: index.php?module=Calls");
     }
 }
-$formBase->handleSave('', true, false);
-?>
