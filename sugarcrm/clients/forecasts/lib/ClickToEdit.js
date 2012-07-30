@@ -3,6 +3,7 @@
     app.view.ClickToEditField = function (field, view) {
         this.field = field;
         this.view = view;
+        this.numberTypes = ['int', 'float', 'currency'];
         return this.render();
     };
 
@@ -20,6 +21,7 @@
                 select: true,
                 field: this.field,
                 view: this.view,
+                numberTypes: this.numberTypes,
                 onedit:function(settings, original){
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     settings.field.holder = $(original).html();
@@ -28,7 +30,7 @@
                     try{
                         var orig = settings.field.holder;
                         // if it's an int, and the user entered a +/- percentage, calculate it
-                        if(settings.field.type == "int"){
+                        if(_.include(settings.numberTypes, settings.field.type)) {
                             if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
                                 value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
                             } else if (!value.match(/^[0-9]*$/)) {
