@@ -78,8 +78,10 @@
             this._collection.on("reset", function() { self.render() }, this);
 
             this._collection.on("change:include_expected", function() {
-                _.each(this._collection.models, function(model){
-                    model.save();
+                _.each(this._collection.models, function(model) {
+                    if(model.hasChanged("include_expected")) {
+                        model.save();
+                    }
                 }, this);
             }, this);
         }
