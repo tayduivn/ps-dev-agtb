@@ -17,7 +17,7 @@
                 module: "Search",
                 layout: "search",
                 query: query,
-                silent: true
+                skipFetch: true
             });
         });
 

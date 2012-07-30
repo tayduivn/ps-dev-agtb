@@ -55,7 +55,8 @@ class SupportPortalVisibility extends SugarVisibility
             $accountIn = "('".implode("','",$_SESSION['account_ids'])."')";
         } else {
             // No accounts
-            $accountIn = '()';
+            // According to the SQL specification this should never return any records
+            $accountIn = "(NULL)";
         }
         // $_SESSION['contact_id']
         // $_SESSION['account_ids']
@@ -66,9 +67,16 @@ class SupportPortalVisibility extends SugarVisibility
         switch ($this->bean->module_dir) {
             case 'Contacts':
                 // Contacts: Any contact related to the account list
-                if ( $queryType == 'from' ) {
-                    $this->bean->load_relationship('accounts');
-                    $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                // Special case, if there are no accounts in the list, at least allow them access to their own contact
+                if ( empty($_SESSION['account_ids']) && !empty($_SESSION['contact_id']) ) {
+                    if ( $queryType == 'where' ) {
+                        $queryPart = " $table_alias.id = '".$_SESSION['contact_id']."' ";
+                    }
+                } else {
+                    if ( $queryType == 'from' ) {
+                        $this->bean->load_relationship('accounts');
+                        $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                    }
                 }
                 break;
             case 'Accounts':
