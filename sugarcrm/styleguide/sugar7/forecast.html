@@ -127,31 +127,7 @@
 
 
     <div class="span4 hide" id="thedrawer">
-        <div class="block">
-          <h4>Filters</h4>
-          <div class="control-group">
-            <label for="date_filter" class="control-label">Forecast Period:</label>
-            <div class="controls ">
-              <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
-                <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
-                <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
-                <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
-                <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
-              </select>
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="sales_stage_filter" class="control-label">Forecast Category:</label>
-            <div class="controls">
-              <select id="sales_stage_filter" data-placeholder="Choose a forecast category..." class="chzn-select" multiple tabindex="1">
-                <option value=""></option>
-                <option value="Committed" selected="selected">Committed</option>
-                <option value="Pipline">Pipeline</option>
-              </select>
-            </div>
-          </div>
-        </ul>
-      </div>
+
   </div>
 
 
@@ -159,16 +135,31 @@
 
       <div class="span8 content">
 
+        <div class="btn-toolbar pull-right">
 
-        <a href="forecast.html" class="btn btn-primary pull-right" style="margin-left: 10px;margin-right: -20px;"><i class="icon-upload"></i> Commit</a>
-        <a href="forecast.html" class="btn pull-right" >Save Draft</a>
+                <a href="forecast.html" class="btn" >Save Draft</a>
+                <a href="forecast.html" class="btn btn-primary" style="margin-left: 10px"><i class="icon-upload"></i> Commit</a>
+
+        </div>
+
 
           <div class="clearfix"></div>
         <div class="topline">
           <div class="title">
-              Forecast for<br>
-              <h2>Q1 2012</h2>
+
+              <div class="control-group datefilter">
+                  <label for="date_filter" class="control-label">Timeframe</label>
+                  <div class="controls ">
+                      <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
+                          <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
+                          <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
+                          <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
+                          <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
+                      </select>
+                  </div>
+              </div>
           </div>
+            <div class="clearfix"></div>
           <div class="datapoint1">
               Best<br>
               <h2 id="best"></h2> <i class="icon-arrow-up"></i>
@@ -203,6 +194,20 @@
                   <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
                 </article>
             </div>
+
+            <div class="control-group filter">
+                <div class="controls">
+                    <select id="sales_stage_filter" data-placeholder="Choose a forecast category..." class="chzn-select" multiple tabindex="1" style="width: 100%;">
+                        <option value=""></option>
+                        <option value="Committed" selected="selected">Committed</option>
+                        <option value="Upside">Upside</option>
+                        <option value="Downside">Downside</option>
+                    </select>
+
+                </div>
+            </div>
+
+
           <div id="dynamic"></div>
         </div>
       </div>  
@@ -647,7 +652,6 @@
 
                             $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
                             $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
-                        console.log('test')
                     })
 
 
@@ -761,7 +765,6 @@
 
             var addEditIcon = function() {
                 $("body").on("mouseenter","span.click", function() {
-                    console.log($(this))
                         $(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');
                 });
                 $("body").on("mouseleave","span.click", function() {
@@ -926,6 +929,7 @@
 
 
             $("#sales_stage_filter").chosen().change(function(formData){
+
           oTable.fnFilter( formData.target.value, 3 );
         jQuery.ajax({
             url: "forecast-json-month.js?r=" + new Date().getTime(),
@@ -969,6 +973,38 @@
     $("#dataset").chosen().change(function(data){
         //forecast = swapChart(chartId,'forecast-json-q1-month'+data.target.value+'.js',css,chartConfig);
     });
+
+            $("#sales_stage_filter_chzn input").on("focus",function(){
+                var left = $('#sales_stage_filter_chzn .chzn-drop').css('left');
+
+                console.log(left)
+                if(left == "-9000px") {
+                    $('#sales_stage_filter_chzn .chzn-drop').
+                    width(0)
+                } else {
+                    $('#sales_stage_filter_chzn .chzn-drop').
+                    width(100).
+                    css("left","auto").
+                    css("right","0px")
+                }
+
+
+            });
+
+            $("#sales_stage_filter_chzn .chzn-drop").on("click",function(){
+                $(this).
+                css("right","auto")
+             });
+
+
+
+
+
+            $("#sales_stage_filter_chzn").append('<div class="indicator">Filter <span class="caret"></span></div>');
+            $("#sales_stage_filter_chzn .chzn-drop").addClass('carettop');
+            $("#date_filter_chzn .chzn-drop").addClass('carettop');
+            $("#date_filter_chzn .chzn-results").append('<li class="active-result divider"></li><li class="active-result">+ Add timeframe</li>');
+
 
   });
 

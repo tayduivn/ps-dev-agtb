@@ -6574,6 +6574,7 @@ table tfoot td {
   position: absolute;
   top: -6px;
   left: 10px;
+  right: auto;
 }
 #headerbar .dropdown-menu.carettop:before {
   content: '';
@@ -6585,6 +6586,7 @@ table tfoot td {
   position: absolute;
   top: -7px;
   left: 9px;
+  right: auto;
 }
 #headerbar .drawerTrig {
   background-color: #fff;
@@ -7081,6 +7083,57 @@ tr:hover .actions {
 .topline {
   position: relative;
 }
+.topline .control-group.filter {
+  background-color: #f5f5f5;
+  margin-right: -20px;
+  padding: 5px 5px 0px 5px;
+  margin-bottom: 0px;
+  border-bottom: 1px solid #cdcccb;
+  position: relative;
+}
+.topline .control-group.filter .indicator {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  padding-right: 15px;
+}
+.topline .control-group.filter .indicator .caret {
+  margin-top: 7px;
+  margin-left: 5px;
+}
+.topline .control-group.datefilter {
+  float: left;
+}
+.topline .control-group.datefilter .chzn-single span {
+  font-size: 22px;
+}
+.topline .control-group.datefilter .chzn-single {
+  border: 0px none;
+  background-image: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding-left: 0px;
+}
+.topline .control-group.datefilter .chzn-single:focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border: 0 none;
+}
+.topline .control-group.datefilter .chzn-container-single .chzn-single div {
+  right: 22px;
+}
+.topline .control-group.datefilter .chzn-container-single .chzn-search {
+  display: none;
+}
+.topline .control-group.datefilter select {
+  width: 160px;
+}
+.topline select {
+  width: 130px;
+}
 .results {
   position: relative;
   margin: 0 -22px 0 0;
@@ -7138,12 +7191,12 @@ tr:hover .actions {
   right: 151px;
   top: 0;
 }
-.topline .divider {
+.topline > div.divider {
   border-right: 1px solid #cdcccb;
   height: 60px;
   width: 1px;
   position: absolute;
-  right: 130px;
+  right: 131px;
   top: 0;
 }
 .topline .toggle {
@@ -7167,7 +7220,7 @@ tr:hover .actions {
   border-top: 1px solid #cdcccb;
   border-bottom: 1px solid #cdcccb;
   color: #58595b !important;
-  margin-right: -21px;
+  margin-right: -20px;
 }
 .topline .extend {
   background-color: #3f4041;
@@ -7872,7 +7925,7 @@ color: @red;
   padding-right: 20px;
 }
 .content .btn-toolbar {
-  margin: 0 0 8px !important;
+  margin: 0 -20px 8px !important;
 }
 .content .vcard2 {
   z-index: 0;
@@ -7991,6 +8044,63 @@ color: @red;
     bottom: auto;
     left: auto;
   }
+}
+#sales_stage_filter_chzn .chzn-drop,
+#date_filter_chzn .chzn-drop {
+  padding: 10px;
+}
+#sales_stage_filter_chzn .chzn-single-with-drop div b,
+#date_filter_chzn .chzn-single-with-drop div b {
+  background-position: 0px 0px;
+}
+.chzn-container .chzn-drop.carettop {
+  border: 1px solid #cdcccb;
+}
+.chzn-container .chzn-drop.carettop:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: auto;
+  right: 10px;
+}
+.chzn-container .chzn-drop.carettop:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: auto;
+  right: 9px;
+}
+#date_filter_chzn.chzn-container .chzn-drop.carettop:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: auto;
+  right: 24px;
+}
+#date_filter_chzn.chzn-container .chzn-drop.carettop:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: auto;
+  right: 23px;
 }
 .pull-right {
   float: right;

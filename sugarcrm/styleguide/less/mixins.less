@@ -514,6 +514,8 @@
   .clearfix();
 }
 
+
+
 // Table columns
 .tableColumns(@columnSpan: 1) {
   float: none; // undo default grid column styles
@@ -634,4 +636,31 @@
 
   }
 
+}
+
+
+.caret-top(@afterLeftCaretPos: 10px, @beforeLeftCaretPos: 9px,@afterRightCaretPos: auto, @beforeRightCaretPos: auto) {
+        &:after {
+            content: '';
+            display: inline-block;
+            border-left:   6px solid transparent;
+            border-right:  6px solid transparent;
+            border-bottom: 6px solid @white;
+            position: absolute;
+            top: -6px;
+            left: @afterLeftCaretPos;
+            right: @afterRightCaretPos;
+        }
+        &:before {
+            content: '';
+            display: inline-block;
+            border-left:   7px solid transparent;
+            border-right:  7px solid transparent;
+            border-bottom: 7px solid #ccc;
+            border-bottom-color: rgba(0,0,0,.2);
+            position: absolute;
+            top: -7px;
+            left: @beforeLeftCaretPos;
+            right: @beforeRightCaretPos;
+        }
 }

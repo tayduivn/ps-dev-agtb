@@ -275,27 +275,7 @@ table tfoot td {
         .box-shadow(none);
     }
     .dropdown-menu.carettop {
-        &:after {
-            content: '';
-            display: inline-block;
-            border-left:   6px solid transparent;
-            border-right:  6px solid transparent;
-            border-bottom: 6px solid @white;
-            position: absolute;
-            top: -6px;
-            left: 10px;
-        }
-        &:before {
-            content: '';
-            display: inline-block;
-            border-left:   7px solid transparent;
-            border-right:  7px solid transparent;
-            border-bottom: 7px solid #ccc;
-            border-bottom-color: rgba(0,0,0,.2);
-            position: absolute;
-            top: -7px;
-            left: 9px;
-        }
+        .caret-top(10px,9px,auto,auto);
     }
 
     .drawerTrig {
@@ -754,6 +734,63 @@ color: @white;
 }
 .topline {
     position: relative;
+
+    .control-group.filter {
+        background-color: @grayLighter;
+        margin-right: -20px;
+        padding: 5px 5px 0px 5px;
+        margin-bottom: 0px;
+        border-bottom: 1px solid @grayLight;
+        position: relative;
+
+        .indicator {
+            position: absolute;
+            top: 6px;
+            right: 0;
+            padding-right: 15px;
+
+            .caret {
+                margin-top: 7px;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    .control-group.datefilter {
+        float: left;
+        .chzn-single span {
+            font-size: 22px;
+        }
+
+        .chzn-single {
+            border: 0px none;
+            background-image: none;
+            background-color: transparent;
+            .box-shadow(none);
+            padding-left: 0px;
+        }
+
+        .chzn-single:focus {
+            .box-shadow(none);
+            border: 0 none;
+        }
+
+        .chzn-container-single .chzn-single div {
+            right: 22px;
+        }
+
+        .chzn-container-single .chzn-search {
+            display: none;
+        }
+
+        select {
+            width: 160px;
+        }
+    }
+
+    select {
+        width: 130px;
+    }
 }
 .results {position: relative;
   margin: 0 -22px 0 0;
@@ -809,12 +846,12 @@ color: @white;
   right: 151px;
   top: 0;
 }
-.topline .divider {
+.topline > div.divider {
   border-right: 1px solid  @grayLight;
   height: 60px;
   width: 1px;
   position: absolute;
-  right: 130px;
+  right: 131px;
   top: 0;
 }
 .topline .toggle {
@@ -830,7 +867,7 @@ color: @white;
   border-top: 1px solid @grayLight;
   border-bottom: 1px solid @grayLight;
   color: @gray !important;
-  margin-right: -21px;
+    margin-right: -20px;
 }
 
 .topline .extend {
@@ -1405,7 +1442,7 @@ width: 72px !important;
 .content.span12 {
     padding-right: 20px;
 }
-.content .btn-toolbar {margin: 0 0 8px !important;}
+.content .btn-toolbar {margin: 0 -20px 8px !important;}
 .content .vcard2 {
   z-index: 0;
   position: relative;
@@ -1509,3 +1546,21 @@ table th:gt(3), table td:gt(3)  {
 
 }
 
+#sales_stage_filter_chzn, #date_filter_chzn {
+    .chzn-drop {
+        padding: 10px;
+    }
+
+    .chzn-single-with-drop div b {
+        background-position: 0px 0px;
+    }
+}
+
+.chzn-container .chzn-drop.carettop {
+    .caret-top(auto,auto,10px,9px);
+    border: 1px solid @grayLight;
+}
+
+#date_filter_chzn.chzn-container .chzn-drop.carettop {
+    .caret-top(auto,auto,24px,23px);
+}
