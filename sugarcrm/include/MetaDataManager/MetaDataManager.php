@@ -217,7 +217,7 @@ class MetaDataManager {
     public function getModuleData($moduleName) {
         $vardefs = $this->getVarDef($moduleName);
 
-        $data['fields'] = $vardefs['fields'];
+        $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
 
@@ -258,27 +258,31 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    public function getVarDef($moduleName) {
-
+    public function getVarDef($moduleName)
+    {
         require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName($moduleName);
 
-        require_once("include/SugarObjects/VardefManager.php");
-        global $dictionary;
-        VardefManager::loadVardef($moduleName, $obj);
-        if ( isset($dictionary[$obj]) ) {
-            $data = $dictionary[$obj];
+        $data = false;
+        if ($obj) {
+            require_once("include/SugarObjects/VardefManager.php");
+            global $dictionary;
+            VardefManager::loadVardef($moduleName, $obj);
+            if (isset($dictionary[$obj])) {
+                $data = $dictionary[$obj];
+            }
+
+            // vardefs are missing something, for consistancy let's populate some arrays
+            if (!isset($data['fields'])) {
+                $data['fields'] = array();
+            }
+            if (!isset($data['relationships'])) {
+                $data['relationships'] = array();
+            }
+
+            return $data;
         }
 
-        // vardefs are missing something, for consistancy let's populate some arrays
-        if (!isset($data['fields']) ) {
-            $data['fields'] = array();
-        }
-        if (!isset($data['relationships'])) {
-            $data['relationships'] = array();
-        }
-
-        return $data;
     }
 
     /**

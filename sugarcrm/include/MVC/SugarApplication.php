@@ -20,7 +20,7 @@ class SugarApplication
  	var $controller = null;
  	var $headerDisplayed = false;
  	var $default_module = 'Home';
- 	var $default_action = 'index';
+ 	var $default_action = 'sidecar';
 
  	function SugarApplication()
  	{}
@@ -72,7 +72,7 @@ class SugarApplication
 		// Double check the server's unique key is in the session.  Make sure this is not an attempt to hijack a session
 		$user_unique_key = (isset($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
 		$server_unique_key = (isset($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
-		$allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
+		$allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut', 'sidecar');
 
 		if(($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions)) &&
 		   (!isset($_SESSION['login_error'])))
@@ -94,8 +94,10 @@ class SugarApplication
 			        $this->controller->action = 'index';
 			}
 
-			header('Location: index.php?action=Login&module=Users'.$this->createLoginVars());
-			exit ();
+			//TODO: Port this to sidecar with sidecar # vars
+            //header('Location: index.php?action=Login&module=Users'.$this->createLoginVars());
+			header('Location: index.php?action=sidecar#Home');
+            exit ();
 		}
 
 		$authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
@@ -106,7 +108,8 @@ class SugarApplication
 				 // if the object we get back is null for some reason, this will break - like user prefs are corrupted
 				$GLOBALS['log']->fatal('User retrieval for ID: ('.$_SESSION['authenticated_user_id'].') does not exist in database or retrieval failed catastrophically.  Calling session_destroy() and sending user to Login page.');
 				session_destroy();
-				SugarApplication::redirect('index.php?action=Login&module=Users');
+				//SugarApplication::redirect('index.php?action=Login&module=Users');
+				SugarApplication::redirect('index.php?action=sidecar#Home');
 				die();
                 //BEGIN SUGARCRM flav=pro ONLY
             } else {
@@ -126,9 +129,10 @@ class SugarApplication
                 }
                 //END SUGARCRM flav=pro ONLY
 			}//fi
-		}elseif(!($this->controller->module == 'Users' && in_array($this->controller->action, $allowed_actions))){
+		}elseif(!($this->controller->action == "sidecar" || ($this->controller->module == 'Users' && in_array($this->controller->action, $allowed_actions)))){
 			session_destroy();
-			SugarApplication::redirect('index.php?action=Login&module=Users');
+			//SugarApplication::redirect('index.php?action=Login&module=Users');
+			SugarApplication::redirect('index.php?action=sidecar#Home');
 			die();
 		}
 		$GLOBALS['log']->debug('Current user is: '.$GLOBALS['current_user']->user_name);

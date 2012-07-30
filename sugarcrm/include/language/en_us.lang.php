@@ -2810,6 +2810,25 @@ $app_strings = array (
     'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
+    // LOGIN PAGE STRINGS
+    'LBL_LOGIN_BUTTON_KEY' => 'L',
+    'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_LOGIN_BUTTON_TITLE' => 'Log In',
+    'LBL_LOGIN_WELCOME_TO' => 'Welcome to',
+    'LBL_LOGIN_OPTIONS' => 'Options',
+    'LBL_LOGIN_FORGOT_PASSWORD' => 'Forgot Password?',
+    'LBL_LOGIN_SUBMIT' => 'Submit',
+    'LBL_LOGIN_ATTEMPTS_OVERRUN' => 'Too many failed login attempts.',
+    'LBL_LOGIN_LOGIN_TIME_ALLOWED' => 'You can try logging in again in ',
+    'LBL_LOGIN_LOGIN_TIME_DAYS' => 'days.',
+    'LBL_LOGIN_LOGIN_TIME_HOURS' => 'h.',
+    'LBL_LOGIN_LOGIN_TIME_MINUTES' => 'min.',
+    'LBL_LOGIN_LOGIN_TIME_SECONDS' => 'sec.',
+    'LBL_LOGIN_ADMIN_CALL' => 'Please contact the system administrator.',
+    'LBL_LOGIN_USERNAME' => 'Username',
+    'LBL_LOGIN_PASSWORD' => 'Password',
+    // END LOGIN PAGE STRINGS
+
     'LBL_SYNC' => 'Sync',
     'LBL_SYNC' => 'Sync',
     'LBL_TABGROUP_ALL' => 'All',

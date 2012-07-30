@@ -150,6 +150,12 @@
             'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
+           $sugar_grp_yui2 = array(
+               //YUI combination 2
+               'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
+               'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
+           ),
+
             //Grouping for emails module.
             $sugar_grp_emails = array(
             'include/javascript/yui/ygDDList.js' => 'include/javascript/sugar_grp_emails.js',
