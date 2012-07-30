@@ -10,9 +10,11 @@ try {
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../bootstrap"';
     $less = new lessc('../bootstrap/less/bootstrap.less');
+    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
     echo '<h2>bootstrap.css successfully generated.</h2>';
-    echo '<a href="./../styleguide/">Go to the styleguide</a>';
+    echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
+    echo '<p><a href="./index.php">Back</a></p>';
 
 } catch (exception $ex) {
     exit('lessc fatal error:<br />'.$ex->getMessage());
