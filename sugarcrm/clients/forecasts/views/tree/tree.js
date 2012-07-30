@@ -115,7 +115,7 @@
                     data = [ data ];
                 treeData = data;
             }
-        })).then(
+        }, { oauth_token: app.sugarAuthStore.get('AuthAccessToken') })).then(
             function() {
                 self.jsTree = $(".jstree-sugar").jstree({
                     "plugins":["json_data", "ui", "crrm", "types", "themes"],

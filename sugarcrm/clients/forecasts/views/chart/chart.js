@@ -113,7 +113,6 @@
         if(!_.isEmpty(oldChart)) {
             oldChart.remove();
         }
-        app.view.View.prototype.render.call(this);
 
         SUGAR.charts = $.extend(SUGAR.charts,
             {
@@ -124,7 +123,9 @@
                   };
                   data = $.extend(data, params);
 
-                  app.api.call('read', url, data, {success : success}, {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+                  url = app.api.buildURL('Forecasts', 'chart', '', data);
+
+                  app.api.call('read', url, data, {success : success}, { oauth_token: app.sugarAuthStore.get('AuthAccessToken') });
               }
             }
         );
