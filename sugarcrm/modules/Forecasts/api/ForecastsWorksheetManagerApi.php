@@ -177,7 +177,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
 
         $quota = $this->getQuota();
-        $forecast = $this->getForecastBestLikely();
+        $forecast = $this->getForecastValues();
         $worksheet = $this->getWorksheetBestLikelyAdjusted();
         $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
 
@@ -214,18 +214,28 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         return $data;
     }
-    
-    protected function getForecastBestLikely()
+
+
+    /**
+     * This function returns the best, likely and worst case values from the forecasts table for the manager
+     * associated with the user_id class variable.  It is a helper function used by the manager worksheet api
+     * to return forecast related information.
+     *
+     * @return array Array of entries with deltas best_case, likely_case, worst_case, id and forecast_id
+     */
+    protected function getForecastValues()
     {
         $query = "SELECT id, user_name FROM users WHERE reports_to_id = '{$this->user_id}' AND deleted = 0";
-        $result = $GLOBALS['db']->query($query);
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query($query);
 
         $ids = array();
-        while($row=$GLOBALS['db']->fetchByAssoc($result))
+        while($row=$db->fetchByAssoc($result))
         {
             $ids[$row['id']] = $row['user_name'];
         }
 
+        //Add the manager's data as well
         $user = new User();
         $user->retrieve($this->user_id);
         $ids[$this->user_id] = $user->user_name;
@@ -235,8 +245,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         foreach($ids as $id=>$user_name)
         {
             $forecast_query = "SELECT id, best_case, likely_case, worst_case FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}' AND forecast_type = 'DIRECT' AND user_id = '{$id}' AND deleted = 0 ORDER BY date_modified DESC";
-            $result = $GLOBALS['db']->limitQuery($forecast_query, 0, 1);
-            while($row=$GLOBALS['db']->fetchByAssoc($result))
+            $result = $db->limitQuery($forecast_query, 0, 1);
+            while($row=$db->fetchByAssoc($result))
             {
                 $data[$user_name]['best_case'] = $row['best_case'];
                 $data[$user_name]['likely_case'] = $row['likely_case'];

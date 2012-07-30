@@ -28,7 +28,7 @@ require_once('modules/Forecasts/api/ForecastsWorksheetManagerApi.php');
 /**
  * Bug54621Test.php
  *
- * This is a test for the ForecastWorksheetManagerApi class.  We are testing that the getForecastBestLikely method
+ * This is a test for the ForecastWorksheetManagerApi class.  We are testing that the getForecastValues method
  * returns the most recent forecast entry.  There is a bug with some MySQL implementation where the max(datetime)
  * function does not correctly return the most recent datetime and so we could not use that function in our code.
  *
@@ -85,7 +85,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Here we call the subclass of ForecastWorksheetManagerApi.  Since the getForecastBestLikely is protected we
+     * Here we call the subclass of ForecastWorksheetManagerApi.  Since the getForecastValues is protected we
      * override the function in our mock object.
      *
      */
@@ -93,7 +93,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $current_user;
         $mock = new ForecastsWorksheetManagerApiMock();
-        $data = $mock->getForecastBestLikelyOverride($current_user->id, $this->timeperiod->id);
+        $data = $mock->getForecastValuesOverride($current_user->id, $this->timeperiod->id);
 
         $found = false;
 
@@ -119,10 +119,10 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
  */
 class ForecastsWorksheetManagerApiMock extends ForecastsWorksheetManagerApi
 {
-    public function getForecastBestLikelyOverride($user_id, $timeperiod_id)
+    public function getForecastValuesOverride($user_id, $timeperiod_id)
     {
          $this->user_id = $user_id;
          $this->timeperiod_id = $timeperiod_id;
-         return $this->getForecastBestLikely();
+         return $this->getForecastValues();
     }
 }
