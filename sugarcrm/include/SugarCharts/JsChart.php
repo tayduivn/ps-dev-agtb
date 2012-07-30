@@ -525,8 +525,8 @@ class JsChart extends SugarChart {
 
 	}
 
-	function buildJson($xmlstr){
-		if($this->checkData($xmlstr)) {
+	function buildJson($xmlstr, $ignore_datacheck = false){
+		if($this->checkData($xmlstr) || $ignore_datacheck === true) {
 			$content = "{\n";
 			if ($this->chartType == "pie chart" || $this->chartType == "funnel chart 3D") {
 				$content .= $this->buildProperties($xmlstr);

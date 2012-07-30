@@ -470,6 +470,6 @@ class ChartDisplay
      */
     public function generateJson()
     {
-        return $this->getSugarChart()->buildJson($this->generateXML());
+        return $this->getSugarChart()->buildJson($this->generateXML(), true);
     }
 }
