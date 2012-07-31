@@ -2240,6 +2240,21 @@ return str_replace(' > ','_',
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
 
+        
+        // fix for bug47120
+         // RTA - check each column for access, and blank value if no access
+         $col_module = $this->report_def['module'];
+         $is_owner = !empty($this->assigned_user_id) && $this->report_def['assigned_user_id'] == $GLOBALS['current_user']->id;
+         $count=0;
+         foreach($this->report_def['display_columns'] as $column) {
+           if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
+             // blank out the value in the column
+           $row['cells'][$count]="";
+           }
+           $count++;
+         }
+         // end of fix
+
         return $row;
     }
 
