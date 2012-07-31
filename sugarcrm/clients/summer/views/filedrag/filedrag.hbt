@@ -1,3 +1,5 @@
+
+
 <link rel="stylesheet" type="text/css" media="all" href="styles.css" />
 
 <h2>FileDrag</h2>
@@ -8,19 +10,32 @@
         <div>
             <label for="fileselect">Files to upload:</label>
             <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" />
-            <div id="filedrag" style="width:300px; height:300px; border-style: solid; border-width: 2px; background:url(../clients/summer/views/filedrag/drop-icon.png) no-repeat center center;">
+            <div id="filedrag" style="width:300px; height:300px; background:url(../clients/summer/views/filedrag/drop-icon.png) no-repeat center center;">
+
+                <form method="post" action="">
+                    <input class="btn btn-primary" type="submit" value="Submit" style="position:absolute" />
+                    <br>
+                    <br>
+
+                    <textarea name="comments" cols="30" rows="16" style="width: 300px; resize: none; opacity: 0.85">Drop an attachment here, or write a note.</textarea><br>
+
+
+
+                </form>
+
 
             </div>
         </div>
 
-        <div id="submitbutton">
-            <button type="submit">Upload Files</button>
-        </div>
+        <!--<div id="submitbutton">-->
+            <!--<button type="submit">Upload Files</button>-->
+        <!--</div>-->
 
     </fieldset>
 
 </form>
-
+<br>
+        <br>
 <div id="progress"></div>
 
 <div id="messages">
@@ -28,5 +43,6 @@
 </div>
 
 <script src="../clients/summer/views/filedrag/filedrag.js"></script>
+
 
 
