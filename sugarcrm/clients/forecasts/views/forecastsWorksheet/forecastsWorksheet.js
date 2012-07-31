@@ -121,7 +121,6 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        console.log(url);
         /*
         var params = '';
         _.each(args, function (value, key) {

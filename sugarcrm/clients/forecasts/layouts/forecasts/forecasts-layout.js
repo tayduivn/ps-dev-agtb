@@ -115,30 +115,14 @@
                     var moduleContext = context.module;
                     self.namespace(models, module);
 
-                    var Collection = Backbone.Collection.extend({
-                        model : Backbone.Model.extend({
-                            sync : function(method, model, options) {
-                                return app.api.call(method, model.url, model, options);
-                            }
-                        }),
-                        sync: function(method, model, options)
-                        {
-                            // if by chance there is no model url, default to a created one
-                            myURL = model.url || app.api.buildURL(moduleContext, method);
-                            return app.api.call(method, myURL, null, options);
-                        }
-                    });
-
-                    models[module][name] = new Collection();
-
-                    //models[module][name] = app.data.createBeanCollection(context.module);
-                    //models[module][name].url = app.api.buildURL(context.module, null, {},  {oauto_token: app.sugarAuthStore.get('AuthAccessToken')});
+                    models[module][name] = self.createCollection();
                 }
 
                 if (collectionMetadata) {
                     name = collectionMetadata.name.toLowerCase();
                     self.namespace(models, module);
-                    models[module][name] = self.createCollection(collectionMetadata, app.viewModule);
+                    models[module][name] = self.createCollection();
+                    models[module][name].url = app.config.serverUrl + '/' + app.viewModule + '/' + name;
                 }
             });
 
@@ -169,9 +153,8 @@
          * @param module
          * @return {*} instance of a backbone collection.
          */
-        createCollection: function(collectionMetadata, module) {
+        createCollection: function() {
             var Collection = Backbone.Collection.extend({
-                url: app.config.serverUrl + '/' + module + '/' + collectionMetadata.name.toLowerCase(),
                 model : Backbone.Model.extend({
                     sync : function(method, model, options) {
                         return app.api.call(method, model.url, model, options);
