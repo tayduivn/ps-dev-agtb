@@ -73,7 +73,7 @@ foreach ($clientsDir as $platform) {
                         echo '</td>';
                         echo '<td>';
                         echo '<div class="btn-group"><a class="btn" href="buildcss.php?min=true&variables=' . $root . '">Compressed</a>';
-                        echo '<a class="btn btn-primary" href="buildcss.php?min=true&variables=' . $root . '">Uncompressed</a>';
+                        echo '<a class="btn btn-primary" href="buildcss.php?variables=' . $root . '">Uncompressed</a>';
                         echo '</div></td>';
                         echo '<td>';
                         echo '<small>last modified: ' . date("n/j/y \a\\t H:i:s.", filemtime($root . '/variables.less')) . '</small>';
