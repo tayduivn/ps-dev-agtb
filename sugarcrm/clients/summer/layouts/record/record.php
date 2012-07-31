@@ -1,8 +1,6 @@
 <?php
 
 require_once('clients/summer/SideBarLayout.php');
-
-$viewdefs['summer']['layout']['dashboard'] = array(
-    'type' => 'fluid',
-    'components' => array(),
-);
+$layout = new SideBarLayout();
+$layout->push('top', array('view'=>'record'));
+$viewdefs['summer']['layout']['record'] = $layout->getLayout();

@@ -4,11 +4,9 @@
 <div class="widget">
     <div class="twitter-widget">
         <h2>Tweets</h2>
-        {{#if tweets}}
-        <ul style="margin-left: 0px">
-
         {{#each tweets}}
-
+        {{#if this.source}}
+        <ul style="margin-left: 0px">
         <div class="postdate" style="margin: 0 10px 0 0">
             <div class="month m-{{{this.month}}}">{{this.month}}</div>
             <div class="day d-{{{this.day}}}">{{this.day}}</div>
@@ -16,15 +14,11 @@
         </div>
         <div class="tweet">
         {{{this.text}}}</br><br></div>
-        {{/each}}
-        </ul>
+            </ul>
         {{else}}
-
             No tweets at this time.
-            <br>
 
         {{/if}}
-
-
+        {{/each}}
     </div>
 </div>
