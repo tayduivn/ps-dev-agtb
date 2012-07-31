@@ -391,13 +391,18 @@ class TemplateHandler {
                 if ($view == "ConvertLead")
                 {
                     $field['name'] = $module . $field['name'];
-                    if (isset($field['module']) && $field['module'] == 'Accounts' &&
-                        isset($field['id_name']) && substr($field['id_name'], -21) == '_accountsaccounts_ida') {
-                        $field['id_name'] = $module . $field['id_name'];
+                    if (isset($field['module']) && isset($field['id_name']) && substr($field['id_name'], -4) == "_ida") {
+                        $lc_module = strtolower($field['module']);
+                        $ida_suffix = "_".$lc_module.$lc_module."_ida";
+                        if (preg_match('/'.$ida_suffix.'$/', $field['id_name']) > 0) {
+                            $field['id_name'] = $module . $field['id_name'];
+                        }
+                        else
+                            $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                     }
                     else {
-                	    if (!empty($field['id_name']))
-                	        $field['id_name'] = $field['name'] . "_" . $field['id_name'];
+                        if (!empty($field['id_name']))
+                            $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                     }
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
