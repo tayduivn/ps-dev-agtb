@@ -91,28 +91,32 @@
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
+
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
+        this._collection.url = this.createUrl();
+
         this.bestCase = 0;
         this.likelyCase = 0;
     },
 
-    updateCommitted: function() {
-        var urlParams = $.param({
+    createUrl : function() {
+        var urlParams = {
             user_id: this.userId,
             timeperiod_id : this.timePeriodId,
             forecast_type : this.forecastType
-        });
+        };
+        return app.api.buildURL('Forecasts', 'committed', '', urlParams);
+    },
 
+    updateCommitted: function() {
         this.runningFetch = true;
-
-        this._collection.fetch({
-            data: urlParams
-        });
+        this._collection.url = this.createUrl();
+        this._collection.fetch();
     },
 
     /**
@@ -194,7 +198,7 @@
             var best = {};
             var likely = {};
             // get the last committed value
-            var previousCommit = _.first(this._collection.models);
+            var previousCommit = (this._collection.models != undefined) ? _.first(this._collection.models) : [];
             if(_.isEmpty(previousCommit) || this.runningFetch == true) {
                 self.savedTotal = totals;
                 return;
