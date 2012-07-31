@@ -198,11 +198,11 @@ class ThemeApi extends SugarApi
      */
     private function compileBootstrapCss($variables, $min = true)
     {
-        $less = new lessc('include/styleguide/less/bootstrap.less');
+        $less = new lessc('styleguide/bootstrap/less/bootstrap.less');
         if ($min === true) {
             $less->setFormatter('compressed');
         }
-        $variables['baseUrl'] = '"' . $GLOBALS['sugar_config']['site_url'] . '/include/styleguide"';
+        $variables['baseUrl'] = '"' . $GLOBALS['sugar_config']['site_url'] . '/styleguide"';
 
         try {
             $css = $less->parse($variables);
@@ -300,7 +300,7 @@ class ThemeApi extends SugarApi
 
     private function write_file($file, $contents)
     {
-        if (!file_put_contents($file, $contents)) {
+        if (!file_exists($file)) {
             $paths = explode('/', $file);
             $root = '';
             foreach ($paths as $key => $dir) {
@@ -308,7 +308,7 @@ class ThemeApi extends SugarApi
                 $root .= $dir . '/';
                 if (!is_dir($root)) mkdir($root);
             }
-            file_put_contents($file, $contents);
         }
+        file_put_contents($file, $contents);
     }
 }
