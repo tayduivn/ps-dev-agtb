@@ -6,10 +6,12 @@
 .badge {
   font-size: @baseFontSize * .846;
   line-height: 14px; // ensure proper line-height if floated
-  color: @white;
+  color: @black;
   vertical-align: baseline;
   white-space: nowrap;
   background-color: @grayLight;
+  height:14px;
+  display:inline-block;
 }
 // Set unique padding and border-radii
 .label {
@@ -38,28 +40,28 @@ a {
 // Only give background-color difference to links (and to simplify, we don't qualify with `a` but [href] attribute)
 .label,
 .badge {
-  &-Important         { background-color: @btnDangerBackground; }
-  &-Important[href]   { background-color: darken(@btnDangerBackground, 10%); }
-  &-Warning           { background-color: @orange; }
-  &-Warning[href]     { background-color: darken(@orange, 10%); }
-  &-Success           { background-color: @btnSuccessBackground; }
-  &-Success[href]     { background-color: darken(@btnSuccessBackground, 10%); }
-  &-Info              { background-color: @btnInfoBackground; }
-  &-Info[href]        { background-color: darken(@btnInfoBackground, 10%); }
-  &-Inverse           { background-color: @grayDark; }
-  &-Inverse[href]     { background-color: darken(@grayDark, 10%); }
-  &-Log           { background-color: @gray; }
-  &-Log[href]     { background-color: darken(@gray, 10%); }
-  &-Documents           { background-color: @purple; }
-  &-Documents[href]     { background-color: darken(@purple, 10%); }
-  &-Files           { background-color: @orange; }
-  &-Files[href]     { background-color: darken(@orange, 10%); }
-  &-Contacts           { background-color: @blue; }
-  &-Contacts[href]     { background-color: darken(@blue, 10%); }
-  &-Leads           { background-color: @green; }
-  &-Leads[href]     { background-color: darken(@green, 10%); }
-  &-Notes           { background-color: @warningText; }
-  &-Notes[href]     { background-color: darken(@warningText, 10%); }
+  &-Important         { background-color: @btnDangerBackground; color:@white;}
+  &-Important[href]   { background-color: darken(@btnDangerBackground, 10%); color:@white;}
+  &-Warning           { background-color: @orange; color:@white;}
+  &-Warning[href]     { background-color: darken(@orange, 10%); color:@white;}
+  &-Success           { background-color: @btnSuccessBackground; color:@white;}
+  &-Success[href]     { background-color: darken(@btnSuccessBackground, 10%); color:@white; }
+  &-Info              { background-color: @btnInfoBackground; color:@white;}
+  &-Info[href]        { background-color: darken(@btnInfoBackground, 10%); color:@white;}
+  &-Inverse           { background-color: @grayDark; color:@white;}
+  &-Inverse[href]     { background-color: darken(@grayDark, 10%); color:@white;}
+  &-Log           { background-color: @gray; color:@white;}
+  &-Log[href]     { background-color: darken(@gray, 10%); color:@white;}
+  &-Documents           { background-color: @purple; color:@white;}
+  &-Documents[href]     { background-color: darken(@purple, 10%); color:@white;}
+  &-Files           { background-color: @orange; color:@white;}
+  &-Files[href]     { background-color: darken(@orange, 10%); color:@white;}
+  &-Contacts           { background-color: @blue; color:@white;}
+  &-Contacts[href]     { background-color: darken(@blue, 10%); color:@white;}
+  &-Leads           { background-color: @green; color:@white;}
+  &-Leads[href]     { background-color: darken(@green, 10%); color:@white;}
+  &-Notes           { background-color: @warningText; color:@white;}
+  &-Notes[href]     { background-color: darken(@warningText, 10%); color:@white;}
 
 
 
