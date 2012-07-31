@@ -127,7 +127,7 @@ class WorkFlow extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array("name"=>1, 'base_module'=>1, 'type'=>1);
 
-    // This is a member variable to flag whether or not we really call mark_deleted on the cascade_delete call
+    // This is a member variable to flag whether or not we really call mark_deleted
     var $delete_workflow_on_cascade = true;
 
     // Flag whether
@@ -1453,7 +1453,7 @@ function repair_workflow(){
         }
 		$this->write_workflow();
 
-	//end function cascade_delete
+	//end function mark_deleted
 	}
 
 function getActiveWorkFlowCount() {
