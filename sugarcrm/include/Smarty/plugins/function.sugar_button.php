@@ -454,7 +454,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                     'pdf_template_id' => $pdfTemplate->id,
                                     
                                 );
-                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>', 
+                                $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfview" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
                                                         'items' => array(),
                                                     );
                             }
@@ -470,7 +470,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                         'email_action' => '',
                                         
                                     );
-                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>', 
+                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>',
                                                             'items' => array(),
                                                         );
                                 }
@@ -559,7 +559,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
-                            <input id="pdfview_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
+                            <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
                             $pdfItems = array();
                                 if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
@@ -573,7 +573,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                     
                                 );
                                 
-                                $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>', 
+                                $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfemail" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
                                                         'items' => array(),
                                                     );
                             }
