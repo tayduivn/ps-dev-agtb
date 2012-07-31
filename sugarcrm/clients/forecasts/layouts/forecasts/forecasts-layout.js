@@ -164,23 +164,38 @@
          * @return {*} instance of a backbone collection.
          */
         createCollection: function(collectionMetadata, module) {
-
-            var Collection = Backbone.Model.extend({
-                sync: function(method, model, options) {
-                    if(model.url != undefined) {
-                        // check to see if oauth_token exist
-                        var token = "oauth_token=" + app.sugarAuthStore.get('AuthAccessToken');
-                        if(model.url.indexOf(token) == -1) {
-                            model.url += "&" + token;
-                        }
-                        myURL = model.url;
-                    } else {
-                        myURL = app.api.buildURL(module, collectionMetadata.name.toLowerCase(), {},  {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+            var Collection = Backbone.Collection.extend({
+                url: app.config.serverUrl + '/' + module + '/' + collectionMetadata.name.toLowerCase(),
+                /**
+                 * Custom Fetch to make sure that the oauth is set.
+                 *
+                 * @param options
+                 */
+                fetch : function(options) {
+                    var token = "oauth_token=" + app.sugarAuthStore.get('AuthAccessToken');
+                    if(this.url.indexOf(token) == -1) {
+                        this.url += "&" + token;
                     }
-                    return app.api.call(method, myURL, null, options);
-                }
-            });
 
+                    options = options || {};
+                    options.url = this.url;
+
+                    Backbone.Collection.prototype.fetch.call(this, options);
+                },
+                /**
+                 * Custom sync to use the app api to call the url (o-auth headers are inserted here)
+                 *
+                 * @param method
+                 * @param model
+                 * @param options
+                 * @return {*}
+                 */
+                sync: function(method, model, options) {
+
+                    return app.api.call(method, options.url, null, options);
+                }
+
+            });
             return new Collection();
         },
 
