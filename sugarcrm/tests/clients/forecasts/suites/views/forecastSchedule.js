@@ -159,12 +159,6 @@ describe("The expected opportunities view tests", function(){
             dm.declareModel(moduleName, metadata.modules[moduleName]);
             forecastSchedule = dm.createBean(moduleName, {  id: "xyz", include_expected : 0, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
 
-            /*
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("PUT", /.*\/rest\/v10\/ForecastSchedule\/xyz.*/,
-                [200, {  "Content-Type": "application/json"},
-                    JSON.stringify({  id: "xyz", include_expected : 1, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 })]);
-            */
             forecastSchedule.hasChanged = function (attr) { return true; };
             forecastSchedule.save = function() { this.set('include_expected', '1'); };
 
@@ -180,8 +174,6 @@ describe("The expected opportunities view tests", function(){
             view.context = context;
             view.bindDataChange();
             view._collection.trigger("change:include_expected");
-
-            //SugarTest.server.respond();
             expect(forecastSchedule.get("include_expected")).toEqual("1");
         });
     });
