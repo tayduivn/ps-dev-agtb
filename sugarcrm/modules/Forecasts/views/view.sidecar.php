@@ -84,13 +84,16 @@ class ViewSidecar extends SidecarView
         // call Forecasts/filters endpoint
         $filters = $forecastsFiltersApi->filters($filterApi, array());
 
+        $timeframes = $forecastsFiltersApi->timeframes($filterApi, array());
+
+
         // push filters to return data
         $returnInitData["initData"]["filters"] = $filters;
 
         // add filter defaults
-        $defaultTimePeriodId = $filters["timeperiod_id"]["default"];
+        $defaultTimePeriodId = $timeframes["timeperiod_id"]["default"];
         $defaultSelections["timeperiod_id"]["id"] = $defaultTimePeriodId;
-        $defaultSelections["timeperiod_id"]["label"] = $filters["timeperiod_id"]["options"][$defaultTimePeriodId];
+        $defaultSelections["timeperiod_id"]["label"] = $timeframes["timeperiod_id"]["options"][$defaultTimePeriodId];
 
         $defaultCategoryId = $filters["category"]["default"];
         $defaultSelections["category"]["id"] = $defaultCategoryId;
