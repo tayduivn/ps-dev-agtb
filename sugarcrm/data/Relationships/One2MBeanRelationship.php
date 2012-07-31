@@ -329,7 +329,7 @@ class One2MBeanRelationship extends One2MRelationship
                 substr($alias, -20) == "activities_calls_rel" ||
                 substr($alias, -21) == "activities_emails_rel" ||
                 substr($alias, -20) == "activities_notes_rel")
-                $tableInRoleFilter = $alias;
+                $tableInRoleFilter = $startingTable;
         }
         
         //Set up any table aliases required
