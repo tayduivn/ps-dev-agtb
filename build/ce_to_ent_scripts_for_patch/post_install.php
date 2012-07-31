@@ -176,6 +176,12 @@ function post_install()
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+	////	BUILD PORTAL CONFIG
+    _logThis("Building portal config", $path);
+    require("install/install_utils.php");
+    handlePortalConfig();
 	
 	//Upgrade Projects
 	upgradeProjects();

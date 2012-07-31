@@ -137,7 +137,13 @@ function post_install()
     ////    REBUILD DASHLETS
     _logThis("Rebuilding Dashlets", $path);
     rebuild_dashlets();
-    
+
+    ///////////////////////////////////////////////////////////////////////////
+	////	BUILD PORTAL CONFIG
+    _logThis("Building portal config", $path);
+    require("install/install_utils.php");
+    handlePortalConfig();
+
     _logThis('Set default_theme to Sugar', $path);
     $sugar_config['default_theme'] = 'Sugar';
     

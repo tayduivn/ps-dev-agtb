@@ -255,6 +255,7 @@ function genericFunctions(){
         include_once("modules/Administration/UpgradeAccess.php");
 	}
 
+
 	///////////////////////////////////////////////////////////////////////////
     ////    CLEAR SUGARLOGIC CACHE
 	_logThis("Rebuilding SugarLogic Cache", $path);
@@ -494,6 +495,14 @@ function post_install() {
 			$job->save();
 		}
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    ///////////////////////////////////////////////////////////////////////////
+	////	REBUILD PORTAL CONFIG
+    _logThis("Rebuilding portal config", $path);
+    require("install/install_utils.php");
+    handlePortalConfig();
+    //END SUGARCRM flav=ent ONLY
 }
 
 

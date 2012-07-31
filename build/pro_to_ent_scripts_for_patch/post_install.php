@@ -117,7 +117,13 @@ function post_install()
     ///////////////////////////////////////////////////////////////////////////
     ////    REBUILD DASHLETS
     _logThis("Rebuilding Dashlets", $path);
-    rebuild_dashlets();	
+    rebuild_dashlets();
+
+    ///////////////////////////////////////////////////////////////////////////
+	////	BUILD PORTAL CONFIG
+    _logThis("Rebuilding portal config", $path);
+    require("install/install_utils.php");
+    handlePortalConfig();
 }
 
 function rebuild_dashlets(){

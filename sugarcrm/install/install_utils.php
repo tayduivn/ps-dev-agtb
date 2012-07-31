@@ -860,34 +860,48 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
-//BEGIN SUGARCRM flav=ent ONLY
-    $portalConfig = array(
-        'appId' => 'SupportPortal',
-        'env' => 'dev',
-        'platform' => 'portal',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header'
-            ),
-            'footer' => array(
-                'target' => '#footer'
-            ),
-            'alert' => array(
-                'target' => '#alert'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-        'unsecureRoutes' => array('signup', 'error'),
-        'clientID' => 'support_portal'
-    );
-    $configString = json_encode($portalConfig);
-    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
-//END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    handlePortalConfig();
+    //END SUGARCRM flav=ent ONLY
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
 }
+
+/**
+ * handles portal config creation
+ */
+function handlePortalConfig()
+{
+    if (!isset($sugar_config)) {
+        global $sugar_config;
+    }
+
+        $portalConfig = array(
+            'appId' => 'SupportPortal',
+            'env' => 'dev',
+            'platform' => 'portal',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header'
+                ),
+                'footer' => array(
+                    'target' => '#footer'
+                ),
+                'alert' => array(
+                    'target' => '#alert'
+                )
+            ),
+            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'unsecureRoutes' => array('signup', 'error'),
+            'clientID' => 'support_portal'
+        );
+        $configString = json_encode($portalConfig);
+        $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+        sugar_file_put_contents('portal2/config.js', $portalJSConfig);
+
+}
+
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
  */
