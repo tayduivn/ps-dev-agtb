@@ -851,6 +851,22 @@
         app.metadata.set(base_metadata);
         app.data.declareModels();
 
+        // Override detail/edit view routes
+        function recordHandler(module, id, action) {
+            app.controller.loadView({
+                module: module,
+                modelId: id,
+                action: action,
+                layout: "record"
+            });
+        }
+
+        app.router.route(":module/:id/:action", "record", recordHandler);
+
+        // TEMP ORVVER
+        app.router.route(":module/:id", "record", recordHandler);
+
+
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
