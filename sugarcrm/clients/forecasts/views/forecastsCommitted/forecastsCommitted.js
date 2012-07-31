@@ -115,6 +115,8 @@
 
     updateCommitted: function() {
         this.runningFetch = true;
+        this.bestCase = 0;
+        this.likelyCase = 0;
         this._collection.url = this.createUrl();
         this._collection.fetch();
     },
@@ -422,7 +424,7 @@
            return;
         }
 
-        var forecast = new Backbone.Model();
+        var forecast = new this._collection.model();
         forecast.url = self.url;
         var user = this.context.forecasts.get('selectedUser');
         if(user.isManager == true && user.showOpps == false) {

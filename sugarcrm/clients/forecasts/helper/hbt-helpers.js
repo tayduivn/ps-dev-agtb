@@ -87,7 +87,7 @@
                 }
             };
 
-            myURL = app.api.buildURL('Forecasts', 'user/' + uid, {},  {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+            myURL = app.api.buildURL('Forecasts', 'user/' + uid);
             app.api.call('read', myURL, null, options);
 
             linkStr = $('<a href="#">'+this.value +'</a>');

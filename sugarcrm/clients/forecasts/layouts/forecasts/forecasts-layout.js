@@ -116,9 +116,15 @@
                     self.namespace(models, module);
 
                     var Collection = Backbone.Collection.extend({
+                        model : Backbone.Model.extend({
+                            sync : function(method, model, options) {
+                                return app.api.call(method, model.url, model, options);
+                            }
+                        }),
                         sync: function(method, model, options)
                         {
-                            myURL = app.api.buildURL(moduleContext, method, null, {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+                            // if by chance there is no model url, default to a created one
+                            myURL = model.url || app.api.buildURL(moduleContext, method);
                             return app.api.call(method, myURL, null, options);
                         }
                     });
@@ -149,7 +155,7 @@
 
             var Model = Backbone.Model.extend({
                 sync: function(method, model, options) {
-                    myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase(), {},  {oauth_token: app.sugarAuthStore.get('AuthAccessToken')});
+                    myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
                     return app.api.call(method, myURL, null, options);
                 }
             });
@@ -166,22 +172,11 @@
         createCollection: function(collectionMetadata, module) {
             var Collection = Backbone.Collection.extend({
                 url: app.config.serverUrl + '/' + module + '/' + collectionMetadata.name.toLowerCase(),
-                /**
-                 * Custom Fetch to make sure that the oauth is set.
-                 *
-                 * @param options
-                 */
-                fetch : function(options) {
-                    var token = "oauth_token=" + app.sugarAuthStore.get('AuthAccessToken');
-                    if(this.url.indexOf(token) == -1) {
-                        this.url += "&" + token;
+                model : Backbone.Model.extend({
+                    sync : function(method, model, options) {
+                        return app.api.call(method, model.url, model, options);
                     }
-
-                    options = options || {};
-                    options.url = this.url;
-
-                    Backbone.Collection.prototype.fetch.call(this, options);
-                },
+                }),
                 /**
                  * Custom sync to use the app api to call the url (o-auth headers are inserted here)
                  *
@@ -191,8 +186,7 @@
                  * @return {*}
                  */
                 sync: function(method, model, options) {
-
-                    return app.api.call(method, options.url, null, options);
+                    return app.api.call(method, model.url, null, options);
                 }
 
             });

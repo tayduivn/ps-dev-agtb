@@ -194,6 +194,6 @@
                     }
                 }
             }
-        },{ oauth_token: app.sugarAuthStore.get('AuthAccessToken') });
+        });
     }
 })

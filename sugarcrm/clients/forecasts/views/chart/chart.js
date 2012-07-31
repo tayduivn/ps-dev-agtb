@@ -125,7 +125,7 @@
 
                   url = app.api.buildURL('Forecasts', 'chart', '', data);
 
-                  app.api.call('read', url, data, {success : success}, { oauth_token: app.sugarAuthStore.get('AuthAccessToken') });
+                  app.api.call('read', url, data, {success : success});
               }
             }
         );
