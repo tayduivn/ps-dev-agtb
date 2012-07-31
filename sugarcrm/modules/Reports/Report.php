@@ -2130,7 +2130,7 @@ return str_replace(' > ','_',
 					$amountUSDollar = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_USDOLLAR");
 					// If currency is set to US Dolar, and the amount and amountUSDollar are equal, skip pre-processing
 					// Otherwise, use the currency and amount to convert to dollar and ignore amount_usdollar
-					if (!($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
+					if (!empty($fields[$currencyId]) && !($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
 						// Get currency
 						$currency = new Currency();
 						$currency->retrieve($fields[$currencyId]);
@@ -2203,7 +2203,7 @@ return str_replace(' > ','_',
         $count_exists = false;
         foreach ($db_row as $count_column => $count_value)
         {
-            if (substr($count_column, -7) == "__count") {
+            if (substr($count_column, -7) == "__count" || $count_column == 'count') {
                 $count *= max($count_value, 1);
                 $count_exists = true;
             }

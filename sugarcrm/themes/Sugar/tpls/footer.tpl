@@ -42,8 +42,10 @@
 <div class="clear"></div>
 <div id="arrow" title="Show" class="up"></div>
 <div id="footer">
-    <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
-        title="{$STATISTICS}" border="0"/> <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
+    {if $COMPANY_LOGO_URL}
+    <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" title="{$STATISTICS}" border="0"/>
+    {/if}
+    <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
     <div id="partner">
         <div id="integrations" style="min-width: 20px;">
             {foreach from=$DYNAMICDCACTIONS item=action}
@@ -52,7 +54,7 @@
         </div>
     </div>
 <script>
- 	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
+ 	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
 </script>       
 
 {literal}

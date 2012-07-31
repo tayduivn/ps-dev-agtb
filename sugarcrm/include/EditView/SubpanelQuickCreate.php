@@ -141,6 +141,9 @@ class SubpanelQuickCreate{
 	}
 
 	function process($module){
+        if($_REQUEST['target_action'] == 'QuickCreate'){
+            $this->ev->view = 'QuickCreate';
+        }
         $form_name = 'form_Subpanel'.$this->ev->view .'_'.$module;
         $this->ev->formName = $form_name;
         $this->ev->process(true, $form_name);

@@ -168,6 +168,39 @@ function run_sql_file( $filename ){
     return( true );
 }
 
+
+if (!function_exists("getValidDBName"))
+{
+    /*
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string $name Proposed name for the column
+     * @param string $ensureUnique
+     * @return string Valid column name trimmed to right length and with invalid characters removed
+     */
+     function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
+    {
+        // first strip any invalid characters - all but alphanumerics and -
+        $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+        $len = strlen ( $name ) ;
+        $result = $name;
+        if ($ensureUnique)
+        {
+            $md5str = md5($name);
+            $tail = substr ( $name, -11) ;
+            $temp = substr($md5str , strlen($md5str)-4 );
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
+        }else if ($len > ($maxLen - 5))
+        {
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
+        }
+        return strtolower ( $result ) ;
+    }
+
+
+}
+
+
 function isTypeBoolean($type) {
 
 	switch ($type){

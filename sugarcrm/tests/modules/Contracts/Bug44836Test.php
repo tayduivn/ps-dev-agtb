@@ -30,11 +30,9 @@ class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
 	public function setUp()
 	{
-		include('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = 1;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, 1));
 	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");	    		
@@ -42,16 +40,15 @@ class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
 	}
 	
 	public function testContractsSubpanelQuickCreate()
 	{
-         $_REQUEST['action'] = 'QuickCreate';
+        $_REQUEST['action'] = 'QuickCreate';
+        $_REQUEST['target_action'] = $_REQUEST['action'];
 		 $subpanelQuickCreate = new SubpanelQuickCreate('Contracts', 'QuickCreate');
 		 $this->expectOutputRegex('/check_form\s*?\(\s*?\'form_SubpanelQuickCreate_Contracts\'\s*?\)/');
 	}
 	
 }
-
-?>

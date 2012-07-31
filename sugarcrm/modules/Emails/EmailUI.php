@@ -1754,6 +1754,14 @@ EOQ;
 				$email = new Email();
 				$email->retrieve($id);
 
+                // BUG FIX BEGIN
+                // Bug 50973 - marking unread in group inbox removes message
+                if (empty($email->assigned_user_id))
+                {
+                    $email->setFieldNullable('assigned_user_id');
+                }
+                // BUG FIX END
+
 				switch($type) {
 					case "unread":
 						$email->status = 'unread';
@@ -1780,6 +1788,14 @@ EOQ;
 					break;
 
 				}
+
+                // BUG FIX BEGIN
+                // Bug 50973 - reset assigned_user_id field defs
+                if (empty($email->assigned_user_id))
+                {
+                    $email->revertFieldNullable('assigned_user_id');
+                }
+                // BUG FIX END
 			}
 		} else {
 			/* dealing with IMAP email, uids are IMAP uids */
@@ -2219,6 +2235,10 @@ eoq;
 		$ret['parent_type'] = $email->parent_type;
 		$ret['parent_id'] = $email->parent_id;
 
+       if ($email->type == 'draft') {
+            $ret['cc'] = from_html($ccAddresses);
+            $ret['bcc'] = $bccAddresses;
+        }
 		// reply all
 		if(isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'replyAll') {
 		    $ret['cc'] = from_html($ccAddresses);

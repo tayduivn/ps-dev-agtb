@@ -955,7 +955,7 @@ $mod_strings = array (
  	'WARN_LICENSE_EXPIRED'=> "Notice: Your license expires in ",
     'WARN_LICENSE_EXPIRED2' =>" day(s). Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
     'WARN_LICENSE_SEATS'=>  "Warning: User licenses exceeded by ",
-    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:cagroup@sugarcrm.com'>cagroup@sugarcrm.com</a>.",
+    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:sales@sugarcrm.com'>sales@sugarcrm.com</a>.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users is already the maximum number of licenses allowed: ",
     'WARN_LICENSE_SEATS_EDIT_USER'=>  "Warning: The number of active users is already the maximum number of licenses allowed",
     'WARN_LICENSE_SEATS_USER_CREATE'=>"Warning: The number of active users allowed by your license matches the number of active users in the system. You will not be able to create additional active users.",

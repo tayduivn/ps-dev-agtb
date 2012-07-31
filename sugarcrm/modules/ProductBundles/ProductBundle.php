@@ -307,12 +307,12 @@ class ProductBundle extends SugarBean {
 		$this->db->query($query,true,"Error clearing quote to product bundle relationship: ");
 	}
 
-	function set_productbundle_quote_relationship($quote_id, $bundle_id, $bundle_index='')
+    function set_productbundle_quote_relationship($quote_id, $bundle_id, $bundle_index = '0')
 	{
 		if(empty($bundle_id)){
 			$bundle_id = $this->id;
 		}
-		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values ('".create_guid()."', '$quote_id', '$bundle_id', '$bundle_index', ".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').")";
+        $query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->quoted($bundle_index) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
 		$this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting quote to product bundle relationship for $quote_id and $bundle_id");
 	}
