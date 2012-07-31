@@ -27,8 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class CalendarUtils {
-
+class CalendarUtils
+{
 	/**
 	 * Find first day of week according to user's settings
 	 * @param SugarDateTime $date
@@ -106,8 +106,8 @@ class CalendarUtils {
 	 * @param SugarBean $bean
 	 * @return array
 	 */
-	static function get_sendback_array(SugarBean $bean){
-
+	static function getBeanDataArray(SugarBean $bean)
+	{
 			if(isset($bean->parent_name) && isset($_REQUEST['parent_name']))
 				$bean->parent_name = $_REQUEST['parent_name'];
 
@@ -154,18 +154,20 @@ class CalendarUtils {
 	 * @param SugarBean $bean
 	 * @return array
 	 */
-	 static function get_sendback_repeat_data(SugarBean $bean){
+	 static function getRepeatData(SugarBean $bean, $editAllRecurrences = false, $dateStart = false)
+	 {
 	 	if ($bean->module_dir == "Meetings" || $bean->module_dir == "Calls") {
-	 		if(!empty($bean->repeat_parent_id) || (!empty($bean->repeat_type) && empty($_REQUEST['edit_all_recurrences']))){
-				if(!empty($bean->repeat_parent_id))
+	 		if (!empty($bean->repeat_parent_id) || (!empty($bean->repeat_type) && empty($editAllRecurrences))) {
+				if (!empty($bean->repeat_parent_id)) {
 					$repeat_parent_id = $bean->repeat_parent_id;
-				else
+				} else {
 					$repeat_parent_id = $bean->id;
+				}
 	 			return array("repeat_parent_id" => $repeat_parent_id);
 	 		}
 
 	 		$arr = array();
-	 		if(!empty($bean->repeat_type)){
+	 		if (!empty($bean->repeat_type)) {
 	 			$arr = array(
 	 				'repeat_type' => $bean->repeat_type,
 	 				'repeat_interval' => $bean->repeat_interval,
@@ -175,17 +177,18 @@ class CalendarUtils {
 	 			);
 	 		}
 
-	 		// TODO CHECK DATETIME VARIABLE
-	 		if(!empty($_REQUEST['date_start'])){
-	 			$date_start = $_REQUEST['date_start'];
-	 		}else
-	 			$date_start = $bean->date_start;
+	 		if (empty($dateStart)) {
+	 			$dateStart = $bean->date_start;
+	 		}
 
-	 		$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
-		 	$arr = array_merge($arr,array(
-		 		'current_dow' => $date->format("w"),
-		 		'default_repeat_until' => $date->get("+1 Month")->format($GLOBALS['timedate']->get_date_format()),
-		 	));
+            $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(), $dateStart);
+            if (empty($date)) {
+                $date = $GLOBALS['timedate']->getNow(true);
+            }
+            $arr = array_merge($arr,array(
+                'current_dow' => $date->format("w"),
+                'default_repeat_until' => $date->get("+1 Month")->format($GLOBALS['timedate']->get_date_format()),
+            ));
 
 		 	return $arr;
 		}
@@ -198,8 +201,8 @@ class CalendarUtils {
 	 * @param array $params
 	 * @return array
 	 */
-	static function build_repeat_sequence($date_start,$params){
-
+	static function buildRecurringSequence($date_start, $params)
+	{
 		$arr = array();
 
 		$type = $params['type'];
@@ -300,16 +303,16 @@ class CalendarUtils {
 	/**
 	 * Save repeat activities
 	 * @param SugarBean $bean
-	 * @param array $time_arr array of datetimes
+	 * @param array $timeArray array of datetimes
 	 * @return array
 	 */
-	static function save_repeat_activities(SugarBean $bean,$time_arr){
-
+	static function saveRecurring(SugarBean $bean, $timeArray)
+	{
 		// Here we will create single big inserting query for each invitee relationship
 		// rather than using relationships framework due to performance issues.
 		// Relationship framework runs very slowly
 
-		global $db;
+		$db = $GLOBALS['db'];
 		$id = $bean->id;
 		$date_modified = $GLOBALS['timedate']->nowDb();
 		$lower_name = strtolower($bean->object_name);
@@ -352,8 +355,9 @@ class CalendarUtils {
 
 		$arr = array();
 		$i = 0;
-		foreach($time_arr as $date_start){
-			$clone = $bean;	// we don't use clone keyword cause not necessary
+		
+		$clone = clone $bean;
+		foreach ($timeArray as $date_start) {
 			$clone->id = "";
 			$clone->date_start = $date_start;
 			// TODO CHECK DATETIME VARIABLE
