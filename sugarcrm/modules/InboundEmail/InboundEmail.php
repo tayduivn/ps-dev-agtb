@@ -5448,15 +5448,15 @@ eoq;
 			if (empty($trashFolder)) {
 				$trashFolder = "INBOX.Trash";
 			}
-			foreach($uids as $uid) {
-		        if($this->moveEmails($this->id, $this->mailbox, $this->id, $trashFolder, $uid))
-	                $GLOBALS['log']->debug("INBOUNDEMAIL: MoveEmail to {$trashFolder} successful.");
-	            else {
-	                $GLOBALS['log']->debug("INBOUNDEMAIL: MoveEmail to {$trashFolder} FAILED - trying hard delete for message: $uid");
-	                imap_delete($this->conn, $uid, FT_UID);
-					$return = true;
-	            }
-	        }
+			$uidsToMove = implode('::;::', $uids);
+			if($this->moveEmails($this->id, $this->mailbox, $this->id, $trashFolder, $uidsToMove))
+				$GLOBALS['log']->debug("INBOUNDEMAIL: MoveEmail to {$trashFolder} successful.");
+			else {
+				$GLOBALS['log']->debug("INBOUNDEMAIL: MoveEmail to {$trashFolder} FAILED - trying hard delete for message: $uid");
+				$uidsToDelete = implode(',', $uids);
+				imap_delete($this->conn, $uidsToDelete, FT_UID);
+				$return = true;
+			}
 		}
         else {
             $msgnos = array();
