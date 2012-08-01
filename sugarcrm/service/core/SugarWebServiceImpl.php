@@ -190,9 +190,6 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	if($offset == '' || $offset == -1){
 		$offset = 0;
 	} // if
-	if($deleted){
-	    $deleted = -1;
-	}	
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
@@ -452,6 +449,9 @@ function set_entry($session,$module_name, $name_value_list){
 
 	foreach($name_value_list as $name=>$value){
 		if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
+			continue;
+		}
+		if(!empty($seed->field_name_map[$name]['sensitive'])) {
 			continue;
 		}
 		if(!is_array($value)){

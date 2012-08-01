@@ -1068,9 +1068,15 @@ require_once('include/EditView/EditView2.php');
                                          $column_name =  explode('.', $db_field);
                                          //when a search is done with a space, we concatenate and search against the full name.
                                          if(count($string)>1){
-                                             //add where clause against concatenated fields
-                                             $where .= $this->seed->db->concat($column_name[0],array($parms['db_field'][0],$parms['db_field'][1])) . " LIKE ".$this->seed->db->quoted($field_value.'%');
-                                             $where .= ' OR ' . $this->seed->db->concat($column_name[0],array($parms['db_field'][1],$parms['db_field'][0])) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                             //add where clause against concatenated field
+                                             $first_field = $parms['db_field'][0];
+                                             $second_field = $parms['db_field'][1];
+                                             $first_db_fields = explode('.', $first_field);
+                                             $second_db_fields = explode('.', $second_field);
+                                             if(count($first_db_fields)==2) $first_field = $first_db_fields[1];
+                                             if(count($second_db_fields)==2) $second_field = $second_db_fields[1];
+                                             $where .= $this->seed->db->concat($column_name[0],array($first_field,$second_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                             $where .= ' OR ' . $this->seed->db->concat($column_name[0],array($second_field,$first_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
                                          }else{
                                              //no space was found, add normal where clause
                                              $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));

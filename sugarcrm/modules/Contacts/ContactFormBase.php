@@ -46,7 +46,7 @@ var $objectName = 'Contact';
  */
 public function getDuplicateQuery($focus, $prefix='')
 {
-	$query = 'SELECT id, first_name, last_name, title FROM contacts ';
+	$query = 'SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title FROM contacts ';
 
     // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
     // add team security
@@ -57,15 +57,15 @@ public function getDuplicateQuery($focus, $prefix='')
     }
     //END SUGARCRM flav=pro ONLY
 
-    $query .= ' where deleted = 0 AND ';
+    $query .= ' where contacts.deleted = 0 AND ';
 	if(isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0){
-		$query .= " first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND last_name = '". $_POST[$prefix.'last_name'] ."'";
+		$query .= " contacts.first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
 	} else {
-		$query .= " last_name = '". $_POST[$prefix.'last_name'] ."'";
+		$query .= " contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
 	}
 
 	if(!empty($_POST[$prefix.'record'])) {
-		$query .= " AND  id != '". $_POST[$prefix.'record'] ."'";
+		$query .= " AND  contacts.id != '". $_POST[$prefix.'record'] ."'";
 	}
     return $query;
 }
@@ -78,7 +78,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 	}
 
 	if(empty($contact)){
-		$contact = new Contact();
+        $contact = $this->getContact();
 	}
 
 	global $mod_strings;
@@ -254,7 +254,7 @@ EOQ;
 
 
 	//carry forward custom lead fields common to contacts during Lead Conversion
-	$tempContact = new Contact();
+    $tempContact = $this->getContact();
 
 	if (method_exists($contact, 'convertCustomFieldsForm')) $contact->convertCustomFieldsForm($form, $tempContact, $prefix);
 	unset($tempContact);
@@ -308,7 +308,7 @@ EOQ;
 
 	$javascript = new javascript();
 	$javascript->setFormName($formname);
-	$javascript->setSugarBean(new Contact());
+	$javascript->setSugarBean($this->getContact());
 	$javascript->addField('email1','false',$prefix);
 	$javascript->addField('email2','false',$prefix);
 	$javascript->addRequiredFields($prefix);
@@ -375,7 +375,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Contact());
+$javascript->setSugarBean($this->getContact());
 $javascript->addField('email1','false',$prefix);
 $javascript->addRequiredFields($prefix);
 
@@ -431,7 +431,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 
 	global $timedate;
 
-	$focus = new Contact();
+	$focus = $this->getContact();
 
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -701,6 +701,13 @@ function handleRedirect($return_id){
     }
 }
 
+    /**
+    * @return Contact
+    */
+    protected function getContact()
+    {
+        return new Contact();
+    }
 }
 
 

@@ -798,6 +798,11 @@ class MssqlManager extends DBManager
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
 
+        // If there is no ordering direction (ASC/DESC), use ASC by default
+        if (strpos($orig_order_match, " ") === false) {
+        	$orig_order_match .= " ASC";
+        }
+            
         //grab first space in order by
         $firstSpace = strpos($orig_order_match, " ");
 
@@ -824,6 +829,9 @@ class MssqlManager extends DBManager
 				if($containsCommaPos !== false) {
 					$col_name = substr($col_name, $containsCommaPos+1);
 				}
+                //add the "asc/desc" order back
+                $col_name = $col_name. " ". $asc_desc;
+
                 //return column name
                 return $col_name;
             }
@@ -1524,7 +1532,7 @@ EOSQL;
             break;
         case 'primary':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
+                $sql = "ALTER TABLE {$table} DROP CONSTRAINT {$name}";
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
             break;

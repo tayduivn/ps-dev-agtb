@@ -4511,6 +4511,7 @@ ul.subpanelTablist li a.activeSubTab:hover
 	-webkit-border-radius:6px;
 }
 
+.detail.view  tr:last-child td:first-child ,.detail.view  tr:last-child th:first-child,
 .list.view  tr:last-child td:first-child ,.list.view  tr:last-child th:first-child{
 	-moz-border-radius-bottomleft: 6px;
 	-webkit-border-bottom-left-radius: 6px;
@@ -5504,41 +5505,73 @@ input, select, textarea, button
 
 /* for edit and detail views */
 .edit.view th:first-child,.detail.view th:first-child {
--moz-border-radius: 6px 6px 0px 0px;
-border-radius: 6px 6px 0px 0px;
--webkit-border-topr-right-radius: 6px;
+-moz-border-radius-topleft: 6px;
+-moz-border-radius-topright: 6px;
+border-top-left-radius: 6px;
+border-top-right-radius: 6px;
+-webkit-border-top-right-radius: 6px;
 -webkit-border-top-left-radius: 6px;
 }
 
 .edit.view h4:first-child,.detail.view h4:first-child {
--moz-border-radius: 6px 6px 0px 0px;
-border-radius: 6px 6px 0px 0px;
--webkit-border-topr-right-radius: 6px;
+-moz-border-radius-topleft: 6px;
+-moz-border-radius-topright: 6px;
+border-top-left-radius: 6px;
+border-top-right-radius: 6px;
+-webkit-border-top-right-radius: 6px;
 -webkit-border-top-left-radius: 6px;
 }
 
-.edit.view > tr:first-child > td:first-child,.detail.view tr:first-child > td:first-child  {
--moz-border-radius: 6px 0px 0px 0px;
-border-radius: 6px 0px 0px 0px;
+.edit.view.collapsed h4,.detail.view.collapsed h4 {
+-moz-border-bottom-left-radius: 6px;
+-moz-border-bottom-right-radius: 6px;
+border-bottom-left-radius: 6px;
+border-bottom-right-radius: 6px;
+-webkit-border-bottom-right-radius: 6px;
+-webkit-border-bottom-left-radius: 6px;
+}
+
+.collapsed .panelContainer, .collapsed .collapseLink, .expanded .expandLink { display:none; }
+
+.edit.view > table tr:first-child td:first-child,.detail.view > table:first-child tr:first-child td:first-child  {
+-moz-border-radius-topleft: 6px;
+border-top-left-radius: 6px;
 -webkit-border-top-left-radius: 6px;
 }
 
-.edit.view > tr:first-child td:last-child,.detail.view tr:first-child td:last-child   {
--moz-border-radius: 0px 6px 0px 0px;
-border-radius: 0px 6px 0px 0px;
+.edit.view > table tr:first-child td:last-child,.detail.view > table:first-child tr:first-child td:last-child   {
+-moz-border-radius-topright: 6px;
+border-top-right-radius: 6px;
 -webkit-border-top-right-radius: 6px;
 }
 
 .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child {
 -moz-border-radius: 0px 0px 0px 6px;
 border-radius: 0px 0px 0px 6px;
+-moz-border-radius-bottomleft: 6px;
+border-bottom-left-radius: 6px;
 -webkit-border-bottom-left-radius: 6px;
 }
 .edit.view > tr:last-child td:last-child ,.detail.view tr:last-child td:last-child{
--moz-border-radius: 0px 0px 6px 0px;
-border-radius: 0px 0px 6px 0px;
+-moz-border-radius-bottomright: 6px;
+border-bottom-right-radius: 6px;
 -webkit-border-bottom-right-radius: 6px;
 }
+.edit.view tr td tr td,
+.detail.view > table:first-child tr td tr:first-child td:first-child,
+.detail.view > table:first-child tr td tr:first-child td:last-child,
+.detail.view tr td tr:first-child > td:first-child,
+.detail.view tr td tr:first-child > td:last-child,
+.detail.view tr td tr:last-child > td:first-child,
+.detail.view tr td tr:last-child > td:last-child {
+    -moz-border-radius: 0px 0px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+}
+/*
 table.importTable .edit.view > tr:first-child > td:first-child,.detail.view tr:first-child > td:first-child,
 table.importTable .edit.view > tr:first-child td:last-child,.detail.view tr:first-child td:last-child,
 table.importTable .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child,
@@ -5551,11 +5584,12 @@ table.importTable .edit.view > tr:last-child td:last-child ,.detail.view tr:last
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 0px;
 }
+*/
 
 .edit.view tr:last-child td,.detail.view tr:last-child td {
 border-bottom: 0px;
 }
-
+/*
 .yui-navset.detailview_tabs .view tr:first-child td:first-child {
 -moz-border-radius: 6px 0px 0px 0px;
 border-radius: 6px 0px 0px 0px;
@@ -5566,6 +5600,7 @@ border-radius: 6px 0px 0px 0px;
 border-radius: 0px 6px 0px 0px;
 -webkit-border-top-right-radius: 6px;
 }
+*/
 /* for list views */
 .oddListRowS1 td:first-child, .evenListRowS1 td:first-child,.list.view th:first-child{
 padding-left: 10px;
@@ -6853,6 +6888,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	padding: 10px 0px;
 	border: 1px solid #999;
 	width: auto;
+    min-width: 150px;
 }
 
 #quickCreate ul.clickMenu li ul.subnav {

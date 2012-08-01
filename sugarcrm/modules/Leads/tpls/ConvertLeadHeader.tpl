@@ -28,6 +28,33 @@
 *}
 {literal}
 <script type="text/javascript">
+
+/**
+  *  Start Bug#50590 
+  *  mod_array global array that contains required modules
+  *  addDropdownElements fills lead_conv_ac_op_sel with all required modules except Contacts 
+  *  as this module is in the list by default
+  */
+
+ var mod_array = new Array; 
+ function addDropdownElements(){
+   var i;
+   for(i=0; i<=mod_array.length-1; i++){
+     if(mod_array[i] != 'Contacts'){
+       var dropdown = document.getElementById('lead_conv_ac_op_sel');
+       var opt = document.createElement("option");
+       opt.text = SUGAR.language.get('app_list_strings', "moduleListSingular")[mod_array[i]];
+       opt.value = mod_array[i];
+       opt.label = opt.text;
+       dropdown.options.add(opt);
+     }
+   }
+ }
+ /**
+  *   End Bug#50590
+  */    
+
+
 function addRemoveDropdownElement(module) {
     var accountText = document.getElementById('account_name');
     var checkbox = document.getElementById('new'+module);

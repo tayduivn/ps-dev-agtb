@@ -559,6 +559,8 @@ class User extends Person {
             }else{
                 $this->team_id = $this->default_team;
             }
+        } else {
+            $this->team_id = $this->default_team;
         }
 
 		//END SUGARCRM flav=pro ONLY

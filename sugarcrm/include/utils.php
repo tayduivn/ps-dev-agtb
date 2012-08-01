@@ -2619,7 +2619,7 @@ function get_emails_by_assign_or_link($params)
     	'join_table_link_alias' => 'linkt',
     ));
     $rel_join = str_replace("{$bean->table_name}.id", "'{$bean->id}'", $rel_join);
-    $return_array['select']='SELECT emails.id ';
+    $return_array['select']='SELECT DISTINCT emails.id ';
     $return_array['from'] = "FROM emails ";
     $return_array['join'] = " INNER JOIN (".
         // directly assigned emails
@@ -5299,4 +5299,25 @@ function getReportNameTranslation($reportName) {
 	}
 
 	return $title;
+}
+
+/**
+ * Remove vars marked senstitive from array
+ * @param array $defs
+ * @param SugarBean|array $data
+ * @return mixed $data without sensitive fields
+ */
+function clean_sensitive_data($defs, $data)
+{
+    foreach($defs as $field => $def) {
+        if(!empty($def['sensitive'])) {
+            if(is_array($data)) {
+                $data[$field] = '';
+            }
+            if($data instanceof SugarBean) {
+                $data->$field = '';
+            }
+        }
+    }
+    return $data;
 }
