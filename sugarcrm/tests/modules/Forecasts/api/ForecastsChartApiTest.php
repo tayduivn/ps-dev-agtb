@@ -139,30 +139,6 @@ class ForecastsChartApiTest extends RestTestBase
     }
 
     /**
-     * @group forecastapi
-     */
-    public function testReturnEmptyWithInvalidTimePeriod()
-    {
-        $url = 'Forecasts/chart?timeperiod_id=InvalidTimePeriodId&user_id=' . self::$user->id . '&group_by=sales_stage&dataset=likely';
-        $return = $this->_restCall($url);
-
-        $chart = $return['reply'];
-        $this->assertEmpty($chart);
-    }
-
-    /**
-     * @group forecastapi
-     */
-    public function testReturnEmptyWithUser()
-    {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=InvalidUserId&group_by=sales_stage&dataset=likely';
-        $return = $this->_restCall($url);
-
-        $chart = $return['reply'];
-        $this->assertEmpty($chart);
-    }
-
-    /**
      * @dataProvider providerGroupByReturnTheProperLabelName
      * @group forecastapi
      */
@@ -189,6 +165,28 @@ class ForecastsChartApiTest extends RestTestBase
             array(get_label('LBL_FORECAST', $mod_strings), 'forecast'),
             array(get_label('LBL_PROBABILITY', $mod_strings), 'probability')
         );
+    }
+
+    /**
+     * @bug 54921
+     * @group forecastapi
+     *
+     */
+    public function testUsersWithNoDataChartContainsUsers()
+    {
+        $user1 = SugarTestUserUtilities::createAnonymousUser();
+        $user1->user_name = "user1";
+        $user1->save();
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+        $user2->reports_to_id = $user1->id;
+        $user2->user_name = "user2";
+        $user2->save();
+
+        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . $user1->id . '&group_by=sales_stage&dataset=likely&display_manager=true';
+        $return = $this->_restCall($url);
+
+        $chart = $return['reply'];
+        $this->assertEquals(2, count($chart['values']));
     }
 
 }
