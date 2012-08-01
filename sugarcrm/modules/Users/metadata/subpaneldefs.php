@@ -48,17 +48,6 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
-        'tokens' => array(
-			'order' => 40,
-			'module' => 'OAuthTokens',
-			'sort_order' => 'asc',
-			'sort_by' => 'token_ts',
-			'subpanel_name' => 'ForUser',
-			'get_subpanel_data' => 'oauth_tokens',
-			'title_key' => 'LBL_OAUTH_TOKENS_SUBPANEL_TITLE',
-            'top_buttons' => array(),
-		),
-
 		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(
@@ -158,7 +147,6 @@ $layout_defs['UserEAPM'] = array(
 );
 //BEGIN SUGARCRM flav=pro ONLY
 $layout_defs['UsersHolidays']['subpanel_setup']['holidays'] = $layout_defs['Users']['subpanel_setup']['holidays'];
-$layout_defs['UserOAuth']['subpanel_setup']['tokens'] = $layout_defs['Users']['subpanel_setup']['tokens'];
 
 //remove the administrator create button holiday for the user admin only
 if ( !empty($_REQUEST['record']) ) {
