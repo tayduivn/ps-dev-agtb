@@ -11,7 +11,7 @@
          * Application identifier.
          * @cfg {String}
          */
-        appId: 'core-app',
+        appId: 'SugarCRM',
 
         /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
