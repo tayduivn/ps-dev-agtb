@@ -104,7 +104,8 @@ App.sync(function (data) {
             //TODO the module probably shouldnt be cases
             App.controller.loadView({
                 module:'Cases',
-                layout:'themeroller'
+                layout:'themeroller',
+                create: true
             });
         }, function (data) {
             console.log("app sync error");
