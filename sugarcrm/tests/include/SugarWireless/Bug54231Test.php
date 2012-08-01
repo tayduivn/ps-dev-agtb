@@ -68,7 +68,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 					'disable_create' => true
 				),
 			),
-  		    'remap_action' => 'wirelessedit',
+  		'remap_action' => 'wirelessedit',
 		);
 	}
 
@@ -96,17 +96,15 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 		// Set fields for wirelessedit.tpl
 		$editView->ss->assign('fields', $fieldDefs);
 		$editView->ss->assign('DETAILS', $detail);
-        $editView->ss->display('include/SugarWireless/tpls/wirelessedit.tpl');
+		$editView->ss->display('include/SugarWireless/tpls/wirelessedit.tpl');
 
-		foreach ($fieldDefs as $value)
-        {
+		foreach ($fieldDefs as $name => $value) {
 			if ($value['acl'] > 1) {
-                $this->expectOutputRegex("/value=[\'\"]{$value['value']}[\'\"]/");
+                $this->expectOutputRegex("/value=\'" . $value['value'] . "\'/");
 			} else {
-                $this->expectOutputNotRegex("/value=[\'\"]{$value['value']}[\'\"]/");
+                $this->expectOutputNotRegex("/value=\'" . $value['value'] . "\'/");
 			}
 		}
-
 	}
 	
 	
@@ -131,7 +129,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
   						'importable' => 'required',
   						'duplicate_merge' => '1',
   						'required' => true,
-  						'options' =>
+  						'options' => 
 	  						array(
   								'=' => 'Equals',
   								'not_equal' => 'Does Not Equal',
@@ -145,6 +143,24 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
   						'value' => 'TestAmount',
   						'acl' => 1,
   					),
+  					'name' => array(
+						'name' => 'name',
+						'vname' => 'LBL_OPPORTUNITY_NAME',
+						'type' => 'name',
+						'dbType' => 'varchar',
+						'len' => '50',
+						'unified_search' => true,
+						'full_text_search' => 
+							array(
+								'boost' => 3,
+							),
+						'comment' => 'Name of the opportunity',
+						'merge_filter' => 'selected',
+						'importable' => 'required',
+						'required' => true,
+						'value' => 'TestName',
+						'acl' => 4,
+					)
 				),
 				// detail array
 				array(
@@ -153,13 +169,13 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
     					'field' => 'amount',
     					'required' => false,
     					'detail_only' => false,
-    					'displayParams' =>
+    					'displayParams' => 
     						array(
     							'readOnly' => false,
     						),
     					'label' => 'Opportunity Amount:',
     					'value' => 'TestAmount',
-    					'vardef' =>
+    					'vardef' => 
 	    					array(
 		    					'name' => 'amount',
 		    					'vname' => 'LBL_AMOUNT',
@@ -176,68 +192,42 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
     					'readOnly' => false,
     					'customCode' => NULL,
     				),
+	    			'name' => array(
+	  					'id' => '76aeb087-ec27-423f-057f-500ea309721f',
+	  					'field' => 'name',
+	  					'required' => true,
+	  					'detail_only' => false,
+	  					'displayParams' => 
+	  						array(
+	  							'required' => true,
+	  							'wireless_edit_only' => true,
+	  							'readOnly' => false,
+	  						),
+	  					'label' => 'Opportunity Name:',
+	  					'value' => 'TestName',
+	  					'vardef' => 
+	  						array(
+	  							'name' => 'name',
+	  							'vname' => 'LBL_OPPORTUNITY_NAME',
+	  							'type' => 'name',
+	  							'dbType' => 'varchar',
+	  							'len' => '50',
+	  							'unified_search' => true,
+	  							'full_text_search' => 
+	  								array(
+	  									'boost' => 3,
+	  								),
+	  							'comment' => 'Name of the opportunity',
+	  							'merge_filter' => 'selected',
+	  							'importable' => 'required',
+	  							'required' => true,
+	  					),
+	  					'type' => 'name',
+	  					'readOnly' => false,
+	  					'customCode' => NULL,
+					),
 				),
   			),
-
-
-            1 => array(
-                array(
-                    'name' => array(
-             						'name' => 'name',
-             						'vname' => 'LBL_OPPORTUNITY_NAME',
-             						'type' => 'name',
-             						'dbType' => 'varchar',
-             						'len' => '50',
-             						'unified_search' => true,
-             						'full_text_search' =>
-             							array(
-             								'boost' => 3,
-             							),
-             						'comment' => 'Name of the opportunity',
-             						'merge_filter' => 'selected',
-             						'importable' => 'required',
-             						'required' => true,
-             						'value' => 'TestName',
-             						'acl' => 4,
-             					)
-                ),
-                array(
-                    'name' => array(
-            	  					'id' => '76aeb087-ec27-423f-057f-500ea309721f',
-            	  					'field' => 'name',
-            	  					'required' => true,
-            	  					'detail_only' => false,
-            	  					'displayParams' =>
-            	  						array(
-            	  							'required' => true,
-            	  							'wireless_edit_only' => true,
-            	  							'readOnly' => false,
-            	  						),
-            	  					'label' => 'Opportunity Name:',
-            	  					'value' => 'TestName',
-            	  					'vardef' =>
-            	  						array(
-            	  							'name' => 'name',
-            	  							'vname' => 'LBL_OPPORTUNITY_NAME',
-            	  							'type' => 'name',
-            	  							'dbType' => 'varchar',
-            	  							'len' => '50',
-            	  							'unified_search' => true,
-            	  							'full_text_search' =>
-            	  								array(
-            	  									'boost' => 3,
-            	  								),
-            	  							'comment' => 'Name of the opportunity',
-            	  							'merge_filter' => 'selected',
-            	  							'importable' => 'required',
-            	  							'required' => true,
-            	  					),
-            	  					'type' => 'name',
-            	  					'readOnly' => false,
-            	  					'customCode' => NULL,
-            					),
-                )
-            )
         );
     }
 }
