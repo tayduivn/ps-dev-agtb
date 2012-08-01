@@ -1,1 +1,1 @@
-<h3>{{label}}</h3><span name="{{name}}">{{value}}</span>
+<span name="{{name}}">{{value}}</span>
