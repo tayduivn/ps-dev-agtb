@@ -197,7 +197,9 @@ class AdministrationController extends SugarController
              $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
              $host = !empty($_REQUEST['host']) ? $_REQUEST['host'] : '';
              $port = !empty($_REQUEST['port']) ? $_REQUEST['port'] : '';
-
+             $this->cfg = new Configurator();
+             $this->cfg->config['full_text_engine'] = '';
+             $this->cfg->saveConfig();
              $ftsConnectionValid = TRUE;
 
              if( !empty($type) )
@@ -211,9 +213,6 @@ class AdministrationController extends SugarController
                      $ftsConnectionValid = FALSE;
 
                  // bug 54274 -- only bother with an override if we have data to place there, empty string breaks Sugar On-Demand!
-                 $this->cfg = new Configurator();
-                 $this->cfg->config['full_text_engine'] = '';
-                 $this->cfg->saveConfig();
                  $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port, 'valid' => $ftsConnectionValid));
                  $this->cfg->handleOverride();
              }
