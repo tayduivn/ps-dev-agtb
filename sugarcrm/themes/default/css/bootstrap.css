@@ -8390,3 +8390,10 @@ color: @red;
     border-radius: 0px;
   }
 }
+
+/* CSS for forecasts subnav */
+#headerbar h1 {
+    float:left;
+    margin-right:5px;
+    margin-left:12px;
+}

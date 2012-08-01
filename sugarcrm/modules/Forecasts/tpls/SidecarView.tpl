@@ -2,7 +2,7 @@
 <div id="core-module">
     <div id="forecasts" style="" >
         <div class="row-fluid">
-            <div class="view-forecastsSubnav subnav"></div>
+            <div class="view-forecastsSubnav subnav" id="headerbar"></div>
         </div>
         <div class="container-fluid">
             <div class="row-fluid">
