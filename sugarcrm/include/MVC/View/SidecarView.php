@@ -8,10 +8,6 @@ class SidecarView extends SugarView
     {
         $this->options['use_table_container'] = false;
         parent::SugarView($bean, $view_object_map);
-        //require_once('include/SugarOAuth2Storage.php');
-        //$storage = new SugarOAuth2Storage();
-        //$storage->setAccessToken('632c18b015a41137b549d9e87faa5684', 'sugar', $GLOBALS['current_user']->id, 3600);
-
     }
 
     public function getThemeCss()

@@ -61,19 +61,6 @@
         };
         var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
         if (uid) {
-            /*
-            $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
-                dataType: 'json',
-                context: selectedUser,
-                success: function(data) {
-                    this.id = data.id;
-                    this.full_name = data.full_name;
-                    this.first_name = data.first_name;
-                    this.last_name = data.last_name;
-                    this.isManager = data.isManager;
-                }
-            });
-            */
 
             var options = {
                 dataType: 'json',
