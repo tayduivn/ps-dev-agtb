@@ -53,6 +53,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'probability',
                     'label' => 'LBL_PROBABILITY',
+                    'type' => 'int',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
