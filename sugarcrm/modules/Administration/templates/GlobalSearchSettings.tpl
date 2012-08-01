@@ -73,6 +73,16 @@
 		</table>
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
+    <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+        <tbody>
+        <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_PREPEND_WILDCARD_TITLE}</h4></th></tr>
+        <tr>
+            <td width="45%" scope="row" valign="middle">{$MOD.LBL_PREPEND_WILDCARD}:&nbsp;{sugar_help text=$MOD.LBL_PREPEND_WILDCARD_HELP}</td>
+            <td width="25%" align="left" valign="middle"><input type="checkbox" name="prepend_wildcard" id="prepend_wildcard" value="1" {if $prepend_wildcard}checked="checked"{/if} /></td>
+            <td width="30%">&nbsp;</td>
+        </tr>
+        </tbody>
+    </table>
     <div {if $hide_fts_config}style="display:none;"{/if}>
 
         <br>
@@ -215,6 +225,7 @@
                 return;
         }
         {* //END SUGARCRM flav=pro ONLY *}
+        var prependWildcard = $('#prepend_wildcard').attr('checked') ? 1 : 0;
 		var enabledTable = SUGAR.globalSearchEnabledTable;
 		var modules = SUGAR.getEnabledModules();
 		modules = modules == "" ? modules : modules.substr(1);
@@ -232,6 +243,7 @@
                 port: port,
                 type: type,
                 {* //END SUGARCRM flav=pro ONLY *}
+                prepend_wildcard: prependWildcard,
 				enabled_modules: modules
 			}) + "to_pdf=1"
         );

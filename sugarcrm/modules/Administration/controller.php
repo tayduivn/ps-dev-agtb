@@ -192,6 +192,16 @@ class AdministrationController extends SugarController
 	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
 	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
 	    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
+
+             // save prepend wildcard setting
+             $prepend = (isset($GLOBALS['sugar_config']['search_wildcard_infront']) ? $GLOBALS['sugar_config']['search_wildcard_infront'] : FALSE);
+             $new_prepend = (isset($_REQUEST['prepend_wildcard']) && $_REQUEST['prepend_wildcard']==1) ? TRUE: FALSE;
+             if ($prepend != $new_prepend) {
+                $cfg = new Configurator();
+                 $cfg->config['search_wildcard_infront'] = $new_prepend;
+                 $cfg->handleOverride();
+             }
+
              //BEGIN SUGARCRM flav=pro ONLY
              //Save FTS Settings
              $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
