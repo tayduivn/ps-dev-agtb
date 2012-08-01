@@ -281,5 +281,8 @@ $config['blackList']['com'] = array(
 'sugarcrm/themes/Sugar5/images/KBDocuments_favico.png' => 1,
 'sugarcrm/themes/Sugar5/images/Quotes_favico.png' => 1,
 'sugarcrm/themes/Sugar5/images/Reports_favico.png' => 1,
+
+'sugarcrm/portal2' =>1,
+'sugarcrm/sidecar' =>1 
 );
 $build = 'com';
