@@ -54,6 +54,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();
         }
+        $this->created = array();
     }
 
     public function tearDown()
@@ -2093,7 +2094,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAddPrimaryKey()
     {
         $tablename = 'testConstraints';
-        $this->created[$tablename] = true;
         $fielddefs = array(
                         'id' =>
                             array (
@@ -2108,6 +2108,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         );
 
         $this->createTableParams($tablename, $fielddefs, array());
+        unset($this->created[$tablename]); // that table is required by testRemovePrimaryKey test
 
         $sql = $this->_db->add_drop_constraint(
             $tablename,
@@ -2143,6 +2144,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRemovePrimaryKey()
     {
         $tablename = 'testConstraints';
+        $this->created[$tablename] = true;
 
          $sql = $this->_db->add_drop_constraint(
             $tablename,
@@ -2151,7 +2153,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'type'   => 'primary',
                 'fields' => array('id'),
                 ),
-            false
+            true
             );
 
         $result = $this->_db->query($sql);
