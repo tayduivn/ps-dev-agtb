@@ -241,10 +241,11 @@ $mod_strings = array (
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
-    //Labels for worksheet expected opportunities and totals
+    //Labels for worksheet items
     'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
+    'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
