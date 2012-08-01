@@ -80,7 +80,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 	}
 
 	if(empty($contact)){
-        $contact = $this->getContact();
+		$contact = new Contact();
 	}
 
 	global $mod_strings;
@@ -256,7 +256,7 @@ EOQ;
 
 
 	//carry forward custom lead fields common to contacts during Lead Conversion
-    $tempContact = $this->getContact();
+	$tempContact = new Contact();
 
 	if (method_exists($contact, 'convertCustomFieldsForm')) $contact->convertCustomFieldsForm($form, $tempContact, $prefix);
 	unset($tempContact);
@@ -310,7 +310,7 @@ EOQ;
 
 	$javascript = new javascript();
 	$javascript->setFormName($formname);
-	$javascript->setSugarBean($this->getContact());
+	$javascript->setSugarBean(new Contact());
 	$javascript->addField('email1','false',$prefix);
 	$javascript->addField('email2','false',$prefix);
 	$javascript->addRequiredFields($prefix);
@@ -377,7 +377,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean($this->getContact());
+$javascript->setSugarBean(new Contact());
 $javascript->addField('email1','false',$prefix);
 $javascript->addRequiredFields($prefix);
 
@@ -433,7 +433,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 
 	global $timedate;
 
-	$focus = $this->getContact();
+	$focus = new Contact();
 
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -703,13 +703,6 @@ function handleRedirect($return_id){
     }
 }
 
-    /**
-    * @return Contact
-    */
-    protected function getContact()
-    {
-        return new Contact();
-    }
 }
 
 
