@@ -141,7 +141,7 @@ function post_install()
     ///////////////////////////////////////////////////////////////////////////
 	////	BUILD PORTAL CONFIG
     _logThis("Building portal config", $path);
-    require("install/install_utils.php");
+    require_once("install/install_utils.php");
     handlePortalConfig();
 
     _logThis('Set default_theme to Sugar', $path);

@@ -122,7 +122,7 @@ function post_install()
     ///////////////////////////////////////////////////////////////////////////
 	////	BUILD PORTAL CONFIG
     _logThis("Rebuilding portal config", $path);
-    require("install/install_utils.php");
+    require_once("install/install_utils.php");
     handlePortalConfig();
 }
 

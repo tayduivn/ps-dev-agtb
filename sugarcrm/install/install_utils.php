@@ -868,6 +868,7 @@ function handleSugarConfig() {
     return $bottle;
 }
 
+//BEGIN SUGARCRM flav=ent ONLY
 /**
  * handles portal config creation
  */
@@ -877,30 +878,31 @@ function handlePortalConfig()
         global $sugar_config;
     }
 
-        $portalConfig = array(
-            'appId' => 'SupportPortal',
-            'env' => 'dev',
-            'platform' => 'portal',
-            'additionalComponents' => array(
-                'header' => array(
-                    'target' => '#header'
-                ),
-                'footer' => array(
-                    'target' => '#footer'
-                ),
-                'alert' => array(
-                    'target' => '#alert'
-                )
+    $portalConfig = array(
+        'appId' => 'SupportPortal',
+        'env' => 'dev',
+        'platform' => 'portal',
+        'additionalComponents' => array(
+            'header' => array(
+                'target' => '#header'
             ),
-            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-            'unsecureRoutes' => array('signup', 'error'),
-            'clientID' => 'support_portal'
-        );
-        $configString = json_encode($portalConfig);
-        $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-        sugar_file_put_contents('portal2/config.js', $portalJSConfig);
+            'footer' => array(
+                'target' => '#footer'
+            ),
+            'alert' => array(
+                'target' => '#alert'
+            )
+        ),
+        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
+        'unsecureRoutes' => array('signup', 'error'),
+        'clientID' => 'support_portal'
+    );
+    $configString = json_encode($portalConfig);
+    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
 
 }
+//END SUGARCRM flav=ent ONLY
 
 /**
  * (re)write the .htaccess file to prevent browser access to the log file

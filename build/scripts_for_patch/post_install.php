@@ -500,7 +500,7 @@ function post_install() {
     ///////////////////////////////////////////////////////////////////////////
 	////	REBUILD PORTAL CONFIG
     _logThis("Rebuilding portal config", $path);
-    require("install/install_utils.php");
+    require_once("install/install_utils.php");
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
 }
