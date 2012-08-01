@@ -2274,7 +2274,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'type'   => 'primary',
                 'fields' => array('id'),
                 ),
-            false
+            true
             );
 
         $result = $this->_db->query($sql);
