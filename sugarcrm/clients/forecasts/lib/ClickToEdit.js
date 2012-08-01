@@ -51,7 +51,6 @@
                     //check to see if the datatype matches the input, if not return and show an error.
                 	$(this).css("background-color", "");
                 	$(this).css("color", $.data(this, "color"));
-                	window.test = $(this);
                 	$(this).parent().find(".tempMsg").each(function(index, node){
                 		$(node).remove();
                 	});
