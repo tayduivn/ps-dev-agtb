@@ -543,10 +543,8 @@ class User extends Person {
 		}
 
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
-		$setNewUserPreferences = empty($this->id);
-		//END SUGARCRM flav=sales ONLY
+		$setNewUserPreferences = empty($this->id) || !empty($this->new_with_id);
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
@@ -593,14 +591,17 @@ class User extends Person {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
+		//BEGIN SUGARCRM flav=sales ONLY
 		    // set default reminder time to 30 minutes
 		    $this->setPreference('reminder_time', 1800);
 		    $this->setPreference('mailmerge_on', 'on');
-		}
 		//END SUGARCRM flav=sales ONLY
+	        if(!$this->getPreference('calendar_publish_key')) {
+		        $this->setPreference('calendar_publish_key', create_guid());
+	        }
+		}
 
         $this->savePreferencesToDB();
         return $this->id;
