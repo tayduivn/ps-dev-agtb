@@ -31,6 +31,6 @@
             this.options.viewName = 'link';
         }
 
-        app.view.Field.__super__._render.call(this);
+        app.view.Field.prototype._render.call(this);
     }
 })
