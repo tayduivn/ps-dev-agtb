@@ -60,19 +60,22 @@
             isManager: false,
             showOpps: this.model.get("show_opps")
         };
-        $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
-            dataType: 'json',
-            context: this,
-            success: function(data) {
 
+        var options = {
+            dataType: 'json',
+            context: selectedUser,
+            success: function(data) {
                 selectedUser.id = data.id;
                 selectedUser.full_name = data.full_name;
                 selectedUser.first_name = data.first_name;
                 selectedUser.last_name = data.last_name;
                 selectedUser.isManager = data.isManager;
 
-                this.context.forecasts.set({selectedUser : selectedUser})
+                self.context.forecasts.set({selectedUser : selectedUser})
             }
-        });
+        };
+
+        myURL = app.api.buildURL('Forecasts', 'user/' + uid);
+        app.api.call('read', myURL, null, options);
     }
 })
