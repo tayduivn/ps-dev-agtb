@@ -26,7 +26,7 @@ require_once 'include/vCard.php';
 
 class vCardTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $beanList = array();
@@ -36,9 +36,12 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['beanList']['vCardMockModule'] = 'vCardMockModule';
         $GLOBALS['beanFiles']['vCardMockModule'] = 'tests/include/vCard/vCardTest.php';
+        global $app_strings, $app_list_strings, $current_language;
+        $app_strings = return_application_language($current_language);
+        $app_list_strings = return_app_list_strings_language($current_language);
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
