@@ -171,50 +171,34 @@ class ForecastsChartApi extends ChartApi
         $dataArray = json_decode($json, true);
 
 
-        if(!$this->isManager) {
+        if (!$this->isManager) {
             $validTimePeriods = $this->getTimePeriodMonths($timeperiod_id);
 
-            if(count($validTimePeriods) != count($dataArray['values'])) {
+            if (count($validTimePeriods) != count($dataArray['values'])) {
                 // we need to add in the values
-                $num_of_items = count($dataArray['label']);
-                $empty_array = array(
-                    'label' => '',
-                    'gvalue' => '',
-                    'gvaluelabel' => '',
-                    'values' => array_pad(array(), $num_of_items, 0),
-                    'valuelabels' => array_pad(array(), $num_of_items, "0"),
-                    'links' => array_pad(array(), $num_of_items, ""),
-
-                );
-                $current_values = $dataArray['values'];
-                $new_values = array_combine($validTimePeriods, array_pad(array(), count($validTimePeriods), $empty_array));
-
-                foreach($current_values as $c_val) {
-                    $new_values[$c_val['label']] = $c_val;
-                }
-
-                // fix the labels
-                array_walk($new_values, function(&$item, $key) {
-                    $item['label'] = $key;
-                });
-
-
-                $dataArray['values'] = array_values($new_values);
+                $dataArray = $this->combineReportData($dataArray, $validTimePeriods);
             }
         } else {
+            // we have a manager so lets
+            $reportees = $this->getUserReportees($user_id);
+
+            if(count($reportees) != count($dataArray['values'])) {
+                $dataArray = $this->combineReportData($dataArray, $reportees);
+            }
+
             // always make sure that the columns go from the largest to the smallest
             // if we are displaying the manager chart
             usort($dataArray['values'], array($this, 'sortChartColumns'));
         }
 
-        if($args['group_by'] == "forecast") {
+        if ($args['group_by'] == "forecast") {
             // fix the labels
             $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
-            if(isset($dataArray['label'][1])) {
+            if (isset($dataArray['label'][1])) {
                 $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
             }
-        } else if($args['group_by'] == "probability") {
-            foreach($dataArray['label'] as $key => $value) {
+        } else if ($args['group_by'] == "probability") {
+            foreach ($dataArray['label'] as $key => $value) {
                 $dataArray['label'][$key] = $value . '%';
             }
         }
@@ -473,6 +457,12 @@ class ForecastsChartApi extends ChartApi
         }
     }
 
+    /**
+     * Get the months for the current time period
+     *
+     * @param $timeperiod_id
+     * @return array
+     */
     protected function getTimePeriodMonths($timeperiod_id)
     {
         /* @var $timeperiod TimePeriod */
@@ -488,6 +478,72 @@ class ForecastsChartApi extends ChartApi
         }
 
         return $months;
+    }
+
+    /**
+     * Get the direct reportees for a user.
+     *
+     * @param $user_id
+     * @return array
+     */
+    protected function getUserReportees($user_id)
+    {
+        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
+            'id, user_name, first_name, last_name, reports_to_id, _level', false,
+            "id = '{$user_id}' AND status = 'Active' AND deleted = 0", null, " AND status = 'Active' AND deleted = 0"
+        );
+
+        $result = $GLOBALS['db']->query($sql);
+
+        $reportees = array();
+
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            if($row['_level'] > 2) continue;
+
+            if($row['_level'] == 1) {
+                array_unshift($reportees, $row['user_name']);
+            } else {
+                array_push($reportees, $row['user_name']);
+            }
+        }
+
+        return $reportees;
+    }
+
+    /**
+     * Add any missing data to the chart data.
+     *
+     * This can be users or timeperiods
+     *
+     * @param $dataArray
+     * @param $newData
+     * @return array
+     */
+    protected function combineReportData($dataArray, $newData) {
+        $num_of_items = count($dataArray['label']);
+        $empty_array = array(
+            'label' => '',
+            'gvalue' => '',
+            'gvaluelabel' => '',
+            'values' => array_pad(array(), $num_of_items, 0),
+            'valuelabels' => array_pad(array(), $num_of_items, "0"),
+            'links' => array_pad(array(), $num_of_items, ""),
+
+        );
+        $current_values = $dataArray['values'];
+        $new_values = array_combine($newData, array_pad(array(), count($newData), $empty_array));
+
+        foreach ($current_values as $c_val) {
+            $new_values[$c_val['label']] = $c_val;
+        }
+
+        // fix the labels
+        array_walk($new_values, function(&$item, $key) {
+            $item['label'] = $key;
+        });
+
+        $dataArray['values'] = array_values($new_values);
+        return $dataArray;
     }
 
 }
