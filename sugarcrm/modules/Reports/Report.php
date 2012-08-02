@@ -1104,7 +1104,7 @@ class Report
         if($from2 != $from) {
         	$query .= " AND EXISTS($from WHERE {$alias}.id={$alias}2.id)\n";
         }
-        $focus->addVisibilityWhere($query);
+        $focus->addVisibilityWhere($query, array('table_alias' => $alias));
         return $query;
     }
 
