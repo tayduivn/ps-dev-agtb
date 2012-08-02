@@ -437,7 +437,7 @@ class UserViewHelper {
 	    $this->ss->assign("EMAIL_REMINDER_TIME", $email_reminder_time);
 	    $this->ss->assign("REMINDER_TABINDEX", "12");
 	    $publish_key = $this->bean->getPreference('calendar_publish_key' );
-        $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
+        $this->ss->assign('CALENDAR_PUBLISH_KEY', $publish_key);
 
         $publish_url = $sugar_config['site_url'].'/vcal_server.php';
         $token = "/";
@@ -450,14 +450,14 @@ class UserViewHelper {
             }
         }
 
-        $publish_url .= $token.'type=vfb&source=outlook&key=<span id="cal_pub_key_span">'.$this->bean->getPreference('calendar_publish_key' ) . '</span>';
+        $publish_url .= $token."type=vfb&source=outlook&key=<span id=\"cal_pub_key_span\">$publish_key</span>";
         if (! empty($this->bean->email1)) {
             $publish_url .= '&email='.$this->bean->email1;
         } else {
             $publish_url .= '&user_name='.$this->bean->user_name;
         }
 
-        $ical_url = $sugar_config['site_url'].'/ical_server.php?type=ics&key=<span id="ical_pub_key_span">'.$this->bean->getPreference('calendar_publish_key' ) . '</span>';
+        $ical_url = $sugar_config['site_url']."/ical_server.php?type=ics&key=<span id=\"ical_pub_key_span\">$publish_key</span>";
         if (! empty($this->bean->email1))
         {
             $ical_url .= '&email='.$this->bean->email1;
@@ -467,7 +467,7 @@ class UserViewHelper {
         }
 
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
-        $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url'].'/vcal_server.php/type=vfb&email=%NAME%@%SERVER%');
+        $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url']."/vcal_server.php/type=vfb&key=<span id=\"search_pub_key_span\">$publish_key</span>&email=%NAME%@%SERVER%");
         $this->ss->assign("CALENDAR_ICAL_URL", $ical_url);
         //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav!=dce ONLY
