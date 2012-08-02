@@ -2,8 +2,12 @@ var SugarFieldTest = {};
 
 (function(test) {
 
-    test.loadSugarField = function(file) {
-        return SugarTest.loadFile("../../../../sugarcrm/clients/base/fields", file, "js", function(data) {
+    test.loadSugarField = function(file,platform) {
+        if ( typeof(platform) == 'undefined' ) {
+            platform = 'base';
+        }
+
+        return SugarTest.loadFile("../../../clients/"+platform+"/fields", file, "js", function(data) {
             return eval("(" + data + ")");
         });
     };
