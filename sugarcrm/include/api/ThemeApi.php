@@ -186,8 +186,10 @@ class ThemeApi extends SugarApi
         $this->write_file($myThemeCss, $css);
 
         // saves the bootstrap.css URL in the portal settings
-        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($GLOBALS['sugar_config']['site_url'] . '/' . $myThemeCss));
-        exit();
+        $url = $GLOBALS['sugar_config']['site_url'] . '/' . $myThemeCss;
+        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($url));
+
+        return $url;
     }
 
     /**
@@ -298,6 +300,12 @@ class ThemeApi extends SugarApi
         return $this->getThemeLocation($platform, $customThemeName) . 'bootstrap.css';
     }
 
+    /**
+     * Write a file in file system.
+     * If the path to access this file doesn't exist, we create missing folders.
+     * @param $file url of the file to write
+     * @param $contents contents of the file
+     */
     private function write_file($file, $contents)
     {
         if (!file_exists($file)) {
