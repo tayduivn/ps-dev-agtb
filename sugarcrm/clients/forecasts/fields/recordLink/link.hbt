@@ -1,1 +1,1 @@
-<a href="javascript:void(0)" class="worksheetManagerLink" data-uid="{{uid}}">{{value}}</a>
+<a href="index.php?module={{module}}&action={{action}}&record={{record_id}}">{{linkText}}</a>
