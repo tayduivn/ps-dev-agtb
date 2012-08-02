@@ -11,7 +11,7 @@
          * Application identifier.
          * @cfg {String}
          */
-        appId: 'core-app',
+        appId: 'SugarCRM',
 
         /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
@@ -102,12 +102,13 @@
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar"
+        clientID: "sugar",
 
         /**
-          * Override the authentication storage
+          * Override the authentication storage class (see include/javascript/sugarAuthStore.js)
           */
-        //,authStore:"sugarAuthStore"
+        authStore: "sugarAuthStore",
+        keyValueStore: "sugarAuthStore"
 
 
     }, false);

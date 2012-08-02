@@ -109,11 +109,26 @@
                 "dataPointSize":"5"
             };
 
-
         var oldChart = $("#" + chartId + "-canvaswidget");
         if(!_.isEmpty(oldChart)) {
             oldChart.remove();
         }
+
+        SUGAR.charts = $.extend(SUGAR.charts,
+            {
+              get : function(url, params, success)
+              {
+                  var data = {
+                      r: new Date().getTime()
+                  };
+                  data = $.extend(data, params);
+
+                  url = app.api.buildURL('Forecasts', 'chart', '', data);
+
+                  app.api.call('read', url, data, {success : success});
+              }
+            }
+        );
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;

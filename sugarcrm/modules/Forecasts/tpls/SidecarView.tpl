@@ -103,6 +103,7 @@
     var syncResult, view, layout, html;
 
     SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
+    SUGAR.App.sugarAuthStore.set('AuthRefreshToken', {/literal}'{$token}'{literal});
 
     (function(app) {
          app.augment("forecasts", {
