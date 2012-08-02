@@ -186,10 +186,9 @@ class ForecastsChartApi extends ChartApi
                 $dataArray = $this->combineReportData($dataArray, $reportees);
             }
 
-
             // always make sure that the columns go from the largest to the smallest
             // if we are displaying the manager chart
-            //usort($dataArray['values'], array($this, 'sortChartColumns'));
+            usort($dataArray['values'], array($this, 'sortChartColumns'));
         }
 
         if ($args['group_by'] == "forecast") {
