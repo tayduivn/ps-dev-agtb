@@ -78,7 +78,7 @@ class ChartDisplay
     protected $chartRows = array();
 
     /**
-     * Set the Reporter to use
+     * Set the Reporter (Report Object) to use
      *
      * @param Report $reporter
      */
@@ -104,7 +104,7 @@ class ChartDisplay
     }
 
     /**
-     * Get the Reporter
+     * Get the Reporter (Report Object)
      *
      * @return Report
      */
@@ -312,6 +312,12 @@ class ChartDisplay
         return $currency_symbol;
     }
 
+    /**
+     * Remap the row to conform to how the charting engine needs the data
+     *
+     * @param $row
+     * @return array
+     */
     protected function get_row_remap($row)
     {
         $row_remap = array();
@@ -348,6 +354,12 @@ class ChartDisplay
 
     }
 
+    /**
+     * Generate a total amount for a row
+     *
+     * @param $total_row
+     * @return float|string
+     */
     protected function get_total($total_row)
     {
         $total_index = 0;
@@ -376,6 +388,11 @@ class ChartDisplay
 
     }
 
+    /**
+     * Return a Thousands Symbol if one is required
+     *
+     * @return string
+     */
     protected function get_k()
     {
         global $do_thousands, $app_strings;
@@ -386,6 +403,11 @@ class ChartDisplay
         }
     }
 
+    /**
+     * Get the Maximum Number from the rows
+     *
+     * @return float|int|mixed
+     */
     protected function get_maximum()
     {
         $numbers = array();
@@ -396,6 +418,12 @@ class ChartDisplay
         return $this->get_max_from_numbers($numbers);
     }
 
+    /**
+     * Get the Maximum Number of an array of numbers
+     *
+     * @param $numbers
+     * @return float|int|mixed
+     */
     protected function get_max_from_numbers($numbers)
     {
         if (!empty ($numbers)) {
@@ -409,6 +437,12 @@ class ChartDisplay
         }
     }
 
+    /**
+     * Figure out the cache name for a chart
+     *
+     * @param null|Report $reporter         If Null, this will use the set reporter, other wise it will use the passed in one
+     * @return string                       File name for the cache file.
+     */
     public function get_cache_file_name($reporter = null)
     {
         if(is_null($reporter)) {
@@ -430,6 +464,13 @@ class ChartDisplay
         return $filename;
     }
 
+    /**
+     * Method for displaying the old legacy way that was done.
+     *
+     * @param $id                       ID use for the guid
+     * @param bool $is_dashlet          Are we displaying a dashlet or not
+     * @return JitReports|string        Return the HTML
+     */
     public function legacyDisplay($id, $is_dashlet = false)
     {
 
