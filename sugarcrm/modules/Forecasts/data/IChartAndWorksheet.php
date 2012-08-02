@@ -19,18 +19,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * IChartAndWorksheet.php
+ *
+ * This is an interface used by the Forecasts modules to separate returning chart and worksheet data for an individual sales
+ * rep and manager view.  See modules/Forecasts/data/Individual/Individual.php and modules/Forecasts/data/Manager/Manager.php
+ *
+ */
 interface IChartAndWorksheet
 {
-
     /**
-     * @abstract
+     * Returns the Report's module JSON encoded format chart definition as a String.  Implementations should have a definition
+     * created in the format of the Reports module and return this report definition string.
      *
-     * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
-     * @return mixed
-     */
-    public function getChartDefinition($id = '');
-
-    /**
      * @abstract
      *
      * @param string $id            Optional string id in the event there may be multiple worksheet data definitions
@@ -38,9 +40,13 @@ interface IChartAndWorksheet
      */
     public function getWorksheetDefinition($id = '');
 
+
     /**
-     * @param Report $report
-     * @return array
+     * This method returns the report results that represent the data for the individual or manager worksheets.  Implementations
+     * should pass in a Report instance that is expected to return row data.
+     *
+     * @param Report $report Report instance to retrieve data from
+     * @return Array report data results
      */
     public function getGridData(Report $report);
 

@@ -974,6 +974,8 @@ class Report
         if (!$this->is_layout_def_valid($layout_def)) {
             global $current_language;
             $mod_strings = return_module_language($current_language, $this->module_dir);
+
+            echo var_export($layout_def, true);
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 
