@@ -19,7 +19,7 @@
         if ($.fn.timeago) {
             $("span.relativetime").timeago({
                 logger: SUGAR.App.logger,
-                date: SUGAR.App.utils.date,
+                date: SUGAR.App.date,
                 lang: SUGAR.App.lang,
                 template: SUGAR.App.template
             });
