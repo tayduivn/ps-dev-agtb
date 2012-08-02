@@ -62,11 +62,11 @@
 	</tbody>
 	<tfoot>
 		<td>
-			<div>{{str "LBL_LV_OPPORTUNITIES" "Forecasts"}}</div>
+			<div>{{str "LBL_PIPELINE_OPPORTUNITIES" "Forecasts"}}</div>
 			<div>{{formatNumber opportunities}}</div>
 		</td>
 		<td>
-			<div>{{str "LBL_REVENUE" "Forecasts"}}</div>
+			<div>{{str "LBL_PIPELINE_REVENUE" "Forecasts"}}</div>
 			<div>{{formatNumber revenue}}</div>
 		</td>
 		<td>

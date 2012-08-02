@@ -274,6 +274,8 @@ $mod_strings = array (
     'LBL_DISTANCE_LEFT_BEST_TO_CLOSED' => 'Distance Left: Best to Closed',
     'LBL_REVENUE' => 'Revenue',
     'LBL_PIPELINE_SIZE' => 'Pipeline Size',
+    'LBL_PIPELINE_REVENUE' => 'Pipeline Revenue',
+    'LBL_PIPELINE_OPPORTUNITIES' => 'Pipeline Opportunities',
     'LBL_LOADING' => 'Loading',
 
     'LBL_ACTIONS' => 'Actions',
