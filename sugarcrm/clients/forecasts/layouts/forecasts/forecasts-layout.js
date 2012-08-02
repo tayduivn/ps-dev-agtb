@@ -157,7 +157,8 @@
             var Collection = Backbone.Collection.extend({
                 model : Backbone.Model.extend({
                     sync : function(method, model, options) {
-                        return app.api.call(method, model.url, model, options);
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
                     }
                 }),
                 /**
@@ -169,7 +170,8 @@
                  * @return {*}
                  */
                 sync: function(method, model, options) {
-                    return app.api.call(method, model.url, null, options);
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, null, options);
                 }
 
             });
