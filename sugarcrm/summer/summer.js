@@ -861,10 +861,10 @@
             });
         }
 
-        app.router.route(":module/:id/:action", "record", recordHandler);
+//        app.router.route(":module/:id/:action", "record", recordHandler);
 
         // TEMP ORVVER
-        app.router.route(":module/:id", "record", recordHandler);
+//        app.router.route(":module/:id", "record", recordHandler);
 
 
         // Load dashboard route.

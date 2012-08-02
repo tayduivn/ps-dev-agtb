@@ -1,7 +1,0 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span10">
-        <input type="text" name="{{name}}" class="input-xlarge wide tleft" value="{{value}}">
-        <p class="help-block"></p>
-    </div>
-</div>

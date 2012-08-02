@@ -1,0 +1,6 @@
+<div class="row-fluid control-group">
+    <div class="span2">{{label}}</div>
+    <div class="span10">
+        <a href="http://{{value}}">{{value}}</a>
+    </div>
+</div>
