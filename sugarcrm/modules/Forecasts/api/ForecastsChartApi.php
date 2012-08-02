@@ -191,15 +191,18 @@ class ForecastsChartApi extends ChartApi
             usort($dataArray['values'], array($this, 'sortChartColumns'));
         }
 
-        if ($args['group_by'] == "forecast") {
-            // fix the labels
-            $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
-            if (isset($dataArray['label'][1])) {
-                $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
-            }
-        } else if ($args['group_by'] == "probability") {
-            foreach ($dataArray['label'] as $key => $value) {
-                $dataArray['label'][$key] = $value . '%';
+        if(isset($args['group_by'])) {
+            if($args['group_by'] == "forecast")
+            {
+                // fix the labels
+                $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
+                if(isset($dataArray['label'][1])) {
+                    $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
+                }
+            } else if($args['group_by'] == "probability") {
+                foreach($dataArray['label'] as $key => $value) {
+                    $dataArray['label'][$key] = $value . '%';
+                }
             }
         }
 

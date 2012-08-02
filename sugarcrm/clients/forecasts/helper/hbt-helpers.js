@@ -61,7 +61,8 @@
         };
         var uid = Handlebars.Utils.escapeExpression(model.get(route.recordID));
         if (uid) {
-            $.ajax(app.config.serverUrl + '/Forecasts/user/'+ uid, {
+
+            var options = {
                 dataType: 'json',
                 context: selectedUser,
                 success: function(data) {
@@ -71,7 +72,10 @@
                     this.last_name = data.last_name;
                     this.isManager = data.isManager;
                 }
-            });
+            };
+
+            myURL = app.api.buildURL('Forecasts', 'user/' + uid);
+            app.api.call('read', myURL, null, options);
 
             linkStr = $('<a href="#">'+this.value +'</a>');
             linkStr.on("click", function(){
