@@ -425,7 +425,7 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '640') {
+    if($origVersion < '650') {
        // move uploads dir
        if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
 
