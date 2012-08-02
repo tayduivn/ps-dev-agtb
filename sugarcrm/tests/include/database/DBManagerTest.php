@@ -2011,11 +2011,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($good, $check);
     }
 
-    /**
-     * @outputBuffering disabled
-     *
-     * @group testTextSizeHandling
-     */
     public function testTextSizeHandling()
     {
         $tablename = 'testTextSize';// . mt_rand();
@@ -2037,10 +2032,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                             //'len' => '255',
                             ),
                         );
-        if($this->_db->tableExists($tablename))
-        {
-           $this->_db->dropTableName($tablename);
-        }
+
         $this->createTableParams($tablename, $fielddefs, array());
         $basestr = '0123456789abcdefghijklmnopqrstuvwxyz';
         $str = $basestr;
@@ -2053,20 +2045,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $str .= $basestr;
             $size = strlen($str);
-            //$this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
-            //We need to manually call the INSERT statement and pass true to suppress errors because this statement will obviously generate errors
-            $this->_db->query("INSERT into {$tablename} (id, test, dummy) values ('{$size}', '{$str}', '{$str}')", false, '', true);
+            //echo "$size\n";
+            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
 
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
 
-            if(!empty($strresult))
-            {
-                $this->assertEquals(0, mb_strpos($str, $strresult));
-            } else {
-                //This really should fail right here because it's not returning results
-                //$this->assertEquals(0, mb_strpos($str, $strresult));
-            }
+            $this->assertEquals(0, mb_strpos($str, $strresult));
         }
     }
 
