@@ -142,6 +142,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->portal_only = '1';
             $user->save();
             $id = $user->id;
+
+            // set user id in system settings
+            $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);
         }
         $resultUser = new User();
         $resultUser->retrieve($id);
