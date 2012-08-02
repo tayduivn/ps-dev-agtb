@@ -41,37 +41,9 @@ class SugarConfig
             if (!class_exists('SugarArray', true)) {
 				require 'include/utils/array_utils.php';
 			}
-            if ($key == "logger.file.ext") {
-                @session_start();
-                if (isset($GLOBALS['sugar_config'])) {
-                    if (isset($_POST['logger_file_ext'])) {
-                        $new_ext = $_POST['logger_file_ext'];
-                        $trim_new_ext = preg_replace('/^\./', '', $new_ext);
-                        if(in_array($trim_new_ext, $GLOBALS['sugar_config']['upload_badext'])) {
-                            $this->_cached_values[$key] = SugarArray::staticGet($GLOBALS['sugar_config'], $key, $default);
-                            $_SESSION['old_ext'] = $this->_cached_values[$key];
-                            $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
-                            $GLOBALS['log']->security("Invalid log file extension: trying to use invalid file extension '$trim_new_ext'.");
-                        }
-                        else {
-                            $this->_cached_values[$key] = $new_ext;
-                            if (isset($_SESSION['old_ext'])) unset($_SESSION['old_ext']);
-                        }
-                    }
-                    else {
-                        $this->_cached_values[$key] = isset($_SESSION['old_ext']) ?
-                            $_SESSION['old_ext'] :
-                            SugarArray::staticGet($GLOBALS['sugar_config'], $key, $default);
-                    }
-                }
-                else
-                    $this->_cached_values[$key] = $default;
-            }
-            else {
-                $this->_cached_values[$key] = isset($GLOBALS['sugar_config']) ?
-                    SugarArray::staticGet($GLOBALS['sugar_config'], $key, $default) :
-                    $default;
-            }
+            $this->_cached_values[$key] = isset($GLOBALS['sugar_config']) ?
+                SugarArray::staticGet($GLOBALS['sugar_config'], $key, $default) :
+                $default;
         }
         return $this->_cached_values[$key];
     }

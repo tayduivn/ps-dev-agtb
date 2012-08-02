@@ -52,6 +52,13 @@ class Configurator {
 	function populateFromPost() {
 		$sugarConfig = SugarConfig::getInstance();
 		foreach ($_POST as $key => $value) {
+			if ($key == "logger_file_ext") {
+			    $trim_value = preg_replace('/^\./', '', $value);
+			    if(in_array($trim_value, $this->config['upload_badext'])) {
+			        $GLOBALS['log']->security("Invalid log file extension: trying to use invalid file extension '$trim_value'.");
+			        continue;
+			    }
+			}
 			if (isset ($this->config[$key]) || in_array($key, $this->allow_undefined)) {
 				if (strcmp("$value", 'true') == 0) {
 					$value = true;
@@ -102,7 +109,7 @@ class Configurator {
             $repair->module_list = array();
             $repair->clearTpls();
         }
-		@session_start();
+
 		foreach($overrideArray as $key => $val) {
 			if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
 				if (strcmp("$val", 'true') == 0) {
@@ -114,8 +121,6 @@ class Configurator {
 					$this->config[$key] = false;
 				}
 			}
-			if ($key == 'logger')
-			    $val['file']['ext'] = isset($_SESSION['old_ext']) ? $_SESSION['old_ext'] : $val['file']['ext'];
 			$overideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
 		}
 		$overideString .= '/***CONFIGURATOR***/';
