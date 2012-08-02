@@ -5,44 +5,18 @@
     events : { 'click a.worksheetManagerLink' : 'linkClicked' },
 
     /**
-     * Template to use when displaying clickable name links in the manager worksheet
-     * data-uid carries the user_id through the event
-     */
-    userTemplate : _.template('<a href="javascript:void(0)" class="worksheetManagerLink" data-uid="<%= uid %>"><%= value %></a>'),
-
-    /**
-     * Template to use when displaying simple values
-     */
-    valueTemplate :_.template('<%= value %>'),
-
-    /**
      * Holds the user_id for passing into userTemplate
      */
     uid: '',
 
     _render:function() {
-        var tpl = this.valueTemplate;
-
         if(this.name == 'name') {
-            tpl = this.userTemplate;
             this.uid = this.model.get('user_id');
+            // setting the viewName allows us to explicitly set the template to use
+            this.options.viewName = 'link';
         }
 
-        this.template = tpl;
-
-        if (this.model instanceof Backbone.Model) {
-            /**
-             * Model property value.
-             * @property {String}
-             * @member View.Field
-             */
-            this.value = this.format(this.model.has(this.name) ? this.model.get(this.name) : "");
-        }
-
-        this.$el.html(this.template(this));
-        this.unbindDom();
-        this.bindDomChange();
-        return this;
+        app.view.Field.__super__._render.call(this);
     },
 
     /**
