@@ -216,8 +216,10 @@ class InboundEmail extends SugarBean {
 	 */
 	function mark_deleted($id) {
 		parent::mark_deleted($id);
-		$q = "update inbound_email set groupfolder_id = null WHERE id = '{$id}'";
-		$r = $this->db->query($q);
+
+		//bug52021  we need to keep the reference to the folders table in order for emails module to function properly
+		//$q = "update inbound_email set groupfolder_id = null WHERE id = '{$id}'";
+		//$r = $this->db->query($q);
 		$this->deleteCache();
 	}
 

@@ -1351,7 +1351,16 @@ return str_replace(' > ','_',
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
-
+            // Bug 40573: addon field for "day" "select" field
+            if(isset($display_column['column_function']) && $display_column['column_function'] == 'day')
+            {
+                $addon_dispay_column = $display_column;
+                $addon_dispay_column['column_function'] = 'dayreal';
+                $addon_select_piece = $this->layout_manager->widgetQuery($addon_dispay_column);
+                if (!$this->select_already_defined($addon_select_piece, $field_list_name)) {
+                    array_push($this->$field_list_name, $addon_select_piece);
+                }
+            }
             if (!$this->select_already_defined($select_piece, $field_list_name)) {
                 array_push($this->$field_list_name, $select_piece);
             }
@@ -2091,10 +2100,10 @@ return str_replace(' > ','_',
                     }
                     $display_column['fields'][$field_name] = $display;
                 } else {
-                    if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
-                        $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
-                    }
-                    $display = $this->layout_manager->widgetDisplay($display_column);
+                        if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
+                            $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
+                        }
+                        $display = $this->layout_manager->widgetDisplay($display_column);
                 }
 
             } else {
@@ -2230,6 +2239,21 @@ return str_replace(' > ','_',
             $row['group_header'] = $this->group_header;
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
+
+        
+        // fix for bug47120
+         // RTA - check each column for access, and blank value if no access
+         $col_module = $this->report_def['module'];
+         $is_owner = !empty($this->assigned_user_id) && $this->report_def['assigned_user_id'] == $GLOBALS['current_user']->id;
+         $count=0;
+         foreach($this->report_def['display_columns'] as $column) {
+           if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
+             // blank out the value in the column
+           $row['cells'][$count]="";
+           }
+           $count++;
+         }
+         // end of fix
 
         return $row;
     }

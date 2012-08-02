@@ -129,6 +129,7 @@ class ModuleScanner{
     'set_file_buffer',
     'tmpfile',
     'umask',
+    'ini_set',
 	'eval',
 	'exec',
 	'system',
