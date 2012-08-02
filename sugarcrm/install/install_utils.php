@@ -914,6 +914,14 @@ RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
+</IfModule>
 # END SUGARCRM RESTRICTIONS
 EOQ;
 
@@ -934,14 +942,7 @@ $cache_headers = <<<EOQ
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
-<IfModule mod_rewrite.c>
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
-    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-</IfModule>
+
 EOQ;
     if(file_exists($htaccess_file)){
         $fp = fopen($htaccess_file, 'r');
