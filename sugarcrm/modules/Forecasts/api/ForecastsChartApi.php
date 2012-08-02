@@ -457,6 +457,12 @@ class ForecastsChartApi extends ChartApi
         }
     }
 
+    /**
+     * Get the months for the current time period
+     *
+     * @param $timeperiod_id
+     * @return array
+     */
     protected function getTimePeriodMonths($timeperiod_id)
     {
         /* @var $timeperiod TimePeriod */
@@ -474,6 +480,12 @@ class ForecastsChartApi extends ChartApi
         return $months;
     }
 
+    /**
+     * Get the direct reportees for a user.
+     *
+     * @param $user_id
+     * @return array
+     */
     protected function getUserReportees($user_id)
     {
         $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
@@ -498,6 +510,15 @@ class ForecastsChartApi extends ChartApi
         return $reportees;
     }
 
+    /**
+     * Add any missing data to the chart data.
+     *
+     * This can be users or timeperiods
+     *
+     * @param $dataArray
+     * @param $newData
+     * @return array
+     */
     protected function combineReportData($dataArray, $newData) {
         $num_of_items = count($dataArray['label']);
         $empty_array = array(
