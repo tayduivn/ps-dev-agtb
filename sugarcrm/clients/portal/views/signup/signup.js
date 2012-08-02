@@ -13,7 +13,7 @@
         app.controller.context.prepare(true);
 
         // Attach the metadata to the view
-        this.options.meta = this._metadata.modules[this.options.module].views[this.options.name].meta;
+        this.options.meta = _.clone(this._metadata.modules[this.options.module].views[this.options.name].meta);
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -83,10 +83,7 @@
                         self.signup_success = true;
 
                         // show a Back button
-                        var buttons = self._metadata.modules[self.module].views[self.name].meta.buttons;
-
-                        buttons[0].label = 'LBL_BACK';
-                        self.options.meta.buttons = [buttons[0]];
+                        self.options.meta.buttons = self._backButton;
 
                         self.render();
                         $('#content').show();
@@ -94,6 +91,15 @@
                 });
         }
     },
+    _backButton: [
+        {
+            name: "cancel_button",
+            type: "button",
+            label: "LBL_BACK",
+            value: "signup",
+            primary: false
+        }
+    ],
     // Base metadata for Login module and login view
     _metadata: {
         _hash: '',

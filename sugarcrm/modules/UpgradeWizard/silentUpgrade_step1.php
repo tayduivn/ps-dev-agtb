@@ -929,8 +929,6 @@ if(!didThisStepRunBefore('commit')){
 	@createMissingRels();
 	 //logThis('Checked for leads_assigned_user relationship.', $path);
 	ob_end_clean();
-	//// run fix on dropdown lists that may have been incorrectly named
-    //fix_dropdown_list();
 }
 
 set_upgrade_progress('end','in_progress','end','in_progress');
