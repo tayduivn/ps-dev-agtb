@@ -12,6 +12,8 @@
 <script src='clients/forecasts/views/progress/progress.js'></script>
 <script src='clients/forecasts/views/chart/chart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
+<script scr='clients/forecasts/fields/userLink/userLink.js'></script>
+<script scr='clients/forecasts/fields/recordLink/recordLink.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <div class="view-forecastsSubnav subnav"></div>
 <div id="alert" class="alert-top"></div>

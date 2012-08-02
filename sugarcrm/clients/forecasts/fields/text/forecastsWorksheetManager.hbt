@@ -1,1 +1,0 @@
-{{#if def.link}}{{{userHref context model def.route}}}{{else}}{{value}}{{/if}}
