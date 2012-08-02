@@ -61,8 +61,13 @@ class ContactsViewEdit extends ViewEdit
                $this->ev->focus->portal_acitve = 0;
            }
            else {
-               $this->ev->fieldDefs['portal_password']['value'] = '';
-               $this->ev->fieldDefs['portal_password1']['value'] = '';               
+               if (!empty($this->ev->fieldDefs['portal_password']['value'])) {
+                   $this->ev->fieldDefs['portal_password']['value'] = 'value_setvalue_setvalue_set';
+                   $this->ev->fieldDefs['portal_password1']['value'] = 'value_setvalue_setvalue_set';
+               } else {
+                   $this->ev->fieldDefs['portal_password']['value'] = '';
+                   $this->ev->fieldDefs['portal_password1']['value'] = '';
+               }
            }
 		   echo getVersionedScript('modules/Contacts/Contact.js');
 		   echo '<script language="javascript">';
