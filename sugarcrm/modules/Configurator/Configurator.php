@@ -53,9 +53,9 @@ class Configurator {
 		$sugarConfig = SugarConfig::getInstance();
 		foreach ($_POST as $key => $value) {
 			if ($key == "logger_file_ext") {
-			    $trim_value = preg_replace('/^\./', '', $value);
+			    $trim_value = preg_replace('/.*\.([^\.]+)$/', '\1', $value);
 			    if(in_array($trim_value, $this->config['upload_badext'])) {
-			        $GLOBALS['log']->security("Invalid log file extension: trying to use invalid file extension '$trim_value'.");
+			        $GLOBALS['log']->security("Invalid log file extension: trying to use invalid file extension '$value'.");
 			        continue;
 			    }
 			}
