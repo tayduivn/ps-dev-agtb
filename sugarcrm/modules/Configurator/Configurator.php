@@ -102,7 +102,7 @@ class Configurator {
             $repair->module_list = array();
             $repair->clearTpls();
         }
-
+		@session_start();
 		foreach($overrideArray as $key => $val) {
 			if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
 				if (strcmp("$val", 'true') == 0) {
@@ -114,6 +114,8 @@ class Configurator {
 					$this->config[$key] = false;
 				}
 			}
+			if ($key == 'logger')
+			    $val['file']['ext'] = isset($_SESSION['old_ext']) ? $_SESSION['old_ext'] : $val['file']['ext'];
 			$overideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
 		}
 		$overideString .= '/***CONFIGURATOR***/';
