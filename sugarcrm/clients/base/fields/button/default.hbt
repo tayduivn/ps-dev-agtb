@@ -1,3 +1,0 @@
-<a href="{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}
-{{else}}javascript:void(0){{/if}}" name="{{name}}" class="btn {{def.class}} {{#if def.primary}}btn-primary{{/if}}">
-{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{label}}</a>
