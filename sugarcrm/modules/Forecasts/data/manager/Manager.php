@@ -57,14 +57,6 @@ class Manager implements IChartAndWorksheet {
         return $data_grid;
     }
 
-    /**
-     * @param string $id
-     * @return array|mixed
-     */
-    public function getChartDefinition($id='')
-    {
-        return $this->getWorksheetDefinition($id);
-    }
 
     /**
      * @param string $id

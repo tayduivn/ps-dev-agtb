@@ -23,6 +23,17 @@ require_once('include/SugarCharts/ReportBuilder.php');
 class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * setUpBeforeClass
+     *
+     * Override setupBeforeClass to instantiate global beanFile and beanList variables
+     */
+    public static function setUpBeforeClass()
+    {
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+    }
+
+    /**
      * @group ReportBuilder
      * @group SugarCharts
      */
