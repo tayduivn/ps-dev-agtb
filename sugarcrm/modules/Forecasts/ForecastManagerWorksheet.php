@@ -102,7 +102,7 @@ class ForecastManagerWorksheet extends SugarBean
 	 * @param string $userId The userID for which you want a reportee quota sum.
 	 * @return int Sum of quota amounts.
 	 */
-	private function getQuotaSum($userId)
+	protected function getQuotaSum($userId)
 	{
 		$sql = "SELECT sum(q.amount) amount " .
 				"FROM `quotas` q " .
@@ -126,7 +126,7 @@ class ForecastManagerWorksheet extends SugarBean
 	 * @param string userId User id to query for
 	 * @return array id, Quota value
 	 */
-	private function getManagerQuota($userId)
+	protected function getManagerQuota($userId)
 	{
 		/*
 		 * This info is in two rows, and either of them might not exist.  The union 
@@ -169,7 +169,7 @@ class ForecastManagerWorksheet extends SugarBean
 	/**
 	 * Recalculates quotas based on committed values and reportees' quota values
 	 */
-	 private function recalcQuotas()
+	 protected function recalcQuotas()
 	 {
 	 	
 	 	//don't recalc if we are editing the manager row
@@ -187,7 +187,7 @@ class ForecastManagerWorksheet extends SugarBean
 	  * 
 	  * @param string $userId User Id of quota that needs recalculated.
 	  */
-	  private function recalcUserQuota($userId)
+	  protected function recalcUserQuota($userId)
 	  {
 	  	$reporteeTotal = $this->getQuotaSum($userId);
 	 	$managerQuota = $this->getManagerQuota($userId);
