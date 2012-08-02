@@ -314,15 +314,7 @@
            args['user_id'] = this.selectedUser.id;
         }
 
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
-        });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }
+        url = app.api.buildURL('ForecastManagerWorksheets', '', '', args);
         return url;
     },
 
