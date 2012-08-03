@@ -20,7 +20,6 @@
     linkText: '',
 
     _render:function() {
-
         if(this.name == 'name') {
             var route = this.def.route;
             this.record_id = this.model.get(route.recordID);
@@ -30,7 +29,7 @@
             // setting the viewName allows us to explicitly set the template to use
             this.options.viewName = 'link';
         }
-
-        app.view.Field.__super__._render.call(this);
+        app.view.Field.prototype._render.call(this);
+        return this;
     }
 })
