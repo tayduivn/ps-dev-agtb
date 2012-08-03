@@ -204,7 +204,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getAccessToken($oauth_token)
     {
-        $GLOBALS['log']->fatal("getAccessToken! {$oauth_token}");
         if ( session_id() != '' ) {
             // There is already a session, let's see if it's the same one
             if ( session_id() != $oauth_token ) {
