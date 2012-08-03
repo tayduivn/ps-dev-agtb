@@ -55,7 +55,7 @@ class ViewSidecar extends SidecarView
     }
 
     function forecastsInitialization() {
-        global $current_user;
+        global $current_user, $app_list_strings;
 
         $returnInitData = array();
         $defaultSelections = array();
@@ -95,9 +95,9 @@ class ViewSidecar extends SidecarView
         $defaultSelections["timeperiod_id"]["id"] = $defaultTimePeriodId;
         $defaultSelections["timeperiod_id"]["label"] = $timeframes["timeperiod_id"]["options"][$defaultTimePeriodId];
 
-        $defaultCategoryId = $filters["category"]["default"];
+        $defaultCategoryId = $filters["category"];
         $defaultSelections["category"]["id"] = $defaultCategoryId;
-        $defaultSelections["category"]["label"] = $filters["category"]["options"][$defaultCategoryId];
+        $defaultSelections["category"]["label"] = $app_list_strings['forecasts_filters_category'][$defaultCategoryId];
 
         /***
          * CHART OPTIONS

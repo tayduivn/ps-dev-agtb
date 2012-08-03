@@ -78,10 +78,24 @@ class ForecastsFiltersApi extends ModuleApi {
         $mod_strings = return_module_language($current_language, 'Forecasts');
 
         return array(
-            'category' => array(
-                'label' => get_label('LBL_FORECAST_CATEGORY', $mod_strings),
-                'default' => 'Committed',
-                'options' => $app_list_strings['forecasts_filters_category'],
+//            'name' => 'category',
+//            'label' => get_label('LBL_FORECAST_CATEGORY', $mod_strings),
+//            'default' => 'Committed',
+//            'options' => 'forecasts_filters_category',
+            'category' => 'Committed',
+        );
+    }
+
+    public function timeframes($api, $args) {
+        global $app_list_strings, $current_language;
+        $app_list_strings = return_app_list_strings_language($current_language);
+        $mod_strings = return_module_language($current_language, 'Forecasts');
+
+        return array(
+            'timeperiod_id' => array(
+                'label' => get_label('LBL_FORECAST_PERIOD', $mod_strings),
+                'default' => TimePeriod::getCurrentId(),
+                'options' => TimePeriod::get_not_fiscal_timeperiods_dom(),
             ),
         );
     }
