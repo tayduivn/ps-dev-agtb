@@ -5012,7 +5012,6 @@ ul#quickCreateULSubnav,
   padding: 0;
   width: 100%;
   float: left;
-  margin-left: 20px;
 }
 .legend .waterMark {
   width: 10px;
@@ -7045,13 +7044,19 @@ table tfoot td {
 #folded > div {
   width: inherit;
 }
+#folded {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+}
 #folded .tab-pane#overview {
   border-left: none;
 }
 #folded .tab-pane.active#overview {
   border-left: 1px solid #ebebeb;
 }
-#dashboard #folded .tab-pane.active {
+#folded #overview {
+    border-left: 1px solid #ebebeb;
+}
+#folded .tab-pane.active {
   position: fixed !important;
   top: 47px;
   right: 0;
@@ -8396,4 +8401,18 @@ color: @red;
     float:left;
     margin-right:5px;
     margin-left:12px;
+}
+
+#overview {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+    border-left:3px solid #cdcccb;
+    border-top:3px solid #cdcccb;
+}
+
+.viz {
+    min-height: 300px;
+    float: left;
+    width: 90% !important;
+    margin-left: 5% !important;
+    padding-top: 20px;
 }

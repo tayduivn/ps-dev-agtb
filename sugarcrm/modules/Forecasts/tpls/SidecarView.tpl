@@ -18,10 +18,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="span4">
-                    <div class="view-chart"></div>
+                <div class="span4 tab-content" id="folded">
                     <div class="tab-pane active" id="overview">
-                        <div class="block" id="moduleTwitter">
+                        <div class="viz">
+                            <div class="view-chart"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="block" id="guages">
                             <div class="view-progress"></div>
                         </div>
                     </div>

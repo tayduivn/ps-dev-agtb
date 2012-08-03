@@ -10,13 +10,15 @@
 
     chart: null,
 
+    chartTitle: '',
+
     /**
      * Override the _render function
      *
      * @private
      */
     _render: function() {
-        app.view.View.prototype._render.call(this);
+        this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
 
         var values = {
             user_id: app.user.get('id'),
@@ -27,6 +29,7 @@
             category : app.defaultSelections.category.id
         };
 
+        app.view.View.prototype._render.call(this);
         this.handleRenderOptions(values);
     },
 
