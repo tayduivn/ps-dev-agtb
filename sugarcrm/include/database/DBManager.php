@@ -830,7 +830,7 @@ protected function checkQuery($sql, $object_name = false)
 
 		$take_action = false;
 
-		// do column comparisions
+		// do column comparisons
 		$sql .=	"/*COLUMNS*/\n";
 		foreach ($fielddefs as $name => $value) {
 			if (isset($value['source']) && $value['source'] != 'db')
@@ -914,13 +914,13 @@ protected function checkQuery($sql, $object_name = false)
 			}
 		}
 
-		// do index comparisions
+		// do index comparisons
 		$sql .=	"/* INDEXES */\n";
 		$correctedIndexs = array();
 
         $compareIndices_case_insensitive = array();
 
-		// do indicies comparisons case-insensitive
+		// do indices comparisons case-insensitive
 		foreach($compareIndices as $k => $value){
 			$value['name'] = strtolower($value['name']);
 			$compareIndices_case_insensitive[strtolower($k)] = $value;
@@ -955,7 +955,7 @@ protected function checkQuery($sql, $object_name = false)
 				$value['type'] = 'index';
 
 			if ( !isset($compareIndices[$name]) ) {
-				//First check if an index exists that doens't match our name, if so, try to rename it
+				//First check if an index exists that doesn't match our name, if so, try to rename it
 				$found = false;
 				foreach ($compareIndices as $ex_name => $ex_value) {
 					if($this->compareVarDefs($ex_value, $value, true)) {
@@ -1027,6 +1027,10 @@ protected function checkQuery($sql, $object_name = false)
 			//Ignore len if its not set in the vardef
 			if ($key == 'len' && empty($fielddef2[$key]))
 				continue;
+            // if the length in db is greather than the vardef, ignore it
+            if ($key == 'len' && ($fielddef1[$key] >= $fielddef2[$key])) {
+                continue;
+            }
 			return false;
 		}
 
@@ -1965,7 +1969,7 @@ protected function checkQuery($sql, $object_name = false)
     		// specially for Bugs and Cases which have a number associated with them.
     		if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
 
-    		//custom fields handle their save seperatley
+    		//custom fields handle their save separately
     		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
     		// no need to clear deleted since we only update not deleted records anyway
@@ -2181,7 +2185,8 @@ protected function checkQuery($sql, $object_name = false)
 		}
 		$type = $this->getColumnType($fieldDef['dbType'],$fieldDef['name'],$tablename);
 		$matches = array();
-		preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*)\)|)/i', $type, $matches);
+        // len can be a number or a string like 'max', for example, nvarchar(max)
+        preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*|\w+)\)|)/i', $type, $matches);
 		if ( isset($matches[1][0]) )
 			$fieldDef['type'] = $matches[1][0];
 		if ( isset($matches[2][0]) && empty($fieldDef['len']) )
@@ -2251,7 +2256,7 @@ protected function checkQuery($sql, $object_name = false)
 			//"as" used for an alias
 			return trim(substr($string, strripos($string, " as ") + 4));
 		else if (strrpos($string, " ") != 0)
-			//Space used as a delimeter for an alias
+			//Space used as a delimiter for an alias
 			return trim(substr($string, strrpos($string, " ")));
 		else if (strpos($string, ".") !== false)
 			//No alias, but a table.field format was used
@@ -2347,7 +2352,7 @@ protected function checkQuery($sql, $object_name = false)
 		// generate the from clause. Use relations array to generate outer joins
 		// all the rest of the tables will be used as a simple from
 		// relations table define relations between table1 and table2 through column on table 1
-		// table2 is assumed to joing through primaty key called id
+		// table2 is assumed to joining through primary key called id
 		$separator = "";
 		$from = ''; $table_used_in_from = array();
 		foreach ($relations as $table1 => $rightsidearray){
@@ -2357,11 +2362,11 @@ protected function checkQuery($sql, $object_name = false)
 			$table_used_in_from[$table1] = true;
 			foreach ($rightsidearray as $tablearray){
 				$table2 = $tablearray['foreignTable']; // get foreign table
-				$tableAlias = $aliases[$table2]; // get a list of aliases fo thtis table
+				$tableAlias = $aliases[$table2]; // get a list of aliases for this table
 				foreach ($tableAlias as $table2) {
 					//choose first alias that does not match
 					// we are doing this because of self joins.
-					// in case of self joins, the same table will bave many aliases.
+					// in case of self joins, the same table will have many aliases.
 					if ($table2 != $table1) break;
 				}
 
@@ -2435,8 +2440,9 @@ protected function checkQuery($sql, $object_name = false)
      * @param string $type Column type
      * @return array|bool array containing the different components of the passed in type or false in case the type contains illegal characters
      */
-    public function getTypeParts($type) {
-        if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\w+)\s*(,\s*(?'scale'\d+))*\))*)", $type, $matches))
+    public function getTypeParts($type)
+    {
+        if(preg_match("#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#", $type, $matches))
         {
             $return = array();  // Not returning matches array as such as we don't want to expose the regex make up on the interface
             $return['baseType'] = $matches['type'];
@@ -2496,12 +2502,21 @@ protected function checkQuery($sql, $object_name = false)
             }
         }
 
-		if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
-			$default = " DEFAULT ".$this->quoted($fieldDef['default']);
-		elseif (!isset($default) && $type == 'bool')
-			$default = " DEFAULT 0 ";
-		elseif (!isset($default))
-			$default = '';
+        $default = '';
+
+        // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
+        if (!empty($fieldDef['no_default']))
+        {
+            // nothing to do
+        }
+        elseif (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
+        {
+            $default = " DEFAULT ".$this->quoted($fieldDef['default']);
+        }
+        elseif (!isset($default) && $type == 'bool')
+        {
+            $default = " DEFAULT 0 ";
+        }
 
 		$auto_increment = '';
 		if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
@@ -3846,4 +3861,21 @@ protected function checkQuery($sql, $object_name = false)
 	 * @return array
 	 */
 	abstract public function installConfig();
+
+    /**
+     * Returns a DB specific FROM clause which can be used to select against functions.
+     * Note that depending on the database that this may also be an empty string.
+     * @abstract
+     * @return string
+     */
+    abstract public function getFromDummyTable();
+
+    /**
+     * Returns a DB specific piece of SQL which will generate GUID (UUID)
+     * This string can be used in dynamic SQL to do multiple inserts with a single query.
+     * I.e. generate a unique Sugar id in a sub select of an insert statement.
+     * @abstract
+     * @return string
+     */
+	abstract public function getGuidSQL();
 }

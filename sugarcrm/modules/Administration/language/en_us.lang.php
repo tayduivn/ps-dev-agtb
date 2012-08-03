@@ -120,7 +120,7 @@ $mod_strings = array (
     'LBL_ADMIN_WIZARD' => 'Easily setup your SugarCRM system',
     'LBL_ADMINISTRATION_HOME_TITLE' => 'System',
     'LBL_ADMINISTRATION_HOME_DESC' =>'Configure the system-wide settings according to the specifications of your organization. Users can override some of the default locale settings within their user settings page.',
-    'LBL_ALLOW_USER_TABS' => 'Allow users to hide tabs',
+    'LBL_ALLOW_USER_TABS' => 'Allow users to select modules to appear in the navigation bar',
     'LBL_ALREADY_RUNNING'                  => 'This server is running as an Offline Client.',
     'LBL_APPLY_DST_FIX_DESC' => 'This mandatory step will update the time handling functionality (MYSQL ONLY).',
     'LBL_APPLY_DST_FIX' => 'Apply Daylight Savings Time Fix',
@@ -156,7 +156,7 @@ $mod_strings = array (
     'LBL_CHECK_NOW_LABEL' =>'Check Now',
     'LBL_CHECK_NOW_TITLE' =>'Check Now',
     'LBL_CHECK_DB_VARDEFS' => 'Checking database structure against vardefs...',
-    'LBL_CONFIGURE_TABS_AND_SUBPANELS_DESC'=>'Choose which module tabs and subpanels are displayed system-wide',
+    'LBL_CONFIGURE_TABS_AND_SUBPANELS_DESC'=>'Choose which modules are displayed in the navigation bar and which subpanels are displayed system-wide',
     'LBL_CLEAR_CHART_DATA_CACHE_DESC'=>'Removes cached data files used by charts',
     'LBL_CLEAR_CHART_DATA_CACHE_TITLE'=>'Clear Chart Data Cache',
     'LBL_CLEAR_CHART_DATA_CACHE_FINDING'=>'Finding files...',
@@ -173,19 +173,20 @@ $mod_strings = array (
     'LBL_CLEAR_PDF_FONT_CACHE_DESC'=>'Removes cached file used to store PDF fonts data',
     'LBL_CONFIG_CHECK' =>'Config Check',
     'LBL_CONFIG_AJAX' => 'Configure AJAX User Interface',
+    'LBL_CONFIG_FTS' => 'Configure Full Text Search Engine',
     'LBL_CONFIG_AJAX_DESC' => 'Performance and page-rendering times are improved in AJAX UI-enabled modules because full page refreshes are not required in those modules. If you are experiencing display issues with modules that are not compatible with AJAX, the AJAX UI for those modules can be disabled.',
     'LBL_CONFIG_AJAX_HELP' => 'Drag and drop the names of the modules below to enable or disable the use of the AJAX UI in those modules.',
-    'LBL_CONFIG_TABS'=>'Display Module Tabs and Subpanels',
-	'LBL_CONFIG_TABS_DESC'=>'Drag and Drop the names of the modules below to set tabs or subpanels to be displayed or to be hidden.',
+    'LBL_CONFIG_TABS'=>'Display Modules and Subpanels',
+	'LBL_CONFIG_TABS_DESC'=>'Drag and Drop the names of the modules below to set them to be displayed or hidden in the top navigation bar or as subpanels. To control access to modules, use <a href="?module=ACLRoles&action=index">Role Management.</a>',
 	'LBL_CONFIG_LANGS_DESC'=>'Drag and Drop the names of the languages below to enable and disable them.',
 	'LBL_CONFIG_TABS_ALLOW_USERS_HIDE_TABS_HELP'=>'Select this option to allow users to choose which module tabs they can view. When selected, users will be able to choose which module tabs are visible by managing the tabs within their User Settings.',
 	'LBL_CONFIGURATOR_DESC'=>'Set up Config.php',
     'LBL_CONFIGURATOR_TITLE'=>'Configurator',
-    'LBL_CONFIGURE_GROUP_TABS_DESC' => 'Create and edit the grouping of navigation tabs',
-    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Grouped Modules',
+    'LBL_CONFIGURE_GROUP_TABS_DESC' => 'Create and edit module menu filters',
+    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Module Menu Filters',
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'System Settings',
     'LBL_CONFIGURE_SETTINGS' => 'Configure system-wide settings',
-    'LBL_CONFIGURE_TABS_AND_SUBPANELS' => 'Display Module Tabs and Subpanels',
+    'LBL_CONFIGURE_TABS_AND_SUBPANELS' => 'Display Modules and Subpanels',
     'LBL_CONFIGURE_UPDATER'=>'Configure Sugar Updates',
     'LBL_CONTRACT_TITLE'=>'Contracts',
     'LBL_CONTRACT_DESC'=>'Define contract types for the Contracts module. When users create a contract, the Types drop-down menu displays the contract types for selection.',
@@ -290,8 +291,16 @@ $mod_strings = array (
     'LBL_FORECAST_TITLE'=> 'Forecast',
     'LBL_FORECAST_DESC'=> 'Define time periods for the Forecasts module. These time periods display in the Time Periods drop-down menus in the Forecasts Module.',
     //END SUGARCRM flav!=sales ONLY
+    //BEGIN SUGARCRM flav=com ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
 	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
+    //END SUGARCRM flav=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS' => 'Search',
+    'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Select modules for the Global Search and configure full-text searching.',
+    //END SUGARCRM flav=pro ONLY
+    'LBL_FTS_SETTINGS' => 'Full-Text Search',
+   	'LBL_FTS_SETTINGS_DESC' => 'Configure the full-text search system.',
     'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',
     'LBL_GLOBAL_TEAM_SELECT' => 'A default global team was not found. Please select a team from this list.',
     'LBL_GLOBAL_TEAM' => 'Rebuild access to global team.',
@@ -302,7 +311,7 @@ $mod_strings = array (
     'LBL_HELP_PRINT' => 'Print',
     'LBL_HIDE_TABS'=>'Hide Tabs',
 	'LBL_HIDDEN_PANELS'=>'Hidden Subpanels',
-    'LBL_HIDDEN_TABS'=>'Hidden Tabs',
+    'LBL_HIDDEN_TABS'=>'Hidden Modules',
     'LBL_HIDE_ADVANCED_OPTIONS'=>'Hide Advanced Options',
     'LBL_HT_DONE' => '--- DONE ---',
     'LBL_HT_NO_WRITE_2' => 'If you want to secure your files from being accessible via browser, create an .htaccess file in your root directory with the lines:',
@@ -330,6 +339,7 @@ $mod_strings = array (
     'LBL_LICENSE_VALIDATION_KEY'           => 'Validation Key',
     'LBL_LICENSE_VALIDATION'           => 'License Validation',
     'LBL_LICENSE'               => 'License',
+    'LBL_LICENSE_UNAUTHORIZED_ACCESS'               => 'Unauthorized access to license settings.',
     'LBL_LIST_FIRST_CONNECT_DATE' => 'First Connect Date',
     'LBL_LIST_LAST_CONNECT_DATE' => 'Last Connect Date',
     'LBL_LIST_NUM_SYNCS' => 'Num. of Syncs',
@@ -897,7 +907,7 @@ $mod_strings = array (
     'LBL_VALIDATION_FILE'=>'Validation Key File',
     'LBL_VALIDATION_SUCCESS_DATE'=>'Last successful validation : ',
 	'LBL_VISIBLE_PANELS'=>'Displayed Subpanels',
-    'LBL_VISIBLE_TABS'=>'Displayed Tabs',
+    'LBL_VISIBLE_TABS'=>'Displayed Modules',
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_WORKFLOW_DESC'                     => 'Manage workflow conditions, alerts and actions',
     'LBL_WORKFLOW_TITLE'                    => 'Workflow Management',
@@ -946,7 +956,7 @@ $mod_strings = array (
  	'WARN_LICENSE_EXPIRED'=> "Notice: Your license expires in ",
     'WARN_LICENSE_EXPIRED2' =>" day(s). Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
     'WARN_LICENSE_SEATS'=>  "Warning: User licenses exceeded by ",
-    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:cagroup@sugarcrm.com'>cagroup@sugarcrm.com</a>.",
+    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:sales@sugarcrm.com'>sales@sugarcrm.com</a>.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users is already the maximum number of licenses allowed: ",
     'WARN_LICENSE_SEATS_EDIT_USER'=>  "Warning: The number of active users is already the maximum number of licenses allowed",
     'WARN_LICENSE_SEATS_USER_CREATE'=>"Warning: The number of active users allowed by your license matches the number of active users in the system. You will not be able to create additional active users.",
@@ -1061,9 +1071,10 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Shortcut Bar',
-	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the Shortcut Bar',
+	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',
+	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the navigation bar quick create',
 	'LBL_ERROR_PROD_BAR_NUM_MODULES' => 'Error: There can be at most 10 modules on the Sugar Shortcut Bar at a time.',
+    'LBL_CONFIGURE_SHORTCUT_BAR_HELP' => 'Choose which modules for which users can quickly create records using the Plus icon in the top navigation bar. Drag & drop modules between the Enabled Modules and Disabled Modules boxes.',
 //END SUGARCRM flav=pro ONLY
 	'LBL_ACTIVE_MODULES' => 'Enabled Modules',
 	'LBL_DISABLED_MODULES' => 'Disabled Modules',
@@ -1154,9 +1165,15 @@ $mod_strings = array (
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
+    //BEGIN SUGARCRM flav=com ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
+    //END SUGARCRM flav=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. If full-text searching is enabled, perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
+    //END SUGARCRM flav=pro ONLY
    'LBL_SELECT_MODULES' => 'Advanced',
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
+   'LBL_SELECT_FTS_MODULES_TITLE' => 'Drag and drop to select modules to be used in the Global Search. Click Save to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
 	'LBL_LANGUAGE_PACKS' => 'Language Packs' /*for 508 compliance fix*/,
@@ -1184,5 +1201,37 @@ $mod_strings = array (
     'LBL_SPRITES_PROCESSING_DIR' => 'Processing directory {0}',
     'LBL_SPRITES_ADDED' => 'Added sprite {0}',
     'LBL_SPRITES_EXCLUDING_FILE' => 'Excluding file: {0}',
-	);
+
+    //FTS
+    'LBL_FTS_TYPE' => 'System Type',
+    'LBL_FTS_HOST' => 'Host',
+    'LBL_FTS_PORT' => 'Port',
+    'LBL_FTS_TYPE_HELP' => 'Select the engine to use for full text searching. The system detects the engines that are supported and displays them within this list. Sugar includes built-in support for the elasticsearch engine.',
+    'LBL_FTS_HOST_HELP' => 'Enter the name of the host where the full text search engine resides.',
+    'LBL_FTS_PORT_HELP' => 'Enter the number of the port where the full text search engine resides.',
+
+    'LBL_AVAILABLE_FTS_MODULES' => 'Select the module(s) for indexing.',
+    'LBL_FTS_INDEX_BUTTON' => 'Index',
+    'LBL_DELETE_FTS_DATA' => 'Delete existing data when index is performed. Only data in the selected modules will be indexed.',
+    'LBL_CONNECT_STATUS' => 'Connection Status',
+    'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
+    'LBL_FTS_TEST' => 'Test',
+    'LBL_SAVE_SCHED_BUTTON' => 'Schedule System Index',
+    'LBL_SAVE_SCHED_WARNING' => 'Are you sure you would like to perform a system index at this time? The system performance could be impacted while the index is being performed.',
+    'LBL_FTS_NO_MODULES' => 'Select at least one module to search.',
+    'LBL_FTS_NO_MODULES_FOR_SCHED' => 'Select at least one module to schedule.',
+    'LBL_FTS_ADVANCED_LINK' => 'Enable Modules',
+    'LBL_FTS_ADVANCED_LINK_HELP' => 'Select the module(s) that users will be able to search against using the Full Text Search.',
+    'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a system index for full-text searching to work for the enabled modules and module fields.',
+	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A system index operation has been scheduled to run within the next several minutes.',
+    'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
+    'LBL_FTS_PAGE_DESC' => 'To enable full text searching:<br>
+1) Select the search engine that will be used<br>
+2) Enter the host and port of the search engine<br>
+3) Click Test to make sure Sugar can connect to the search engine<br>
+4) Click Schedule System Index. Make sure that crontab is set up to run cron.php. This will handle indexing as well as the fallback mechanism when the connection to the search engine is interrupted.',
+    'LBL_FTS_DISABLED' => 'Full Text Search has been disabled because the system is not able to connect to the search engine.',
+    'LBL_FTS_CONNECTION_INVALID' => 'The Full Text Search Settings you have entered are invalid and may slow down system performance.  Please change or clear your settings.',
+    'MSG_RECONNECT_LOTUSLIVE' => 'You are currently not connected to IBM SmartCloud. Connect to IBM SmartCloud within your Profile to be able to access IBM SmartCloud meetings and files.'    
+);
 

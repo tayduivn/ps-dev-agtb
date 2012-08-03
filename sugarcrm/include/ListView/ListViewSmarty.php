@@ -46,12 +46,12 @@ class ListViewSmarty extends ListViewDisplay{
     var $email = true;
     var $targetList = false;
 	var $multiSelect = true;
-	var $overlib = true;
 	var $quickViewLinks = true;
 	var $lvd;
 	var $mergeduplicates = true;
     var $contextMenus = true;
     var $showMassupdateFields = true;
+    var $menu_location = 'top';
     /**
      * Constructor, Smarty object immediately available after
      *
@@ -107,7 +107,6 @@ class ListViewSmarty extends ListViewDisplay{
         //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
         //END SUGARCRM flav=pro ONLY
-        if($this->overlib) $this->ss->assign('overlib', true);
 
         // Bug 24677 - Correct the page total amount on the last page of listviews
         $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];
@@ -115,11 +114,18 @@ class ListViewSmarty extends ListViewDisplay{
             $pageTotal = $this->data['pageData']['offsets']['total'] - $this->data['pageData']['offsets']['current'];
         }
 
-		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
-		
-		if($this->show_action_dropdown)
+		if($this->select)$this->ss->assign('selectLinkTop', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
+        if($this->select)$this->ss->assign('selectLinkBottom', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal, "bottom"));
+
+        if($this->show_action_dropdown)
 		{
-			$this->ss->assign('actionsLink', $this->buildActionsLink());
+            $action_menu = $this->buildActionsLink();
+			$this->ss->assign('actionsLinkTop', $action_menu);
+            if(count($action_menu['buttons']) > 0) {
+                $this->ss->assign('actionDisabledLink', preg_replace("/id\s*\=(\"\w+\"|w+)/i", "", $action_menu['buttons'][0]));
+            }
+            $menu_location = 'bottom';
+            $this->ss->assign('actionsLinkBottom', $this->buildActionsLink('actions_link' ,$menu_location));
 		}
 		
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
@@ -127,7 +133,7 @@ class ListViewSmarty extends ListViewDisplay{
 		// handle save checks and stuff
 		if($this->multiSelect)
         {
-			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
+			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, (isset($_POST['mass'])) ? count($_POST['mass']): 0));
 		    $this->ss->assign('multiSelectData', $this->getMultiSelectData());
 		} else {
             $this->ss->assign('multiSelectData', '<textarea style="display: none" name="uid"></textarea>');
@@ -190,8 +196,12 @@ class ListViewSmarty extends ListViewDisplay{
 	function display($end = true) {
 
 		if(!$this->should_process) return $GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
-        global $app_strings;
+        global $app_strings, $sugar_version, $sugar_flavor, $server_unique_key, $currentModule, $app_list_strings;
+        $this->ss->assign('moduleListSingular', $app_list_strings["moduleListSingular"]);
         $this->ss->assign('data', $this->data['data']);
+        $this->ss->assign('query', $this->data['query']);
+        $this->ss->assign('sugar_info', array("sugar_version" => $sugar_version, 
+											  "sugar_flavor" => $sugar_flavor));
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
 
@@ -201,6 +211,16 @@ class ListViewSmarty extends ListViewDisplay{
                             'start' => $app_strings['LNK_LIST_START'],
                             'of' => $app_strings['LBL_LIST_OF']);
         $this->ss->assign('navStrings', $navStrings);
+
+        $displayEmptyDataMessages = TRUE;
+        //TODO: Cleanup, better logic for which modules are exempt from the new messaging. 
+        $modulesExemptFromEmptyDataMessages = array('WorkFlow','ContractTypes', 'OAuthKeys', 'TimePeriods');
+        if( (isset($GLOBALS['moduleTabMap'][$currentModule]) && $GLOBALS['moduleTabMap'][$currentModule] == 'Administration')
+            || isset($GLOBALS['adminOnlyList'][$currentModule]) || in_array($currentModule, $modulesExemptFromEmptyDataMessages) )
+        {
+            $displayEmptyDataMessages = FALSE;
+        }
+        $this->ss->assign('displayEmptyDataMesssages', $displayEmptyDataMessages);
 
 		$str = parent::display();
 		$strend = $this->displayEnd();

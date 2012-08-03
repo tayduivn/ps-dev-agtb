@@ -117,12 +117,18 @@ class SetOptionsAction extends AbstractAction{
 					
 					//Hide fields with empty lists
 					var empty =  field.options.length == 1 && field.value == '';
-					var visAction = new SUGAR.forms.VisibilityAction(this.target, empty ? 'false' : 'true', '');
+					var visAction = new SUGAR.forms.VisibilityAction(this.target, (empty ? 'false' : 'true', ''));
 					visAction.setContext(context);
 					visAction.exec();
 					
 					if ( SUGAR.forms.AssignmentHandler.ANIMATE && !empty)
 						SUGAR.forms.FlashField(field);
+				}
+				//Check if we are on a detailview and just need to hide the field
+				else if (keys instanceof Array && (keys.length == 0 || (keys.length == 1 && keys[0] == ''))){
+				    //Use a normal visibility action to hide the field
+				    var va = new SUGAR.forms.VisibilityAction(this.target, 'false', '');
+				    va.exec(context);
 				}
 			}
 		});";

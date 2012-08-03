@@ -20,6 +20,8 @@
  ********************************************************************************/
 //require_once('include/Utils.php');
 
+require_once('modules/ExpressionEngine/formulaHelper.php');
+
 class ViewEditFormula extends SugarView
 {
 	function ViewEditFormula(){
@@ -46,12 +48,12 @@ class ViewEditFormula extends SugarView
  				require_once('modules/ModuleBuilder/MB/MBPackage.php');
  				$pak = new MBPackage($_REQUEST['package']);
  				$defs = $pak->modules[$module]->getVardefs();
- 				$fields = $this->cleanFields($defs['fields']);
+                $fields = FormulaHelper::cleanFields(array_merge($pak->modules[$module]->getLinkFields(), $defs['fields']));
  			} else {
  				$class = $beanList[$module];
 				require_once $beanFiles [ $class ] ;
 	        	$seed = new $class ( ) ;
-	        	$fields = $this->cleanFields($seed->field_defs);
+	        	$fields = FormulaHelper::cleanFields($seed->field_defs);
  			}
         	$smarty->assign('Field_Array', $json->encode($fields));
 		}
@@ -97,53 +99,6 @@ class ViewEditFormula extends SugarView
  		$smarty->display('modules/ExpressionEngine/tpls/formulaBuilder.tpl');
  	}
 
- 	/**
- 	 * Takes an array of field defs and returns a formated list of fields that are valid for use in expressions.
- 	 *
- 	 * @param array $fieldDef
- 	 * @return array
- 	 */
- 	function cleanFields($fieldDef){
- 		$fieldArray = array();
- 		foreach($fieldDef as $fieldName => $def) {
- 			if ($fieldName == 'deleted' || $fieldName == 'email1' || empty($def['type']))
- 				continue;
- 			if (isset($def['studio']) && ($def['studio'] == false || $def['studio'] == "false"))
- 			    continue;
- 			switch($def['type']) {
- 				case "int":
- 				case "float":
- 				case "decimal":
- 				case "currency":
- 					$fieldArray[] = array($fieldName, 'number');
- 					break;
- 				case "bool":
- 					$fieldArray[] = array($fieldName, 'boolean');
- 					break;
- 				case "varchar":
- 				case "name":
- 				case "phone":
- 				case "text":
- 				case "url":
- 				case "encrypt":
- 				case "enum":
-					$fieldArray[] = array($fieldName, 'string');
- 					break;
-                case "date":
-                case "datetime":
-                case "datetimecombo":
-					$fieldArray[] = array($fieldName, 'date');
- 					break;
- 				case "link":
-					$fieldArray[] = array($fieldName, 'relate');
- 					break;
-                 default:
- 					//Do Nothing
- 					break;
- 			}
- 		}
- 		return $fieldArray;
- 	}
 
 }
 ?>

@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['KBDocument'] = array('table' => 'kbdocuments',
 								  'unified_search' => true,
+								  'full_text_search' => true,
                					  'comment' => 'Knowledge Document management and FTS',
                					  'fields' => array (
   'id' =>
@@ -42,6 +43,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'required'=>true,
     'importable' => 'required',
   	'unified_search' => true,
+  	'full_text_search' => array('boost' => 3),
   ),
 
 'name' =>
@@ -190,7 +192,8 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'type' => 'link',
     'relationship' => 'kbdocument_revisions',
     'source'=>'non-db',
-     'vname'=>'LBL_REVISIONS',
+    'vname'=>'LBL_REVISIONS',
+    'studio' => false
   ),
   'latest_revision' =>
   array (

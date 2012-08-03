@@ -41,61 +41,164 @@ $viewdefs['Project']['DetailView'] = array(
 		'form' => array(
 	 		'buttons'=> array(
 			 	array( 'customCode' =>
-			 		'<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" ' .
-					'accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button" type="submit" ' .
-					'name="Edit" id="edit_button" value="{$APP.LBL_EDIT_BUTTON_LABEL}"'.
-					'{if $IS_TEMPLATE}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';"'.
-					'{else}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\';" {/if}'.
-					'"/>', 
+                        '<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" ' .
+                        'accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button" type="submit" ' .
+                        'name="Edit" id="edit_button" value="{$APP.LBL_EDIT_BUTTON_LABEL}"'.
+                        'onclick="'.
+                        '{if $IS_TEMPLATE}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';'.
+                        '{else}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'; '.
+                        '{/if}"'.
+                        '/>',
+                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                    'sugar_html' => array(
+                        'type' => 'submit',
+                        'value' => ' {$APP.LBL_EDIT_BUTTON_LABEL} ',
+                        'htmlOptions' => array(
+                            'id' => 'edit_button',
+                            'class' => 'button',
+                            'accessKey' => '{$APP.LBL_EDIT_BUTTON_KEY}',
+                            'name' => 'Edit',
+                            'onclick' =>
+                                '{if $IS_TEMPLATE}'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';'.
+                                '{else}'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'; '.
+                                '{/if}',
+                        ),
+                    ),
 				),
 				array( 'customCode' =>
-					'<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" ' .
-					'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="submit" ' .
-					'name="Delete" id="delete_button" value="{$APP.LBL_DELETE_BUTTON_LABEL}"'.
-					'{if $IS_TEMPLATE}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');"'.
-					'{else}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');" {/if}'.
-					'"/>', 
+                        '<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" ' .
+                        'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="button" ' .
+                        'name="Delete" id="delete_button" value="{$APP.LBL_DELETE_BUTTON_LABEL}"'.
+                        'onclick="'.
+                        '{if $IS_TEMPLATE}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\') )  this.form.submit(); '.
+                        '{else}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\'))  this.form.submit(); '.
+                        '{/if}"'.
+                        '/>',
+                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                    'sugar_html' => array(
+                        'type' => 'button',
+                        'id'    => 'delete_button',
+                        'value' => '{$APP.LBL_DELETE_BUTTON_LABEL}',
+                        'htmlOptions' => array(
+                            'title' => '{$APP.LBL_DELETE_BUTTON_TITLE}',
+                            'accessKey' => '{$APP.LBL_DELETE_BUTTON_KEY}',
+                            'id'    => 'delete_button',
+                            'class' => 'button',
+                            'onclick' =>
+                                '{if $IS_TEMPLATE}'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) this.form.submit();'.
+                                '{else}'.
+                                    'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) this.form.submit();'.
+                                '{/if}',
+                        ),
+
+                    ),
 				),
-								
+
 				//BEGIN SUGARCRM flav=com ONLY
 				 array( 'customCode' =>
-				 	'<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
-					'accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" type="submit" ' .
-					'name="Duplicate" id="duplicate_button" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}"'.
-					'{if $IS_TEMPLATE}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';"'.
-					'{else}'.
-						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';" {/if}'.
-					'"/>', 
-				),
+                        '<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
+                        'accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" type="submit" ' .
+                        'name="Duplicate" id="duplicate_button" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}"'.
+                        'onclick="'.
+                        '{if $IS_TEMPLATE}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';'.
+                        '{else}'.
+                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';'.
+                        '{/if}"'.
+                        '"/>',
+                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                     'sugar_html' => array(
+                         'type' => 'submit',
+                         'value' => '{$APP.LBL_DUPLICATE_BUTTON_LABEL}',
+                         'htmlOptions' => array(
+                             'title' => '{$APP.LBL_DUPLICATE_BUTTON_TITLE}',
+                             'accessKey' => '{$APP.LBL_DUPLICATE_BUTTON_KEY}',
+                             'class' => 'button',
+                             'name' => 'Duplicate',
+                             'id' => 'duplicate_button',
+                             'onclick' =>
+                                 '{if $IS_TEMPLATE}'.
+                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';'.
+                                 '{else}'.
+                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';'.
+                                 '{/if}',
+                         ),
+                     ),
+                ),
 				//END SUGARCRM flav=com ONLY
 
 				//BEGIN SUGARCRM flav=pro ONLY
-				array( 'customCode' => 
-					'{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
-					'class="button" type="submit" '.
-					'name="EditProjectTasks" id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
-					'onclick="prep_edit_project_tasks(this.form);" />{/if}',
+				array( 'customCode' =>
+                        '{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
+                        'class="button" type="submit" '.
+                        'name="EditProjectTasks" id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
+                        'onclick="prep_edit_project_tasks(this.form);" />{/if}',
+                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                    'sugar_html' => array(
+                        'type' => 'submit',
+                        'value' => '{$MOD.LBL_VIEW_GANTT_TITLE}',
+                        'htmlOptions' => array(
+                            'title' => '{$MOD.LBL_VIEW_GANTT_TITLE}',
+                            'class' => 'button',
+                            'name' => 'EditProjectTasks',
+                            'id' => 'view_gantt_button',
+                            'onclick' => 'prep_edit_project_tasks(this.form);'
+                        ),
+                        'template' => '{if $EDIT_RIGHTS_ONLY}[CONTENT]{/if}',
+                    )
+                ),
+				array( 'customCode' =>
+                        '<input title="{$SAVE_AS}" ' .
+                        'class="button" type="submit" ' .
+                        'name="SaveAsTemplate" id="save_as_template_button" value="{$SAVE_AS}"'.
+                        'onclick="'.
+                        '{if $IS_TEMPLATE}'.
+                            'prep_save_as_project(this.form)'.
+                        '{else}'.
+                            'prep_save_as_template(this.form)'.
+                        '{/if}"'.
+                        '/>',
+                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                    'sugar_html' => array(
+                        'type' => 'submit',
+                        'value' => '{$SAVE_AS}',
+                        'htmlOptions' => array(
+                            'name' => 'SaveAsTemplate',
+                            'class' => 'button',
+                            'id'=> 'save_as_template_button',
+                            'onclick' =>
+                                '{if $IS_TEMPLATE}'.
+                                'prep_save_as_project(this.form)'.
+                                '{else}'.
+                                'prep_save_as_template(this.form)'.
+                                '{/if}',
+
+                        ),
+                    )
 				),
 				array( 'customCode' =>
-					'<input title="{$SAVE_AS}" ' .
-					'class="button" type="submit" ' .
-					'name="SaveAsTemplate" value="{$SAVE_AS}"'.
-					'{if $IS_TEMPLATE}'.
-						'onclick="prep_save_as_project(this.form)"'.
-					'{else}'.
-						'onclick="prep_save_as_template(this.form) {/if}'.
-					'"/>',
-				),
-				array( 'customCode' => 
-					'<input title="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
-					'class="button" type="submit" ' .
-					'name="ExportToProject" value="  {$MOD.LBL_EXPORT_TO_MS_PROJECT}  " ' .
-					'onclick="prep_export_to_project(this.form);"/>',
+                        '<input title="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
+                        'class="button" type="submit" ' .
+                        'name="ExportToProject" id="export_to_ms_project_button" value="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
+                        'onclick="prep_export_to_project(this.form);"/>',
+                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                    'sugar_html' => array(
+                        'type' => 'submit',
+                        'value' => '{$MOD.LBL_EXPORT_TO_MS_PROJECT}',
+                        'htmlOptions' => array(
+                            'title' => '{$MOD.LBL_EXPORT_TO_MS_PROJECT}',
+                            'name' => 'ExportToProject',
+                            'id'=> 'export_to_ms_project_button',
+                            'onclick' => 'prep_export_to_project(this.form);'
+                        ),
+                    ),
 				),
 				//END SUGARCRM flav=pro ONLY
  			),

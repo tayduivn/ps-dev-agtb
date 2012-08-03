@@ -28,41 +28,11 @@
 *}
 {include file="_head.tpl" theme_template=true}
 <body class="yui-skin-sam">
+    <a name="top"></a>
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-	{$SUGAR_DCMENU}
+	{include file="_dcmenu.tpl" theme_template=true}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 
-    <div id='shortcuts' class='accessKeyHelp'>
-        <script>
-            //if overlib is not loaded, then add the overlib source
-            if (typeof(overlib) == 'undefined'){ldelim}
-        		var newScript = document.createElement('script');
-        		newScript.type = 'text/javascript';
-        		newScript.src = "{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}";
-        		document.body.appendChild(newScript);
-            {rdelim}
-            keyboardhelpText = '{$APP.LBL_KEYBOARD_SHORTCUTS_HELP}'; setTimeout('SUGAR.util.buildAccessKeyLabels()',500);
-        </script>
-		<span id='keyboardhelp' onmouseover="return overlib(keyboardhelpText, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow' );" onmouseout="return nd();"/> {$APP.LBL_KEYBOARD_SHORTCUTS_HELP_TITLE} </span>
-    </div>
-
-	<div id="header">
-    {include file="_companyLogo.tpl" theme_template=true}
-    {if $AUTHENTICATED}
-    {include file="_globalLinks.tpl" theme_template=true}
-	{/if}
-    <div class="clear"></div>
-    <div class="clear"></div>
-    {if !$AUTHENTICATED}
-    <br /><br />
-    {/if}
-	{if $AUTHENTICATED}
-      {include file="_headerModuleList.tpl" theme_template=true}
-    {/if}
-	
-    <div class="clear"></div>
-    <div class="clear"></div>
-</div>
 	<div class="clear"></div>
     <div class="clear"></div>
 
@@ -77,11 +47,41 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 	YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
 	{/if}{literal}
 }
+
+
+function keyboardShortcuts() {
+var $dialog = $('<div id="shortcuts_dialog" class="open"></div>')
+.html("{/literal}{$APP.LBL_KEYBOARD_SHORTCUTS_HELP}{literal}")
+.dialog({
+	autoOpen: false,
+	title: '{/literal}{$APP.LBL_KEYBOARD_SHORTCUTS_HELP_TITLE}{literal}',
+	width: 300,
+	position: {
+	    my: 'right top',
+	    at: 'left top',
+	    of: $("#shortcuts")
+    },
+    close: function(e) {
+        $(this).dialog("destroy").remove();
+    },
+    open: function(e) {
+        SUGAR.util.buildAccessKeyLabels();
+    }
+});
+
+$dialog.dialog('open');
+$(".ui-dialog").appendTo("#content");
+
+}
 </script>
 {/literal}
 
+<script>
+var max_tabs = {$max_tabs};
+</script>
 
+<div id='shortcuts' class='accessKeyHelp' style="float: right; margin-right: 10px;" onclick="javascript: keyboardShortcuts();">{$APP.LBL_KEYBOARD_SHORTCUTS_HELP_TITLE}</div>
 <div id="main">
     <div id="content">
-        <table style="width:100%" id="contentTable"><tr><td>
 
+        <table style="width:100%" id="contentTable"><tr><td>

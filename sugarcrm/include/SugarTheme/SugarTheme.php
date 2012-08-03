@@ -548,6 +548,7 @@ class SugarTheme
     {
         // include style.css file
         $html = '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('yui.css').'" />';
+        $html .= '<link rel="stylesheet" type="text/css" href="include/javascript/jquery/themes/base/jquery.ui.all.css" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('deprecated.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
 
@@ -556,21 +557,21 @@ class SugarTheme
 
 			// system wide sprites
 			if(file_exists("cache/sprites/default/sprites.css"))
-				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/default/sprites.css" />';
+				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/default/sprites.css').'" />';
 
 			// theme specific sprites
 			if(file_exists("cache/sprites/{$this->dirName}/sprites.css"))
-				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$this->dirName.'/sprites.css" />';
+				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/'.$this->dirName.'/sprites.css').'" />';
 
 			// parent sprites
 			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
 				if(file_exists("cache/sprites/{$parent->dirName}/sprites.css"))
-					$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$parent->dirName.'/sprites.css" />';
+					$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/'.$parent->dirName.'/sprites.css').'" />';
 			}
 
 			// repeatable sprites
 			if(file_exists("cache/sprites/Repeatable/sprites.css"))
-				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/Repeatable/sprites.css" />';
+				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/Repeatable/sprites.css').'" />';
 		}
 
         // for BC during upgrade
@@ -650,7 +651,7 @@ EOHTML;
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
 	 * @param  string $width optional, defaults to the actual image's width
 	 * @param  string $height optional, defaults to the actual image's height
-	 * @param  string $ext optional, image extension (TODO can we depricate this one ?)
+	 * @param  string $ext optional, image extension (TODO can we deprecate this one ?)
      * @param  string $alt optional, only used when image contains something useful, i.e. "Sally's profile pic"
      * @return string HTML image tag or sprite
      */
@@ -666,7 +667,7 @@ EOHTML;
 
         static $cached_results = array();
 
-		// trap depricated use of image extension
+		// trap deprecated use of image extension
 		if(is_null($ext)) {
 			$imageNameExp = explode('.',$imageName);
 			if(count($imageNameExp) == 1)
@@ -678,7 +679,6 @@ EOHTML;
 		// trap alt attributes in other_attributes
 		if(preg_match('/alt=["\']([^\'"]+)["\']/i', $other_attributes))
 			$GLOBALS['log']->debug("Sprites: alt attribute detected for $imageName");
-
 		// sprite handler, makes use of own caching mechanism
 		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
 			// get sprite metadata
@@ -715,10 +715,10 @@ EOHTML;
 	public function getSpriteMeta($imageName) {
 
 		// return from cache
-		if(isset($this->_spriteCache[$imageName]))
+	    if(isset($this->_spriteCache[$imageName]))
 			return $this->_spriteCache[$imageName];
 
-		// sprite keys are base on imageURL
+			// sprite keys are base on imageURL
 		$imageURL = $this->getImageURL($imageName,false);
 		if(empty($imageURL)) {
 			$this->_spriteCache[$imageName] = false;
@@ -728,7 +728,6 @@ EOHTML;
 		// load meta data, includes default images
 		require_once("include/SugarTheme/SugarSprites.php");
 		$meta = SugarSprites::getInstance();
-
 		// add current theme dir
 		$meta->loadSpriteMeta($this->dirName);
 		// add parent theme dir
@@ -800,8 +799,8 @@ EOHTML;
 				$img = 'unknown';
 			}
 			switch($img_placement) {
-				case 'left': 	$inner_html = $img.$title; break;
-				case 'right':	$inner_html = $title.$img; break;
+				case 'left': 	$inner_html = $img."<span class='title'>".$title."</span>"; break;
+				case 'right':	$inner_html = "<span class='title'>".$title."</span>".$img; break;
 				default:		$inner_html = $img; break;
 			}
 		} else {
@@ -998,7 +997,7 @@ EOHTML;
 
         // minify the js
         if ( !inDeveloperMode()&& !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
-            $jsFileContents = JSMin::minify($jsFileContents);
+            $jsFileContents = SugarMin::minify($jsFileContents);
             $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
             $fullFileName = str_replace('.js','-min.js',$fullFileName);
         }

@@ -26,13 +26,71 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Campaigns']['DetailView'] = array(
-'templateMeta' => array('form' => array('buttons' =>
-										array('EDIT', 'DUPLICATE', 'DELETE',
-                                        array('customCode'=>'<input title="{$MOD.LBL_TEST_BUTTON_TITLE}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';this.form.mode.value=\'test\'" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_TEST_BUTTON_LABEL}">'),
-                                        array('customCode'=>'<input title="{$MOD.LBL_QUEUE_BUTTON_TITLE}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\'" type="{$ADD_BUTTON_STATE}" name="button" id="send_emails_button" value="{$MOD.LBL_QUEUE_BUTTON_LABEL}">'),
-                                        array('customCode'=>'<input title="{$APP.LBL_MAILMERGE}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'MailMerge\'" type="submit" name="button" id="mail_merge_button" value="{$APP.LBL_MAILMERGE}">'),
-                                        array('customCode'=>'<input title="{$MOD.LBL_MARK_AS_SENT}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\'" type="{$TARGET_BUTTON_STATE}" name="button" id="mark_as_sent_button" value="{$MOD.LBL_MARK_AS_SENT}"><input title="mode" class="button" id="mode" name="mode" type="hidden" value="">'),
-                                        array('customCode'=>'<script>{$MSG_SCRIPT}</script>'),
+'templateMeta' => array('form' => array(
+                                        'hidden'=>array('<input type="hidden" name="mode" value="">'),
+                                        'buttons' =>
+                                            array('EDIT', 'DUPLICATE', 'DELETE',
+                                            array('customCode'=>'<input title="{$MOD.LBL_TEST_BUTTON_TITLE}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_TEST_BUTTON_LABEL}">',
+                                                //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                                                'sugar_html' => array(
+                                                    'type' => 'input',
+                                                    'value' => '{$MOD.LBL_TEST_BUTTON_LABEL}',
+                                                    'htmlOptions' => array(
+                                                        'type' => '{$ADD_BUTTON_STATE}',
+                                                        'title' => '{$MOD.LBL_TEST_BUTTON_TITLE}',
+                                                        'class' => 'button',
+                                                        'onclick' => 'this.form = document.getElementById(\'formDetailView\'); this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);',
+                                                        'name' => 'button',
+                                                        'id' => 'send_test_button',
+                                                    ),
+                                                ),
+                                            ),
+                                            array('customCode'=>'<input title="{$MOD.LBL_QUEUE_BUTTON_TITLE}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_emails_button" value="{$MOD.LBL_QUEUE_BUTTON_LABEL}">',
+                                                //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                                                'sugar_html' => array(
+                                                    'type' => 'input',
+                                                    'value' => '{$MOD.LBL_QUEUE_BUTTON_LABEL}',
+                                                    'htmlOptions' => array(
+                                                        'type' => '{$ADD_BUTTON_STATE}',
+                                                        'title' => '{$MOD.LBL_QUEUE_BUTTON_TITLE}',
+                                                        'class' => 'button',
+                                                        'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';SUGAR.ajaxUI.submitForm(this.form);',
+                                                        'name' => 'button',
+                                                        'id' => 'send_emails_button',
+                                                    ),
+                                                ),
+                                            ),
+                                            array('customCode'=>'<input title="{$APP.LBL_MAILMERGE}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'MailMerge\';SUGAR.ajaxUI.submitForm(this.form);" type="submit" name="button" id="mail_merge_button" value="{$APP.LBL_MAILMERGE}">',
+                                                //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                                                'sugar_html' => array(
+                                                    'type' => 'submit',
+                                                    'value' => '{$APP.LBL_MAILMERGE}',
+                                                    'htmlOptions' => array(
+                                                        'title' => '{$APP.LBL_MAILMERGE}',
+                                                        'class' => 'button',
+                                                        'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'MailMerge\';SUGAR.ajaxUI.submitForm(this.form);',
+                                                        'name' => 'button',
+                                                        'id' => 'mail_merge_button',
+                                                    ),
+                                                ),
+                                            ),
+                                            array('customCode'=>'<input title="{$MOD.LBL_MARK_AS_SENT}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\';SUGAR.ajaxUI.submitForm(this.form);" type="{$TARGET_BUTTON_STATE}" name="button" id="mark_as_sent_button" value="{$MOD.LBL_MARK_AS_SENT}">',
+                                                //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                                                'sugar_html' => array(
+                                                    'type' => 'input',
+                                                    'value' => '{$MOD.LBL_MARK_AS_SENT}',
+                                                    'htmlOptions' => array(
+                                                        'type' => '{$TARGET_BUTTON_STATE}',
+                                                        'title' => '{$MOD.LBL_MARK_AS_SENT}',
+                                                        'class' => 'button',
+                                                        'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\';SUGAR.ajaxUI.submitForm(this.form);',
+                                                        'name' => 'button',
+                                                        'id' => 'mark_as_sent_button',
+                                                    ),
+                                                ),
+
+                                            ),
+                                            array('customCode'=>'<script>{$MSG_SCRIPT}</script>'),
                                         ),
                                         'links' => array('<input type="button" class="button" onclick="javascript:window.location=\'index.php?module=Campaigns&action=WizardHome&record={$fields.id.value}\';" name="button" id="launch_wizard_button" value="{$MOD.LBL_TO_WIZARD_TITLE}" />',
                                         				 '<input type="button" class="button" onclick="javascript:window.location=\'index.php?module=Campaigns&action=TrackDetailView&record={$fields.id.value}\';" name="button" id="view_status_button" value="{$MOD.LBL_TRACK_BUTTON_LABEL}" />',
@@ -73,7 +131,7 @@ $viewdefs['Campaigns']['DetailView'] = array(
 	    ),
 	    array(
           	'name' => 'frequency',
-          	'customCode' => '{if $fields.campaign_type.value == "NewsLetter"}<div style=\'none\' id=\'freq_field\'>{$fields.frequency.value}</div>{/if}&nbsp;',
+          	'customCode' => '{if $fields.campaign_type.value == "NewsLetter"}<div style=\'none\' id=\'freq_field\'>{$APP_LIST.newsletter_frequency_dom[$fields.frequency.value]}</div>{/if}&nbsp;',
           	'customLabel' => '{if $fields.campaign_type.value == "NewsLetter"}<div style=\'none\' id=\'freq_label\'>{$MOD.LBL_CAMPAIGN_FREQUENCY}</div>{/if}&nbsp;'
           ),
 	  ),

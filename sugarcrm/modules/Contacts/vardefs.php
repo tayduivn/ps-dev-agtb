@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 $dictionary['Contact'] = array('table' => 'contacts', 'audited'=>true,
 
-'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
+'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
 array (
 
 	'email_and_name1' =>
@@ -125,7 +125,7 @@ array (
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
-		),	
+		),
 	'opportunity_role' =>
 		array(
 			'name' => 'opportunity_role',
@@ -193,7 +193,7 @@ array (
             'vname' => 'LBL_USER_PASSWORD',
             'type' => 'password',
             'dbType' => 'varchar',
-            'len' => '32',
+            'len' => '255',
             'group'=>'portal',
             'reportable' => false,
         	'studio' => array('listview' => false),
@@ -204,7 +204,7 @@ array (
             'vname' => 'LBL_USER_PASSWORD',
             'type' => 'varchar',
             'source' => 'non-db',
-            'len' => '32',
+            'len' => '255',
             'group'=>'portal',
             'reportable' => false,
             'importable' => 'false',
@@ -337,6 +337,8 @@ array (
         array (
             'name' => 'products',
             'type' => 'link',
+            'link_file' => 'modules/Products/AccountLink.php',
+            'link_class' => 'AccountLink',
             'relationship' => 'contact_products',
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCTS_TITLE',

@@ -1409,7 +1409,7 @@ eoq;
 
 			if(isset($_REQUEST['sugarEmail']) && !empty($_REQUEST['sugarEmail']))
                	$from = (isset($email->to_addrs_names) && !empty($email->to_addrs_names)) ? $email->to_addrs_names : $email->to_addrs;
-			
+
 
 			$name = explode(" ", trim($from));
 
@@ -1535,7 +1535,7 @@ EOQ;
 		require_once("include/EditView/EditView2.php");
         require_once("include/TemplateHandler/TemplateHandler.php");
 		require_once('include/QuickSearchDefaults.php');
-		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 		$qsd->setFormName($formName);
 
         global $app_strings;
@@ -1754,6 +1754,14 @@ EOQ;
 				$email = new Email();
 				$email->retrieve($id);
 
+                // BUG FIX BEGIN
+                // Bug 50973 - marking unread in group inbox removes message
+                if (empty($email->assigned_user_id))
+                {
+                    $email->setFieldNullable('assigned_user_id');
+                }
+                // BUG FIX END
+
 				switch($type) {
 					case "unread":
 						$email->status = 'unread';
@@ -1780,6 +1788,14 @@ EOQ;
 					break;
 
 				}
+
+                // BUG FIX BEGIN
+                // Bug 50973 - reset assigned_user_id field defs
+                if (empty($email->assigned_user_id))
+                {
+                    $email->revertFieldNullable('assigned_user_id');
+                }
+                // BUG FIX END
 			}
 		} else {
 			/* dealing with IMAP email, uids are IMAP uids */
@@ -2219,6 +2235,10 @@ eoq;
 		$ret['parent_type'] = $email->parent_type;
 		$ret['parent_id'] = $email->parent_id;
 
+       if ($email->type == 'draft') {
+            $ret['cc'] = from_html($ccAddresses);
+            $ret['bcc'] = $bccAddresses;
+        }
 		// reply all
 		if(isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'replyAll') {
 		    $ret['cc'] = from_html($ccAddresses);
@@ -2633,6 +2653,22 @@ eoq;
 				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
+				// Archived Emails
+				$archived = new SugarFolder();
+				$archived->name = $mod_strings['LBL_LIST_TITLE_MY_ARCHIVES'];
+				$archived->has_child = 0;
+				$archived->parent_folder = $folder->id;
+				$archived->created_by = $user->id;
+				$archived->modified_by = $user->id;
+				$archived->is_dynamic = 1;
+				$archived->folder_type = "archived";
+				$archived->dynamic_query = '';
+				//BEGIN SUGARCRM flav=pro ONLY
+				$archived->team_id = $privateTeam;
+				$archived->team_set_id = $team_set_id;
+				//END SUGARCRM flav=pro ONLY
+				$archived->save();
+
 			// set flag to show that this was run
 			$user->setPreference("email2Preflight", true, 1, "Emails");
 		}
@@ -2705,7 +2741,7 @@ eoq;
 
 		if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
 			$et = new EmailTemplate();
-			$etResult = $et->db->query($et->create_new_list_query('','',array(),array(),''));
+            $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='' OR type='email')",array(),array(),''));
 			$email_templates_arr = array('' => $app_strings['LBL_NONE']);
 			while($etA = $et->db->fetchByAssoc($etResult)) {
 				$email_templates_arr[$etA['id']] = $etA['name'];
@@ -2742,7 +2778,7 @@ eoq;
 			$myAccountString = " - {$app_strings['LBL_MY_ACCOUNT']}";
 		} // if
 
-		//Check to make sure that the user has set the associated inbound email acount -> outbound acount is active.
+		//Check to make sure that the user has set the associated inbound email account -> outbound account is active.
 		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
         $sf = new SugarFolder();
         $groupSubs = $sf->getSubscriptions($current_user);
@@ -3056,7 +3092,10 @@ eoq;
 	function getCacheValue($ieId, $type, $file, $key) {
 		global $sugar_config;
 
-		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
+		$cleanIeId = cleanDirName($ieId);
+		$cleanType = cleanDirName($type);
+		$cleanFile = cleanFileName($file);
+		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3135,7 +3174,10 @@ eoq;
 	function writeCacheFile($key, $var, $ieId, $type, $file) {
 		global $sugar_config;
 
-		$the_file = sugar_cached("/modules/Emails/{$ieId}/{$type}/{$file}");
+		$cleanIeId = cleanDirName($ieId);
+		$cleanType = cleanDirName($type);
+		$cleanFile = cleanFileName($file);
+		$the_file = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;

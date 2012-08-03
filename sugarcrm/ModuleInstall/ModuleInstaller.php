@@ -258,7 +258,7 @@ class ModuleInstaller{
 	function install_copy(){
 		if(isset($this->installdefs['copy'])){
 			/* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
-			$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore" );
+			$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore" );
 			/* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
 			foreach($this->installdefs['copy'] as $cp){
 				$GLOBALS['log']->debug("Copying ..." . $cp['from'].  " to " .$cp['to'] );
@@ -525,7 +525,155 @@ class ModuleInstaller{
 		}
     }
 
-	public function install_extensions()
+    /**
+     * Method removes module from global search configurations
+     *
+     * return bool
+     */
+    public function uninstall_global_search()
+    {
+        if (empty($this->installdefs['beans']))
+        {
+            return true;
+        }
+
+        if (is_file('custom/modules/unified_search_modules_display.php') == false)
+        {
+            return true;
+        }
+
+        $user = new User();
+        $users = get_user_array();
+        $unified_search_modules_display = array();
+        require('custom/modules/unified_search_modules_display.php');
+
+        foreach($this->installdefs['beans'] as $beanDefs)
+        {
+            if (array_key_exists($beanDefs['module'], $unified_search_modules_display) == false)
+            {
+                continue;
+            }
+            unset($unified_search_modules_display[$beanDefs['module']]);
+            foreach($users as $userId => $userName)
+            {
+                if (empty($userId))
+                {
+                    continue;
+                }
+                $user->retrieve($userId);
+                $prefs = $user->getPreference('globalSearch', 'search');
+                if (array_key_exists($beanDefs['module'], $prefs) == false)
+                {
+                    continue;
+                }
+                unset($prefs[$beanDefs['module']]);
+                $user->setPreference('globalSearch', $prefs, 0, 'search');
+                $user->savePreferencesToDB();
+            }
+        }
+
+        if (write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php') == false)
+        {
+            global $app_strings;
+            $msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/unified_search_modules_display.php'));
+            $GLOBALS['log']->error($msg);
+            throw new Exception($msg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Method enables module in global search configurations by disabled_module_visible key
+     *
+     * return bool
+     */
+    public function enable_global_search()
+    {
+        if (empty($this->installdefs['beans']))
+        {
+            return true;
+        }
+
+        if (is_file('custom/modules/unified_search_modules_display.php') == false)
+        {
+            return true;
+        }
+
+        $unified_search_modules_display = array();
+        require('custom/modules/unified_search_modules_display.php');
+
+        foreach($this->installdefs['beans'] as $beanDefs)
+        {
+            if (array_key_exists($beanDefs['module'], $unified_search_modules_display) == false)
+            {
+                continue;
+            }
+            if (isset($unified_search_modules_display[$beanDefs['module']]['disabled_module_visible']) == false)
+            {
+                continue;
+            }
+            $unified_search_modules_display[$beanDefs['module']]['visible'] = $unified_search_modules_display[$beanDefs['module']]['disabled_module_visible'];
+            unset($unified_search_modules_display[$beanDefs['module']]['disabled_module_visible']);
+        }
+
+        if (write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php') == false)
+        {
+            global $app_strings;
+            $msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/unified_search_modules_display.php'));
+            $GLOBALS['log']->error($msg);
+            throw new Exception($msg);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Method disables module in global search configurations by disabled_module_visible key
+     *
+     * return bool
+     */
+    public function disable_global_search()
+    {
+        if (empty($this->installdefs['beans']))
+        {
+            return true;
+        }
+
+        if (is_file('custom/modules/unified_search_modules_display.php') == false)
+        {
+            return true;
+        }
+
+        $unified_search_modules_display = array();
+        require('custom/modules/unified_search_modules_display.php');
+
+        foreach($this->installdefs['beans'] as $beanDefs)
+        {
+            if (array_key_exists($beanDefs['module'], $unified_search_modules_display) == false)
+            {
+                continue;
+            }
+            if (isset($unified_search_modules_display[$beanDefs['module']]['visible']) == false)
+            {
+                continue;
+            }
+            $unified_search_modules_display[$beanDefs['module']]['disabled_module_visible'] = $unified_search_modules_display[$beanDefs['module']]['visible'];
+            $unified_search_modules_display[$beanDefs['module']]['visible'] = false;
+        }
+
+        if (write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php') == false)
+        {
+            global $app_strings;
+            $msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/unified_search_modules_display.php'));
+            $GLOBALS['log']->error($msg);
+            throw new Exception($msg);
+            return false;
+        }
+        return true;
+    }
+
+    public function install_extensions()
 	{
 	    foreach($this->extensions as $extname => $ext) {
 	        $install = "install_$extname";
@@ -971,7 +1119,18 @@ class ModuleInstaller{
                 if(!isset($field['duplicate_merge']))$field['duplicate_merge'] = 0;
                 if(!isset($field['help']))$field['help'] = '';
 
-				if(file_exists($beanFiles[$class])){
+                //Merge contents of the sugar field extension if we copied one over
+                if (file_exists("custom/Extension/modules/{$field['module']}/Ext/Vardefs/sugarfield_{$field['name']}.php"))
+                {
+                    $dictionary = array();
+                    include ("custom/Extension/modules/{$field['module']}/Ext/Vardefs/sugarfield_{$field['name']}.php");
+                    $obj = BeanFactory::getObjectName($field['module']);
+                    if (!empty($dictionary[$obj]['fields'][$field['name']])) {
+                        $field = array_merge($dictionary[$obj]['fields'][$field['name']], $field);
+                    }
+                }
+
+                if(file_exists($beanFiles[$class])){
 					require_once($beanFiles[$class]);
 					$mod = new $class();
 					$installed = true;
@@ -1308,6 +1467,7 @@ class ModuleInstaller{
 			'uninstall_connectors',
 			'uninstall_layoutfields',
 		    'uninstall_extensions',
+            'uninstall_global_search',
 			'disable_manifest_logichooks',
 			'post_uninstall',
 		);
@@ -1868,6 +2028,7 @@ private function dir_file_count($path){
 								'enable_dashlets',
 								'enable_relationships',
 		                        'enable_extensions',
+                                'enable_global_search',
 		                        'enable_manifest_logichooks',
 								'reset_opcodes',
 		);
@@ -1937,6 +2098,7 @@ private function dir_file_count($path){
 							'disable_dashlets',
 							'disable_relationships',
 		                    'disable_extensions',
+                            'disable_global_search',
 							'disable_manifest_logichooks',
 							'reset_opcodes',
 							);

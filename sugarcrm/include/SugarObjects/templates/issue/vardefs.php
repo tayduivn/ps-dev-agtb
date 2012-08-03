@@ -36,9 +36,11 @@ $vardefs = array (
 			'required' => true,
 			'auto_increment' => true,
 			'unified_search' => true,
+			'full_text_search' => array('boost' => 3),
 			'comment' => 'Visual unique identifier',
 			'duplicate_merge' => 'disabled',
 			'disable_num_format' => true,
+			'studio' => array('quickcreate' => false),
 		),
 
 		'name' => array (
@@ -50,6 +52,7 @@ $vardefs = array (
 			'len' => 255,
 			'audited' => true,
 			'unified_search' => true,
+			'full_text_search' => array('boost' => 3),
 			'comment' => 'The short description of the bug',
 			'merge_filter' => 'selected',
 			'required'=>true,

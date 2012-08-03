@@ -35,10 +35,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
+
+    public function getWidgetId()
+    {
+        return parent::getWidgetId();
+    }
+
 	function display($defines)
 	{
-	
-		
 		global $app_strings;
 		global $currentModule;
 
@@ -105,7 +109,7 @@ class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopB
 		}
 		
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input title='$title' class='button' type='submit' name='{$this->getWidgetId()}_button' id='{$this->getWidgetId()}_create_button' value='  $value  '/>\n";
+		$button .= "<input title='$title' class='button' type='submit' name='{$this->getWidgetId()}_button' id='{$this->getWidgetId()}' value='  $value  '/>\n";
 		$button .= "</form>";
 		return $button;
 	}

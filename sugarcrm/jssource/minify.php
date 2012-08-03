@@ -81,8 +81,21 @@ if(isset($_REQUEST['root_directory'])){
      return;
     }
 
+    if ($argv[1] != '-?') {
+        chdir($from);
+        require_once('include/utils.php');
+        require_once('include/utils/file_utils.php');
+        require_once('include/utils/sugar_file_utils.php');
+    }
     if(!function_exists('sugar_cached')) {
-        function sugar_cached($dir) { return "cache/$dir"; }
+        if ($argv[1] != '-?') {
+            require_once($from.'/./include/utils.php');
+            require_once($from.'/./include/utils/file_utils.php');
+            require_once($from.'/./include/utils/sugar_file_utils.php');
+        }
+        if(!function_exists('sugar_cached')) {
+            function sugar_cached($dir) { return "cache/$dir"; }
+        }
     }
 
     if($argv[1] == '-?'){

@@ -66,6 +66,9 @@ $subpanel_layout = array(
 			 'widget_class' => 'SubPanelRemoveButton',
 			 'width' => '2%',
 		),
+		'recurring_source'=>array(
+			'usage'=>'query_only',	
+		),
 	),
 );
 ?>

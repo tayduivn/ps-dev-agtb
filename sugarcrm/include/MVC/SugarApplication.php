@@ -37,7 +37,7 @@ class SugarApplication
 		insert_charset_header();
 		$this->setupPrint();
 		$this->controller = ControllerFactory::getController($module);
-        // if the entry point is defined to not need auth, then don't authenicate
+        // If the entry point is defined to not need auth, then don't authenticate.
 		if( empty($_REQUEST['entryPoint'])
                 || $this->controller->checkEntryPointRequiresAuth($_REQUEST['entryPoint']) ){
             $this->loadUser();
@@ -72,7 +72,7 @@ class SugarApplication
 		// Double check the server's unique key is in the session.  Make sure this is not an attempt to hijack a session
 		$user_unique_key = (isset($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
 		$server_unique_key = (isset($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
-		$allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions : $allowed_actions = array('Authenticate', 'Login',);
+		$allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
 
 		if(($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions)) &&
 		   (!isset($_SESSION['login_error'])))
@@ -431,7 +431,7 @@ class SugarApplication
         }
 
         // cn: bug 6048 - merge en_us with requested language
-        $app_strings = sugarArrayMerge($en_app_strings, $app_strings);
+        $app_strings = sugarLangArrayMerge($en_app_strings, $app_strings);
 
         // If we are in debug mode for translating, turn on the prefix now!
         if($sugar_config['translation_string_prefix']) {
@@ -514,7 +514,7 @@ class SugarApplication
 
         // cn: bug 6048 - merge en_us with requested language
         if (!empty($en_app_list_strings)) {
-            $app_list_strings = sugarArrayMerge($en_app_list_strings, $app_list_strings);
+            $app_list_strings = sugarLangArrayMerge($en_app_list_strings, $app_list_strings);
         }
 
         if (file_exists("custom/application/Ext/Language/en_us.lang.ext.php")){
@@ -743,7 +743,7 @@ class SugarApplication
      * The list of the actions excepted from referer checks by default
      * @var array
      */
-	protected $whiteListActions = array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'Authenticate', 'Login', 'SupportPortal');
+	protected $whiteListActions = array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login', 'SupportPortal');
 
 	/**
 	 *
@@ -836,7 +836,7 @@ class SugarApplication
         //BEGIN SUGARCRM flav=pro ONLY
         $this->trackLogin();
         //END SUGARCRM flav=pro ONLY
-        
+
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 	}
 
@@ -988,7 +988,7 @@ class SugarApplication
 	    $_COOKIE[$name] = $value;
 	}
 
-    protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token', 'mobile');
+	protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token', 'mobile');
 
 	/**
 	 * Create string to attach to login URL with vars to preserve post-login
@@ -1006,9 +1006,11 @@ class SugarApplication
                 $ret["login_".$var] = $_REQUEST[$var];
             }
         }
-        if(isset($_REQUEST['mobile']))
-        {
-         	    $ret['mobile'] = $_REQUEST['mobile'];
+        if(isset($_REQUEST['mobile'])) {
+            $ret['mobile'] = $_REQUEST['mobile'];
+        }
+        if(isset($_REQUEST['no_saml'])) {
+            $ret['no_saml'] = $_REQUEST['no_saml'];
         }
         if(empty($ret)) return '';
         return "&".http_build_query($ret);
@@ -1039,6 +1041,9 @@ class SugarApplication
         $vars = array();
         foreach($this->redirectVars as $var) {
             if(!empty($_REQUEST['login_'.$var])) $vars[$var] = $_REQUEST['login_'.$var];
+        }
+        if(isset($_REQUEST['mobile'])) {
+            $vars['mobile'] = $_REQUEST['mobile'];
         }
 
         if(isset($_REQUEST['mobile']))

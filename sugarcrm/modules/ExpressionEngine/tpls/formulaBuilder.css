@@ -1,32 +1,172 @@
-  /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*********************************************************************************
+*The contents of this file are subject to the SugarCRM Professional End User License Agreement
+*("License") which can be viewed at http://www.sugarcrm.com/EULA.
+*By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+*not use this file except in compliance with the License. Under the terms of the license, You
+*shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+*otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+*service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+*of a third party.  Use of the Software may be subject to applicable fees and any use of the
+*Software without first paying applicable fees is strictly prohibited.  You do not have the
+*right to remove SugarCRM copyrights from the source code or user interface.
+* All copies of the Covered Code must include on each user interface screen:
+* (i) the "Powered by SugarCRM" logo and
+* (ii) the SugarCRM copyright notice
+* in the same form as they appear in the distribution.  See full license for requirements.
+*Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+*to the License for the specific language governing these rights and limitations under the License.
+*Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+********************************************************************************/
 @CHARSET "UTF-8";
-.x-grid3-header {display:none;}
-.ticon {
-	background-image: url('../../../themes/default/images/icon_expression_types.gif');
-	width: 12px;
-	height: 12px;
-	float: right;
+.x-grid3-header {
+    display: none;
 }
-.icon_boolean {background-position: 0px 12px;}
-.icon_number {background-position: 0px 24px;}
+
+.ticon {
+    background-image: url('../../../themes/default/images/icon_expression_types.gif');
+    width: 12px;
+    height: 12px;
+    float: right;
+}
+
+.icon_boolean {
+    background-position: 0px 12px;
+}
+
+.icon_number {
+    background-position: 0px 24px;
+}
+
 input.empty {
-	color: grey;
+    color: grey;
+}
+
+.markItUpHeader {
+    border: 1px solid grey;
+    height: 24px;
+    width: 495px;
+    padding: 2px;
+    background: #EEE;
+}
+
+#formulaBuilder .markItUpHeader ul a {
+    width: auto;
+    height: auto;
+    text-indent: 14px;
+    padding-top: 2px;
+    background-position-y: 2px
+}
+
+#formulaBuilder .markItUpHeader ul li {
+    margin-right: 5px;
+    height: 20px
+}
+
+.markItUp .rel_field a {
+    background-image: url('../../../themes/default/images/SugarLogic/icon_rel_field_16.png');
+}
+
+.markItUp .rollup a {
+    background-image: url('../../../themes/default/images/SugarLogic/icon_rollup_16.png');
+}
+
+#selrf_table td.label {
+    text-align:right;
+}
+
+/*
+ * jQuery UI Autocomplete 1.8.16
+ *
+ * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Autocomplete#theming
+ */
+.ui-autocomplete { position: absolute; cursor: default; }
+
+/* workarounds */
+* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+
+/*
+ * jQuery UI Menu 1.8.16
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Menu#theming
+ */
+#fb_ac_wrapper .ui-menu, #fb_ac_wrapper .ui-widget-content {
+	list-style:none;
+	padding: 2px;
+	margin: 0;
+	display:block;
+	float: left;
+    background: rgba(235,235,235, 0.9);
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+#fb_ac_wrapper .ui-menu .ui-menu {
+	margin-top: -3px;
+}
+#fb_ac_wrapper .ui-menu .ui-menu-item,#fb_ac_wrapper ul li.ui-menu-item {
+    list-style-type: none;
+    list-style:none;
+    margin:0;
+	padding: 0;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
+}
+#fb_ac_wrapper .ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	zoom:1;
+}
+#fb_ac_wrapper .ui-state-focus, #fb_ac_wrapper .ui-widget-content .ui-state-focus,
+#fb_ac_wrapper .ui-widget-header .ui-state-focus {
+    background: white;
+}
+#fb_ac_wrapper .ui-menu .ui-menu-item a.ui-state-hover,
+#fb_ac_wrapper .ui-menu .ui-menu-item a.ui-state-active {
+	font-weight: bold;
+	margin: -1px;
+    background-color: rgba(225,225,255, 0.8);
+}
+
+
+.fb_ac_spacer {
+    font: 12px 'Courier New', Courier, monospace;
+    padding-right: 5px;
+    clear: both;
+    line-height: 18px;
+    visibility: hidden;
+    float:left
+}
+
+.fb_ac_spacer_line {
+    width: 800px;
+}
+
+ul.ui-autocomplete {
+    /* top and left must be important as autocomplete normally tries to position itself via javascript */
+    left: 6px !important;
+    top:  2em !important;
+    position: relative;
+    min-width: 150px;
+}
+
+.fb_ac_help{
+    position: absolute;
+    visibility: hidden;
+    z-index: 51;
+    background-color: rgba(255, 255, 200, 0.8);
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 0 0 0 2px;
 }

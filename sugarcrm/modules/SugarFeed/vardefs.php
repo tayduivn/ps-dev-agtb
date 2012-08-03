@@ -38,6 +38,7 @@ $dictionary['SugarFeed'] = array(
     'len' => 255,
     'comment' => 'Name of the feed',
     'unified_search' => true,
+    'full_text_search' => true,
     'audited' => true,
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
@@ -51,6 +52,7 @@ $dictionary['SugarFeed'] = array(
     'len' => 255,
     'comment' => 'Name of the feed',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 1),
     'audited' => true,
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
@@ -64,6 +66,7 @@ $dictionary['SugarFeed'] = array(
     'len' => 100,
     'comment' => 'related module',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 1),
     'audited' => false,
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
@@ -88,6 +91,7 @@ $dictionary['SugarFeed'] = array(
     'len' => 255,
     'comment' => 'Name of the feed',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 1),
     'audited' => false,
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
@@ -100,6 +104,7 @@ $dictionary['SugarFeed'] = array(
     'len' => 30,
     'comment' => 'Name of the feed',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 1),
     'audited' => false,
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.

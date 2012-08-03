@@ -98,6 +98,8 @@ $xtpl=new XTemplate ('modules/WorkFlow/WorkFlowEditView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 
+$xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($mod_strings['LBL_EMAILTEMPLATES_TYPE_LIST_WORKFLOW'],'workflow'));
+
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);

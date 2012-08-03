@@ -35,19 +35,36 @@ array (
         array (
           0 =>
           array (
-			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id ="SAVE" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
+			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id ="SAVE_HEADER" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
 		  ),
           1 => 'CANCEL',
           2 =>
           array (
-             'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="document.EditView.send_invites.value=\'1\';SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\';document.EditView.return_action.value=\'EditView\';document.EditView.return_module.value=\'{$smarty.request.return_module}\'; formSubmitCheck();"type="button" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
+             'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" id="save_and_send_invites_header" class="button" onclick="document.EditView.send_invites.value=\'1\';SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\';document.EditView.return_action.value=\'EditView\';document.EditView.return_module.value=\'{$smarty.request.return_module}\'; formSubmitCheck();"type="button" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
 		  ),
           3 => 
           array (
-            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}"  class="button" onclick="SUGAR.meetings.fill_invitees(); document.EditView.status.value=\'Held\'; document.EditView.action.value=\'Save\'; document.EditView.return_module.value=\'Meetings\'; document.EditView.isDuplicate.value=true; document.EditView.isSaveAndNew.value=true; document.EditView.return_action.value=\'EditView\'; document.EditView.return_id.value=\'{$fields.id.value}\'; formSubmitCheck();"type="button" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
+            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" id="close_and_create_new_header" class="button" onclick="SUGAR.meetings.fill_invitees(); document.EditView.status.value=\'Held\'; document.EditView.action.value=\'Save\'; document.EditView.return_module.value=\'Meetings\'; document.EditView.isDuplicate.value=true; document.EditView.isSaveAndNew.value=true; document.EditView.return_action.value=\'EditView\'; document.EditView.return_id.value=\'{$fields.id.value}\'; formSubmitCheck();"type="button" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
            ),
         ),
         'headerTpl' => 'modules/Meetings/tpls/header.tpl',
+
+          'buttons_footer' =>
+        array (
+          0 =>
+          array (
+			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id ="SAVE_FOOTER" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
+		  ),
+          1 => 'CANCEL',
+          2 =>
+          array (
+             'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" id="save_and_send_invites_footer" class="button" onclick="document.EditView.send_invites.value=\'1\';SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\';document.EditView.return_action.value=\'EditView\';document.EditView.return_module.value=\'{$smarty.request.return_module}\'; formSubmitCheck();"type="button" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
+		  ),
+          3 =>
+          array (
+            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" id="close_and_create_new_footer" class="button" onclick="SUGAR.meetings.fill_invitees(); document.EditView.status.value=\'Held\'; document.EditView.action.value=\'Save\'; document.EditView.return_module.value=\'Meetings\'; document.EditView.isDuplicate.value=true; document.EditView.isSaveAndNew.value=true; document.EditView.return_action.value=\'EditView\'; document.EditView.return_id.value=\'{$fields.id.value}\'; formSubmitCheck();"type="button" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
+           ),
+        ),
         'footerTpl' => 'modules/Meetings/tpls/footer.tpl',
       ),
       'widths' =>
@@ -102,7 +119,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'type' => 'datetimecombo',
             'displayParams' =>
             array (
-
+              'required' => true,
               'updateCallback' => 'SugarWidgetScheduler.update_time();',
             ),
           ),
@@ -112,24 +129,51 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'label' => 'LBL_LIST_RELATED_TO',
           ),
         ),
-       
-        array (
+        
+        
+      array (
           array (
-            'name' => 'duration_hours',
-            'label' => 'LBL_DURATION',
-            'customCode' => '{literal}<script type="text/javascript">function isValidDuration(formName) { var form = document.getElementById(formName); if ( form.duration_hours.value + form.duration_minutes.value <= 0 ) { return false; } return true; }</script>{/literal}<div class="duration"><input id="duration_hours" name="duration_hours" size="2" maxlength="2" type="text" value="{$fields.duration_hours.value}" onkeyup="SugarWidgetScheduler.update_time();"/>{$fields.duration_minutes.value}&nbsp;<span class="dateFormat">{$MOD.LBL_HOURS_MINS}</span></div>',
+            'name' => 'date_end',
+            'type' => 'datetimecombo',
+            'displayParams' =>
+            array (
+              'required' => true,
+              'updateCallback' => 'SugarWidgetScheduler.update_time();',
+            ),
           ),
+          
           array (
             'name' => 'location',
             'comment' => 'Meeting location',
             'label' => 'LBL_LOCATION',
           ),
-
+        ),      
+        
+        array(        
+          array (
+            'name' => 'duration',
+            'customCode' => '
+                @@FIELD@@
+                <input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
+                <input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
+                {sugar_getscript file="modules/Meetings/duration_dependency.js"}
+                <script type="text/javascript">
+                    var date_time_format = "{$CALENDAR_FORMAT}";
+                    {literal}
+                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
+                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
+                        initEditView(YAHOO.util.Selector.query(\'select#duration\')[0].form);
+                    });
+                    {/literal}
+                </script>            
+            ',
+            'customCodeReadOnly' => '{$fields.duration_hours.value}{$MOD.LBL_HOURS_ABBREV} {$fields.duration_minutes.value}{$MOD.LBL_MINSS_ABBREV} ',
+          ),
         ),
         array (
           array (
             'name' => 'reminder_time',
-            'customCode' => '{if $fields.reminder_checked.value == "1"}{assign var="REMINDER_TIME_DISPLAY" value="inline"}{assign var="REMINDER_CHECKED" value="checked"}{else}{assign var="REMINDER_TIME_DISPLAY" value="none"}{assign var="REMINDER_CHECKED" value=""}{/if}<input name="reminder_checked" type="hidden" value="0"><input name="reminder_checked" onclick=\'toggleDisplay("should_remind_list");\' type="checkbox" class="checkbox" value="1" {$REMINDER_CHECKED}><div id="should_remind_list" style="display:{$REMINDER_TIME_DISPLAY}">{$fields.reminder_time.value}</div>',
+            'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
             'label' => 'LBL_REMINDER',
           ),
         ),

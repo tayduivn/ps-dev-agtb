@@ -43,8 +43,25 @@
 			<input type='hidden' name='return_module' value='{$RETURN.module}'>
 			<input type="hidden" name="action">
 
-			
-		<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='EditView'" type="submit" name="button" value="  {$APP.LBL_EDIT_BUTTON} "> <input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" onclick="this.form.isDuplicate.value='1'; this.form.action.value='EditView'" type="submit" name="button" value=" {$APP.LBL_DUPLICATE_BUTTON} "> <input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='ACLRoles'; this.form.return_action.value='index'; this.form.action.value='Delete'; return confirm('{$APP.NTC_DELETE_CONFIRMATION}')" type="submit" name="button" value=" {$APP.LBL_DELETE_BUTTON} ">
+{php}
+    $APP = $this->get_template_vars('APP');
+    $this->append('buttons',
+    <<<EOD
+    <input title="{$APP['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$APP['LBL_EDIT_BUTTON_KEY']}" class="button" onclick="var _form = $('#form')[0]; _form.action.value='EditView'; _form.submit();" type="submit" name="button" value="{$APP['LBL_EDIT_BUTTON']}" />
+EOD
+    );
+    $this->append('buttons',
+    <<<EOD
+    <input title="{$APP['LBL_DUPLICATE_BUTTON_TITLE']}" accessKey="{$APP['LBL_DUPLICATE_BUTTON_KEY']}" class="button" onclick="this.form.isDuplicate.value='1'; this.form.action.value='EditView'" type="submit" name="button" value=" {$APP['LBL_DUPLICATE_BUTTON']} " />
+EOD
+    );
+    $this->append('buttons',
+    <<<EOD
+    <input title="{$APP['LBL_DELETE_BUTTON_TITLE']}" accessKey="{$APP['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="this.form.return_module.value='ACLRoles'; this.form.return_action.value='index'; this.form.action.value='Delete'; return confirm('{$APP['NTC_DELETE_CONFIRMATION']}')" type="submit" name="button" value=" {$APP['LBL_DELETE_BUTTON']} " />
+EOD
+    );
+{/php}
+            {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons="$buttons"}
 		</form>
 		</p>
 		<p>
@@ -57,5 +74,5 @@
 </tr></table>
 </p>
 		<p>
-		
+
 {include file="modules/ACLRoles/EditViewBody.tpl" }

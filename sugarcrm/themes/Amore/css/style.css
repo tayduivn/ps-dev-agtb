@@ -35,7 +35,6 @@
 
 body
 {
-	background-image:url('../../../../index.php?entryPoint=getImage&imageName=bg.png'); 
 	background-color: #f4c3da;
 }
 
@@ -61,124 +60,63 @@ background-image: -webkit-gradient(
     color-stop(0.78, rgba(0,0,0,.3)),
     color-stop(1, rgba(0,0,0,0))
     );
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0789c', endColorstr='#ec4779');
 height: 43px\9;;
+}
+#ie8GradientFix{
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: transparent;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0789c', endColorstr='#ec4779');
 }
 
 .dcmenuDivider  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dcMenuDivider.png");
+	border-left: 1px solid #ef3067;
+	border-right: 1px solid #ffd3e0;
+	background-image: none;
+	width: 0px;
 }
 
 
 #glblSearchBtn {
-margin-top:8px;
 }
 
-#moduleList  {
-background: -moz-linear-gradient(center top,
-		transparent 0%,
-		transparent 12%,
-		rgba(255,255,255,.9) 13%,  
-		rgba(255,255,255,.8) 45%,
-		rgba(255,255,255,.6) 45%, 
-		rgba(255,255,255,.6) 76%,
-		rgba(0,0,0,.1) 76%, 
-		rgba(0,0,0,0) 100%
-	); 
-	background-color: transparent;
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, rgba(255,255,255,0)),
-    color-stop(0.12, rgba(255,255,255,0)),
-    color-stop(0.13, rgba(255,255,255,.9)),
-    color-stop(0.45, rgba(255,255,255,.8)),
-    color-stop(0.45, rgba(255,255,255,.6)),
-    color-stop(0.74, rgba(255,255,255,.6)),
-    color-stop(0.74, rgba(0,0,0,.1)),
-    color-stop(1, rgba(0,0,0,0))
-    );
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png")/9;
-height:50px;
+#moduleList .sf-menu > li.current > a {
+	background:		#ef3067;
 }
 
-#moduleList.yuimenubar li.current {
-margin-right: -1px;	
-}
-
-#moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
-	background-image: -moz-linear-gradient(center top, 
-	#f9d3dd 0%,
-	#f5b4c7 2%,
-	#f26b91 52%,
-	#ef4475 52%,
-	#e586a1 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #f9d3dd),
-    color-stop(.05, #f5b4c7),
-    color-stop(.52, #f26b91),
-    color-stop(.52, #ef4475),
-    color-stop(1, #e586a1)
-   );	
-	-moz-border-radius: 10px 10px 0px 0px;
-	border-radius: 10px 10px 0px 0px;
-	-webkit-border-top-left-radius: 10px;
-	-webkit-border-top-right-radius: 10px;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9d3dd', endColorstr='#e586a1');
-	
-padding-bottom: 4px;
-padding-top: 6px\9;
-text-shadow:-1px -1px #F04476;
+ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
+ul.moduleTabMore li.sfHover a.sf-with-ul,
+ul.sf-sub-modulelist li.sfHover > a.sf-with-ul,
+ul.filter-menu li a.selected,
+ul.megamenu ul a:hover,
+ul.moduleTabMore li a:hover,
+ul.sf-sub-modulelist li a:hover,
+#moduleList .sf-menu li:hover,
+#moduleList .sf-menu li.sfHover,
+#moduleList .sf-menu li a:focus,
+#moduleList .sf-menu li a:hover,
+#moduleList .sf-menu li a:active {
+	background:		#ef3067;
+	outline:		0;
 }
 
 
-#moduleList .yuimenuitemlabel, a.yuimenuitemlabel, a.yuimenuitemlabel:link, a.yuimenuitemlabel:visited {
-padding:1px 15px 2px;
-border-color:#F0B9D3;
+#moduleList .more .selected {
+	background:		#ef3067;
+}
+#globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
+#globalLinksModule ul.clickMenu li:hover span,
+ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
+ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
+ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
+	background-color:		#ef3067;
+    color:#ffffff !important;
 }
 
-.moduleTabExtraMenu .yuimenuitemlabel.more {
-border-right:1px solid #F0B9D3;
-}
-
-#moduleList .moduleTabGroup .yuimenuitemlabel.group em
-{
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
-}
-
-#moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
-	background-image: -moz-linear-gradient(center top, 
-	#ffffff 0%,
-	rgba(255,255,255,.6) 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #ffffff),
-    color-stop(1, rgba(255,255,255,.6))
-   );	
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fefefe');
-border-color: #fbe9f1;
-}
-
-#welcome, #globalLinks  {
- height: 20px;
- background-image: none;
- background-color: rgba(252,184,194,.6);
- background-color: #fce2e6/9;
- border-color: #f2bdd5;
-}
-
-#globalLinksCtrl a.yui-toggle {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=globalLinksToggle.png");
-height:29px;
-}
 
 .dashletPanel {
 -moz-box-shadow:0 2px 10px #666666;
@@ -245,36 +183,6 @@ margin-top:5px;
 height: 44px;
 }
 
-#moduleList .dashletPanelMenu .ml {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ml-menu.png");
-}
-
-#moduleList .dashletPanelMenu .mr {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-mr-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .bl {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bl-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .ft-center {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .br {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
-}
-
-#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
-background-color: rgba(255,255,255,.5);
-background-color: #ffffff\9;  /*ie hack */
-border-color: #ffffff;
-box-shadow: 0 2px 5px #999999;
-}
-
-#moduleList li.more div.bd { 
-
-}
 
 .dashletPanel .dccontent {
 border:1px solid #ef3067;
@@ -420,13 +328,6 @@ a.utilsLink:link, a.utilsLink:visited, #bottomLinks a {
 color:#ef3067;
 }
 
-#globalLinks a {
-color:#ef3067;
-}
-
-#globalLinksModule a  {
-color:#ef3067;
-}
 
 .search_form .view, .search_form .view.advanced {
 	background-color: #efb9d2;
@@ -542,7 +443,13 @@ background-image: -webkit-gradient(
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9c8d7', endColorstr='#f57398');
 }
 
+#globalLinksModule:hover, #quickCreate ul.clickMenu > li:hover {
+	background-color: #ef3067;	
+}
 
+#dcmenuSugarCube:hover {
+	background-color: #ef3067;	
+}
 
 .moduleTitle h2 {
 color:#BB0058;
@@ -559,14 +466,6 @@ color:#ef3067;
 border-color: #FF95C7;
 }
 
-#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
-background-color: #ef3067;
-}
-
-
-#moduleList .moduleTabExtraMenu,#moduleList .moduleTabGroupMenu {
-height:32px;
-}
 
 .monthHeader,.monthFooter td  {
 background-color: transparent;

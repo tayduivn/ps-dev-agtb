@@ -18,8 +18,9 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * $Id: index.php 56510 2010-05-17 18:54:49Z jenny $
  ********************************************************************************/
+
+include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();

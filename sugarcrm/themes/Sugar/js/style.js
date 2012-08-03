@@ -29,304 +29,572 @@
  * $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
  */
 
-/**
- * Handles the global links slide
- */
-YAHOO.util.Event.onContentReady("globalLinksModule", function() 
-{
-    if ( !Get_Cookie('globalLinksOpen') ) {
-        Set_Cookie('globalLinksOpen','true',30,'/','','');
-    }
-    if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-        document.getElementById('globalLinks').style.width = "auto";
-    }
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.one('#globalLinksModule');
-    
-        if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 0
-                     
-            },
-            to: {
-                width: 
-                function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    }
-            },
-            easing: Y.Easing.easeOut,
-            duration: 0.5
-        });
-            module.toggleClass('yui-closed');
-            
-        } else {
-        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 
-                    function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    } 
-            },
-            to: {
-                width: 0
-            },
-            easing: Y.Easing.backIn,
-            duration: 0.5
-        });
+
+ //window resize event handers
+$(window).resize(function() {
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
+});
+
+
+
+$(document).ready(function(){
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
+	//setup for action menus
+	SUGAR.themes.actionMenu();
+	//setup event handler for search results
+	SUGAR.themes.searchResults();
+    //setup footer for toggling
+    SUGAR.themes.toggleFooter();
+    //initialize global tooltips
+	SUGAR.themes.globalToolTips();
+
+
+    $('body').click(function(e) {
+    	if($(e.target).closest('#dcmenuSearchDiv').length == 0 && !$("#SpotResults").parent().hasClass("dccontent") && $("#dcgscontent").css("visibility") != "visible"){
+            SUGAR.themes.clearSearch();
         }
-        
-        var onClick = function(e) {
-            module.toggleClass('yui-closed');
-            content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
-            content.fx.run();
-            if ( document.getElementById('globalLinksModule').className == 'yui-closed' )
-                Set_Cookie('globalLinksOpen','true',30,'/','','');
-            else
-                Set_Cookie('globalLinksOpen','false',30,'/','','');
-        };
-    
-        // use dynamic control for dynamic behavior
-        var control = Y.Node.create(
-        '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
-        );
-        module.one('#globalLinksCtrl').appendChild(control);
-        control.on('click', onClick);
     });
 });
 
 SUGAR.themes = SUGAR.namespace("themes");
-
+if(Get_Cookie("sugar_theme_menu_load") == null) {
+	Set_Cookie('sugar_theme_menu_load','false',30,'/','','');
+}
 SUGAR.append(SUGAR.themes, {
     setRightMenuTab: function(el, params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var extraMenu = Dom.get("moduleTabExtraMenuAll");
-        //Check if the menu we want to show is in the more menu
-        if (Dom.isAncestor("MoreAll", el)) {
-            var currRight = Dom.getPreviousSibling(extraMenu);
-            if (currRight.id == "moduleTab_")
-                currRight = Dom.getPreviousSibling(extraMenu);
-            //Insert the el to the menu
-            Dom.insertAfter(el, currRight);
-            //Move the curr right back into the more menu
-            Dom.insertBefore(currRight, Sel.query("ul>li", "MoreAll", true));
-            Dom.removeClass(currRight, "yuimenubaritem");
-            Dom.removeClass(currRight, "yuimenubaritem-hassubmenu");
-            Dom.removeClass(currRight, "current");
-        }
+
+        var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+        var moreItemsContainer = "#moduleTabMore"+sugar_theme_gm_current;
+
+		//Check if the menu we want to show is in the more menu
+		if($(el).parents().is(extraMenu)) {
+            var menuNode = $(el).parent();
+            menuNode.remove();
+            $("#moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
+            
+            //kill menu and reload it so all events are assigned properly
+
+			$("#moduleList").find("a").unbind();
+			SUGAR.themes.loadModuleList();
+	
+		}
     },
     setCurrentTab: function(params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleTab_' + params.module);
-        if (el && el.parentNode) {
-            el = el.parentNode;
+        var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
+        if ($(el) && $(el).parent()) {
             SUGAR.themes.setRightMenuTab(el, params);
-            var currActiveTab = Sel.query("li.yuimenubaritem.current", "themeTabGroupMenu_All", true);
-            if (currActiveTab) {
-                if (currActiveTab == el) return;
-                Dom.removeClass(currActiveTab, "current");
+            var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";
+            if ($(currActiveTab)) {
+                if ($(currActiveTab) == $(el).parent()) return;
+                $(currActiveTab).removeClass("current");
             }
-            Dom.addClass(el, "yuimenubaritem  yuimenubaritem-hassubmenu current");
-            var right = Sel.query("li.yuimenubaritem.currentTabRight", "themeTabGroupMenu_All", true);
-            Dom.insertAfter(right, el);
+            $(el).parent().addClass("current");
         }
+        SUGAR.themes.resizeMenu();
+        makeCall = true;
     },
     setModuleTabs: function(html) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleList');
-        if (el && el.parentNode) {
-            var parent = el.parentNode;
-
+        var el = $("#moduleList");
+        if (el) {
             try {
-                //This can fail hard if multiple events fired at the same time
-                YAHOO.util.Event.purgeElement(el, true);
-                for (var i in allMenuBars) {
-                    if (allMenuBars[i].destroy)
-                        allMenuBars[i].destroy();
-                }
+                el.remove("ul.sf-menu");
             } catch (e) {
                 //If the menu fails to load, we can get leave the user stranded, reload the page instead.
                 window.location.reload();
             }
-            parent.removeChild(el);
-            parent.innerHTML += html;
-            el = document.getElementById('moduleList');
+            el.html(html);
             this.loadModuleList();
         }
     },
+    
+    toggleQuickCreateOverFlow: function(menuName,maction) {
+    	var menuName = "#quickCreateULSubnav"; 
+    		if(maction == "more") {
+				$(menuName).addClass("showMore");
+				$(menuName).removeClass("showLess");
+    		} else {
+    			$(menuName).addClass("showLess");
+				$(menuName).removeClass("showMore");
+    		}
+    },
+    toggleMenuOverFlow: function(menuName,maction) {
 
-    loadModuleList: function() {
+    	var menuName = "#"+menuName;
+        //Bug#52141: Prevent hiding the menu after expanding with more modules
+        var retainItem = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            retainClass = $.fn.superfish.defaults['retainClass'];
+        retainItem.addClass(retainClass);
+        $(menuName).off("mouseout.retain").on("mouseout.retain", function(){
+            retainItem.removeClass(retainClass);
+        });
 
-    // Indentation not changed to preserve history.
-    function onSubmenuBeforeShow(p_sType, p_sArgs)
+	    if(maction == "more") {
+			$(menuName).addClass("showMore");
+			$(menuName).removeClass("showLess");
+
+		var viewPortHeight = $(window).height(),
+		    menuOffset = $(menuName).offset(),
+		    menuHeight = $(menuName).outerHeight(true),
+		    menuWidth = $(menuName).width(),
+		    footerHeight = $('#footer').height(),
+		    moduleListHeight = $('#moduleList').height(),
+		    filterByHeight = $(menuName).parent().find('ul.filterBy').outerHeight(true);
+			if(menuHeight + moduleListHeight > viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)) {
+				
+	    		$.fn.hoverscroll.params = $.extend($.fn.hoverscroll.params, {
+	    			vertical : true,
+	    			width: menuWidth,
+	    			hoverZone: 'instant',
+	    			height: viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)
+	    		});
+	    		$(menuName).hoverscroll();
+	    		$(menuName).width(menuWidth);
+                $(menuName).addClass("hs-active");
+
+		    }
+		} else {
+			$(menuName).addClass("showLess");
+			$(menuName).removeClass("showMore");
+            if( $(menuName).hasClass("hs-active") ) {
+                $(menuName).removeClass("hs-active");
+			    $.fn.hoverscroll.destroy($(menuName));
+            }
+		}	
+    },
+    switchMenuMode: function() {
+    	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
+    		Set_Cookie('sugar_theme_menu_mode','hover',30,'/','','');
+    	} else {
+    		Set_Cookie('sugar_theme_menu_mode','click',30,'/','','');
+    	}
+    	location.reload();
+    },
+    getMenuMode: function() {
+
+    	if(Get_Cookie("sugar_theme_menu_mode") == null) {
+    		Set_Cookie('sugar_theme_menu_mode','hover',30,'/','','');
+    	}
+
+    	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
+	    	return true;
+    	} else {
+    		return false;
+    	}
+    },
+    updateFavoritesList: function(v)
     {
-		var oElement,
-			oBd,
-			oShadow,
-			oShadowBody,
-			oShadowBodyCenter,
-			oVR,
-		    oLastViewContainer,
-			parentIndex,
-			oItem,
-			oSubmenu,
-			data,
-			aItems;
+        makeCall = v;
+    },
+    loadModuleList: function() {
+        var isRTL = (typeof rtl != "undefined") && rtl;
+        $('#moduleList ul.sf-menu').superfish({
+			delay: 50,
+			speed: 0,
+            animation: {
+                display: 'show'
+            },
+			firstOnClick: SUGAR.themes.getMenuMode(),
+			autoArrows: false,
+			dropShadows: false,
+            ignoreClass: 'megawrapper',
+            rtl: isRTL,
+			onBeforeShow: function() {
+				if($(this).hasClass("megamenu") && $(this).prev().hasClass('more') != true) {
+                    var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+					var moduleName = $(this).prev().attr("module");
+                    //Check if the menu we want to show is in the more menu
+					if($(this).parents().is(extraMenu)) {
+						var moduleName = moduleName.replace("Overflow","");
+						var moduleName = moduleName.replace("Hidden","");
+					}
 
+					var that = $(this),
+                        shortCutWidth = that.find("ul.MMShortcuts").parent().outerWidth();
+					//ajax call for favorites
 
-			parentIndex = this.parent.index;
+                    if(that.is(".rtl, .ltr")) {
+                        that.find("ul.MMFavorites, ul.MMLastViewed").parent().hide();
+                        var _width = that.find("ul.MMShortcuts").parent().outerWidth();
+                        that.width(_width).find(".megawrapper").width(_width);
+                    } else {
+                        var _width = that.attr("width");
 
+                        if(_width) {
+                            that.find("div.show").show();
+                            that.width(_width).find(".megawrapper").width(_width);
+                        }
+                        else {
+                            that.find("ul.MMFavorites, ul.MMLastViewed").parent().removeClass("divider").hide();
+                            var _width = that.find("ul.MMShortcuts").parent().removeClass("divider").outerWidth();
+                            that.width(_width).find(".megawrapper").width(_width);
+                        }
+                    }
+                    var updateHeight = function() {
+                        var wrapperHeight = $(that).find("li div.megawrapper").height();
+                        if(wrapperHeight == 0) {
+                            setTimeout(updateHeight, 500);
+                        } else {
+                            if(wrapperHeight > $(that).find("div.megacolumn-content").height())
+                                $(that).find("div.megacolumn-content").height(wrapperHeight);
+                        }
+                    };
+					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
 
-		if (this.parent) {
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=favorites",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json),
+                                container = that.find("ul.MMFavorites");
+                            container.children().not(':eq(0)').remove();
+						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
+                                container.append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
 
-			oElement = this.element;
-			oBd = oElement.firstChild;
-			oShadow = oElement.lastChild;
-			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
+                            if( lastViewed.length > 0 && lastViewed[0].text != 'none') {
+                                var _width = shortCutWidth;
 
-            // We need to figure out the module name from the ID. Sometimes it will have the group name in it
-            // But sometimes it will just use the module name (in the case of the All group which don't have the
-            // group prefixes due to the automated testing suite.
-            var moduleName = oElement.id;
-            var groupName = oElement.parentNode.parentNode.parentNode.id.replace('themeTabGroup_','');
-            moduleName = moduleName.replace(groupName+'_','');
+                                if(container.parent().hasClass("show")) {
+                                    _width = 0;
+                                } else {
+                                    container.parent().show().addClass("show");
+                                }
 
-			var handleSuccess = function(o){
-				if(o.responseText !== undefined){
-				data = YAHOO.lang.JSON.parse(o.responseText);
-				aItems = oMenuBar.getItems();
-				oItem = aItems[parentIndex];
-				if(!oItem) return;
+                                if(that.attr("width")) {
+                                    _width += parseInt(that.attr("width"));
+                                    that.find("ul.MMLastViewed").parent().addClass("divider");
+                                } else {
+                                    that.find("ul.MMShortcuts").parent().addClass("divider");
+                                    _width += shortCutWidth;
+                                }
+                                that.width(_width).attr("width", _width).find(".megawrapper").width(_width);
+                            }
+                              //update column heights so dividers are even
+                              that.find("ul.MMFavorites li:nth("+lastViewed.length+")").children().ready(updateHeight);
+						  }
+						});
+					}
+					//ajax call for last viewed
+					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;" || makeCall == true) {
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json),
+                                container = that.find("ul.MMLastViewed");
+                            container.children().not(':eq(0)').remove();
+						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
+                                container.append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
 
-                oSubmenu = oItem.cfg.getProperty("submenu");
-				if (!oSubmenu) return;
-                oSubmenu.removeItem(1,1);
-				oSubmenu.addItems(data,1);
-
-				//update shadow height to accomodate new items
-
-				oVR = oShadow.previousSibling;
-				oVR.style.height = (oShadow.offsetHeight - 15)+"px";
-
-
-
+                              if(lastViewed.length > 0 && lastViewed[0].text != 'none') {
+                                  var _width = shortCutWidth;
+                                  if(container.parent().hasClass("show")) {
+                                      _width = 0;
+                                  } else {
+                                      container.parent().show().addClass("show");
+                                  }
+                                  if(that.attr("width")) {
+                                      _width += parseInt(that.attr("width"));
+                                      container.parent().addClass("divider");
+                                  } else {
+                                      that.find("ul.MMShortcuts").parent().addClass("divider");
+                                      _width += shortCutWidth;
+                                  }
+                                  that.width(_width).attr("width", _width).find(".megawrapper").width(_width);
+                              }
+                              //update column heights so dividers are even
+                              that.find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(updateHeight);
+						  }
+						});
+					}
+				makeCall = false;
 				}
+			},
+			onShow: function() {
 			}
-
-			var handleFailure = function(o){
-				if(o.responseText !== undefined){
-					oLastViewContainer.innerHTML = "Failed to load menu";
-				}
-			}
-
-			var callback =
-			{
-			  success:handleSuccess,
-			  failure:handleFailure
-			};
-
-			var sUrl = "index.php?module="+moduleName+"&action=modulelistmenu";
-
-			if(oLastViewContainer && oLastViewContainer.lastChild.firstChild.innerHTML == "&nbsp;") {
-				var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
-			}
-
-
-		}
-
-	}
-
-
-	function onSubmenuShow(p_sType, p_sArgs) {
-
-	var oElement,
-		oShadow,
-		oShadowBody,
-		oShadowBodyCenter,
-		oBd,
-		oVR;
-
-	if (this.parent) {
-
-		oElement = this.element;
-		var newLeft = oElement.offsetLeft + offsetPadding;
-		oElement.style.left = newLeft + "px";
-		oBd = oElement.firstChild;
-		oShadow = oElement.lastChild;
-		oElement.style.top = oElement.offsetTop + "px";
-		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
-			if(oShadow.previousSibling.className != "vr") {
-
-			oVR = document.createElement("div");
-			oVR.setAttribute("class", "vr");
-			oVR.setAttribute("className", "vr");
-			oElement.insertBefore(oVR,oShadow);
-			oVR.style.height = (oBd.offsetHeight - 15)+"px";
-			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
-
-			}
-		}
-
-		}
-
-	}
-
-    var nodes = YAHOO.util.Selector.query('#moduleList>div');
-    allMenuBars = {};
-
-    for ( var i = 0 ; i < nodes.length ; i++ ) {
-	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
-		    autosubmenudisplay: true,
-            visible: false,
-		    hidedelay: 750,
-		    lazyload: true });
-	    /*
-	      Subscribe to the "beforeShow" and "show" events for
-	      each submenu of the MenuBar instance.
-	    */
-
-	    currMenuBar.subscribe("beforeShow", onSubmenuBeforeShow);
-	    currMenuBar.subscribe("show", onSubmenuShow);
-
-	    /*
-	      Call the "render" method with no arguments since the
-	      markup for this MenuBar already exists in the page.
-	    */
-
-	    currMenuBar.render();
-        allMenuBars[nodes[i].id.substr(nodes[i].id.indexOf('_')+1)] = currMenuBar;
+		});
+    },
+    editMenuMode: function() {
 
 
 
-        if (typeof YAHOO.util.Dom.getChildren(nodes[i]) == 'object' && YAHOO.util.Dom.getChildren(nodes[i]).shift().style.display != 'none')
-        {
-            // This is the currently displayed menu bar
-            oMenuBar = currMenuBar;
+    },
+    resizeSearch: function() {
+        if(SUGAR.themes.enableResizeSearch) {
+            $('#moduleList').attr("width", $('#moduleList').attr("width") || $('#moduleList').css("width").replace("px",""));
+
+            var searchWidth = $("#dcmenu").width() - 200
+                - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
+            //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
+            searchWidth *= .75;
+
+            $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
+            var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
+            searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
+            $('#sugar_spot_search_div').width(searchWidth + 25);
+            $('#sugar_spot_search').width(searchWidth);
+            $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
         }
-    }
+
+    },
+    resizeMenu: function () {
+        //Bug#52433: Prevent calling resizeMenu before basic theme is initialized
+        if(typeof sugar_theme_gm_current == "undefined") return;
+
+        //Bug#52650: For RTL, Keep module menus rather than search, quick menu, and etc.
+        var isRTL = (typeof rtl != "undefined") && rtl;
+        if(isRTL) {
+            $("#dcmenu").css({
+                'left' : $(window).width() < $("#dcmenu").width() ? $(window).width() - $("#dcmenu").width() : ''
+            });
+        }
+
+	    var maxMenuWidth = $("#dcmenu").width() - 100 //100px: spacing for submegamenu, padding and border lines
+            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
+		var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            menuItemsWidth = SUGAR.themes.menuItemsWidth || $("#moduleList").width(),
+            _ie_adjustment = 10,
+            menuItems = currentModuleList.children("li"),
+            menuLength = menuItems.length;
+        if($.browser.msie) {
+            menuItemsWidth = 0;
+            menuItems.each(function(){
+                menuItemsWidth += $(this).width();
+            });
+            menuItemsWidth += _ie_adjustment;
+            currentModuleList.width(menuItemsWidth);
+            menuItemsWidth += _ie_adjustment;
+            $("#moduleList").width(menuItemsWidth);
+
+        }
+        SUGAR.themes.menuItemsWidth = menuItemsWidth;
 
 
-	// Remove the href attribute if we are on an touch device ( like an iPad )
-	if ( SUGAR.util.isTouchScreen() ) {
-	    var nodes = YAHOO.util.Selector.query('#moduleList a.yuimenubaritemlabel-hassubmenu');
-	    YAHOO.util.Dom.batch(nodes, function(el,o) {
-	        el.href = '#';
+        if(menuItemsWidth > maxMenuWidth){
+            var moreNode = $("#moduleTabMore" + sugar_theme_gm_current);
+            while(menuItemsWidth >= maxMenuWidth && menuLength-- > 0){
+                var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
+                if(menuNode.hasClass("current")){
+                    menuNode = menuNode.prev();
+                }
+                if(menuNode.hasClass("home")){
+                    menuNode = menuNode.prev();
+                }
+                menuNode.find(".megamenu").css({
+                    'left' : '',
+                    'right' : '',
+                    'top' : '',
+                    'bottom' : ''
+                });
+                if($.browser.msie) {
+                    menuNode.attr("width", menuNode.outerWidth());
+                    menuItemsWidth -= menuNode.outerWidth();
+                    moreNode.prepend(menuNode);
+                    currentModuleList.width(menuItemsWidth + _ie_adjustment);
+                    if(isRTL) {
+                        $("#moduleList").width(menuItemsWidth + _ie_adjustment);
+                    }
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                } else {
+                    moreNode.prepend(menuNode);
+                    menuItemsWidth = currentModuleList.width();
+                    SUGAR.themes.menuItemsWidth = false;
+                }
+            }
+
+        }
+        else {
+
+            var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
+            if(insertNode.prev().hasClass("current")){
+                insertNode = insertNode.prev();
+            }
+            while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
+                var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first"),
+                    menuNodeWidth = ($.browser.msie) ? (menuNode.attr("width") || menuNode.width()) : menuNode.width();
+
+                if((menuNode.attr("id") != undefined &&
+                    menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
+                    (menuItemsWidth + parseInt(menuNodeWidth)) > maxMenuWidth){
+                    break;
+                }
+                menuLength++;
+
+                menuNode.find(".megamenu").css({
+                    'left' : '',
+                    'right' : '',
+                    'top' : '',
+                    'bottom' : ''
+                });
+                if($.browser.msie) {
+                    menuItemsWidth += parseInt(menuNodeWidth);
+                    insertNode.before(menuNode);
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                    currentModuleList.width(menuItemsWidth + _ie_adjustment);
+                    if(isRTL) {
+                        $("#moduleList").width(menuItemsWidth + _ie_adjustment);
+                    }
+                } else {
+                    insertNode.before(menuNode);
+                    menuItemsWidth = currentModuleList.width();
+                    SUGAR.themes.menuItemsWidth = false;
+                }
+            }
+        }
+
+
+    },
+    globalToolTips: function () {
+    	// $("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: SUGAR.language.translate('', 'LBL_QUICK_CREATE_TITLE')});
+        if( typeof($("#dcmenuSugarCube").attr("title")) != 'undefined' )
+        {
+		    $("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
+        }
+
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
+        $("#glblSearchBtn").tipTip({maxWidth: "auto", edgeOffset: 10});
+		//setup tool tips for partner integrations
+		$("#partner").children("a").each(
+            function (index) {
+                    $(this).tipTip({maxWidth: "auto", edgeOffset: 10});
+                }
+		);
+    },
+    toggleFooter: function () {
+        var isVisible = Get_Cookie('sugar_theme_footer_visible');
+        if(isVisible != null && isVisible == 'false')
+        {
+            var el = $("#arrow");
+            el.toggleClass("up");
+            SUGAR.themes.hideFooter(el);
+            $("#footer").slideToggle("fast");
+        }
+	    $("#arrow").click(function(){
+	        $(this).toggleClass("up");
+	        if ($(this).hasClass('up')) {
+                Set_Cookie('sugar_theme_footer_visible','true',3000,false, false, false);
+                SUGAR.themes.showFooter(this);
+
+	        } else {
+                Set_Cookie('sugar_theme_footer_visible','false',3000,false, false, false);
+                SUGAR.themes.hideFooter(this);
+	        }
+	        $("#footer").slideToggle("fast");
 	    });
-	}
+    },
+    hideFooter: function(el){
+        $(el).attr("title","Show");
+        $(el).animate({bottom:'0'},200);
+        $("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+    },
+    showFooter: function(el){
+        $(el).attr("title","Hide");
+        $(el).animate({bottom:'5px'},200);
+        $("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+    },
+    searchResults: function () {
+    	firstHit = false;
+    	$("#sugar_spot_search").keypress(function(event) {
+			DCMenu.startSearch(event);
+            SUGAR.util.doWhen(function(){
+                return document.getElementById('SpotResults') != null;
+            }, SUGAR.themes.resizeSearch);
+			$('#close_spot_search').css("display","inline-block");
 
-    } // loadModuleList()
+			 if(event.charCode == 0 && !firstHit) {
+			firstHit = true;
+			 	}
+			$('#close_spot_search').click(function() {
+				SUGAR.themes.clearSearch();
+			});
+
+		});
+    },
+    clearSearch: function() {
+   		$("div#sugar_spot_search_results").hide();
+        $("#SpotResults").remove();
+		$('#close_spot_search').css("display","none");
+        $("#sugar_spot_search").val(SUGAR.language.get('app_strings', 'LBL_SEARCH'));
+        $("#sugar_spot_search").css('color', 'grey');
+		$("#sugar_spot_search").removeClass("searching");
+		$('#sugar_spot_search_div').css("left",0);
+	  	firstHit = false;
+   	},
+   	actionMenu: function() {
+	   	//set up any action style menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
+
+		//Fix show more/show less buttons in top action menus
+		$("[class^='moduleMenuOverFlow']").each(function(index,node){
+		    var jNode = $(node);
+		    jNode.unbind("click");
+			jNode.click(function(event){
+				event.stopPropagation();
+			});
+
+		});
+   	},
+   	sugar_theme_gm_switch: function(groupName, groupId) {
+
+        SUGAR.themes.current_theme = (SUGAR.themes.current_theme) ? SUGAR.themes.current_theme : sugar_theme_gm_current;
+        $('ul.sf-menu:visible li').hideSuperfishUl();
+        $('#moduleTabMore'+SUGAR.themes.current_theme +' li').hideSuperfishUl();
+        var dcheight = $("#dcmenu").outerHeight();
+        var current_menu = $('ul.sf-menu:visible');
+        var target_menu = $('#themeTabGroupMenu_'+ (groupId ? groupId : groupName));
+        SUGAR.themes.current_theme = sugar_theme_gm_current = groupName;
+        //fliping over-and-out is added to change the global menu theme
+        $("#dcmenu").animate({
+            top: '-=' + dcheight
+        }, 200, function() {
+            current_menu.hide();
+            target_menu.show();
+            SUGAR.themes.menuItemsWidth = null;
+            SUGAR.themes.resizeSearch();
+            SUGAR.themes.resizeMenu();
+            $(this).animate({
+                top: '+=' + dcheight
+            }, 200);
+        });
+        $.ajax({
+	    	type: "POST",
+	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
+	    	data: 'newGroup='+groupName
+	    });
+
+   	}
+
 });
 
 /**
  * For the module list menu
  */
-YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 
+$("#moduleList").ready(function(){
+	SUGAR.themes.loadModuleList();
+});
+
+$(document).bind('keydown', 'Ctrl+b',function() {
+	SUGAR.themes.switchMenuMode()
+});
 /**
  * For the module list menu scrolling functionality
  */
 YAHOO.util.Event.onContentReady("tabListContainerTable", function()
 {
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
+    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y)
     {
         var content = Y.one('#content');
         //BEGIN SUGARCRM flav!=sales ONLY
@@ -345,9 +613,9 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
         //BEGIN SUGARCRM flav!=sales ONLY
         var maxWidth = (contentWidth-3)-(dashletCtrlsWidth+addPageWidth+2);
         //END SUGARCRM flav!=sales ONLY
-        
+
         var tabListChildren = tabList.get('children');
-        
+
         var tabListWidth = 0;
         for(i=0;i<tabListChildren.size();i++) {
             if(Y.UA.ie == 7) {
@@ -356,7 +624,7 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
 				tabListWidth += tabListChildren.item(i).get('offsetWidth');
 			}
         }
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         if(tabListWidth > maxWidth) {
             tabListContainer.setStyle('width',maxWidth+"px");
@@ -364,8 +632,8 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
             tabListContainer.addClass('active');
         }
         //END SUGARCRM flav!=sales ONLY
-        
-    
+
+
         var node = Y.one('#tabListContainer .yui-bd');
         var anim = new Y.Anim({
             node: node,
@@ -376,37 +644,22 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
             },
             easing: Y.Easing.easeOut
         });
-    
+
         var onClick = function(e) {
-    
+
             var y = node.get('offsetWidth');
             if (e.currentTarget.hasClass('yui-scrollup')) {
                 y = 0 - y;
             }
-    
+
             anim.set('to', { scroll: [y + node.get('scrollLeft'),0] });
             anim.run();
         };
-    
+
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
+
+
 });
 
-function sugar_theme_gm_switch( groupName ) {
-    document.getElementById('themeTabGroup_'+sugar_theme_gm_current).style.display='none';
-    sugar_theme_gm_current = groupName;
-    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
-    document.getElementById('themeTabGroup_'+groupName).style.display='block';
-    
-    oMenuBar = allMenuBars[groupName];
-}
 
-offsetPadding = 0;
-
-function resizeHeader() {
-	var e = document.getElementById("contentTable");
-	document.getElementById("moduleList").style.width = e.offsetWidth + "px";
-	document.getElementById("header").style.width = e.offsetWidth + 20 + "px";
-	document.getElementById("dcmenu").style.width = e.offsetWidth + 20 + "px";
-
-}

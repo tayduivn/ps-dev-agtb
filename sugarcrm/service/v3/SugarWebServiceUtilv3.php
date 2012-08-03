@@ -79,8 +79,13 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
 			//First get all the related beans
-            $related_beans = $bean->$link_field_name->getBeans();
-			//Create a list of field/value rows based on $link_module_fields
+            $params = array();
+            if (!empty($optional_where))
+            {
+                $params['where'] = $optional_where;
+            }
+            $related_beans = $bean->$link_field_name->getBeans($params);
+            //Create a list of field/value rows based on $link_module_fields
 			$list = array();
             $filterFields = array();
             if (!empty($order_by) && !empty($related_beans))
@@ -111,6 +116,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 if(is_a($bean, 'User') && $current_user->id != $bean->id && isset($row['user_hash'])) {
                     $row['user_hash'] = "";
                 }
+                $row = clean_sensitive_data($bean->field_defs, $row);
                 $list[] = $row;
             }
             $GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');

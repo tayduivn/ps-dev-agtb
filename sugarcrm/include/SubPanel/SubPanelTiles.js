@@ -199,7 +199,13 @@ function set_return_and_save_background(popup_reply_data)
 
 	var returnstuff = http_fetch_sync('index.php',query_string);
 	request_id++;
- 	got_data(returnstuff, true);
+
+	// Bug 52843
+	// If returnstuff.responseText is empty, don't process, because it will blank the innerHTML
+	if (typeof returnstuff != 'undefined' && typeof returnstuff.responseText != 'undefined' && returnstuff.responseText.length != 0) {
+		got_data(returnstuff, true);
+	}
+	
  	if(refresh_page == 1){
  		document.location.reload(true);
  	}
@@ -216,43 +222,9 @@ function got_data(args, inline)
 		var child_field = request_map[args.request_id].toLowerCase();
 		if(inline){
 
-			//CCL - 21752
-			//if this is an inline operation, get the original buttons in the td element
-			//so that we may replace them later
-			buttonHTML = '';
-			trEls = list_subpanel.getElementsByTagName('tr');
-			if(trEls && trEls.length > 0) {
-				for(x in trEls) {
-					if(trEls[x] && trEls[x].className == 'pagination') {
-					   tableEls = trEls[x].getElementsByTagName('table');
-					   tdEls = tableEls[0].getElementsByTagName('td');
-					   span = tdEls[0].getElementsByTagName('span');
-					   if(span) {
-					      buttonHTML = span[0].innerHTML;
-					   }
-					   break;
-					}
-				}
-			}
-
 			child_field_loaded[child_field] = 2;
 			list_subpanel.innerHTML='';
-			list_subpanel.innerHTML=args.responseText;
-
-			//now if the trPagination element is set then let's replace the new tr element with this
-			if(buttonHTML != '') {
-				list_subpanel = document.getElementById('list_subpanel_'+request_map[args.request_id].toLowerCase());
-				trEls = list_subpanel.getElementsByTagName('tr');
-				for(x in trEls) {
-					if(trEls[x] && trEls[x].className == 'pagination') {
-					   tableEls = trEls[x].getElementsByTagName('table');
-					   tdEls = tableEls[0].getElementsByTagName('td');
-					   span = tdEls[0].getElementsByTagName('span');
-					   span[0].innerHTML = buttonHTML;
-					   break;
-					}
-				}
-			}
+			list_subpanel.innerHTML=args.responseText;			
 
 		} else {
 			child_field_loaded[child_field] = 1;
@@ -277,6 +249,10 @@ function got_data(args, inline)
 			//hideSubPanel(current_child_field);
 		}
 		current_child_field = child_field;
+		//reinit action menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
 	}
 }
 
@@ -537,6 +513,8 @@ SUGAR.subpanelUtils = function() {
 				// Grab the buttons from the subpanel and hide them
 				var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
 				YAHOO.util.Dom.setStyle(button_elements, 'display', 'none');
+				button_elements = YAHOO.util.Selector.query('ul.SugarActionMenu', theDiv, false);
+				YAHOO.util.Dom.setStyle(button_elements, 'display', 'none');
 
                 // Add the form object to the DOM
 				theDivObj.parentNode.insertBefore(subpanelContents[theDiv]['newDiv'], theDivObj);
@@ -603,6 +581,8 @@ SUGAR.subpanelUtils = function() {
             SUGAR.subpanelUtils.removeSubPanel();
             var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
             YAHOO.util.Dom.setStyle(button_elements, 'display', '');
+            button_elements = YAHOO.util.Selector.query('ul.SugarActionMenu', theDiv, false);
+            YAHOO.util.Dom.setStyle(button_elements, 'display', '');
             
 			return false;
 		},
@@ -664,7 +644,7 @@ SUGAR.subpanelUtils = function() {
 			}else{
 
 				SUGAR.subpanelUtils.loadedGroups.push(group);
-				var needed = Array();
+				var needed = [];
 				for(group_sp in SUGAR.subpanelUtils.subpanelGroups[group]){
 					if(typeof(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]) == 'string' && !document.getElementById('whole_subpanel_'+SUGAR.subpanelUtils.subpanelGroups[group][group_sp])){
 						needed.push(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]);
@@ -702,6 +682,7 @@ SUGAR.subpanelUtils = function() {
 					sp_list.childNodes[sp].style.display = 'none';
 				}
 			}
+
 			for(group_sp in SUGAR.subpanelUtils.subpanelGroups[group]){
                 if ( typeof(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]) != 'string' )
                 {
@@ -715,13 +696,9 @@ SUGAR.subpanelUtils = function() {
                 }
 
                 cur.style.display = 'block';
-				/* use YDD swapNodes this and first, second, etc. */
-				try{
-					YAHOO.util.DDM.swapNode(cur, sp_list.getElementsByTagName('LI')[group_sp]);
-				}catch(e){
 
-				}
 			}
+
 			SUGAR.subpanelUtils.updateSubpanelTabs(group);
 		},
 

@@ -92,8 +92,9 @@ if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 
 // config|_override.php
 if(is_file('config.php')) {
-    require_once('config.php'); // provides $sugar_config
+	require_once('config.php'); // provides $sugar_config
 }
+
 // load up the config_override.php file.  This is used to provide default user settings
 if(is_file('config_override.php')) {
 	require_once('config_override.php');
@@ -110,6 +111,7 @@ require_once 'include/SugarObjects/SugarConfig.php';
 ///////////////////////////////////////////////////////////////////////////////
 ////	DATA SECURITY MEASURES
 require_once('include/utils.php');
+require_once('include/clean.php');
 clean_special_arguments();
 clean_incoming_data();
 ////	END DATA SECURITY MEASURES
@@ -164,13 +166,15 @@ UploadStream::register();
 if (!defined('SUGAR_PATH')) {
     define('SUGAR_PATH', realpath(dirname(__FILE__) . '/..'));
 }
-require_once SUGAR_PATH . '/include/SugarObjects/SugarRegistry.php';
+require_once 'include/SugarObjects/SugarRegistry.php';
+
 if(empty($GLOBALS['installing'])){
 ///////////////////////////////////////////////////////////////////////////////
 ////	SETTING DEFAULT VAR VALUES
 $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 $error_notice = '';
 $use_current_user_login = false;
+
 // Allow for the session information to be passed via the URL for printing.
 if(isset($_GET['PHPSESSID'])){
     if(!empty($_COOKIE['PHPSESSID']) && strcmp($_GET['PHPSESSID'],$_COOKIE['PHPSESSID']) == 0) {
@@ -179,6 +183,7 @@ if(isset($_GET['PHPSESSID'])){
         unset($_GET['PHPSESSID']);
     }
 }
+
 if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
@@ -209,6 +214,8 @@ $system_config->retrieveSettings();
 
 LogicHook::initialize()->call_custom_logic('', 'after_entry_point');
 }
+
+
 ////	END SETTING DEFAULT VAR VALUES
 ///////////////////////////////////////////////////////////////////////////////
 

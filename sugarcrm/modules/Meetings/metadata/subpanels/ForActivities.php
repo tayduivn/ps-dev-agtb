@@ -40,21 +40,16 @@ $subpanel_layout = array(
 				
 	'list_fields' => array(
 		'object_image'=>array(
+			'vname' => 'LBL_OBJECT_IMAGE',
 			'widget_class' => 'SubPanelIcon',
  		 	'width' => '2%',
 			'image2'=>'__VARIABLE',
  		 	'image2_ext_url_field'=>'displayed_url',
 		),
-		'close_button'=>array(
-			'widget_class' => 'SubPanelCloseButton',
-			'vname' => 'LBL_LIST_CLOSE',
-			'sortable'=>false,
-			'width' => '6%',
-		),
 		'name'=>array(
 			 'vname' => 'LBL_LIST_SUBJECT',
 			 'widget_class' => 'SubPanelDetailViewLink',
-			 'width' => '30%',
+			 'width' => '42%',
 		),
 		'status'=>array(
 			 'widget_class' => 'SubPanelActivitiesStatusField',
@@ -99,6 +94,12 @@ $subpanel_layout = array(
 			 'widget_class' => 'SubPanelEditButton',
 			 'width' => '2%',
 		),
+		'close_button'=>array(
+			'widget_class' => 'SubPanelCloseButton',
+			'vname' => 'LBL_LIST_CLOSE',
+			'sortable'=>false,
+			'width' => '6%',
+		),
 		'remove_button'=>array(
 			'vname' => 'LBL_REMOVE',
 			 'widget_class' => 'SubPanelRemoveButton',
@@ -108,6 +109,9 @@ $subpanel_layout = array(
 			'usage'=>'query_only',
 	
 		),	
+		'recurring_source'=>array(
+			'usage'=>'query_only',	
+		),
 		//BEGIN SUGARCRM flav!=com ONLY
 		'join_url'=>array(
 			'usage'=>'query_only'

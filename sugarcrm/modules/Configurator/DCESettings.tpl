@@ -32,7 +32,6 @@
 *}
 <!--//FILE SUGARCRM flav=dce ONLY -->
 
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
 <BR>
 <form name="ConfigureDCESettings" enctype='multipart/form-data' method="POST" action="index.php?action=DCESettings&module=Configurator" onSubmit="return (check_form('ConfigureDCESettings'));">
 <span class='error'>{$error.main}</span>

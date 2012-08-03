@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
+require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('modules/MySettings/TabController.php');
 
 $display_tabs_def = isset($_REQUEST['display_tabs_def']) ? urldecode($_REQUEST['display_tabs_def']) : '';
@@ -41,6 +41,8 @@ $REMOVE_ARR = array();
 parse_str($display_tabs_def,$DISPLAY_ARR);
 parse_str($hide_tabs_def,$HIDE_ARR);
 parse_str($remove_tabs_def,$REMOVE_ARR);
+
+
 
 if (isset($_POST['id']))
 	sugar_die("Unauthorized access to administration.");
@@ -60,6 +62,9 @@ sugar_die ("Unauthorized access to user administration.");
 $focus = new User();
 $focus->retrieve($_POST['record']);
 
+//update any ETag seeds that are tied to the user object changing
+$focus->incrementETag("mainMenuETag");
+
 // Flag to determine whether to save a new password or not.
 // Bug 43241 - Changed $focus->id to $focus->user_name to make sure that a system generated password is made when converting employee to user
 if(empty($focus->user_name))
@@ -72,7 +77,7 @@ if(empty($focus->user_name))
 } else {
     $newUser = false;
 }
-	
+
 
 if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
     //BEGIN SUGARCRM flav=sales only
@@ -95,21 +100,31 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
 
     // Populate the custom fields
-    foreach ($focus->field_defs as $fieldName => $field ) {
-        if ( isset($field['source']) && $field['source'] == 'custom_fields' ) {
-            if ( isset($_POST[$fieldName]) ) {
-                $focus->$field = $_POST[$fieldName];
+    $sfh = new SugarFieldHandler();
+    foreach ($focus->field_defs as $fieldName => $field)
+    {
+        if (isset($field['source']) && $field['source'] == 'custom_fields')
+        {
+            $type = !empty($field['custom_type']) ? $field['custom_type'] : $field['type'];
+            $sf = $sfh->getSugarField($type);
+            if ($sf != null)
+            {
+                $sf->save($focus, $_POST, $fieldName, $field, '');
+            }
+            else
+            {
+                $GLOBALS['log']->fatal("Field '$fieldName' does not have a SugarField handler");
             }
         }
     }
-    
+
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-	$teamSetField = new SugarFieldTeamset('Teamset');	
+	$teamSetField = new SugarFieldTeamset('Teamset');
     if(!$newUser && $teamSetField != null){
        $teamSetField->save($focus, $_POST, 'team_name', '');
-    }   
+    }
 
 	// track the current reports to id to be able to use it if it has changed
 	$old_reports_to_id = $focus->reports_to_id;
@@ -122,18 +137,18 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 			{
 				$value = $_POST[$field];
 				$focus->$field = $value;
-				
+
 			}
 		}
 	}
-	
+
 	if(isset($_POST['is_group']) && ($_POST['is_group']=='1' || $focus->is_group)){
 		foreach($group as $field){
 			if(isset($_POST[$field]))
 			{
 				$value = $_POST[$field];
 				$focus->$field = $value;
-				
+
 			}
 		}
 	}
@@ -147,62 +162,67 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		unset($_POST['user_type']);
 	}
 	//END SUGARCRM flav=sales ONLY
-	
+
 	// copy the group or portal user name over.  We renamed the field in order to ensure auto-complete would not change the value
 	if(isset($_POST['user_name']))
 	{
 		$focus->user_name = $_POST['user_name'];
 	}
-	
+
 	// if the user saved is a Regular User
-	if(!$focus->is_group && !$focus->portal_only){	
-		
-		foreach($focus->column_fields as $field)
-		{
-			if(isset($_POST[$field]))
-			{
-				$value = $_POST[$field];
-				$focus->$field = $value;
-			}
-		}
-		foreach($focus->additional_column_fields as $field)
-		{
-			if(isset($_POST[$field]))
-			{
-				$value = $_POST[$field];
-				$focus->$field = $value;
-			}
-		}
-		
+	if(!$focus->is_group && !$focus->portal_only){
+
+        foreach ($focus->column_fields as $fieldName)
+        {
+            $field = $focus->field_defs[$fieldName];
+            $type = !empty($field['custom_type']) ? $field['custom_type'] : $field['type'];
+            $sf = $sfh->getSugarField($type);
+            if ($sf != null)
+            {
+                $sf->save($focus, $_POST, $fieldName, $field, '');
+            }
+            else
+            {
+                $GLOBALS['log']->fatal("Field '$fieldName' does not have a SugarField handler");
+            }
+        }
+        foreach ($focus->additional_column_fields as $fieldName)
+        {
+            $field = $focus->field_defs[$fieldName];
+            $type = !empty($field['custom_type']) ? $field['custom_type'] : $field['type'];
+            $sf = $sfh->getSugarField($type);
+            if ($sf != null)
+            {
+                $sf->save($focus, $_POST, $fieldName, $field, '');
+            }
+            else
+            {
+                $GLOBALS['log']->fatal("Field '$fieldName' does not have a SugarField handler");
+            }
+        }
+
 		$focus->is_group=0;
 		$focus->portal_only=0;
 
      		if(isset($_POST['status']) && $_POST['status']== "Inactive") $focus->employee_status = "Terminated"; //bug49972
-		
+
 			if(isset($_POST['user_name']))
 		{
 			$focus->user_name = $_POST['user_name'];
-		}	
-		if(isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) $focus->is_admin = 1;
-		elseif(empty($_POST['is_admin'])) $focus->is_admin = 0;
+		}
+		if((isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) ||
+           (isset($_POST['UserType']) && $_POST['UserType'] == "Administrator")) $focus->is_admin = 1;
+		elseif(isset($_POST['is_admin']) && empty($_POST['is_admin'])) $focus->is_admin = 0;
 		//if(empty($_POST['portal_only']) || !empty($_POST['is_admin'])) $focus->portal_only = 0;
 		//if(empty($_POST['is_group'])    || !empty($_POST['is_admin'])) $focus->is_group = 0;
 		if(empty($_POST['receive_notifications'])) $focus->receive_notifications = 0;
-		
+
 		if(isset($_POST['mailmerge_on']) && !empty($_POST['mailmerge_on'])) {
 			$focus->setPreference('mailmerge_on','on', 0, 'global');
 		} else {
 			$focus->setPreference('mailmerge_on','off', 0, 'global');
 		}
-	
-		if(isset($_POST['user_max_tabs']))
-		{
-			$current_theme_max_tabs = SugarThemeRegistry::current()->maxTabs;
-			if(empty($current_theme_max_tabs) || $_POST['user_max_tabs'] <= SugarThemeRegistry::current()->maxTabs){
-				$focus->setPreference('max_tabs', $_POST['user_max_tabs'], 0, 'global');
-			}
-		}
-	    
+
 	    if(isset($_POST['user_swap_last_viewed']))
 	    {
 	        $focus->setPreference('swap_last_viewed', $_POST['user_swap_last_viewed'], 0, 'global');
@@ -211,7 +231,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    {
 	    	$focus->setPreference('swap_last_viewed', '', 0, 'global');
 	    }
-	    
+
 	    if(isset($_POST['user_swap_shortcuts']))
 	    {
 	        $focus->setPreference('swap_shortcuts', $_POST['user_swap_shortcuts'], 0, 'global');
@@ -220,7 +240,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    {
 	        $focus->setPreference('swap_shortcuts', '', 0, 'global');
 	    }
-	    
+
 	    if(isset($_POST['use_group_tabs']))
 	    {
 	        $focus->setPreference('navigation_paradigm', $_POST['use_group_tabs'], 0, 'global');
@@ -238,13 +258,13 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    {
 	        $focus->setPreference('subpanel_tabs', '', 0, 'global');
 	    }
-        
+
         if(isset($_POST['user_theme']))
         {
             $focus->setPreference('user_theme', $_POST['user_theme'], 0, 'global');
             $_SESSION['authenticated_user_theme'] = $_POST['user_theme'];
         }
-        
+
         if(isset($_POST['user_module_favicon']))
 	    {
 	        $focus->setPreference('module_favicon', $_POST['user_module_favicon'], 0, 'global');
@@ -253,38 +273,42 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    {
 	        $focus->setPreference('module_favicon', '', 0, 'global');
 	    }
-	    
+
 		$tabs = new TabController();
 		if(isset($_POST['display_tabs']))
 			$tabs->set_user_tabs($DISPLAY_ARR['display_tabs'], $focus, 'display');
 		if(isset($HIDE_ARR['hide_tabs'])){
 			$tabs->set_user_tabs($HIDE_ARR['hide_tabs'], $focus, 'hide');
-		
+
 		}else{
-			$tabs->set_user_tabs(array(), $focus, 'hide');	
+			$tabs->set_user_tabs(array(), $focus, 'hide');
 		}
 		if(is_admin($current_user)){
 			if(isset($REMOVE_ARR['remove_tabs'])){
 				$tabs->set_user_tabs($REMOVE_ARR['remove_tabs'], $focus, 'remove');
 			}else{
-				$tabs->set_user_tabs(array(), $focus, 'remove');		
+				$tabs->set_user_tabs(array(), $focus, 'remove');
 			}
 		}
-	
+
 	    if(isset($_POST['no_opps'])) {
 	        $focus->setPreference('no_opps',$_POST['no_opps'], 0, 'global');
 	    }
 	    else {
 	        $focus->setPreference('no_opps','off', 0, 'global');
 	    }
-	    
-		if(	isset($_POST['should_remind']) 
-			&& $_POST['should_remind'] == '1' 
-			&& isset($_POST['reminder_time'])) {
+
+		if(isset($_POST['reminder_checked']) && $_POST['reminder_checked'] == '1' && isset($_POST['reminder_checked'])){
 			$focus->setPreference('reminder_time', $_POST['reminder_time'], 0, 'global');
-		} else {
+		}else{
 			// cn: bug 5522, need to unset reminder time if unchecked.
 			$focus->setPreference('reminder_time', -1, 0, 'global');
+		}
+
+		if(isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '1' && isset($_POST['email_reminder_checked'])){
+			$focus->setPreference('email_reminder_time', $_POST['email_reminder_time'], 0, 'global');
+		}else{
+			$focus->setPreference('email_reminder_time', -1, 0, 'global');
 		}
 		if(isset($_POST['timezone'])) $focus->setPreference('timezone',$_POST['timezone'], 0, 'global');
 		if(isset($_POST['ut'])) $focus->setPreference('ut', '0', 0, 'global');
@@ -307,15 +331,19 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		if(isset($_POST['default_locale_name_format'])) $focus->setPreference('default_locale_name_format',$_POST['default_locale_name_format'], 0, 'global');
 		if(isset($_POST['export_delimiter'])) $focus->setPreference('export_delimiter', $_POST['export_delimiter'], 0, 'global');
 		if(isset($_POST['default_export_charset'])) $focus->setPreference('default_export_charset', $_POST['default_export_charset'], 0, 'global');
-		if(isset($_POST['use_real_names'])) $focus->setPreference('use_real_names', 'on', 0, 'global');
-		else $focus->setPreference('use_real_names', 'off', 0, 'global');
-	
+		if(isset($_POST['use_real_names'])) {
+			$focus->setPreference('use_real_names', 'on', 0, 'global');
+		} elseif(!isset($_POST['use_real_names']) && !isset($_POST['from_dcmenu'])) {
+			// Make sure we're on the full form and not the QuickCreate.
+			$focus->setPreference('use_real_names', 'off', 0, 'global');
+		}
+
 		if(isset($_POST['mail_smtpauth_req'])) {
 			$focus->setPreference('mail_smtpauth_req',$_POST['mail_smtpauth_req'] , 0, 'global');
 		} else {
 			$focus->setPreference('mail_smtpauth_req','', 0, 'global');
 		}
-		
+
 		// SSL-enabled SMTP connection
 		if(isset($_POST['mail_smtpssl'])) {
 			$focus->setPreference('mail_smtpssl', 1, 0, 'global');
@@ -331,16 +359,16 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    }
 	    ////    PDF SETTINGS
 		///////////////////////////////////////////////////////////////////////////
-    		
+
 		///////////////////////////////////////////////////////////////////////////
 		////	SIGNATURES
 		if(isset($_POST['signature_id']))
-			$focus->setPreference('signature_default', $_POST['signature_id'], 0, 'global');	
-		
+			$focus->setPreference('signature_default', $_POST['signature_id'], 0, 'global');
+
 		if(isset($_POST['signature_prepend'])) $focus->setPreference('signature_prepend',$_POST['signature_prepend'], 0, 'global');
 		////	END SIGNATURES
 		///////////////////////////////////////////////////////////////////////////
-		
+
 	    //BEGIN SUGARCRM flav=ent ONLY
 	    //////////////////////////////////////////////////////////////////////////
 	    ////    OFFLINE CLIENT
@@ -348,7 +376,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	    ////   END OFFLINE CLIENT
 	    //////////////////////////////////////////////////////////////////////////
 	    //END SUGARCRM flav=ent ONLY
-		
+
 		 if(isset($_POST['email_link_type'])) $focus->setPreference('email_link_type', $_REQUEST['email_link_type']);
 		if(isset($_REQUEST['email_show_counts'])) {
 			$focus->setPreference('email_show_counts', $_REQUEST['email_show_counts'], 0, 'global');
@@ -359,10 +387,10 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 			$focus->setPreference('email_editor_option', $_REQUEST['email_editor_option'], 0, 'global');
 		if(isset($_REQUEST['default_email_charset']))
 			$focus->setPreference('default_email_charset', $_REQUEST['default_email_charset'], 0, 'global');
-	
+
 		if(isset($_POST['calendar_publish_key'])) $focus->setPreference('calendar_publish_key',$_POST['calendar_publish_key'], 0, 'global');
 	}
-	
+
 	if (!$focus->verify_data())
 	{
 		header("Location: index.php?action=Error&module=Users&error_string=".urlencode($focus->error_string));
@@ -377,8 +405,8 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
 		global $new_pwd;
 		$new_pwd='';
-		if((isset($_POST['old_password']) || $focus->portal_only) && 
-			(isset($_POST['new_password']) && !empty($_POST['new_password'])) && 
+		if((isset($_POST['old_password']) || $focus->portal_only) &&
+			(isset($_POST['new_password']) && !empty($_POST['new_password'])) &&
 			(isset($_POST['password_change']) && $_POST['password_change'] == 'true') ) {
 			if (!$focus->change_password($_POST['old_password'], $_POST['new_password'])) {
 			   if((isset($_POST['page']) && $_POST['page'] == 'EditView')){
@@ -397,13 +425,13 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		   			$new_pwd='1';
 		   }
 		}
-		
+
 		///////////////////////////////////////////////////////////////////////////
 		////	OUTBOUND EMAIL SAVES
 		///////////////////////////////////////////////////////////////////////////
 
 		$sysOutboundAccunt = new OutboundEmail();
-		
+
 		//If a user is not alloweed to use the default system outbound account then they will be
 		//saving their own username/password for the system account
 		if( ! $sysOutboundAccunt->isAllowUserAccessToSystemDefaultOutbound() )
@@ -416,19 +444,19 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
                 $userOverrideOE->mail_smtppass = $_REQUEST['mail_smtppass'];
                 $userOverrideOE->save();
             }
-            else 
+            else
             {
                 //If a user name and password for the mail account is set, create the users override account.
                 if( ! (empty($_REQUEST['mail_smtpuser']) || empty($_REQUEST['mail_smtppass'])) )
                     $sysOutboundAccunt->createUserSystemOverrideAccount($focus->id,$_REQUEST['mail_smtpuser'],$_REQUEST['mail_smtppass'] );
             }
         }
-		
-		
+
+
 		///////////////////////////////////////////////////////////////////////////
 		////	INBOUND EMAIL SAVES
 		if(isset($_REQUEST['server_url']) && !empty($_REQUEST['server_url'])) {
-			
+
 			$ie = new InboundEmail();
 			if(false === $ie->savePersonalEmailAccount($return_id, $focus->user_name)) {
 				header("Location: index.php?action=Error&module=Users&error_string=&ie_error=true&id=".$return_id);
@@ -436,17 +464,17 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 			}
 		} elseif(isset($_REQUEST['ie_id']) && !empty($_REQUEST['ie_id']) && empty($_REQUEST['server_url'])) {
 			// user is deleting their I-E
-			
+
 			$ie = new InboundEmail();
 			$ie->deletePersonalEmailAccount($_REQUEST['ie_id'], $focus->user_name);
 		}
-		////	END INBOUND EMAIL SAVES	
+		////	END INBOUND EMAIL SAVES
 		///////////////////////////////////////////////////////////////////////////
 		if(($newUser) && !($focus->is_group) && !($focus->portal_only) && isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON']) && $sugar_config['passwordsetting']['SystemGeneratedPasswordON']){
 			$new_pwd='2';
 			require_once('modules/Users/GeneratePassword.php');
 		}
-			
+
 //BEGIN SUGARCRM flav=pro ONLY
 		// If reports to has changed, call update team memberships to correct the membership tree
 		if ($old_reports_to_id != $focus->reports_to_id)

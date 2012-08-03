@@ -205,7 +205,7 @@ if ($sync_module_index > -1) {
 	echo retrieve_msg();
 	if ($display_log == 0)
 		echo '</div>';
-	echo "</td><td align='right'><A href='http://www.sugarcrm.com' target='_blank'><!--not_in_theme!--><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='".$mod_strings['LBL_POWERED_BY_SUGAR']."'></a></td></tr></table></div><script>document.getElementById('sync_table').style.display='inline';</script>";
+	echo "</td><td align='right'><A href='http://www.sugarcrm.com' target='_blank'><!--not_in_theme!--><img style='margin-top: 2px' border='0' width='120' height='34' src='include/images/poweredby_sugarcrm_65.png' alt='".$mod_strings['LBL_POWERED_BY_SUGAR']."'></a></td></tr></table></div><script>document.getElementById('sync_table').style.display='inline';</script>";
 	echo str_repeat(' ', 256);
 
 	flush();
@@ -288,7 +288,7 @@ if ($sync_module_index > -1) {
 
 	if (!isset ($_SESSION['sync_session'])) {
 		add_to_msg("Logging Into Server...");
-		$result = $soapclient->call('login', array ('user_auth' => array ('user_name' => $current_user->user_name, 'password' => $current_user->user_hash, 'version' => '1.5'), 'application_name' => 'MobileClient'));
+		$result = $soapclient->call('login', array ('user_auth' => sync_get_user_auth_data(), 'application_name' => 'MobileClient'));
 
 		if (!has_error($result)) {
 

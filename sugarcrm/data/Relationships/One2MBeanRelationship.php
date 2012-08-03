@@ -47,7 +47,7 @@ class One2MBeanRelationship extends One2MRelationship
         // test to see if the relationship exist if the relationship between the two beans
         // exist then we just fail out with false as we don't want to re-trigger this
         // the save and such as it causes problems with the related() in sugarlogic
-        if($this->relationship_exists($lhs, $rhs)) return false;
+        if($this->relationship_exists($lhs, $rhs) && !empty($GLOBALS['resavingRelatedBeans'])) return false;
 
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
@@ -69,8 +69,13 @@ class One2MBeanRelationship extends One2MRelationship
             $lhs->$lhsLinkName->load();
         }
 
-        $this->updateFields($lhs, $rhs, $additionalFields);
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callBeforeAdd($lhs, $rhs);
+            $this->callBeforeAdd($rhs, $lhs);
+        }
 
+        $this->updateFields($lhs, $rhs, $additionalFields);
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
@@ -128,6 +133,12 @@ class One2MBeanRelationship extends One2MRelationship
 
         $rhs->$rhsID = '';
 
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callBeforeDelete($lhs, $rhs);
+            $this->callBeforeDelete($rhs, $lhs);
+        }
+
         if ($save && !$rhs->deleted)
         {
             $rhs->in_relationship_update = TRUE;
@@ -147,7 +158,7 @@ class One2MBeanRelationship extends One2MRelationship
      * @param  $link Link2 loads the relationship for this link.
      * @return void
      */
-    public function load($link)
+    public function load($link, $params = array())
     {
         $relatedModule = $link->getSide() == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $rows = array();
@@ -165,14 +176,14 @@ class One2MBeanRelationship extends One2MRelationship
         else //If the link is LHS, we need to query to get the full list and load all the beans.
         {
             $db = DBManagerFactory::getInstance();
-            $query = $this->getQuery($link);
+            $query = $this->getQuery($link, $params);
             if (empty($query))
             {
                 $GLOBALS['log']->fatal("query for {$this->name} was empty when loading from   {$this->lhsLink}\n");
                 return array("rows" => array());
             }
             $result = $db->query($query);
-            while ($row = $db->fetchByAssoc($result))
+            while ($row = $db->fetchByAssoc($result, FALSE))
             {
                 $id = $row['id'];
                 $rows[$id] = $row;
@@ -182,8 +193,12 @@ class One2MBeanRelationship extends One2MRelationship
         return array("rows" => $rows);
     }
 
-    public function getQuery($link, $return_as_array = false)
+    public function getQuery($link, $params = array())
     {
+        //There was an old signature with $return_as_array as the second parameter. We should respect this if $params is true
+        if ($params === true){
+            $params = array("return_as_array" => true);
+        }
 
         if ($link->getSide() == REL_RHS) {
             return false;
@@ -193,7 +208,9 @@ class One2MBeanRelationship extends One2MRelationship
             $lhsKey = $this->def['lhs_key'];
             $rhsTable = $this->def['rhs_table'];
             $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
-            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=0";
+            $deleted = !empty($params['deleted']) ? 1 : 0;
+            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=$deleted";
+
             //Check for role column
             if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
             {
@@ -201,8 +218,33 @@ class One2MBeanRelationship extends One2MRelationship
                 $roleValue = $this->def["relationship_role_column_value"];
                 $where .= " AND $rhsTable.$roleField = '$roleValue'";
             }
-            if (!$return_as_array) {
-                return "SELECT id FROM {$this->def['rhs_table']} $where";
+
+            //Add any optional where clause
+            if (!empty($params['where'])){
+                $add_where = is_string($params['where']) ? $params['where'] : "$rhsTable." . $this->getOptionalWhereClause($params['where']);
+                if (!empty($add_where))
+                    $where .= " AND $add_where";
+            }
+
+            $from = $this->def['rhs_table'];
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!empty($params['enforce_teams']))
+            {
+                $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                if ($this->def['rhs_table'] != $relatedSeed->table_name)
+                    $from .= ", $relatedSeed->table_name";
+                $relatedSeed->add_team_security_where_clause($from);
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            if (empty($params['return_as_array'])) {
+                //Limit is not compatible with return_as_array
+                $query = "SELECT id FROM $from $where";
+                if (!empty($params['limit']) && $params['limit'] > 0) {
+                    $offset = isset($params['offset']) ? $params['offset'] : 0;
+                    $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);
+                }
+                return $query;
             }
             else
             {
@@ -269,13 +311,38 @@ class One2MBeanRelationship extends One2MRelationship
         $alias = empty($params['join_table_alias']) ? "{$link->name}_rel": $params['join_table_alias'];
         $alias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
 
+        $tableInRoleFilter = "";
+        if (($targetTable == "meetings" ||
+            $targetTable == "notes" ||
+            $targetTable == "tasks" ||
+            $targetTable == "calls") && $linkIsLHS == false) {
+            if (substr($alias, -25) == "activities_1_meetings_rel" ||
+                substr($alias, -22) == "activities_1_tasks_rel" ||
+                substr($alias, -22) == "activities_1_calls_rel" ||
+                substr($alias, -23) == "activities_1_emails_rel" ||
+                substr($alias, -22) == "activities_1_notes_rel")
+                $tableInRoleFilter = $alias;
+        }
+        else if (($startingTable == "meetings" ||
+            $startingTable == "notes" ||
+            $startingTable == "tasks" ||
+            $startingTable == "calls" ||
+            $startingTable == "emails") && empty($linkIsLHS)) {
+            if (substr($alias, -23) == "activities_meetings_rel" ||
+                substr($alias, -20) == "activities_tasks_rel" ||
+                substr($alias, -20) == "activities_calls_rel" ||
+                substr($alias, -21) == "activities_emails_rel" ||
+                substr($alias, -20) == "activities_notes_rel")
+                $tableInRoleFilter = $startingTable;
+        }
+        
         //Set up any table aliases required
         $targetTableWithAlias = "$targetTable $alias";
         $targetTable = $alias;
 
         $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
-               . $this->getRoleWhere() . "\n";
+               . $this->getRoleWhere($tableInRoleFilter) . "\n";
 
         if (!empty($params['return_as_array'])) {
             $return_array = true;

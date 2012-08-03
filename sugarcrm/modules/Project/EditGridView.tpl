@@ -32,7 +32,6 @@
 *}
 <link rel="stylesheet" type="text/css" href="modules/Project/gantt.css" />
 
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/yui/ext/yui-ext.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/popup_parent_helper.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Project/gantt.js'}"></script>

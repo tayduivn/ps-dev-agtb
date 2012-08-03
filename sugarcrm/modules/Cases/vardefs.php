@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
+$dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
 		'comment' => 'Cases are issues or problems that a customer asks a support representative to resolve'
                                ,'fields' => array (
 
@@ -52,6 +52,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'type'=>'text',
     'len' => 100,
     'importable' => 'false',
+    'studio' => array("formula" => false),
   ),
 
     'account_id'=>

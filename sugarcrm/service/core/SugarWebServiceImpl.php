@@ -451,6 +451,9 @@ function set_entry($session,$module_name, $name_value_list){
 		if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
 			continue;
 		}
+		if(!empty($seed->field_name_map[$name]['sensitive'])) {
+			continue;
+		}
 		if(!is_array($value)){
 			$seed->$name = $value;
 		}else{
@@ -1158,6 +1161,12 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	//BEGIN SUGARCRM flav=pro ONLY
 	$seed->add_team_security_where_clause($sql);
 	//END SUGARCRM flav=pro ONLY
+
+    if (isset($seed->custom_fields))
+    {
+        $customJoin = $seed->custom_fields->getJOIN();
+        $sql .= $customJoin ? $customJoin['join'] : '';
+    }
 
 	// build WHERE clauses, if any
 	$where_clauses = array();

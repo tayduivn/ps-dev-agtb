@@ -160,40 +160,6 @@ class Contact extends Person {
 		parent::Person();
 	}
 
-
-
-//BEGIN SUGARCRM flav=pro ONLY
-	/**
-	 * Returns a list of the associated products
-	 */
-	function get_products()
-	{
-		// First, get the list of IDs.
-        $query = $this->get_products_query();
-		return $this->build_related_list($query, new Product());
-	}
-
-	function get_products_query()
-	{
-		$product = new Product();
-
-		if($GLOBALS['db']->tableExists($product->table_name . "_cstm")){
-			return "SELECT 'Products' module, products.*, products_cstm.*"
-		    	. " FROM $product->table_name "
-	    		. " LEFT JOIN quotes ON products.quote_id = quotes.id"
-	    		. " LEFT JOIN $product->table_name"."_cstm ON products.id = products_cstm.id_c"
-	    		. " WHERE products.contact_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		}
-		else{
-			return "SELECT 'Products' module, products.*"
-		    	. " FROM $product->table_name "
-	    		. " LEFT JOIN quotes ON products.quote_id = quotes.id"
-	    		. " WHERE products.contact_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		}
-	}
-
-//END SUGARCRM flav=pro ONLY
-
 	function add_list_count_joins(&$query, $where)
 	{
 		// accounts.name
@@ -473,8 +439,10 @@ class Contact extends Person {
 		global $current_user;
 
 		$this->load_relationship("user_sync");
-        $beans = $this->user_sync->getBeans();
-        if (!empty($beans[$current_user->id]))
+
+        $beanIDs = $this->user_sync->get();
+
+        if( in_array($current_user->id, $beanIDs) )
         {
             $this->contacts_users_id = $current_user->id;
         }

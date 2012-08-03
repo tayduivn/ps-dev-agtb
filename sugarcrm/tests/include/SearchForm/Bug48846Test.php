@@ -97,6 +97,3 @@ class Bug48846Test extends Sugar_PHPUnit_Framework_TestCase {
     }
 
 }
- 
-?>
- 

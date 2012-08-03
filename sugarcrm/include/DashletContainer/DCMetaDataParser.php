@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * DCMetaDataParser handles both the loading and saving of meta-data for Dashlet Containers.
  * It also provides the API for adding and removing Dashlets from a layout.
- * Since all Dashlet Containers use the same Meta-Data it is in the interest of uniformity to keep this class seperate. Think of this meta-data as the master list.
+ * Since all Dashlet Containers use the same Meta-Data it is in the interest of uniformity to keep this class separate. Think of this meta-data as the master list.
  * This meta-data DOES NOT handle specifics on layout positioning of Dashlets. It just handles which Dashlets should be rendered.
  * Layout Positioning is handled by each Dashlet Container Layout on an individual basis and is not common between Dashlet Container Layouts.
  *

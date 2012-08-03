@@ -31,7 +31,6 @@
 {$CSS}
 
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
-{overlib_includes}
 <form enctype="multipart/form-data" real_id="extstep1" id="extstep1" name="extstep1" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="import_type" value="{$TYPE}">

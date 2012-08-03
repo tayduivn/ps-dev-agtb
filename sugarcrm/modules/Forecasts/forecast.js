@@ -87,6 +87,9 @@ function formsubmit(theform) {
 					window.setTimeout('ajaxStatus.hideStatus()', 2000);
 			    	var targetdiv=document.getElementById('activetimeperiodsworksheet');
 	    			targetdiv.innerHTML=o.responseText;
+                    $("ul.clickMenu").each(function(index, node){
+                     	  		$(node).sugarActionMenu();
+                    });
 			  },
 			  failure: function(o) {/*failure handler code*/}
 		};
@@ -221,23 +224,3 @@ function copy_amount(forecast_type,copy_type) {
 	wk_field=document.getElementById('commit_likely_case');
 	wk_field.value=unformat_currency(likely_case);
 } 
-
-function copyvalue_overlib(forecast_type) {
-
-	var script;
-
-	if (forecast_type=='direct') {
-		script= "overlib('<a style=\\\'width: 150px\\\' class=\\\'menuItem\\\' onmouseover=\\\'hiliteItem(this,\\\"yes\\\");\\\' onmouseout=\\\'unhiliteItem(this);\\\' onclick=\\\'copy_amount(\"direct\",\"amount\")\\\' href=\\\'#\\\'>" + SUGAR.language.get('Forecasts', 'LBL_COPY_AMOUNT')+"</a>" ;
-		script=script + "<a style=\\\'width: 150px\\\' class=\\\'menuItem\\\' onmouseover=\\\'hiliteItem(this,\\\"yes\\\");\\\' onmouseout=\\\'unhiliteItem(this);\\\' onclick=\\\'copy_amount(\"direct\",\"weigh\")\\\' href=\\\'#\\\'>" + SUGAR.language.get('Forecasts', 'LBL_COPY_WEIGH_AMOUNT')+"</a>";  
-        script=script + "<a style=\\\'width: 150px\\\' class=\\\'menuItem\\\' onmouseover=\\\'hiliteItem(this,\\\"yes\\\");\\\' onmouseout=\\\'unhiliteItem(this);\\\' onclick=\\\'copy_amount(\"direct\",\"worksheet\")\\\' href=\\\'#\\\'>" + SUGAR.language.get('Forecasts', 'LBL_WORKSHEET_AMOUNT')+"</a>"  
-	} else {
-		script= "overlib('<a style=\\\'width: 150px\\\' class=\\\'menuItem\\\' onmouseover=\\\'hiliteItem(this,\\\"yes\\\");\\\' onmouseout=\\\'unhiliteItem(this);\\\' onclick=\\\'copy_amount(\"rollup\",\"amount\")\\\' href=\\\'#\\\'>" + SUGAR.language.get('Forecasts', 'LBL_COMMIT_AMOUNT')+"</a>" ;
-        script=script + "<a style=\\\'width: 150px\\\' class=\\\'menuItem\\\' onmouseover=\\\'hiliteItem(this,\\\"yes\\\");\\\' onmouseout=\\\'unhiliteItem(this);\\\' onclick=\\\'copy_amount(\"rollup\",\"worksheet\")\\\' href=\\\'#\\\'>" + SUGAR.language.get('Forecasts', 'LBL_WORKSHEET_AMOUNT')+"</a>"  	
-	}
-    script=script + "', CAPTION, '" + SUGAR.language.get('Forecasts', 'LBL_COPY_FROM');
-    script=script + "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 style=\"margin-left:50px;\" src=index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name;
-    script=script + "&imageName=close.gif>', WIDTH, 150, CLOSETITLE, '" + SUGAR.language.get('Forecasts', 'LBL_COPY') + "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', ";
-    script=script + "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass')";		
-
-	return eval(script);
-}

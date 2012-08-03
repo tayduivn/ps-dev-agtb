@@ -172,6 +172,18 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 		$_POST['reminder_time'] = $current_user->getPreference('reminder_time');
 		$_POST['reminder_checked']=1;
 	}
+	
+	if(!isset($_POST['email_reminder_checked']) || (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '0')) {
+		$_POST['email_reminder_time'] = -1;
+	}
+	if(!isset($_POST['email_reminder_time'])){
+		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
+		$_POST['email_reminder_checked'] = 1;
+	}
+	
+	// don't allow to set recurring_source from a form
+	unset($_POST['recurring_source']);
+	
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";
     if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {
@@ -217,7 +229,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
 
 	  	//add current user if the assigned to user is different than current user.
-	  	if($current_user->id != $_POST['assigned_user_id']){
+	  	if($current_user->id != $_POST['assigned_user_id'] && $_REQUEST['module'] != "Calendar"){
 	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
 	  	}
 
@@ -227,7 +239,9 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 
 
 	if( (isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true') ||
-        (isset($_POST['is_ajax_call']) && !empty($_POST['is_ajax_call']) && !empty($focus->id) )
+        (isset($_POST['is_ajax_call']) && !empty($_POST['is_ajax_call']) && !empty($focus->id) ||
+        (isset($_POST['return_action']) && $_POST['return_action'] == 'SubPanelViewer') && !empty($focus->id))||
+         !isset($_POST['user_invitees']) // we need to check that user_invitees exists before processing, it is ok to be empty
     ){
         $focus->save(true);
         $return_id = $focus->id;

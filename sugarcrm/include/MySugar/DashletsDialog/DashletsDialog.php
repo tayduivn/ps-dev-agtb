@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
  * $Id: DashletsTree.php 15444 2006-08-03 05:25:57Z wayne $
- * Description: Handles the User Preferences and stores them in a seperate table. 
+ * Description: Handles the User Preferences and stores them in a separate table.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
@@ -30,24 +30,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class DashletsDialog {
 	var $dashlets = array();
-	
+
     function getDashlets($category='') {
         global $app_strings, $current_language, $mod_strings;
-        
+
         require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
-        
+
         $categories = array( 'module' 	=> 'Module Views',
         					 'portal' 	=> 'Portal',
         					 'charts'	=> 'Charts',
         					 'tools'	=> 'Tools',
         					 'misc'		=> 'Miscellaneous',
         					 'web'      => 'Web');
-        
+
         $dashletStrings = array();
         $dashletsList = array();
-        
+
         if (!empty($category)){
-			$dashletsList[$categories[$category]] = array();        	
+			$dashletsList[$categories[$category]] = array();
         }
         else{
 	        $dashletsList['Module Views'] = array();
@@ -55,38 +55,38 @@ class DashletsDialog {
 	        $dashletsList['Tools'] = array();
 	        $dashletsList['Web'] = array();
         }
-              
+
         asort($dashletsFiles);
-        
+
         foreach($dashletsFiles as $className => $files) {
             if(!empty($files['meta']) && is_file($files['meta'])) {
                 require_once($files['meta']); // get meta file
-                
+
                 $directory = substr($files['meta'], 0, strrpos($files['meta'], '/') + 1);
-                if(is_file($directory . $files['class'] . '.' . $current_language . '.lang.php')) 
+                if(is_file($directory . $files['class'] . '.' . $current_language . '.lang.php'))
                     require_once($directory . $files['class'] . '.' . $current_language . '.lang.php');
-                elseif(is_file($directory . $files['class'] . '.en_us.lang.php')) 
+                elseif(is_file($directory . $files['class'] . '.en_us.lang.php'))
                     require_once($directory . $files['class'] . '.en_us.lang.php');
 
                 // try to translate the string
                 if(empty($dashletStrings[$files['class']][$dashletMeta[$files['class']]['title']]))
                     $title = $dashletMeta[$files['class']]['title'];
-                else 
+                else
                     $title = $dashletStrings[$files['class']][$dashletMeta[$files['class']]['title']];
-                
+
                 // try to translate the string
                 if(empty($dashletStrings[$files['class']][$dashletMeta[$files['class']]['description']]))
-                    $description = $dashletMeta[$files['class']]['description']; 
-                else 
+                    $description = $dashletMeta[$files['class']]['description'];
+                else
                     $description = $dashletStrings[$files['class']][$dashletMeta[$files['class']]['description']];
-				
+
 				// generate icon
                 if (!empty($dashletMeta[$files['class']]['icon'])) {
                     // here we'll support image inheritance if the supplied image has a path in it
                     // i.e. $dashletMeta[$files['class']]['icon'] = 'themes/default/images/dog.gif'
                     // in this case, we'll strip off the path information to check for the image existing
                     // in the current theme.
-                   
+
                     $imageName = SugarThemeRegistry::current()->getImageURL(basename($dashletMeta[$files['class']]['icon']), false);
                     if ( !empty($imageName) ) {
                         if (sugar_is_file($imageName))
@@ -108,7 +108,7 @@ class DashletsDialog {
 						}
                 	}
                 }
-                
+
                 // determine whether to display
                 if (!empty($dashletMeta[$files['class']]['hidden']) && $dashletMeta[$files['class']]['hidden'] === true){
                 	$displayDashlet = false;
@@ -132,14 +132,14 @@ class DashletsDialog {
                 		}
                 	}
                 }
-                                                
+
                 if ($dashletMeta[$files['class']]['category'] == 'Charts'){
                 	$type = 'predefined_chart';
                 }
                 else{
                 	$type = 'module';
                 }
-                
+
                 if ($displayDashlet && isset($dashletMeta[$files['class']]['dynamic_hide']) && $dashletMeta[$files['class']]['dynamic_hide']){
                     if ( file_exists($files['file']) ) {
                         require_once($files['file']);
@@ -149,8 +149,8 @@ class DashletsDialog {
                         }
                     }
                 }
-                	
-                if ($displayDashlet){    
+
+                if ($displayDashlet){
 					$cell = array( 'title' => $title,
 								   'description' => $description,
 								   'onclick' => 'return SUGAR.mySugar.addDashlet(\'' . $className . '\', \'' . $type . '\', \''.(!empty($dashletMeta[$files['class']]['module']) ? $dashletMeta[$files['class']]['module'] : '' ) .'\');',
@@ -175,16 +175,15 @@ class DashletsDialog {
         		asort($dashletsList[$key]);
         	}
         }
-        $this->dashlets = $dashletsList;        
+        $this->dashlets = $dashletsList;
     }
-        
+
     //BEGIN SUGARCRM flav=pro ONLY
     function getReportCharts($category){
     	global $current_user;
-    	
-    	
+
     	//require_once('modules/Reports/Report.php');
-    	
+
     	$chartsList = array();
     	$focus = new SavedReport();
     	$focus->disable_row_level_security = false;
@@ -193,7 +192,7 @@ class DashletsDialog {
 		    	// build global where string
 		    	$where = "AND saved_reports.team_set_id='1'";
     	    	break;
-    	    	
+
     		case 'myTeams':
 		    	// build myTeams where string
 		    	$myTeams = $current_user->get_my_teams();
@@ -210,12 +209,12 @@ class DashletsDialog {
 		    		}
 		    	}
 		    	break;
-		    	
+
     		case 'mySaved':
 		    	// build mySaved where string
 		    	$where = "AND saved_reports.team_set_id='".$current_user->getPrivateTeamID()."'";
 		    	break;
-		    	
+
 		    case 'myFavorites':
                 global $current_user;
                 $sugaFav = new SugarFavorites();
@@ -229,14 +228,14 @@ class DashletsDialog {
                 else
                     $where = ' AND saved_reports.id IN (\'-1\')';
                 break;
-		    	
-		    	
+
+
     		default:
     			break;
     	}
-		
+
     	$savedReports = $focus->get_full_list(""," chart_type != 'none' " . $where);
-		
+
 		$chartsList = array();
 		if (!empty($savedReports)){
 			foreach($savedReports as $savedReport){
@@ -247,10 +246,11 @@ class DashletsDialog {
 				$displayDashlet = $myDashlet->checkDashletDisplay();
 
 				if ($displayDashlet) {
-				$report_def = array( 'title' => $savedReport->name,
+					$title = getReportNameTranslation($savedReport->name); 
+					$report_def = array( 'title' => $title, 
 										 'onclick' => 'return SUGAR.mySugar.addDashlet(\'' . $savedReport->id . '\', \'chart\', \''.$savedReport->module.'\');',
 									);
-									 
+
 				array_push($chartsList, $report_def);
 			}
 		}

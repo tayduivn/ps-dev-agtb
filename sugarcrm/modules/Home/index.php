@@ -104,7 +104,7 @@ if(!$hasUserPreferences){
                                          'module' => 'Home',
                                          'forceColumn' => 0,
                                          'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
-                                         'options' => array('title' => translate('LBL_DASHLET_DISCOVER_SUGAR_PRO','Home'),
+                                         'options' => array('titleLabel' => 'LBL_DASHLET_DISCOVER_SUGAR_PRO',
                                                             'url' => 'http://www.sugarcrm.com/crm/product/gopro',
                                                             'height' => 315,
                                              ));
@@ -120,7 +120,7 @@ if(!$hasUserPreferences){
                                          'module' => 'Home',
                                          'forceColumn' => 1,
                                          'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
-                                         'options' => array('title' => translate('LBL_DASHLET_SUGAR_NEWS','Home'),
+                                         'options' => array('titleLabel' => 'LBL_DASHLET_SUGAR_NEWS',
                                                             'url' => 'http://www.sugarcrm.com/crm/product/news',
                                                             'height' => 315,
                                              ));
@@ -506,38 +506,38 @@ if (empty($pages)){
 //BEGIN SUGARCRM flav=dce ONLY
     $pages[0]['columns'] = $dceColumns;
     $pages[0]['numColumns'] = '2';
-    $pages[0]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_5_NAME'];  // "DCE"
+    $pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_5_NAME';  // "DCE"
 //END SUGARCRM flav=dce ONLY
 //BEGIN SUGARCRM flav!=dce ONLY
 	$pages[0]['columns'] = $columns;
 	$pages[0]['numColumns'] = '2';
-	$pages[0]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_1_NAME'];	// "My Sugar"
+	$pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_1_NAME';	// "My Sugar"
 	$pageIndex++;
 //BEGIN SUGARCRM flav=pro ONLY
 
 	$pages[$pageIndex]['columns'] = $salesColumns;
 	$pages[$pageIndex]['numColumns'] = '2';
-	$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_2_NAME'];	// "Sales Page"
+	$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_2_NAME';	// "Sales Page"
 	$pageIndex++;
 
 	if(ACLController::checkAccess('Leads', 'view', false)){
 		$pages[$pageIndex]['columns'] = $marketingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_6_NAME';	// "Marketing Page"
 		$pageIndex++;
 	}
 
 	if(ACLController::checkAccess('Cases', 'view', false)){
 		$pages[$pageIndex]['columns'] = $supportColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_3_NAME'];	// "Support Page"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_3_NAME';	// "Support Page"
 		$pageIndex++;
 	}
 
 	if(ACLController::checkAccess('Trackers', 'view', false, 'Tracker')){
 		$pages[$pageIndex]['columns'] = $trackingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_4_NAME'];	// "Tracker"
+		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_4_NAME';	// "Tracker"
 		$pageIndex++;
 	}
 
@@ -586,7 +586,12 @@ foreach($pages as $pageNum => $page){
     if($pageNum != $activePage)
         $divPages[] = $pageNum;
 
-    $pageData[$pageNum]['pageTitle'] = $page['pageTitle'];
+    // If it's one of the default tabs (has 'pageTitleLabel' defined) pick translated value
+    if (!empty($page['pageTitleLabel']) && empty($page['pageTitle'])) {
+    	$pageData[$pageNum]['pageTitle'] = to_html($mod_strings[$page['pageTitleLabel']], ENT_QUOTES);
+    } else {
+        $pageData[$pageNum]['pageTitle'] = to_html($page['pageTitle'], ENT_QUOTES);
+	}
 
     if($pageNum == $activePage){
         $pageData[$pageNum]['tabClass'] = 'current';
@@ -726,7 +731,18 @@ $resources = $sugarChart->getChartResources();
 $mySugarResources = $sugarChart->getMySugarChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 $sugar_smarty->assign('mySugarChartResources', $mySugarResources);
-echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
+//BEGIN SUGARCRM flav=pro ONLY
+$viewed_tour = $current_user->getPreference('viewed_tour');
+if((empty($viewed_tour) || $viewed_tour == 'false') && $theme != "Sugar5") {
+    $sugar_smarty->assign('view_tour', true);
+}
+//END SUGARCRM flav=pro ONLY
+if (file_exists("custom/include/MySugar/tpls/MySugar.tpl")) {
+	echo $sugar_smarty->fetch('custom/include/MySugar/tpls/MySugar.tpl');
+} else {
+	echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
+}
+
 //init the quickEdit listeners after the dashlets have loaded on home page the first time
 echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";
 ?>

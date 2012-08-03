@@ -318,6 +318,10 @@ $app_list_strings = array (
     'Net 30' => 'Net 30',
   ),
   'sales_stage_default_key' => 'Prospecting',
+  'fts_type' => array (
+      '' => '',
+      'Elastic' => 'elasticsearch'
+  ),
   'sales_stage_dom' =>
   array (
     'Prospecting' => 'Prospecting',
@@ -372,13 +376,17 @@ $app_list_strings = array (
         'Prof.' => 'Prof.',
       ),
   //time is in seconds; the greater the time the longer it takes;
-  'reminder_max_time'=>3600,
+  'reminder_max_time' => 90000,
   'reminder_time_options' => array( 60=> '1 minute prior',
                                   300=> '5 minutes prior',
                                   600=> '10 minutes prior',
                                   900=> '15 minutes prior',
                                   1800=> '30 minutes prior',
                                   3600=> '1 hour prior',
+                                  7200 => '2 hours prior',
+                                  10800 => '3 hours prior',
+                                  18000 => '5 hours prior',
+                                  86400 => '1 day prior',
                                  ),
 
   'task_priority_default' => 'Medium',
@@ -1469,6 +1477,37 @@ $app_list_strings = array (
                                     '30'=>'30',
                                     '45'=>'45'),
 
+    'repeat_type_dom' => array(
+    	'' => 'None',
+    	'Daily'	=> 'Daily',
+	'Weekly' => 'Weekly',
+	'Monthly' => 'Monthly',
+	'Yearly' => 'Yearly',
+    ),
+
+    'repeat_intervals' => array(
+        '' => '',
+        'Daily' => 'day(s)',
+        'Weekly' => 'week(s)',
+        'Monthly' => 'month(s)',
+        'Yearly' => 'year(s)',
+    ),
+
+    'duration_dom' => array(
+    	'' => 'None',
+    	'900' => '15 minutes',
+	'1800' => '30 minutes',
+	'2700' => '45 minutes',
+	'3600' => '1 hour',
+	'5400' => '1.5 hours',
+	'7200' => '2 hours',
+	'10800' => '3 hours',
+	'21600' => '6 hours',
+	'86400' => '1 day',
+	'172800' => '2 days',
+	'259200' => '3 days',
+	'604800' => '1 week',
+    ),
 
 // deferred
 /*// QUEUES MODULE DOMs
@@ -1539,6 +1578,13 @@ $app_list_strings = array (
     'false'=>'No',
     'required'=>'Required',
   ),
+
+    'Elastic_boost_options' => array (
+        '0' =>'Disabled',
+        '1'=>'Low Boost',
+        '2'=>'Medium Boost',
+        '3'=>'High Boost',
+    ),
 
   'custom_fields_merge_dup_dom'=> array (
         0=>'Disabled',
@@ -1816,6 +1862,11 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_TOUR_NEXT' => 'Next',
+  'LBL_TOUR_SKIP' => 'Skip',
+  'LBL_TOUR_BACK' => 'Back',
+  'LBL_TOUR_CLOSE' => 'Close',
+  'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
@@ -1841,6 +1892,9 @@ $app_strings = array (
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
+    'LBL_ADVANCED' => 'Advanced',
+    'LBL_BASIC' => 'Basic',
+    'LBL_MODULE_FILTER' => 'Filter By',
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
     'LBL_MOREDETAIL'=>'More Detail',
@@ -2309,6 +2363,7 @@ $app_strings = array (
     'LBL_LINK_RECORDS'=> 'Records',
     'LBL_LINK_SELECT'=> 'Select',
     'LBL_LINK_ACTIONS'=> 'Actions',
+    'LBL_LINK_MORE'=> 'More',
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
@@ -2321,6 +2376,7 @@ $app_strings = array (
     'LBL_TEAM_SET_ID' => 'Team Set ID',
     'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
+    'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
     //END SUGARCRM flav=pro ONLY
@@ -2417,6 +2473,7 @@ $app_strings = array (
 //BEGIN SUGARCRM flav=dce ONLY
     'LBL_BROWSER_TITLE' => 'Sugar DCE',
 //END SUGARCRM flav=dce ONLY
+    'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
 //BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
 //END SUGARCRM flav!=dce ONLY
@@ -2483,6 +2540,8 @@ $app_strings = array (
     'LBL_DST_NEEDS_FIXIN' => 'The application requires a Daylight Saving Time fix to be applied.  Please go to the <a href="index.php?module=Administration&action=DstFix">Repair</a> link in the Admin console and apply the Daylight Saving Time fix.',
     'LBL_EDIT_AS_NEW_BUTTON_LABEL' => 'Edit As New',
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
+    'LBL_FAVORITES' => 'Favorites',
+    'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
@@ -2509,7 +2568,9 @@ $app_strings = array (
     'LBL_IMPORT' => 'Import',
     'LBL_IMPORT_STARTED' => 'Import Started: ',
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
-    'LBL_LAST_VIEWED' => 'Last Viewed',
+    'LBL_LAST_VIEWED' => 'Recently Viewed',
+    'LBL_SHOW_LESS' => 'Show Less',
+    'LBL_SHOW_MORE' => 'Show More',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
   //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_LEADS'=>'Leads',
@@ -2556,6 +2617,7 @@ $app_strings = array (
     'LBL_LOCALE_NAME_EXAMPLE_TITLE' => 'Code Monkey Extraordinaire',
     'LBL_LOGIN_TO_ACCESS' => 'Please sign in to access this area.',
     'LBL_LOGOUT' => 'Log Out',
+    'LBL_PROFILE' => 'Profile',
     'LBL_MAILMERGE_KEY' => 'M',
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
@@ -2571,7 +2633,7 @@ $app_strings = array (
     'LBL_MODIFIED' => 'Modified by',
     'LBL_MODIFIED_NAME'=>'Modified By Name',
     'LBL_MODIFIED_ID'=>'Modified By Id',
-    'LBL_MORE' => 'more',
+    'LBL_MORE' => 'More',
     'LBL_MY_ACCOUNT' => 'My Settings',
     'LBL_NAME' => 'Name',
     'LBL_NEW_BUTTON_KEY' => 'N',
@@ -2608,7 +2670,7 @@ $app_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET_3' => 'Primary Address Street 3:',
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street:',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
-	
+
 	'LBL_BILLING_STREET'=> 'Street:',
 	'LBL_SHIPPING_STREET'=> 'Street:',
 
@@ -2648,6 +2710,8 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_TIPS' => "Press the search button or click enter to get an exact match for them.",
+    'LBL_SEARCH_TIPS_2' => "Press the search button or click enter to get an exact match for",
     'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
@@ -2752,7 +2816,7 @@ $app_strings = array (
     'LBL_TABGROUP_ALL' => 'All',
     'LBL_TABGROUP_ACTIVITIES' => 'Activities',
     'LBL_TABGROUP_COLLABORATION' => 'Collaboration',
-    'LBL_TABGROUP_HOME' => 'Home',
+    'LBL_TABGROUP_HOME' => 'Dashboard',
     'LBL_TABGROUP_MARKETING' => 'Marketing',
     'LBL_TABGROUP_MY_PORTALS' => 'My Sites',
     'LBL_TABGROUP_OTHER' => 'Other',
@@ -2792,10 +2856,13 @@ $app_strings = array (
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
     'LNK_BASIC_SEARCH' => 'Basic Search',
+    'LNK_SEARCH_FTS_VIEW_ALL' => 'View all results',
+    'LNK_SEARCH_NONFTS_VIEW_ALL' => 'Show All',
+    'LNK_CLOSE' => 'close',
     'LBL_MODIFY_CURRENT_SEARCH'=> 'Modify current search',
     'LNK_SAVED_VIEWS' => 'Layout Options',
     'LNK_DELETE_ALL' => 'del all',
-    'LNK_DELETE' => 'del',
+    'LNK_DELETE' => 'delete',
     'LNK_EDIT' => 'edit',
     'LNK_GET_LATEST'=>'Get latest',
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
@@ -2810,7 +2877,7 @@ $app_strings = array (
     'LNK_LOAD_SIGNED_TOOLTIP'=>'Replace with signed document',
     'LNK_PRINT' => 'Print',
     'LNK_BACKTOTOP' => 'Back to top',
-    'LNK_REMOVE' => 'rem',
+    'LNK_REMOVE' => 'remove',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
 
@@ -2843,6 +2910,7 @@ $app_strings = array (
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
+    'ERROR_NO_BEAN' => 'Failed to get bean.', 
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
@@ -2888,7 +2956,14 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
-  'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+  	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+ 	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
+	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
+ 	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
+	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
+	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG' =>	"<item4> to learn more about the <item1> module. In order to access more information, use the user menu drop down located on the main navigation bar to access Help.",
+
+    'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -2971,7 +3046,8 @@ $app_strings = array (
     'LBL_SEARCH_TOOLS' => 'Tools',
     'LBL_SEARCH_HELP_TITLE' => 'Search Tips',
     'LBL_SEARCH_HELP_CLOSE_TOOLTIP' => 'Close',
-
+    'LBL_SEARCH_RESULTS_FOUND' => 'Search Results Found',
+    'LBL_SEARCH_RESULTS_TIME' => 'ms.',
     'ERR_BLANK_PAGE_NAME' => 'Please enter a page name.',
     /* End MySugar Framework strings */
 
@@ -3158,6 +3234,13 @@ $app_strings = array (
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
 
+    'LBL_DURATION_DAY' => 'day',
+    'LBL_DURATION_HOUR' => 'hour',
+    'LBL_DURATION_MINUTE' => 'minute',
+    'LBL_DURATION_DAYS' => 'days',
+    'LBL_DURATION_HOURS' => 'hours',
+    'LBL_DURATION_MINUTES' => 'minutes',
+
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
     'LBL_ENTER_YEAR' => 'Enter Year',
@@ -3254,6 +3337,8 @@ $app_strings = array (
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
     'UPLOAD_ERROR_TEXT_SIZEINFO' => 'ERROR: There was an error during upload. Error code: {0} - {1}. The upload_maxsize is {2} ',
     'UPLOAD_ERROR_HOME_TEXT'     => 'ERROR: There was an error during your upload, please contact an administrator for help.',
+    'UPLOAD_MAXIMUM_EXCEEDED'    => 'Size of Upload ({0} bytes) Exceeded Allowed Maximum: {1} bytes',
+
 
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
@@ -4036,4 +4121,31 @@ $app_list_strings['eapm_list_documents']= array(
         3 => 'Invalid',
     );
 
+$app_list_strings ['emailTemplates_type_list'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+    'email' => 'Email',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'workflow' => 'Workflow',
+    //END SUGARCRM flav=pro ONLY
+  );
+
+$app_list_strings ['emailTemplates_type_list_campaigns'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+  );
+
+$app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+    'email' => 'Email',
+  );
+$app_strings ['documentation'] = array (
+    'LBL_DOCS' => 'Documentation',
+    'ULT' => '02_Sugar_Ultimate',
+	'ENT' => '02_Sugar_Enterprise',
+	'CORP' => '03_Sugar_Corporate',
+	'PRO' => '04_Sugar_Professional',
+	'COM' => '05_Sugar_Community_Edition'
+);
 ?>

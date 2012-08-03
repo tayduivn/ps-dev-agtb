@@ -49,7 +49,7 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
 
 	function setUp() 
 	{
-	    $this->markTestSkipped("Skipping unless otherwise specified");
+	    $this->markTestIncomplete("Skipping unless otherwise specified");
 
         global $beanList, $beanFiles, $moduleList;
         require('include/modules.php');		

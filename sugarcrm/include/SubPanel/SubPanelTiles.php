@@ -295,8 +295,16 @@ if(document.DetailView != null &&
 			$div_display = $default_div_display;
 			$cookie_name =   $tab . '_v';
 
+			if (isset($thisPanel->_instance_properties['collapsed']) && $thisPanel->_instance_properties['collapsed'])
+			{
+				$div_display = 'none';
+			}
+				
 			if(isset($div_cookies[$cookie_name])){
-				$div_display = 	$div_cookies[$cookie_name];
+				//If defaultSubPanelExpandCollapse is set, ignore the cookie that remembers whether the panel is expanded or collapsed.
+				//To be used with the above 'collapsed' metadata setting so they will always be set the same when the page is loaded.
+				if(!isset($sugar_config['defaultSubPanelExpandCollapse']) || $sugar_config['defaultSubPanelExpandCollapse'] == false)
+					$div_display = 	$div_cookies[$cookie_name];
 			}
 			if(!empty($sugar_config['hide_subpanels'])){
 				$div_display = 'none';
@@ -427,10 +435,15 @@ EOQ;
 	function get_buttons($thisPanel,$panel_query=null)
 	{
 		$subpanel_def = $thisPanel->get_buttons();
-		$layout_manager = $this->getLayoutManager();
-		$widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>';
+        $layout_manager = $this->getLayoutManager();
+
+        //for action button at the top of each subpanel
+        // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
+        $buttons = array();
+        $widget_contents = '';
 		foreach($subpanel_def as $widget_data)
 		{
+
 			$widget_data['action'] = $_REQUEST['action'];
 			$widget_data['module'] =  $thisPanel->get_inst_prop_value('module');
 			$widget_data['focus'] = $this->focus;
@@ -439,18 +452,20 @@ EOQ;
 
 			if(empty($widget_data['widget_class']))
 			{
-				$widget_contents .= "widget_class not defined for top subpanel buttons";
+				$buttons[] = "widget_class not defined for top subpanel buttons";
 			}
 			else
 			{
-				$widget_contents .= $layout_manager->widgetDisplay($widget_data);
+				$buttons[] = $layout_manager->widgetDisplay($widget_data);
 			}
 
-			$widget_contents .= '</td>';
-		}
-
-		$widget_contents .= '</tr></table></span>';
-		return $widget_contents;
+        }
+        require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+        $widget_contents = smarty_function_sugar_action_menu(array(
+            'buttons' => $buttons,
+            'class' => 'clickMenu fancymenu',
+        ), $this->xTemplate);
+        return $widget_contents;
 	}
 }
 ?>

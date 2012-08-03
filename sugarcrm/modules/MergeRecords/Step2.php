@@ -56,8 +56,8 @@ $this->bean = $focus->merge_bean;
 
 $params = array();
 $params[] = "<a href='index.php?module={$focus->merge_bean->module_dir}&action=index'>{$GLOBALS['app_list_strings']['moduleList'][$focus->merge_bean->module_dir]}</a>";
-$params[] = "<a href='index.php?module={$focus->merge_bean->module_dir}&action=DetailView&record={$focus->merge_bean->id}'>{$focus->merge_bean->name}</a>";
 $params[] = $mod_strings['LBL_STEP2_FORM_TITLE'];
+$params[] = $focus->merge_bean->name;
 echo getClassicModuleTitle($focus->merge_bean->module_dir, $params, true);
 
        $order_by_name = $focus->merge_module.'2_'.strtoupper($focus->merge_bean->object_name).'_ORDER_BY' ; 
@@ -84,7 +84,6 @@ $ListView = new ListViewSmarty();
 $ListView->should_process = true;
 $ListView->mergeduplicates = false;
 $ListView->export = false;
-$ListView->select = false;
 $ListView->delete = false;
 $module = $_REQUEST['merge_module'];
 $metadataFile = null;
@@ -158,13 +157,13 @@ $form_top = <<<EOQ
 			<input type="hidden" name="return_module" value="$focus->merge_module">
 			<input type="hidden" name="return_id" value="$return_id">
 			<input type="hidden" name="return_action" value="DetailView">
-			<input title="$button_title" class="button" onclick="return verify_selection(this);" type="submit" name="button" value="  $button_label  " >
-            <input title="$cancel_title" accessKey="$cancel_key" class="button" onclick="this.form.action.value='DetailView';this.form.module.value='$focus->merge_module';this.form.module.record='$return_id'" type="submit" name="button" value=" $cancel_label   " >
+			<input title="$button_title" class="button" onclick="return verify_selection(this);" type="submit" name="button" value="  $button_label  " id="perform_merge_button">
+            <input title="$cancel_title" accessKey="$cancel_key" class="button" onclick="this.form.action.value='DetailView';this.form.module.value='$focus->merge_module';this.form.module.record='$return_id'" type="submit" name="button" value=" $cancel_label   " id="cancel_merge_button" >
 		</form>
         <script>
            function verify_selection(theElement) {
                 theElement.form.action.value='Step3';
-                var selcount=document.getElementById('selectCount');
+                var selcount=document.getElementById('selectCountTop');
                 if (parseInt(selcount.value) >0 ) {
                     return true;
                 } else {

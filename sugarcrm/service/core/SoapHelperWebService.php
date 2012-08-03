@@ -564,6 +564,7 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $value->id != $current_user->id){
 			$value->user_hash = '';
 		}
+		$value = clean_sensitive_data($value->field_defs, $value);
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_return_value_for_fields');
 		return Array('id'=>$value->id,
 					'module_name'=> $module,
@@ -583,19 +584,30 @@ function validate_user($user_name, $password){
 
 	function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
-		require_once('include/TimeDate.php');
 		global $current_user, $disable_date_format,  $timedate;
 
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
+            $params = array();
+            if (!empty($optional_where))
+            {
+                $params['where'] = $optional_where;
+            }
 			//First get all the related beans
-            $related_beans = $bean->$link_field_name->getBeans();
-			$filterFields = $this->filter_fields($submodule, $link_module_fields);
-            //Create a list of field/value rows based on $link_module_fields
+            $related_beans = $bean->$link_field_name->getBeans($params);
+            if(isset($related_beans[0])) {
+                // use first bean to filter fields since all records have same module
+                // and  $this->filter_fields doesn't use ACLs
+                $filterFields = $this->filter_fields($related_beans[0], $link_module_fields);
+            } else {
+                $filterFields = $this->filter_fields(null, $link_module_fields);
+            }
 			$list = array();
             foreach($related_beans as $id => $bean)
             {
                 $row = array();
+                //Create a list of field/value rows based on $link_module_fields
+
                 foreach ($filterFields as $field) {
                     if (isset($bean->$field))
                     {
@@ -613,6 +625,7 @@ function validate_user($user_name, $password){
                 if(is_a($bean, 'User') && $current_user->id != $bean->id && isset($row['user_hash'])) {
                     $row['user_hash'] = "";
                 }
+                $row = clean_sensitive_data($bean->field_defs, $row);
                 $list[] = $row;
             }
 			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');
@@ -631,6 +644,7 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $bean->id != $current_user->id){
 			$bean->user_hash = '';
 		}
+		$bean = clean_sensitive_data($bean->field_defs, $bean);
 
 		if (empty($link_name_to_value_fields_array) || !is_array($link_name_to_value_fields_array)) {
 			$GLOBALS['log']->debug('End: SoapHelperWebServices->get_return_value_for_link_fields - Invalid link information passed ');
@@ -769,7 +783,9 @@ function validate_user($user_name, $password){
 				if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $value['name'] == 'user_hash'){
 					continue;
 				}
-
+                if(!empty($seed->field_name_map[$value['name']]['sensitive'])) {
+                    continue;
+                }
 				$seed->$value['name'] = $val;
 			}
 
@@ -839,6 +855,9 @@ function validate_user($user_name, $password){
                         }
                     }
 					$seed->save();
+                    if($seed->deleted == 1){
+                            $seed->mark_deleted($seed->id);
+                    }
 					$ids[] = $seed->id;
 				}//fi
 			}
@@ -884,6 +903,7 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $value->id != $current_user->id){
 			$value->user_hash = '';
 		}
+		$value = clean_sensitive_data($value->field_defs, $value);
 		$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_entries');
 		return Array('id'=>$value->id,
 					'module_name'=> $module,

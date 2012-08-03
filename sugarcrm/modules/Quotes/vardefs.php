@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_search' => true
-                               ,'fields' => array (
+                               ,'full_text_search' => true, 'fields' => array (
   'shipper_id' =>
   array (
     'name' => 'shipper_id',
@@ -101,6 +101,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'name',
     'len' => '50',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 3),
     'importable' => 'required',
     'required'=>true,
   ),
@@ -194,6 +195,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'auto_increment'=>true,
     'required'=>true,
     'unified_search' => true,
+    'full_text_search' => array('boost' => 3),
     'disable_num_format' => true,
   	'enable_range_search' => true,
   	'options' => 'numeric_range_search_dom',

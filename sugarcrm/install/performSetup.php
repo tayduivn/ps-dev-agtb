@@ -106,7 +106,7 @@ $out =<<<EOQ
 		</p>
 		{$mod_strings['LBL_PERFORM_TITLE']}</th>
     <th width="200" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-    <IMG src="$loginImage" width="145" height="30" alt="SugarCRM" border="0"></a></th>
+    <IMG src="$loginImage" alt="SugarCRM" border="0"></a></th>
 </tr>
 <tr>
    <td colspan="2">
@@ -336,7 +336,7 @@ echo "<br>";
         echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_REPORTS'].$line_exit_format;
         installLog($mod_strings['LBL_PERFORM_DEFAULT_REPORTS']);
         installerHook('pre_createDefaultReports');
-        require_once('modules/Reports/SeedReports.php');
+        require_once(get_custom_file_if_exists('modules/Reports/SeedReports.php'));
         create_default_reports();
         installerHook('post_createDefaultReports');
         echo $mod_strings['LBL_PERFORM_DONE'];
@@ -446,6 +446,33 @@ require_once ('install/createSnipUser.php');
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();
 
+// Install the logic hook for FTS
+installLog("Creating FTS logic hook");
+if (!function_exists('createFTSLogicHook')) {
+    function createFTSLogicHook($filePath = 'application/Ext/LogicHooks/logichooks.ext.php')
+    {
+        $customFileLoc = create_custom_directory($filePath);
+        $fp = sugar_fopen($customFileLoc, 'wb');
+        $contents = <<<CIA
+<?php
+if (!isset(\$hook_array) || !is_array(\$hook_array)) {
+    \$hook_array = array();
+}
+if (!isset(\$hook_array['after_save']) || !is_array(\$hook_array['after_save'])) {
+    \$hook_array['after_save'] = array();
+}
+\$hook_array['after_save'][] = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
+CIA;
+
+        fwrite($fp,$contents);
+        fclose($fp);
+
+    }
+}
+createFTSLogicHook();
+// also write it to Extension directory so it won't be lost when rebuilding extensions
+createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 
@@ -467,6 +494,14 @@ enableInsideViewConnector();
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type']))
+        {
+            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+            $indexer = new SugarSearchEngineFullIndexer();
+            $results = $indexer->performFullSystemIndex();
+        }
+        //END SUGARCRM flav=pro ONLY
     }
 
     $endTime = microtime(true);
@@ -634,13 +669,13 @@ FP;
     $enabled_tabs[] = 'Cases';
     $enabled_tabs[] = 'Reports';
     //END SUGARCRM flav=dce ONLY
-    
+
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');
     $tabs = new TabController();
     $tabs->set_system_tabs($enabled_tabs);
     installerHook('post_setSystemTabs');
-    
+
 post_install_modules();
 
 //Call rebuildSprites

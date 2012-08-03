@@ -52,7 +52,7 @@ function & displayListPlain($layout_def){
                                 $body .= $row['display_name'].'<br/>';
                             }
 
-                            $result .= "&nbsp;<a href=\"#\" style='text-decoration:none;' id='more_feather' onmouseout=\"return nd();\" onmouseover=\"return overlib('".$body."', CAPTION, '', STICKY, MOUSEOFF, 1000, WIDTH, 100, CLOSETEXT, ('<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\">+</a>";
+                            $result .= "&nbsp;<a href=\"#\" style='text-decoration:none;' id='more_feather' onclick=\"SUGAR.utils.showHelpTips(this,'".$body."')\" >+</a>";
                     }
 
 					return $result;

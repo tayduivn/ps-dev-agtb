@@ -64,7 +64,7 @@ abstract class SugarRelationship
      * @param $link Link2 loads the rows for this relationship that match the given link
      * @return void
      */
-    public abstract function load($link);
+    public abstract function load($link, $params = array());
 
     /**
      * Gets the query to load a link.
@@ -320,6 +320,19 @@ abstract class SugarRelationship
     }
 
     /**
+     * Call the before add logic hook for a given link
+     * @param  SugarBean $focus base bean the hooks is triggered from
+     * @param  SugarBean $related bean being added/removed/updated from relationship
+     * @param string $link_name name of link being triggerd
+     * @return void
+     */
+    protected function callBeforeAdd($focus, $related, $link_name="")
+    {
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
+        $focus->call_custom_logic('before_relationship_add', $custom_logic_arguments);
+    }
+
+    /**
      * Call the after add logic hook for a given link
      * @param  SugarBean $focus base bean the hooks is triggered from
      * @param  SugarBean $related bean being added/removed/updated from relationship
@@ -338,10 +351,38 @@ abstract class SugarRelationship
      * @param string $link_name
      * @return void
      */
+    protected function callBeforeDelete($focus, $related, $link_name="")
+    {
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
+        $focus->call_custom_logic('before_relationship_delete', $custom_logic_arguments);
+    }
+
+    /**
+     * @param  SugarBean $focus
+     * @param  SugarBean $related
+     * @param string $link_name
+     * @return void
+     */
     protected function callAfterDelete($focus, $related, $link_name="")
     {
         $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
         $focus->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
+    }
+
+    /**
+     * @param $optional_array clause to add to the where query when populating this relationship. It should be in the
+     * @param string $add_and
+     * @param string $prefix
+     * @return string
+     */
+    protected function getOptionalWhereClause($optional_array) {
+        //lhs_field, operator, and rhs_value must be set in optional_array
+        foreach(array("lhs_field", "operator", "rhs_value") as $required){
+            if (empty($optional_array[$required]))
+                return "";
+        }
+
+        return $optional_array['lhs_field']."".$optional_array['operator']."'".$optional_array['rhs_value']."'";
     }
 
     /**

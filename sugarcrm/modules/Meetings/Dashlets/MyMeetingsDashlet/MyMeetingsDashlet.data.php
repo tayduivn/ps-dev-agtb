@@ -50,7 +50,7 @@ $dashletData['MyMeetingsDashlet']['columns'] = array('set_complete' => array('wi
                                                                              'label'    => 'LBL_LIST_CLOSE',
                                                                              'default'  => true,
                                                                              'sortable' => false,
-                                                                             'related_fields' => array('status')),
+                                                                             'related_fields' => array('status','recurring_source')),
 													//BEGIN SUGARCRM flav!=com ONLY
 													'join_meeting' => array('width'    => '1', 
                                                                              'label'    => 'LBL_LIST_JOIN_MEETING',

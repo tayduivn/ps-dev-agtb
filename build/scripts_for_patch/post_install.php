@@ -158,6 +158,9 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			case 'oci8':
 				$schemaFileName = $schemaFileName . '_oracle.sql';
 				break;
+            case 'ibm_db2':
+                $schemaFileName = $schemaFileName . '_ibm_db2.sql';
+                break;
 		}
 
 
@@ -349,7 +352,7 @@ function post_install() {
 		_logThis('Set chartEngine in config.php to JS Charts', $path);
 		$sugar_config['chartEngine'] = 'Jit';
 	}
-    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.	
+    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
     if ($origVersion < '642') {
         _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
         $sugar_config['upload_maxsize'] = 30000000;
@@ -377,6 +380,7 @@ function post_install() {
     // End Bug 40458///////////////////
 
     upgradeGroupInboundEmailAccounts();
+    upgrade_custom_duration_defs();
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
@@ -453,6 +457,42 @@ function post_install() {
               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
            }
        }
+    }
+
+    if($origVersion < '651') {
+        // add cleanJobQueue job if not there
+        $job = new Scheduler();
+        $job->retrieve_by_string_fields(array("job" => 'function::cleanJobQueue'));
+        if(empty($job->id)) {
+            // not found - create
+            $job->name               = translate('LBL_OOTB_CLEANUP_QUEUE', 'Schedulers');
+            $job->job                = 'function::cleanJobQueue';
+            $job->date_time_start    = "2012-01-01 00:00:01";
+            $job->date_time_end      = "2030-12-31 23:59:59";
+            $job->job_interval       = '0::5::*::*::*';
+            $job->status             = 'Active';
+            $job->created_by         = '1';
+            $job->modified_user_id   = '1';
+            $job->catch_up           = '0';
+            $job->save();
+        }
+        
+		// add sendEmailReminders job if not there
+		$job = new Scheduler();
+		$job->retrieve_by_string_fields(array("job" => 'function::sendEmailReminders'));
+		if(empty($job->id)) {
+			// not found - create
+			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers'); 
+			$job->job                = 'function::sendEmailReminders';
+			$job->date_time_start    = "2012-01-01 00:00:01";
+			$job->date_time_end      = "2030-12-31 23:59:59";
+			$job->job_interval       = '*::*::*::*::*';
+			$job->status             = 'Active';
+			$job->created_by         = '1';
+			$job->modified_user_id   = '1';
+			$job->catch_up           = '0';
+			$job->save();
+		}
     }
 }
 
@@ -538,4 +578,188 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 	}
 
 }
-?>
+
+/**
+ * Bug #53981 we have to disable duration_hours & duration_minutes fields for studio & remove duration_hours from editviewdefs.php
+ * because it will be replaced by duration field
+ */
+function upgrade_custom_duration_defs()
+{
+    require_once('include/utils/file_utils.php');
+    global $path;
+
+    // fields for replacement
+    $fieldsForReplacement = array(
+        'duration_hours' => 'duration',
+        'duration_minutes' => 'duration',
+        'reminder_checked' => 'reminder_time'
+    );
+
+    //check to see if custom vardefs exist for calls and/or meetings
+    $modsToCheck = array('Meeting', 'Call');
+
+    //first lets make any custom vardefs not show up in studio
+    foreach ($modsToCheck as $mods)
+    {
+        $filestr = 'custom/Extension/modules/' . $mods . 's/Ext/Vardefs/';
+        if (file_exists($filestr) && is_dir($filestr))
+        {
+            //custom vardef directory exists, lets iterate through the files and grab the defs
+
+            $modDir = opendir($filestr);
+            while (false !== ($file = readdir($modDir)))
+            {
+                if ($file == "." || $file == "..")
+                {
+                    continue;
+                }
+
+                $dictionary = array();
+                include($filestr . $file);
+                $rewrite = false;
+                //read the file and see check for duration_minutes or duration_hours
+                if (!empty($dictionary[$mods]['fields']['duration_hours']))
+                {
+                    $dictionary[$mods]['fields']['duration_hours']['studio'] = false;
+                    $rewrite = true;
+                }
+
+                if (!empty($dictionary[$mods]['fields']['duration_minutes']))
+                {
+                    $dictionary[$mods]['fields']['duration_minutes']['studio'] = false;
+                    $rewrite = true;
+                }
+
+                //found the field, rewrite the vardef and overwrite the file
+                if ($rewrite)
+                {
+                    $out =  "<?php\n// created: " . date('Y-m-d H:i:s') . "\n";
+                    $iterator = new RecursiveArrayIterator($dictionary);
+                    $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+
+                    $keys = array();
+                    foreach($iterator as $k => $v)
+                    {
+                        if (is_array($v))
+                        {
+                            array_push($keys, $k);
+                        }
+                        else
+                        {
+                            $keys = array_slice($keys, 0, $iterator->getDepth());
+                            array_push($keys, $k);
+                            $out .= "\$dictionary['" . implode("']['", $keys) . "'] = " . var_export_helper($v) . ";\n";
+                            array_pop($keys);
+                        }
+                    }
+
+                    if (!sugar_file_put_contents($filestr . $file, $out, LOCK_EX))
+                    {
+                        logThis("could not write $mods dictionary to {$filestr}{$file}", $path);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //now lets get rid of the duration fields in any custom editview defs
+        //the view def will alrady have the input files as hidden, so lets get rid of the duplicates
+
+        //these fields will be replaced inline in the form instead of being added to the end
+        $fieldsToReplaceInline = array(
+            'duration_hours' => 'duration',
+            'reminder_checked' => 'reminder_time'
+        );
+
+
+        foreach ($modsToCheck as $mods)
+        {
+            $filestr = 'custom/modules/' . $mods . 's/metadata/';
+            $files = array(
+                'editviewdefs.php' => 'EditView',
+                'detailviewdefs.php' => 'DetailView'
+            );
+            foreach ($files as $file => $key)
+            {
+            		$fieldPositions = array();
+                $rewrite = false;
+                $viewdefs = array();
+                if (file_exists($filestr . $file))
+                {
+                    //custom view exists, lets get rid of the dupes
+                    include($filestr . $file);
+                    $fieldsList = array();
+                    $iterator = new RecursiveArrayIterator($viewdefs[$mods.'s'][$key]['panels']);
+                    $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+                    foreach($iterator as $v)
+                    {
+                        if (!empty($v['name']))
+                        {
+                            $fieldsList[] = $v['name'];
+                        }
+                    }
+
+                    //iterate through and unset the duration_fields
+                    foreach ($viewdefs[$mods.'s'][$key]['panels'] as $panelName => $panel)
+                    {
+                        foreach ($panel as $rowctr => $fieldrow)
+                        {
+                            foreach ($fieldrow as $fieldctr => $fields)
+                            {
+                                if (!empty($fields['name']))
+                                {
+                                    //check to see if this is the new field we need to move
+                                    if( in_array($fields['name'], $fieldsToReplaceInline)){
+                                        //we've located the position of a field that needs to be move to replace another, let's hang on to the position
+                                        $fieldPositions['new'][$fields['name']] = array('key'=>$key, 'panelName'=>$panelName,'rowctr'=>$rowctr,'fieldctr'=>$fieldctr);
+                                    }
+                                    //else, lets check to see if this field is marked for deletion
+                                    elseif (array_key_exists($fields['name'], $fieldsForReplacement) && in_array($fieldsForReplacement[$fields['name']], $fieldsList))
+                                    {
+                                            //mark the position of this field for deletion
+                                           $fieldPositions['old'][$fields['name']] = array('key'=>$key, 'panelName'=>$panelName,'rowctr'=>$rowctr,'fieldctr'=>$fieldctr);
+                                           $rewrite = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //changes are needed, let's rewrite the custom file
+                if ($rewrite)
+                {
+
+                    //lets unset and replace fields as needed
+                    foreach ($fieldPositions['old'] as $k=>$unsetPos){
+                        //check to see if this field is set to be replaced
+                        if(!empty($fieldsToReplaceInline[$k])){
+                            //check to see if replacement position has been located
+                            if(!empty($fieldPositions['new'][$fieldsToReplaceInline[$k]])){
+                                //get the value of the replacement position
+                                $replPos = $fieldPositions['new'][$fieldsToReplaceInline[$k]];
+
+                                //copy the new field over to the position of the old field
+                                $viewdefs[$mods . 's'][$unsetPos['key']]['panels'][$unsetPos['panelName']][$unsetPos['rowctr']][$unsetPos['fieldctr']] =
+                                $viewdefs[$mods . 's'][$replPos['key']]['panels'][$replPos['panelName']][$replPos['rowctr']][$replPos['fieldctr']] ;
+
+                                //now lets remove the replacement from it's previous position
+                                unset($viewdefs[$mods . 's'][$replPos['key']]['panels'][$replPos['panelName']][$replPos['rowctr']][$replPos['fieldctr']]);
+                            }else{
+                                //field is set to be removed, but the replacement field was NOT located, don't do anything with it (keep the original field)
+                            }
+                        }else{
+                            //field is not marked for replacment and just needs to be removed, unset the position of the old field
+                            unset($viewdefs[$mods . 's'][$unsetPos['key']]['panels'][$unsetPos['panelName']][$unsetPos['rowctr']][$unsetPos['fieldctr']]);
+                        }
+                    }
+
+                    if (!write_array_to_file("viewdefs['{$mods}s']['" . $key . "']", $viewdefs[$mods.'s'][$key], $filestr . $file, 'w'))
+                    {
+                        logThis("could not write $mods dictionary to {$filestr}{$file}", $path);
+                    }
+                }
+            }
+        }
+    }
+}

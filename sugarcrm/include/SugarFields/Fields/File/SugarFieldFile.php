@@ -57,7 +57,11 @@ class SugarFieldFile extends SugarFieldBase {
         return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
     
-	public function save(&$bean, $params, $field, $vardef, $prefix = ''){
+    function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'SearchView');
+    }
+    
+    public function save(&$bean, $params, $field, $vardef, $prefix = ''){
         $fakeDisplayParams = array();
         $this->fillInOptions($vardef,$fakeDisplayParams);
 
@@ -122,7 +126,7 @@ class SugarFieldFile extends SugarFieldBase {
                 $bean->$docType = $params[$prefix . $field . '_old_doctype'];
             }
 		} else if ( !empty($params[$prefix . $field . '_remoteName']) ) {
-            // We ain't moving, we might need to do some remote linking
+            // We aren't moving, we might need to do some remote linking
             $displayParams = array();
             $this->fillInOptions($vardef,$displayParams);
             
@@ -155,5 +159,5 @@ class SugarFieldFile extends SugarFieldBase {
                 $bean->$clearField = '';
             }
         }
-	}
+    }
 }

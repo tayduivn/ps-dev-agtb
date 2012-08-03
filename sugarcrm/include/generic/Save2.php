@@ -55,7 +55,7 @@ function add_prospects_to_prospect_list($query_panel,$parent_module,$parent_type
 
 
 	if (!class_exists($parent_type)) {
-		require_once('modules/'.$parent_module.'/'.$parent_type.'.php');
+		require_once('modules/'.cleanDirName($parent_module).'/'.cleanDirName($parent_type).'.php');
 	}
 	$focus = new $parent_type();
 	$focus->retrieve($parent_id);
@@ -70,6 +70,7 @@ function add_prospects_to_prospect_list($query_panel,$parent_module,$parent_type
 	$relationship_attribute=$link_attribute;
 
 	//find all prospects based on the query
+
 	$subpanel = new SubPanelTiles($parent, $parent->module_dir);
     $thisPanel=$subpanel->subpanel_definitions->load_subpanel($query_panel);
     if(empty($thisPanel)) {
@@ -156,7 +157,7 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
     //if param is set to "addcampaignlog", then we need to create a campaign log entry
     //for each campaign id passed in.
 
-    //get list of campaign's selected'
+    // Get a list of campaigns selected.
     if (isset($_REQUEST['subpanel_id'])  && !empty($_REQUEST['subpanel_id'])) {
         $campaign_ids = $_REQUEST['subpanel_id'];
         global $beanFiles;
@@ -198,9 +199,9 @@ else if(isset($_REQUEST['return_module']) && isset($_REQUEST['subpanel_module_na
     if(!$find){
         $add_values['contact_role']='Primary Decision Maker';
     }
-    //find request paramters with with prefix of REL_ATTRIBUTE_
-    //convert them into an array of name value pairs add pass them as
-    //parameters to the add metod.
+    // Find request parameters with with prefix of REL_ATTRIBUTE_,
+    // convert them into an array of name-value pairs and pass them as
+    // parameters to the add method.
     foreach ($_REQUEST as $key=>$value) {
         if (strpos($key,"REL_ATTRIBUTE_") !== false) {
             $add_values[substr($key,14)]=$value;
@@ -227,7 +228,8 @@ else {
  		$current_query_by_page_array = unserialize(base64_decode($current_query_by_page));
 
         $module = $current_query_by_page_array['module'];
- 		$seed = loadBean($module);
+        $seed = BeanFactory::getBean($module);
+        if(empty($seed)) sugar_die($GLOBALS['app_strings']['ERROR_NO_BEAN']);
  		$where_clauses = '';
  		require_once('include/SearchForm/SearchForm2.php');
 

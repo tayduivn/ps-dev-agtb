@@ -30,7 +30,6 @@
 // $Id: EditView.tpl 54689 2010-02-21 02:43:22Z jmertic $
 
 *}
-<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>
@@ -139,7 +138,7 @@
         {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
         <td width='35%' >
-            <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO height="40" width="212">
+            <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO>
         </td>
         //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
@@ -167,6 +166,38 @@
             <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a>&nbsp;{sugar_help text=$MOD.LBL_CONFIG_AJAX_DESC}</td>
 <!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
+
+    <tr>
+        <td  scope="row" nowrap>{$MOD.LBL_DISALBE_CONVERT_LEAD}: &nbsp;{sugar_help text=$MOD.LBL_DISALBE_CONVERT_LEAD_DESC}</td>
+        {if !empty($config.disable_convert_lead)}
+            {assign var='disable_convert_lead' value='CHECKED'}
+        {else}
+            {assign var='disable_convert_lead' value=''}
+        {/if}
+        <td>
+            <input type='hidden' name='disable_convert_lead' value='false'>
+            <input name='disable_convert_lead'  type="checkbox" value="true" {$disable_convert_lead}>
+        </td>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
+    <tr>
+        <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
+    {if isset($config.enable_action_menu) && $config.enable_action_menu != "true" }
+        {assign var='enable_action_menu' value=''}
+        {else}
+        {assign var='enable_action_menu' value='CHECKED'}
+    {/if}
+        <td>
+            <input type='hidden' name='enable_action_menu' value='false'>
+            <input name='enable_action_menu'  type="checkbox" value="true" {$enable_action_menu}>
+        </td>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
+
+
+
 </table>
 
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
@@ -265,7 +296,7 @@
 	{else}
 		{assign var='system_mailmerge_on_checked' value=''}
 	{/if}
-	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
+	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" id="system_mailmerge" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
 	</tr>
 </table>
 {* //END SUGARCRM flav!=sales && flav!=com ONLY*}

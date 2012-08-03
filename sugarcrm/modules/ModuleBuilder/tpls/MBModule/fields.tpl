@@ -64,7 +64,8 @@ var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 
 var labelFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = oData.replace(/\:\s*?$/, '');
+    if (oData)
+        elCell.innerHTML = oData.replace(/\:\s*?$/, '');
 };
 
 var myColumnDefs = [

@@ -45,26 +45,26 @@ function installerHook($function_name, $options = array()){
             installLog("installerHook: Found custom/install/install_hooks.php");
             require_once('custom/install/install_hooks.php');
             $GLOBALS['customInstallHooksExist'] = true;
-        }   
+        }
         else{
             installLog("installerHook: Could not find custom/install/install_hooks.php");
             $GLOBALS['customInstallHooksExist'] = false;
-        }   
+        }
     }
 
     if($GLOBALS['customInstallHooksExist'] === false){
         return 'undefined';
-    }   
-    else{   
+    }
+    else{
         if(function_exists($function_name)){
             installLog("installerHook: function {$function_name} found, calling and returning the return value");
             return $function_name($options);
-        }   
+        }
         else{
             installLog("installerHook: function {$function_name} not found in custom install hooks file");
             return 'undefined';
         }
-    }   
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -764,8 +764,23 @@ function handleSugarConfig() {
     $sugar_config['host_name']                      = $setup_site_host_name;
     $sugar_config['js_custom_version']              = '';
     $sugar_config['use_real_names']                 = true;
+    $sugar_config['disable_convert_lead']           = false;
     $sugar_config['log_dir']                        = $setup_site_log_dir;
     $sugar_config['log_file']                       = $setup_site_log_file;
+
+    //Setup FTS
+    if(!empty($_SESSION['fts_type']))
+        $sugar_config['full_text_engine']               = array($_SESSION['fts_type'] => array('host'=> $_SESSION['fts_host'], 'port' => $_SESSION['fts_port']));
+
+    // for silent install
+    if(!empty($_SESSION['setup_fts_type']))
+    {
+        $sugar_config['full_text_engine']               = array($_SESSION['setup_fts_type'] => array('host'=> $_SESSION['setup_fts_host'], 'port' => $_SESSION['setup_fts_port']));
+        if (isset($_SESSION['setup_fts_hide_config']))
+        {
+            $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
+        }
+    }
 
 	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
 		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
@@ -779,6 +794,7 @@ function handleSugarConfig() {
 			'maxLogs' => 10,
 			'suffix' => ''), // bug51583, change default suffix to blank for backwards comptability
   	);
+
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
@@ -811,12 +827,12 @@ function handleSugarConfig() {
         }
     }
     if(file_exists('install/lang.config.php')){
-    	include('install/lang.config.php');
-    	if(!empty($config['languages'])){
-    		foreach($config['languages'] as $lang=>$label){
-    			$sugar_config['languages'][$lang] = $label;
-    		}
-    	}
+        include('install/lang.config.php');
+        if(!empty($config['languages'])){
+            foreach($config['languages'] as $lang=>$label){
+                $sugar_config['languages'][$lang] = $label;
+            }
+        }
     }
 
     ksort($sugar_config);
@@ -878,17 +894,36 @@ RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 # END SUGARCRM RESTRICTIONS
 EOQ;
-	if(file_exists($htaccess_file)){
-	 	$fp = fopen($htaccess_file, 'r');
-	 	$skip = false;
-	 	while($line = fgets($fp)){
 
-	 		if(preg_match("/\s*#\s*BEGIN\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = true;
-	 		if(!$skip)$contents .= $line;
-	 		if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
-	 	}
-	}
-	$status =  file_put_contents($htaccess_file, $contents . $restrict_str);
+$cache_headers = <<<EOQ
+
+<FilesMatch "\.(jpg|png|gif|js|css|ico)$">
+        <IfModule mod_headers.c>
+                Header set ETag ""
+                Header set Cache-Control "max-age=2592000"
+                Header set Expires "01 Jan 2112 00:00:00 GMT"
+        </IfModule>
+</FilesMatch>
+<IfModule mod_expires.c>
+        ExpiresByType text/css "access plus 1 month"
+        ExpiresByType text/javascript "access plus 1 month"
+        ExpiresByType application/x-javascript "access plus 1 month"
+        ExpiresByType image/gif "access plus 1 month"
+        ExpiresByType image/jpg "access plus 1 month"
+        ExpiresByType image/png "access plus 1 month"
+</IfModule>
+EOQ;
+    if(file_exists($htaccess_file)){
+        $fp = fopen($htaccess_file, 'r');
+        $skip = false;
+        while($line = fgets($fp)){
+
+            if(preg_match("/\s*#\s*BEGIN\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = true;
+            if(!$skip)$contents .= $line;
+            if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
+        }
+    }
+    $status =  file_put_contents($htaccess_file, $contents . $restrict_str . $cache_headers);
     if( !$status ) {
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
@@ -906,7 +941,7 @@ function handleWebConfig()
         return;
     }
 
-	global $setup_site_log_dir;
+    global $setup_site_log_dir;
     global $setup_site_log_file;
     global $sugar_config;
 
@@ -955,26 +990,39 @@ function handleWebConfig()
     $xmldoc->setIndentString(' ');
     $xmldoc->startDocument('1.0','UTF-8');
     $xmldoc->startElement('configuration');
-    $xmldoc->startElement('system.webServer');
-    $xmldoc->startElement('rewrite');
-    $xmldoc->startElement('rules');
-    for ($i = 0; $i < count($config_array); $i++) {
-        $xmldoc->startElement('rule');
-        $xmldoc->writeAttribute('name', "redirect$i");
-        $xmldoc->writeAttribute('stopProcessing', 'true');
-        $xmldoc->startElement('match');
-        $xmldoc->writeAttribute('url', $config_array[$i]['1']);
+        $xmldoc->startElement('system.webServer');
+            $xmldoc->startElement('rewrite');
+                $xmldoc->startElement('rules');
+                for ($i = 0; $i < count($config_array); $i++) {
+                    $xmldoc->startElement('rule');
+                        $xmldoc->writeAttribute('name', "redirect$i");
+                        $xmldoc->writeAttribute('stopProcessing', 'true');
+                        $xmldoc->startElement('match');
+                            $xmldoc->writeAttribute('url', $config_array[$i]['1']);
+                        $xmldoc->endElement();
+                        $xmldoc->startElement('action');
+                            $xmldoc->writeAttribute('type', 'Redirect');
+                            $xmldoc->writeAttribute('url', $config_array[$i]['2']);
+                            $xmldoc->writeAttribute('redirectType', 'Found');
+                        $xmldoc->endElement();
+                    $xmldoc->endElement();
+                }
+                $xmldoc->endElement();
+            $xmldoc->endElement();
+            $xmldoc->startElement('caching');
+                $xmldoc->startElement('profiles');
+                    $xmldoc->startElement('remove');
+                        $xmldoc->writeAttribute('extension', ".php");
+                    $xmldoc->endElement();
+                $xmldoc->endElement();
+            $xmldoc->endElement();
+            $xmldoc->startElement('staticContent');
+                $xmldoc->startElement("clientCache");
+                    $xmldoc->writeAttribute('cacheControlMode', 'UseMaxAge');
+                    $xmldoc->writeAttribute('cacheControlMaxAge', '30.00:00:00');
+                $xmldoc->endElement();
+            $xmldoc->endElement();
         $xmldoc->endElement();
-        $xmldoc->startElement('action');
-        $xmldoc->writeAttribute('type', 'Redirect');
-        $xmldoc->writeAttribute('url', $config_array[$i]['2']);
-        $xmldoc->writeAttribute('redirectType', 'Found');
-        $xmldoc->endElement();
-        $xmldoc->endElement();
-    }
-    $xmldoc->endElement();
-    $xmldoc->endElement();
-    $xmldoc->endElement();
     $xmldoc->endElement();
     $xmldoc->endDocument();
     $xmldoc->flush();
@@ -1025,36 +1073,27 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-    global $current_user;
-	require_once('install/UserDemoData.php');
+
+    require_once('install/UserDemoData.php');
 
     //Create default admin user
-    $current_user = new User();
-    $current_user->id = 1;
-    $current_user->new_with_id = true;
-    $current_user->last_name = 'Administrator';
-    //$user->user_name = 'admin';
-    $current_user->user_name = $setup_site_admin_user_name;
-    $current_user->title = "Administrator";
-    $current_user->status = 'Active';
-    $current_user->is_admin = true;
-	$current_user->employee_status = 'Active';
-    //$user->user_password = $user->encrypt_password($setup_site_admin_password);
-    $current_user->user_hash = strtolower(md5($setup_site_admin_password));
-    $current_user->email = '';
-    $current_user->picture = UserDemoData::_copy_user_image($current_user->id);
-    $current_user->save();
+    $user = new User();
+    $user->id = 1;
+    $user->new_with_id = true;
+    $user->last_name = 'Administrator';
+    $user->user_name = $setup_site_admin_user_name;
+    $user->title = "Administrator";
+    $user->status = 'Active';
+    $user->is_admin = true;
+    $user->employee_status = 'Active';
+    $user->user_hash = User::getPasswordHash($setup_site_admin_password);
+    $user->email = '';
+    $user->picture = UserDemoData::_copy_user_image($user->id);
+    $user->save();
+    //Bug#53793: Keep default current user in the global variable in order to store 'created_by' info as default user
+    //           while installation is proceed.
+    $GLOBALS['current_user'] = $user;
 
-    // echo 'Creating RSS Feeds';
-    //$feed = new Feed();
-    //$feed->createRSSHomePage($user->id);
-
-
-    // We need to change the admin user to a fixed id of 1.
-    // $query = "update users set id='1' where user_name='$user->user_name'";
-    // $result = $db->query($query, true, "Error updating admin user ID: ");
-
-    $GLOBALS['log']->info("Created ".$current_user->table_name." table. for user $current_user->id");
 
     if( $create_default_user ){
         $default_user = new User();
@@ -1064,21 +1103,16 @@ function create_default_users(){
         if( isset($sugar_config['default_user_is_admin']) && $sugar_config['default_user_is_admin'] ){
             $default_user->is_admin = true;
         }
-        //$default_user->user_password = $default_user->encrypt_password($sugar_config['default_password']);
-        $default_user->user_hash = strtolower(md5($sugar_config['default_password']));
+        $default_user->user_hash = User::getPasswordHash($sugar_config['default_password']);
         $default_user->save();
-        //$feed->createRSSHomePage($user->id);
     }
 }
 
 function set_admin_password( $password ) {
     global $db;
 
-    $user = new User();
-    $encrypted_password = $user->encrypt_password($password);
-    $user_hash = strtolower(md5($password));
+    $user_hash = User::getPasswordHash($password);
 
-    //$query = "update users set user_password='$encrypted_password', user_hash='$user_hash' where id='1'";
     $query = "update users set user_hash='$user_hash' where id='1'";
 
     $db->query($query);
@@ -1107,14 +1141,14 @@ function insert_default_settings(){
     $db->query("INSERT INTO config (category, name, value) VALUES ('MySettings', 'tab', '')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('portal', 'on', '0')");
 
-	  //BEGIN SUGARCRM lic=sub ONLY
+      //BEGIN SUGARCRM lic=sub ONLY
 
     // license info
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'users',        '0' )" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'expire_date',  '' )" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'key',          '' )" );
 
-	  //END SUGARCRM lic=sub ONLY
+      //END SUGARCRM lic=sub ONLY
 
 
     //insert default tracker settings
@@ -1390,12 +1424,14 @@ function print_debug_comment(){
 function validate_systemOptions() {
     global $mod_strings;
     $errors = array();
-    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
-    if(empty($db)) {
-       $errors[] = "<span class='error'>".$mod_strings['ERR_DB_INVALID']."</span>";
-    } else {
-        $_SESSION['setup_db_manager'] = get_class($db);
+    if(!empty($_SESSION['setup_db_type']) && trim($_SESSION['setup_db_type']) != '') {
+        $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+        if(!empty($db)) {
+            $_SESSION['setup_db_manager'] = get_class($db);
+            return $errors;
+        }
     }
+    $errors[] = "<span class='error'>".$mod_strings['ERR_DB_INVALID']."</span>";
     return $errors;
 }
 
@@ -1420,7 +1456,7 @@ function validate_siteConfig($type){
        }
 
        if($_SESSION['setup_site_admin_user_name'] == '') {
-       	  $errors[] = "<span class='error'>".$mod_strings['ERR_ADMIN_USER_NAME_BLANK']."</span>";
+          $errors[] = "<span class='error'>".$mod_strings['ERR_ADMIN_USER_NAME_BLANK']."</span>";
        }
 
        if($_SESSION['setup_site_admin_password'] == ''){
@@ -1486,12 +1522,12 @@ function pullSilentInstallVarsIntoSession() {
         'setup_site_url'                => isset($sugar_config['site_url']) ? $sugar_config['site_url'] : '',
         'setup_db_host_name'            => isset($sugar_config['dbconfig']['db_host_name']) ? $sugar_config['dbconfig']['db_host_name'] : '',
         'setup_db_host_instance'        => isset($sugar_config['dbconfig']['db_host_instance']) ? $sugar_config['dbconfig']['db_host_instance'] : '',
-    	'setup_db_sugarsales_user'      => isset($sugar_config['dbconfig']['db_user_name']) ? $sugar_config['dbconfig']['db_user_name'] : '',
+        'setup_db_sugarsales_user'      => isset($sugar_config['dbconfig']['db_user_name']) ? $sugar_config['dbconfig']['db_user_name'] : '',
         'setup_db_sugarsales_password'  => isset($sugar_config['dbconfig']['db_password']) ? $sugar_config['dbconfig']['db_password'] : '',
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
         'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port']) ? $sugar_config['dbconfig']['db_port'] : '',
-        'setup_db_options'			    => !empty($sugar_config['dbconfigoptions']) ? $sugar_config['dbconfigoptions'] : array(),
+        'setup_db_options'              => !empty($sugar_config['dbconfigoptions']) ? $sugar_config['dbconfigoptions'] : array(),
     );
     // third array of values derived from above values
     $derived = array (
@@ -1513,7 +1549,7 @@ function pullSilentInstallVarsIntoSession() {
     //END SUGARCRM flav=pro ONLY
 
     $needles = array('setup_db_create_database','setup_db_create_sugarsales_user','setup_license_key_users',
-    				 'setup_license_key_expire_date','setup_license_key', 'setup_num_lic_oc',
+                     'setup_license_key_expire_date','setup_license_key', 'setup_num_lic_oc',
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
@@ -1523,7 +1559,7 @@ function pullSilentInstallVarsIntoSession() {
 
     // bug 16860 tyoung -  trim leading and trailing whitespace from license_key
     if (isset($all_config_vars['setup_license_key'])) {
-    	$all_config_vars['setup_license_key'] = trim($all_config_vars['setup_license_key']);
+        $all_config_vars['setup_license_key'] = trim($all_config_vars['setup_license_key']);
     }
 
     foreach( $all_config_vars as $key => $value ){
@@ -1652,7 +1688,7 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
     if(empty($notice_text)){
         $notice_text =  $mod_strings['LBL_LANG_PACK_READY'];
     }
-	$ret = "<tr><td colspan=7 align=left>{$notice_text}</td></tr>";
+    $ret = "<tr><td colspan=7 align=left>{$notice_text}</td></tr>";
     //$ret .="<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
     $ret .= "<tr>
                 <td width='20%' ><b>{$mod_strings['LBL_ML_NAME']}</b></td>
@@ -1668,12 +1704,12 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
 
     // duh, new installs won't have the upgrade folders
    if(!is_dir($base_upgrade_dir)) {
-	    mkdir_recursive( $base_upgrade_dir);
-	}
-	$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
-	foreach( $subdirs as $subdir ){
-		mkdir_recursive( "$base_upgrade_dir/$subdir" );
-	}
+        mkdir_recursive( $base_upgrade_dir);
+    }
+    $subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
+    foreach( $subdirs as $subdir ){
+        mkdir_recursive( "$base_upgrade_dir/$subdir" );
+    }
 
     $files = findAllFiles($base_upgrade_dir, $files);
     $hidden_input = '';
@@ -1946,9 +1982,9 @@ function getHostPortFromString($hostname=''){
 
 function getLicenseContents($filename)
 {
-	$license_file = '';
+    $license_file = '';
     if(file_exists($filename) && filesize($filename) >0){
-	    $license_file = trim(file_get_contents($filename));
+        $license_file = trim(file_get_contents($filename));
     }
     return $license_file;
 }
@@ -2065,7 +2101,7 @@ function create_past_date()
     global $timedate;
     $now = $timedate->getNow(true);
     $day=$now->day-mt_rand(1, 365);
-    return $timedate->asUserDate($now->get_day_begin($day));
+    return $timedate->asDbDate($now->get_day_begin($day));
 }
 
 /**
@@ -2121,11 +2157,11 @@ return $password;
 }
 
 function addDefaultRoles($defaultRoles = array()) {
-	global $db;
+    global $db;
 
 
-	foreach($defaultRoles as $roleName=>$role){
-	    $ACLField = new ACLField();
+    foreach($defaultRoles as $roleName=>$role){
+        $ACLField = new ACLField();
         $role1= new ACLRole();
         $role1->name = $roleName;
         $role1->description = $roleName." Role";
@@ -2146,7 +2182,7 @@ function addDefaultRoles($defaultRoles = array()) {
                 }
             }
         }
-	}
+    }
 }
 
 /**
@@ -2165,7 +2201,7 @@ function enableSugarFeeds()
 
 function create_writable_dir($dirname)
 {
-    if ((is_dir($dirname)) || @sugar_mkdir($dirname,0555)) {
+    if ((is_dir($dirname)) || @sugar_mkdir($dirname,0755)) {
         $ok = make_writable($dirname);
     }
     if(empty($ok)) {

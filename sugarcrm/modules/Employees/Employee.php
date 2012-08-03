@@ -116,7 +116,6 @@ class Employee extends Person {
 		$result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 
 		$row = $this->db->fetchByAssoc($result);
-		$GLOBALS['log']->debug("additional detail query results: $row");
 
 		if($row != null)
 		{
@@ -290,6 +289,30 @@ class Employee extends Person {
 
         //return parent method, specifying for array to be returned
         return parent::create_new_list_query($order_by, $where, $filter,$params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+    }
+
+    /*
+     * Overwrite Sugar bean which returns the current objects custom fields.  Lets return User custom fields instead
+     */
+    function hasCustomFields()
+    {
+
+        //Check to see if there are custom user fields that we should report on, first check the custom_fields array
+        $userCustomfields = !empty($GLOBALS['dictionary']['Employee']['custom_fields']);
+        if(!$userCustomfields){
+            //custom Fields not set, so traverse employee fields to see if any custom fields exist
+            foreach ($GLOBALS['dictionary']['Employee']['fields'] as $k=>$v){
+                if(!empty($v['source']) && $v['source'] == 'custom_fields'){
+                    //custom field has been found, set flag to true and break
+                    $userCustomfields = true;
+                    break;
+                }
+
+            }
+        }
+
+        //return result of search for custom fields
+        return $userCustomfields;
     }
 }
 

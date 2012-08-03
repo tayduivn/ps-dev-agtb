@@ -44,7 +44,9 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 	{
 		
 		global $app_strings;
-		
+        global $subpanel_item_count;
+
+		$unique_id = $layout_def['subpanel_id']."_remove_".$subpanel_item_count; //bug 51512
 		
 		$parent_record_id = $_REQUEST['record'];
 		$parent_module = $_REQUEST['module'];
@@ -93,18 +95,19 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		$return_url = "index.php?module=$return_module&action=$return_action&subpanel=$subpanel&record=$return_id&sugar_body_only=1&inline=1";
 
 		$icon_remove_text = strtolower($app_strings['LBL_ID_FF_REMOVE']);
-		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline','align="absmiddle" border="0"',null,null,'.gif','');//setting alt to blank on purpose on subpanels for 508
+		
 		//BEGIN SUGARCRM flav!=sales ONLY
-		if($linked_field == 'get_products_query')
-			$linked_field = 'products';
+         if($linked_field == 'get_emails_by_assign_or_link')
+            $linked_field = 'emails';
 		//END SUGARCRM flav!=sales ONLY
 		//based on listview since that lets you select records
 		if($layout_def['ListView'] && !$hideremove) {
             $retStr = "<a href=\"javascript:sub_p_rem('$subpanel', '$linked_field'" 
                     .", '$record', $refresh_page);\"" 
 			. ' class="listViewTdToolsS1"'
+            . "id=$unique_id"
 			. " onclick=\"return sp_rem_conf();\""
-			. ">$icon_remove_html&nbsp;$icon_remove_text</a>";
+			. ">$icon_remove_text</a>";
         return $retStr;
             
 		}else{
@@ -112,4 +115,3 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		}
 	}
 }
-?>

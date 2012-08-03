@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
+	//BEGIN SUGARCRM flav=pro ONLY
+    'favorites'=>false,
+    //END SUGARCRM flav=pro ONLY
 	'comment' => 'OAuth consumer keys',
 	'audited'=>false,
 	'fields' => array (

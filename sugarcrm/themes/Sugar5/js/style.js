@@ -29,6 +29,13 @@
  
 // $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
 
+	//set up any action style menus
+	$(document).ready(function(){
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
+	});
+
 /**
  * Handles loading the sitemap popup
  */
@@ -240,7 +247,12 @@ SUGAR.append(SUGAR.themes, {
             this.loadModuleList();
         }
     },
-    
+    actionMenu: function() {
+        //set up any action style menus
+        $("ul.clickMenu").each(function(index, node){
+            $(node).sugarActionMenu();
+        });
+    },
     loadModuleList: function() {
         var nodes = YAHOO.util.Selector.query('#moduleList>div'),
             currMenuBar;
@@ -270,7 +282,9 @@ SUGAR.append(SUGAR.themes, {
          * Handles changing the sub menu items when using grouptabs
          */
         YAHOO.util.Event.onAvailable('subModuleList',IKEADEBUG);
-    }
+    },
+    //dummy function to make classic theme work with 6.5
+    setCurrentTab: function(){}
 });
 
 YAHOO.util.Event.onDOMReady(SUGAR.themes.loadModuleList, SUGAR.themes, true);

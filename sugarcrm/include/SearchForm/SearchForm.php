@@ -89,9 +89,11 @@ class SearchForm {
         //require_once('modules/' . $module . '/metadata/SearchFields.php');
         $this->searchFields = $searchFields[$module];
         if(empty($tpl)) {
-            $this->tpl = 'modules/' . $module . '/SearchForm.html';
             if(!empty($GLOBALS['layout_edit_mode'])){
             	 $this->tpl = sugar_cached('studio/custom/working/modules/' . $module . '/SearchForm.html');
+            }
+            else {
+             	 $this->tpl = get_custom_file_if_exists('modules/' . $module . '/SearchForm.html');
             }
         }
         else {
@@ -259,7 +261,7 @@ class SearchForm {
                 if(is_array($parms['value'])) {
                     $field_value = '';
 
-                    // If it is a custom field of mutliselect we have to do some special processing
+                    // If it is a custom field of multiselect we have to do some special processing
                     if($customField && !empty($this->bean->field_name_map[$field]['isMultiSelect']) && $this->bean->field_name_map[$field]['isMultiSelect']) {
 	                    $operator = 'custom_enum';
 	                    $db_field = $this->bean->table_name .  "_cstm." . $field;

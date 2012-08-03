@@ -37,16 +37,17 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 {
 	function display($defines)
 	{
-		if(ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true)){
+		if((ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true) ||
+			$defines['module'] == "History" & !ACLController::checkAccess("Emails", 'edit', true))){
 			$temp = '';
 			return $temp;
 		}
+		
 		global $app_strings;
 		global $mod_strings;
 		global $currentModule;
 
 		$title = $app_strings['LBL_TRACK_EMAIL_BUTTON_TITLE'];
-		//$accesskey = $app_strings['LBL_TRACK_EMAIL_BUTTON_KEY'];
 		$value = $app_strings['LBL_TRACK_EMAIL_BUTTON_LABEL'];
 		$this->module = 'Emails';
 
@@ -62,11 +63,11 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 			$additionalFormFields['to_email_addrs'] = $defines['focus']->email1;
 		}
 		if(ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true)){
-			$button = "<input id='".preg_replace('[ ]', '', $value)."_button'  title='$title' class='button' type='button' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='  $value  ' disabled/>\n";
+			$button = "<input id='".preg_replace('[ ]', '', $value)."_button'  title='$title' class='button' type='button' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='$value' disabled/>\n";
 			return $button;
 		}
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title'  class='button' type='submit' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='  $value  '/>\n";
+		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title' class='button' type='submit' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='$value'/>\n";
 		$button .= "</form>";
 		return $button;
 	}

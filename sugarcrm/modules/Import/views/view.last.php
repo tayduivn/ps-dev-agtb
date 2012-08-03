@@ -94,13 +94,14 @@ class ImportViewLast extends ImportView
             $activeTab = 0;
 
         $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
-        $this->ss->assign("errorCount",$errorCount);
-        $this->ss->assign("dupeCount",$dupeCount);
-        $this->ss->assign("createdCount",$createdCount);
-        $this->ss->assign("updatedCount",$updatedCount);
-        $this->ss->assign("errorFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorFileName()));
-        $this->ss->assign("errorrecordsFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
-        $this->ss->assign("dupeFile",ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
+
+        $this->ss->assign("errorCount", $errorCount);
+        $this->ss->assign("dupeCount", $dupeCount);
+        $this->ss->assign("createdCount", $createdCount);
+        $this->ss->assign("updatedCount", $updatedCount);
+        $this->ss->assign("errorFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorFileName()));
+        $this->ss->assign("errorrecordsFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
+        $this->ss->assign("dupeFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
 
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )

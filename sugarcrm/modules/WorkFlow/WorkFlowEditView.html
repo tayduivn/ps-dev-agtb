@@ -59,7 +59,12 @@ function remember_place(obj)
 	<tr>
 	<td width="15%" scope="row">{MOD.LBL_NAME} <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></td>
 	<td width="30%" ><input name='name' tabindex="1" type="text" size='30' maxlength="255" value="{NAME}"></td>
-	<td colspan=2></td>
+    <td width="15%" scope="row">
+       {MOD.LBL_EMAILTEMPLATES_TYPE}
+    </td>
+    <td width="30%" >
+        <select name='type' tabindex="4">{TYPEDROPDOWN}</select>
+    </td>
 	</tr>
 	<tr>
 	<td width="15%" scope="row">{MOD.LBL_FROM_NAME} </td>

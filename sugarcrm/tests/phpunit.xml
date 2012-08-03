@@ -27,7 +27,7 @@
  ********************************************************************************/
 -->
 
-<phpunit bootstrap="SugarTestHelper.php" 
+<phpunit bootstrap="SugarTestHelper.php"
     backupGlobals="false"
     backupStaticAttributes="false">
     <testsuites>
@@ -36,6 +36,7 @@
             <directory>data</directory>
             <directory>include</directory>
             <directory>install</directory>
+            <directory>jssource</directory>
             <directory>modules</directory>
             <directory>ModuleInstall</directory>
             <directory>service</directory>

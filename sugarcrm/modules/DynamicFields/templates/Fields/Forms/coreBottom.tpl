@@ -32,6 +32,28 @@
 *}
 
 {* //BEGIN SUGARCRM flav=pro ONLY *}
+{if $hideLevel < 5 && $show_fts}
+<tr>
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_FTS"}:</td>
+    <td>
+        {if empty($vardef.full_text_search) || empty($vardef.full_text_search.boost)}
+            {html_options name="full_text_search[boost]" id="full_text_search" selected="0" options=$fts_options}
+        {else}
+            {html_options name="full_text_search[boost]" id="full_text_search" selected=$vardef.full_text_search.boost options=$fts_options}
+        {/if}
+        {sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="ftsTipIcon" '}
+              <script>
+                  if (!ModuleBuilder.ftsToolTip)
+                       ModuleBuilder.ftsToolTip = new YAHOO.widget.Tooltip("ftsTipPopup", {ldelim}
+                          context:"ftsTipIcon", text:"{$mod_strings.LBL_POPHELP_SEARCHABLE}"
+                       {rdelim});
+                  else
+                      ModuleBuilder.ftsToolTip.cfg.setProperty("context", "ftsTipIcon");
+              </script>
+    </td>
+</tr>
+{/if}
+
 {include file='modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl'}
 {* //END SUGARCRM flav=pro ONLY *}
 
@@ -59,7 +81,7 @@
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_GLOBAL_SEARCH"}:</td>
     <td><input type="checkbox" name="unified_search" value="1" {if !empty($vardef.unified_search) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
     {if $hideLevel > 5}<input type="hidden" name="unified_search" value="{$vardef.unified_search}">{/if}
-    <img id="globalSearchTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
+    <img id="globalSearchTipIcon" src="{sugar_getimagepath file="helpInline.png"}" />
 <script>
 	if (!ModuleBuilder.globalSearchToolTip)
 		ModuleBuilder.globalSearchToolTip = new YAHOO.widget.Tooltip("globalSearchTipPopup", {ldelim}
@@ -78,7 +100,7 @@
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_IMPORTABLE"}:</td><td>
     {if $hideLevel < 5}
         {html_options name="importable" id="importable" selected=$vardef.importable options=$importable_options}
-		{sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="importTipIcon" '}
+		{sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".png" other_attributes='id="importTipIcon" '}
         <script>
             if (!ModuleBuilder.importToolTip)
                  ModuleBuilder.importToolTip = new YAHOO.widget.Tooltip("importTipPopup", {ldelim}
@@ -97,7 +119,7 @@
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DUPLICATE_MERGE"}:</td><td>
 {if $hideLevel < 5}
     {html_options name="duplicate_merge" id="duplicate_merge" selected=$vardef.duplicate_merge_dom_value options=$duplicate_merge_options}
-    {sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="duplicateTipIcon" '}
+    {sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".png" other_attributes='id="duplicateTipIcon" '}
     <script>
         if (!ModuleBuilder.duplicateToolTip)
              ModuleBuilder.duplicateToolTip = new YAHOO.widget.Tooltip("duplicateTipPopup", {ldelim}

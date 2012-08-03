@@ -145,7 +145,7 @@ if(file_exists("install/language/{$current_language}.lang.php")) {
 if($current_language != 'en_us') {
 	$my_mod_strings = $mod_strings;
 	include('install/language/en_us.lang.php');
-	$mod_strings = sugarArrayMerge($mod_strings, $my_mod_strings);
+	$mod_strings = sugarLangArrayMerge($mod_strings, $my_mod_strings);
 }
 ////	END INSTALLER LANGUAGE
 ///////////////////////////////////////////////////////////////////////////////
@@ -350,7 +350,7 @@ $langHeader = get_language_header();
 		</p>
 		{$mod_strings['LBL_TITLE_WELCOME']} {$setup_sugar_version} {$mod_strings['LBL_WELCOME_SETUP_WIZARD']}</th>
 
-      <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="{$loginImage}" width="145" height="30" alt="SugarCRM" border="0"></a>
+      <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="{$loginImage}" alt="SugarCRM" border="0"></a>
       </th>
     </tr>
     <tr>
@@ -436,7 +436,9 @@ if($next_clicked) {
             break;
 
         case 'systemOptions.php':
-            $_SESSION['setup_db_type'] = $_REQUEST['setup_db_type'];
+            if(isset($_REQUEST['setup_db_type'])) {
+              $_SESSION['setup_db_type'] = $_REQUEST['setup_db_type'];
+            }
             $validation_errors = validate_systemOptions();
             if(count($validation_errors) > 0) {
                 $next_step--;
@@ -639,11 +641,13 @@ EOQ;
         create_writable_dir(sugar_cached('custom_fields'));
         create_writable_dir(sugar_cached('dyn_lay'));
         create_writable_dir(sugar_cached('images'));
+        create_writable_dir(sugar_cached('modules'));
         create_writable_dir(sugar_cached('layout'));
         create_writable_dir(sugar_cached('pdf'));
         create_writable_dir(sugar_cached('upload/import'));
         create_writable_dir(sugar_cached('xml'));
         create_writable_dir(sugar_cached('include/javascript'));
+        recursive_make_writable(sugar_cached('modules'));
 
         // check whether we're getting this request from a command line tool
         // we want to output brief messages if we're outputting to a command line tool

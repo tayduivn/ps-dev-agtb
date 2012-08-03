@@ -1807,6 +1807,7 @@ function prepSystemForUpgrade() {
 	global $sugar_config;
 	global $sugar_flavor;
 	global $mod_strings;
+    global $current_language;
 	global $subdirs;
 	global $base_upgrade_dir;
 	global $base_tmp_upgrade_dir;
@@ -1867,8 +1868,8 @@ function prepSystemForUpgrade() {
 
 	if($upload_max_filesize_bytes < constant('SUGARCRM_MIN_UPLOAD_MAX_FILESIZE_BYTES')) {
 		$GLOBALS['log']->debug("detected upload_max_filesize: $upload_max_filesize");
-
-		echo '<p class="error">'.$mod_strings['MSG_INCREASE_UPLOAD_MAX_FILESIZE'].' '.get_cfg_var('cfg_file_path')."</p>\n";
+        $admin_strings = return_module_language($current_language, 'Administration');
+		echo '<p class="error">'.$admin_strings['MSG_INCREASE_UPLOAD_MAX_FILESIZE'].' '.get_cfg_var('cfg_file_path')."</p>\n";
 	}
 }
 
@@ -4895,6 +4896,23 @@ function rebuildSprites($fromUpgrade=true)
             }
         }
         closedir($dh);
+    }
+
+     // add all theme custom image directories
+    $custom_themes_dir = "custom/themes";
+    if (is_dir($custom_themes_dir)) {
+         if($dh = opendir($custom_themes_dir))
+         {
+             while (($dir = readdir($dh)) !== false)
+             {
+                 //Since the custom theme directories don't require an images directory
+                 // we check for it implicitly
+                 if ($dir != "." && $dir != ".." && is_dir('custom/themes/'.$dir."/images")) {
+                     $sb->addDirectory($dir, "custom/themes/{$dir}/images");
+                 }
+             }
+             closedir($dh);
+         }
     }
 
     // generate the sprite goodies

@@ -47,29 +47,48 @@
                 'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
                 //HTML decode
-                'include/javascript/phpjs/license.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/get_html_translation_table.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/html_entity_decode.js' => 'include/javascript/sugar_grp1.js',
+                'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
             ),
-
+			//jquery libraries
+			$sugar_grp_jquery = array(
+			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
+			//bootstrap
+            //'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',			
+            //jquery for moddule menus
+            'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hoverscroll.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hotkeys.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            
+            
+			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
+               //BEGIN SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Teamset/Teamset.js' => 'include/javascript/sugar_field_grp.js',
+               //END SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Datetimecombo/Datetimecombo.js' => 'include/javascript/sugar_field_grp.js',
            ),
-
             $sugar_grp1_yui = array(
 			//YUI scripts loaded on first page
             'include/javascript/yui3/build/yui/yui-min.js'              => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui3/build/loader/loader-min.js'        => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/yahoo/yahoo-min.js'           => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/dom/dom-min.js'               => 'include/javascript/sugar_grp1_yui.js',
-			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event-min.js'
+			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event.js'
 			    => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/event/event-min.js'           => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/logger/logger-min.js'         => 'include/javascript/sugar_grp1_yui.js',
@@ -92,7 +111,7 @@
 			'include/javascript/sugar_connection_event_listener.js'     => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/calendar/calendar.js'     => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/history/history.js'     => 'include/javascript/sugar_grp1_yui.js',
-
+            'include/javascript/yui/build/resize/resize-min.js'     => 'include/javascript/sugar_grp1_yui.js',
             ),
 
             $sugar_grp_yui_widgets = array(
@@ -126,12 +145,6 @@
             'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
-            $sugar_grp_overlib = array(
-            //overlib combination
-            'include/javascript/overlibmws.js'              => 'include/javascript/sugar_grp_overlib.js',
-            'include/javascript/overlibmws_iframe.js'       => 'include/javascript/sugar_grp_overlib.js',
-            ),
-
             //Grouping for emails module.
             $sugar_grp_emails = array(
             'include/javascript/yui/ygDDList.js' => 'include/javascript/sugar_grp_emails.js',
@@ -145,7 +158,7 @@
             'modules/Emails/javascript/EmailUIShared.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUI.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUICompose.js' => 'include/javascript/sugar_grp_emails.js',
-             'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
+            'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/grid.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/init.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_emails.js',
@@ -177,11 +190,9 @@
             ),
         );
 
-
     /**
      * Check for custom additions to this code
      */
     if(file_exists("custom/jssource/JSGroupings.php")) {
         require("custom/jssource/JSGroupings.php");
     }
-?>

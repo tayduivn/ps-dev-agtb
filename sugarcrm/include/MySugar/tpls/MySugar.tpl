@@ -46,15 +46,11 @@ height: 10px;
 </style>
 {/literal}
 
-<!-- begin includes for overlib -->
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
-<!-- end includes for overlib -->
 
 
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {sugar_getscript file='include/javascript/dashlets.js'}
-<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+
 {$chartResources}
 {$mySugarChartResources}
 
@@ -204,12 +200,12 @@ mySugarLoader.insert();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"  alt=""{/capture}
+			{capture assign=img_attr} border="0"  alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0" alt=""{/capture}
+			{capture assign=img_attr} border="0" alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
 			<!--//END SUGARCRM flav=pro ONLY -->
@@ -351,3 +347,15 @@ mySugarLoader.insert();
 				
 	
 </div>
+
+{* //BEGIN SUGARCRM flav=pro ONLY*}
+{if $view_tour}
+<link rel="stylesheet" type="text/css" href="themes/default/css/bootstrap.css" id="bootstrapCss"/>
+<link rel="stylesheet" type="text/css" href="modules/Home/tour.css" id="tourCss"/>
+<script src="include/javascript/jquery/bootstrap.min.js" type="text/javascript" id="bootstrapJs"></script>
+<script src="include/javascript/jquery/jquery.popoverext.js" type="text/javascript" id="popoverext"></script>
+<script src="include/javascript/jquery/jquery.effects.custombounce.js" type="text/javascript" id="bounce"></script>
+<script src="include/javascript/tour.js" type="text/javascript" id="tourJs"></script>
+<script src="modules/Home/tour.js" type="text/javascript" id="whatsNewsJs"></script>
+{/if}
+{* //END SUGARCRM flav=pro ONLY*}

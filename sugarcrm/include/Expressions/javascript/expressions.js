@@ -874,6 +874,62 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	return null;
 };
 
+SUGAR.expressions.ExpressionParser.prototype.getRelatedFieldsFromFormula = function(expr) {
+    var fields = [],
+        relateFunctions = ["related", "count", "rollupSum", "rollupMax", 'rollupMin', "rollupAve"];
+    var recurseTokens = function(t){
+        //First check if its a simple related field
+        if (t.type == "variable" && t.relate){
+            fields.push({
+                type:"related",
+                link:t.name,
+                relate:t.relate
+            });
+        } else if (t.type == "function" && relateFunctions.indexOf(t.name) != -1)
+        {
+            switch(t.name){
+                case "related":
+                    // For now, do not attempt to prefetch relate fields that use a formula to determine what related field to pull from
+                    if (t.args[1].type == "constant")
+                        fields.push({
+                            type:"related",
+                            link:t.args[0].name,
+                            relate:t.args[1].value
+                        });
+                    break;
+                case "count":
+                    //count has no field parameter, only a link
+                    fields.push({
+                        type:"count",
+                        link:t.args[0].name
+                    });
+                    break;
+                default:
+                    //Default will be a rollup, again, no nested formulas allowed
+                    if (t.args[1].type == "constant")
+                    {
+                        fields.push({
+                            type:t.name,
+                            link:t.args[0].name,
+                            relate:t.args[1].value
+                        });
+                    }
+            }
+        } else if (t.type == "function") {
+            for(var i = 0; i < t.args.length; i++){
+                recurseTokens(t.args[i]);
+            }
+        }
+    }
+    try {
+        var t = this.tokenize(expr);
+        recurseTokens(t);
+    }
+    catch(e){}
+
+    return fields;
+}
+
 /**
  * An expression context is used to retrieve variables when evaluating expressions.
  * the default class only returns the empty string.
@@ -905,21 +961,6 @@ SUGAR.expressions.ExpressionContext.prototype.getRelatedValue = function(linkFie
 		new SUGAR.StringLiteralExpression( linkField ),
 		new SUGAR.StringLiteralExpression( relField )
 	]);
-/*
-	var module = this.getValue("module");
-	var record = this.getValue("record");
-	if (!module || !record)
-		return "";
-	var url = "index.php?" + SUGAR.util.paramsToUrl({
-		module:"ExpressionEngine",
-		action:"execFunction",
-		id: record.evaluate(),
-		tmodule:module.evaluate(),
-		"function":"related",
-		params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
-	});
-	//The response should the be the JSON encoded value of the related field
-	return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);*/
 }
 
 SUGAR.expressions.isNumeric = function(str) {

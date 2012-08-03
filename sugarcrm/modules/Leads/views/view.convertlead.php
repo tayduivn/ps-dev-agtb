@@ -98,6 +98,13 @@ class ViewConvertLead extends SugarView
         $qsd->setFormName("ConvertLead");
 
         $this->contact = new Contact();
+        // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
+        if (!empty($this->focus->account_name))
+        {
+            $smarty->assign('displayParams', array(
+                'initial_filter' => '&name_advanced=' . urlencode($this->focus->account_name))
+            );
+        }
         $smarty->assign("contact_def", $this->contact->field_defs);
         $smarty->assign("form_name", "ConvertLead");
         $smarty->assign("form_id", "ConvertLead");
@@ -389,6 +396,10 @@ class ViewConvertLead extends SugarView
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 
+                // when creating a new contact, do not populate it with lead's old account_id
+                if ($module == 'Contacts') {
+                    $beans[$module]->account_id = '';
+                }
             }
             //If an existing bean was selected, relate it to the contact
             else if (!empty($vdef['ConvertLead']['select'])) 
@@ -578,7 +589,7 @@ class ViewConvertLead extends SugarView
                     $bean->id = create_guid();
 		            $bean->new_with_id = true;
                 }
-                if( isset($_POST['lead_conv_ac_op_sel']) && $_POST['lead_conv_ac_op_sel'] != $app_strings['LBL_NONE'])
+                if( isset($_POST['lead_conv_ac_op_sel']) && $_POST['lead_conv_ac_op_sel'] != 'None')
                 {
 	                foreach($activities as $activity)
 			    	{
@@ -719,6 +730,12 @@ class ViewConvertLead extends SugarView
 
 		if ($rel = $this->findRelationship($newActivity, $bean))
         {
+            if (isset($newActivity->$rel))
+            {
+                // this comes form $activity, get rid of it and load our own
+                $newActivity->$rel = '';
+            }
+
             $newActivity->load_relationship ($rel) ;
             $relObj = $newActivity->$rel->getRelationshipObject();
             if ( $relObj->relationship_type=='one-to-one' || $relObj->relationship_type == 'one-to-many' )

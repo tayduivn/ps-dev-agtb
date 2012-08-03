@@ -739,7 +739,7 @@ SE.autoComplete = {
     },
 
     /**
-     * Redisplays the textareas after an address is commited
+     * Redisplays the textareas after an address is committed.
      */
     toggleTextareaShow : function(sType, aArgs) {
         var textBoxId = aArgs[0]._oTextbox.id; // "addressTo0"
@@ -775,6 +775,7 @@ SE.composeLayout = {
     bccHidden : true,
     outboundAccountErrors : null,
     loadedTinyInstances : {}, //Tracks which tinyMCE editors have initalized with html content.
+    subjectMaxlen : 255,
 
     showAddressDetails : function(e) {
     	var linkElement = document.getElementById("More"+e.id);
@@ -1341,9 +1342,8 @@ SE.composeLayout = {
     },
 
 
-    /*/////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
     ///    EMAIL TEMPLATE CODE
-     */
     applyEmailTemplate : function (idx, id) {
 
         //bug #20680
@@ -1679,6 +1679,7 @@ SE.composeLayout = {
      * @param int Instance index
      */
     saveDraft : function(tinyInstance) {
+        SE.tinyInstances.currentHtmleditor = 'htmleditor' + tinyInstance;
         this.sendEmail(tinyInstance, true);
     },
 
@@ -1855,7 +1856,7 @@ SE.composeLayout = {
         //END SUGARCRM flav=pro ONLY
 
 
-        var t = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
+        var t = SE.util.getTiny('htmleditor' + idx);
         if (t != null || typeof(t) != "undefined") {
             var html = t.getContent();
         } else {
@@ -2097,7 +2098,7 @@ SE.composeLayout = {
                 setTimeout("SE.composeLayout.setContentOnThisTiny(true);", 3000);
                 return;
             }
-            
+
             //bug 48179
             //check tinyHTML for closing tags
             var body = tinyHTML.lastIndexOf('</body>');
@@ -2625,4 +2626,4 @@ SE.util = {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-})();//End namespace
+})();

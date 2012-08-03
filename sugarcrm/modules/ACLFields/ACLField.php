@@ -43,7 +43,7 @@ class ACLField  extends ACLAction{
     */
 
 
-    function getAvailableFields($module, $object=false){
+    static function getAvailableFields($module, $object=false){
         static $exclude = array('deleted', 'assigned_user_id');
         static $modulesAvailableFields = array();
         if(!isset($modulesAvailableFields[$module])){
@@ -235,10 +235,13 @@ class ACLField  extends ACLAction{
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    function hasAccess($field, $module,$user_id, $is_owner){
+    static function hasAccess($field, $module,$user_id, $is_owner){
         static $is_admin = null;
         if (is_null($is_admin)) {
             $is_admin = is_admin($GLOBALS['current_user']);
+            if ( !$is_admin ) {
+                $is_admin = $GLOBALS['current_user']->isAdminForModule($module);
+            }            
         }
         if ($is_admin) {
             return 4;

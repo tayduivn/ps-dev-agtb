@@ -170,7 +170,7 @@
 			{/foreach}
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
-				{if $pageData.access.edit}
+				{if $pageData.rowAccess[$id].edit}
                     {capture name='tmp1' assign='alt_edit'}{sugar_translate label="LNK_EDIT"}{/capture}
                     {capture name='tmp1' assign='alt_view'}{sugar_translate label="LBL_VIEWINLINE"}{/capture}
 					<a

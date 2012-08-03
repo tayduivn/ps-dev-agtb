@@ -505,13 +505,13 @@ EOJS;
 	//BEGIN SUGARCRM flav=pro ONLY
 	function addTab(){
 		if (isset($_REQUEST['numColumns'])){
-			$numCols = $_REQUEST['numColumns'];
+			$numCols = (int)$_REQUEST['numColumns'];
 		}
 		else{
-			$numCols = '2';
+			$numCols = 2;
 		}
 
-		$pageName = js_escape($_REQUEST['pageName']);
+		$pageName = js_escape(filter_input(INPUT_POST, 'pageName', FILTER_SANITIZE_STRIPPED, FILTER_FLAG_ENCODE_AMP));
 
 		$json = getJSONobj();
 		echo 'result = ' . $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
@@ -580,13 +580,12 @@ EOJS;
 		$json = getJSONobj();
 		$newPageName = $json->decode(html_entity_decode($_REQUEST['pageName']));
 
-
-        $newPageName = remove_xss(from_html($newPageName));
+        $newPageName = SugarCleaner::stripTags(from_html($newPageName), false);
 
 		// hack for single quotes -- escape the backspaces
         $newPage['pageTitle'] =  str_replace("\'", "'", $newPageName);
 
-		$newPage['numColumns'] = $_REQUEST['numCols'];
+		$newPage['numColumns'] = (int)$_REQUEST['numCols'];
 
 		array_push($pages,$newPage);
 
@@ -976,10 +975,10 @@ EOJS;
 		$json = getJSONobj();
 		$newPageName = $json->decode(html_entity_decode($_REQUEST['newPageTitle']));
 
-		$pages[$_REQUEST['pageId']]['pageTitle'] = $newPageName;
+		$pages[$_REQUEST['pageId']]['pageTitle'] = SugarCleaner::stripTags(from_html($newPageName), false);
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
-		return $pages[$_REQUEST['pageId']]['pageTitle'];
+        return to_html($pages[$_REQUEST['pageId']]['pageTitle'], ENT_QUOTES);
 	}
 	//END SUGARCRM flav=pro ONLY
 }

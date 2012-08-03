@@ -67,9 +67,14 @@ $job_strings = array (
     10 => 'dceCreateReportData',
     11 => 'dceCreateSalesReport',
     //END SUGARCRM flav=dce ONLY
+    12 => 'sendEmailReminders',
+    //BEGIN SUGARCRM flav=pro ONLY
+    13 => 'performFullFTSIndex',
+    //END SUGARCRM flav=pro ONLY
+    14 => 'cleanJobQueue',
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
-//END SUGARCRM flav=int ONLY
+    //END SUGARCRM flav=int ONLY
 //END SUGARCRM flav!=sales ONLY
 
 );
@@ -357,9 +362,9 @@ function pruneDatabase() {
 			while($aDel = $db->fetchByAssoc($rDel, false)) {
 				// build column names
 
-				$queryString[] = $db->insertParams($table, $columns, $rDel, null, false);
+				$queryString[] = $db->insertParams($table, $columns, $aDel, null, false);
 
-				if(!empty($custom_columns) && !empty($rDel['id'])) {
+				if(!empty($custom_columns) && !empty($aDel['id'])) {
                     $qDelCstm = 'SELECT * FROM '.$table.'_cstm WHERE id_c = '.$db->quoted($aDel['id']);
                     $rDelCstm = $db->query($qDelCstm);
 
@@ -540,6 +545,27 @@ function dceCreateSalesReport() {
 }
 //END SUGARCRM flav=dce ONLY
 
+/**
+ * Job 12
+ */
+function sendEmailReminders(){
+	$GLOBALS['log']->info('----->Scheduler fired job of type sendEmailReminders()');
+	require_once("modules/Activities/EmailReminder.php");
+	$reminder = new EmailReminder();
+	return $reminder->process();
+}
+//BEGIN SUGARCRM flav=pro ONLY
+function performFullFTSIndex()
+{
+    require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+    $indexer = new SugarSearchEngineFullIndexer();
+    $indexer->initiateFTSIndexer();
+    $GLOBALS['log']->info("FTS Indexer initiated.");
+    return true;
+}
+//END SUGARCRM flav=pro ONLY
+
+
 //BEGIN SUGARCRM flav=int ONLY
 /**
  * Job 999
@@ -574,6 +600,26 @@ All in all, Exit looks like an exciting action puzzle game that should showoff t
 	return true;
 }
 //END SUGARCRM flav=int ONLY
+
+function cleanJobQueue($job)
+{
+    $td = TimeDate::getInstance();
+    // soft delete all jobs that are older than cutoff
+    $soft_cutoff = 7;
+    if(isset($GLOBALS['sugar_config']['jobs']['soft_lifetime'])) {
+        $soft_cutoff = $GLOBALS['sugar_config']['jobs']['soft_lifetime'];
+    }
+    $soft_cutoff_date = $job->db->quoted($td->getNow()->modify("- $soft_cutoff days")->asDb());
+    $job->db->query("UPDATE {$job->table_name} SET deleted=1 WHERE status='done' AND date_modified < ".$job->db->convert($soft_cutoff_date, 'datetime'));
+    // hard delete all jobs that are older than hard cutoff
+    $hard_cutoff = 21;
+    if(isset($GLOBALS['sugar_config']['jobs']['hard_lifetime'])) {
+        $hard_cutoff = $GLOBALS['sugar_config']['jobs']['hard_lifetime'];
+    }
+    $hard_cutoff_date = $job->db->quoted($td->getNow()->modify("- $hard_cutoff days")->asDb());
+    $job->db->query("DELETE FROM {$job->table_name} WHERE status='done' AND date_modified < ".$job->db->convert($hard_cutoff_date, 'datetime'));
+    return true;
+}
 
 if (file_exists('custom/modules/Schedulers/_AddJobsHere.php')) {
 	require('custom/modules/Schedulers/_AddJobsHere.php');

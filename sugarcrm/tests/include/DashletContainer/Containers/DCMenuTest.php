@@ -47,14 +47,14 @@ class DCMenuTest extends Sugar_PHPUnit_Framework_TestCase
         global $sugar_config;
         if(!empty($sugar_config['use_sprites']) && $sugar_config['use_sprites'])
         {
-            $this->assertContains('spr_', $menuItem, "Did not contain Accounts sprite menu icon.");
+            $this->assertContains('spr_', $menuItem['image'], "Did not contain Accounts sprite menu icon.");
         } else {
-            $this->assertContains('icon_Accounts_bar_32.png', $menuItem, "Did not contain Accounts menu icon.");
+            $this->assertContains('icon_Accounts_bar_32.png', $menuItem['image'], "Did not contain Accounts menu icon.");
         }
 
         $account_mod_string = return_module_language($GLOBALS['current_language'], 'Accounts');
         $regExp = '/' . $account_mod_string['LNK_NEW_ACCOUNT'] . '/';
-        $this->assertRegExp($regExp, $menuItem, "Did not contain {$regExp}");
+        $this->assertRegExp($regExp, $menuItem['image'], "Did not contain {$regExp}");
     }
 
 }

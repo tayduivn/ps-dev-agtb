@@ -70,7 +70,7 @@ $emailman = new EmailMan();
         //find all the message that meet the following criteria.
         //1. scheduled send date time is now
         //2. campaign matches the current campaign
-        //3. recipient belongs to a propsect list of type test, attached to this campaign
+        //3. recipient belongs to a prospect list of type test, attached to this campaign
 
         $select_query =" SELECT em.* FROM emailman em";
         $select_query.=" join prospect_list_campaigns plc on em.campaign_id = plc.campaign_id";
@@ -160,7 +160,7 @@ do {
         //the criteria in the original query, and we care most about the in_queue_date and process_date_time,
         //if they are null or in past(older than 24 horus) then we are okay.
 
-		$lock_query="UPDATE emailman SET in_queue=1, in_queue_date=". $db->now()." WHERE id = '{$row['id']}'";
+		$lock_query="UPDATE emailman SET in_queue=1, in_queue_date=". $db->now()." WHERE id = ".intval($row['id']);
 		$lock_query.=" AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " .$db->convert($db->quoted($timedate->fromString("-1 day")->asDb()),"datetime")."))";
 
  		//if the query fails to execute.. terminate campaign email process.
@@ -180,7 +180,7 @@ do {
 			$emailman->$name = $value;
 		}
 
-		//for the campaign process the supression lists.
+		//for the campaign process the suppression lists.
 		if (!isset($current_campaign_id) or empty($current_campaign_id) or $current_campaign_id != $row['campaign_id']) {
 			$current_campaign_id= $row['campaign_id'];
 

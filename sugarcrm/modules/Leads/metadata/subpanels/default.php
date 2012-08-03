@@ -32,8 +32,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: default.php 15479 2006-08-03 22:12:05Z jenny $
 $subpanel_layout = array(
 	'top_buttons' => array(
-		array('widget_class' => 'SubPanelTopCreateButton'),
-		array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Accounts'),
+		//array('widget_class' => 'SubPanelTopCreateButton'),
+		//array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Accounts'),
 	),
 
 	'where' => '',

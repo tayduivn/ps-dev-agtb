@@ -35,8 +35,7 @@
 
 body
 {
-	background-image:url('../../../../index.php?entryPoint=getImage&imageName=bg.png'); 
-	background-color: #fff;
+	background-color: #e8efa0;
 }
 
 a:link, a:visited {
@@ -61,142 +60,69 @@ background-image: -webkit-gradient(
     color-stop(0.78, rgba(0,0,0,.2)),
     color-stop(1, rgba(0,0,0,0))
     );
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#98bd38', endColorstr='#86a238');
 height: 43px\9;;
+}
+#ie8GradientFix{
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: transparent;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#98bd38', endColorstr='#86a238');
 }
 
 .dcmenuDivider  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dcMenuDivider.png");
+	border-left: 1px solid #748a39;
+	border-right: 1px solid #c7ec61;
+	background-image: none;
+	width: 0px;
 }
 
 #glblSearchBtn {
-margin-top:8px;
-}
-
-#moduleList  {
-background: -moz-linear-gradient(center top,
-		transparent 0%,
-		transparent 12%,
-		rgba(255,255,255,.9) 13%,  
-		rgba(255,255,255,.8) 45%,
-		rgba(255,255,255,.6) 45%, 
-		rgba(255,255,255,.6) 76%,
-		rgba(0,0,0,.1) 76%, 
-		rgba(0,0,0,0) 100%
-	); 
-	background-color: transparent;
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, rgba(255,255,255,0)),
-    color-stop(0.12, rgba(255,255,255,0)),
-    color-stop(0.13, rgba(255,255,255,.9)),
-    color-stop(0.45, rgba(255,255,255,.8)),
-    color-stop(0.45, rgba(255,255,255,.6)),
-    color-stop(0.74, rgba(255,255,255,.6)),
-    color-stop(0.74, rgba(0,0,0,.1)),
-    color-stop(1, rgba(0,0,0,0))
-    );
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png")/9;
-height:50px;
-}
-
-#moduleList.yuimenubar li.current {
-margin-right: -1px;	
-}
-
-#moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
-	background-image: -moz-linear-gradient(center top, 
-	#cee3a2 0%,
-	#adcf64 2%,
-	#87ad35 52%,
-	#689800 52%,
-	#7ab200 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #cee3a2),
-    color-stop(.05, #adcf64),
-    color-stop(.52, #87ad35),
-    color-stop(.52, #689800),
-    color-stop(1, #7ab200)
-   );	
-	-moz-border-radius: 10px 10px 0px 0px;
-	border-radius: 10px 10px 0px 0px;
-	-webkit-border-top-left-radius: 10px;
-	-webkit-border-top-right-radius: 10px;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cee3a2', endColorstr='#7ab200');
-	
-padding-bottom: 4px;
-padding-top: 6px\9;
-text-shadow:-1px -1px #48591a;
 }
 
 
-#moduleList .yuimenuitemlabel, a.yuimenuitemlabel, a.yuimenuitemlabel:link, a.yuimenuitemlabel:visited {
-padding:1px 15px 2px;
-border-color:#cbdc2b;
+#moduleList .sf-menu > li.current > a {
+	background:		#6ea100;
 }
 
-.moduleTabExtraMenu .yuimenuitemlabel.more {
-border-right:1px solid #cbdc2b;
-}
-
-#moduleList #moduleTabGroup .yuimenuitemlabel.group em
-{
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
-}
-
-#moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
-	background-image: -moz-linear-gradient(center top, 
-	#ffffff 0%,
-	rgba(255,255,255,.6) 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #ffffff),
-    color-stop(1, rgba(255,255,255,.6))
-   );	
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fefefe');
-border-color: #CBDC2B;
-}
-
-#welcome, #globalLinks  {
-	border-color: #edf0d2;
-height:21px;
-background-image: -moz-linear-gradient(center top, 
-	#eef3bf 0%,
-	#dfe793 50%,
-	#d1dd63 50%,
-	#cad661 100%
-	);
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #eef3bf),
-    color-stop(.5, #dfe793),
-    color-stop(.5, #d1dd63),
-    color-stop(1, #cad661)
-   );	
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eef3bf', endColorstr='#cad661');
+ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
+ul.moduleTabMore li.sfHover a.sf-with-ul,
+ul.sf-sub-modulelist li.sfHover > a.sf-with-ul,
+ul.filter-menu li a.selected,
+ul.megamenu ul a:hover,
+ul.moduleTabMore li a:hover,
+ul.sf-sub-modulelist li a:hover,
+#moduleList .sf-menu li:hover,
+#moduleList .sf-menu li.sfHover,
+#moduleList .sf-menu li a:focus,
+#moduleList .sf-menu li a:hover,
+#moduleList .sf-menu li a:active {
+	background:		#6ea100;
+	outline:		0;
 }
 
 
-#globalLinksCtrl a.yui-toggle {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=globalLinksToggle.png");
-height:29px;
+#moduleList .more .selected {
+	background:		#6ea100;
+}
+#globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
+#globalLinksModule ul.clickMenu li:hover span,
+ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
+ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
+ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
+	background-color:		#6ea100;
+    color:#ffffff !important;
 }
 
-.dashletPanel {
--moz-box-shadow:0 2px 10px #666666;
-box-shadow: #666666 0px 2px 10px;
--webkit-box-shadow: #666666 0px 2px 10px;
+#globalLinksModule:hover, #quickCreate ul.clickMenu > li:hover {
+	background-color: #6ea100;	
+}
+
+#dcmenuSugarCube:hover {
+	background-color: #6ea100;	
 }
 
 .dashletPanel.dc {
@@ -258,43 +184,6 @@ margin-top:5px;
 height: 44px;
 }
 
-#moduleList .dashletPanelMenu .ml {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ml-menu.png");
-}
-
-#moduleList .dashletPanelMenu .mr {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-mr-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .bl {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bl-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .ft-center {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-menu.png");
-}
-
-#moduleList .dashletPanelMenu .ft .br {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
-}
-
-#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
-background-color: rgba(255,255,255,.5);
-background-color: #ffffff\9;  /*ie hack */
-border-color: #ffffff;
-}
-
-#moduleList li.more div.bd { 
-
-}
-
-.dashletPanel .dccontent {
-border:1px solid #17e531;
-}
-
-#moduleList .dashletPanelMenu .bd-center {
-border:1px solid #17e531;
-}
 
 
 .dashletPanel .hd .hd-center, .dashletPanel .hd .tl, .dashletPanel .hd .tr{
@@ -570,10 +459,6 @@ border-color: #17E531;
 background-color: #6ea100;
 }
 
-
-#moduleList .moduleTabExtraMenu,#moduleList .moduleTabGroupMenu {
-height:32px;
-}
 
 .monthHeader,.monthFooter td  {
 	background-image: -moz-linear-gradient(center top, 

@@ -71,7 +71,7 @@ if(empty($focus_triggers_list)){
 }
 /*
 if(empty($focus_triggers_list)){
-	
+
 	$button .= "<input title='".$current_module_strings['LBL_NEW_TRIGGER_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_NEW_TRIGGER_BUTTON_KEY']."' class='button' type='button' name='New' value='  ".$current_module_strings['LBL_NEW_TRIGGER_BUTTON_LABEL']."'";
 	$button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowTriggerShells&action=CreateStep1&sugar_body_only=true&form=ComponentView&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'>";
 	echo "<BR><font color='red'><b>".$mod_strings['LBL_LACK_OF_TRIGGER_ALERT']."</b></font><BR>";
@@ -80,19 +80,25 @@ if(empty($focus_triggers_list)){
 	$button .= "&nbsp;&nbsp;<input title='".$current_module_strings['LBL_NEW_FILTER_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_NEW_FILTER_BUTTON_KEY']."' class='button' type='button' name='New' value='  ".$current_module_strings['LBL_NEW_FILTER_BUTTON_LABEL']."'";
 	$button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowTriggerShells&action=CreateStep1&sugar_body_only=true&form=ComponentView&workflow_id=$focus->id&frame_type=Secondary\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'>";
 */
-$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' type='button' name='NewWorkFlowTriggerShells' id='NewWorkFlowTriggerShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
+$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' type='button' name='NewWorkFlowTriggerShells' id='NewWorkFlowTriggerShells' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
 $button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowTriggerShells&action=CreateStep1&sugar_body_only=true&form=ComponentView&workflow_id=$focus->id&frame_type=$frame_type\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'>";
-
 $button .= "</form>\n";
+
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_buttons = smarty_function_sugar_action_menu(array(
+    'id' => 'ACLRoles_EditView_action_menu',
+    'buttons' => array($button),
+), $xtpl);
+
 $ListView = new ListView();
 $header_text = '';
-		
+
 	$ListView->initNewXTemplate( 'modules/WorkFlowTriggerShells/SubPanelView.html',$current_module_strings);
 $ListView->xTemplateAssign("WORKFLOW_ID", $focus->id);
 $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&return_action=DetailView&return_id={$_REQUEST['record']}");
 $ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
 $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
 $ListView->setHeaderTitle($current_module_strings['LBL_MODULE_NAME'] . $header_text);
-$ListView->setHeaderText($button);
+$ListView->setHeaderText($action_buttons);
 $ListView->processListView($focus_all_triggers_list, "main", "TRIGGER");
 ?>

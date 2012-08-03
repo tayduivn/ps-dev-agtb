@@ -32,7 +32,6 @@
 
 <!-- BEGIN: main -->
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
-<script type='text/javascript' src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {literal}
 <script type="text/javascript" >
@@ -181,7 +180,7 @@ function change_state(radiobutton) {
 				 		<tr id="mail_allow_user">
 				 		     <td width="20%" scope="row">
 									{$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
-									<img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
+									<img border="0" class="inlineHelpTip" onclick="return SUGAR.util.showHelpTips(this,'{$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP}','','','dialogHelpPopup')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
 							</td>
 				 		    <td width="30%">
                                  <input type='hidden' id="notify_allow_default_outbound_hidden_input" name='notify_allow_default_outbound' value='0'>
@@ -212,7 +211,7 @@ function change_state(radiobutton) {
     <tr>
     	<td width="20%" scope="row" valign='top'>
     	   {$MOD.LBL_NOTIFY_ON}:&nbsp;
-        	<img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_NOTIFICATION_ON_DESC}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
+        	<img border="0" class="inlineHelpTip" onclick="return SUGAR.util.showHelpTips(this,'{$MOD.LBL_NOTIFICATION_ON_DESC}','','','dialogHelpPopup')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
     	</td>
     	<td width="30%"  valign='top'>
     		<input type='hidden' name='notify_on' value='0'><input name="notify_on" tabindex='1' value="1" class="checkbox" type="checkbox" {$notify_on}>
@@ -230,7 +229,7 @@ function change_state(radiobutton) {
     	</td>
     	<td scope="row" width="20%">
     	   {$MOD.LBL_NOTIFY_SEND_FROM_ASSIGNING_USER}:
-    	   <img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_FROM_ADDRESS_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
+    	   <img border="0" class="inlineHelpTip" onclick="return SUGAR.util.showHelpTips(this,'{$MOD.LBL_FROM_ADDRESS_HELP}','','','dialogHelpPopup')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
     	</td>
     	<td width="30%"  valign='top'><input type='hidden' name='notify_send_from_assigning_user' value='0'><input name='notify_send_from_assigning_user' value="2" tabindex='1' class="checkbox" type="checkbox" {$notify_send_from_assigning_user}></td>
     </tr>
@@ -672,18 +671,20 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_YAHOOMAIL_SMTPUSER}{literal}';
         break;
     case "gmail":
-        document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
-        document.getElementById("mail_smtpport").value = '587';
-        document.getElementById("mail_smtpauth_req").checked = true;
-        var ssl = document.getElementById("mail_smtpssl");
-        for(var j=0;j<ssl.options.length;j++) {
-            if(ssl.options[j].text == 'TLS') {
-                ssl.options[j].selected = true;
-                break;
+        if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
+            document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
+            document.getElementById("mail_smtpport").value = '587';
+            document.getElementById("mail_smtpauth_req").checked = true;
+            var ssl = document.getElementById("mail_smtpssl");
+            for(var j=0;j<ssl.options.length;j++) {
+                if(ssl.options[j].text == 'TLS') {
+                    ssl.options[j].selected = true;
+                    break;
+                }
             }
         }
-        document.getElementById("mailsettings1").style.display = 'none';
-        document.getElementById("mailsettings2").style.display = 'none';
+        //document.getElementById("mailsettings1").style.display = 'none';
+        //document.getElementById("mailsettings2").style.display = 'none';
         document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPPASS}{literal}';
         document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPUSER}{literal}';
         break;

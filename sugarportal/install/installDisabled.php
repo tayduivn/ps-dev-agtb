@@ -45,12 +45,12 @@ $out =<<<EOQ
     <tr>
       <th width="400">{$mod_strings['LBL_DISABLED_TITLE_2']}</th>
 
-      <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="include/images/sugarcrm_login.gif" alt="SugarCRM" border="0"></a></th>
+      <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="include/images/sugarcrm_login_65.png" alt="SugarCRM" border="0"></a></th>
     </tr>
 
     <tr>
       <td colspan="2" width="600" style="background-image : url(include/images/cube_bg.gif); background-position : right; background-repeat : no-repeat;">
-      <p><img src="include/images/logo_sugarportal.gif" alt="SugarCRM" border="0"></p>
+      <p><img src="include/images/logo_sugarportal_65.png" alt="SugarCRM" border="0"></p>
         <p>{$mod_strings['LBL_DISABLED_DESCRIPTION']}</p>
         <pre>
             'installer_locked' => false,

@@ -298,7 +298,7 @@ class ForecastDirectReports extends SugarBean {
             return $ret_array['select'].$ret_array['from'].$ret_array['where'].$ret_array['order_by'];
     }
 
-    //returns a sum of (opportunity count, weighted value and commit value) for the forecats
+    //returns a sum of (opportunity count, weighted value and commit value) for the forecast.
     //committed by the logged in user's downline. This also inludes the user's direct forecast.
     function compute_rollup_totals($order_by, $where,$currency_format=true) {
 

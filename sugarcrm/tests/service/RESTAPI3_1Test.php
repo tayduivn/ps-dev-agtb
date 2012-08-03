@@ -125,7 +125,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoginAvailableModulesResults()
     {
-        $this->markTestSkipped('modInvisList becomes corrupted, need to investigate.');
+        $this->markTestIncomplete('modInvisList becomes corrupted, need to investigate.');
         $result = $this->_login();
         $this->assertTrue( isset($result['name_value_list']['available_modules']) );
 
@@ -228,7 +228,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoginVardefsMD5Results()
     {
-        $this->markTestSkipped('Vardef results are still dirty even with reload global set, need to investigate further.');
+        $this->markTestIncomplete('Vardef results are still dirty even with reload global set, need to investigate further.');
 
         $GLOBALS['reload_vardefs'] = TRUE;
         global  $beanList, $beanFiles;
@@ -282,7 +282,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetadataListViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
     {
-        $this->markTestSkipped('Should be enabled for 611 patch.');
+        $this->markTestIncomplete('Should be enabled for 611 patch.');
 
         $result = $this->_login();
         $session = $result['id'];
@@ -303,7 +303,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetadataEditViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
     {
-        $this->markTestSkipped('Should be enabled for 611 patch.');
+        $this->markTestIncomplete('Should be enabled for 611 patch.');
         $result = $this->_login();
         $session = $result['id'];
 

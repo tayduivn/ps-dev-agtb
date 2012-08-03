@@ -449,6 +449,7 @@ $adminOnlyList = array(
                     //END SUGARCRM flav=pro ONLY
                     'UpgradeWizard' => array('all' => 1),
                     'Studio' => array('all' => 1),
+                    'Schedulers' => array('all' => 1),
                     );
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -576,7 +577,6 @@ $modInvisList[] = 'SugarFollowing';
 $objectList = array();
 $objectList['Cases'] =  'Case';
 $objectList['Groups'] =  'User';
-$objectList['Schedulers'] =  'schedulers';
 $objectList['Users'] =  'User';
 //BEGIN SUGARCRM flav=pro ONLY
 $objectList['TrackerSessions'] =  'tracker_sessions';

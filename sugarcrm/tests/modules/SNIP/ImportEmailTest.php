@@ -78,6 +78,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('Conference Room - F123, Bldg. 002', $meeting->location);
 		$this->assertEquals('Planned', $meeting->status);
 		$this->assertEquals('2002-10-28 22:00:00', $GLOBALS['db']->fromConvert($meeting->date_start, 'datetime'));
+		$this->assertEquals('2002-10-28 23:00:00', $GLOBALS['db']->fromConvert($meeting->date_end, 'datetime'));
 		$this->assertEquals('Emails', $meeting->parent_type);
 		$this->assertEquals($email['message']['subject'], $meeting->parent_name);
 	}
@@ -120,7 +121,8 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
-	public function testExistingEmail () {
+	public function testExistingEmail ()
+	{
 		// import email through snip
 		$email['message']['message_id'] = '2002';
 		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
@@ -168,6 +170,44 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
+	public function testRelateCase()
+	{
+	    $case = new aCase();
+        $case->name = 'PHPUnint test case';
+        $case->save();
+        $caseid = $case->id;
+        $this->assertNotEmpty($caseid);
+        $case->retrieve($caseid);
+	    $case_num = $case->case_number;
+
+        $macro = str_replace("%1", $case_num, $case->getEmailSubjectMacro());
+
+		// import email through snip
+		$email['message']['message_id'] = 'test-sugar-email-case-import'.uniqid();
+		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
+		$email['message']['description'] = 'This is a test email';
+		$email['message']['description_html'] = 'This is a <b>test</b> <u>email</u>';
+		$email['message']['to_addrs'] = 'sugar.phone@example.name';
+		$email['message']['cc_addrs'] = 'sugar.section.dev@example.net';
+		$email['message']['bcc_addrs'] = 'qa.sugar@example.net';
+		$email['message']['date_sent'] = '2010-01-01 12:30:00';
+		$email['message']['subject'] = "Re: $macro PHPUnit Test Existing Email";
+		$email['user'] = $GLOBALS['current_user']->user_name;
+		$this->snip->importEmail($email);
+
+		// get the email object if it imported correctly
+		$e = new Email();
+		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
+		$this->assertTrue(isset($e->id) && !empty($e->id), 'Unable to retrieve email object');
+		$this->email_id = $e->id;
+
+		$case->retrieve($caseid);
+		$case->load_relationship("emails");
+        $ids = $case->emails->get();
+        $this->assertContains($e->id, $ids, "Email not found linked to the case");
+	}
+
+
 	public function setUp () {
 	    // setup test user and initiate snip
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -178,10 +218,12 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->date_time_format = $timedate->get_date_time_format();
 	}
 
-	public function tearDown () {
+	public function tearDown ()
+	{
 		// delete emails that were imported
     	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");
     	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");
+    	$GLOBALS['db']->query("DELETE FROM cases WHERE name='PHPUnint test case'");
 
     	// delete other beans
     	if (!empty ($this->meeting_id)) {

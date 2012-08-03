@@ -1753,7 +1753,7 @@ function getListFieldDef(field_key) {
 	return field_def;
 }
 
-function showDuplicateOverlib(reportType, canCovertToMatrix) {
+function showDuplicateOverlib(el,reportType, canCovertToMatrix) {
 	if (reportType == 'tabular') {
 		var menu = '<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,"yes");\' ' +
 				   'onmouseout=\'unhiliteItem(this);\' ' +
@@ -1834,8 +1834,5 @@ function showDuplicateOverlib(reportType, canCovertToMatrix) {
 						
 		
 	}
-	return overlib(menu, 
-				   CENTER, STICKY, MOUSEOFF, 3000, WIDTH, 150, FGCLASS, 'olOptionsFgClass', CGCLASS, 'olOptionsCgClass', 
-				   BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', 
-				   CLOSEFONTCLASS, 'olOptionsCloseFontClass');
+	SUGAR.util.showHelpTips(el,menu);
 }

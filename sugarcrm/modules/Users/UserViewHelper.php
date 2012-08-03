@@ -154,7 +154,8 @@ class UserViewHelper {
         if(isset($_REQUEST['record'])) {
             $the_query_string .= '&record='.$_REQUEST['record'];
         }
-        $buttons = "";
+        $buttons_header = array();
+        $buttons_footer = array();
         if (!$this->bean->is_group){
             if ($this->bean->id == $current_user->id) {
                 $reset_pref_warning = translate('LBL_RESET_PREFERENCES_WARNING','Users');
@@ -170,10 +171,15 @@ class UserViewHelper {
             if(isset($_REQUEST['record'])){
                 $user_preference_url .= "&record=".$_REQUEST['record'];
             }
-            $buttons .="<input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$user_preference_url."&reset_preferences=true\";' value='".translate('LBL_RESET_PREFERENCES','Users')."' />";
-            $buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".translate('LBL_RESET_HOMEPAGE','Users')."' />";
+            $buttons_header[]="<input type='button' class='button' id='reset_user_preferences_header' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$user_preference_url."&reset_preferences=true\";' value='".translate('LBL_RESET_PREFERENCES','Users')."' />";
+            $buttons_header[]="<input type='button' class='button' id='reset_homepage_header' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".translate('LBL_RESET_HOMEPAGE','Users')."' />";
+
+            $buttons_footer[]="<input type='button' class='button' id='reset_user_preferences_footer' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$user_preference_url."&reset_preferences=true\";' value='".translate('LBL_RESET_PREFERENCES','Users')."' />";
+            $buttons_footer[]="<input type='button' class='button' id='reset_homepage_footer' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".translate('LBL_RESET_HOMEPAGE','Users')."' />";
+
         }
-        if (isset($buttons)) $this->ss->assign("BUTTONS", $buttons);
+        if (isset($buttons_header)) $this->ss->assign("BUTTONS_HEADER", $buttons_header);
+        if (isset($buttons_footer)) $this->ss->assign("BUTTONS_FOOTER", $buttons_footer);
         
 
 
@@ -415,19 +421,20 @@ class UserViewHelper {
             $this->ss->assign('NO_OPPS', 'CHECKED');
         }
 
-        $reminder_time = $this->bean->getPreference('reminder_time');
-        if(empty($reminder_time)){
-            $reminder_time = -1;
-        }
+	$reminder_time = $this->bean->getPreference('reminder_time');
+	if(empty($reminder_time)){
+		$reminder_time = -1;
+	}	
+	$email_reminder_time = $this->bean->getPreference('email_reminder_time');
+	if(empty($email_reminder_time)){
+		$email_reminder_time = -1;
+	}
         //BEGIN SUGARCRM flav!=sales ONLY
-        $this->ss->assign("REMINDER_TIME_OPTIONS", get_select_options_with_id($app_list_strings['reminder_time_options'],$reminder_time));
-        if($reminder_time > -1){
-            $this->ss->assign("REMINDER_TIME_DISPLAY", 'inline');
-            $this->ss->assign("REMINDER_CHECKED", 'checked');
-            $this->ss->assign("REMINDER_TIME", $app_list_strings['reminder_time_options'][$reminder_time]);
-        }else{
-            $this->ss->assign("REMINDER_TIME_DISPLAY", 'none');
-        }
+        $this->ss->assign("REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	
+        $this->ss->assign("EMAIL_REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	        
+	$this->ss->assign("REMINDER_TIME", $reminder_time);
+	$this->ss->assign("EMAIL_REMINDER_TIME", $email_reminder_time);
+	$this->ss->assign("REMINDER_TABINDEX", "12");
         $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
 
         $publish_url = $sugar_config['site_url'].'/vcal_server.php';
@@ -441,15 +448,25 @@ class UserViewHelper {
             }
         }
         
-        $publish_url .= $token.'type=vfb&source=outlook&key='.$this->bean->getPreference('calendar_publish_key' );
+        $publish_url .= $token.'type=vfb&source=outlook&key=<span id="cal_pub_key_span">'.$this->bean->getPreference('calendar_publish_key' ) . '</span>';
         if (! empty($this->bean->email1)) {
             $publish_url .= '&email='.$this->bean->email1;
         } else {
             $publish_url .= '&user_name='.$this->bean->user_name;
         }
+
+        $ical_url = $sugar_config['site_url'].'/ical_server.php?type=ics&key=<span id="ical_pub_key_span">'.$this->bean->getPreference('calendar_publish_key' ) . '</span>';
+        if (! empty($this->bean->email1))
+        {
+            $ical_url .= '&email='.$this->bean->email1;
+        } else
+        {
+            $ical_url .= '&user_name='.$this->bean->user_name;
+        }
+
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url'].'/vcal_server.php/type=vfb&email=%NAME%@%SERVER%');
-        
+        $this->ss->assign("CALENDAR_ICAL_URL", $ical_url);
         //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav!=dce ONLY
         //BEGIN SUGARCRM flav=ent ONLY
@@ -534,17 +551,7 @@ class UserViewHelper {
             $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
         }
         $this->ss->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
-        
-        $user_max_tabs = $this->bean->getPreference('max_tabs');
-        if(isset($user_max_tabs) && $user_max_tabs > 0) {
-            $this->ss->assign("MAX_TAB", $user_max_tabs);
-        } elseif(SugarThemeRegistry::current()->maxTabs > 0) {
-            $this->ss->assign("MAX_TAB", SugarThemeRegistry::current()->maxTabs);
-        } else {
-            $this->ss->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
-        }
-        $this->ss->assign("MAX_TAB_OPTIONS", range(1, ((!empty($GLOBALS['sugar_config']['default_max_tabs']) && $GLOBALS['sugar_config']['default_max_tabs'] > 10 ) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         $user_subpanel_tabs = $this->bean->getPreference('subpanel_tabs');
         if(isset($user_subpanel_tabs)) {
@@ -573,27 +580,28 @@ class UserViewHelper {
         foreach($chooser->args['values_array'][0] as $key=>$value) {
             $chooser->args['values_array'][0][$key] = $app_list_strings['moduleList'][$key];
         }
-        
+
         foreach($chooser->args['values_array'][1] as $key=>$value) {
             $chooser->args['values_array'][1][$key] = $app_list_strings['moduleList'][$key];
         }
-        
+
         foreach($chooser->args['values_array'][2] as $key=>$value) {
             $chooser->args['values_array'][2][$key] = $app_list_strings['moduleList'][$key];
         }
-        
+
         $chooser->args['left_name'] = 'display_tabs';
         $chooser->args['right_name'] = 'hide_tabs';
-        
+
         $chooser->args['left_label'] =  translate('LBL_DISPLAY_TABS','Users');
         $chooser->args['right_label'] =  translate('LBL_HIDE_TABS','Users');
-        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').' <!--not_in_theme!--><img border="0" src="themes/default/images/helpInline.gif" onmouseover="return overlib(\'Choose which tabs are displayed.\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\', WIDTH, -1, NOFOLLOW, \'ol_nofollow\' );" onmouseout="return nd();"/>';
-        
+        require_once('include/Smarty/plugins/function.sugar_help.php');
+        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').smarty_function_sugar_help(array("text"=>translate('LBL_CHOOSE_WHICH','Users')),$ss);
+
         $this->ss->assign('TAB_CHOOSER', $chooser->display());
         $this->ss->assign('CHOOSER_SCRIPT','set_chooser();');
         $this->ss->assign('CHOOSE_WHICH', translate('LBL_CHOOSE_WHICH','Users'));
         //END SUGARCRM flav!=sales ONLY
-        
+
     }
 
     protected function setupAdvancedTabLocaleSettings() {

@@ -67,6 +67,7 @@ $out =<<<EOQ
     <script type="text/javascript" src="install/dbConfig.js"></script>
     <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
     <script src="cache/include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
+    <script src="cache/include/javascript/sugar_grp1_jquery.js?s={$sugar_version}&c={$js_custom_version}"></script>
     <script type="text/javascript">
     <!--
     if ( YAHOO.env.ua )
@@ -94,7 +95,7 @@ $out2 =<<<EOQ2
 		{$mod_strings['LBL_DBCONF_TITLE']}
 	</th>
 	<th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-		<IMG src="include/images/sugarcrm_login.png" width="145" height="30" alt="SugarCRM" border="0"></a>
+		<IMG src="include/images/sugarcrm_login.png" alt="SugarCRM" border="0"></a>
         </th>
 </tr>
 <tr>
@@ -212,12 +213,6 @@ $out2 .=<<<EOQ2
 EOQ2;
 }
 
-//set demo dropdown
-//$supported_demodata = array(
-//	'en_us' => 'English (US)',
-//	'zh_cn' => '简体中文',
-//	'ja_jp' => 'Japanese - 日本語',
-//);
 $demoDD = "<select name='demoData' id='demoData'><option value='no' >".$mod_strings['LBL_NO']."</option><option value='yes'>".$mod_strings['LBL_YES']."</option>";
 $demoDD .= "</select><br>&nbsp;";
 
@@ -234,6 +229,42 @@ $out3 =<<<EOQ3
 </tr>
 </table>
 EOQ3;
+
+//BEGIN SUGARCRM flav=pro ONLY
+$GLOBALS['sugar_config']['default_language'] = 'en_us';
+$app_list_strings = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
+$ftsTypeDropdown = "<select name='fts_type' id='fts_type'>";
+$ftsTypeDropdown .= get_select_options_with_id($app_list_strings['fts_type'], '');
+$ftsTypeDropdown .= "</select>";
+
+$outFTS =<<<EOQ3
+<table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
+<tr><th colspan="3" align="left">{$mod_strings['LBL_FTS_TABLE_TITLE']}</th></tr>
+<tr><td colspan='3'>{$mod_strings['LBL_FTS_HELP']}</td></tr>
+<tr>
+        <td width='1%'></td>
+        <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_TYPE']}</b></td>
+        <td  width='35%'nowrap align="left">
+            $ftsTypeDropdown
+        </td>
+</tr>
+<tr id='fts_host_row' style='display:none;'>
+        <td width='1%'></td>
+        <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_HOST']}</b></td>
+        <td  width='35%'nowrap align="left">
+         <input type="text" name="fts_host" id="fts_host" value="localhost" />
+        </td>
+</tr>
+<tr id='fts_port_row' style='display:none;'>
+<td width='1%'></td>
+        <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_PORT']}</b></td>
+        <td  width='35%'nowrap align="left">
+         <input type="text" name="fts_port" id="fts_port" maxlength="10" value="9200" />
+        </td>
+</tr>
+</table>
+EOQ3;
+//END SUGARCRM flav=pro ONLY
 
 
 $out4 =<<<EOQ4
@@ -260,6 +291,26 @@ $out4 =<<<EOQ4
 <br>
 
 <script>
+
+$('#fts_type').change(function(){
+    if($(this).val() == '')
+        hideFTSSettings();
+    else
+        showFTSSettings();
+});
+
+function showFTSSettings()
+{
+    $('#fts_port_row').show();
+    $('#fts_host_row').show();
+}
+
+function hideFTSSettings()
+{
+    $('#fts_port_row').hide();
+    $('#fts_host_row').hide();
+}
+
 function toggleDBUser(){
      if(typeof(document.getElementById('dbUSRData')) !='undefined'
      && document.getElementById('dbUSRData') != null){
@@ -371,6 +422,18 @@ function callDBCheck(){
 
 EOQ4;
 
+//BEGIN SUGARCRM flav=pro ONLY
+$out4 .= <<<FTSTEST
+var ftsType = $('#fts_type').val();
+if(ftsType != "")
+{
+    postData += "&fts_type=" + ftsType;
+    postData += "&fts_host=" + $('#fts_host').val();
+    postData += "&fts_port=" + $('#fts_port').val();
+}
+FTSTEST;
+//END SUGARCRM flav=pro ONLY
+
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
                 postData += "&to_pdf=1&sugar_body_only=1";
@@ -454,6 +517,7 @@ if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
 //END SUGARCRM flav=pro ONLY
     echo $out3;
 //BEGIN SUGARCRM flav=pro ONLY
+    echo $outFTS;
 }
 //END SUGARCRM flav=pro ONLY
 echo $out4;

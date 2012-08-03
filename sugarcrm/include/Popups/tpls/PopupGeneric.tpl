@@ -99,10 +99,9 @@
 	
 		<tr height='20'>
 			{if $prerow}
-				<td nowrap="nowrap" width='1%' class="selectCol td_alt">
-				<div>
-					<input type='checkbox' class='checkbox' title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
-					{$selectLink}
+				<td nowrap="nowrap" width="43px" class="selectCol td_alt">
+				<div style="width:43px">
+					{sugar_action_menu id=$link_select_id params=$selectLink}
 				</div>
 				</td>
 				<td class='td_alt' nowrap="nowrap" width='1%'>&nbsp;</td>

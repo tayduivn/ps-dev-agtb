@@ -239,7 +239,7 @@ $out =<<<EOQ
     <tr>
       <th width="400">{$mod_strings['LBL_STEP']} {$next_step}: {$mod_strings['LBL_LOCALE_TITLE']} & {$mod_strings['LBL_LANG_TITLE']}</th>
       <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target=
-      "_blank"><IMG src="include/images/sugarcrm_login.gif" alt="SugarCRM" border="0"></a></th>
+      "_blank"><IMG src="include/images/sugarcrm_login_65.png" alt="SugarCRM" border="0"></a></th>
     </tr>
 
     <tr>

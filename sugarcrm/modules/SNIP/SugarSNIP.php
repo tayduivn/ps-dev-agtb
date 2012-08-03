@@ -22,6 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'include/MVC/SugarModule.php';
+require_once 'modules/OAuthKeys/OAuthKey.php';
+require_once 'modules/OAuthTokens/OAuthToken.php';
+require_once 'include/SugarHttpClient.php';
+
 /**
  * SNIP data handling implementation
  */
@@ -29,6 +33,7 @@ class SugarSNIP
 {
     // Username for SNIP system user
     const SNIP_USER = 'SNIPuser';
+    const OAUTH_KEY = 'SNIPOAuthKey';
     const DEFAULT_URL = 'http://ease.sugarcrm.com:20010/';
 
     /**
@@ -50,6 +55,18 @@ class SugarSNIP
     public $last_result;
 
     /**
+     * SNIP user
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * SNIP OAuth token
+     * @var OAuthToken
+     */
+    protected $token;
+
+    /**
      * Get instance of the SNIP client
      * @return SugarSNIP SNIP client instance
      */
@@ -65,14 +82,14 @@ class SugarSNIP
     {
         global $sugar_config;
         $this->config = $sugar_config;
-        $this->setClient(new SugarSNIPClient());
+        $this->setClient(new SugarHttpClient());
     }
 
     /**
     * Set client to talk to SNIP
-    * @param SugarSNIPClient $client
+    * @param SugarHttpClient $client
     */
-    public function setClient(SugarSNIPClient $client)
+    public function setClient(SugarHttpClient $client)
     {
         $this->client = $client;
         return $this;
@@ -153,9 +170,18 @@ class SugarSNIP
 
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->user_hash,
+                        'password' => '', //$snipuser->authenticate_id,
                         'client_api_url' => $this->getURL(),
-                        'license' => $license);
+                        'license' => $license,
+            );
+        $token = $this->getSnipToken();
+        if(!empty($token)) {
+            $consumer = $this->getSnipConsumer();
+            $request['oauth_token'] = $token->token;
+            $request['oauth_secret'] = $token->secret;
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
+        }
 
         $response = $this->callRest('register', $request, true, $connectionfailed);
 
@@ -207,8 +233,13 @@ class SugarSNIP
         $snipuser = $this->getSnipUser();
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->user_hash);
-
+                        'password' => '', //$snipuser->authenticate_id,
+        );
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
+        }
         $response = $this->callRest('unregister', $request, true, $connectionfailed);
 
         if ($connectionfailed)
@@ -219,6 +250,7 @@ class SugarSNIP
 
                 // change snip user's password for security purposes
                 $user = $this->getSnipUser();
+                $token = $this->deleteSnipTokens($user);
                 $user->user_hash = strtolower(md5(time().mt_rand()));
                 $user->save();
             }
@@ -247,7 +279,7 @@ class SugarSNIP
      */
     public function getURL()
     {
-        return $this->config['site_url'].'/service/v4/rest.php';
+        return rtrim($this->config['site_url'],'/').'/service/v4/rest.php';
     }
 
     /**
@@ -343,6 +375,68 @@ class SugarSNIP
     }
 
     /**
+     * Get consumer key belonging to SNIP
+     * @return OAuthKey
+     */
+    protected function getSnipConsumer()
+    {
+        $consumer = OAuthKey::fetchKey(self::OAUTH_KEY);
+        if(empty($consumer)) {
+            $consumer = new OAuthKey();
+            $consumer->c_key = self::OAUTH_KEY;
+            $consumer->c_secret = bin2hex(Zend_Oauth_Provider::generateToken(16));
+            $consumer->name = self::OAUTH_KEY;
+            $consumer->description = translate('LBL_SNIP_KEY_DESC', 'SNIP');
+            $consumer->save();
+        }
+        return $consumer;
+    }
+
+    /**
+     * Get OAuth token for SNIP user
+     * @return OAuthToken
+     */
+    protected function getSnipToken()
+    {
+        if(empty($this->token)) {
+            $user = $this->getSnipUser();
+            if(!empty($user->authenticate_id)) {
+                $this->token = OAuthToken::load($user->authenticate_id);
+            }
+            if(empty($this->token)) {
+                $this->token = $this->createSnipToken($user);
+            }
+        }
+        return $this->token;
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function createSnipToken($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        $token = OAuthToken::createAuthorized($consumer, $user);
+        $user->authenticate_id = $token->token;
+        $user->save();
+        return $token;
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function deleteSnipTokens($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            OAuthToken::deleteByConsumer($consumer->id);
+        }
+        OAuthToken::deleteByUser($user->id);
+    }
+
+    /**
      * Create user to use for SNIP imports
      * @return User
      */
@@ -357,10 +451,15 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = strtolower(md5(time().mt_rand()));
+        $random = time().mt_rand();
+        $user->authenicate_id = md5($random);
+        $user->user_hash = User::getPasswordHash($random);
         $user->default_team = '1';
         $user->created_by = '1';
+        $user->external_auth_only = 1;
         $user->save();
+        // create oauth token
+        $this->createSnipToken($user);
         return $user;
     }
 
@@ -370,7 +469,9 @@ class SugarSNIP
      */
     public function getSnipUser()
     {
-
+        if($this->user) {
+            return $this->user;
+        }
         $id = User::retrieve_user_id(self::SNIP_USER);
 
         if(!$id) {
@@ -378,6 +479,9 @@ class SugarSNIP
         }
         $u = new User();
         $u->retrieve($id);
+        if(!empty($u->id)) {
+            $this->user = $u;
+        }
         return $u;
     }
 
@@ -446,7 +550,8 @@ class SugarSNIP
                 $e->$field = '';
             }
         }
-        $e->from_addr_name = $e->from_name;
+        // preserve name because bean cleanup can strip <>
+        $from_name = $e->from_addr_name = $e->from_name;
         $from = $this->splitEmailAddress($e, $e->from_name);
         $e->from_addr = $from["email"];
         $e->from_name = $from["name"];
@@ -479,7 +584,11 @@ class SugarSNIP
         $e->team_id = $e->default_team = '1';
         self::assignUserTeam($e, $e->assigned_user_id);
 
+        $e->call_custom_logic("before_email_import");
+        // If custom logic cleared the object, skip it
+        if(empty($e->id)) return;
         $e->save(FALSE);
+        $e->from_addr_name = $from_name;
         // Object creation hook
         if(!empty($e->all_addrs)) {
         	$this->createObject($e);
@@ -491,6 +600,11 @@ class SugarSNIP
             {
                 $this->processEmailAttachment($attach,$e);
             }
+        }
+
+        // Relate records
+        if(!empty($e->subject)) {
+            $this->relateRecords($e);
         }
     }
 
@@ -543,9 +657,11 @@ class SugarSNIP
 		foreach(array("subject", "description", "description_html", "message_id", "from_addr", "from_name") as $prop) {
 			$emaildata["{".$prop."}"] = $email->$prop;
 		}
-		$emaildata["{from}"] = $email->from_addr_name;
+		$emaildata["{from}"] = to_html($email->from_addr_name);
 		$emaildata["{date}"] = $email->date_sent;
 		$emaildata["{email_id}"] = $email->id;
+
+
     	foreach($email->all_addrs as $cleanaddr) {
 			if(!isset($createdef[$cleanaddr])) {
 				continue;
@@ -559,7 +675,7 @@ class SugarSNIP
 				}
 				// instantiate the data
 				foreach($data["fields"] as $key => $value) {
-					$obj->$key = str_replace(array_keys($emaildata), array_values($emaildata), $value);;
+					$obj->$key = str_replace(array_keys($emaildata), array_values($emaildata), $value);
 				}
 				// save
 				$obj->save();
@@ -596,7 +712,7 @@ class SugarSNIP
     }
 
     /**
-    * Save a snip email attachment and assoicated it to a parent email.  Content is base64 encoded.
+    * Save a snip email attachment and associated it to a parent email.  Content is base64 encoded.
     *
     */
     protected function processEmailAttachment($data, $email)
@@ -654,55 +770,26 @@ class SugarSNIP
         $note->save();
         $upload_file->final_move($note->id);
     }
-}
-
-/**
- * CURL client for communicating with SNIP Rest service
- *
- */
-class SugarSNIPClient
-{
-    protected $last_error = '';
-    /**
-     * sends POST request to REST service via CURL
-     * @param string $url URL to call
-     * @param string $postArgs POST args
-     */
-    public function callRest($url, $postArgs)
-    {
-        if(!function_exists("curl_init")) {
-            $this->last_error = 'ERROR_NO_CURL';
-            $GLOBALS['log']->fatal("SNIP call failed - no cURL!");
-            return false;
-        }
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postArgs);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        $GLOBALS['log']->debug("SNIP call: $url -> $postArgs");
-        $response = curl_exec($curl);
-        if($response === false) {
-            $this->last_error = 'ERROR_REQUEST_FAILED';
-            $curl_errno = curl_errno($curl);
-            $curl_error = curl_error($curl);
-            $GLOBALS['log']->error("SNIP: cURL call failed: error $curl_errno: $curl_error");
-            return false;
-        }
-        $GLOBALS['log']->debug("SNIP response: $response");
-        curl_close($curl);
-        return $response;
-    }
 
     /**
-     * Returns code of last error that happened to the client
-     * @return string
+     * Relate records to this email
+     * @param Email $e
      */
-    public function getLastError()
+    protected function relateRecords($e)
     {
-        return $this->last_error;
+        // relate a case
+        $case = new aCase();
+        $subj = str_replace("%1", '(\d+)', preg_quote($case->getEmailSubjectMacro(), "#"));
+        if(preg_match("#$subj#", $e->subject, $match) && !empty($match[1])) {
+            $caseid = $match[1];
+            $GLOBALS['log']->info("Trying to link to case $caseid");
+            $case->retrieve_by_string_fields(array("case_number" => $caseid));
+            if(!empty($case->id)) {
+                $case->load_relationship("emails");
+                $case->emails->add($e);
+            }
+        }
+        // allow custom stuff
+        $e->call_custom_logic("after_email_import");
     }
 }

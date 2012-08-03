@@ -87,7 +87,8 @@ class OracleManager extends DBManager
             'relate'   => 'varchar2',
             'multienum'=> 'clob',
             'html'     => 'clob',
-            'datetime' => 'date',
+            'longhtml' => 'clob',
+    		'datetime' => 'date',
             'datetimecombo' => 'date',
             'time'     => 'date',
             'bool'     => 'number(1)',
@@ -483,7 +484,7 @@ class OracleManager extends DBManager
      */
     protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
-    	$GLOBALS['log']->debug("Oracle Execute: $sql");
+    	$GLOBALS['log']->debug("Oracle Execute Args: $sql");
         $this->checkConnection();
         if(empty($sql)){
             return false;
@@ -493,7 +494,7 @@ class OracleManager extends DBManager
         $lob_field_type=array();
         $lobs=array();
         foreach ($field_defs as $fieldDef) {
-            $type = $this->getFieldType($fieldDef);
+            $type = $this->getColumnType($this->getFieldType($fieldDef));
             if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
                 continue;
             }
@@ -502,8 +503,8 @@ class OracleManager extends DBManager
             if (!isset($data[$fieldDef['name']])) continue;
 
             $lob_type = false;
-            if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
+            if ($this->isTextType($type)) $lob_type = OCI_B_CLOB;
+            else if ($type == 'blob') $lob_type = OCI_B_BLOB;
 
             // this is not a lob, continue;
             if ($lob_type === false) continue;
@@ -515,7 +516,7 @@ class OracleManager extends DBManager
         if (count($lob_fields) > 0 ) {
             $sql .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
         }
-
+        $GLOBALS['log']->info("Oracle Execute: $sql");
         $stmt = oci_parse($this->database, $sql);
         if($this->checkError("Update parse failed: $sql", false)) {
             return false;
@@ -1012,11 +1013,11 @@ class OracleManager extends DBManager
 			        $addColumns[] = $col;
 			    }
 			}
-			if(!empty($addColumns)) {
-        	    $columns = "(" . implode(",", $addColumns) . ")";
-			} else {
-			    $columns = '';
-			}
+            if(!empty($addColumns)) {
+                     $columns = "(" . implode(",", $addColumns) . ")";
+              } else {
+                $columns = '';
+          }
         } else {
             $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
@@ -1724,5 +1725,28 @@ EOQ;
 				"setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
 			),
         );
+    }
+
+    /**
+     * Returns a DB specific FROM clause which can be used to select against functions.
+     * Note that depending on the database that this may also be an empty string.
+     * @return string
+     */
+    public function getFromDummyTable()
+    {
+        return "from dual";
+    }
+
+    /**
+     * Returns a DB specific piece of SQL which will generate GUID (UUID)
+     * This string can be used in dynamic SQL to do multiple inserts with a single query.
+     * I.e. generate a unique Sugar id in a sub select of an insert statement.
+     * @return string
+     */
+
+	public function getGuidSQL()
+    {
+        $guidStart = create_guid_section(3);
+      	return "'$guidStart-' || sys_guid()";
     }
 }

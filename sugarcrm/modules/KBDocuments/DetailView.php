@@ -107,6 +107,32 @@ $xtpl->assign("FILE_NAME", $focus->filename);
 $xtpl->assign("FILE_URL_NOIMAGE", $focus->file_url_noimage);
 $xtpl->assign("LAST_REV_CREATOR", $focus->last_rev_created_name);
 
+$buttons = array(
+    <<<EOD
+            <input title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" id="edit_button" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" class="button primary" onclick="this.form.return_module.value='KBDocuments'; this.form.return_action.value='DetailView'; this.form.return_id.value='{$focus->id}'; this.form.action.value='EditView'" type="submit" name="Edit" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}">
+EOD
+,
+    <<<EOD
+            <input title="{$app_strings['LBL_DUPLICATE_BUTTON_TITLE']}" id="duplicate_button" accessKey="{$app_strings['LBL_DUPLICATE_BUTTON_KEY']}" class="button" onclick="this.form.return_module.value='KBDocuments'; this.form.return_action.value='index'; this.form.isDuplicate.value=true; this.form.action.value='EditView'" type="submit" name="Duplicate" value="{$app_strings['LBL_DUPLICATE_BUTTON_LABEL']}">
+EOD
+,
+    <<<EOD
+            <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}" id="delete_button" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="this.form.return_module.value='KBDocuments'; this.form.return_action.value='SearchHome'; this.form.action.value='Delete'; return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')" type="submit" name="Delete" value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}">
+EOD
+,
+    <<<EOD
+            <input title="{$mod_strings['LBL_SEND_EMAIL']}" id="send_email_button" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="document.getElementById('isDuplicate').parentNode.removeChild(document.getElementById('isDuplicate'));this.form.return_module.value='Emails'; this.form.return_action.value='DetailView'; this.form.action.value='Compose';this.form.module.value='Emails'" type="submit" name="Send Email" value="{$mod_strings['LBL_SEND_EMAIL']}">
+EOD
+);
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_button = smarty_function_sugar_action_menu(array(
+    'id' => 'detail_header_action_menu',
+    'buttons' => $buttons,
+    'class' => 'clickMenu fancymenu',
+), $xtpl);
+
+$xtpl->assign("ACTION_BUTTON", $action_button);
+
 //BEGIN SUGARCRM flav=ent ONLY
 $xtpl->assign("IS_EXTERNAL_ARTICLE", $focus->is_external_article);
 //END SUGARCRM flav=ent ONLY

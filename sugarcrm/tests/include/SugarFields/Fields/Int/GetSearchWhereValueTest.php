@@ -66,6 +66,3 @@ class GetSearchWhereValueTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 
 }
- 
-?>
- 

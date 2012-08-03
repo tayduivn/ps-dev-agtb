@@ -207,7 +207,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     /**
      * @ticket 38986
-     */
+    */
     public function testGetEntryForContactNoSelectFields()
     {
         $result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>self::$_contactId,'select_fields'=>array(), 'link_name_to_fields_array' => array()));
@@ -253,6 +253,48 @@ class SOAPAPI3_1Test extends SOAPTestCase
     	$result = $this->_searchByModule();
     	$this->assertTrue(($result['entry_list'][0]['records'] > 0 && $result['entry_list'][1]['records'] && $result['entry_list'][2]['records']), "testSearchByModule - could not retrieve any data by search");
     } // fn
+
+   public function testGetRelationshipWithCondition()
+   {
+       $this->markTestIncomplete("Test is failing on non-mysql db, working with David W. to fix");
+       $account_name = 'UNIT_TEST ' . uniqid();
+       $account_id = uniqid();
+       $a1 = new Account();
+       $a1->id = $account_id;
+       $a1->new_with_id = TRUE;
+       $a1->name = $account_name;
+       $a1->save();
+
+       $contact1 = SugarTestContactUtilities::createContact();
+       $contact1->last_name = "New Contact 1";
+       $contact1->save();
+
+       $contact2 = SugarTestContactUtilities::createContact();
+       $contact2->last_name = "New Contact 2";
+       $contact2->save();
+
+       $a1->load_relationship("contacts");
+       $a1->contacts->add($contact1);
+       $a1->contacts->add($contact2);
+
+       $result = $this->_soapClient->call('get_relationships',
+           array(
+               'session' => $this->_sessionId,
+               'module' => 'Accounts',
+               'module_id' => $account_id,
+               'link_field_name' => 'contacts',
+               'related_module_query' => 'contacts.last_name = "New Contact 2"',
+               'related_fields' => array('last_name','description'),
+               'related_module_link_name_to_fields_array' => array(),
+               'deleted' => false,
+           )
+       );
+       $contact1->mark_deleted($contact1->id);
+       $contact2->mark_deleted($contact2->id);
+
+       $this->assertNotEmpty($result['entry_list']);
+       $this->assertEquals(1, sizeof($result['entry_list']));
+   } // fn
 
     /**********************************
      * HELPER PUBLIC FUNCTIONS

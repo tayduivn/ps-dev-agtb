@@ -418,6 +418,12 @@ document_additionalDetailsCalls = new Array();
                     obj.value = val;
                 }
             }
+            if(val > 0) {
+                var elemSelectTop = document.getElementById('selectedRecordsTop');
+                if(elemSelectTop) {
+                    elemSelectTop.style.display = '';
+                }
+            }
 	}
 
 	function update_sel_count(c){
@@ -476,7 +482,24 @@ document_additionalDetailsCalls = new Array();
 		 selCount = 0;
       }
 	  update_select_count_to_value(selCount);
-	}
+      var selectedRecords = document.getElementById("selectedRecordsTop");
+	  var selectActions = document.getElementById("selectActions");
+	  var selectActionsDisabled = document.getElementById("selectActionsDisabled");
+	  if(selCount > 0) {
+        $(selectedRecords).removeAttr("style").addClass("show");
+        $(".selectActionsDisabled").hide();
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).removeAttr("style").addClass("show");
+        });
+
+	  } else {
+        $(selectedRecords).hide();
+        $(".selectActionsDisabled").removeAttr("style").addClass("show");
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).hide();
+        });
+	  }
+   }
 
 	function unCheckAll(){
         document.getElementsByName('massall')[0].checked=false;

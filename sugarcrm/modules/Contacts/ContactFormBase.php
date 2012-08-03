@@ -46,8 +46,8 @@ var $objectName = 'Contact';
  */
 public function getDuplicateQuery($focus, $prefix='')
 {
-	$query = 'SELECT id, first_name, last_name, title FROM contacts ';
-    
+	$query = 'SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title FROM contacts ';
+
     // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
     // add team security
     //BEGIN SUGARCRM flav=pro ONLY
@@ -56,29 +56,29 @@ public function getDuplicateQuery($focus, $prefix='')
         $focus->add_team_security_where_clause($query);
     }
     //END SUGARCRM flav=pro ONLY
-    
-    $query .= ' where deleted = 0 AND ';
+
+    $query .= ' where contacts.deleted = 0 AND ';
 	if(isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0){
-		$query .= " first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND last_name = '". $_POST[$prefix.'last_name'] ."'";
+		$query .= " contacts.first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
 	} else {
-		$query .= " last_name = '". $_POST[$prefix.'last_name'] ."'";
+		$query .= " contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
 	}
 
 	if(!empty($_POST[$prefix.'record'])) {
-		$query .= " AND  id != '". $_POST[$prefix.'record'] ."'";
+		$query .= " AND  contacts.id != '". $_POST[$prefix.'record'] ."'";
 	}
     return $query;
 }
 
 
 function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal = true){
-	
+
 	if(!ACLController::checkAccess('Contacts', 'edit', true)){
 		return '';
 	}
-	
+
 	if(empty($contact)){
-		$contact = new Contact();
+        $contact = $this->getContact();
 	}
 
 	global $mod_strings;
@@ -124,7 +124,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
     }
 	$lbl_email_address = $mod_strings['LBL_EMAIL_ADDRESS'];
 	$salutation_options=get_select_options_with_id($app_list_strings['salutation_dom'], $contact->salutation);
-	
+
 	if (isset($contact->lead_source)) {
 		$lead_source_options=get_select_options_with_id($app_list_strings['lead_source_dom'], $contact->lead_source);
 	} else {
@@ -158,7 +158,7 @@ if(!empty($_REQUEST['birthdate'])){
    }
 
 
-$jsCalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');	
+$jsCalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');
 $ntc_date_format = $timedate->get_user_date_format();
 $cal_dateformat = $timedate->get_cal_date_format();
 $lbl_required_symbol = $app_strings['LBL_REQUIRED_SYMBOL'];
@@ -231,7 +231,7 @@ $form .= <<<EOQ
 		<td  nowrap>
 			<input name='{$prefix}birthdate' onblur="parseDate(this, '$cal_dateformat');" size='12' maxlength='10' id='${prefix}jscal_field' type="text" value="{$birthdate}">&nbsp;
 			<!--not_in_theme!--><img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="${prefix}jscal_trigger" align="absmiddle">
-		</td>		
+		</td>
 		</tr>
 
 EOQ;
@@ -254,14 +254,14 @@ EOQ;
 
 
 	//carry forward custom lead fields common to contacts during Lead Conversion
-	$tempContact = new Contact();
+    $tempContact = $this->getContact();
 
 	if (method_exists($contact, 'convertCustomFieldsForm')) $contact->convertCustomFieldsForm($form, $tempContact, $prefix);
 	unset($tempContact);
 
 $form .= <<<EOQ
 		</table>
-		
+
 		<input type='hidden' name='${prefix}alt_address_street'  value='{$contact->alt_address_street}'>
 		<input type='hidden' name='${prefix}alt_address_city' value='{$contact->alt_address_city}'><input type='hidden' name='${prefix}alt_address_state'   value='{$contact->alt_address_state}'><input type='hidden' name='${prefix}alt_address_postalcode'   value='{$contact->alt_address_postalcode}'><input type='hidden' name='${prefix}alt_address_country'  value='{$contact->alt_address_country}'>
 		<input type='hidden' name='${prefix}do_not_call'  value='{$contact->do_not_call}'>
@@ -295,7 +295,7 @@ EOQ;
 	        $form .= "<input name='${prefix}old_portal_password' type='hidden' size='25'  value='' >";
 	    }
 	}
-	
+
 $form .= <<<EOQ
 			<script type="text/javascript">
 				Calendar.setup ({
@@ -303,20 +303,20 @@ $form .= <<<EOQ
 				});
 			</script>
 EOQ;
-	
-	
-	
+
+
+
 	$javascript = new javascript();
 	$javascript->setFormName($formname);
-	$javascript->setSugarBean(new Contact());
+	$javascript->setSugarBean($this->getContact());
 	$javascript->addField('email1','false',$prefix);
 	$javascript->addField('email2','false',$prefix);
 	$javascript->addRequiredFields($prefix);
 
 	$form .=$javascript->getScript();
 	$mod_strings = $temp_strings;
-	
-  
+
+
 	return $form;
 }
 
@@ -375,7 +375,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Contact());
+$javascript->setSugarBean($this->getContact());
 $javascript->addField('email1','false',$prefix);
 $javascript->addRequiredFields($prefix);
 
@@ -423,20 +423,20 @@ return $the_form;
 
 function handleSave($prefix, $redirect=true, $useRequired=false){
 	global $theme, $current_user;
-	
-	
-	
-    
+
+
+
+
 	require_once('include/formbase.php');
-	
+
 	global $timedate;
 
-	$focus = new Contact();
+	$focus = $this->getContact();
 
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
-	
+
 	if (!empty($_POST[$prefix.'new_reports_to_id'])) {
 		$focus->retrieve($_POST[$prefix.'new_reports_to_id']);
 		$focus->reports_to_id = $_POST[$prefix.'record'];
@@ -444,7 +444,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 
         $focus = populateFromPost($prefix, $focus);
         if( isset($_POST[$prefix.'old_portal_password']) && !empty($focus->portal_password) && $focus->portal_password != $_POST[$prefix.'old_portal_password']){
-            $focus->portal_password = md5($focus->portal_password);
+            $focus->portal_password = User::getPasswordHash($focus->portal_password);
         }
 		if (!isset($_POST[$prefix.'email_opt_out'])) $focus->email_opt_out = 0;
 		if (!isset($_POST[$prefix.'do_not_call'])) $focus->do_not_call = 0;
@@ -456,7 +456,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	}
 	if($_REQUEST['action'] != 'BusinessCard' && $_REQUEST['action'] != 'ConvertLead' && $_REQUEST['action'] != 'ConvertProspect')
 	{
-		
+
 		if (!empty($_POST[$prefix.'sync_contact']) || !empty($focus->sync_contact)){
 			 $focus->contacts_users_id = $current_user->id;
 		}
@@ -477,7 +477,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		$check_notify = FALSE;
 	}
 
-    
+
 	if (empty($_POST['record']) && empty($_POST['dup_checked'])) {
 
 		$duplicateContacts = $this->checkForDuplicates($prefix);
@@ -487,7 +487,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			if(isset($_POST['inbound_email_id']) && !empty($_POST['inbound_email_id'])) {
 				$get .= '&inbound_email_id='.$_POST['inbound_email_id'];
 			}
-			
+
 			// Bug 25311 - Add special handling for when the form specifies many-to-many relationships
 			if(isset($_POST['relate_to']) && !empty($_POST['relate_to'])) {
 				$get .= '&Contactsrelate_to='.$_POST['relate_to'];
@@ -514,22 +514,22 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			}
 
 			if($focus->hasCustomFields()) {
-				foreach($focus->field_defs as $name=>$field) {	
+				foreach($focus->field_defs as $name=>$field) {
 					if (!empty($field['source']) && $field['source'] == 'custom_fields')
 					{
 						$get .= "&Contacts$name=".urlencode($focus->$name);
-					}			    
+					}
 				}
-			}			
-			
-			
+			}
+
+
 			$emailAddress = new SugarEmailAddress();
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			//BEGIN SUGARCRM flav=pro ONLY
 			$get .= get_teams_url('Contacts');
 			//END SUGARCRM flav=pro ONLY
-			
+
 			//create list of suspected duplicate contact id's in redirect get string
 			$i=0;
 			foreach ($duplicateContacts as $contact)
@@ -587,7 +587,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	if(isset($_REQUEST['inbound_email_id']) && !empty($_REQUEST['inbound_email_id'])) {
 		// fake this case like it's already saved.
 		$focus->save($check_notify);
-		
+
 		$email = new Email();
 		$email->retrieve($_REQUEST['inbound_email_id']);
 		$email->parent_type = 'Contacts';
@@ -606,16 +606,16 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 
 	$focus->save($check_notify);
 	$return_id = $focus->id;
-    
+
 	$GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
-    if (!empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1') {
+    if ($redirect && !empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1') {
         $json = getJSONobj();
         echo $json->encode(array('status' => 'success',
                                  'get' => ''));
     	$trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
-        if($monitor = $trackerManager->getMonitor('tracker')){ 
+        if($monitor = $trackerManager->getMonitor('tracker')){
 	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
 	        //END SUGARCRM flav=pro ONLY
@@ -624,7 +624,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	        $monitor->setValue('module_name', 'Contacts');
 	        $monitor->setValue('date_modified', $timeStamp);
 	        $monitor->setValue('visible', 1);
-	
+
 	        if (!empty($this->bean->id)) {
 	            $monitor->setValue('item_id', $return_id);
 	            $monitor->setValue('item_summary', $focus->get_summary_text());
@@ -634,7 +634,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
         return null;
     }
 
-	if(isset($_POST['popup']) && $_POST['popup'] == 'true') {
+	if($redirect && isset($_POST['popup']) && $_POST['popup'] == 'true') {
 		$get = '&module=';
 		if(!empty($_POST['return_module'])) $get .= $_POST['return_module'];
 		else $get .= 'Contacts';
@@ -701,6 +701,13 @@ function handleRedirect($return_id){
     }
 }
 
+    /**
+    * @return Contact
+    */
+    protected function getContact()
+    {
+        return new Contact();
+    }
 }
 
 

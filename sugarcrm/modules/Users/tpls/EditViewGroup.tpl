@@ -44,7 +44,6 @@ Hello Group!
 
 </div></div>
 {{include file=$footerTpl}}
-{$overlibStuff}
 {{if $useTabs}}
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 <script type="text/javascript">

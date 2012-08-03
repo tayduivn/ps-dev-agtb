@@ -511,6 +511,7 @@ function get_return_value_for_fields($value, $module, $fields) {
 	if($module == 'Users' && $value->id != $current_user->id){
 		$value->user_hash = '';
 	}
+	$value = clean_sensitive_data($value->field_defs, $value);
 	return Array('id'=>$value->id,
 				'module_name'=> $module,
 				'name_value_list'=>get_name_value_list_for_fields($value, $fields)
@@ -565,6 +566,7 @@ function get_return_value_for_link_fields($bean, $module, $link_name_to_value_fi
 	if($module == 'Users' && $bean->id != $current_user->id){
 		$bean->user_hash = '';
 	}
+	$bean = clean_sensitive_data($value->field_defs, $bean);
 
 	if (empty($link_name_to_value_fields_array) || !is_array($link_name_to_value_fields_array)) {
 		return array();
@@ -731,6 +733,9 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 					}//fi
 				}//fi
 				$seed->save();
+                if($seed->deleted == 1){
+                    $seed->mark_deleted($seed->id);
+                }
 				$ids[] = $seed->id;
 			}//fi
 		}
@@ -773,6 +778,7 @@ function get_return_value($value, $module, $returnDomValue = false){
 	if($module == 'Users' && $value->id != $current_user->id){
 		$value->user_hash = '';
 	}
+	$value = clean_sensitive_data($value->field_defs, $value);
 	return Array('id'=>$value->id,
 				'module_name'=> $module,
 				'name_value_list'=>get_name_value_list($value, $returnDomValue)

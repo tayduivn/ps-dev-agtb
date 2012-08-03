@@ -70,5 +70,3 @@ class Bug49691bTest extends Sugar_PHPUnit_Framework_TestCase {
 class Bug49691bMockBean {
     var $test_c;
 }
-?>
- 

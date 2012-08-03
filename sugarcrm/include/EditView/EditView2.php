@@ -374,6 +374,13 @@ class EditView
 
         //the retrieve already did this work;
         //$this->focus->fill_in_relationship_fields();
+        //Bug#53261: If quickeditview is loaded after editview.tpl is created,
+        //           the th->checkTemplate will return true. So, the following
+        //           code prevent avoid rendering popup editview container.
+        if(!empty($this->formName)) {
+            $formName = $this->formName;
+            $checkFormName = true;
+        }
 
         if (!$this->th->checkTemplate($this->module, $this->view, $checkFormName, $formName))
         {
@@ -453,6 +460,10 @@ class EditView
                    }
                 }
 
+                if(isset($this->fieldDefs[$name]['options']) && is_array($this->fieldDefs[$name]['options']) && isset($this->fieldDefs[$name]['default_empty']) && !isset($this->fieldDefs[$name]['options'][$this->fieldDefs[$name]['default_empty']])) {
+                    $this->fieldDefs[$name]['options'] = array_merge(array($this->fieldDefs[$name]['default_empty']=>$this->fieldDefs[$name]['default_empty']), $this->fieldDefs[$name]['options']);
+                }
+                                
 	       	 	if(isset($this->fieldDefs[$name]['function'])) {
 	       	 		$function = $this->fieldDefs[$name]['function'];
 	       			if(is_array($function) && isset($function['name'])){
@@ -467,10 +478,13 @@ class EditView
                   	}
 
 	       	 		if(!empty($this->fieldDefs[$name]['function']['returns']) && $this->fieldDefs[$name]['function']['returns'] == 'html'){
-						$value = $function($this->focus, $name, $value, $this->view);
+						if(!empty($this->fieldDefs[$name]['function']['include'])){
+								require_once($this->fieldDefs[$name]['function']['include']);
+						}
+						$value = call_user_func($function, $this->focus, $name, $value, $this->view);
 						$valueFormatted = true;
 					}else{
-						$this->fieldDefs[$name]['options'] = $function($this->focus, $name, $value, $this->view);
+						$this->fieldDefs[$name]['options'] = call_user_func($function, $this->focus, $name, $value, $this->view);
 					}
 	       	 	}
 
@@ -589,7 +603,7 @@ class EditView
         $this->th->ss->assign('returnId', $this->returnId);
         $this->th->ss->assign('isDuplicate', $this->isDuplicate);
         $this->th->ss->assign('def', $this->defs);
-        $this->th->ss->assign('useTabs', isset($this->defs['templateMeta']['useTabs']) ? $this->defs['templateMeta']['useTabs'] : false);
+        $this->th->ss->assign('useTabs', isset($this->defs['templateMeta']['useTabs']) && isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['useTabs'] : false);
         $this->th->ss->assign('maxColumns', isset($this->defs['templateMeta']['maxColumns']) ? $this->defs['templateMeta']['maxColumns'] : 2);
         $this->th->ss->assign('module', $this->module);
         $this->th->ss->assign('headerTpl', isset($this->defs['templateMeta']['form']['headerTpl']) ? $this->defs['templateMeta']['form']['headerTpl'] : 'include/' . $this->view . '/header.tpl');
@@ -598,6 +612,7 @@ class EditView
         $this->th->ss->assign('bean', $this->focus);
         $this->th->ss->assign('isAuditEnabled', $this->focus->is_AuditEnabled());
         $this->th->ss->assign('gridline',$current_user->getPreference('gridline') == 'on' ? '1' : '0');
+        $this->th->ss->assign('tabDefs', isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
         $this->th->ss->assign('VERSION_MARK', getVersionedPath(''));
 
         global $js_custom_version;

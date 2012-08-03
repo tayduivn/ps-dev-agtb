@@ -168,6 +168,13 @@ function rebuildRelations($pre_path = '')
 	include($pre_path.'modules/ACL/install_actions.php');
 }
 
+//Bug 52872. Dies if the request does not come from CLI.
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) != 'cli') {
+    die("This is command-line only script");
+}
+//End of #52872
+
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	fwrite(STDERR,'This utility may only be run from the command line or command prompt.');
@@ -362,6 +369,29 @@ if(function_exists('deleteCache'))
 	@deleteCache();
 }
 
+// creating full text search logic hooks
+// this will be merged into application/Ext/LogicHooks/logichooks.ext.php
+// when rebuild_extensions is called
+logThis(' Writing FTS hooks');
+if (!function_exists('createFTSLogicHook')) {
+    $customFileLoc = create_custom_directory('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
+    $fp = sugar_fopen($customFileLoc, 'wb');
+    $contents = <<<CIA
+<?php
+if (!isset(\$hook_array) || !is_array(\$hook_array)) {
+    \$hook_array = array();
+}
+if (!isset(\$hook_array['after_save']) || !is_array(\$hook_array['after_save'])) {
+    \$hook_array['after_save'] = array();
+}
+\$hook_array['after_save'][] = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
+CIA;
+
+    fwrite($fp,$contents);
+    fclose($fp);
+} else {
+    createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
+}
 
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);

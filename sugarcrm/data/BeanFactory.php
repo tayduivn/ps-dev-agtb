@@ -38,14 +38,29 @@ class BeanFactory {
      * Returns a SugarBean object by id. The Last 10 loaded beans are cached in memory to prevent multiple retrieves per request.
      * If no id is passed, a new bean is created.
      * @static
-     * @param  String $module
+     * @param String $module
      * @param String $id
-     * @param Bool $encode @see SugarBean::retrieve
+     * @param Array $params A name/value array of parameters. Names: encode, deleted, 
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
+     *        If $params is boolean we revert to the old arguments (encode, deleted), and use $params as $encode.
+     *        This will be changed to using only $params in later versions.
      * @param Bool $deleted @see SugarBean::retrieve
      * @return SugarBean
      */
-    public static function getBean($module, $id = null, $encode = true, $deleted = true)
+    public static function getBean($module, $id = null, $params = array(), $deleted = true)
     {
+    	
+    	// Check if params is an array, if not use old arguments
+    	if (isset($params) && !is_array($params)) {
+    		$params = array('encode' => $params);
+    	}
+    	
+    	// Pull values from $params array
+    	$encode = isset($params['encode']) ? $params['encode'] : true;
+    	$deleted = isset($params['deleted']) ? $params['deleted'] : $deleted;
+    	
         if (!isset(self::$loadedBeans[$module])) {
             self::$loadedBeans[$module] = array();
             self::$touched[$module] = array();
@@ -60,6 +75,13 @@ class BeanFactory {
             if (empty(self::$loadedBeans[$module][$id]))
             {
                 $bean = new $beanClass();
+                //BEGIN SUGARCRM flav=pro ONLY
+                // Pro+ versions, to disable team check if we have rights
+                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
+                if (!empty($params['disable_row_level_security'])) {
+                    $bean->disable_row_level_security = true;	
+                }
+                //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
                 if($result == null)
                     return FALSE;

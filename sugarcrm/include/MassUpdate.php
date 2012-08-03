@@ -202,11 +202,10 @@ eoq;
 		if(!empty($_REQUEST['uid'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
 		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
 			if(empty($order_by))$order_by = '';
-			$ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $this->searchFields, $this->where_clauses);
-			if(!isset($ret_array['join'])) {
-				$ret_array['join'] = '';
-			}
-			$query = $this->sugarbean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+
+            // TODO: define filter array here to optimize the query
+            // by not joining the unneeded tables
+            $query = $this->sugarbean->create_new_list_query($order_by, $this->where_clauses, array(), array(), 0, '', false, $this, true, true);
 			$result = $db->query($query,true);
 			$new_arr = array();
 			while($val = $db->fetchByAssoc($result,false))
@@ -232,23 +231,22 @@ eoq;
 				if(isset($_POST['Delete'])){
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
-					//Martin Hu Bug #20872
-						if($this->sugarbean->object_name == 'EmailMan'){
-							$query = "DELETE FROM emailman WHERE id = '" . $this->sugarbean->id . "'";
-							$db->query($query);
-						} else {
-
-							//BEGIN SUGARCRM flav=pro ONLY
-						    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
-                                if(!isset($_SESSION['REASSIGN_TEAMS'])) {
-						    	   $_SESSION['REASSIGN_TEAMS'] = array();
-                                }
-                                $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
-						    	continue;
-						    }
-						    //END SUGARCRM flav=pro ONLY
-							$this->sugarbean->mark_deleted($id);
+						//BEGIN SUGARCRM flav=pro ONLY
+					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
+                            if(!isset($_SESSION['REASSIGN_TEAMS'])) {
+                                $_SESSION['REASSIGN_TEAMS'] = array();
+                            }
+                            $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
+						    continue;
 						}
+						//END SUGARCRM flav=pro ONLY
+						$this->sugarbean->mark_deleted($id);
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        // ideally we should use after_delete logic hook
+                        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+                        $searchEngine = SugarSearchEngineFactory::getInstance();
+                        $searchEngine->delete($this->sugarbean);
+                        //END SUGARCRM flav=pro ONLY
 					}
 				}
 				else {
@@ -598,9 +596,9 @@ EOJS;
 			if(!empty($vardef['function']['include'])){
 				require_once($vardef['function']['include']);
 			}
-			return $function($focus, $vardef['name'], '', 'MassUpdate');
+			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
 		}else{
-			return $function($focus, $vardef['name'], '', 'MassUpdate');
+			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
 		}
 	}
 
@@ -1038,7 +1036,7 @@ EOQ;
 	function addStatus($displayname, $varname, $options){
 		global $app_strings, $app_list_strings;
 
-		// cn: added "mass_" to the id tag to diffentieate from the status id in StoreQuery
+		// cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
 		$html = '<td scope="row" width="15%">'.$displayname.'</td><td>';
 		if(is_array($options)){
 			if(!isset($options['']) && !isset($options['0'])){
@@ -1081,7 +1079,7 @@ EOQ;
 		}
 		$options = get_select_options_with_id_separate_key($options, $options, '', true);;
 
-		// cn: added "mass_" to the id tag to diffentieate from the status id in StoreQuery
+		// cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
 		$html = '<td scope="row" width="15%">'.$displayname.'</td>
 			 <td><select id="mass_'.$varname.'" name="'.$varname.'[]" size="5" MULTIPLE>'.$options.'</select></td>';
 		return $html;
@@ -1290,7 +1288,7 @@ EOQ;
             }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
                 require('modules/'.$module.'/metadata/metafiles.php');
             }
-            
+
             $searchFields = $this->getSearchFields($module);
             $searchdefs = $this->getSearchDefs($module);
 

@@ -137,12 +137,12 @@ public function testSugarApplication()
    		$monitor->setValue('seconds', '5');
    		$monitor->setValue('round_trips', 1);
    		$monitor->setValue('active', 1);
-   		$monitor->setValue('client_ip', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+   		$monitor->setValue('client_ip', 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ');
    		$trackerManager->saveMonitor($monitor, true);
 
    		$client_ip = $GLOBALS['db']->getOne("SELECT client_ip FROM tracker_sessions WHERE session_id = 'Bug50220Test'");
    		$this->assertTrue(strlen($client_ip) <= 45);
-   		$this->assertEquals('ABCDEFGHIJKLMNOPQRST', $client_ip, 'Assert that client_ip address value is truncated to first 20 characters');
+   		$this->assertEquals('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRS', $client_ip, 'Assert that client_ip address value is truncated to first 45 characters');
 
         $monitor = $trackerManager->getMonitor('tracker_sessions');
         $monitor->setValue('session_id', 'Bug50220Test');

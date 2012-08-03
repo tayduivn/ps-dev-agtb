@@ -23,6 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('modules/Home/UnifiedSearchAdvanced.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+
 
 class ViewSpot extends ViewAjax
 {
@@ -31,52 +33,120 @@ class ViewSpot extends ViewAjax
      */
     public function display()
     {
-        $usa = new UnifiedSearchAdvanced();
-        $unified_search_modules = $usa->getUnifiedSearchModules();
-        $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
-		
-        // load the list of unified search enabled modules
-        $modules = array();
-        
-        //check to see if the user has customized the list of modules available to search        
-        $users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
-             
-    	if(!empty($users_modules)) { 
-			// use user's previous selections
-		    foreach ($users_modules as $key => $value ) {
-		        if (isset($unified_search_modules_display[$key]) && !empty($unified_search_modules_display[$key]['visible'])) {
-		            $modules[$key] = $key;
-		        }
-		    }
-		} else {
-			global $beanList;
-			foreach($unified_search_modules_display as $key=>$data) {
-			    if (!empty($data['visible'])) 
-			    {
-			        $modules[$key] = $key;			    
-			    }
-			}
-		}        
-
 
 		$offset = -1;
+        $modules = array();
 
-		// make sure the current module appears first in the list
-		if(isset($modules[$this->module])) {
-		    unset($modules[$this->module]);
-		    $modules = array_merge(array($this->module=>$this->module),$modules);
-		}
-
-		if(!empty($_REQUEST['zoom']) && isset($modules[$_REQUEST['zoom']])){
+		if(!empty($_REQUEST['zoom']) )
+        {
 			$modules = array($_REQUEST['zoom']);
 			if(isset($_REQUEST['offset'])){
 				$offset = $_REQUEST['offset'];
 			}
 		}
-		require_once('include/SearchForm/SugarSpot.php');
-		$sugarSpot = new SugarSpot;
-		$trimmed_query = trim($_REQUEST['q']);
-				
-		echo $sugarSpot->searchAndDisplay($trimmed_query, $modules, $offset);
+
+        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
+        if($offset !== -1)
+        {
+            $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
+        }
+
+        $options = array('current_module' => $this->module, 'modules' => $modules);
+
+        $searchEngine = SugarSearchEngineFactory::getInstance('', array(), true);
+
+        $trimmed_query = trim($_REQUEST['q']);
+        $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
+        $formattedResults = $this->formatSearchResultsToDisplay($rs, $offset,$trimmed_query);
+
+        $query_encoded = urlencode($trimmed_query);
+        $displayMoreForModule = $formattedResults['displayMoreForModule'];
+        $displayResults = $formattedResults['displayResults'];
+
+        $ss = new Sugar_Smarty();
+        $ss->assign('displayResults', $displayResults);
+        $ss->assign('displayMoreForModule', $displayMoreForModule);
+        $ss->assign('appStrings', $GLOBALS['app_strings']);
+        $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
+        $ss->assign('queryEncoded', $query_encoded);
+
+        $template = 'include/SearchForm/tpls/SugarSpot.tpl';
+        if(file_exists('custom/include/SearchForm/tpls/SugarSpot.tpl'))
+        {
+            $template = 'custom/include/SearchForm/tpls/SugarSpot.tpl';
+        }
+        echo $ss->fetch($template);
+    }
+
+
+    protected function formatSearchResultsToDisplay($results, $offset, $trimmedQuery)
+    {
+        $displayResults = array();
+        $displayMoreForModule = array();
+        //$actions=0;
+        foreach($results as $m=>$data)
+        {
+            if(empty($data['data']))
+            {
+                continue;
+            }
+
+            $countRemaining = $data['pageData']['offsets']['total'] - count($data['data']);
+            if($offset > 0)
+            {
+                $countRemaining -= $offset;
+            }
+
+            if($countRemaining > 0)
+            {
+                $displayMoreForModule[$m] = array('query'=>$trimmedQuery,
+                    'offset'=>++$data['pageData']['offsets']['next'],
+                    'countRemaining'=>$countRemaining);
+            }
+
+            foreach($data['data'] as $row)
+            {
+                $name = '';
+
+                //Determine a name to use
+                if(!empty($row['NAME']))
+                {
+                    $name = $row['NAME'];
+                }
+                else if(!empty($row['DOCUMENT_NAME']))
+                {
+                    $name = $row['DOCUMENT_NAME'];
+                }
+                else
+                {
+                    $foundName = '';
+                    foreach($row as $k=>$v)
+                    {
+                        if(strpos($k, 'NAME') !== false)
+                        {
+                            if(!empty($row[$k]))
+                            {
+                                $name = $v;
+                                break;
+                            }
+                            else if(empty($foundName))
+                            {
+                                $foundName = $v;
+                            }
+                        }
+                    }
+
+                    if(empty($name))
+                    {
+                        $name = $foundName;
+                    }
+                }
+
+                $displayResults[$m][$row['ID']] = $name;
+            }
+        }
+
+        return array('displayResults' => $displayResults, 'displayMoreForModule' => $displayMoreForModule);
     }
 }
+

@@ -33,6 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     global $app_strings;
     global $sugar_config;
     global $new_pwd;
+    global $current_user;
 
   	$mod_strings=return_module_language('','Users');
   	$res=$GLOBALS['sugar_config']['passwordsetting'];
@@ -61,7 +62,7 @@ if(isset( $_POST['Users0emailAddress0'])){
             $usr_id=$usr->retrieve_user_id($username);
             $usr->retrieve($usr_id);
             if ($usr->email1 !=  $useremail){
-                echo $mod_strings['ERR_PASSWORD_USERNAME_MISSMATCH'];
+                echo $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
                 return;
             }
 
@@ -81,14 +82,20 @@ if(isset( $_POST['Users0emailAddress0'])){
             $usr->retrieve($_POST['userId']);
         }
         else{
-        	if(isset( $_POST['sugar_user_name']) && isset($_POST['sugar_user_name'] )){
+        	if(!empty( $_POST['sugar_user_name'])){
 				$usr_id=$usr->retrieve_user_id($_POST['sugar_user_name']);
 	        	$usr->retrieve($usr_id);
 			}
     		else{
-    			echo  $mod_strings['ERR_USER_INFO_NOT_FOUND'];
+    			echo  $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
             	return;
     		}
+    	}
+
+    	// Check if current_user is admin or the same user
+    	if(empty($current_user->id) || empty($usr->id) || ($usr->id != $current_user->id && !$current_user->is_admin)) {
+    	    echo  $mod_strings['LBL_PROVIDE_USERNAME_AND_EMAIL'];
+    	    return;
     	}
     }
 
@@ -105,15 +112,15 @@ if(isset( $_POST['Users0emailAddress0'])){
 
 ///////
 ///////////////////////////////////////////////////
-
+    $isLink = isset($_POST['link']) && $_POST['link'] == '1';
     // if i need to generate a password (not a link)
-    $password = !isset($_POST['link']) ? User::generatePassword() : '';
+    $password = $isLink ? '' : User::generatePassword();
 
 ///////////////////////////////////////////////////
 ///////  Create URL
 
 // if i need to generate a link
-if (isset($_POST['link']) && $_POST['link'] == '1'){
+if ($isLink){
 	global $timedate;
 	$guid=create_guid();
 	$url=$GLOBALS['sugar_config']['site_url']."/index.php?entryPoint=Changenewpassword&guid=$guid";
@@ -127,14 +134,13 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 ///////////////////////////////////////////////////
 
 ///////  Email creation
-	global $current_user;
-    if (isset($_POST['link']) && $_POST['link'] == '1')
+    if ($isLink)
     	$emailTemp_id = $res['lostpasswordtmpl'];
     else
     	$emailTemp_id = $res['generatepasswordtmpl'];
 
     $additionalData = array(
-        'link' => isset($_POST['link']) && $_POST['link'] == '1',
+        'link' => $isLink,
         'password' => $password
     );
     if (isset($url))
@@ -148,7 +154,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
         $new_pwd = '4';
         return;
     }
-    
+
     if ($result['status'] == true)
     {
         echo '1';
@@ -156,10 +162,6 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     	$new_pwd='4';
     	if ($current_user->is_admin){
     		$email_errors=$mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
-    		if ($mail->Mailer == 'smtp')
-    			$email_errors.="\n-".$mod_strings['ERR_SMTP_URL_SMTP_PORT'];
-    		if ($mail->SMTPAuth)
-    		 	$email_errors.="\n-".$mod_strings['ERR_SMTP_USERNAME_SMTP_PASSWORD'];
     		$email_errors.="\n-".$mod_strings['ERR_RECIPIENT_EMAIL'];
     		$email_errors.="\n-".$mod_strings['ERR_SERVER_STATUS'];
     		echo $email_errors;

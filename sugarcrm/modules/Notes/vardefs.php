@@ -28,7 +28,7 @@ $dictionary['Note'] = array(
     //END SUGARCRM flav=following ONLY
 
     'table' => 'notes',
-	'unified_search' => true, 'unified_search_default_enabled' => true,
+	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
 
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (
@@ -121,6 +121,7 @@ $dictionary['Note'] = array(
     'type' => 'name',
     'len' => '255',
 	'unified_search' => true,
+	'full_text_search' => array('boost' => 3),
     'comment' => 'Name of the note',
     'importable' => 'required',
     'required' => true,
@@ -264,7 +265,8 @@ $dictionary['Note'] = array(
         'name'=>'contact_email',
         'type'=>'varchar',
 		'vname' => 'LBL_EMAIL_ADDRESS',
-		'source' => 'non-db'
+		'source' => 'non-db',
+        'studio' => false
     ),
 
   'account_id' =>

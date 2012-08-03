@@ -63,7 +63,7 @@ $dictionary['tracker_sessions'] = array(
             'name' => 'client_ip',
             'vname' => 'LBL_CLIENT_IP',
             'type' => 'varchar',
-            'len' => '20',
+            'len' => '45',
             'isnull' => 'false',
         ),
         'user_id'=>array(

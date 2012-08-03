@@ -187,7 +187,7 @@ class Common {
         }
     }
 
-	//returns a list of timeperiods that users has commited forecats for.
+	//returns a list of timeperiods that users has committed forecasts for.
 	//sorted by timeperiod start date descending.
 	function get_my_forecasted_timeperiods($the_user_id) {
 		$my_forecasted_timeperiods = array();
@@ -228,7 +228,7 @@ class Common {
 
 	/* this method navigates the reporting hierarchy and produces a ordered list
 	 * of users,and types of forecast they need to commit to.
-	 * This function assumes that there is atleast one user in the system who does not reports to
+	 * This function assumes that there is at least one user in the system who does not reports to
 	 * anybody.
 	 */
 	function get_forecast_commit_order() {
@@ -244,7 +244,7 @@ class Common {
 		return $commit_order;
 	}
 
-	/*recursive function, adds a direct foreacast entry for the user, if the user has a downline,
+	/*recursive function, adds a direct forecast entry for the user, if the user has a downline,
 	 * calls itself for each entry in the downline and then adds a rollup entry for the user. */
 	function process_users_downline($user_id, &$commit_order) {
 		//this user needs to commit a direct forecast.

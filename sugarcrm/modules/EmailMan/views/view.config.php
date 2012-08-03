@@ -150,13 +150,13 @@ class ViewConfig extends SugarView
             $this->ss->assign($k."Checked", 'CHECKED');
         }
 
-        //clean_xss('here');
         ////	END EMAIL SECURITY
         ///////////////////////////////////////////////////////////////////////////////
 
         require_once('modules/Emails/Email.php');
         $email = new Email();
         $this->ss->assign('ROLLOVER', $email->rolloverStyle);
+        $this->ss->assign('THEME', $GLOBALS['theme']);
 
         $this->ss->assign("JAVASCRIPT",get_validate_record_js());
         $this->ss->display('modules/EmailMan/tpls/config.tpl');

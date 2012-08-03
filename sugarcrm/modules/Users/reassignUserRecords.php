@@ -290,8 +290,11 @@ else if(!isset($_GET['execute'])){
 	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
 	//BEGIN SUGARCRM flav!=sales ONLY
-        $help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_REASS_VERBOSE_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"',null,null,'.gif',$mod_strings['LBL_HELP']);
+	require_once('include/Smarty/plugins/function.sugar_help.php');
+	$sugar_smarty = new Sugar_Smarty();
+        $help_img = smarty_function_sugar_help(array("text"=>$mod_strings['LBL_REASS_VERBOSE_HELP']),$sugar_smarty);
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
+	
 	//END SUGARCRM flav!=sales ONLY
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
@@ -519,7 +522,6 @@ if(!empty($quicksearch_js)){
 	echo $quicksearch_js;
 }
 //END SUGARCRM flav=pro ONLY
-echo getVersionedScript("cache/include/javascript/sugar_grp_overlib.js");
 ?>
 <script type="text/javascript">
 

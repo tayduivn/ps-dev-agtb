@@ -166,6 +166,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 $data['activity_type']="'" .  $activity . "'";
                 $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
                 $data['hits']=1;
+                $data['deleted']=0;
                 if (!empty($clicked_url_key)) {
                     $data['related_id']="'".$clicked_url_key."'";
                     $data['related_type']="'".'CampaignTrackers'."'";
@@ -227,6 +228,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 $data['list_id']="'" .  $row['list_id'] . "'";
                 $data['marketing_id']="'" .  $row['marketing_id'] . "'";
                 $data['hits']=1;
+                $data['deleted']=0;
                 if (!empty($clicked_url_key)) {
                     $data['related_id']="'".$clicked_url_key."'";
                     $data['related_type']="'".'CampaignTrackers'."'";
@@ -267,8 +269,8 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
 
 
  /**
-     * 
-     * This method is deprecated 
+     *
+     * This method is deprecated
      * @deprecated 62_Joneses - June 24, 2011
      * @see campaign_log_lead_or_contact_entry()
      */
@@ -295,7 +297,7 @@ function campaign_log_lead_or_contact_entry($campaign_id, $parent_bean,$child_be
     //save the campaign log entry
     $campaign_log->save();
 }
-    
+
 
 function get_campaign_urls($campaign_id) {
     $return_array=array();
@@ -363,12 +365,12 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     return array('current_plp_arr' => $current_plp_arr, 'news_type_list_arr' => $news_type_list_arr);
 }
 /*
- * This function takes in a bean from a lead, propsect, or contact and returns an array containing
+ * This function takes in a bean from a lead, prospect, or contact and returns an array containing
  * all subscription lists that the bean is a part of, and all the subscriptions that the bean is not
  * a part of.  The array elements have the key names of "subscribed" and "unsusbscribed".  These elements contain an array
  * of the corresponding list.  In other words, the "subscribed" element holds another array that holds the subscription information.
  *
- * The subscription information is a concatenated string that holds the prospect list id and the campaign id, seperated by at "@" character.
+ * The subscription information is a concatenated string that holds the prospect list id and the campaign id, separated by at "@" character.
  * To parse these information string into something more usable, use the "process subscriptions()" function
  *
  * */
@@ -431,7 +433,7 @@ function get_subscription_lists($focus, $descriptions = false) {
 }
 
 /**
- * same function as get_subscription_lists, but with the data seperated in an associated array
+ * same function as get_subscription_lists, but with the data separated in an associated array
  */
 function get_subscription_lists_keyed($focus) {
     $subs_arr = array();
@@ -884,7 +886,7 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
         $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
         $data['list_id']="'" .  $GLOBALS['db']->quote($pl_row['prospect_list_id']) . "'";
         $data['hits']=1;
-
+        $data['deleted']=0;
         $insert_query="INSERT into campaign_log (" . implode(",",array_keys($data)) . ")";
         $insert_query.=" VALUES  (" . implode(",",array_values($data)) . ")";
         $GLOBALS['db']->query($insert_query);
@@ -892,50 +894,29 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 }
 
     function track_campaign_prospects($focus){
-		$campaign_id = $GLOBALS['db']->quote($focus->id);
-		$delete_query="delete from campaign_log where campaign_id='".$campaign_id."' and activity_type='targeted'";
-		$focus->db->query($delete_query);
+        $campaign_id = $GLOBALS['db']->quote($focus->id);
+        $delete_query="delete from campaign_log where campaign_id='".$campaign_id."' and activity_type='targeted'";
+        $focus->db->query($delete_query);
 
-		$query="SELECT prospect_lists.id prospect_list_id, plp.related_id related_id, plp.related_type related_type from prospect_lists ";
-		$query.=" INNER JOIN prospect_lists_prospects plp ON plp.prospect_list_id = prospect_lists.id";
-		$query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
-		$query.=" WHERE plc.campaign_id='".$GLOBALS['db']->quote($focus->id)."'"; 
-		$query.=" AND prospect_lists.deleted=0";
-		$query.=" AND plc.deleted=0";
-		$query.=" AND plp.deleted=0";
-		$query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
-		$result=$focus->db->query($query);
-		$current_date = $focus->db->now();
-		$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
-		$insert_query.=') VALUES ';
+        $current_date = $focus->db->now();
+        $guidSQL = $focus->db->getGuidSQL();
 
-		$i=0;
-		$data = array();
-		while (($row=$focus->db->fetchByAssoc($result))!=null) {
-			$i++;
-			$prospect_list_id=$GLOBALS['db']->quote($row['prospect_list_id']);
-			$related_id=$GLOBALS['db']->quote($row['related_id']);
-			$related_type=$GLOBALS['db']->quote($row['related_type']);
-			$guid = create_guid();
-			$data[] = "('{$guid}', $current_date, '{$campaign_id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
+        $insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type, deleted";
+        $insert_query.=')';
+        $insert_query.="SELECT {$guidSQL}, $current_date, plc.campaign_id,{$guidSQL},plp.prospect_list_id, plp.related_id, plp.related_type,'targeted',0 ";
+        $insert_query.="FROM prospect_lists INNER JOIN prospect_lists_prospects plp ON plp.prospect_list_id = prospect_lists.id";
+        $insert_query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
+        $insert_query.=" WHERE plc.campaign_id='".$GLOBALS['db']->quote($focus->id)."'";
+        $insert_query.=" AND prospect_lists.deleted=0";
+        $insert_query.=" AND plc.deleted=0";
+        $insert_query.=" AND plp.deleted=0";
+        $insert_query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
+        $focus->db->query($insert_query);
 
-			// we do inserts in chunks
-			if ($i == 100){
-				$focus->db->query($insert_query.implode(',', $data));
-				$data = array();
-				$i=0;
-			}
-		}
-
-		// now we insert the rest of the data
-		if ($i != 0){
-			$focus->db->query($insert_query.implode(',', $data));
-		}
-
-		global $mod_strings;
-		//return success message
-		return $mod_strings['LBL_DEFAULT_LIST_ENTRIES_WERE_PROCESSED'];
-	}
+        global $mod_strings;
+        //return success message
+        return $mod_strings['LBL_DEFAULT_LIST_ENTRIES_WERE_PROCESSED'];
+    }
 
     function create_campaign_log_entry($campaign_id, $focus, $rel_name, $rel_bean, $target_id = ''){
         global $timedate;

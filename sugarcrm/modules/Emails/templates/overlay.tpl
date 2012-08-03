@@ -47,4 +47,3 @@
 		</div>
 	</div>
 </div>
-{overlib_includes}

@@ -34,9 +34,18 @@ global $sugar_config, $sugar_version, $sugar_flavor, $server_unique_key, $curren
 if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 	require_once('modules/Sync/headermenu.php');
 }
+
+//BEGIN SUGARCRM flav!=com ONLY
+if(SugarThemeRegistry::current()->name != 'Classic')
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user']))
 //END SUGARCRM flav=sales ONLY
+$global_control_links['profile'] = array(
+'linkinfo' => array($app_strings['LBL_PROFILE'] => 'index.php?module=Users&action=EditView&record='.$GLOBALS['current_user']->id),
+'submenu' => ''
+);
+//END SUGARCRM flav!=com ONLY
+
 $global_control_links['employees'] = array(
 'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index'),
 'submenu' => ''
@@ -65,10 +74,13 @@ $global_control_links['training'] = array(
 'submenu' => ''
  );
 //END SUGARCRM flav!=sales ONLY
+/*
+ Bug#53922: Remove the help link until its target is decided.
 $global_control_links['help'] = array(
     'linkinfo' => array($app_strings['LNK_HELP'] => ' javascript:void window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$sugar_version.'&edition='.$sugar_flavor.'&lang='.$current_language.'&help_module='.$GLOBALS['module'].'&help_action='.$action.'&key='.$server_unique_key.'\')'),
     'submenu' => ''
  );
+*/
 
 $global_control_links['users'] = array(
 'linkinfo' => array($app_strings['LBL_LOGOUT'] => 'index.php?module=Users&action=Logout'),

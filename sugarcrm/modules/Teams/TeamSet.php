@@ -55,7 +55,7 @@ class TeamSet extends SugarBean{
     */
     var $primary_team_id;
     /*
-    * The number of teams assoicated with a team set.
+    * The number of teams associated with a team set.
     */
     var $team_count = 0;
 
@@ -256,6 +256,30 @@ class TeamSet extends SugarBean{
                 LEFT JOIN  teams teams ON teams.id=ts.id AND teams.deleted=0 AND teams.deleted=0 ";
     }
 
+    /**
+     * Retrieve all team set ids for a given user.
+     * @static
+     * @param $user_id
+     * @return array
+     */
+    public static function getTeamSetIdsForUser($user_id)
+    {
+        $cacheKey = "teamSetIdByUser{$user_id}";
+        $cachedResults = sugar_cache_retrieve($cacheKey);
+        if($cachedResults)
+            return $cachedResults;
+
+        $results = array();
+        $sql = "SELECT tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                AND team_memberships.user_id = '$user_id' AND team_memberships.deleted=0 group by tst.team_set_id";
+        $rs = $GLOBALS['db']->query($sql, TRUE, "Error retrieving team set ids for user.");
+        while($row = $GLOBALS['db']->fetchByAssoc($rs))
+        {
+            $results[] = $row['team_set_id'];
+        }
+        sugar_cache_put($cacheKey, $results);
+        return $results;
+    }
     /**
     * Determine whether a user has access to any of the teams on a team set.
     *

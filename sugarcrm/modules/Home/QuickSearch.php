@@ -120,6 +120,17 @@ class quicksearchQuery
         return $this->getJsonEncodedData($data);
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    function fts_query()
+    {
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $_REQUEST['q'] = trim($_REQUEST['term']);
+        $view = new ViewFts();
+        $view->init();
+        echo $view->display(TRUE, TRUE);
+    }
+    //END SUGARCRM flav=pro ONLY
+
     /**
      * Internal function to construct where clauses
      *
@@ -496,7 +507,8 @@ class quicksearchQuery
         $this->extra_where = '';
 
         // Sanitize group
-        if(!empty($args['group'])  && strcasecmp($args['group'], 'and')) {
+        /* BUG: 52684 properly check for 'and' jeff@neposystems.com */
+        if(!empty($args['group'])  && strcasecmp($args['group'], 'and') == 0) {
             $args['group'] = 'AND';
         } else {
             $args['group'] = 'OR';

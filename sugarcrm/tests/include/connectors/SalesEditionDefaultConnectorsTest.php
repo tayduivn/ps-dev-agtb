@@ -35,7 +35,7 @@ class SalesEditionConnectorsTest extends Sugar_Connectors_TestCase {
     var $has_custom_contacts_detailviewdefs_file;
 
     function setUp() {
-        $this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
+        $this->markTestIncomplete("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
   		return;
 
         if(file_exists('custom/modules/connectors/metadata/connectors.php')) {

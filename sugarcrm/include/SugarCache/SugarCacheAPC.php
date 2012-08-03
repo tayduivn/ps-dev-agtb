@@ -47,10 +47,7 @@ class SugarCacheAPC extends SugarCacheAbstract
     /**
      * @see SugarCacheAbstract::_setExternal()
      */
-    protected function _setExternal(
-        $key,
-        $value
-        )
+    protected function _setExternal($key,$value)
     {
         apc_store($key,$value,$this->_expireTimeout);
     }
@@ -58,9 +55,7 @@ class SugarCacheAPC extends SugarCacheAbstract
     /**
      * @see SugarCacheAbstract::_getExternal()
      */
-    protected function _getExternal(
-        $key
-        )
+    protected function _getExternal($key)
     {
         $res = apc_fetch($key);
         if($res === false) {
@@ -73,9 +68,7 @@ class SugarCacheAPC extends SugarCacheAbstract
     /**
      * @see SugarCacheAbstract::_clearExternal()
      */
-    protected function _clearExternal(
-        $key
-        )
+    protected function _clearExternal($key)
     {
         apc_delete($key);
     }

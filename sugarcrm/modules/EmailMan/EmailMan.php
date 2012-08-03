@@ -251,6 +251,7 @@ class EmailMan extends SugarBean{
 		global $timedate;
 
 		$this->send_attempts++;
+		$this->id = (int)$this->id;
 		if($delete || $this->send_attempts > 5){
 
 			//create new campaign log record.
@@ -276,7 +277,7 @@ class EmailMan extends SugarBean{
 			$this->db->query($query);
 		}else{
 			//try to send the email again a day later.
-			$query = 'UPDATE ' . $this->table_name . " SET in_queue='1', send_attempts='$this->send_attempts', in_queue_date=". $this->db->now() ." WHERE id = '$this->id'";
+			$query = 'UPDATE ' . $this->table_name . " SET in_queue='1', send_attempts='$this->send_attempts', in_queue_date=". $this->db->now() ." WHERE id = $this->id";
 			$this->db->query($query);
 		}
 	}
@@ -295,9 +296,10 @@ class EmailMan extends SugarBean{
      * @param string from_address Email address of the sender, usually email address of the configured inbox.
      * @param string sender_id If of the user sending the campaign.
      * @param array  macro_nv array of name value pair, one row for each replacable macro in email template text.
+     * @param string from_address_name The from address eg markeing <marketing@sugar.net>
      * @return
      */
-    function create_ref_email($marketing_id,$subject,$body_text,$body_html,$campagin_name,$from_address,$sender_id,$notes,$macro_nv,$newmessage) {
+    function create_ref_email($marketing_id,$subject,$body_text,$body_html,$campagin_name,$from_address,$sender_id,$notes,$macro_nv,$newmessage,$from_address_name) {
 
        global $mod_Strings, $timedate;
        $upd_ref_email=false;
@@ -333,6 +335,7 @@ class EmailMan extends SugarBean{
                 $this->ref_email->description_html = $body_html;
                 $this->ref_email->description = $body_text;
                 $this->ref_email->from_addr = $from_address;
+                $this->ref_email->from_addr_name = $from_address_name;
                 $this->ref_email->assigned_user_id = $sender_id;
                 if ($this->test) {
                     $this->ref_email->parent_type = 'test';
@@ -828,6 +831,9 @@ class EmailMan extends SugarBean{
                     $email_id=$this->create_indiv_email($module,$mail);
                 } else {
                     //find/create reference email record. all campaign targets reveiving this message will be linked with this message.
+                    $decodedFromName = mb_decode_mimeheader($this->current_emailmarketing->from_name);
+                    $fromAddressName= "{$decodedFromName} <{$this->mailbox_from_addr}>";
+
                     $email_id=$this->create_ref_email($this->marketing_id,
                                             $this->current_emailtemplate->subject,
                                             $this->current_emailtemplate->body,
@@ -837,7 +843,8 @@ class EmailMan extends SugarBean{
                                             $this->user_id,
                                             $this->notes_array,
                                             $macro_nv,
-                                            $this->newmessage
+                                            $this->newmessage,
+                                            $fromAddressName
                      );
                     $this->newmessage = false;
                 }
@@ -950,5 +957,13 @@ class EmailMan extends SugarBean{
 
         return $query;
     }
+
+    /**
+     * Actuall deletes the emailman record
+     * @param int $id
+     */
+    public function mark_deleted($id)
+	{
+	    $this->db->query("DELETE FROM {$this->table_name} WHERE id=".intval($id));
+	}
 }
-?>

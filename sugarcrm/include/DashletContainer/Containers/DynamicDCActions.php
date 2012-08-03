@@ -33,6 +33,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
     return;
 }
 
+
 require_once('include/connectors/utils/ConnectorUtils.php');
 require_once('include/connectors/sources/SourceFactory.php');
 $connector = SourceFactory::getSource('ext_eapm_lotuslive', false);
@@ -54,14 +55,17 @@ if ( !empty($connector) && $connector->propertyExists('oauth_consumer_key') && $
                     'module' => 'Meetings',
                     'label' => translate('LBL_VIEW_LOTUS_LIVE_MEETINGS','EAPM'),
                     'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'".$llNowButton."');",
-                    'icon'=> 'icon_LotusMeetings_bar_32.png',
+                    'icon'=> 'icon_LotusMeetings_footer_bar.png',
             );
             $dynamicDCActions['LotusLiveDocuments'] = array(
                     'module' => 'Documents',
                     'label' => translate('LBL_VIEW_LOTUS_LIVE_DOCUMENTS','EAPM'),
                     'action' => 'DCMenu.loadView(\''.translate('LBL_TITLE_LOTUS_LIVE_DOCUMENTS','EAPM').'\',\'index.php?module=Documents&action=extdoc&type=LotusLive\');',
-                    'icon' => 'icon_LotusDocuments_bar_32.png',
+                    'icon' => 'icon_LotusDocuments_footer_bar.png',
             );
         }
     }
+    
+    // Display alert if not connected
+    $_SESSION['display_lotuslive_alert'] = empty($eapmBean);
 }

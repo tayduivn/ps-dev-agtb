@@ -91,6 +91,13 @@ class LayoutManager
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
                 'ACL'=>'edit',
             ),
+            'SugarWidgetSubPanelTopCreateLeadNameButton' => array(
+                'widget_class'=>'SugarWidgetSubPanelTopCreateLeadNameButton',
+                'title'=>'LBL_NEW_BUTTON_TITLE',
+                'access_key'=>'LBL_NEW_BUTTON_KEY',
+                'form_value'=>'LBL_NEW_BUTTON_LABEL',
+                'ACL'=>'edit',
+            ),
 			'SugarWidgetSubPanelTopScheduleMeetingButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopScheduleMeetingButton',
 				'module'=>'Meetings',
@@ -180,7 +187,7 @@ class LayoutManager
 				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopSelectFromReportButton' => array(
-				'widget_class'=>'SugarWidgetSubPanelTopSelectButton',
+				'widget_class'=>'SugarWidgetSubPanelTopSelectReportsButton',
 				'module'=>'Reports',
 				'title'=>'LBL_SELECT_REPORTS_BUTTON_LABEL',
 				'access_key'=>'LBL_SELECT_BUTTON_KEY',
@@ -190,6 +197,14 @@ class LayoutManager
 					'return_type'=>'report',
 				)
 			),
+			 'SugarWidgetSubPanelTopCreateAccountNameButton' => array(
+                'widget_class'=>'SugarWidgetSubPanelTopCreateAccountNameButton',
+                'module'=>'Contacts',
+                'title'=>'LBL_NEW_BUTTON_TITLE',
+                'access_key'=>'LBL_NEW_BUTTON_KEY',
+                'form_value'=>'LBL_NEW_BUTTON_LABEL',
+                'ACL'=>'edit',
+            ),
 			//BEGIN SUGARCRM flav!=sales ONLY
 			'SugarWidgetSubPanelAddToProspectListButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopSelectButton',
@@ -290,7 +305,19 @@ class LayoutManager
 			}
 		}
 
+        $parent_bean = null;
+
+        if (isset($widget_def['parent_bean']))
+        {
+            $parent_bean = $widget_def['parent_bean'];
+        }
+        elseif (isset($widget_def['focus']))
+        {
+            $parent_bean = $widget_def['focus'];
+        }
+
 		$widget = new $class_name($this); // cache disabled $this->getClassFromCache($class_name);
+        $widget->setParentBean($parent_bean);
 		return $widget;
 	}
 
@@ -310,7 +337,7 @@ class LayoutManager
 		return null;
 	}
 
-	function widgetDisplay($widget_def, $use_default = false)
+	function widgetDisplay($widget_def, $use_default = false, $grabName = false, $grabId = false)
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
  		$label = isset($widget_def['module']) ? $widget_def['module'] : '';
@@ -327,7 +354,14 @@ class LayoutManager
 		}
 		//end
 
-		return $theclass->display($widget_def);
+        if ($grabName) {
+            return $theclass->getDisplayName();
+        }
+        if ($grabId) {
+            return $theclass->getWidgetId();
+        }
+        
+		return $theclass->display($widget_def, null, null);
 	}
 
 	function widgetQuery($widget_def, $use_default = false)

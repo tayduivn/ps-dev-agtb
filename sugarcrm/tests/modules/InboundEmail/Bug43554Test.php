@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/InboundEmail/InboundEmail.php');
 
 /**
@@ -67,7 +67,7 @@ class Bug43554Test extends Sugar_PHPUnit_Framework_TestCase
 	function testEmailCleanup($url)
 	{
         $data = "Test: <img src=\"$url\">";
-        $res = str_replace("<img />", "", self::$ie->cleanContent($data));
+        $res = str_replace("<img />", "", SugarCleaner::cleanHtml($data));
         $this->assertNotContains("<img", $res);
 	}
 }

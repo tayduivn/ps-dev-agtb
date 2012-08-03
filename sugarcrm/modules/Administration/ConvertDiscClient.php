@@ -39,7 +39,7 @@ function ConvertDiscClient(){
     $xtpl->assign("APP", $app_strings);
 
     echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_UPGRADE_CONVERT_DISC_CLIENT_TITLE']), false);
-    
+
     require_once('include/nusoap/nusoap.php');
 
     $errors = array();
@@ -96,36 +96,36 @@ function ConvertDiscClient(){
           if(empty($server_url) || $server_url == 'http://'){
         	 $errors[] = "Server URL is required";
         }else{
-        	
+
         $soapclient = new nusoapclient( "$server_url/soap.php" );
         $soapclient->response_timeout = 360;
 		if($soapclient->call('is_loopback', array())){
-			$errors[] = "Server and Client must be on seperate machines with unique ip addresses";	
+			$errors[] = "Server and Client must be on separate machines with unique ip addresses";
 		}
 		if(!$soapclient->call('offline_client_available', array())){
-			$errors[] = "No licenses available for offline client";	
+			$errors[] = "No licenses available for offline client";
 		}
         $result = $soapclient->call( 'login', array('user_auth'=>array('user_name'=>$admin_name,'password'=>md5($_REQUEST['password']), 'version'=>'.01'), 'application_name'=>'Disconnected Client Setup'));
         if( $soapclient->error_str ){
             $errors[] = "Login failed with error: " . $soapclient->error_str;
         }
-        
+
         if( $result['error']['number'] != 0 ){
         	 $errors[] = "Login failed with error: " . $result['error']['name'] . ' ' . $result['error']['description'];
-        	
+
         }
-          
-      
+
+
         $session = $result['id'];
         if(empty($errors)){
         	$result = $soapclient->call( 'sudo_user', array('session'=>$session, 'user_name'=>$user_name));
          if( $soapclient->error_str ){
             $errors[] = "switch to $user_name failed with error: " . $soapclient->error_str;
         }
-        
+
         if(isset($result['error']) &&  $result['error']['number'] != 0 ){
         	 $errors[] = "switch to $user_namewith error: " . $result['error']['name'] . ' ' . $result['error']['description'];
-        	
+
         }
         }
           }
@@ -136,7 +136,7 @@ function ConvertDiscClient(){
 	  		  }
 		 }
   		  echo '<font color="red"> ' . $errorString . '</font>';
-       
+
         if( $session  && empty($errors)){
             if( $run == "convert" ){
                 // register this client/user with server
@@ -152,13 +152,13 @@ function ConvertDiscClient(){
             		$errors[] = "Unable to obtain unique system id from server: " . $soapclient->error_str;
         		}
         		else{
-					
+
 					$admin = new Administration();
 					$system_id = $result['id'];
 					if(!isset($system_id)){
 						$system_id = 1;
 					}
-					$admin->saveSetting('system', 'system_id', $system_id); 
+					$admin->saveSetting('system', 'system_id', $system_id);
         		}
         		//END SUGARCRM flav=pro ONLY
             }
@@ -166,9 +166,9 @@ function ConvertDiscClient(){
             // run the file sync
             require_once( "include/utils/disc_client_utils.php" );
             disc_client_file_sync( $soapclient, $session, true );
-			
+
             // data sync triggers
-            
+
             require_once("modules/Sync/SyncHelper.php");
             sync_users($soapclient, $session, true);
              ksort( $sugar_config );
@@ -181,10 +181,10 @@ function ConvertDiscClient(){
 			 	echo 'Done - will auto logout in <div id="seconds_left">10</div> seconds<script> function logout_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php?module=Users&action=Logout";}else{left--; setTimeout("logout_countdown("+ left+")", 1000)}};setTimeout("logout_countdown(10)", 1000)</script>';
             // done with soap calls
             $result = $soapclient->call( 'logout', array('session'=>$session) );
-			
+
             $xtpl->assign("COMPLETED_MESSAGE","Synchronization complete." );
             $xtpl->parse("main.complete");
-          
+
             return;
         }
     }
@@ -193,7 +193,7 @@ function ConvertDiscClient(){
     foreach( $errors as $error ){
        $errorString .= $error . "<br>" ;
     }
-   
+
     if(!empty($errorString)){
          $xtpl->assign("COMPLETED_MESSAGE",$errorString);
          $xtpl->parse("main.complete");

@@ -29,7 +29,7 @@ $yui_path = array(
 	"3_3_0" => "include/javascript/yui3"
 );
 $types = array(
-    "js" => "application/x-javascript",
+    "js" => "application/javascript",
 	"css" => "text/css",
 );
 $out = "";
@@ -77,6 +77,6 @@ $etag = '"'.md5($allpath).'"';
 header("Cache-Control: private");
 header("Pragma: dummy=bogus");
 header("Etag: $etag");
-header('Expires: ' . TimeDate::httpTime(time()+86400));
+header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
 header("Content-Type: $contentType");
 echo ($out);

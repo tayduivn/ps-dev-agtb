@@ -33,7 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-////////////////////Maybe move to seperate function////////////////////
+////////////////////Maybe move to separate function////////////////////
 include_once('modules/WorkFlowTriggerShells/MetaArray.php');
 ///////////////////////////////////////////////////////////////////////
 
@@ -154,7 +154,7 @@ if(!empty($_REQUEST['frame_type']) && $_REQUEST['frame_type']=="Secondary"){
 			echo getClassicModuleTitle($mod_strings['LBL_FILTER_FORM_TITLE'], array($mod_strings['LBL_FILTER_FORM_TITLE'],$mod_strings['LBL_FILTER_FORM_TITLE']), false);
 		} else {
 			echo getClassicModuleTitle($mod_strings['LBL_TRIGGER_FORM_TITLE'], array($mod_strings['LBL_TRIGGER_FORM_TITLE'],$mod_strings['LBL_TRIGGER_FORM_TITLE']), false);
-		}		
+		}
 $form->parse("main");
 $form->out("main");
 

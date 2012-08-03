@@ -31,6 +31,12 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
+
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
 	}
 
 	public function tearDown()
@@ -45,6 +51,8 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
             if (is_file($file))
                 unlink($file);
         }
+
+        unset($GLOBALS['beanFiles'], $GLOBALS['beanList']);
 	}
 
     public function testGetLinkedBeans()
@@ -64,14 +72,15 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInstanceOf("Link2", $account->cases);
         $this->assertTrue($account->cases->loadedSuccesfully());
         $account->cases->add($case);
+        $account->save();
 
         $where = array(
                  'lhs_field' => 'id',
                  'operator' => ' LIKE ',
-                 'rhs_value' => "'{$case->id}'",
+                 'rhs_value' => "{$case->id}",
         );
 
-        $cases = $account->get_linked_beans('cases', 'Case', array(), 0, -1, 0, $where);
+        $cases = $account->get_linked_beans('cases', 'Case', array(), 0, 10, 0, $where);
         $this->assertEquals(1, count($cases), 'Assert that we have found the test case linked to the test account');
 
         $contact  = BeanFactory::newBean("Contacts");
@@ -88,7 +97,7 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $where = array(
                  'lhs_field' => 'id',
                  'operator' => ' LIKE ',
-                 'rhs_value' => "'{$contact->id}'",
+                 'rhs_value' => "{$contact->id}",
         );
 
         $contacts = $account->get_linked_beans('contacts', 'Contact', array(), 0, -1, 0, $where);

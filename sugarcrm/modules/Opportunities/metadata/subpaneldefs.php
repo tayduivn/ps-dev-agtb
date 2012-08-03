@@ -107,8 +107,10 @@ $layout_defs['Opportunities'] = array(
 				),
 				'emails' => array(
 					'module' => 'Emails',
-					'subpanel_name' => 'ForHistory',
-					'get_subpanel_data' => 'emails',
+					'subpanel_name' => 'ForUnlinkedEmailHistory',
+            		'get_subpanel_data' => 'function:get_emails_by_assign_or_link',
+          			'function_parameters' => array('import_function_file' => 'include/utils.php', 'link' => 'contacts'),
+                    'generate_select'=>true,
 				),
 			)
 		),
@@ -220,23 +222,6 @@ $layout_defs['Opportunities'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Contracts','mode'=>'MultiSelect',
 						'initial_filter_fields'=>array('account_id'=>'account_id','account_name'=>'account_name')),
 				)
-		),
-        //END SUGARCRM flav=pro ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-		// SNIP
-        'contact_history' => array(
-			'order' => 20,
-        	'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
-			'module' => 'Emails',
-            'subpanel_name' => 'ForContactHistory',
-            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
-		    'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
-            'generate_select'=>true,
-		    'get_distinct_data' => true,
-            'top_buttons' => array(),
 		),
         //END SUGARCRM flav=pro ONLY
 	),

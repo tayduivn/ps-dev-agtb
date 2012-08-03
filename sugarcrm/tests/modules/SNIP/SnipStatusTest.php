@@ -74,7 +74,7 @@ class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class MockClient extends SugarSNIPClient
+class MockClient extends SugarHttpClient
 {
 	private $snip;
 	private $hasfailed=false;

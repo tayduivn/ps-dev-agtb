@@ -61,12 +61,16 @@ if(in_array($cal->view, array("day","week","month","shared"))){
 	$cal->load_activities();
 }
 
+if (!empty($_REQUEST['print']) && $_REQUEST['print'] == 'true') {
+    $cal->setPrint(true);
+}
+
 $display = new CalendarDisplay($cal);
 $display->display_title();
 if($cal->view == "shared")
 	$display->display_shared_html();
 $display->display_calendar_header();
 $display->display();
-$display->display_calendar_footer();
+$display->display_calendar_footer();	
 
 ?>

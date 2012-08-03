@@ -72,6 +72,25 @@ $xtpl->assign("ACTION", "EditView");
 $xtpl->assign("NAME", Team::getDisplayName($focus->name, $focus->name_2));
 $xtpl->assign("DESCRIPTION", nl2br(url2html($focus->description)));
 
+$buttons = array(<<<EOD
+            <input type="submit" class="button" id="teamEditButton" title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}">
+EOD
+, <<<EOD
+            <input id="duplicate_button" title="{$app_strings['LBL_DUPLICATE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DUPLICATE_BUTTON_KEY']}" class="button" onclick="document.DetailView.isDuplicate.value = 1;" type="submit" name="Duplicate" value=" {$app_strings['LBL_DUPLICATE_BUTTON_LABEL']} ">
+EOD
+, <<<EOD
+            <input id="delete_button" title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="document.DetailView.return_action.value = 'ListView'; document.DetailView.action.value = 'Delete'; return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')" type="submit" name="Delete" value=" {$app_strings['LBL_DELETE_BUTTON_LABEL']} ">
+EOD
+);
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_button = smarty_function_sugar_action_menu(array(
+    'id' => 'team_action_menu',
+    'buttons' => $buttons,
+    'class' => 'clickMenu fancymenu',
+), $xtpl);
+
+$xtpl->assign("ACTION_BUTTON", $action_button);
+
 global $current_user;
 if($current_user->isAdminForModule('Users') && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
 	

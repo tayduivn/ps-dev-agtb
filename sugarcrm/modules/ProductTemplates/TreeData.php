@@ -25,7 +25,8 @@ require_once('include/ytree/Node.php');
 function get_node_data($params,$get_array=false) {
     $click_level=$params['TREE']['depth'];
     $parent_id=$params['NODES'][$click_level]['id'];
-
+	$ret = array();
+	
 	$nodes=get_categories_and_products($parent_id);
 	foreach ($nodes as $node) {
 		$ret['nodes'][]=$node->get_definition();

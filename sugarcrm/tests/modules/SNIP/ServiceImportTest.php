@@ -36,7 +36,7 @@ class ServiceImportTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
 		// get configured date format
 		$timedate = new TimeDate();
-		$this->date_time_format = $timedate->get_date_time_format();
+		$this->date_time_format = $timedate->get_date_time_format($this->_user);
     }
 
     public function tearDown()

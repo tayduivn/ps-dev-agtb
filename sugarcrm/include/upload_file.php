@@ -499,22 +499,22 @@ class UploadStream
      */
     public static function getSuhosinStatus()
     {
-        $isSuhosinHere = ini_get('suhosin.perdir') !== false;
-
+        // looks like suhosin patch doesn't block protocols, only suhosin extension (tested on FreeBSD)
         // if suhosin is not installed it is okay for us
-        if ($isSuhosinHere == false)
+        if (extension_loaded('suhosin') == false)
         {
             return true;
         }
+        $configuration = ini_get_all('suhosin', false);
 
         // suhosin simulation is okay for us
-        if (ini_get('suhosin.simulation') == true)
+        if ($configuration['suhosin.simulation'] == true)
         {
             return true;
         }
 
         // checking that UploadStream::STREAM_NAME is allowed by white list
-        $streams = ini_get('suhosin.executor.include.whitelist');
+        $streams = $configuration['suhosin.executor.include.whitelist'];
         if ($streams != '')
         {
             $streams = explode(',', $streams);
@@ -539,7 +539,7 @@ class UploadStream
         }
 
         // checking that UploadStream::STREAM_NAME is not blocked by black list
-        $streams = ini_get('suhosin.executor.include.blacklist');
+        $streams = $configuration['suhosin.executor.include.blacklist'];
         if ($streams != '')
         {
             $streams = explode(',', $streams);

@@ -43,11 +43,34 @@
 />
 
 {if empty($picture_value)}
+<img
+	id="img_picture" 
+	name="img_picture" 	
+	src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1&isProfile=1'
+	style='
+		{if "$vardef.border" eq ""}
+			border: 0; 
+		{else}
+			border: 1px solid black; 
+		{/if}
+		{if "$vardef.width" eq ""}
+			width: auto;
+		{else}
+			width: {$vardef.width}px;
+		{/if}
+		{if "$vardef.height" eq ""}
+			height: auto;
+		{else}
+			height: {$vardef.height} px;
+		{/if}
+		'	
+
+>
 {else}
 <img
 	id="img_picture" 
 	name="img_picture" 	
-	src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1'
+	src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1&isProfile=1'
 	style='
 		{if "$vardef.border" eq ""}
 			border: 0; 

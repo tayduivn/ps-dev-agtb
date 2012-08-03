@@ -182,4 +182,100 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($note2->parent_id, $lead->id);
         $this->assertEquals($note2->parent_type, "Leads");
     }
+
+    public function testGetBeansWithParameters(){
+
+        $this->markTestIncomplete("Disabling test while getting help from dev on fix");
+
+        $module = "Accounts";
+        require('include/modules.php');
+
+        $account = BeanFactory::newBean($module);
+        $account->name = "LinkTestAccount";
+        $account->save();
+        $this->createdBeans[] = $account;
+
+        $bug = BeanFactory::newBean("Bugs");
+        $bug->name = "LinkTestBug";
+        $bug->save();
+        $this->createdBeans[] = $bug;
+
+        $bug2 = BeanFactory::newBean("Bugs");
+        $bug2->name = "LinkTestBug1";
+        $bug2->save();
+        $this->createdBeans[] = $bug2;
+
+        $bug3 = BeanFactory::newBean("Bugs");
+        $bug3->name = "LinkTestBug3";
+        $bug3->source = "external";
+        $bug3->save();
+        $this->createdBeans[] = $bug3;
+
+        $accountsLink = new Link2("bugs", $account);
+        $accountsLink->add($bug);
+        $accountsLink->add($bug2);
+        $accountsLink->add($bug3);
+
+        //First test the generic result
+        $result = $accountsLink->getBeans();
+        $expected = array(
+            $bug->id => $bug,
+            $bug2->id => $bug2,
+            $bug3->id => $bug3,
+        );
+        ksort($result);
+        ksort($expected);
+
+        $this->assertEquals($expected, $result);
+
+        //Test a limited set
+        $result = $accountsLink->getBeans(array("limit" => 2));
+        $this->assertEquals(2, sizeof($result));
+
+        //Test a custom where
+        $result = $accountsLink->getBeans(array(
+            "where" => array(
+                'lhs_field' => 'source',
+                'operator' => '=',
+                'rhs_value' => 'external'
+            )
+        ));
+        $this->assertEquals(1, sizeof($result));
+        $this->assertEquals($bug3, $result[$bug3->id]);
+
+
+
+        //Test a custom where on a One2M Relationship
+        $contract1 = BeanFactory::newBean("Contracts");
+        $contract1->name = "Contract 1";
+        $contract1->status = "closed";
+        $contract1->account_id = $account->id;
+        $contract1->save();
+        $contract1->createdBeans[] = $contract1;
+
+        $contract2 = BeanFactory::newBean("Contracts");
+        $contract2->name = "Contract 1";
+        $contract2->status = "inprogress";
+        $contract2->account_id = $account->id;
+        $contract2->save();
+        $contract2->createdBeans[] = $contract2;
+
+
+        $account->load_relationship("contracts");
+        $account->contracts->add($contract1);
+        $account->contracts->add($contract2);
+
+        $result = $account->get_linked_beans("contracts", "Contract");
+        $this->assertEquals(2, sizeof($result));
+
+        $result = $account->get_linked_beans("contracts", "Contract",null, 0, -1, 0,
+            array(
+                'lhs_field' => 'status',
+                'operator' => '=',
+                'rhs_value' => 'inprogress'
+            )
+        );
+        $this->assertEquals(1, sizeof($result));
+        $this->assertEquals($contract2, $result[0]);
+    }
 }

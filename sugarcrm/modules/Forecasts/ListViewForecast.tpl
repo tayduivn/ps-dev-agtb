@@ -60,9 +60,6 @@
    {/literal}
 </script>
 
-{if $overlib}
-	<script type='text/javascript' src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
-	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 	<script>var image_path="{$IMAGE_PATH}";
 		{literal}
 		function unformat_currency(amt) {
@@ -75,7 +72,6 @@
 		}
 		{/literal}
 	</script>
-{/if}
 
 
 
@@ -225,7 +221,7 @@
 		</tr>
     	<tr>
     		<td colspan=3 scope="row">&nbsp;</td>
-			<td align="right" scope="row">{$COPY_LINK}&nbsp;<input title="{$LBL_QC_COMMIT_BUTTON}" class="button"  type = "button" onclick="if (commitverify(this.form,'{$ERR_FORECAST_AMOUNT}','{$LBL_COMMIT_MESSAGE}'))  formsubmit(this.form);" name="rollupcommit" value="{$LBL_QC_COMMIT_BUTTON}" id='btn_commit'></td>
+			<td align="right" scope="row">{sugar_action_menu buttons="$COPY_LINK" class="clickMenu"}&nbsp;<input title="{$LBL_QC_COMMIT_BUTTON}" class="button"  type = "button" onclick="if (commitverify(this.form,'{$ERR_FORECAST_AMOUNT}','{$LBL_COMMIT_MESSAGE}'))  formsubmit(this.form);" name="rollupcommit" value="{$LBL_QC_COMMIT_BUTTON}" id='btn_commit'></td>
 		</tr>
 {/if}
 

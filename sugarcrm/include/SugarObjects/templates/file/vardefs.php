@@ -40,13 +40,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => '255',
     'required'=>true,
     'unified_search' => true,
+    'full_text_search' => array('boost' => 3),
   ),
 
 'name'=>
   array(
 	'name'=>'name',
 	'source'=>'non-db',
-	'type'=>'varchar'
+	'type'=>'varchar',
+	'db_concat_fields'=> array(0=>'document_name'),
 	),
 
 'filename' =>
@@ -81,7 +83,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      'vname' => 'LBL_FILE_UPLOAD',
      'type' => 'file',
      'source' => 'non-db',
-     //'noChange' => true,  // jwhitcraft BUG44657 - Take this out as it was causing the remove button not to show up on custom modules
+    //'noChange' => true,
+    // jwhitcraft BUG44657 - Take this out as it was causing the remove button not to show up on custom modules
   ),
 
 'active_date' =>
@@ -139,7 +142,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'source' => 'non-db',
     'Comment' => 'Document status for Meta-Data framework',
   ),
- ),
+ )
 );
 
 ?>

@@ -28,13 +28,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
  // $Id: AuthenticationController.php 56522 2010-05-17 20:22:41Z jmertic $
-class AuthenticationController 
+class AuthenticationController
 {
 	public $loggedIn = false; //if a user has attempted to login
 	public $authenticated = false;
 	public $loginSuccess = false;// if a user has successfully logged in
-	
+
 	protected static $authcontrollerinstance = null;
+
+    /**
+     * @var SugarAuthenticate
+     */
+    public $authController;
 
 	/**
 	 * Creates an instance of the authentication controller and loads it
@@ -42,12 +47,12 @@ class AuthenticationController
 	 * @param STRING $type - the authentication Controller - default to SugarAuthenticate
 	 * @return AuthenticationController -
 	 */
-	public function __construct($type = 'SugarAuthenticate') 
+	public function __construct($type = 'SugarAuthenticate')
 	{
 	    if ($type == 'SugarAuthenticate' && !empty($GLOBALS['system_config']->settings['system_ldap_enabled']) && empty($_SESSION['sugar_user'])){
 			$type = 'LDAPAuthenticate';
         }
-	    
+
         // check in custom dir first, in case someone want's to override an auth controller
 		if (file_exists('custom/modules/Users/authentication/'.$type.'/' . $type . '.php')) {
             require_once('custom/modules/Users/authentication/'.$type.'/' . $type . '.php');
@@ -59,7 +64,6 @@ class AuthenticationController
         }
 
         $this->authController = new $type();
-        $this->authController->pre_login();
 	}
 
 
@@ -74,7 +78,7 @@ class AuthenticationController
 		if (empty(self::$authcontrollerinstance)) {
 			self::$authcontrollerinstance = new AuthenticationController($type);
 		}
-		
+
 		return self::$authcontrollerinstance;
 	}
 
@@ -86,7 +90,7 @@ class AuthenticationController
 	 * @param array $PARAMS
 	 * @return boolean true if the user successfully logs in or false otherwise.
 	 */
-	public function login($username, $password, $PARAMS = array()) 
+	public function login($username, $password, $PARAMS = array())
 	{
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
@@ -105,7 +109,7 @@ class AuthenticationController
 			loginLicense();
 			if(!empty($GLOBALS['login_error'])){
 				unset($_SESSION['authenticated_user_id']);
-				$GLOBALS['log']->fatal('FAILED LOGIN: potential hack attempt');
+				$GLOBALS['log']->fatal('FAILED LOGIN: potential hack attempt:'.$GLOBALS['login_error']);
 				$this->loginSuccess = false;
 				return false;
 			}
@@ -154,7 +158,7 @@ class AuthenticationController
 	 *
 	 * @return booelan
 	 */
-	public function sessionAuthenticate() 
+	public function sessionAuthenticate()
 	{
 		if(!$this->authenticated){
 			$this->authenticated = $this->authController->sessionAuthenticate();

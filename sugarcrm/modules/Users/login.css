@@ -49,6 +49,10 @@ form {
 	margin: 0px;
 }
 
+input[type="text"], input[type="password"], textarea {
+	width: 200px !important;
+}
+
 #recaptcha_image {
     height: 47.5px !important;
     width: 250px !important;
@@ -75,9 +79,7 @@ form {
     
 	border: 1px solid #999999; 
 	background-color: #e8e8e8;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-webkit-border-radius: 6px;
+	border-bottom: 1px solid #ccc;
 /*//END SUGARCRM flav!=com ONLY*/
 /*//BEGIN SUGARCRM flav=com ONLY*/
 	border: 1px solid #abc3d7; 
@@ -85,21 +87,44 @@ form {
 	padding: 20px;	
 
 }
+
+.password {
+	padding: 5px 20px 5px 20px;
+	border: 1px solid #999;
+	border-top: 0px none;
+	background-color: #fff;
+}
+
+.password .login_more div:first-child {
+	text-align: right;
+}
+
+.password a { 
+	text-decoration: none;
+}
+
+.password a img {
+	margin-right: 5px;
+}	
+
+#forgot_password_dialog table {
+	margin-top: 10px;	
+}
+
 .dashletPanelMenu .bd .bd-center {
 	padding-top: 0px;
 }
 
 /*//BEGIN SUGARCRM flav!=com ONLY*/
 .loginBoxShadow {
-		-moz-border-radius:6px 6px 6px 6px;
-	border-radius:6px 6px 6px 6px;
-	-webkit-border-radius:6px;
 	-moz-box-shadow:0 0 10px #aaa;
 	box-shadow:0 0 10px #aaa;
 	-webkit-box-shadow:0 0 10px #aaa;
-	border: 1px solid #999;
-	padding: 15px;
 	background-color:rgba(204,204,204,.8);
 	background-color: #cccccc\9;
 	}
+
+.loginBoxShadow .last {
+    border-bottom-color:#999999;
+}
 /*//END SUGARCRM flav!=com ONLY*/

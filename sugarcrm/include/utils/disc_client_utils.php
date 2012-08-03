@@ -147,7 +147,7 @@ function convert_disc_client(){
         $soapclient = new nusoapclient( "$server_url/soap.php" );
         $soapclient->response_timeout = 360;
 		if($soapclient->call('is_loopback', array())){
-			$errors[] = "Server and Client must be on seperate machines with unique ip addresses";
+			$errors[] = "Server and Client must be on separate machines with unique ip addresses";
 		}
         $result = $soapclient->call('get_sugar_flavor', array());
         global $sugar_flavor, $sugar_version;

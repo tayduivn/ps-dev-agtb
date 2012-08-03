@@ -42,6 +42,7 @@ class ACLController {
 	function requireOwner($category, $value, $type='module'){
 			global $current_user;
 			if(is_admin($current_user))return false;
+			if($current_user->isAdminForModule($category))return false;
 			return ACLAction::userNeedsOwnership($current_user->id, $category, $value,$type);
 	}
 
@@ -82,8 +83,7 @@ class ACLController {
 			}else{
 				unset($moduleList['Calendar']);
 			}
-			if(isset($compList['Activities']) &&
-				!( ACLController::checkModuleAllowed('Notes', $actions) || ACLController::checkModuleAllowed('Notes', $actions))){
+			if(isset($compList['Activities']) && !ACLController::checkModuleAllowed('Notes', $actions)){
 				if($by_value){
 					unset($moduleList[$compList['Activities']]);
 				}else{
@@ -111,7 +111,7 @@ class ACLController {
 		return false;
 	}
 
-	function disabledModuleList($moduleList, $by_value=true,$view='list'){
+	static function disabledModuleList($moduleList, $by_value=true,$view='list'){
 		global $aclModuleList, $current_user;
 		if(is_admin($GLOBALS['current_user'])) return array();
 		$actions = ACLAction::getUserActions($current_user->id, false);

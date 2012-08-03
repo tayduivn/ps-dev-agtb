@@ -165,7 +165,7 @@
 					</tr>
 					<tr>
 						<td class='dataLabel' nowrap width='1%'>
-							{$MOD.LBL_SAVE_SEARCH_AS} <img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_SAVE_SEARCH_AS_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_SAVE_SEARCH_AS} {sugar_help text=$MOD.LBL_SAVE_SEARCH_AS_HELP }
 						</td>
 						<td class='dataField'>
 							<input type='text' id='saved_search_name' value='' name='saved_search_name'>
@@ -173,7 +173,7 @@
 							<input value='{$APP.LBL_SAVE_BUTTON_LABEL}' class='button' type='button' name='saved_search_submit' onclick="document.getElementById('saved_search_action').value='saveSearch'; this.form.submit();">
 						</td>
 						<td nowrap class='dataLabel'>
-							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} <img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} {sugar_help text=$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP }
 						</td>
 						<td class='dataField'>
 							<select name='saved_search_select' id='saved_search_select' onChange="setSelectSearchInputs('loadSearch');this.form.submit();">

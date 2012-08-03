@@ -50,6 +50,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     				this.get('boundingBox').setStyle('visibility','visible');
     				if(Y.one('#dcboxbody')) {
     					Y.one('#dcboxbody').setStyle('display','');
+    					Y.one('#dcboxbody').setStyle('visibility','hidden');
     				}
     			}
     			overlays[depth].hide = function(){
@@ -86,10 +87,22 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     }
                 }
     		}
-			var dcmenuContainer = Y.one('#dcmenuContainer');
-			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
-    		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
+
+			//var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
+    		//overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	    overlays[depth].render();
+   	  	    
+   	  	    
+   	  	    //overlays[depth].center();
+   	  	    YAHOO.util.Event.onContentReady("dcboxbody", function() {
+   	  	    		
+   	  	    	   	//console.log(Y.one('#dcboxbody').get('offsetWidth'));
+		   	  	    //overlays[depth].set("width", Y.one('#dcboxbody').get('offsetWidth')+"px");
+		   	  	    //overlays[depth].set("height", Y.one('#dcboxbody').get('offsetHeight')+"px");
+		   	  	    //overlays[depth].set("centered", true);
+		   	  	    //Y.one('#dcboxbody').setStyle('display','');
+   	  	    	});
+
             if(modal)
                 overlays[depth].toggleModal();
     		return overlays[depth]
@@ -250,8 +263,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         Y.one(item).setAttribute("title", SUGAR.language.get('app_strings', 'LBL_REMOVE_FROM_FAVORITES'));
 		item.onclick = function(){
 			DCMenu.removeFromFavorites(this, module, record);
+            SUGAR.themes.updateFavoritesList(true);
 		}
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=save&fav_id=' + record + '&fav_module=' + module);
+        SUGAR.themes.updateFavoritesList(true);
 	}
 
 	DCMenu.removeFromFavorites = function(item, module, record){
@@ -316,23 +331,51 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.history = function(q){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
 	}
+    DCMenu.startSearch = function(e){
+        if (window.event) { e = window.event; }
+            if (e.keyCode == 13)
+            {
+                DCMenu.spot(document.getElementById('sugar_spot_search').value);
+            }
+    }
 	Y.spot = function(q){
+        var q = $.trim(q);
+        if(q == '')
+            return;
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
+        Y.spotFull = function(q){
+        DCMenu.closeQView();
+            ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
+                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
+        }
 	DCMenu.spotZoom = function(q, module, offset){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
+        fullResults = function(id, data){
+            var resultsDiv = document.getElementById('sugar_full_search_results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = data.responseText;
+            ajaxStatus.hideStatus();
+        }
 	spotResults = function(id, data){
-		var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
-		overlay.set('x', overlay.get('x') - 60);
+		//var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
+        document.getElementById('sugar_spot_search').className = 'searching';
+                        
+        var resultsDiv = document.getElementById('sugar_spot_search_results');
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = data.responseText;
+		//overlay.set('x', overlay.get('x') - 60);
 		ajaxStatus.hideStatus();
 		//set focus on first sugaraction element, identified by id sugaraction1
-		var focuselement=document.getElementById('sugaraction1');
-		if (typeof(focuselement) != 'undefined' && focuselement != null) {
-			focuselement.focus();
-		}
+		//var focuselement=document.getElementById('sugaraction1');
+		//if (typeof(focuselement) != 'undefined' && focuselement != null) {
+		//	focuselement.focus();
+		//}
+        //$('#sugar_spot_search_results').removeHighlight();
+        //$('#sugar_spot_search_results li a').highlight($("#sugar_spot_search").val());
 	}
 
     DCMenu.showQELoadingPanel = function(){
@@ -489,14 +532,37 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
                         DCMenu.jsEvalled = false;
-                        overlay = setBody({
+                        var overlay = setBody({
                             html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + data.responseText
                         }, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
 
-						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
+						var dcmenuSugarCubeX = (dcmenuSugarCube)?dcmenuSugarCube.get('offsetLeft'):0;
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+
+						setTimeout(function() {
+                            //Bug#52650: Centerize modal window using jQuery since .set("centered") is not working properly in IE8
+                            if(jQuery && jQuery.fn) {
+                                var _overlay = $("#" + overlay.get('id')),
+                                    _dcbody = $("#dcboxbody"),
+                                    _width = _dcbody.outerWidth(),
+                                    _height = _dcbody.outerHeight(),
+                                    _viewportWidth = $(window).width(),
+                                    _viewportHeight = $(window).height();
+                                _overlay.css({
+                                    left: (_viewportWidth - _width) * .5,
+                                    top: (_viewportHeight- _height) *.5,
+                                    width: _width,
+                                    height: _height
+                                });
+                            } else {
+                                overlay.set("width", dcboxbody.get('offsetWidth')+"px");
+                                overlay.set("height", dcboxbody.get('offsetHeight')+"px");
+                                overlay.set("centered", true);
+                            }
+                            dcboxbody.setStyle("visibility", "visible");
+						}, 1000);
 
                         //set margins on modal so it is visible on all browsers
                         Y.one('#dcboxbody').setStyle('margin', '0 5% 0 0');
@@ -541,11 +607,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');
         var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
    		var dcboxbody = Y.one('#dcboxbody');
-
+		Y.one('#dcboxbody').setStyle('visibility','visible');
 		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-
+		overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+		
+		
 		if(isRTL) {
 			overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
 		}
@@ -581,24 +649,14 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     DCMenu.closeQView = function()
     {
-        if(!overlays['sqv'] || !Y.one('#dcboxbody'))
+        if(!overlays['sqv'] || !Y.one('#SpotResults'))
         {
             return;
         }
-
+       
         var o = overlays['sqv'];
-        var animX = Y.one('#dcboxbody').getX();
-        var animY = o.get("y");
-        var animDCcont = new Y.Anim({ node: o.get("boundingBox"), to: { xy:[animX,animY] } });
-        animDCcont.on('end', function() {
-            o.visible = false;
-            o.get('boundingBox').setStyle('visibility','hidden');
-        });
-
-        animDCcont.set('duration', .5);
-        animDCcont.set('easing', Y.Easing.easeOut);
-        animDCcont.run();
-
+        o.visible = false;
+        o.get('boundingBox').setStyle('visibility','hidden');
     }
 
 
@@ -624,7 +682,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         {
             overlays[qvDepth] = new Y.Overlay({
                 bodyContent:'',
-                zIndex:5,
+                zIndex:100,
                 height:500,
                 width:320,
                 shim:false,
@@ -672,12 +730,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     DCMenu.showQuickView = function(module, recordID)
     {
         var qvDepth = 'sqv';
-        var boxBody = Y.one('#dcboxbody');
+        var boxBody = Y.one('#SpotResults');
         if(typeof(overlays[qvDepth]) == 'undefined')
         {
             overlays[qvDepth] = new Y.Overlay({
                 bodyContent:'',
-                zIndex:5,
+                zIndex:100,
                 height:boxBody._node.clientHeight,
                 width:320,
                 shim:false,
@@ -707,17 +765,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             content += '</div></div></div></div></div></div></div></div>';
       
             overlays[qvDepth].set("bodyContent", content);
-            overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
+            overlays[qvDepth].set("align", {node:"#SpotResults", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
             overlays[qvDepth].visible = true;
             overlays[qvDepth].show = function()
             {
                 this.visible = true;
                 this.get('boundingBox').setStyle('visibility','visible');
                 //Animate a slide out
-                var shim = 15;  //The padding of the dashletPanel border
-                var animX = (SUGAR.themes.theme_name == 'RTL') ? this.get("x") + this.get("width") - shim : this.get("x") - this.get("width") - shim;
+                var spotLeft = $("#sugar_spot_search_results").offset().left;
+                var spotWidth = $("#sugar_spot_search_results").width();
+                var shim = 35;  //The padding of the dashletPanel border
+                var animX = (SUGAR.themes.theme_name == 'RTL') ? spotLeft + spotWidth + shim + 5: spotLeft - this.get("width") - shim;
                 var animY = 42;
-                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY] } });
+                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY]} });
                 animDCcont.set('duration', .25);
                 animDCcont.set('easing', Y.Easing.easeOut);
                 animDCcont.run();

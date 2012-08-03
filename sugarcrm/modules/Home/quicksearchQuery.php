@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *$Id: QuickSearchDefaults.php 16849 2006-09-28 00:11:56Z clee $
  ********************************************************************************/
+
 $filePath = 'modules/Home/QuickSearch.php';
 if (file_exists('custom/' . $filePath))
 {

@@ -118,16 +118,12 @@ $layout_defs['Accounts'] = array(
 				),
 				'emails' => array(
 					'module' => 'Emails',
-					'subpanel_name' => 'ForHistory',
-					'get_subpanel_data' => 'emails',
+					'subpanel_name' => 'ForUnlinkedEmailHistory',
+            		'get_subpanel_data' => 'function:get_emails_by_assign_or_link',
+          			'function_parameters' => array('import_function_file' => 'include/utils.php', 'link' => 'contacts'),
+                    'generate_select'=>true,
+                    'get_distinct_data'=> true,
 				),
-				'linkedemails' => array(
-	                'module' => 'Emails',
-	                'subpanel_name' => 'ForUnlinkedEmailHistory',
-	                'get_subpanel_data' => 'function:get_unlinked_email_query',
-	                'generate_select'=>true,
-	                'function_parameters' => array('return_as_array'=>'true'),
-	    		),
 			)
 		),
         'documents' => array(
@@ -219,20 +215,25 @@ $layout_defs['Accounts'] = array(
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav=pro ONLY
-		'products' => array(
-			'order' => 60,
-			'module' => 'Products',
-			'sort_order' => 'desc',
-			'sort_by' => 'date_purchased',
-			'subpanel_name' => 'ForAccounts',
-			'get_subpanel_data' => 'function:get_products_query',
-			'add_subpanel_data' => 'product_id',
-			'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-			),
+        'products' => array(
+            'order' => 60,
+            'module' => 'Products',
+            'subpanel_name' => 'ForAccounts',
+            'sort_order' => 'desc',
+            'sort_by' => 'date_purchased',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
+            'top_buttons' => array(
+                array(
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                ),
+                array(
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                ),
+            ),
 
-		),
+        ),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 		'quotes' => array(
@@ -318,21 +319,6 @@ $layout_defs['Accounts'] = array(
 			),
 		),
 
-        // SNIP
-        'contact_history' => array (
-			'order' => 21,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
-			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
-            'top_buttons' => array(),
-        	'module' => 'Emails',
-            'subpanel_name' => 'ForContactHistory',
-            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
-          	'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
-            'generate_select'=>true,
-            'get_distinct_data' => true,
-		),
         //END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 	),

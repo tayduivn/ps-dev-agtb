@@ -28,12 +28,12 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 var LBL_SHOWOPTIONS = '{sugar_translate module="Users" label="LBL_SHOWOPTIONS"}';
 var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}';
 </script>
-<table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
+<table cellpadding="0" align="center" width="100%" cellspacing="0" border="0" style="margin-top: 100px;">
 	<tr>
 		<td align="center">
 		<div class="loginBoxShadow" style="width: 460px;">
 			<div class="loginBox">
-			<table cellpadding="0" cellspacing="0" border="0" align="center">
+			<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
 				<tr>
 					<td align="left"><b>{sugar_translate module="Users" label="LBL_LOGIN_WELCOME_TO"}</b><br>
 					    {$LOGIN_IMAGE}
@@ -44,7 +44,8 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 						<div class="login">
 							<form action="index.php" method="post" name="DetailView" id="form" onsubmit="return document.getElementById('cant_login').value == ''">
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
-									{if $LOGIN_ERROR !=''}
+
+						    	{if $LOGIN_ERROR !=''}
 									<tr>
 										<td scope="row" colspan="2"><span class="error">{$LOGIN_ERROR}</span></td>
 						    	{if $WAITING_ERROR !=''}
@@ -61,7 +62,6 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 								{/if}
 									<tr>
 										<td scope="row" colspan="2" width="100%" style="font-size: 12px; font-weight: normal; padding-bottom: 4px;">
-										{sugar_translate label="NTC_LOGIN_MESSAGE"}
 										<input type="hidden" name="module" value="Users">
 										<input type="hidden" name="action" value="Authenticate">
 										<input type="hidden" name="return_module" value="Users">
@@ -74,6 +74,12 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 									</tr>
 
                                     <tr><td>&nbsp;</td></tr>
+                                {if !empty($SELECT_LANGUAGE)}
+                                    <tr>
+                                        <td scope="row">{sugar_translate module="Users" label="LBL_LANGUAGE"}:</td>
+                                        <td><select style='width: 152px' name='login_language' onchange="switchLanguage(this.value)">{$SELECT_LANGUAGE}</select></td>
+                                    </tr>
+                                {/if}
 									<tr>
 										<td scope="row" width="30%"><label for="user_name">{sugar_translate module="Users" label="LBL_USER_NAME"}:</label></td>
 										<td width="70%"><input type="text" size='35' tabindex="1" id="user_name" name="user_name"  value='{$LOGIN_USER_NAME}' /></td>
@@ -82,22 +88,24 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 										<td scope="row"><label for="user_password">{sugar_translate module="Users" label="LBL_PASSWORD"}:</label></td>
 										<td width="30%"><input type="password" size='26' tabindex="2" id="user_password" name="user_password" value='{$LOGIN_PASSWORD}' /></td>
 									</tr>
-									{if !empty($SELECT_LANGUAGE)}
 
-
-									<tr>
-									    <td scope="row">{sugar_translate module="Users" label="LBL_LANGUAGE"}:</td>
-                                        <td><select style='width: 152px' name='login_language' onchange="switchLanguage(this.value)">{$SELECT_LANGUAGE}</select></td>
-									</tr>
-                                    <tr><td>&nbsp;</td></tr>
-									{/if}
 									<tr>
 										<td>&nbsp;</td>
 										<td><input title="{sugar_translate module="Users" label="LBL_LOGIN_BUTTON_TITLE"}"  class="button primary" class="button primary" type="submit" tabindex="3" id="login_button" name="Login" value="{sugar_translate module="Users" label="LBL_LOGIN_BUTTON_LABEL"}"><br>&nbsp;</td>
 									</tr>
 								</table>
 							</form>
-							<form action="index.php" method="post" name="fp_form" id="fp_form" >
+							
+						</div>
+
+
+					</td>
+				</tr>
+			</table>
+			</div>
+			<div class="password">
+			
+			<form action="index.php" method="post" name="fp_form" id="fp_form" >
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 									<tr>
 										<td colspan="2" class="login_more">
@@ -131,15 +139,8 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 									</tr>
 								</table>
 							</form>
-						</div>
-
-
-					</td>
-				</tr>
-			</table>
-			</div>
-
-</div>
+			</div>	
+		</div>
 		</td>
 	</tr>
 </table>

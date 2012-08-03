@@ -100,13 +100,13 @@ require_once('include/EditView/EditView2.php');
  		$this->view = $this->view.'_'.$displayView;
  		$tokens = explode('_', $this->displayView);
  		$this->parsedView = $tokens[0];
+                $this->searchFields = $searchFields[$this->module];
  		if($this->displayView != 'saved_views'){
  			$this->_build_field_defs();
  		}
 
-        $this->searchFields = $searchFields[$this->module];
 
-        // Setub the tab array
+        // Setup the tab array.
         $this->tabs = array();
         if($this->showBasic){
             $this->nbTabs++;
@@ -232,7 +232,9 @@ require_once('include/EditView/EditView2.php');
         if ($this->module == 'Documents'){
             $this->th->ss->assign('DOCUMENTS_MODULE', true);
         }
+
         $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->locateFile($this->tpl));
+
         if($header){
 			$this->th->ss->assign('return_txt', $return_txt);
 			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->locateFile('header.tpl'));
@@ -394,7 +396,8 @@ require_once('include/EditView/EditView2.php');
 	                // fill in enums
                     $this->fieldDefs[$fvName]['options'] = $GLOBALS['app_list_strings'][$this->fieldDefs[$fvName]['options']];
                     //Hack to add blanks for parent types on search views
-                    if ($this->fieldDefs[$fvName]['type'] == "parent_type" || $this->fieldDefs[$fvName]['type'] == "parent")
+                    //53131 - add blank option for SearchField options with def 'options_add_blank' set to true
+                    if ($this->fieldDefs[$fvName]['type'] == "parent_type" || $this->fieldDefs[$fvName]['type'] == "parent" || (isset($this->searchFields[$name]['options_add_blank']) && $this->searchFields[$name]['options_add_blank']) )
                     {
                         $this->fieldDefs[$fvName]['options'] = array_merge(array(""=>""), $this->fieldDefs[$fvName]['options']);
                     }
@@ -420,11 +423,11 @@ require_once('include/EditView/EditView2.php');
 						if(!empty($this->fieldDefs[$fvName]['function']['include'])){
 								require_once($this->fieldDefs[$fvName]['function']['include']);
 						}
-						$value = $function_name($this->seed, $name, $value, $this->view);
+						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						$this->fieldDefs[$fvName]['value'] = $value;
 					}else{
 						if(!isset($function['params']) || !is_array($function['params'])) {
-							$this->fieldDefs[$fvName]['options'] = $function_name($this->seed, $name, $value, $this->view);
+							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						} else {
 							$this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
 						}
@@ -554,7 +557,6 @@ require_once('include/EditView/EditView2.php');
 
 	                        if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
 	                    	{
-
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
 
                                 if (!empty($params['type']) && $params['type'] == 'parent'
@@ -1038,7 +1040,9 @@ require_once('include/EditView/EditView2.php');
                                      $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                      $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                  }else{
-                                     $where .= "{$db_field} $in ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').")";
+                                     //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
+                                     //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
+                                    $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
                                  }
 
                                  break;
@@ -1058,15 +1062,21 @@ require_once('include/EditView/EditView2.php');
                                      //check to see if this is a universal search OR the field has db_concat_fields set in vardefs, AND the field name is "last_name"
                                      //BUG 45709: Tasks Advanced Search: Contact Name field does not return matches on full names
                                      //Frank: Adding Surabhi's fix back which seem to have gone missing in CottonCandy merge
-                                     if(($UnifiedSearch || !empty($this->seed->field_name_map[$field]['db_concat_fields'])) && strpos($db_field, 'last_name') !== false){
+                                     if(($UnifiedSearch || !empty($this->seed->field_name_map[$field]['db_concat_fields'])) && (strpos($db_field, 'last_name') !== false) || strpos($db_field, 'name_2') !== false){
                                          //split the string value, and the db field name
                                          $string = explode(' ', $field_value);
                                          $column_name =  explode('.', $db_field);
                                          //when a search is done with a space, we concatenate and search against the full name.
                                          if(count($string)>1){
-                                             //add where clause against concatenated fields
-                                             $where .= $this->seed->db->concat($column_name[0],array('first_name','last_name')) . " LIKE ".$this->seed->db->quoted($field_value.'%');
-                                             $where .= ' OR ' . $this->seed->db->concat($column_name[0],array('last_name','first_name')) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                             //add where clause against concatenated field
+                                             $first_field = $parms['db_field'][0];
+                                             $second_field = $parms['db_field'][1];
+                                             $first_db_fields = explode('.', $first_field);
+                                             $second_db_fields = explode('.', $second_field);
+                                             if(count($first_db_fields)==2) $first_field = $first_db_fields[1];
+                                             if(count($second_db_fields)==2) $second_field = $second_db_fields[1];
+                                             $where .= $this->seed->db->concat($column_name[0],array($first_field,$second_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                             $where .= ' OR ' . $this->seed->db->concat($column_name[0],array($second_field,$first_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
                                          }else{
                                              //no space was found, add normal where clause
                                              $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
@@ -1211,5 +1221,54 @@ require_once('include/EditView/EditView2.php');
     	$GLOBALS['log']->debug("Found empty value for {$name} dropdown search key");
     	return $result;
     }
- }
 
+     /**
+      * Return the search defs for a particular module.
+      *
+      * @static
+      * @param $module
+      */
+     public static function retrieveSearchDefs($module)
+     {
+         $searchdefs = array();
+         $searchFields = array();
+
+         if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/metafiles.php');
+         }
+         elseif(file_exists('modules/'.$module.'/metadata/metafiles.php'))
+         {
+             require('modules/'.$module.'/metadata/metafiles.php');
+         }
+
+         if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/searchdefs.php');
+         }
+         elseif (!empty($metafiles[$module]['searchdefs']))
+         {
+             require($metafiles[$module]['searchdefs']);
+         }
+         elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
+         {
+             require('modules/'.$module.'/metadata/searchdefs.php');
+         }
+
+
+         if(!empty($metafiles[$module]['searchfields']))
+         {
+             require($metafiles[$module]['searchfields']);
+         }
+         elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+         {
+             require('modules/'.$module.'/metadata/SearchFields.php');
+         }
+         if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/SearchFields.php');
+         }
+
+         return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
+     }
+ }

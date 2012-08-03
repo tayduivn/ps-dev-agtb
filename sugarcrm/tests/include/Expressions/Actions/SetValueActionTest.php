@@ -57,7 +57,7 @@ class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
         $expr = 'addDays($date_due, -7)';
         $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
         $action->fire($task);
-        $this->assertEquals(TimeDate::getInstance()->fromUser($task->$target)->asDb(), TimeDate::getInstance()->fromDb('2001-01-10 11:45:00')->get('- 7 days')->asDb());
+        $this->assertEquals($task->$target, TimeDate::getInstance()->fromDb('2001-01-10 11:45:00')->get('- 7 days')->asDb());
 
         //Test string value
         $target = "name";

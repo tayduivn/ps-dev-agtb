@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 global $sugar_config;
- 
+
 $mod_strings = array (
 // OOTB Scheduler Job Names:
 'LBL_OOTB_WORKFLOW'		=> 'Process Workflow Tasks',
@@ -38,6 +38,8 @@ $mod_strings = array (
 'LBL_OOTB_PRUNE'		=> 'Prune Database on 1st of Month',
 'LBL_OOTB_TRACKER'		=> 'Prune Tracker Tables',
 'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions Table',
+'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
+'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 //BEGIN SUGARCRM flav=dce ONLY
 'LBL_OOTB_DCE_CLNUP'          => 'Close loop on completed DCE actions',
 'LBL_OOTB_DCE_REPORT'         => 'Create Action to gather daily reports',
@@ -96,6 +98,7 @@ $mod_strings = array (
 'LBL_DATE_TIME_START' => 'Date & Time Start',
 'LBL_INTERVAL' => 'Interval',
 'LBL_JOB' => 'Job',
+'LBL_JOB_URL' => 'Job URL',
 'LBL_LAST_RUN' => 'Last Successful Run',
 'LBL_MODULE_NAME' => 'Sugar Scheduler',
 'LBL_MODULE_TITLE' => 'Schedulers',
@@ -133,7 +136,7 @@ $mod_strings = array (
 'LBL_CRON_INSTRUCTIONS_LINUX' => 'To Setup Crontab',
 'LBL_CRON_LINUX_DESC' => 'Note: In order to run Sugar Schedulers, add the following line to the crontab file: ',
 'LBL_CRON_WINDOWS_DESC' => 'Note: In order to run the Sugar schedulers, create a batch file to run using Windows Scheduled Tasks. The batch file should include the following commands: ',
-'LBL_NO_PHP_CLI' => 'If your host does not have the PHP binary available, you can use wget or curl to launch your Jobs.<br>for wget: <b>*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;wget --quiet --non-verbose '.$sugar_config['site_url'].'/cron.php > /dev/null 2>&1</b><br>for curl: <b>*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;curl --silent '.$sugar_config['site_url'].'/cron.php > /dev/null 2>&1', 
+'LBL_NO_PHP_CLI' => 'If your host does not have the PHP binary available, you can use wget or curl to launch your Jobs.<br>for wget: <b>*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;wget --quiet --non-verbose '.$sugar_config['site_url'].'/cron.php > /dev/null 2>&1</b><br>for curl: <b>*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;curl --silent '.$sugar_config['site_url'].'/cron.php > /dev/null 2>&1',
 // Subpanels
 'LBL_JOBS_SUBPANEL_TITLE'	=> 'Job Log',
 'LBL_EXECUTE_TIME'			=> 'Execute Time',
@@ -141,6 +144,8 @@ $mod_strings = array (
 //jobstrings
 'LBL_REFRESHJOBS' => 'Refresh Jobs',
 'LBL_POLLMONITOREDINBOXES' => 'Check Inbound Mail Accounts',
+'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
+
 //BEGIN SUGARCRM flav!=dce ONLY
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
 'LBL_POLLMONITOREDINBOXESFORBOUNCEDCAMPAIGNEMAILS' => 'Run Nightly Process Bounced Campaign Emails',
@@ -159,8 +164,10 @@ $mod_strings = array (
 'LBL_DCECREATEREPORTDATA' => 'dceCreateReportData',
 'LBL_DCECREATESALESREPORT' => 'dceCreateSalesReport',
 //END SUGARCRM flav=dce ONLY
+'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY
 'LBL_TESTEMAIL' => 'testEmail',
 //END SUGARCRM flav=int ONLY
+'LBL_CLEANJOBQUEUE' => 'Cleanup Job Queue',
 );
 ?>

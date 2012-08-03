@@ -39,10 +39,6 @@ $focus = new KBDocument();
 
 echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
-$path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
-echo "
-<script type='text/javascript' src='$path'></script>
-<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";
 
 $ss = new Sugar_Smarty();
 $ss->assign("MOD", $mod_strings);
@@ -675,7 +671,7 @@ function perform_advanced_search($focus,$default=false){
                 $srch_str_raw_orig = $srch_str_raw;
 
                //lets remove defined tags from the search string
-                $tagNamesArr = seperateTagNames($srch_str_raw);
+                $tagNamesArr = separateTagNames($srch_str_raw);
                 if(!empty($tagNamesArr)){
                     $_POST['searchText'] = $tagNamesArr['search_string_raw'];
                     $spec_SearchVars['tag_name'] = $tagNamesArr['tag_token_string'];
@@ -883,14 +879,14 @@ function perform_advanced_search($focus,$default=false){
 
     }
 
-    /**seperateTagNames()
+    /**separateTagNames()
      *
      * This method extracts formatted tags from string and returns an array containing
      * string without tags and string of tag names
      *
      * @param $srch_str_raw string to be processed
      */
-    function seperateTagNames($srch_str_raw){
+    function separateTagNames($srch_str_raw){
        //lets look for defined tags and extract them from search string.
         $tag_token = array();
         $first_bracket = 0;

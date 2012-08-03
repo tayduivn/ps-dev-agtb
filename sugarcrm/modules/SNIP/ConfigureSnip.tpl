@@ -29,7 +29,6 @@
 *}
 
 {literal}
-<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
 <style>
 #snip_title {
 	float:left;
@@ -167,7 +166,7 @@ div.snipError{
 					</div>
 					<div class='snipUiWrapper'>
 						<div class='snipCheckboxWrapper'>
-							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
+							<input type='checkbox' onclick="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
 							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE}</label>
 						</div>
 						<div class='snipButtonWrapper'>

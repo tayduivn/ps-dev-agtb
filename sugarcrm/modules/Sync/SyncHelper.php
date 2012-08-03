@@ -582,4 +582,9 @@ function sync_users($soapclient, $session, $clean = false, $is_conversion = fals
 			return false;
 
 }
-?>
+
+function sync_get_user_auth_data()
+{
+    global $sugar_config;
+    return array('user_name'=>$sugar_config['oc_username'],'password'=>$sugar_config['oc_password'], 'version'=>'1.0');
+}

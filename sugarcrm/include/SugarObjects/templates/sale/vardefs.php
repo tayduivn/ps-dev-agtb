@@ -39,6 +39,7 @@ $vardefs = array(
 			'vname'=>'LBL_NAME',
 			'comment'=>'Name of the Sale',
 			'unified_search'=>true,
+			'full_text_search'=>array('boost' => 3),
 			'audited'=>true,
 			'merge_filter'=>'selected',
 			'required' => true,

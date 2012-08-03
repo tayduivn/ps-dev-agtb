@@ -105,7 +105,11 @@ $mod_strings = array (
 	'LBL_SKYPEOUT_TITLE' => 'SkypeOut&reg;',
 	'LBL_USE_REAL_NAMES'	=> 'Show Full Names',
 	'LBL_USE_REAL_NAMES_DESC'			=> 'Display users\' full names instead of their User Names in assignment fields.',
-	'LIST_ENTRIES_PER_LISTVIEW'=>'Listview items per page',
+    'LBL_DISALBE_CONVERT_LEAD' => 'Disable convert lead action for converted leads',
+    'LBL_DISALBE_CONVERT_LEAD_DESC' => 'If a lead has already been converted, enabling this option will remove the convert lead action.',
+    'LBL_ENABLE_ACTION_MENU' => 'Display actions within menus',
+    'LBL_ENABLE_ACTION_MENU_DESC' => 'Select to display DetailView and subpanel actions within a dropdown menu. If un-selected, the actions will display as separate buttons.',
+    'LIST_ENTRIES_PER_LISTVIEW'=>'Listview items per page',
 	'LIST_ENTRIES_PER_SUBPANEL'=>'Subpanel items per page',
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_WIRELESS_LIST_ENTRIES' => 'Listview items per page',
@@ -121,9 +125,9 @@ $mod_strings = array (
     'LOCK_HOMEPAGE_HELP'=>'This setting is to prevent<BR> 1) the addition of new home pages and dashlets in the Home module, <BR>2) customization of dashlet placement in the home pages by dragging and dropping.',
     //END SUGARCRM flav=pro ONLY
     'CURRENT_LOGO'=>'Current Logo:',
-    'CURRENT_LOGO_HELP'=>'This logo is displayed at the top left-hand corner of the Sugar application.',
+    'CURRENT_LOGO_HELP'=>'This logo is displayed in the left-hand corner of the footer of the Sugar application.',
     'NEW_LOGO'=>'Select Logo:',
-	'NEW_LOGO_HELP'=>'The image file format can be either .png or .jpg.<BR>The recommended size is 212x40 px.',
+	'NEW_LOGO_HELP'=>'The image file format can be either .png or .jpg. The maximum height is 17px, and the maximum width is 450px. Any image uploaded that is larger in any direction will be scaled to these max dimensions.',
     'NEW_QUOTE_LOGO'=>'Upload new Quotes logo',
     'NEW_QUOTE_LOGO_HELP'=>'The required image file format is .jpg.<BR>The recommended size is 867x74 px.',
     'QUOTES_CURRENT_LOGO'=>'Quotes logo',
@@ -178,7 +182,7 @@ $mod_strings = array (
     'LBL_LDAP_AUTO_CREATE_USERS_DESC'=> 'If an authenticated user does not exist one will be created in Sugar.',
     'LBL_LDAP_ENC_KEY'	=> 'Encryption Key:',
     'DEVELOPER_MODE'=>'Developer Mode',
-	
+
 	'SHOW_DOWNLOADS_TAB' =>'Display Downloads Tab',
 	'SHOW_DOWNLOADS_TAB_HELP' =>'When selected, the Download tab will appear in the User settings and provide users with access to Sugar plug-ins and other available files',
     'LBL_LDAP_ENC_KEY_DESC'	=> 'For SOAP authentication when using LDAP.',
@@ -301,7 +305,7 @@ $mod_strings = array (
 
     'PDF_OWNER_PASSWORD' => 'Owner Password',
     'PDF_OWNER_PASSWORD_INFO' => 'If you don\\\'t set any password, the document will open as usual. <br>If you set a user password, the PDF viewer will ask for it before displaying the document. <br>The master password, if different from the user one, can be used to get full access.',
-    
+
     'PDF_ACL_ACCESS' => 'Access Control',
     'PDF_ACL_ACCESS_INFO' => 'Default Access Control for the PDF generation.',
 

@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
+$dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
 		'comment' => 'Leads are persons of interest early in a sales cycle', 'fields' => array (
 
 
@@ -167,6 +167,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 	'type' => 'varchar',
 	'len' => '255',
 	'unified_search' => true,
+	'full_text_search' => 1,
 	'comment' => 'Account name for lead',
   ),
 
@@ -189,6 +190,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'type' => 'text',
     'group'=>'account_name',
     'unified_search' => true,
+    'full_text_search' => 1,
     'comment' => 'Description of lead account'
   ),
   'contact_id' =>
@@ -270,6 +272,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
       'isnull' => 'true',
       'module' => 'Campaigns',
       'source' => 'non-db',
+      'additionalFields' => array('id' => 'campaign_id')
     ),
     'campaign_leads' =>
     array (

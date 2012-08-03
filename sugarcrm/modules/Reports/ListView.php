@@ -34,7 +34,7 @@ require_once('include/contextMenus/contextMenu.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/ListViewReports.php');
 if(file_exists('custom/modules/Reports/metadata/listviewdefs.php')){
-    require_once('custom/modules/Reports/metadata/listviewdefs.php');  
+    require_once('custom/modules/Reports/metadata/listviewdefs.php');
 }else{
     require_once('modules/Reports/metadata/listviewdefs.php');
 }
@@ -65,18 +65,18 @@ $lv->quickViewLinks=false;
 if ( empty($_REQUEST['search_form_only']) )
     echo "<div class='listViewBody'>";
 
-if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the pagination button, it will poplate the search criteria here
+if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the pagination button, it will populate the search criteria here
     if(!empty($_REQUEST['current_query_by_page'])) {//The code support multi browser tabs pagination
-    
+
         $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount', 'request_data', 'current_query_by_page' , 'Reports2_SAVEDREPORT_ORDER_BY');
          if(isset($_REQUEST['lvso'])){
         	$blockVariables[] = 'lvso';
         }
-        
+
         $current_query_by_page = unserialize(base64_decode($_REQUEST['current_query_by_page']));
         foreach($current_query_by_page as $search_key=>$search_value) {
             if($search_key != 'Reports2_SAVEDREPORT_offset' && !in_array($search_key, $blockVariables)) {
-                //bug 48620 
+                //bug 48620
                 if (!is_array($search_value)) {
                     $_REQUEST[$search_key] = $GLOBALS['db']->quote($search_value);
                     }
@@ -111,7 +111,7 @@ if(!isset($_REQUEST['query']) && empty($_GET['favorite'])){// when we click the 
     $storeQuery->loadQuery($currentModule);
     $storeQuery->populateRequest();
 }else{
-    $storeQuery->saveFromRequest($currentModule);   
+    $storeQuery->saveFromRequest($currentModule);
 }
 
 // setup for search form
@@ -160,7 +160,7 @@ $reportModules = array();
 
 foreach($ACLAllowedModules as $key => $module) {
     $reportModules[$key] = isset($app_list_strings['moduleList'][$key]) ? $app_list_strings['moduleList'][$key] : $key;
-} 
+}
 
 asort($reportModules);
 if(!empty($_REQUEST['search_form_only']) && $_REQUEST['search_form_only']) { // handle ajax requests for search forms only
@@ -205,19 +205,19 @@ if(!empty($_REQUEST['favorite'])) { // handle favorite requests
             unset($where_clauses[$p_where]);
         }
     }
-    array_push($where_clauses, 
-        'saved_reports.id IN ( 
-            SELECT sugarfavorites.record_id FROM sugarfavorites 
-                WHERE sugarfavorites.deleted=0 
-                    and sugarfavorites.module = \'Reports\' 
+    array_push($where_clauses,
+        'saved_reports.id IN (
+            SELECT sugarfavorites.record_id FROM sugarfavorites
+                WHERE sugarfavorites.deleted=0
+                    and sugarfavorites.module = \'Reports\'
                     and sugarfavorites.assigned_user_id = \''.$GLOBALS['current_user']->id.'\')');
 }
 $displayColumns = array();
 if(!empty($_REQUEST['displayColumns'])) {
     foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-        if(!empty($listViewDefs['Reports'][$col])) 
+        if(!empty($listViewDefs['Reports'][$col]))
             $displayColumns[$col] = $listViewDefs['Reports'][$col];
-    }    
+    }
 }
 elseif(!empty($savedDisplayColumns)) {
     $displayColumns = $savedDisplayColumns;
@@ -282,17 +282,17 @@ if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_PO
     		echo '<font color="red">'.$mod_strings['LBL_DELETE_ERROR'].'</font>';
 
     }
-    
+
 }
 //END SUGARCRM flav!=sales ONLY
 
 if(!empty($_REQUEST['orderBy'])) {
     if(trim($_REQUEST['orderBy']) == 'REPORT_TYPE_TRANS'){
-        $_REQUEST['orderBy'] = 'REPORT_TYPE'; 
+        $_REQUEST['orderBy'] = 'REPORT_TYPE';
     }elseif(trim($_REQUEST['orderBy']) == 'TEAM_NAME'){
-        $_REQUEST['orderBy'] = 'TEAM_ID'; 
+        $_REQUEST['orderBy'] = 'TEAM_ID';
     }elseif(trim($_REQUEST['orderBy']) == 'ASSIGNED_USER_NAME'){
-        $_REQUEST['orderBy'] = 'ASSIGNED_USER_ID'; 
+        $_REQUEST['orderBy'] = 'ASSIGNED_USER_ID';
     }
     $params['orderBy'] = $_REQUEST['orderBy'];
     $params['overrideOrder'] = true;

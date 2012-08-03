@@ -447,7 +447,7 @@ if(!$skipFooters) {
 
 
 
-	echo "<A href='http://www.sugarforge.org' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></a>\n";
+	echo "<A href='http://www.sugarforge.org' target='_blank'><img style='margin-top: 2px' border='0' width='120' height='34' src='include/images/poweredby_sugarcrm_65.png' alt='Powered By SugarCRM'></a>\n";
 
 
 

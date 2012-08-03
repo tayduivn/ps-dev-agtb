@@ -77,7 +77,7 @@ function recursiveParse($dir, $silent = false)
 			$js_contents .= $cont["javascript"];
 		}
 
-		// check for extentions
+		// Check for extensions.
 		if ( ! preg_match('/^[0-9a-zA-Z-_]+Expression.php$/', $entry) )	continue;
 
 		// ignore files

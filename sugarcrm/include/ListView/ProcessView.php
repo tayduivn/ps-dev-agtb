@@ -48,7 +48,7 @@ class ProcessView {
     /*
 
     $no_count is if the individual elements all have unique names and we
-    dont need to add a number to the end of each item like user_5 or user_6
+    don't need to add a number to the end of each item like user_5 or user_6
 
     This is specific to the bottom build right now
     */

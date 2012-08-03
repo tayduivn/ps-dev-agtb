@@ -344,16 +344,16 @@ function construct_where(&$query_obj, $table='') {
 
 	foreach($query_obj['conditions'] as $condition) {
 		 if($condition['op'] == 'contains') {
-		 	array_push($cond_arr,PearDatabase::quote($table.$condition['name'])." like '%".PearDatabase::quote($condition['value'])."%'");
+		 	array_push($cond_arr,$table.getValidDBName($condition['name'])." like '%".PearDatabase::quote($condition['value'])."%'");
 		 }
 		 if($condition['op'] == 'like_custom') {
 		 	$like = '';
 		 	if(!empty($condition['begin'])) $like .= PearDatabase::quote($condition['begin']);
 		 	$like .= PearDatabase::quote($condition['value']);
 		 	if(!empty($condition['end'])) $like .= PearDatabase::quote($condition['end']);
-		 	array_push($cond_arr,PearDatabase::quote($table.$condition['name'])." like '$like'");
+		 	array_push($cond_arr,$table.getValidDBName($condition['name'])." like '$like'");
 		 } else { // starts_with
-		 	array_push($cond_arr,PearDatabase::quote($table.$condition['name'])." like '".PearDatabase::quote($condition['value'])."%'");
+		 	array_push($cond_arr,$table.getValidDBName($condition['name'])." like '".PearDatabase::quote($condition['value'])."%'");
 		 }
 	}
 

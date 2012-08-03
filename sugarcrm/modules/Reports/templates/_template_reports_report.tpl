@@ -151,7 +151,6 @@ ACLAllowedModules = {$ACLAllowedModules};
 </form>
 </p>
 <script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

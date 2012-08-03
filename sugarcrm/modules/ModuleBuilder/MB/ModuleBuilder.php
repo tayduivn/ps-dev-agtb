@@ -53,11 +53,16 @@ class ModuleBuilder
     
     }
 
+    /**
+     * @param $name
+     * @return MBPackage
+     */
     function getPackage ($name)
     {
-        if (! empty ( $this->packages [ $name ] ))
-            return $this->packages [ $name ] ;
-        $this->packages [ $name ] = new MBPackage ( $name ) ;
+        if (empty ( $this->packages [ $name ] ))
+            $this->packages [ $name ] = new MBPackage ( $name ) ;
+
+        return $this->packages [ $name ] ;
     }
     
     function getPackageKey ($name)

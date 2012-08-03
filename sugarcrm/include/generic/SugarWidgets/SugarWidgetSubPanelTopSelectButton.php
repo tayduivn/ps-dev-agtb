@@ -41,15 +41,24 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		$this->button_properties=$button_properties;
 	}
 
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
+    public function getWidgetId()
+    {
+        return parent::getWidgetId(false) . 'select_button';
+    }
+
+    public function getDisplayName()
+    {
+        return $GLOBALS['app_strings']['LBL_SELECT_BUTTON_LABEL'];
+    }
+	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
 		global $app_strings;
 		$initial_filter = '';
 
-		$this->title = $app_strings['LBL_SELECT_BUTTON_TITLE'];
-		$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
-		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];
+	    $this->title     = $this->getTitle();
+        $this->accesskey = $this->getAccesskey();
+        $this->value     = $this->getDisplayName();
 
 		if (is_array($this->button_properties)) {
 			if( isset($this->button_properties['title'])) {
@@ -69,7 +78,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 
 		$focus = $widget_data['focus'];
 		if(ACLController::moduleSupportsACL($widget_data['module']) && !ACLController::checkAccess($widget_data['module'], 'list', true)){
-			$button = ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $this->getWidgetId() . '_select_button" class="button"' . "\n"
+			$button = ' <input type="button" name="' . $this->getWidgetId() . '" id="' . $this->getWidgetId() . '" class="button"' . "\n"
 			. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			.' disabled />';
@@ -142,20 +151,30 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
 		}
-		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
+        //acl_roles_users_selectuser_button
 
-        //#46725, add proper ID for given in the duplicated button ID in the "Select From Report"
-        $button_class_name = str_replace("SubPanelTop", "", $widget_data['widget_class']);
-
-        //create unique button id from the class name by converting camel case letters to the underscore form
-        $func_to_underscore = create_function('$args', 'return "_" . strtolower($args[0]);');
-        $inputID = $this->getWidgetId() . preg_replace_callback('/[A-Z]/', $func_to_underscore, $button_class_name);
-
-		return ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $inputID . '" class="button"' . "\n"
-			. ' title="' . $this->title . '"'
-			. ' accesskey="' . $this->accesskey . '"'
+        $json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
+		return ' <input type="button" name="' . $this->getWidgetId() . '" id="' . $this->getWidgetId() . '" class="button"' . "\n"
+				. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' />\n";
 	}
+
+    /**
+    * @return string
+    */
+    protected function getTitle()
+    {
+       return translate('LBL_SELECT_BUTTON_TITLE');
+    }
+
+    /**
+    * @return string
+    */
+    protected function getAccesskey()
+    {
+       return translate('LBL_SELECT_BUTTON_KEY');
+    }
+
 }
 ?>

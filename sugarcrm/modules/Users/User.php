@@ -169,7 +169,7 @@ class User extends Person {
 	{
 	    $signatures = $this->getSignaturesArray();
 
-	    return $signatures[$id];
+	    return isset($signatures[$id]) ? $signatures[$id] : FALSE;
 	}
 
 	function getSignaturesArray() {
@@ -420,6 +420,46 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+	/**
+     * incrementETag
+     *
+     * This function increments any ETag seed needed for a particular user's
+     * UI. For example, if the user changes their theme, the ETag seed for the
+     * main menu needs to be updated, so you call this function with the seed name
+     * to do so:
+     *
+     * UserPreference::incrementETag("mainMenuETag");
+     *
+     * @param string $tag ETag seed name.
+     * @return nothing
+     */
+    public function incrementETag($tag){
+    	$val = $this->getETagSeed($tag);
+    	if($val == 2147483648){
+    		$val = 0;
+    	}
+    	$val++;
+    	$this->setPreference($tag, $val, 0, "ETag");
+    }
+
+    /**
+     * getETagSeed
+     *
+     * This function is a wrapper to encapsulate getting the ETag seed and
+     * making sure it's sanitized for use in the app.
+     *
+     * @param string $tag ETag seed name.
+     * @return integer numeric value of the seed
+     */
+    public function getETagSeed($tag){
+    	$val = $this->getPreference($tag, "ETag");
+    	if($val == null){
+    		$val = 0;
+    	}
+    	return $val;
+    }
+
+
    /**
     * Get WHERE clause that fetches all users counted for licensing purposes
     * @return string
@@ -512,11 +552,16 @@ class User extends Person {
 
 		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
 		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
-		if(!empty($this->team_id)){
-			$this->default_team = $this->team_id;
-		}else{
-			$this->team_id = $this->default_team;
-		}
+        if(!$this->is_admin) {
+            //Bug#53249: Prevent admin user set non-member team as a primary team
+            if(!empty($this->team_id)){
+                $this->default_team = $this->team_id;
+            }else{
+                $this->team_id = $this->default_team;
+            }
+        } else {
+            $this->team_id = $this->default_team;
+        }
 
 		//END SUGARCRM flav=pro ONLY
 
@@ -619,15 +664,14 @@ class User extends Person {
 	}
 
 	/**
-	* @return string encrypted password for storage in DB and comparison against DB password.
+	 * @deprecated
 	* @param string $user_name - Must be non null and at least 2 characters
 	* @param string $user_password - Must be non null and at least 1 character.
 	* @desc Take an unencrypted username and password and return the encrypted password
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
+	* @return string encrypted password for storage in DB and comparison against DB password.
 	*/
-	function encrypt_password($user_password) {
+	function encrypt_password($user_password)
+	{
 		// encrypt the password.
 		$salt = substr($this->user_name, 0, 2);
 		$encrypted_password = crypt($user_password, $salt);
@@ -638,26 +682,16 @@ class User extends Person {
 	/**
 	 * Authenicates the user; returns true if successful
 	 *
-	 * @param $password
+	 * @param string $password MD5-encoded password
 	 * @return bool
 	 */
-	public function authenticate_user(
-	    $password
-	    )
+	public function authenticate_user($password)
 	{
-		$password = $GLOBALS['db']->quote($password);
-		$user_name = $GLOBALS['db']->quote($this->user_name);
-		$query = "SELECT * from $this->table_name where user_name='$user_name' AND user_hash='$password' AND (portal_only IS NULL OR portal_only !='1') AND (is_group IS NULL OR is_group !='1') ";
-		//$result = $this->db->requireSingleResult($query, false);
-		$result = $this->db->limitQuery($query,0,1,false);
-		$a = $this->db->fetchByAssoc($result);
-		// set the ID in the seed user.  This can be used for retrieving the full user record later
-		if (empty ($a)) {
-			// already logging this in load_user() method
-			//$GLOBALS['log']->fatal("SECURITY: failed login by $this->user_name");
-			return false;
+	    $row = self::findUserPassword($this->user_name, $password);
+	    if(empty($row)) {
+	        return false;
 		} else {
-			$this->id = $a['id'];
+			$this->id = $row['id'];
 			return true;
 		}
 	}
@@ -689,7 +723,7 @@ class User extends Person {
 
 		select id from users where id in ( SELECT  er.bean_id AS id FROM email_addr_bean_rel er,
 			email_addresses ea WHERE ea.id = er.email_address_id
-		    AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = 'Users' AND email_address_caps IN ('{$email}') )
+		    AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = 'Users' AND email_address_caps IN ('{$email1}') )
 EOQ;
 
 
@@ -717,12 +751,12 @@ EOQ;
 
 	/**
 	 * Load a user based on the user_name in $this
+	 * @param string $user_password Password
+	 * @param bool $password_encoded Is password md5-encoded or plain text?
 	 * @return -- this if load was successul and null if load failed.
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
 	 */
-	function load_user($user_password) {
+	function load_user($user_password, $password_encoded = false)
+	{
 		global $login_error;
 		unset($GLOBALS['login_error']);
 		if(isset ($_SESSION['loginattempts'])) {
@@ -732,6 +766,7 @@ EOQ;
 		}
 		if($_SESSION['loginattempts'] > 5) {
 			$GLOBALS['log']->fatal('SECURITY: '.$this->user_name.' has attempted to login '.$_SESSION['loginattempts'].' times from IP address: '.$_SERVER['REMOTE_ADDR'].'.');
+			return null;
 		}
 
 		$GLOBALS['log']->debug("Starting user load for $this->user_name");
@@ -739,42 +774,18 @@ EOQ;
 		if (!isset ($this->user_name) || $this->user_name == "" || !isset ($user_password) || $user_password == "")
 			return null;
 
-		$user_hash = strtolower(md5($user_password));
-		if($this->authenticate_user($user_hash)) {
-			$query = "SELECT * from $this->table_name where id='$this->id'";
-		} else {
-			$GLOBALS['log']->fatal('SECURITY: User authentication for '.$this->user_name.' failed');
-			return null;
-		}
-		$r = $this->db->limitQuery($query, 0, 1, false);
-		$a = $this->db->fetchByAssoc($r);
-		if(empty($a) || !empty ($GLOBALS['login_error'])) {
+	    if(!$password_encoded) {
+	        $user_password = md5($user_password);
+	    }
+        $row = self::findUserPassword($this->user_name, $user_password);
+		if(empty($row) || !empty ($GLOBALS['login_error'])) {
 			$GLOBALS['log']->fatal('SECURITY: User authentication for '.$this->user_name.' failed - could not Load User from Database');
 			return null;
 		}
 
-		// Get the fields for the user
-		$row = $a;
-
-		// If there is no user_hash is not present or is out of date, then create a new one.
-		if (!isset ($row['user_hash']) || $row['user_hash'] != $user_hash) {
-			$query = "UPDATE $this->table_name SET user_hash='$user_hash' where id='{$row['id']}'";
-			$this->db->query($query, true, "Error setting new hash for {$row['user_name']}: ");
-		}
-
 		// now fill in the fields.
-		foreach ($this->column_fields as $field) {
-			$GLOBALS['log']->info($field);
-
-			if (isset ($row[$field])) {
-				$GLOBALS['log']->info("=".$row[$field]);
-
-				$this-> $field = $row[$field];
-			}
-		}
-
+		$this->loadFromRow($row);
 		$this->loadPreferences();
-
 
 		require_once ('modules/Versions/CheckVersions.php');
 		$invalid_versions = get_invalid_versions();
@@ -796,12 +807,99 @@ EOQ;
 
 			$_SESSION['invalid_versions'] = $invalid_versions;
 		}
-		$this->fill_in_additional_detail_fields();
 		if ($this->status != "Inactive")
 			$this->authenticated = true;
 
 		unset ($_SESSION['loginattempts']);
 		return $this;
+	}
+
+	/**
+	 * Generate a new hash from plaintext password
+	 * @param string $password
+	 */
+	public static function getPasswordHash($password)
+	{
+	    if(!defined('CRYPT_MD5') || !constant('CRYPT_MD5')) {
+	        // does not support MD5 crypt - leave as is
+	        if(defined('CRYPT_EXT_DES') && constant('CRYPT_EXT_DES')) {
+	            return crypt(strtolower(md5($password)),
+	            	"_.012".substr(str_shuffle('./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), -4));
+	        }
+	        // plain crypt cuts password to 8 chars, which is not enough
+	        // fall back to old md5
+	        return strtolower(md5($password));
+	    }
+	    return crypt(strtolower(md5($password)));
+	}
+
+	/**
+	 * Check that password matches existing hash
+	 * @param string $password Plaintext password
+	 * @param string $user_hash DB hash
+	 */
+	public static function checkPassword($password, $user_hash)
+	{
+	    return self::checkPasswordMD5(md5($password), $user_hash);
+	}
+
+	/**
+	 * Check that md5-encoded password matches existing hash
+	 * @param string $password MD5-encoded password
+	 * @param string $user_hash DB hash
+	 * @return bool Match or not?
+	 */
+	public static function checkPasswordMD5($password_md5, $user_hash)
+	{
+	    if(empty($user_hash)) return false;
+	    if($user_hash[0] != '$' && strlen($user_hash) == 32) {
+	        // Old way - just md5 password
+	        return strtolower($password_md5) == $user_hash;
+	    }
+	    return crypt(strtolower($password_md5), $user_hash) == $user_hash;
+	}
+
+	/**
+	 * Find user with matching password
+	 * @param string $name Username
+	 * @param string $password MD5-encoded password
+	 * @param string $where Limiting query
+	 * @return the matching User of false if not found
+	 */
+	public static function findUserPassword($name, $password, $where = '')
+	{
+	    global $db;
+		$name = $db->quote($name);
+		$query = "SELECT * from users where user_name='$name'";
+		if(!empty($where)) {
+		    $query .= " AND $where";
+		}
+		$result = $db->limitQuery($query,0,1,false);
+		if(!empty($result)) {
+		    $row = $db->fetchByAssoc($result);
+		    if(self::checkPasswordMD5($password, $row['user_hash'])) {
+		        return $row;
+		    }
+		}
+		return false;
+	}
+
+	/**
+	 * Sets new password and resets password expiration timers
+	 * @param string $new_password
+	 */
+	public function setNewPassword($new_password, $system_generated = '0')
+	{
+        $user_hash = self::getPasswordHash($new_password);
+        $this->setPreference('loginexpiration','0');
+	    $this->setPreference('lockout','');
+		$this->setPreference('loginfailed','0');
+		$this->savePreferencesToDB();
+        //set new password
+        $now = TimeDate::getInstance()->nowDb();
+		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
+		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
+        $_SESSION['hasExpiredPassword'] = '0';
 	}
 
 	/**
@@ -812,11 +910,7 @@ EOQ;
 	 * @param string $new_password - Must be non null and at least 1 character.
 	 * @return boolean - If passwords pass verification and query succeeds, return true, else return false.
 	 */
-	function change_password(
-	    $user_password,
-	    $new_password,
-	    $system_generated = '0'
-	    )
+	function change_password($user_password, $new_password, $system_generated = '0')
 	{
 	    global $mod_strings;
 		global $current_user;
@@ -833,32 +927,20 @@ EOQ;
 		    return false;
 		}
 
-		$old_user_hash = strtolower(md5($user_password));
-
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
-			$query = "SELECT user_name FROM $this->table_name WHERE user_hash='$old_user_hash' AND id='$this->id'";
-			$result = $this->db->query($query, true);
-			$row = $this->db->fetchByAssoc($result);
-			$GLOBALS['log']->debug("select old password query: $query");
-			$GLOBALS['log']->debug("return result of $row");
-            if ($row == null) {
+			$row = self::findUserPassword($this->user_name, md5($user_password));
+            if (empty($row)) {
 				$GLOBALS['log']->warn("Incorrect old password for ".$this->user_name."");
 				$this->error_string = $mod_strings['ERR_PASSWORD_INCORRECT_OLD_1'].$this->user_name.$mod_strings['ERR_PASSWORD_INCORRECT_OLD_2'];
 				return false;
 			}
 		}
 
-        $user_hash = strtolower(md5($new_password));
-        $this->setPreference('loginexpiration','0');
-        //set new password
-        $now = TimeDate::getInstance()->nowDb();
-		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
-		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
-        $_SESSION['hasExpiredPassword'] = '0';
+		$this->setNewPassword($new_password, $system_generated);
 		return true;
 	}
-	
+
 	/**
 	 * Check new password against rules set by admin
 	 * @param string $password
@@ -866,45 +948,45 @@ EOQ;
 	 */
 	function check_password_rules($password) {
 	    $length = mb_strlen($password);
-	
+
 	    // Min length
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["minpwdlength"]) && $GLOBALS["sugar_config"]["passwordsetting"]["minpwdlength"] > 0 && $length < $GLOBALS["sugar_config"]["passwordsetting"]["minpwdlength"]) {
 	        return false;
 	    }
-	
+
 	    // Max length
 	    if(!empty($GLOBALS['sugar_config']['passwordsetting']['maxpwdlength']) && $GLOBALS['sugar_config']['passwordsetting']['maxpwdlength'] > 0 && $length > $GLOBALS['sugar_config']['passwordsetting']['maxpwdlength']) {
 	        return false;
 	    }
-	
+
 	    // One lower case
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["onelower"]) && !preg_match('/[a-z]+/', $password)){
 	        return false;
 	    }
-	
+
 	    // One upper case
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["oneupper"]) && !preg_match('/[A-Z]+/', $password)){
 	        return false;
 	    }
-	
+
 	    // One number
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["onenumber"]) && !preg_match('/[0-9]+/', $password)){
 	        return false;
 	    }
-	
+
 	    // One special character
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["onespecial"]) && !preg_match('/[|}{~!@#$%^&*()_+=-]+/', $password)){
 	        return false;
 	    }
-	
+
 	    // Custom regex
 	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) && !preg_match($GLOBALS["sugar_config"]["passwordsetting"]["customregex"], $password)){
 	        return false;
 	    }
-	
+
 	    return true;
 	}
-	
+
 	function is_authenticated() {
 		return $this->authenticated;
 	}
@@ -1155,7 +1237,7 @@ EOQ;
 	}
 	//END SUGARCRM flav=pro ONLY
 
-	
+
     /**
      * getAllUsers
      *
@@ -1649,7 +1731,12 @@ EOQ;
                 continue;
             }
 
-            $key = 'module';
+            $focus = SugarModule::get($module)->loadBean();
+            if ( $focus instanceOf SugarBean ) {
+                $key = $focus->acltype;
+            } else {
+                $key = 'module';
+            }
 
             if (($this->isAdmin() && isset($actions[$module][$key]))
             //BEGIN SUGARCRM flav=pro ONLY
@@ -1787,7 +1874,7 @@ EOQ;
 		}
 
 		//uploadfile
-		if (isset($_FILES['picture']))
+		if (isset($_FILES['picture']) && !empty($_FILES['picture']["name"]))
 		{
 			//confirm only image file type can be uploaded
 			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
@@ -1801,6 +1888,15 @@ EOQ;
 					if(!verify_image_file($path)) {
 					    $this->picture = '';
 					}
+				}
+			} else {
+				$this->picture = create_guid().".png";
+				$file = "include/images/default-profile.png";
+				$newfile = "upload://$this->picture";
+				if (!copy($file, $newfile)) {
+		   			global $app_strings;
+		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
+
 				}
 			}
 		}
@@ -2115,15 +2211,7 @@ EOQ;
             $emailObj->save();
             if (!isset($additionalData['link']) || $additionalData['link'] == false)
             {
-                $user_hash = strtolower(md5($additionalData['password']));
-                $this->setPreference('loginexpiration', '0');
-                $this->setPreference('lockout', '');
-                $this->setPreference('loginfailed', '0');
-                $this->savePreferencesToDB();
-                //set new password
-                $now=TimeDate::getInstance()->nowDb();
-                $query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$this->id'";
-                $this->db->query($query, true, "Error setting new password for $this->user_name: ");
+                $this->setNewPassword($additionalData['password'], '1');
             }
         }
 

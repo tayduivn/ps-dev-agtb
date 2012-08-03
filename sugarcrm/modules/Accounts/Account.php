@@ -156,63 +156,31 @@ class Account extends Company {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-        //Combine the email logic original here with bug #26450.
-		if( (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
-        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails' )
-        	||
-        	(!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] != 'Accounts' &&
-        	!empty($_REQUEST['return_module']) && $_REQUEST['return_module'] != 'Accounts') ){
+        //Email logic
+		if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
+        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails') {
 			$_REQUEST['parent_name'] = '';
 			$_REQUEST['parent_id'] = '';
 		}
 	}
+
+function save() {
+     parent::save();
+
+         // If we're importing back semi-colon separated non-primary emails
+      if (!empty($this->email) && is_array($this->email)) {
+       foreach ($this->email as $mail) {
+         $this->emailAddress->addAddress($mail);
+       }
+       $this->emailAddress->save($this->id, $this->module_dir);
+         }
+   }
 
 	function get_summary_text()
 	{
 		return $this->name;
 	}
 
-//BEGIN SUGARCRM flav=pro ONLY
-	/** Returns a list of the associated products
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
-	*/
-	function get_products()
-	{
-
-
-		$product = new Product();
-
-		// First, get the list of IDs.
-		$query = $this->get_products_query();
-		return $this->build_related_list($query, new Product());
-	}
-
-	/**
-	 * Returns the SELECT query that will get the list of associated Products.
-	 */
-	function get_products_query()
-	{
-
-		$product = new Product();
-
-		if($GLOBALS['db']->tableExists($product->table_name . "_cstm")){
-		    return "SELECT 'Products' module, products.*, products_cstm.*"
-                . " FROM $product->table_name "
-                . " LEFT JOIN quotes ON products.quote_id = quotes.id"
-                . " LEFT JOIN $product->table_name"."_cstm ON products_cstm.id_c = products.id"
-                . " WHERE products.account_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		} else {
-		    return "SELECT 'Products' module, products.*"
-                . " FROM $product->table_name "
-                . " LEFT JOIN quotes ON products.quote_id = quotes.id"
-                . " WHERE products.account_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		}
-
-	}
-
-//END SUGARCRM flav=pro ONLY
 	function get_contacts() {
 		return $this->get_linked_beans('contacts','Contact');
 	}
@@ -342,9 +310,13 @@ class Account extends Company {
 			if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                accounts.*,email_addresses.email_address email_address,
-                                accounts.name as account_name,
-                                users.user_name as assigned_user_name ";
+                                 accounts.*,
+                                 email_addresses.email_address email_address,
+                                 '' as any_email,
+                                 accounts.name as account_name,
+                                 users.user_name as assigned_user_name,
+                                 email_addr_bean_rel.primary_address as primary_email_address";
+
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= ", teams.name AS team_name ";
 //END SUGARCRM flav=pro ONLY
@@ -363,7 +335,8 @@ class Account extends Company {
 //END SUGARCRM flav=pro ONLY
 
 						//join email address table too.
-						$query .=  ' LEFT JOIN  email_addr_bean_rel on accounts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Accounts\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
+                         $query .=  ' LEFT JOIN  email_addr_bean_rel on accounts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Accounts\' and email_addr_bean_rel.deleted=0 ';//and email_addr_bean_rel.primary_address=1 ';
+
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
 
 						if($custom_join){

@@ -171,8 +171,8 @@ function confirm_safety(){
 	<td>{PREV_DISPLAY_TEXT}</td>
 	</tr>
 		<!-- BEGIN: lang_field -->		
-		<tr id='lang_{FIELD_NUM}' style="display:{START_DISPLAY}" height="10px">
-		<td  wrap>{MOD.LBL_SET} <a id='href_{FIELD_NUM}' href=# onclick="get_selector('{FIELD_NUM}');">{FIELD_NAME}</a><span id='href_pre_text_{FIELD_NUM}'> {MOD.LBL_AS} </span><span id='href_text_{FIELD_NUM}'>{ACTION_DISPLAY_TEXT}</span></td>
+		<tr>
+		<td id='lang_{FIELD_NUM}' style="display:{START_DISPLAY}" height="10px" wrap>{MOD.LBL_SET} <a id='href_{FIELD_NUM}' href=# onclick="get_selector('{FIELD_NUM}');">{FIELD_NAME}</a><span id='href_pre_text_{FIELD_NUM}'> {MOD.LBL_AS} </span><span id='href_text_{FIELD_NUM}'>{ACTION_DISPLAY_TEXT}</span>
 		<input type="hidden" id="field_{FIELD_NUM}" name="field_{FIELD_NUM}" value="{FIELD_VALUE}">
 		<input type="hidden" id="value_{FIELD_NUM}" name="value_{FIELD_NUM}" value="{ACTION_VALUE}">
 		<input type="hidden" id="set_type_{FIELD_NUM}" name="set_type_{FIELD_NUM}" value="{ACTION_SET_TYPE}">
@@ -183,7 +183,7 @@ function confirm_safety(){
 		<input type="hidden" id="adv_value_{FIELD_NUM}" name="adv_value_{FIELD_NUM}" value="{ACTION_ADV_VALUE}">
 		<input type="hidden" id="ext1_{FIELD_NUM}" name="ext1_{FIELD_NUM}" value="{ACTION_EXT1}">
 		<input type="hidden" id="ext2_{FIELD_NUM}" name="ext2_{FIELD_NUM}" value="{ACTION_EXT2}">	
-		<input type="hidden" id="ext3_{FIELD_NUM}" name="ext3_{FIELD_NUM}" value="{ACTION_EXT3}">
+		<input type="hidden" id="ext3_{FIELD_NUM}" name="ext3_{FIELD_NUM}" value="{ACTION_EXT3}"></td>
 		</tr>
 <!-- END: lang_field -->			
 		<tr>

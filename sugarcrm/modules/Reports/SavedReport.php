@@ -112,7 +112,17 @@ class SavedReport extends SugarBean
 		}
 
 		// cn: SECURITY bug 12272
-		$name = strip_tags(from_html($name));
+		$name = filter_var($name, FILTER_SANITIZE_STRIPPED, FILTER_FLAG_NO_ENCODE_QUOTES);
+        if (empty($name))
+        {
+            $name = translate('LBL_UNTITLED', 'Reports');
+        }
+		$json = getJSONobj();
+		$tmpContent = $json->decode($content, false);
+
+		// clean stored report_name too
+		$tmpContent['report_name'] = $name;
+		$content = $json->encode($tmpContent, false);
 		// end SECURITY
 
 		$result = 1;

@@ -108,6 +108,7 @@ class SqlsrvManager extends MssqlManager
             'relate'   => 'nvarchar',
             'multienum'=> 'nvarchar(max)',
             'html'     => 'nvarchar(max)',
+            'longhtml' => 'nvarchar(max)',
             'datetime' => 'datetime',
             'datetimecombo' => 'datetime',
             'time'     => 'datetime',
@@ -463,6 +464,15 @@ EOSQL;
         return $sql;
     }
 
+    /**
+     * Truncate table
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE TABLE $name";
+    }
 
 	/**
 	 * (non-PHPdoc)

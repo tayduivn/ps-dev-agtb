@@ -31,7 +31,7 @@
 <script type="text/javascript">
 	{literal}
 	SUGAR.util.doWhen(
-		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || SUGAR.loadChart  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
+		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || (SUGAR.loadChart && typeof loadSugarChart == 'function')  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
 		function(){
 			{/literal}
 			var css = new Array();
@@ -54,7 +54,7 @@
 			{if !isset($showchart)}
 				loadCustomChartForReports();
 			{else}
-			    if (document.getElementById('showHideChartButton').value != '{$showchart}')
+			     if($('#showHideChartButton').attr('value') != '{$showchart}')
 			        loadCustomChartForReports();
 			{/if}
 			{literal}

@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['Task'] = array('table' => 'tasks',
 	'unified_search' => true,
+	'full_text_search' => true,
                                'fields' => array (
   'name' =>
   array (
@@ -30,6 +31,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'type' => 'name',
     'len' => '50',
 	'unified_search' => true,
+	'full_text_search' => array('boost' => 3),
     'importable' => 'required',
     'required' => 'true',
   ),
@@ -171,7 +173,7 @@ $dictionary['Task'] = array('table' => 'tasks',
         'type'=>'varchar',
 		'vname' => 'LBL_EMAIL_ADDRESS',
 		'source' => 'non-db',
-        'studio' => 'hidden'
+        'studio' => false
     ),
 
   'priority' =>

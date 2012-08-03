@@ -65,6 +65,7 @@ if (typeof(SUGAR) == "undefined") {
 
 // Namespaces
 SUGAR.namespace("themes");
+SUGAR.namespace("tour");
 
 /**
  * Namespace for Homepage
@@ -119,8 +120,8 @@ var callbackIndex = 16;
 var allowblank = 8;
 var validate = new Array();
 var maxHours = 24;
-var requiredTxt = 'Missing Required Field:'
-var invalidTxt = 'Invalid Value:'
+var requiredTxt = 'Missing Required Field:';
+var invalidTxt = 'Invalid Value:';
 var secondsSinceLoad = 0;
 var inputsWithErrors = new Array();
 var tabsWithErrors = new Array();
@@ -208,7 +209,7 @@ function toggleDisplay(id) {
 			this.document.getElementById(id+"_anchor").innerHTML='[ - ]';
 	}
 	else {
-		this.document.getElementById(id).style.display = 'none'
+		this.document.getElementById(id).style.display = 'none';
 		if(this.document.getElementById(id+"link") != undefined) {
 			this.document.getElementById(id+"link").style.display = '';
 		}
@@ -255,30 +256,30 @@ function addToValidateCallback(formname, name, type, required, msg, callback)
 
 function addToValidateRange(formname, name, type,required,  msg,min,max) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'range'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'range';
 	validate[formname][validate[formname].length - 1][minIndex] = min;
 	validate[formname][validate[formname].length - 1][maxIndex] = max;
 }
 
 function addToValidateIsValidDate(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'date'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'date';
 }
 
 function addToValidateIsValidTime(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'time'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'time';
 }
 
 function addToValidateDateBefore(formname, name, type, required, msg, compareTo) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore';
 	validate[formname][validate[formname].length - 1][compareToIndex] = compareTo;
 }
 
 function addToValidateDateBeforeAllowBlank(formname, name, type, required, msg, compareTo, allowBlank) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore';
 	validate[formname][validate[formname].length - 1][compareToIndex] = compareTo;
 	validate[formname][validate[formname].length - 1][allowblank] = allowBlank;
 }
@@ -693,7 +694,7 @@ function add_error_style(formname, input, txt, flash) {
     {
 		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
 	    if ( inputsWithErrors.length == 1 ) {
-	      for(wp = 1; wp <= 10; wp++) {
+	      for(var wp = 1; wp <= 10; wp++) {
 	        window.setTimeout('fade_error_style(style, '+wp*10+')',1000+(wp*50));
 	      }
 	    }
@@ -1225,7 +1226,7 @@ function validate_form(formname, startsWith){
 		for(var wp = 0; wp < inputsWithErrors.length; wp++) {
 			var elementCoor = findElementPos(inputsWithErrors[wp]);
 			if(!(elementCoor.x >= nwX && elementCoor.y >= nwY &&
-				elementCoor.x <= seX && elementCoor.y <= seY)) { // if input is not within viewport
+                elementCoor.x <= seX+nwX && elementCoor.y <= seY+nwY)) { // if input is not within viewport, modify for SI bug 52497
 					inView = false;
 					scrollToTop = elementCoor.y - 75;
 					scrollToLeft = elementCoor.x - 75;
@@ -1752,7 +1753,6 @@ function initEditView(theForm) {
 function onUnloadEditView(theForm) {
 
 	var dataHasChanged = false;
-
     if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
@@ -1877,21 +1877,16 @@ sugarListView.prototype.confirm_action = function(del) {
 
 }
 sugarListView.get_num_selected = function () {
-	if(typeof document.MassUpdate != 'undefined') {
-		the_form = document.MassUpdate;
-		for(wp = 0; wp < the_form.elements.length; wp++) {
-			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
-				return the_form.elements[wp].value;
-			}
-		}
-	}
-	return 0;
+    var selectCount = $("input[name='selectCount[]']:first");
+    if(selectCount.length > 0)
+        return parseInt(selectCount.val().replace("+", ""));
+    return 0;
 
 }
 sugarListView.update_count = function(count, add) {
 	if(typeof document.MassUpdate != 'undefined') {
 		the_form = document.MassUpdate;
-		for(wp = 0; wp < the_form.elements.length; wp++) {
+		for(var wp = 0; wp < the_form.elements.length; wp++) {
 			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
 				if(add)	{
 					the_form.elements[wp].value = parseInt(the_form.elements[wp].value,10) + count;
@@ -2306,12 +2301,37 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 sugarListView.prototype.check_item = function(cb, form) {
 	if(cb.checked) {
 		sugarListView.update_count(1, true);
+
 	}else{
 		sugarListView.update_count(-1, true);
 		if(typeof form != 'undefined' && form != null) {
 			sugarListView.prototype.updateUid(cb, form);
 		}
 	}
+	sugarListView.prototype.toggleSelected();
+}
+
+sugarListView.prototype.toggleSelected = function() {
+
+	var numSelected = sugarListView.get_num_selected();
+	var selectedRecords = document.getElementById("selectedRecordsTop");
+	var selectActions = document.getElementById("selectActions");
+	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
+	if(numSelected > 0) {
+        $(selectedRecords).removeAttr("style").addClass("show");
+        $(".selectActionsDisabled").hide();
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).removeAttr("style").addClass("show");
+        });
+
+	} else {
+        $(selectedRecords).hide();
+        $(".selectActionsDisabled").removeAttr("style").addClass("show");
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).hide();
+        });
+	}
+
 }
 
 /**#28000, remove the  unselect record id from MassUpdate.uid **/
@@ -2330,9 +2350,9 @@ sugarListView.prototype.updateUid = function(cb  , form){
 sugarListView.prototype.check_entire_list = function(form, field, value, list_count) {
 	// count number of items
 	count = 0;
-	document.MassUpdate.massall.checked = true;
-	document.MassUpdate.massall.disabled = true;
-
+    $(document.MassUpdate.massall).each(function(){
+            $(this).attr('checked', true).attr('disabled', true);
+        });
 	for (i = 0; i < form.elements.length; i++) {
 		if(form.elements[i].name == field && form.elements[i].disabled == false) {
 			if(form.elements[i].checked != value) count++;
@@ -2341,21 +2361,24 @@ sugarListView.prototype.check_entire_list = function(form, field, value, list_co
 		}
 	}
 	document.MassUpdate.select_entire_list.value = 1;
-	//if(value)
 	sugarListView.update_count(list_count, false);
-	//else sugarListView.update_count(-1 * count, true);
+    sugarListView.prototype.toggleSelected();
 }
 
 sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 	// count number of items
 	count = 0;
-	document.MassUpdate.massall.checked = value;
+    $(document.MassUpdate.massall).each(function(){$(this).attr('checked', value);});
 	if (document.MassUpdate.select_entire_list &&
 		document.MassUpdate.select_entire_list.value == 1)
-		document.MassUpdate.massall.disabled = true;
-	else
-		document.MassUpdate.massall.disabled = false;
-
+    {
+        sugarListView.prototype.toggleSelected();
+        $(document.MassUpdate.massall).each(function(){$(this).attr('disabled', true);});
+	}
+    else
+    {
+        $(document.MassUpdate.massall).each(function(){$(this).attr('disabled', false);});
+    }
 	for (i = 0; i < form.elements.length; i++) {
 		if(form.elements[i].name == field && !(form.elements[i].disabled == true && form.elements[i].checked == false)) {
 			form.elements[i].disabled = false;
@@ -2374,6 +2397,8 @@ sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 		sugarListView.update_count(count, true);
 	else
 		sugarListView.update_count(-1 * count, true);
+
+	sugarListView.prototype.toggleSelected();
 }
 sugarListView.check_all = sugarListView.prototype.check_all;
 sugarListView.confirm_action = sugarListView.prototype.confirm_action;
@@ -2387,10 +2412,13 @@ sugarListView.prototype.check_boxes = function() {
 
 	if(typeof theForm.uid.value != 'undefined' && theForm.uid.value != "") {
 		checked_items = theForm.uid.value.split(",");
-		if (theForm.select_entire_list.value == 1)
+		if (theForm.select_entire_list.value == 1) {
 			document.MassUpdate.massall.disabled = true;
+            sugarListView.prototype.toggleSelected();
+            $("a[name=selectall]:first").click();
+        }
 
-		for(wp = 0 ; wp < inputs_array.length; wp++) {
+		for(var wp = 0 ; wp < inputs_array.length; wp++) {
 			if(inputs_array[wp].name == "mass[]") {
 				inputsCount++;
 				if (theForm.select_entire_list.value == 1) {
@@ -2403,19 +2431,16 @@ sugarListView.prototype.check_boxes = function() {
 						if(inputs_array[wp].value == checked_items[i]) {
 							checkedCount++;
 							inputs_array[wp].checked = true;
+                            //Bug#52748: Total # of checked items are calculated in back-end side
+							//sugarListView.prototype.check_item(inputs_array[wp], document.MassUpdate);
 						}
 					}
 				}
 			}
 		}
-		if (theForm.select_entire_list.value == 0)
-			sugarListView.update_count(checked_items.length);
-		else
-			sugarListView.update_count(0, true);
-
 	}
 	else {
-		for(wp = 0 ; wp < inputs_array.length; wp++) {
+		for(var wp = 0 ; wp < inputs_array.length; wp++) {
 			if(inputs_array[wp].name == "mass[]") {
 				inputs_array[wp].checked = false;
 				inputs_array[wp].disabled = false;
@@ -2429,7 +2454,6 @@ sugarListView.prototype.check_boxes = function() {
 	}
 	if(checkedCount > 0 && checkedCount == inputsCount)
 		document.MassUpdate.massall.checked = true;
-
 }
 
 
@@ -2471,7 +2495,7 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 
 	switch(mode) {
 		case 'selected':
-			for(wp = 0; wp < document.MassUpdate.elements.length; wp++) {
+			for(var wp = 0; wp < document.MassUpdate.elements.length; wp++) {
 				var reg_for_existing_uid = new RegExp('^'+RegExp.escape(document.MassUpdate.elements[wp].value)+'[\s]*,|,[\s]*'+RegExp.escape(document.MassUpdate.elements[wp].value)+'[\s]*,|,[\s]*'+RegExp.escape(document.MassUpdate.elements[wp].value)+'$|^'+RegExp.escape(document.MassUpdate.elements[wp].value)+'$');
 				//when the uid is already in document.MassUpdate.uid.value, we should not add it to ar.
 				if(typeof document.MassUpdate.elements[wp].name != 'undefined'
@@ -2535,9 +2559,11 @@ sugarListView.prototype.clear_all = function() {
 	document.MassUpdate.uid.value = '';
 	document.MassUpdate.select_entire_list.value = 0;
 	sugarListView.check_all(document.MassUpdate, 'mass[]', false);
-	document.MassUpdate.massall.checked = false;
-	document.MassUpdate.massall.disabled = false;
+    $(document.MassUpdate.massall).each(function(){
+        $(this).attr('checked', false).attr('disabled', false);
+    });
 	sugarListView.update_count(0);
+	sugarListView.prototype.toggleSelected();
 }
 
 sListView = new sugarListView();
@@ -3029,35 +3055,147 @@ SUGAR.util = function () {
 		},
 
 		/**
+		 * Renders Query UI Help Dialog
+		 */
+		showHelpTips: function(el,helpText,myPos,atPos,id) {
+				if(myPos == undefined || myPos == "") {
+					myPos = "left top";
+				}
+				if(atPos == undefined || atPos == "") {
+					atPos = "right top";
+				}
+
+				var pos = $(el).offset(),
+                    ofWidth = $(el).width(),
+                    elmId = id || 'helpTip' + pos.left + '_' + ofWidth,
+                    $dialog = elmId ? ( $("#"+elmId).length > 0 ? $("#"+elmId) : $('<div></div>').attr("id", elmId) ) : $('<div></div>');
+                $dialog.html(helpText)
+					.dialog({
+						autoOpen: false,
+						title: SUGAR.language.get('app_strings', 'LBL_HELP'),
+						position: {
+						    my: myPos,
+						    at: atPos,
+						    of: $(el)
+					 	}
+					});
+
+
+					var width = $dialog.dialog( "option", "width" );
+
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
+					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
+
+
+		},
+		getStaticAdditionalDetails: function(el, body, caption, show_buttons) {
+			if(typeof show_buttons == "undefined") {
+				show_buttons = false;
+			}
+
+			$(".ui-dialog").find(".open").dialog("close");
+
+			var $dialog = $('<div class="open"></div>')
+			.html(body)
+			.dialog({
+				autoOpen: false,
+				title: caption,
+				width: 300,
+				position: {
+				    my: 'right top',
+				    at: 'left top',
+				    of: $(el)
+			  }
+			});
+
+			if(show_buttons) {
+				$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+			}
+
+
+			var width = $dialog.dialog( "option", "width" );
+			var pos = $(el).offset();
+			var ofWidth = $(el).width();
+
+			if((pos.left + ofWidth) - 40 < width) {
+				$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+			}
+
+			$dialog.dialog('open');
+			$(".ui-dialog").appendTo("#content");
+
+		},
+
+		closeStaticAdditionalDetails: function() {
+			$(".ui-dialog").find(".open").dialog("close");
+		},
+		/**
 		 * Retrieves additional details dynamically
 		 */
-		getAdditionalDetails: function(bean, id, spanId) {
+		getAdditionalDetails: function(bean, id, spanId, show_buttons) {
+			if(typeof show_buttons == "undefined")
+				show_buttons = false;
+				var el = '#'+spanId;
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
-					var _refx = 25-width;
-					return overlib(body, CAPTION, caption, STICKY, MOUSEOFF, 1000, WIDTH, width, CLOSETEXT, ('<img border=0 style="margin-left:2px; margin-right: 2px;" src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', REF, spanId, REFC, 'LL', REFX, _refx);
+
+					$(".ui-dialog").find(".open").dialog("close");
+
+					var $dialog = $('<div class="open"></div>')
+					.html(body)
+					.dialog({
+						autoOpen: false,
+						title: caption,
+						width: 300,
+						position: {
+						    my: 'right top',
+						    at: 'left top',
+						    of: $(el)
+					  }
+					});
+				if(show_buttons) {
+					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+				}
+
+					var width = $dialog.dialog( "option", "width" );
+					var pos = $(el).offset();
+					var ofWidth = $(el).width();
+
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
+
+					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
 				}
 
 				success = function(data) {
 					eval(data.responseText);
 
-					SUGAR.util.additionalDetailsCache[spanId] = new Array();
-					SUGAR.util.additionalDetailsCache[spanId]['body'] = result['body'];
-					SUGAR.util.additionalDetailsCache[spanId]['caption'] = result['caption'];
-					SUGAR.util.additionalDetailsCache[spanId]['width'] = result['width'];
-					SUGAR.util.additionalDetailsCache[spanId]['theme'] = result['theme'];
+					SUGAR.util.additionalDetailsCache[id] = new Array();
+					SUGAR.util.additionalDetailsCache[id]['body'] = result['body'];
+					SUGAR.util.additionalDetailsCache[id]['caption'] = result['caption'];
+					SUGAR.util.additionalDetailsCache[id]['width'] = result['width'];
+					SUGAR.util.additionalDetailsCache[id]['theme'] = result['theme'];
 					ajaxStatus.hideStatus();
-					return oReturn(SUGAR.util.additionalDetailsCache[spanId]['body'], SUGAR.util.additionalDetailsCache[spanId]['caption'], SUGAR.util.additionalDetailsCache[spanId]['width'], SUGAR.util.additionalDetailsCache[spanId]['theme']);
+					return oReturn(SUGAR.util.additionalDetailsCache[id]['body'], SUGAR.util.additionalDetailsCache[id]['caption'], SUGAR.util.additionalDetailsCache[id]['width'], SUGAR.util.additionalDetailsCache[id]['theme']);
 				}
 
-				if(typeof SUGAR.util.additionalDetailsCache[spanId] != 'undefined')
-					return oReturn(SUGAR.util.additionalDetailsCache[spanId]['body'], SUGAR.util.additionalDetailsCache[spanId]['caption'], SUGAR.util.additionalDetailsCache[spanId]['width'], SUGAR.util.additionalDetailsCache[spanId]['theme']);
+				if(typeof SUGAR.util.additionalDetailsCache[id] != 'undefined')
+					return oReturn(SUGAR.util.additionalDetailsCache[id]['body'], SUGAR.util.additionalDetailsCache[id]['caption'], SUGAR.util.additionalDetailsCache[id]['width'], SUGAR.util.additionalDetailsCache[id]['theme']);
 
-				if(typeof SUGAR.util.additionalDetailsCalls[spanId] != 'undefined') // call already in progress
+				if(typeof SUGAR.util.additionalDetailsCalls[id] != 'undefined') // call already in progress
 					return;
 				ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 				url = 'index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=' + bean + '&id=' + id;
-				SUGAR.util.additionalDetailsCalls[spanId] = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});
+				if(show_buttons)
+					url += '&show_buttons=true';
+				SUGAR.util.additionalDetailsCalls[id] = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});
 
 				return false;
 			}
@@ -3178,7 +3316,9 @@ SUGAR.util = function () {
                             context = item.overrideContext;
                         }
                     }
-                    item.fn.call(context, item.obj);
+                    if(item.fn) {
+                        item.fn.call(context, item.obj);
+                    }
                 };
 
                 var i, len, item, test;
@@ -3217,64 +3357,63 @@ SUGAR.util = function () {
                 }
                 this._doWhenLocked = false;
             },
-        buildAccessKeyLabels : function()
-                {
-                    if (typeof(Y.env.ua) !== 'undefined'){
-                        envStr = '';
-                        browserOS = Y.env.ua['os'];
-                        isIE = Y.env.ua['ie'];
-                        isCR = Y.env.ua['chrome'];
-                        isFF = Y.env.ua['gecko'];
-                        isWK = Y.env.ua['webkit'];
-                        isOP = Y.env.ua['opera'];
-                        controlKey = '';
+        buildAccessKeyLabels : function() {
+            if (typeof(Y.env.ua) !== 'undefined'){
+                envStr = '';
+                browserOS = Y.env.ua['os'];
+                isIE = Y.env.ua['ie'];
+                isCR = Y.env.ua['chrome'];
+                isFF = Y.env.ua['gecko'];
+                isWK = Y.env.ua['webkit'];
+                isOP = Y.env.ua['opera'];
+                controlKey = '';
 
-                        //first determine the OS
-                        if(browserOS=='macintosh'){
-                            //we got a mac, lets use the mac specific commands while we check the browser
-                            if(isIE){
-                                //IE on a Mac? Not possible, but let's assign alt anyways for completions sake
-                                controlKey = 'Alt+';
-                            }else if(isWK){
-                                //Chrome or safari on a mac
-                                controlKey = 'Ctrl+Opt+';
-                            }else if(isOP){
-                                //Opera on a mac
-                                controlKey = 'Shift+Esc: ';
-                            }else{
-                                //default FF and everything else on a mac
-                                controlKey = 'Ctrl+';
-                            }
-                        }else{
-                            //this is not a mac so let's use the windows/unix commands while we check the browser
-                            if(isFF){
-                                //FF on windows/unix
-                                controlKey = 'Alt+Shift+';
-                            }else if(isOP){
-                                //Opera on windows/unix
-                                controlKey = 'Shift+Esc: ';
-                            }else {
-                                //this is the default for safari, IE and Chrome
-                                //if this is webkit and is NOT google, then we are most likely looking at Safari
-                                controlKey = 'Alt+';
-                            }
+                //first determine the OS
+                if(browserOS=='macintosh'){
+                    //we got a mac, lets use the mac specific commands while we check the browser
+                    if(isIE){
+                        //IE on a Mac? Not possible, but let's assign alt anyways for completions sake
+                        controlKey = 'Alt+';
+                    }else if(isWK){
+                        //Chrome or safari on a mac
+                        controlKey = 'Ctrl+Opt+';
+                    }else if(isOP){
+                        //Opera on a mac
+                        controlKey = 'Shift+Esc: ';
+                    }else{
+                        //default FF and everything else on a mac
+                        controlKey = 'Ctrl+';
+                    }
+                }else{
+                    //this is not a mac so let's use the windows/unix commands while we check the browser
+                    if(isFF){
+                        //FF on windows/unix
+                        controlKey = 'Alt+Shift+';
+                    }else if(isOP){
+                        //Opera on windows/unix
+                        controlKey = 'Shift+Esc: ';
+                    }else {
+                        //this is the default for safari, IE and Chrome
+                        //if this is webkit and is NOT google, then we are most likely looking at Safari
+                        controlKey = 'Alt+';
+                    }
 
-                        }
+                }
 
-                        //now lets retrieve all elements of type input
-                        allButtons = document.getElementsByTagName('input');
-                        //iterate through list and modify title if the accesskey is not empty
-                        for(i=0;i<allButtons.length;i++){
-                            if(allButtons[i].getAttribute('accesskey') && allButtons[i].getAttribute('type') && allButtons[i].getAttribute('type')=='button'){
-                                allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
-                            }
-                        }
-                        //now change the text in the help div
-			if(typeof(keyboardhelpText) =='string'){
-                                keyboardhelpText = keyboardhelpText.replace(/Alt\+/g,controlKey);
-                        }
-                    }// end if (typeof(Y.env.ua) !== 'undefined')
-                }//end buildAccessKeyLabels()
+                //now lets retrieve all elements of type input
+                allButtons = document.getElementsByTagName('input');
+                //iterate through list and modify title if the accesskey is not empty
+                for(i=0;i<allButtons.length;i++){
+                    if(allButtons[i].getAttribute('accesskey') && allButtons[i].getAttribute('type') && allButtons[i].getAttribute('type')=='button'){
+                        allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
+                    }
+                }
+                //now change the text in the help div
+                $("#shortcuts_dialog").html(function(i, text)  {
+                    return text.replace(/Alt\+/g,controlKey);
+                });
+            }// end if (typeof(Y.env.ua) !== 'undefined')
+        }//end buildAccessKeyLabels()
 	};
 }(); // end util
 SUGAR.util.additionalDetailsCache = new Array();
@@ -3428,6 +3567,22 @@ SUGAR.searchForm = function() {
 	                    }
 					}
 				}
+
+                //clear thesearch form accesekeys and reset them to the appropriate link
+                adv = document.getElementById('advanced_search_link');
+                bas = document.getElementById('basic_search_link');
+                adv.setAttribute('accesskey','');
+                bas.setAttribute('accesskey','');
+                a_key = SUGAR.language.get("app_strings", "LBL_ADV_SEARCH_LNK_KEY");
+
+                //reset the ccesskey based on theview
+                if(theView === 'advanced_search'){
+
+                    bas.setAttribute('accesskey',a_key);
+                }else{
+                    adv.setAttribute('accesskey',a_key);
+                }
+                
 				// show the good search form.
 				document.getElementById(module + theView + 'SearchForm').style.display = '';
                 //if its not the first tab show there is a previous tab.
@@ -4138,6 +4293,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		var request_data = popup_request_data;
 	}
     var field_to_name_array_url = '';
+
     if (request_data && request_data.field_to_name_array != undefined) {
         for(var key in request_data.field_to_name_array) {
             if ( key.toLowerCase() != 'id' ) {
@@ -4555,13 +4711,15 @@ closeActivityPanel: {
     }
 },
 
-setEmailPasswordDisplay: function(id, exists) {
+setEmailPasswordDisplay: function(id, exists, formName) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
 	if(exists) {
     	pwd.style.display = 'none';
     	link.style.display = '';
+        if(typeof(formName) != 'undefined')
+            removeFromValidate(formName, id);
 	} else {
     	pwd.style.display = '';
     	link.style.display = 'none';

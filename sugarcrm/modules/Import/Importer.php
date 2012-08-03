@@ -229,6 +229,13 @@ class Importer
                 }
             }
 
+// Handle email field, if it's a semi-colon separated export
+             if ($field == 'email') {
+               if (strpos($rowValue, ';') !== false) {
+                 $rowValue = explode(';', $rowValue);
+                 $rowValue = array_slice($rowValue, 0, -1);
+               }
+             }
             // Handle email1 and email2 fields ( these don't have the type of email )
             if ( $field == 'email1' || $field == 'email2' )
             {
@@ -272,8 +279,19 @@ class Importer
             if( !empty($rowValue) )
             {
                 //Start
-                $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
-                if ($rowValue === FALSE) {
+                // If it's an array of non-primary e-mails, check each mail
+                 if ($field == "email" && is_array($rowValue)) {
+                   for ($i = 0; $i < sizeof($rowValue); $i++) {
+                     $rowValue[$i] = $this->sanitizeFieldValueByType($rowValue[$i], $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
+                     if ($rowValue[$i] === FALSE) {
+                       $rowValue = false;
+                         $do_save = false;
+                         break;
+             }
+                   }
+                 } else {
+                   $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
+                 }                if ($rowValue === FALSE) {
 					/* BUG 51213 - jeff @ neposystems.com */
                     $do_save = false;
                     continue;
@@ -514,9 +532,14 @@ class Importer
         */
         if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
              ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-        )
+        ) 
             $focus->update_date_modified = false;
 
+        // Bug 53636 - Allow update of "Date Created"
+        if (!empty($focus->date_entered)) {
+        	$focus->update_date_entered = true;
+        }
+            
         $focus->optimistic_lock = false;
         if ( $focus->object_name == "Contact" && isset($focus->sync_contact) )
         {
@@ -544,8 +567,21 @@ class Importer
         // call any logic needed for the module preSave
         $focus->beforeImportSave();
 
+        // Bug51192: check if there are any changes in the imported data
+        $hasDataChanges = false;
+        $dataChanges=$focus->db->getDataChanges($focus);
+        
+        if(!empty($dataChanges)) {
+            foreach($dataChanges as $field=>$fieldData) {
+                if($fieldData['data_type'] != 'date' || strtotime($fieldData['before']) != strtotime($fieldData['after'])) {
+                    $hasDataChanges = true;
+                    break;
+                }
+            }
+        }
+        
         // if modified_user_id is set, set the flag to false so SugarBEan will not reset it
-        if (isset($focus->modified_user_id) && $focus->modified_user_id) {
+        if (isset($focus->modified_user_id) && $focus->modified_user_id && !$hasDataChanges) {
             $focus->update_modified_by = false;
         }
         // if created_by is set, set the flag to false so SugarBEan will not reset it

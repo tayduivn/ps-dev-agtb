@@ -41,7 +41,12 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 		$this->button_properties=$button_properties;
 	}
 
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
+    public function getWidgetId()
+    {
+        return parent::getWidgetId() . '_select_button';
+    }
+
+	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
 		global $app_strings;
@@ -70,7 +75,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 
 		$focus = $widget_data['focus'];
 		if(ACLController::moduleSupportsACL($widget_data['module']) && !ACLController::checkAccess($widget_data['module'], 'list', true)){
-			$button = ' <input type="button" name="' .$this->getWidgetId() . '_select_button" id="' .$this->getWidgetId() . '_select_button" class="button"' . "\"\n"
+			$button = ' <input type="button" name="' .$this->getWidgetId() . '" id="' .$this->getWidgetId() . '" class="button"' . "\"\n"
 			. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			.' disabled />';
@@ -153,12 +158,11 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
 				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
-			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 
 		return '<form action="index.php">' . "\n"
-			. ' <input type="button" name="' .$this->getWidgetId() . '_select_button" id="' .$this->getWidgetId() . '_select_button" class="button"' . "\"\n"
+			. ' <input type="button" name="' .$this->getWidgetId() . '" id="' .$this->getWidgetId() . '" class="button"' . "\"\n"
 				. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' /></form>\n";

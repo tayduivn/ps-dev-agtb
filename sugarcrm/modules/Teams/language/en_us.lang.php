@@ -59,18 +59,19 @@ $mod_strings = array (
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',
 	'LBL_USERS'=>'Users',
 
-    'LBL_REASSIGN_TEAM_TITLE' => 'There are records assigned to the following team(s): <b>{0}</b><br>Before deleting the team(s), you must first reassign these records to a new team.  Select a team to be used as the replacement.',   
+    'LBL_REASSIGN_TEAM_TITLE' => 'There are records assigned to the following team(s): <b>{0}</b><br>Before deleting the team(s), you must first reassign these records to a new team.  Select a team to be used as the replacement.',
     'LBL_REASSIGN_TEAM_BUTTON_KEY' => 'R',
     'LBL_REASSIGN_TEAM_BUTTON_LABEL' => 'Reassign',
     'LBL_REASSIGN_TEAM_BUTTON_TITLE' => 'Reassign',
     'LBL_CONFIRM_REASSIGN_TEAM_LABEL' => 'Proceed to update the affected records to use the new team?',
     'LBL_REASSIGN_TABLE_INFO' => 'Updating table {0}',
-    'LBL_REASSIGN_TEAM_COMPLETED' => 'Operation has completed successfully.',    
+    'LBL_REASSIGN_TEAM_COMPLETED' => 'Operation has completed successfully.',
 
     'LNK_LIST_TEAM' => 'Teams',
 	'LNK_LIST_TEAMNOTICE' => 'Team Notices',
 	'LNK_NEW_TEAM' => 'Create Team',
 
+    'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
 	'NTC_REMOVE_TEAM_MEMBER_CONFIRMATION' => 'Are you sure you want to remove this user\\\'s membership?',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );

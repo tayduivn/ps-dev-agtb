@@ -92,6 +92,7 @@ class TemplateField{
 	    'ext3'=>'ext3',
 		'label_value'=>'label_value',
 		'unified_search'=>'unified_search',
+        'full_text_search'=>'full_text_search',
 	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',
@@ -331,15 +332,20 @@ class TemplateField{
 			'type'=>$this->type,
 			'massupdate'=>$this->massupdate,
 			'default'=>$this->default,
+            'no_default'=> !empty($this->no_default),
 			'comments'=> (isset($this->comments)) ? $this->comments : '',
 		    'help'=> (isset($this->help)) ?  $this->help : '',
 		    'importable'=>$this->importable,
 			'duplicate_merge'=>$this->duplicate_merge,
-			'duplicate_merge_dom_value'=> isset($this->duplicate_merge_dom_value) ? $this->duplicate_merge_dom_value : $this->duplicate_merge,
+			'duplicate_merge_dom_value'=> $this->getDupMergeDomValue(),
 			'audited'=>$this->convertBooleanValue($this->audited),
 			'reportable'=>$this->convertBooleanValue($this->reportable),
-            'unified_search'=>$this->convertBooleanValue($this->unified_search)
+            'unified_search'=>$this->convertBooleanValue($this->unified_search),
+            'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter
 		);
+        if (isset($this->full_text_search)) {
+            $array['full_text_search'] = $this->full_text_search;
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
             $array['calculated'] = $this->calculated;
@@ -358,7 +364,8 @@ class TemplateField{
 		if(!empty($this->size)){
 			$array['size'] = $this->size;
 		}
-		$this->get_dup_merge_def($array);
+
+        $this->get_dup_merge_def($array);
 
 		return $array;
 	}
@@ -377,13 +384,14 @@ class TemplateField{
 	/* if the field is duplicate merge enabled this function will return the vardef entry for the same.
 	 */
 	function get_dup_merge_def(&$def) {
-
-		switch ($def['duplicate_merge_dom_value']) {
+        switch ($def['duplicate_merge_dom_value']) {
 			case 0:
 				$def['duplicate_merge']='disabled';
+                $def['merge_filter']='disabled';
 				break;
 			case 1:
 				$def['duplicate_merge']='enabled';
+                $def['merge_filter']='disabled';
 				break;
 			case 2:
 				$def['merge_filter']='enabled';
@@ -400,6 +408,45 @@ class TemplateField{
 		}
 
 	}
+
+    /**
+     * duplicate_merge_dom_value drives the dropdown in the studio editor. This dropdown drives two fields though,
+     * duplicate_merge and merge_filter. When duplicate_merge_dom_value is not set, we need to derive it from the values
+     * of those two fields. Also, when studio sends this value down to be read in PopulateFromPost, it is set to
+     * duplicate_merge rather than duplicate_merge_dom_value, so we must check if duplicate_merge is a number rather
+     * than a string as well.
+     * @return int
+     */
+    function getDupMergeDomValue(){
+        if (isset($this->duplicate_merge_dom_value)) {
+            return $this->duplicate_merge_dom_value;
+        }
+
+        //If duplicate merge is numeric rather than a string, it is probably what duplicate_merge_dom_value was set to.
+        if (is_numeric($this->duplicate_merge))
+            return $this->duplicate_merge;
+
+
+        //Figure out the duplicate_merge_dom_value based on the values of merge filter and duplicate merge
+        if (empty($this->merge_filter) || $this->merge_filter === 'disabled' )
+        {
+            if (empty($this->duplicate_merge) || $this->duplicate_merge === 'disabled') {
+                $this->duplicate_merge_dom_value = 0;
+            } else {
+                $this->duplicate_merge_dom_value = 1;
+            }
+        } else {
+            if ($this->merge_filter === "selected")
+                $this->duplicate_merge_dom_value = 3;
+            else if (empty($this->duplicate_merge) || $this->duplicate_merge === 'disabled') {
+                $this->duplicate_merge_dom_value = 4;
+            } else {
+                $this->duplicate_merge_dom_value = 2;
+            }
+        }
+
+        return $this->duplicate_merge_dom_value;
+    }
 
 	/*
 		HELPER FUNCTIONS
@@ -423,9 +470,12 @@ class TemplateField{
 		if(!is_array($row)) {
 			$GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
 		}
-		//Bug 24189: Copy fields from FMD format to Field objects
+		//Bug 24189: Copy fields from FMD format to Field objects and vice versa
 		foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
-			if (isset($row[$fmd_key])) {
+            if (isset($row[$dyn_key])) {
+                $this->$fmd_key = $row[$dyn_key];
+            }
+            if (isset($row[$fmd_key])) {
 				$this->$dyn_key = $row[$fmd_key];
 			}
 		}
@@ -444,7 +494,7 @@ class TemplateField{
                 if (is_string($this->$vardef) && in_array($vardef, $this->decode_from_request_fields_map))
                   $this->$vardef = html_entity_decode($this->$vardef);
 
-				// Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'. 
+				// Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
 				// Add to the list below if we need to do the same for other fields.
 				if (!empty($this->$vardef) && in_array($vardef, array('formula', 'dependency'))){
 				    $this->$vardef = to_html(strip_tags(from_html($this->$vardef)));
@@ -492,7 +542,7 @@ class TemplateField{
 
     /**
      * get_field_name
-     * 
+     *
      * This is a helper function to return a field's proper name.  It checks to see if an instance of the module can
      * be created and then attempts to retrieve the field's name based on the name lookup skey supplied to the method.
      *
@@ -519,7 +569,7 @@ class TemplateField{
      * checks to see if updates are needed for the SearchFields.php file.  In the event that the unified_search
      * member variable is set to true, a search field definition is updated/created to the SearchFields.php file.
      *
-     * @param $df Instance of DynamicField
+     * @param DynamicField $df
      */
 	function save($df){
 		//	    $GLOBALS['log']->debug('saving field: '.print_r($this,true));

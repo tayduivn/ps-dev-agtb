@@ -40,7 +40,7 @@ class ACLAction  extends SugarBean{
     * @param STRING $category - the category (e.g module name - Accounts, Contacts)
     * @param STRING $type - the type (e.g. 'module', 'field')
     */
-    function addActions($category, $type='module'){
+    static function addActions($category, $type='module'){
         global $ACLActions;
         $db = DBManagerFactory::getInstance();
         if(isset($ACLActions[$type])){
@@ -122,7 +122,7 @@ class ACLAction  extends SugarBean{
     * @param INT $access - the access level you want the color for
     * @return the translated access level name or false if the level does not exist
     */
-    function AccessName($access){
+    static function AccessName($access){
         global $ACLActionAccessLevels;
         if(isset($ACLActionAccessLevels[$access])){
             return translate($ACLActionAccessLevels[$access]['label'], 'ACLActions');
@@ -205,7 +205,7 @@ class ACLAction  extends SugarBean{
     * @return ARRAY of ACLActionsArray
     */
 
-    function getUserActions($user_id,$refresh=false, $category='',$type='', $action=''){
+    static function getUserActions($user_id,$refresh=false, $category='',$type='', $action=''){
         //check in the session if we already have it loaded
         if(!$refresh && !empty($_SESSION['ACL'][$user_id])){
             if(empty($category) && empty($action)){
@@ -242,7 +242,7 @@ class ACLAction  extends SugarBean{
                     WHERE acl_actions.deleted=0 $additional_where ORDER BY category,name";
         $result = $db->query($query);
         $selected_actions = array();
-        while($row = $db->fetchByAssoc($result) ){
+        while($row = $db->fetchByAssoc($result, FALSE) ){
             $acl = new ACLAction();
             $isOverride  = false;
             $acl->populateFromRow($row);
@@ -301,9 +301,10 @@ class ACLAction  extends SugarBean{
     * @param int $access
     * @return true or false
     */
-    function hasAccess($is_owner=false, $access = 0){
+    static function hasAccess($is_owner=false, $access = 0){
 
         if($access != 0 && $access == ACL_ALLOW_ALL || ($is_owner && $access == ACL_ALLOW_OWNER))return true;
+       //if this exists, then this function is not static, so check the aclaccess parameter
         if(isset($this) && isset($this->aclaccess)){
             if($this->aclaccess == ACL_ALLOW_ALL || ($is_owner && $this->aclaccess == ACL_ALLOW_OWNER))
             return true;
@@ -361,6 +362,11 @@ class ACLAction  extends SugarBean{
 
         }
         if(!empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
+            if (!empty($_SESSION['ACL'][$user_id][$category][$type]['admin']) && $_SESSION['ACL'][$user_id][$category][$type]['admin']['aclaccess'] >= ACL_ALLOW_ADMIN)
+            {
+                // If you have admin access for a module, all ACL's are allowed
+                return $_SESSION['ACL'][$user_id][$category][$type]['admin']['aclaccess'];
+            }            
             return  $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'];
         }
     }
@@ -487,6 +493,3 @@ class ACLAction  extends SugarBean{
 
 
 }
-
-
-?>

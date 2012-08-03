@@ -97,9 +97,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}));
 
 			var viewHeight = document.documentElement ? document.documentElement.clientHeight : self.innerHeight;
+            var heightOffset = $('#dcmenu').length > 0 ? $('#dcmenu').height() : $('#header').height();
 			var mp = ModuleBuilder.mainPanel = new YAHOO.widget.Layout('mblayout', {
 				border: false,
-				height: viewHeight - (document.getElementById('header').clientHeight ) - 40,
+				height: viewHeight - heightOffset - 40,
 				//autoHeight: true
 				//frame: true,
 				units: [//ModuleBuilder.tree, ModuleBuilder.tabPanel,
@@ -1072,42 +1073,101 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (!targetId)
                 targetId = "formula";
             if(!returnType)
-				returnType = "";
+                returnType = "";
 
             if (!ModuleBuilder.formulaEditorWindow)
-            	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
-					width: 512,
-					draggable: true,
-					close: true,
-					constraintoviewport: true,
-					fixedcenter: false,
-					script: true,
-					modal: true
-				});
-			var win = ModuleBuilder.formulaEditorWindow;
-			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
-			win.setBody("loading...");
-			win.render(document.body);
-			win.params = {
+                ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
+                    width: 512,
+                    draggable: true,
+                    close: true,
+                    constraintoviewport: true,
+                    fixedcenter: false,
+                    script: true,
+                    modal: true
+                });
+            var win = ModuleBuilder.formulaEditorWindow;
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+            win.setBody("loading...");
+            win.render(document.body);
+            win.params = {
                 module:"ExpressionEngine",
                 action:"editFormula",
                 targetField: targetId,
-				returnType: returnType,
+                returnType: returnType,
                 loadExt:false,
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
                 formula:encodeURIComponent(YAHOO.lang.JSON.stringify(formula))
             };
-			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
-			{
-				ModuleBuilder.formulaEditorWindow.center();
-				SUGAR.util.evalScript(ModuleBuilder.formulaEditorWindow.body.innerHTML);
-			});
-			win.show();
-			win.center();
+            win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
+            {
+                ModuleBuilder.formulaEditorWindow.center();
+                SUGAR.util.evalScript(ModuleBuilder.formulaEditorWindow.body.innerHTML);
+            });
+            win.show();
+            win.center();
         },
-        
+        editVisibilityGrid: function(targetId, parent_options, child_options){
+            if (!targetId)
+                targetId = "visibility_grid";
+
+            if (!ModuleBuilder.visGridWindow)
+                ModuleBuilder.visGridWindow = new YAHOO.SUGAR.AsyncPanel('visGridWindow', {
+                    draggable: true,
+                    close: true,
+                    constraintoviewport: true,
+                    fixedcenter: false,
+                    script: true,
+                    modal: true,
+                    buttons: [
+                        {text:"Save", handler:function(){
+
+                        }, isDefault:true },
+                        { text:"Cancel",  handler:function(){
+                            ModuleBuilder.visGridWindow.hide()}
+                        }
+                    ]
+                });
+            var win = ModuleBuilder.visGridWindow;
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_VISIBILITY_EDITOR"));
+            win.setBody("loading...");
+            win.render(document.body);
+            win.params = {
+                module:"ModuleBuilder",
+                action:"depdropdown",
+                targetModule: ModuleBuilder.module,
+                package: ModuleBuilder.MBpackage,
+                parentList: parent_options,
+                childList: child_options,
+                targetId:targetId,
+                mode:2,
+                mapping: Dom.get(targetId).value
+            };
+            win.load("", "POST", function()
+            {
+                SUGAR.util.evalScript(win.body.innerHTML);
+                //firefox will ignore the left panel size, so we need to manually force the windows height and width
+                win.body.style.height = "570px";
+                win.body.style.minWidth = "780px";
+                win.center();
+            },
+                //POST parameters
+                ModuleBuilder.paramsToUrl(win.params)
+            );
+            win.show();
+            win.center();
+        },
+        toggleParent: function(enable){
+            if (typeof(enable) == 'undefined') {
+                enable = Dom.get('has_parent').checked;
+            }
+            var display = enable ? "" : "none";
+            Dom.setStyle("visGridRow", "display", display);
+            if(Dom.get('has_parent')){
+                Dom.get('has_parent').value = enable;
+            }
+        },
 		toggleCF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('calculated').checked;
@@ -1162,14 +1222,50 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 }
 			}
 		},
-        toggleDF: function(enable) {
-            if (typeof(enable) == 'undefined') {
+        toggleDF: function(enable, query) {
+            if (typeof(enable) == 'undefined' || enable === null) {
                 enable = Dom.get('dependent').checked;
             }
             var display = enable ? "" : "none";
             Dom.setStyle('visFormulaRow', 'display', display);
+            //If a query was passed in, we need to enble/disable elements that match the query as well
+            if (query)
+                $(query).css("display", display);
             Dom.get('dependency').disabled = !enable;
 			Dom.get('dependent').value = enable;
+        },
+        //We can only have a formula or a vis_grid. Before we save we need to clear the one we aren't using
+        validateDD: function() {
+            if ($('#depTypeSelect').val() != "parent")
+                $("#visibility_grid").val("");
+            if ($('#depTypeSelect').val() != "formula")
+                $("#dependency").val("");
+            return true;
+        },
+        addToHead: function(src, type){
+            var tag, srcKey, typeTag, rel;
+            type = type ? type : "js";
+            if (type == "js") {
+                tag = "script";
+                srcKey = "src";
+                typeTag = "text/javascript";
+            } else if (type == "css")
+            {
+                tag = "link";
+                srcKey = "href";
+                typeTag = "text/css";
+                rel = "stylesheet";
+            } else {
+                //Invalid or unknown type
+                return;
+            }
+            var headElem = document.getElementsByTagName('head')[0];
+            var tmpElem = document.createElement(tag);
+            tmpElem.type = typeTag;
+            tmpElem[srcKey] = src;
+            if (rel)
+                tmpElem.rel = rel;
+            headElem.appendChild(tmpElem);
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY
