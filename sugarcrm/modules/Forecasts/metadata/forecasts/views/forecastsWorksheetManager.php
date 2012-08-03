@@ -10,7 +10,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheetManager'] = array
                
                 array(
                     'name' => 'name',
-                    'type' => 'varchar',
+                    'type' => 'userLink',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'route' =>

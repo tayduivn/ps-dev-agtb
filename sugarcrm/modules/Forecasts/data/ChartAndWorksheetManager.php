@@ -55,22 +55,6 @@ class ChartAndWorksheetManager
     }
 
     /**
-     * @param $type
-     * @param string $id
-     * @return mixed
-     */
-    public function getChartDefinition($type, $id = '')
-    {
-        try {
-            $instance = $this->getDataInstance($type);
-            return $instance->getChartDefinition($id);
-        } catch (Exception $ex) {
-            return null;
-        }
-    }
-
-
-    /**
      * @param string $type
      * @param string $id
      * @return mixed

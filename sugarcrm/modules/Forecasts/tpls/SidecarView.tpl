@@ -101,12 +101,15 @@
 <script src='clients/forecasts/views/progress/progress.js'></script>
 <script src='clients/forecasts/views/chart/chart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
+<script scr='clients/forecasts/fields/userLink/userLink.js'></script>
+<script scr='clients/forecasts/fields/recordLink/recordLink.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;
 
     SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
+    SUGAR.App.sugarAuthStore.set('AuthRefreshToken', {/literal}'{$token}'{literal});
 
     (function(app) {
          app.augment("forecasts", {

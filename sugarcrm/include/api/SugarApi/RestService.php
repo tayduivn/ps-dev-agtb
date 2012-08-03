@@ -307,18 +307,17 @@ class RestService extends ServiceBase {
      */
     protected function authenticateUser() {
         $valid = false;
-        
+
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
 
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
             $oauthServer->verifyAccessToken($this->sessionId);
-        } else if ( isset($_REQUEST[session_name()]) ) {
-            // They just have a regular web session
-            $this->sessionId = $_REQUEST[session_name()];
-            // The OAuth server starts a session to validate the token, we have to start it manually, like a sucker.
-            session_start();
+        } else if ( isset($_POST['oauth_token']) ) {
+            $this->sessionId = $_POST['oauth_token'];
+        } else if ( isset($_GET['oauth_token']) ) {
+            $this->sessionId = $_GET['oauth_token'];
         }
 
         if ( !empty($this->sessionId) ) {

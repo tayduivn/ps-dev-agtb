@@ -20,6 +20,7 @@
         initDataModel: {},
 
         initialize: function(options) {
+
             this.componentsMeta = app.metadata.getLayout("Forecasts").forecasts.meta.components;
 
             options.context = _.extend(options.context, this.initializeAllModels());
@@ -66,6 +67,7 @@
         fetchAllModels: function() {
             var self = this;
             _.each(this.componentsMeta, function(component) {
+
                 if(component.model && component.model.name){
                     self.context.forecasts[component.model.name.toLowerCase()].fetch();
                 }
@@ -77,6 +79,7 @@
                 if(component.collection && component.collection.name) {
                     self.context.forecasts[component.collection.name.toLowerCase()].fetch();
                 }
+
             });
         },
 
@@ -97,28 +100,29 @@
                 var module = app.viewModule.toLowerCase();
 
                 if (!models[module]) {
-                    var topModel = Backbone.Model.extend();
-                    models[module] = new topModel();
+                    var topModel = app.data.createBean(module);
+                    models[module] = topModel;
                 }
 
                 if (modelMetadata) {
                     name = modelMetadata.name.toLowerCase();
-
                     self.namespace(models, module);
                     models[module][name] = self.createModel(modelMetadata, app.viewModule);
                 }
 
                 if(context) {
-                    name = context.name.toLowerCase();
+                    var name = context.name.toLowerCase();
+                    var moduleContext = context.module;
                     self.namespace(models, module);
-                    models[module][name] = app.data.createBeanCollection(context.module);
-                    models[module][name].url = app.config.serverUrl + '/' + context.module;
+
+                    models[module][name] = self.createCollection();
                 }
 
                 if (collectionMetadata) {
                     name = collectionMetadata.name.toLowerCase();
                     self.namespace(models, module);
-                    models[module][name] = self.createCollection(collectionMetadata, app.viewModule);
+                    models[module][name] = self.createCollection();
+                    models[module][name].url = app.config.serverUrl + '/' + app.viewModule + '/' + name;
                 }
             });
 
@@ -132,9 +136,14 @@
          * @return {*} instance of a backbone model.
          */
         createModel: function(modelMetadata, module) {
+
             var Model = Backbone.Model.extend({
-                url: app.config.serverUrl + '/' + module + '/' + modelMetadata.name.toLowerCase()
+                sync: function(method, model, options) {
+                    myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
+                    return app.api.call(method, myURL, null, options);
+                }
             });
+
             return new Model();
         },
 
@@ -144,9 +153,25 @@
          * @param module
          * @return {*} instance of a backbone collection.
          */
-        createCollection: function(collectionMetadata, module) {
+        createCollection: function() {
             var Collection = Backbone.Collection.extend({
-                url: app.config.serverUrl + '/' + module + '/' + collectionMetadata.name.toLowerCase()
+                model : Backbone.Model.extend({
+                    sync : function(method, model, options) {
+                        return app.api.call(method, model.url, model, options);
+                    }
+                }),
+                /**
+                 * Custom sync to use the app api to call the url (o-auth headers are inserted here)
+                 *
+                 * @param method
+                 * @param model
+                 * @param options
+                 * @return {*}
+                 */
+                sync: function(method, model, options) {
+                    return app.api.call(method, model.url, null, options);
+                }
+
             });
             return new Collection();
         },
@@ -189,6 +214,7 @@
         }
     });
 
+
     app.view.Field = app.view.Field.extend({
         _render: function() {
             if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
@@ -198,5 +224,5 @@
             app.view.Field.__super__._render.call(this);
         }
     });
-
+    
 })(SUGAR.App);

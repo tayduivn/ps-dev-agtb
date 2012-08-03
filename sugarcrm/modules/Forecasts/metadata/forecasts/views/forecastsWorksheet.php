@@ -34,6 +34,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                     ),
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'recordLink'
                 ),
 
                 array(

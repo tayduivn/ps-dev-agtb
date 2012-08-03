@@ -71,16 +71,6 @@ class Individual implements IChartAndWorksheet {
         return $opps;
     }
 
-    /**
-     * This method returns the chart definition for the given id
-     *
-     * @param $id String of chart definition id
-     * @return Array the chart definition
-     */
-    public function getChartDefinition($id='')
-    {
-        return $this->getWorksheetDefinition($id);
-    }
 
     /**
      * This method returns the chart filters used for the data given the filter values

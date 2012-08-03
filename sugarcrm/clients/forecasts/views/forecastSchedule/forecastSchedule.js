@@ -21,15 +21,12 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.forecastschedule;
+        this._collection.url = this.createURL();
         this.selectedUser = this.context.forecasts.get('selectedUser');
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
     },
 
-    /**
-     * This is a helper function to fetch the collection given the existing filters for timeperiod and selected user
-     */
-    fetchCollection: function()
-    {
+    createURL : function() {
         var args = {};
         if(this.timePeriod) {
            args.timeperiod_id = this.timePeriod;
@@ -40,9 +37,16 @@
            args.user_id = this.selectedUser.id;
         }
 
-        this._collection.fetch({
-            params : args
-        });
+        return app.api.buildURL('ForecastSchedule', null, null, args);
+    },
+
+    /**
+     * This is a helper function to fetch the collection given the existing filters for timeperiod and selected user
+     */
+    fetchCollection: function()
+    {
+        this._collection.url = this.createURL();
+        this._collection.fetch();
     },
 
 
