@@ -435,6 +435,9 @@
         if($(this).val() == '')
         {
             $('.sched_button').attr('disabled', 'disabled');
+        } else {
+            // bug 27981 - if fts type is not blank, then we need to check the prepend wildcard flag
+            $('#prepend_wildcard').attr('checked','checked');
         }
     });
     {/literal}
