@@ -7047,15 +7047,6 @@ table tfoot td {
 #folded {
     background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
 }
-#folded .tab-pane#overview {
-  border-left: none;
-}
-#folded .tab-pane.active#overview {
-  border-left: 1px solid #ebebeb;
-}
-#folded #overview {
-    border-left: 1px solid #ebebeb;
-}
 #folded .tab-pane.active {
   position: fixed !important;
   top: 47px;

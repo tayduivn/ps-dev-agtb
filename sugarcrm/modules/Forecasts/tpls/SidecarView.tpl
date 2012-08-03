@@ -18,9 +18,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="span4 tab-content" id="folded">
                     <div class="tab-pane active" id="overview">
-                        <div class="viz">
+                        <div class="thumbnail viz">
                             <div class="view-chart"></div>
                         </div>
                         <div class="clearfix"></div>
@@ -30,12 +31,13 @@
                     </div>
                 </div>
 
-                <div class="view-chartOptions"></div>
-                <div class="view-tree"></div>
-                <div class="view-timeframes"></div>
+            {*
+            <div class="view-chartOptions"></div>
+            <div class="view-tree"></div>
+            <div class="view-timeframes"></div>
+            *}
 
-
-            {*<div class="span2" id="drawer">*}
+          {*<div class="span2" id="drawer">*}
             {*<a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>*}
             {*<div class="bordered">*}
                     {*</div>*}
