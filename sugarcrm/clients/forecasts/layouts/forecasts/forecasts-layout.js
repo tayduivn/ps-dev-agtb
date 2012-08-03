@@ -220,7 +220,7 @@
                 this.options = this.options || {};
                 this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'default';
             }
-            app.view.Field.prototype._render.call(this);
+            app.view.Field.__super__._render.call(this);
         }
     });
 
