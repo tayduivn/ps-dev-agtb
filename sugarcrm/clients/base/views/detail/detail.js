@@ -17,7 +17,7 @@
         if (fieldsArray.length > this.fieldsToDisplay) {
             _.each(fieldsArray, function(field, i) {
                 if (i > this.fieldsToDisplay - 1) {
-                    $(field).hide();
+                    $(field).parent().parent().hide();
                 }
             }, this);
             this.$(".more").removeClass("hide");
@@ -26,7 +26,7 @@
     showMore: function() {
         var fieldsArray = this.$("span[sfuuid]") || [];
         _.each(fieldsArray, function(field, i) {
-            $(field).show();
+            $(field).parent().parent().show();
         });
         this.$(".more").toggleClass("hide");
         this.$(".less").toggleClass("hide");
@@ -36,7 +36,7 @@
         var that = this;
         _.each(fieldsArray, function(field, i) {
             if (i > that.fieldsToDisplay - 1) {
-                $(field).hide();
+                $(field).parent().parent().hide();
             }
         });
         this.$(".less").toggleClass("hide");

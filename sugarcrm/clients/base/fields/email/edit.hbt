@@ -1,6 +1,3 @@
-<div class="row-fluid">
-    <div class="span2">{{label}}</div>
-    <div class="span8">
         <div class="existing">
             {{#each value}}
             <div class="control-group" data-emailAddress={{email_address}}>
@@ -33,7 +30,4 @@
         <div class="help-group control-group">
             <p class="help-block"></p>
             </div>
-        </div>
-    </div>
-</div>
 
