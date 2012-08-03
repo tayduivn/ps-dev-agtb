@@ -275,7 +275,9 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $this->xTemplate->assign("COL_COUNT", count($thepanel->get_list_fields()));
         $this->xTemplate->parse($xtemplateSection.".nodata");
     }
-
+	//BEGIN SUGARCRM flav=pro ONLY
+	$module_name = '';
+	//END SUGARCRM flav=pro ONLY
     while(list($aVal, $aItem) = each($data))
     {
         $subpanel_item_count++;
@@ -301,7 +303,23 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             $aItem->parent_name_owner =  $parent_data[$aItem->id]['parent_name_owner'];
             $aItem->parent_name_mod =  $parent_data[$aItem->id]['parent_name_mod'];
         }}
-
+		//BEGIN SUGARCRM flav=pro ONLY
+		if (isset($subpanel_list[strtolower($aItem->module_name)]))
+        {
+            if ($module_name != $aItem->module_name)
+            {
+                $subpanel_list_fields = $subpanel_list[strtolower($aItem->module_name)]->get_list_fields();
+                if (($keyindex = array_search('edit_button', array_keys($subpanel_list_fields))) !== FALSE)
+                {
+                    $subpanel_list_fields = array_slice($subpanel_list_fields, 0, $keyindex, true);
+                }
+            }
+            $aItem->updateDependentFieldForListView($subpanel_list_fields);
+        } else
+        {
+            $aItem->updateDependentField();
+        }
+		//END SUGARCRM flav=pro ONLY
         $fields = $aItem->get_list_view_data();
         //BEGIN SUGARCRM flav=pro ONLY
         if($aItem->bean_implements('ACL')){

@@ -4865,7 +4865,46 @@ function save_relationship_changes($is_update, $exclude=array())
     function list_view_parse_additional_sections(&$list_form)
     {
     }
-
+	//BEGIN SUGARCRM flav=pro ONLY
+	/*
+     * fix bug #54042: ListView calculates all field dependencies
+     *
+     * return listDef for bean
+     */
+    function updateDependentFieldForListView($listview_def_main = '')
+    {
+        static $listview_def = '';
+        static $module_name = '';
+        // for subpanels
+        if (!empty($listview_def_main))
+        {
+            $listview_def = $listview_def_main;
+        } elseif (empty($listview_def) || $module_name != $this->module_name)
+        {
+            $view = new SugarView();
+            $view->type = 'list';
+            $view->module = $this->module_name;
+            $listview_meta_file = $view->getMetaDataFile();
+            if (!empty($listview_meta_file))
+            {
+                require $listview_meta_file;
+                $listview_def = $listViewDefs[$this->module_name];
+            }
+            $module_name = $this->module_name;
+        }
+        
+        if (!empty($listview_def))
+        {
+            $temp_field_defs = $this->field_defs;
+            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
+            $this->updateDependentField();
+            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
+        } else
+        {
+            $this->updateDependentField();
+        }
+    }
+	//END SUGARCRM flav=pro ONLY
     /**
      * Assigns all of the values into the template for the list view
      */
@@ -4874,11 +4913,6 @@ function save_relationship_changes($is_update, $exclude=array())
         static $cache = array();
         // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
         $sensitiveFields = array('user_hash' => '');
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        //fixing bug #46230: Dependent Field values are not refreshed in subpanels & listviews
-        $this->updateDependentField();
-        //END SUGARCRM flav=pro ONLY
         
         $return_array = Array();
         global $app_list_strings, $mod_strings;
