@@ -87,6 +87,7 @@ $mod_strings = array (
   'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this product relationship?',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the product.',
   'LBL_CURRENCY' => 'Currency:',
+  'LBL_CURRENCY_ID' => 'Currency ID:',
   'LBL_ASSET_NUMBER' => 'Asset Number:',
   'LBL_SERIAL_NUMBER' => 'Serial Number:',
   'LBL_BOOK_VALUE' => 'Book Value:',
