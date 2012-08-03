@@ -196,13 +196,14 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     protected function getQuota()
     {
         //getting quotas from quotas table
-        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id
-                        FROM quotas q, users u
-                        WHERE q.user_id = u.id
-                        AND (q.user_id = '{$this->user_id}' OR q.user_id IN (SELECT id FROM users WHERE reports_to_id = '{$this->user_id}'))
-                        AND q.timeperiod_id = '{$this->timeperiod_id}'
-                        AND q.quota_type = 'Direct'";
-
+        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id " .
+					   "FROM quotas q " .
+					   "INNER JOIN users u " .
+					   "ON q.user_id = u.id " .
+					   "WHERE q.timeperiod_id = '{$this->timeperiod_id}' " .
+					   "AND ((u.id = '{$this->user_id}' and q.quota_type = 'Direct') " . 
+						    "OR (u.reports_to_id = '{$this->user_id}' and q.quota_type = 'Rollup'))";
+		
         $result = $GLOBALS['db']->query($quota_query);
         $data = array();
 
