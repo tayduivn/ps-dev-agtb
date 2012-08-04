@@ -40,6 +40,7 @@ $viewdefs['Contacts']['EditView'] = array(
 	    	array (
 		        'name' => 'first_name',
 		        'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
+		        'customCodeReadOnly' => '{$fields.salutation.value}&nbsp;{$fields.first_name.value}">',
 		        'displayParams'=>array('wireless_edit_only'=>true,),
 	      	),
 	    ),
