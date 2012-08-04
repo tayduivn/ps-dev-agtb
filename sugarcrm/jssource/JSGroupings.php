@@ -193,6 +193,6 @@
     /**
      * Check for custom additions to this code
      */
-    if(file_exists("custom/jssource/JSGroupings.php")) {
-        require("custom/jssource/JSGroupings.php");
+    if(file_exists("custom/application/Ext/JSGroupings/jsgroups.ext.php")) {
+        require("custom/application/Ext/JSGroupings/jsgroups.ext.php");
     }
