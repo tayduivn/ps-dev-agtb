@@ -139,7 +139,7 @@ class Report
         if ($this->report_offset < 0) $this->report_offset = 0;
         $this->time_date_obj = new TimeDate();
         $this->name = $mod_strings['LBL_UNTITLED'];
-        $this->db = &DBManagerFactory::getInstance('reports');
+        $this->db = DBManagerFactory::getInstance('reports');
         if (Report::is_old_content($report_def_str)) {
             sugar_die('this report was created with an older version of reports. please upgrade');
         }
@@ -410,13 +410,14 @@ class Report
             // Store this for later, in case we want it.
             $this->full_table_list[$table_key]['bean_label'] = $beanLabel;
             $this->full_table_list[$table_key]['bean_name'] = $beanName;
+            $this->full_table_list[$table_key]['bean_module'] = $beanLabel;
 
             require_once($beanFiles[$beanName]);
 
             $this->full_bean_list[$table_key] = new $beanName();
             if ($table_key == 'self') {
                 // Alias that to $this->focus, because it is very commonly used
-                $this->focus = &$this->full_bean_list[$table_key];
+                $this->focus = $this->full_bean_list[$table_key];
             }
             $this->alias_lookup[$table_key] = 'l' . count($this->alias_lookup);
         }
@@ -1099,12 +1100,18 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-        $from2 = $from = "SELECT * FROM {$focus->table_name} {$alias}2 ";
-        $focus->addVisibilityFrom($from, array('table_alias' => $alias."2"));
-        if($from2 != $from) {
-        	$query .= " AND EXISTS($from WHERE {$alias}.id={$alias}2.id)\n";
+//BEGIN SUGARCRM flav!=sales ONLY
+        $from = '';
+        $focus->addVisibilityFrom($from);
+        $where = '';
+        $focus->addVisibilityWhere($where);
+        if(!empty($from) || !empty($where)) {
+            if(!empty($where)) {
+                $where = "WHERE $where";
+            }
+            $query = str_replace("{$focus->table_name} $alias", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias", $query);
         }
-        $focus->addVisibilityWhere($query, array('table_alias' => $alias));
+//END SUGARCRM flav!=sales ONLY
         return $query;
     }
 
@@ -1117,8 +1124,8 @@ class Report
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         //BEGIN SUGARCRM flav!=sales ONLY
-        $where_clause = $this->addSecurity($where_clause, $this->focus, $this->focus->table_name);
-        //         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
+        $where_clause = $this->focus->addVisibilityWhere($where_clause);
+//         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
 //             if (!empty($where_clause)) {
 //                 $where_clause .= " AND";
 //             }
@@ -1129,24 +1136,6 @@ class Report
 //         }
         //END SUGARCRM flav!=sales ONLY
         $this->where = $where_clause;
-        /*
-        for($i=0; $i < count($this->report_def['filters_def']) ; $i++)
-        {
-            $filter_def = $this->report_def['filters_def'][$i];
-
-            $this->register_field_for_query($filter_def);
-
-             $select_piece = $this->layout_manager->widgetQuery($filter_def);
-            array_push($where_arr,$select_piece);
-        }
-        if(!empty($this->report_def['filters_combiner']) && $this->report_def['filters_combiner'] == 'OR') {
-            $combiner = 'OR';
-        }
-        else {
-            $combiner = 'AND';
-        }
-        $this->where = implode(" $combiner ",$where_arr);
-        */
     }
 
     function filtersIterateForUI($filters, &$verdef_arr_for_filters)
@@ -1523,9 +1512,10 @@ return str_replace(' > ','_',
         $this->full_table_list['self']['params']['join_table_link_alias'] = $this->focus->table_name . "_l";
 
         $this->from = "\nFROM " . $this->focus->table_name . "\n";
+        //BEGIN SUGARCRM flav!=sales ONLY
+        $this->focus->addVisibilityFrom($this->from);
+        //END SUGARCRM flav!=sales ONLY
 
-        //rrs remove this and move to the WHERE
-        //$this->focus->add_team_security_where_clause($this->from,'','INNER');
         $this->jtcount = 0;
         foreach ($this->full_table_list as $table_key => $table_def)
         {
@@ -1545,7 +1535,6 @@ return str_replace(' > ','_',
                 $params['join_table_alias'] = "jt" . $this->jtcount;
             }
 
-
             if (!isset($params['join_table_link_alias'])) {
                 $params['join_table_link_alias'] = "jtl" . $this->jtcount;
             }
@@ -1554,6 +1543,7 @@ return str_replace(' > ','_',
                 $params['join_type'] = 'LEFT JOIN ';
                 $team_join_type = 'LEFT';
             }
+
             if (is_object($this->full_bean_list[$table_def['parent']])) {
                 // We need to find the exact link name that it is expecting.
                 $link_name = $table_def['link_def']['name'];
@@ -1571,6 +1561,7 @@ return str_replace(' > ','_',
 
                 }
                 if ($link_name != '') {
+                    $focus = BeanFactory::newBean($table_def['module']);
                     if (!isset($params['bean_is_lhs']) || $params['bean_is_lhs'] != 1) {
                         $params['right_join_table_alias'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
                         $params['right_join_table_link_alias'] = $this->full_table_list[$table_def['parent']]['params']['join_table_link_alias'];
@@ -1598,9 +1589,8 @@ return str_replace(' > ','_',
                             }
                         }
 
-                        $this->from .= $this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params);
-                        if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-                            $this->from .= " AND " . $params['join_table_alias'] . ".assigned_user_id='" . $current_user->id . "' ";
+                        $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params),
+                            $focus, $params['join_table_alias']);
                         // End ACL check
                     }
                     else {
@@ -1615,9 +1605,9 @@ return str_replace(' > ','_',
                         }
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
                             sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
-                        $this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
-                        if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-                            $this->from .= " AND " . $params['join_table_alias'] . ".assigned_user_id='" . $current_user->id . "' ";
+                        $join =
+                        $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params),
+                            $focus, $params['join_table_alias']);
                         // End ACL check
                     }
                     //echo("<br>Join for $link_name (parent: ".$table_def['parent']."):<br>".$this->from."<pre>".print_r($params,true)."</pre>");
@@ -1627,17 +1617,15 @@ return str_replace(' > ','_',
                     die("Could not find link name, searching through for: " . $link_name);
                 }
             }
-
             else
             {
                 die("table_def[parent] is not an object! (" . $table_def['parent'] . ")<br>");
             }
 
             // Do not add team security on modules that opt out of row level security
-            require_once($beanFiles[$table_def['bean_name']]);
-            $focus = new $table_def['bean_name']();
+//            require_once($beanFiles[$table_def['bean_name']]);
+//            $focus = new $table_def['bean_name']();
             //BEGIN SUGARCRM flav!=sales ONLY
-            $this->from = $this->addSecurity($this->from, $focus, $params['join_table_alias']);
 
 //            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
 //                 $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
