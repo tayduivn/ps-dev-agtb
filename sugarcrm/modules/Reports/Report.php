@@ -1605,7 +1605,6 @@ return str_replace(' > ','_',
                         }
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
                             sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
-                        $join =
                         $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params),
                             $focus, $params['join_table_alias']);
                         // End ACL check
