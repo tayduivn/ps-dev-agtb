@@ -59,7 +59,7 @@
         this.model.set({"email": oEmail}, {silent: true});
         if (validFlag) {
             $('#content').hide();
-            app.alert.show('signup', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose:false});
+            app.alert.show('signup', {level:'process', title:'LBL_PORTAL_SIGNUP_PROCESS', autoClose:false});
             
             var contactData = {
                 first_name: this.model.get("first_name"),
