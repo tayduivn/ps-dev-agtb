@@ -110,6 +110,16 @@ class Report
     var $jtcount = 0;
 
     /**
+     *
+     * Default visibility options
+     * @var array
+     */
+    protected $visibilityOpts = array(
+        // notify visibility strategies we are running from reports
+        'report_query' => true
+    );
+
+    /**
      * Array of invalid report fields. Populated during is_definition_valid() call.
      *
      * @var array
@@ -1102,9 +1112,9 @@ class Report
     {
 //BEGIN SUGARCRM flav!=sales ONLY
         $from = '';
-        $focus->addVisibilityFrom($from);
+        $focus->addVisibilityFrom($from, $this->visibilityOpts);
         $where = '';
-        $focus->addVisibilityWhere($where);
+        $focus->addVisibilityWhere($where, $this->visibilityOpts);
         if(!empty($from) || !empty($where)) {
             if(!empty($where)) {
                 $where = "WHERE $where";
