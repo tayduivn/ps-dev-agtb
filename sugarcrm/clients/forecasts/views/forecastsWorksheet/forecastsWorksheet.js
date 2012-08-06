@@ -457,15 +457,19 @@
            });
         }
 
-        self.includedModel.set('includedAmount', includedAmount);
-        self.includedModel.set('includedBest', includedBest);
-        self.includedModel.set('includedLikely', includedLikely);
-        self.includedModel.set('includedCount', includedCount);
+        self.includedModel.set({
+            includedAmount : includedAmount,
+            includedBest : includedBest,
+            includedLikely : includedLikely,
+            includedCount : includedCount
+        });
         self.includedModel.change();
 
-        self.overallModel.set('overallAmount', overallAmount);
-        self.overallModel.set('overallBest', overallBest);
-        self.overallModel.set('overallLikely', overallLikely);
+        self.overallModel.set({
+            overallAmount : overallAmount,
+            overallBest : overallBest,
+            overallLikely : overallLikely
+        });
         self.overallModel.change();
 
         var totals = {
