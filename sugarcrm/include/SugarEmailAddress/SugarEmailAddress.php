@@ -28,6 +28,7 @@ class SugarEmailAddress extends SugarBean {
     var $smarty;
     var $addresses = array(); // array of emails
     var $view = '';
+    private $stateBeforeWorkflow;
 
     static $count = 0;
 
@@ -157,7 +158,12 @@ class SugarEmailAddress extends SugarBean {
             foreach($this->addresses as $address) {
                 if(!empty($address['email_address'])) {
                     $guid = create_guid();
-                    $emailId = $this->AddUpdateEmailAddress($address['email_address'],$address['invalid_email'],$address['opt_out']);// this will save the email address if not found
+                    $emailId = $this->AddUpdateEmailAddress($address['email_address'],
+                                                            $address['invalid_email'],
+                                                            $address['opt_out'],
+                                                            isset($address['email_address_id']) ? 
+                                                                $address['email_address_id'] : 
+                                                                null);// this will save the email address if not found
 
                     //verify linkage and flags.
                     $upd_eabr="";
@@ -204,6 +210,7 @@ class SugarEmailAddress extends SugarBean {
             $eabr_unlink="update email_addr_bean_rel set deleted=1 where id in ({$delete})";
             $this->db->query($eabr_unlink);
         }
+        $this->stateBeforeWorkflow = null;
         return;
     }
 
@@ -334,6 +341,7 @@ class SugarEmailAddress extends SugarBean {
         $primaryValue = $primary;
         $widgetCount = 0;
         $hasEmailValue = false;
+        $email_ids = array();
 
         if (isset($_REQUEST) && isset($_REQUEST[$module .'_email_widget_id'])) {
 
@@ -408,6 +416,14 @@ class SugarEmailAddress extends SugarBean {
                         }
                     }
                 }
+                if($fromRequest && empty($email_ids)) {
+                    foreach($_REQUEST as $k => $v) {
+                        if(preg_match('/'.$eId.'emailAddressId[0-9]+$/i', $k) && !empty($v)) {
+                            $key = str_replace('emailAddressId', 'emailAddress', $k);
+                            $email_ids[$key] = $v;
+                        }
+                    }
+                }
 
                 if($fromRequest && empty($new_addrs)) {
                     foreach($_REQUEST as $k => $v) {
@@ -447,11 +463,12 @@ class SugarEmailAddress extends SugarBean {
                         $reqVar = trim($reqVar);
                         if(strpos($k, 'emailAddress') !== false) {
                             if(!empty($reqVar) && !in_array($k, $deleteValues)) {
+                                $email_id   = (array_key_exists($k, $email_ids)) ? $email_ids[$k] : null;
                                 $primary    = ($k == $primaryValue) ? true : false;
                                 $replyTo    = ($k == $replyToField) ? true : false;
                                 $invalid    = (in_array($k, $invalidValues)) ? true : false;
                                 $optOut     = (in_array($k, $optOutValues)) ? true : false;
-                                $this->addAddress(trim($new_addrs[$k]), $primary, $replyTo, $invalid, $optOut);
+                                $this->addAddress(trim($new_addrs[$k]), $primary, $replyTo, $invalid, $optOut, $email_id);
                             }
                         }
                     } //foreach
@@ -473,7 +490,7 @@ class SugarEmailAddress extends SugarBean {
      * @param bool $primary Default false
      * @param bool $replyTo Default false
      */
-    function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false) {
+    function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null) {
         $addr = html_entity_decode($addr, ENT_QUOTES);
         if(preg_match($this->regex, $addr)) {
             $primaryFlag = ($primary) ? '1' : '0';
@@ -500,6 +517,7 @@ class SugarEmailAddress extends SugarBean {
                 'reply_to_address' => $replyToFlag,
                 'invalid_email' => $invalidFlag,
                 'opt_out' => $optOutFlag,
+                'email_address_id' => $email_id,
             );
         } else {
             $GLOBALS['log']->fatal("SUGAREMAILADDRESS: address did not validate [ {$addr} ]");
@@ -587,20 +605,44 @@ class SugarEmailAddress extends SugarBean {
         }
     }
 
-    function AddUpdateEmailAddress($addr,$invalid=0,$opt_out=0)
+    function AddUpdateEmailAddress($addr,$invalid=0,$opt_out=0,$id=null)
     {
         $address = $this->db->quote($this->_cleanAddress($addr));
         $addressCaps = strtoupper($address);
 
-        $q = "SELECT * FROM email_addresses WHERE email_address_caps = '{$addressCaps}' and deleted=0";
-        $r = $this->db->query($q);
-        $a = $this->db->fetchByAssoc($r);
+        if ($id)
+        {
+            $q = sprintf('SELECT * FROM email_addresses WHERE id=\'%s\'', $id);
+            $r = $this->db->query($q);
+            $a = $this->db->fetchByAssoc($r);
+        }
+        else
+        {
+            $a = null;
+        }
+
         if(!empty($a) && !empty($a['id'])) {
-            //verify the opt out and invalid flags.
-           //bug# 39378- did not allow change of case of an email address
-            if ($a['invalid_email'] != $invalid or $a['opt_out'] != $opt_out or strcasecmp(trim($a['email_address']), trim($address))==0) {
-                $upd_q="update email_addresses set email_address='{$address}', invalid_email={$invalid}, opt_out={$opt_out},date_modified = '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."' where id='{$a['id']}'";
-                $upd_r= $this->db->query($upd_q);
+            if ($a['invalid_email'] != $invalid ||
+                $a['opt_out']       != $opt_out ||
+                // bug #39378 - did not allow change of case of an email address
+                strnatcmp(trim($a['email_address']), trim($address)) != 0)
+            {
+                if (isset($this->stateBeforeWorkflow[$a['id']]))
+                {
+                    $data = $this->stateBeforeWorkflow[$a['id']];
+                }
+                else
+                {
+                    $data = array();
+                }
+
+                $upd_q = 'UPDATE ' . $this->table_name . ' ' . 
+                         'SET email_address=\'' . $address . '\', '. 
+                         (isset($data['invalid_email']) && $data['invalid_email'] == $a['invalid_email'] ? ('invalid_email=' . $invalid . ', ') : '') .
+                         (isset($data['opt_out']) && $data['opt_out'] == $a['opt_out'] ? ('opt_out=' . $opt_out . ', ') : '') .
+                         'date_modified=\'' . gmdate($GLOBALS['timedate']->get_db_date_time_format()) . '\' ' .
+                         'WHERE id=\'' . $a['id'] . '\'';
+                $upd_r = $this->db->query($upd_q);
             }
             return $a['id'];
         } else {
@@ -1023,6 +1065,35 @@ class SugarEmailAddress extends SugarBean {
  */
     function getCorrectedModule(&$module) {
         return ($module == "Employees")? "Users" : $module;
+    }
+
+    public function stash($parentBeanId, $moduleName)
+    {
+        $queryRelatedIds = sprintf('select email_address_id ' .
+                                   'from email_addr_bean_rel eabr ' .
+                                   'WHERE eabr.bean_id = "%s" ' .
+                                   'AND eabr.bean_module = "%s" ' .
+                                   'and eabr.deleted=0',
+                                   $parentBeanId,
+                                   $moduleName);
+
+        $result = $this->db->query($queryRelatedIds);
+        $queryEmailData = 'SELECT id, email_address, invalid_email, opt_out ' .
+                          'FROM ' . $this->table_name . ' WHERE id IN (';
+
+        while ($row = $this->db->fetchByAssoc($result, false))
+        {
+            $queryEmailData .= '"' . $row['email_address_id'] . '",';
+        }
+
+        $queryEmailData .= '"0") AND deleted=0';
+        $result = $this->db->query($queryEmailData);
+        $this->stateBeforeWorkflow = array();
+
+        while ($row = $this->db->fetchByAssoc($result, false))
+        {
+            $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
+        }
     }
 } // end class def
 
