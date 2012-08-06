@@ -291,6 +291,9 @@
         $("#summary").prepend(view.$el);
         view.render();
 
+        // fix the style on the rows that contain a checkbox
+        this.$el.find('td:has(input[type=checkbox])').addClass('center');
+
         this.calculateTotals();
 
         this.createSubViews();
