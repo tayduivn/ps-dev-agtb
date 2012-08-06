@@ -1,6 +1,6 @@
         {{#each value}}
         <div class="control-group email">
-            <div class="controls pull-left span6" title="{{email_address}}">
+            <div class="controls pull-left span4" title="{{email_address}}">
             {{email_address}}
             </div>
             <div class="btn-toolbar pull-left">

@@ -15,6 +15,7 @@
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
 
+
  */.hidden{display:none;visibility:hidden}#searchForm{position:relative;display:inline-block;float:right}#searchForm .btn{margin-right:0}#searchForm input.search-query{min-width:200px}@media(max-width:480px){
 .error .input-append > .add-on
 {
