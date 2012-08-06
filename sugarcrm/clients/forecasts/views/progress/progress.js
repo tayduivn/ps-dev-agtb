@@ -189,11 +189,13 @@
 
     recalculate: function () {
         this.calculateBases();
-        this.model.set('pipeline', this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue')));
-        this.model.set('closed', this.calculateBestToClose(this.model.get('closed')));
-        this.model.set('quota', this.calculateBestToQuota(this.model.get('quota')));
-        this.model.set('closed', this.calculateLikelyToClose(this.model.get('closed')));
-        this.model.set('quota', this.calculateLikelyToQuota(this.model.get('quota')));
+        this.model.set({
+            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue')),
+            closed : this.calculateBestToClose(this.model.get('closed')),
+            quota : this.calculateBestToQuota(this.model.get('quota')),
+            closed : this.calculateLikelyToClose(this.model.get('closed')),
+            quota :  this.calculateLikelyToQuota(this.model.get('quota'))
+        });
         this.render();
     },
 
