@@ -1134,7 +1134,7 @@ class Report
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         //BEGIN SUGARCRM flav!=sales ONLY
-        $where_clause = $this->focus->addVisibilityWhere($where_clause);
+        $where_clause = $this->focus->addVisibilityWhere($where_clause, $this->visibilityOpts);
 //         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
 //             if (!empty($where_clause)) {
 //                 $where_clause .= " AND";
@@ -1523,7 +1523,7 @@ return str_replace(' > ','_',
 
         $this->from = "\nFROM " . $this->focus->table_name . "\n";
         //BEGIN SUGARCRM flav!=sales ONLY
-        $this->focus->addVisibilityFrom($this->from);
+        $this->focus->addVisibilityFrom($this->from, $this->visibilityOpts);
         //END SUGARCRM flav!=sales ONLY
 
         $this->jtcount = 0;
