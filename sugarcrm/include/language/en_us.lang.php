@@ -3409,6 +3409,10 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
+    'LBL_PORTAL_LOADING' => 'Loading',
+    'LBL_PORTAL_SAVING' => 'Saving',
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
