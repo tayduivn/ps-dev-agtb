@@ -1119,7 +1119,7 @@ class Report
             if(!empty($where)) {
                 $where = "WHERE $where";
             }
-            $query = str_replace("{$focus->table_name} $alias", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias", $query);
+            $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
         }
 //END SUGARCRM flav!=sales ONLY
         return $query;
