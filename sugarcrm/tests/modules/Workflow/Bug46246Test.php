@@ -47,6 +47,9 @@ class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+
         if($GLOBALS['sugar_flavor']==$this->accepted_flav){
             $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
             $this->test_team = SugarTestTeamUtilities::createAnonymousTeam();
