@@ -391,7 +391,7 @@ select:focus:required:invalid {
     margin-bottom: 0; // prevent bottom margin from screwing up alignment in stacked forms
     *margin-left: 0;
     vertical-align: middle;
-    //.border-radius(0 @inputBorderRadius @inputBorderRadius 0);
+    .border-radius(0 @inputBorderRadius @inputBorderRadius 0);
     // Make input on top when focused so blue border and shadow always show
     &:focus {
       z-index: 2;
@@ -468,10 +468,6 @@ select:focus:required:invalid {
   }
 }
 
-.error .input-append > .add-on {
-position:absolute;
-right:40px;
-}
 
 
 // SEARCH FORM
