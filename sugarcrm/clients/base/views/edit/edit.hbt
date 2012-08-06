@@ -2,7 +2,13 @@
     <div class="card2">
         {{#each meta.panels}}
         {{#each fields}}
-        {{field ../../this}}
+        <div class="row-fluid control-group">
+            <div class="span2">{{str  this.label ../../this.model.module}}</div>
+            <div class="span10">
+            {{field ../../this}}
+            <p class="help-block"></p>
+            </div>
+        </div>
         {{/each}}
         {{/each}}
         <div class="form-actions">

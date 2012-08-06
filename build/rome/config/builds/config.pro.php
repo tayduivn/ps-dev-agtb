@@ -135,5 +135,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_corp.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
+
+'sugarcrm/portal2' =>1
 );
 $build = 'pro';

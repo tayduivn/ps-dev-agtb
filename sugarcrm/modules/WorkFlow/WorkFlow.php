@@ -127,11 +127,8 @@ class WorkFlow extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array("name"=>1, 'base_module'=>1, 'type'=>1);
 
-    // This is a member variable to flag whether or not we really call mark_deleted
+    // This is a member variable to flag whether or not we really call mark_deleted on the cascade_delete call
     var $delete_workflow_on_cascade = true;
-
-    // Flag whether
-    var $check_controller = true;
 
 	function WorkFlow() {
 		parent::SugarBean();
@@ -1355,19 +1352,23 @@ function repair_workflow(){
 
 
     /**
-     * mark_deleted
+     * cascade_delete
      * This function handles the management of related workflow components when a workflow is deleted.  The
-     * mark_deleted call is also run when the target module of an existing workflow is modified so that the
+     * cascade_delete call is also run when the target module of an existing workflow is modified so that the
      * workflow may invalidate the related workflow alerts, actions, etc.
      *
-     * @param string $id
+     * @param Mixed $focus variable of the Workflow instance to run cascading deletes against
+     * @param bool $check_controller boolean flag indicating whether or not to readjust the ordering of workflow;
+     * defaults to true
      */
-    function mark_deleted($id){
-		//Completely remove the trigger components////////////////////////
-		$trigger_object_list = $this->get_linked_beans('triggers','WorkFlowTriggerShell');
-        if(!empty($trigger_object_list)){
+	function cascade_delete(& $focus, $check_controller=true){
 
-			foreach($trigger_object_list as $trigger_object){
+
+		//Completely remove the trigger components////////////////////////
+					$trigger_object_list = $focus->get_linked_beans('triggers','WorkFlowTriggerShell');
+					if(!empty($trigger_object_list)){
+
+					foreach($trigger_object_list as $trigger_object){
 
 				//mark delete trigger components and sub expression components
 				mark_delete_components($trigger_object->get_linked_beans('future_triggers','Expression'));
@@ -1380,7 +1381,7 @@ function repair_workflow(){
 		}
 
 		//Completely remove the trigger filter components////////////////////////
-		$trigger_object_list = $this->get_linked_beans('trigger_filters','WorkFlowTriggerShell');
+		$trigger_object_list = $focus->get_linked_beans('trigger_filters','WorkFlowTriggerShell');
 		if(!empty($trigger_object_list)){
 
 			foreach($trigger_object_list as $trigger_object){
@@ -1394,7 +1395,7 @@ function repair_workflow(){
 		//end if any alert objects exist
 		}
 		//Completely remove the alert components/////////////////////////
-		$alert_object_list = $this->get_linked_beans('alerts','WorkFlowAlertShell');
+		$alert_object_list = $focus->get_linked_beans('alerts','WorkFlowAlertShell');
 		if(!empty($alert_object_list)){
 
 			foreach($alert_object_list as $alert_object){
@@ -1424,7 +1425,7 @@ function repair_workflow(){
 
 		//Completely remove the action components////////////////////////
 		//mark delete actionshell components, action components and sub expression components
-		$action_shell_list = $this->get_linked_beans('actions','WorkFlowActionShell');
+		$action_shell_list = $focus->get_linked_beans('actions','WorkFlowActionShell');
 
 		foreach($action_shell_list as $action_shell_object){
 
@@ -1438,22 +1439,23 @@ function repair_workflow(){
 			$action_shell_object->mark_deleted($action_shell_object->id);
 		}
 
-		if($this->check_controller==true){
-             require_once('include/controller/Controller.php');
-             //Handle re-processing orders
-             $controller = new Controller();
-             $controller->init($this, "Delete");
-             $controller->delete_adjust_order($this->base_module);
-         }
+		if($check_controller==true){
+
+		//Handle re-processing orders
+		$controller = new Controller();
+		$controller->init($focus, "Delete");
+		$controller->delete_adjust_order($focus->base_module);
+
+		}
 
 		//mark deleted the workflow object if delete_workflow_on_cascade is set to true
-        if($this->delete_workflow_on_cascade)
+        if($focus->delete_workflow_on_cascade)
         {
-		    parent::mark_deleted($id);
+		    $focus->mark_deleted($focus->id);
         }
-		$this->write_workflow();
+		$focus->write_workflow();
 
-	//end function mark_deleted
+	//end function cascade_delete
 	}
 
 function getActiveWorkFlowCount() {

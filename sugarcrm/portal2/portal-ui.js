@@ -19,7 +19,7 @@
         if ($.fn.timeago) {
             $("span.relativetime").timeago({
                 logger: SUGAR.App.logger,
-                date: SUGAR.App.utils.date,
+                date: SUGAR.App.date,
                 lang: SUGAR.App.lang,
                 template: SUGAR.App.template
             });
@@ -40,12 +40,12 @@
     /**
      * Overrides Field::_render() to fix placeholders on IE and old browsers
      */
-    var __superFieldRender__ = app.view.Field.prototype._render;
-    app.view.Field.prototype._render = function() {
+    var __superFieldRender__ = app.view.SupportPortalField.prototype._render;
+    app.view.SupportPortalField.prototype._render = function() {
 
         __superFieldRender__.call(this);
 
-        this.$("input").placeholder();
+        this.$("input:visible[placeholder!='']").placeholder();
     };
 
 

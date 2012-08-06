@@ -65,11 +65,12 @@ class RegisterLeadApi extends SugarApi {
         // Bug 54515: Set modified by and created by users to assigned to user. If not set default to admin.
         $bean->update_modified_by = false;
         $bean->set_created_by = false;
-        if(isset($bean->assigned_user_id) && !empty($bean->assigned_user_id)) {
-            $bean->created_by = $bean->assigned_user_id;
-            $bean->modified_user_id = $bean->assigned_user_id;
-        }
-        else {
+        $admin = new Administration();
+       	$admin->retrieveSettings();
+        if (isset($admin->settings['supportPortal_RegCreatedBy']) && !empty($admin->settings['supportPortal_RegCreatedBy'])) {
+            $bean->created_by = $admin->settings['supportPortal_RegCreatedBy'];
+            $bean->modified_user_id = $admin->settings['supportPortal_RegCreatedBy'];
+        } else {
             $bean->created_by = '1';
             $bean->modified_user_id = '1';
         }

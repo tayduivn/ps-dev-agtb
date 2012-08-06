@@ -41,5 +41,16 @@ class ViewSystemQuicklist extends ViewQuickList{
 		$sv->includeClassicFile('modules/Administration/DisplayWarnings.php');
 	    
 		echo $this->_formatNotificationsForQuickDisplay($GLOBALS['system_notification_buffer'], "modules/Notifications/tpls/systemQuickView.tpl");
+
+        // after the notification is displayed, clear the fts flag
+        if (is_admin($GLOBALS['current_user']))
+        {
+            $admin = new Administration();
+            $settings = $admin->retrieveSettings();
+            if (!empty($settings->settings['info_fts_index_done']))
+            {
+                $admin->saveSetting('info', 'fts_index_done', 0);
+            }
+        }
 	}
 }

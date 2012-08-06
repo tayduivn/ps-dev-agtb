@@ -116,6 +116,7 @@ class Employee extends Person {
 		$result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 
 		$row = $this->db->fetchByAssoc($result);
+		$GLOBALS['log']->debug("additional detail query results: ".var_export($row, true));
 
 		if($row != null)
 		{
@@ -128,6 +129,13 @@ class Employee extends Person {
 		parent::fill_in_additional_detail_fields();
 	}
 
+	function retrieve_employee_id($employee_name)
+	{
+		$query = "SELECT id from users where user_name='$user_name' AND deleted=0";
+		$result  = $this->db->query($query, false,"Error retrieving employee ID: ");
+		$row = $this->db->fetchByAssoc($result);
+		return $row['id'];
+	}
 
 	/**
 	 * @return -- returns a list of all employees in the system.

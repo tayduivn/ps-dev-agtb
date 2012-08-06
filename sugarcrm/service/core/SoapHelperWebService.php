@@ -565,7 +565,6 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $value->id != $current_user->id){
 			$value->user_hash = '';
 		}
-		$value = clean_sensitive_data($value->field_defs, $value);
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_return_value_for_fields');
 		return Array('id'=>$value->id,
 					'module_name'=> $module,
@@ -629,7 +628,6 @@ function validate_user($user_name, $password){
                 if(is_a($bean, 'User') && $current_user->id != $bean->id && isset($row['user_hash'])) {
                     $row['user_hash'] = "";
                 }
-                $row = clean_sensitive_data($bean->field_defs, $row);
                 $list[] = $row;
             }
 			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');
@@ -648,7 +646,6 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $bean->id != $current_user->id){
 			$bean->user_hash = '';
 		}
-		$bean = clean_sensitive_data($bean->field_defs, $bean);
 
 		if (empty($link_name_to_value_fields_array) || !is_array($link_name_to_value_fields_array)) {
 			$GLOBALS['log']->debug('End: SoapHelperWebServices->get_return_value_for_link_fields - Invalid link information passed ');
@@ -787,9 +784,7 @@ function validate_user($user_name, $password){
 				if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $value['name'] == 'user_hash'){
 					continue;
 				}
-                if(!empty($seed->field_name_map[$value['name']]['sensitive'])) {
-                    continue;
-                }
+
 				$seed->$value['name'] = $val;
 			}
 
@@ -907,7 +902,6 @@ function validate_user($user_name, $password){
 		if($module == 'Users' && $value->id != $current_user->id){
 			$value->user_hash = '';
 		}
-		$value = clean_sensitive_data($value->field_defs, $value);
 		$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_entries');
 		return Array('id'=>$value->id,
 					'module_name'=> $module,

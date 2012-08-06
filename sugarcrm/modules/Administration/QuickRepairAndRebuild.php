@@ -404,6 +404,18 @@ class RepairAndClear
         require_once('include/api/SugarApi/ServiceDictionary.php');
         $sd = new ServiceDictionary();
         $sd->clearCache();
+        //clear out the api metadata cache
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        $platforms = MetaDataManager::getPlatformList();
+        foreach($platforms as $platform) {
+            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+            $hashKey = "metadata:$platformKey:hash";
+            $hash = sugar_cache_retrieve($hashKey);
+            $cacheFile =  sugar_cached("api/metadata/$hash");
+            if (file_exists($cacheFile))
+                unlink($cacheFile);
+            sugar_cache_clear($hashKey);
+        }
     }
         
 

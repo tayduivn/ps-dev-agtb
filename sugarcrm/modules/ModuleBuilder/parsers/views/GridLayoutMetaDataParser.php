@@ -188,52 +188,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return $viewdefs ;
     }
 
-    /*
-    * Return the tab definitions for tab/panel combo
-    */
-    function getTabDefs ()
-    {
-      $tabDefs = array();
-      $this->setUseTabs( false );
-      foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
-      {
-
-        $tabDefs [ strtoupper($panelID) ] = array();
-
-        // panel or tab setting
-        if ( isset($this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] [ strtoupper($panelID) ] [ 'newTab' ])
-        && is_bool($this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] [ strtoupper($panelID) ] [ 'newTab' ]))
-        {
-          $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = $this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] [ strtoupper($panelID) ] [ 'newTab' ];
-          if ($tabDefs [ strtoupper($panelID) ] [ 'newTab' ] == true)
-              $this->setUseTabs( true );
-        }
-        else
-        {
-          $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = false;
-        }
-
-        // collapsed panels
-        if ( isset($this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] [ strtoupper($panelID) ] [ 'panelDefault' ])
-        && $this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] [ strtoupper($panelID) ] [ 'panelDefault' ] == 'collapsed' )
-        {
-          $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'collapsed';
-        }
-        else
-        {
-          $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'expanded';
-        }
-      }
-      return $tabDefs;
-    }
-
-    /*
-     * Set tab definitions
-     */
-    function setTabDefs($tabDefs) {
-      $this->_viewdefs [ 'templateMeta' ] [ 'tabDefs' ] = $tabDefs;
-    }
-
     function getMaxColumns ()
     {
         if (!empty( $this->_viewdefs) && isset($this->_viewdefs [ 'templateMeta' ] [ 'maxColumns' ]))
@@ -517,8 +471,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
         	}
         }
-
-/*
+        
         //Set the tabs setting
         if (isset($_REQUEST['panels_as_tabs']))
         {
@@ -527,39 +480,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         	else
         	   $this->setUseTabs( true );
         }
-*/
-
-        //Set the tab definitions
-        $tabDefs = array();
-        $this->setUseTabs( false );
-        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
-        {
-          // panel or tab setting
-          $tabDefs [ strtoupper($panelID) ] = array();
-          if ( isset($_REQUEST['tabDefs_'.$panelID.'_newTab']) )
-          {
-            $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = ( $_REQUEST['tabDefs_'.$panelID.'_newTab'] == '1' ) ? true : false;
-            if ($tabDefs [ strtoupper($panelID) ] [ 'newTab' ] == true)
-                $this->setUseTabs( true );
-          }
-          else
-          {
-            $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = false;
-          }
-
-          // collapse panel
-          if ( isset($_REQUEST['tabDefs_'.$panelID.'_panelDefault']) )
-          {
-            $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = ( $_REQUEST['tabDefs_'.$panelID.'_panelDefault'] == 'collapsed' ) ? 'collapsed' : 'expanded';
-          }
-          else
-          {
-            $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'expanded';
-          }
-
-        }
-        $this->setTabDefs($tabDefs);
-
+        
     	//bug: 38232 - Set the sync detail and editview settings
         if (isset($_REQUEST['sync_detail_and_edit']))
         {

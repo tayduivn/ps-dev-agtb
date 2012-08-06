@@ -85,7 +85,7 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
 	    $this->wf->deleted = true;
-	    $this->wf->mark_deleted($this->wf->id);
+	    $this->wf->cascade_delete($this->wf);
 	    $sql = "DELETE FROM workflow WHERE id='{$this->wf->id}'";
         $GLOBALS['db']->query($sql);
 	}

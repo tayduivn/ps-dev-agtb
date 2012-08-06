@@ -221,7 +221,7 @@ class ParserFactory
             if (!empty($def['view']) && $def['view'] == strtolower($view) && !empty($def['parser']))
             {
                 $pName = $def['parser'];
-                $path = "modules/ModuleBuilder/parsers/views/{$pName}.php";
+                $path = "module/ModuleBuilder/parsers/views/{$pName}.php";
                 if (file_exists("custom/$path"))
                     require_once("custom/$path");
                 else if (file_exists($path))
