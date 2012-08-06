@@ -141,13 +141,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             return $this;
         }
 
-        // clear flag
-        $admin = new Administration();
-        $settings = $admin->retrieveSettings();
-        if (!empty($settings->settings['info_fts_index_done'])) {
-            $admin->saveSetting('info', 'fts_index_done', 0);
-        }
-
         //Create the index on the server side
         $this->SSEngine->createIndex($deleteExistingData);
 
@@ -156,6 +149,13 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         //Remove any consumers that may be set to run
         $this->removeExistingFTSConsumers();
+
+        // clear flag
+        $admin = new Administration();
+        $settings = $admin->retrieveSettings();
+        if (!empty($settings->settings['info_fts_index_done'])) {
+            $admin->saveSetting('info', 'fts_index_done', 0);
+        }
 
 
         $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
