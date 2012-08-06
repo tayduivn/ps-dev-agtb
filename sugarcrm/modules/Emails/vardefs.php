@@ -479,7 +479,33 @@ $dictionary['Email'] = array(
 			'rhs_key'			=> 'parent_id',
 			'relationship_type'	=> 'one-to-many',
 		),
-
+		'emails_contacts_rel' => array(
+			'rhs_module'            => 'Emails',
+			'rhs_table'             => 'emails',
+			'rhs_key'               => 'parent_id',
+			'lhs_module'            => 'Contacts',
+			'lhs_table'             => 'contacts',
+			'lhs_key'               => 'id',
+			'relationship_type'     => 'one-to-many',
+		),
+		'emails_accounts_rel' => array(
+			'rhs_module'            => 'Emails',
+			'rhs_table'             => 'emails',
+			'rhs_key'               => 'parent_id',
+			'lhs_module'            => 'Accounts',
+			'lhs_table'             => 'accounts',
+			'lhs_key'               => 'id',
+			'relationship_type'     => 'one-to-many',
+		),
+		'emails_leads_rel' => array(
+			'rhs_module'            => 'Emails',
+			'rhs_table'             => 'emails',
+			'rhs_key'               => 'parent_id',
+			'lhs_module'            => 'Leads',
+			'lhs_table'             => 'leads',
+			'lhs_key'               => 'id',
+			'relationship_type'     => 'one-to-many',
+		),
 		// SNIP
 		'emails_meetings_rel' => array(
 			'lhs_module'    		 => 'Emails',
