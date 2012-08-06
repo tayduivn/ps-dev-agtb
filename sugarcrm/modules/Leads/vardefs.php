@@ -343,6 +343,21 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
 		),
+        //bug 54567
+        'email1' =>
+        array(
+            'name'		=> 'email1',
+            'vname'		=> 'LBL_EMAIL_ADDRESS',
+            'type'		=> 'varchar',
+            'function'	=> array(
+                'name'		=> 'getEmailAddressWidget',
+                'returns'	=> 'html'),
+            'source'	=> 'non-db',
+            'group'=>'email1',
+            'merge_filter' => 'enabled',
+            'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false),
+            'full_text_search' => array('boost' => 3),
+        ),
   'webtolead_email1' =>
   array (
     'name' => 'webtolead_email1',

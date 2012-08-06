@@ -331,7 +331,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     {
         $queuTableName = self::QUEUE_TABLE;
         $bean = BeanFactory::getBean($module, null);
-        $selectFields = array('id','team_id','team_set_id');
+        $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
+        $selectFields = array($id,'team_id','team_set_id');
         $ownerField = $bean->getOwnerField(true);
         if (!empty($ownerField))
         {
@@ -340,8 +341,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         foreach($fieldDefinitions as $key => $value)
         {
-            if(isset($value['name']))
+            if(isset($value['name'])) {
+                if ($value['name'] == 'email1')
+                    continue;
                 $selectFields[] = $value['name'];
+            }
         }
 
         $ret_array['select'] = " SELECT " . implode(",", $selectFields);
@@ -359,6 +363,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
         $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
+
+        if(isset($fieldDefinitions['email1'])) {
+            $ret_array['select'].= ", email_addresses.email_address email1";
+            $ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$bean->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$module}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id=email_addr_bean_rel.email_address_id ";
+        }
 
         return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
     }
