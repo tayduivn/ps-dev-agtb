@@ -83,7 +83,7 @@ class ConnectorHtmlHelper
                     . $shown_source .'" onmouseover="show_' . $shown_source . '(event);">';
 
             $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>";
-            $code .= $formatter->getDetailViewFormat();
+            //$code .= $formatter->getDetailViewFormat();
             $code .= $formatter_code;
         }
 
