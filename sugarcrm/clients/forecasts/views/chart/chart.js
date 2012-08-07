@@ -26,7 +26,7 @@
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : app.defaultSelections.group_by.id,
             dataset : app.defaultSelections.dataset.id,
-            category : app.defaultSelections.category.id
+            category : app.defaultSelections.category
         };
 
         app.view.View.prototype._render.call(this);
@@ -51,7 +51,7 @@
             self.handleRenderOptions({dataset: dataset.id});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category: value.id});
+            self.handleRenderOptions({category: value});
         });
         this.context.forecasts.on('change:updatedTotals', function(context, totals){
             if(!_.isEmpty(self.chart)) {

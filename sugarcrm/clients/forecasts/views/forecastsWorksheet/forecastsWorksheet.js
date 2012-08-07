@@ -504,41 +504,45 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        if(params.id == "Committed")
-        {
-            $.fn.dataTableExt.afnFiltering.push (
-                function(oSettings, aData, iDataIndex)
-                {
-                    var val = aData[0];
-                    var jVal = $(val);
-                    
-                    var returnVal = null;
-                    
-                    // our custom checkbox sort has taken over, this is now a 1 or 0
-                    if(val.length == 1){
-                    	if(val == 1){
-                    		returnVal = val;
-                    	}
+        if (app.config.showBuckets) { // buckets
+             // TODO:  this.
+        } else {  // not buckets
+            // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+            if(params[0] == "70") {
+                $.fn.dataTableExt.afnFiltering.push (
+                    function(oSettings, aData, iDataIndex)
+                    {
+                        var val = aData[0];
+                        var jVal = $(val);
+
+                        var returnVal = null;
+
+                        // our custom checkbox sort has taken over, this is now a 1 or 0
+                        if(val.length == 1){
+                            if(val == 1){
+                                returnVal = val;
+                            }
+                        }
+                        //initial load still has html here, or it is a dropdown.
+                        else{
+                            var selectVal = jVal.find("select").attr("value");
+                            var checkboxVal = jVal.find("input").attr("checked");
+
+                            if(typeof(selectVal) != "undefined" && selectVal == 100){
+                                returnVal = selectVal;
+                            }
+                            else if(typeof(checkboxVal) != "undefined"){
+                                returnVal = 1;
+                            }
+                        }
+
+                        return returnVal;
                     }
-                    //initial load still has html here, or it is a dropdown.
-                    else{
-                    	var selectVal = jVal.find("select").attr("value");
-                    	var checkboxVal = jVal.find("input").attr("checked");
-                    
-                    	if(typeof(selectVal) != "undefined" && selectVal == 100){
-                    		returnVal = selectVal;
-                    	}
-                    	else if(typeof(checkboxVal) != "undefined"){
-                    		returnVal = 1;
-                    	}                    	
-                    }
-                    
-                    return returnVal;
-                }
-            );
-        } else {
-            //Remove the filters
-            $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+                );
+            } else {
+                //Remove the filters
+                $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+            }
         }
         this.render();
     },

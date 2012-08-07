@@ -4,9 +4,6 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
     'components' => array(
         0 => array(
             'view' => 'filter',
-            'model' => array(
-                'name' => 'Filters'
-            )
         ),
         1 => array(
             'view' => 'chartOptions',

@@ -276,7 +276,8 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedCategory:function (params) {
-        this.category = params.id;
+        // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        this.category = params[0];
         var model = this.context.forecasts.worksheetmanager;
         if(!this.showMe()){
             return false;
