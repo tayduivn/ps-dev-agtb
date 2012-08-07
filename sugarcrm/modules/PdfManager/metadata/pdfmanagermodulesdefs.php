@@ -61,6 +61,12 @@ $bannedPdfManagerFieldsAndLinks['Contacts'] = array (
         'alt_address_street_3',
     ),
 );
+$bannedPdfManagerFieldsAndLinks['Employees'] = array (
+    'relationships' => array(
+        'holidays',
+        'oauth_tokens',
+    ),
+);
 $bannedPdfManagerFieldsAndLinks['Leads'] = array (
     'fields' => array(
         'primary_address_street_2',
@@ -69,10 +75,11 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
         'alt_address_street_3',
     ),
 );
-$bannedPdfManagerFieldsAndLinks['Employees'] = array (
-    'relationships' => array(
-        'holidays',
-        'oauth_tokens',
+$bannedPdfManagerFieldsAndLinks['Users'] = array (
+    'fields' => array(
+        'date_entered',
+        'date_modified',
+        'status',
     ),
 );
 
