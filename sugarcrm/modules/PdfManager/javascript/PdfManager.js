@@ -34,20 +34,13 @@ SUGAR.PdfManager = {};
 SUGAR.PdfManager.fieldInserted = false;
 
 /**
- * Replace &, <, > and " by HTML corresponding syntax
- */
-SUGAR.PdfManager.htmlEntities = function(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-/**
  * Change the HelpTip for WYSIWYG
  */
 SUGAR.PdfManager.changeHelpTips = function() {
     if ($("#base_module").attr("value") == 'Quotes') {
-        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this,SUGAR.PdfManager.htmlEntities(SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_QUOTES_HELP')),'','' )});
+        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this, SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_QUOTES_HELP'),'','' )});
     } else {
-        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this,SUGAR.PdfManager.htmlEntities(SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_HELP')),'','' )});
+        $("#body_html_label").find(".inlineHelpTip").click(function() {return SUGAR.util.showHelpTips(this, SUGAR.language.get('PdfManager', 'LBL_BODY_HTML_POPUP_HELP'),'','' )});
     }
 }
 
