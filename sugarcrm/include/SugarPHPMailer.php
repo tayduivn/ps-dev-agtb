@@ -394,4 +394,17 @@ eoq;
 		return $connection;
 	} // fn
 
+    /*
+     * overloads PreSend to add a check for the body being empty.  If the body is empty,
+     * then php mailer will not allow to email to go out and throw an exception.
+     * returns the output of PhpMailer->PreSend()
+     */
+    protected function PreSend() {
+        //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
+        if(empty($this->Body)){
+            $this->Body = " ";
+        }
+        return parent::PreSend();
+    }
+
 } // end class definition
