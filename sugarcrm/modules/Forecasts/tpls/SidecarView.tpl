@@ -75,7 +75,22 @@
         </div>
     </div>
 </div>
-
+<footer>
+    <div class="row-fluid">
+      <div class="span6">
+        <a href="" class="logo">SugarCRM</a>
+      </div>
+      <div class="span6">
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group">
+            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 {literal}
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>

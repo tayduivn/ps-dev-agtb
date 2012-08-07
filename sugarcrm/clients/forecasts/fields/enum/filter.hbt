@@ -1,7 +1,6 @@
 <div class="row-fluid">
     <div class="span12">
         <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}} style="width:100%">
-            <option value="" selected></option>
             {{#eachOptions def.options}}
             <option value="{{{this.key}}}" {{#has this.key ../def.value}}selected{{/has}}>{{this.value}}</option>
             {{/eachOptions}}
@@ -10,6 +9,7 @@
     </div>
 </div>
 
+<!--below is the original field template.  only saving here for quick reference during dev.-->
 <!--<div class="row-fluid">-->
     <!--<div class="span12">-->
         <!--<select class="filter_select" data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}} style="width: 100%;">-->
