@@ -78,7 +78,6 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-
         parent::setUp();
 
         // Adding products to visible modules

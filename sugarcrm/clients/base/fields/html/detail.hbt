@@ -1,4 +1,1 @@
-<div class="row-fluid">
-    <div class="span2">{{getLabel label model.module}}</div>
-    <div class="span10">{{#if value}}{{{value}}}{{else}}{{{def.default_value}}}{{/if}}</div>
-</div>
+{{#if value}}{{{value}}}{{else}}{{{def.default_value}}}{{/if}}

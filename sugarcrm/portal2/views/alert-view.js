@@ -41,10 +41,10 @@
                         'click .close' : 'close'
                     },
                     template: "<div class=\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{/if}}\">" +
-                        "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{title}}</strong>{{/if}}" +
-                        "{{#each messages}}<p>{{this}}</p>{{/each}}</div>",
+                        "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{str title}}</strong>{{/if}}" +
+                        "{{#each messages}}<p>{{str this}}</p>{{/each}}</div>",
                     loadingTemplate: "<div class=\"alert {{alertClass}}\">" +
-                        "<strong>{{title}}</strong>&hellip;<a class=\"close\" data-dismiss=\"alert\">x</a></div>",
+                        "<strong>{{str title}}</strong>&hellip;<a class=\"close\" data-dismiss=\"alert\">x</a></div>",
                     initialize: function() {
                         this.render();
                     },

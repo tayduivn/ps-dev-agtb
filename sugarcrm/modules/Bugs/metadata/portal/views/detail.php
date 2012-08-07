@@ -75,6 +75,7 @@ $viewdefs ['Bugs']['portal']['view']['detail'] =
                     'date_modified',
                     'modified_by_name',
                     'created_by_name',
+                    'assigned_user_name',
                     array(
                         'name' => 'description',
                         'displayParams' =>

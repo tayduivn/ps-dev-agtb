@@ -495,6 +495,7 @@ $report_include_modules['Contracts']='Contract';
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $report_include_modules['Trackers']         = 'Tracker';
+$report_include_modules['CampaignTrackers']         = 'CampaignTracker';
 
 //END SUGARCRM flav!=sales ONLY
 

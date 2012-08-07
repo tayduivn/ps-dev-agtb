@@ -1,7 +1,7 @@
 ({
     initialize: function(options) {
         // Figure out the modules that are available to the user.
-        this.moduleList = app.metadata.getModuleList({visible: true});
+        this.moduleList = app.metadata.getModuleNames(true);
 
         options.meta.components = [];
         // Add components metadata as specified in the module list

@@ -32,6 +32,7 @@ $config['builds']['pro']['languages']= array(
 'it_it',
 'lt_LT',
 'ja_JP',
+'lv_LV',
 'nb_NO',
 'nl_NL',
 'pl_PL',
@@ -134,5 +135,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_corp.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
+
+'sugarcrm/portal2' =>1
 );
 $build = 'pro';

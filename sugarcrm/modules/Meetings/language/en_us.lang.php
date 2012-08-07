@@ -152,7 +152,7 @@ $mod_strings = array (
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
 
     // create invitee functionallity
-    'LBL_CREATE_INVITEE' => 'Create an invitee',
+    'LBL_CREATE_INVITEE' => 'Create an Invitee',
     'LBL_CREATE_CONTACT' => 'As Contact',
     'LBL_CREATE_LEAD' => 'As Lead',
     'LBL_CREATE_AND_ADD' => 'Create & Add',
@@ -160,14 +160,27 @@ $mod_strings = array (
     'LBL_EMPTY_SEARCH_RESULT' => 'Sorry, no results were found. Please create an invitee below.',
     'LBL_NO_ACCESS' => 'You have no access to create $module',
     
-    'LBL_REPEAT_TYPE' => 'Repeat Type',
-    'LBL_REPEAT_INTERVAL' => 'Repeat Interval',
-    'LBL_REPEAT_DOW' => 'Repeat Dow',
+    'LBL_REPEAT_TYPE' => 'Repeat',
+    'LBL_REPEAT_INTERVAL' => 'Every',
+    'LBL_REPEAT_END' => 'End',
+    'LBL_REPEAT_END_AFTER' => 'After',
+    'LBL_REPEAT_OCCURRENCES' => 'recurrences',
+    'LBL_REPEAT_END_BY' => 'By',
+    'LBL_REPEAT_DOW' => 'On',
     'LBL_REPEAT_UNTIL' => 'Repeat Until',
-    'LBL_REPEAT_COUNT' => 'Repeat Count',
+    'LBL_REPEAT_COUNT' => 'Number of recurrences',
+    'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
+    'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
+    'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',
+    'LBL_DATE_END_ERROR' => 'End date is before start date',
     'LBL_REPEAT_PARENT_ID' => 'Repeat Parent ID',
     'LBL_RECURRING_SOURCE' => 'Recurring Source',
+    'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
+    'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
+    'LBL_RECURRENCE' => 'Recurrence',
     
     'LBL_SYNCED_RECURRING_MSG' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
+
+    'LBL_RELATED_TO' => 'Related to:',
 );
 ?>

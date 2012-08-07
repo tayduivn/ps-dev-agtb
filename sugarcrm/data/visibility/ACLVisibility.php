@@ -26,6 +26,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ACLVisibility extends SugarVisibility
 {
+    /**
+     * (non-PHPdoc)
+     * @see SugarVisibility::addVisibilityWhere()
+     */
     public function addVisibilityWhere(&$query)
     {
         $action = $this->getOption('action', 'list');

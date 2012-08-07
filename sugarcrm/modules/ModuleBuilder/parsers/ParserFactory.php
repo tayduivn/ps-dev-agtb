@@ -140,9 +140,14 @@ class ParserFactory
             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSBASICSEARCH :
             case MB_WIRELESSADVANCEDSEARCH :
+                // Make sure we have the right client
+                if ($lView == MB_WIRELESSBASICSEARCH || $lView == MB_WIRELESSADVANCEDSEARCH)
+                {
+                    $client = MB_WIRELESS;
+                }
             //END SUGARCRM flav=pro || flav=sales ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php' ;
-                return new SearchViewMetaDataParser ( $view, $moduleName, $packageName ) ;
+                return new SearchViewMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_LISTVIEW :
                 if ($subpanelName == null)
                 {
