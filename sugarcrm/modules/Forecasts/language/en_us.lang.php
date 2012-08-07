@@ -285,6 +285,8 @@ $mod_strings = array (
     'LBL_EMAIL' => 'Email',
     'LBL_PDF' => 'PDF',
     'LBL_CSV' => 'CSV',
+    'LBL_CANCEL' => 'Cancel',
+    'LBL_ADMIN' => 'Admin',
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for',
 );
