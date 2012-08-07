@@ -55,6 +55,11 @@ class ForecastsChartApi extends ChartApi
      */
     protected $isManager = false;
 
+    /**
+     * Which field we need to pull in to the manager chart from the forecast worksheet
+     *
+     * @var string
+     */
     protected $managerAdjustedField = 'likely_adjusted';
 
     /**
@@ -113,7 +118,7 @@ class ForecastsChartApi extends ChartApi
         } else {
             $filters = array(
                 'timeperiod_id' => array('$is' => $timeperiod_id),
-                'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
+                'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id)))
             );
             // no matter what for the manager we need to get the group by to be "forecast";
             $args['group_by'] = "forecast";
