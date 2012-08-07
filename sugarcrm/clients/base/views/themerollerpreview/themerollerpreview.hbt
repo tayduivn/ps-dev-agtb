@@ -1,0 +1,14 @@
+<div class="tab-content" id="folded">
+    <div class="active hero-unit">
+        <div class="block">
+            <h4>Theme Preview</h4>
+
+            <div class="ajaxLoading" style="margin: 1em;">
+                <p style="text-align: center;">Loading Preview</p>
+                <p style="text-align: center;"><img src="./styleguide/bootstrap/img/ajax-loader.gif"></p>
+            </div>
+            <iframe id="previewTheme" src="./styleguide/styleguide/theming_preview.html" style="width: 100%; border: 0; height: 500px;" allowtransparency="true"></iframe>
+            
+        </div>
+    </div>
+</div>

@@ -261,7 +261,7 @@ class SugarView
         $ss->assign("THEME_IE6COMPAT", $themeObject->ie6compat ? 'true':'false');
         $ss->assign("MODULE_NAME", $this->module);
         $ss->assign("langHeader", get_language_header());
-        $ss->assign('use_table_container', $this->options['use_table_container']);
+        $ss->assign('use_table_container', (isset($this->options['use_table_container']) ? $this->options['use_table_container'] : false));
 
         // set ab testing if exists
         $testing = (isset($_REQUEST["testing"]) ? $_REQUEST['testing'] : "a");
@@ -945,7 +945,7 @@ EOHTML;
         $ss = new Sugar_Smarty();
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
         $ss->assign('MOD',return_module_language($GLOBALS['current_language'], 'Users'));
-        $ss->assign('use_table_container', $this->options['use_table_container']);
+        $ss->assign('use_table_container', (isset($this->options['use_table_container']) ? $this->options['use_table_container'] : false));
 
 		$bottomLinkList = array();
 		 if (isset($this->action) && $this->action != "EditView") {
