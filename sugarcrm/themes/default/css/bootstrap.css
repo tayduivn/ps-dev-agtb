@@ -6122,7 +6122,7 @@ table.dataTable th:active {
   background: transparent;
 }
 .jstree-sugar .jstree-no-dots .jstree-open > ins {
-  background-position: -18px 0;
+  margin-left: 5px;
 }
 .jstree-sugar .jstree-no-dots .jstree-closed > ins {
   background-position: 0 0;
@@ -8406,4 +8406,17 @@ color: @red;
     width: 90% !important;
     margin-left: 5% !important;
     padding-top: 20px;
+}
+
+.btn-invisible {
+    background:none;
+    border:1px solid transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.btn-invisible:hover {
+    border:1px solid #d0cfce;
+    *border:0;
+    border-top-color:#c1bfbe;
 }
