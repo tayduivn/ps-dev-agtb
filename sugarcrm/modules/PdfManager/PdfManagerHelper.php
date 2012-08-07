@@ -412,6 +412,8 @@ class PdfManagerHelper
     {
         global $app_list_strings;
 
+        $module_instance->ACLFilterFields();
+
         $fields_module = array();
         foreach ($module_instance->toArray() as $name => $value) {
 
