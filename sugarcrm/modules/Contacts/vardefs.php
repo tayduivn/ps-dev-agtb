@@ -639,21 +639,6 @@ array (
             'importable' => 'false',
         ),
 //END SUGARCRM flav=dce ONLY
-        //bug 54567
-        'email1' =>
-        array(
-            'name'		=> 'email1',
-            'vname'		=> 'LBL_EMAIL_ADDRESS',
-            'type'		=> 'varchar',
-            'function'	=> array(
-                'name'		=> 'getEmailAddressWidget',
-                'returns'	=> 'html'),
-            'source'	=> 'non-db',
-            'group'=>'email1',
-            'merge_filter' => 'enabled',
-            'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false),
-            'full_text_search' => array('boost' => 3),
-        ),
 ),
 'indices' => array (
 	array(
