@@ -3,7 +3,7 @@ var SugarFieldTest = {};
 (function(test) {
 
     test.loadSugarField = function(file) {
-        return SugarTest.loadFile("../../../../sugarcrm/clients/base/fields", file, "js", function(data) {
+        return SugarTest.loadFile("../clients/base/fields", file, "js", function(data) {
             return eval("(" + data + ")");
         });
     };
