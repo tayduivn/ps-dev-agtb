@@ -3,7 +3,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
     'type' => 'forecasts',
     'components' => array(
         0 => array(
-            'view' => 'forecastsFilter',
+            'view' => 'filter',
             'model' => array(
                 'name' => 'Filters'
             )
@@ -63,6 +63,12 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
                 'module' => 'ForecastSchedule',
                 'name' => 'forecastschedule'
             )
-        )
+        ),
+        10 => array(
+            'view' => 'timeframes',
+            'model' => array(
+                'name' => 'Timeframes'
+            )
+        ),
     )
 );

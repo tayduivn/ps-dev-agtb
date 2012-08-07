@@ -1,5 +1,13 @@
 <div class="btn-toolbar pull-left">
-    <h1>Forecast: {{fullName}} for {{timePeriod}}</h1>
+    <h1>Forecast: {{fullName}}}</h1>
+    <div class="btn-group">
+        <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu carettop">
+            <li><div id="people" class="jstree-sugar" id="forecasts-jstree"></div></li>
+        </ul>
+    </div>
 </div>
 <div class="btn-toolbar pull-right">
     <div class="dropdown">

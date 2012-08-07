@@ -1,73 +1,81 @@
-<script src='clients/forecasts/config.js'></script>
-<script src='clients/forecasts/helper/hbt-helpers.js'></script>
-<script src='clients/forecasts/lib/ClickToEdit.js'></script>
-<script src='clients/forecasts/lib/BucketGridEnum.js'></script>
-<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
-<script src='clients/forecasts/views/tree/tree.js'></script>
-<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
-<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
-<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/forecasts/views/progress/progress.js'></script>
-<script src='clients/forecasts/views/chart/chart.js'></script>
-<script src='clients/forecasts/views/alert/alert-view.js'></script>
-<script scr='clients/forecasts/fields/userLink/userLink.js'></script>
-<script scr='clients/forecasts/fields/recordLink/recordLink.js'></script>
-<script src='modules/Forecasts/tpls/SidecarView.js'></script>
-<div class="view-forecastsSubnav subnav"></div>
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
     <div id="forecasts" style="" >
+        <div class="row-fluid">
+            <div class="view-forecastsSubnav subnav" id="headerbar"></div>
+        </div>
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="span2" id="drawer">
-                    <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
-                    <div class="bordered">
-                        <div class="view-forecastsFilter"></div>
-                        <div class="view-chartOptions"></div>
-                        <div class="view-tree"></div>
+                <div class="span8">
+                    <div class="view-forecastsCommitted"></div>
+                    <div class="view-filter"></div>
+                    <div>
+                        <div id="view-sales-rep" style="display:none">
+                            <div class="view-forecastsWorksheet"></div>
+                        </div>
+                        <div id="view-manager" style="display:none">
+                            <div class="view-forecastsWorksheetManager"></div>
+                        </div>
                     </div>
                 </div>
-                <div id="charts" class="span10">
-                    <div class="row-fluid">
-                        <div class="span6">
+
+                <div class="span4 tab-content" id="folded">
+                    <div class="tab-pane active" id="overview">
+                        <div class="thumbnail viz">
                             <div class="view-chart"></div>
                         </div>
-                        <div class="span6">
-                            <div class="tab-pane active" id="overview">
-                                <div class="block" id="moduleTwitter">
-                                    <div class="view-progress"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span12">
-                            <hr/>
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="topline thumbnail span12">
-                          <div class="row-fluid view-forecastsCommitted">
-                          </div>
-                          <hr>
-                          <div>
-                              <div id="view-sales-rep" style="display:none">
-                                  <div class="view-forecastsWorksheet"></div>
-                              </div>
-                              <div id="view-manager" style="display:none">
-                                  <div class="view-forecastsWorksheetManager"></div>
-                              </div>
-                          </div>
+                        <div class="clearfix"></div>
+                        <div class="block" id="guages">
+                            <div class="view-progress"></div>
                         </div>
                     </div>
                 </div>
+
+            {*
+            <div class="view-chartOptions"></div>
+            <div class="view-tree"></div>
+            <div class="view-timeframes"></div>
+            *}
+
+          {*<div class="span2" id="drawer">*}
+            {*<a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>*}
+            {*<div class="bordered">*}
+                    {*</div>*}
+                {*</div>*}
+                {*<div id="charts" class="span10">*}
+                    {*<div class="row-fluid">*}
+                        {*<div class="span12">*}
+                            {*<hr/>*}
+                        {*</div>*}
+                    {*</div>*}
+                    {*<div class="row-fluid">*}
+                        {*<div class="topline thumbnail span12">*}
+                          {**}
+                          {*<hr>*}
+                          {**}
+                        {*</div>*}
+                    {*</div>*}
+                {*</div>*}
             </div>
         </div>
     </div>
 </div>
-
+<footer>
+    <div class="row-fluid">
+      <div class="span6">
+        <a href="" class="logo">SugarCRM</a>
+      </div>
+      <div class="span6">
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group">
+            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 {literal}
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
@@ -97,7 +105,25 @@
 {/literal}
 
 <div class="content"></div>
-
+<script src='clients/forecasts/config.js'></script>
+<script src='clients/forecasts/helper/hbt-helpers.js'></script>
+<script src='clients/forecasts/lib/ClickToEdit.js'></script>
+<script src='clients/forecasts/lib/BucketGridEnum.js'></script>
+<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
+<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
+<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
+<script src='clients/forecasts/views/tree/tree.js'></script>
+<script src='clients/forecasts/views/filter/filter.js'></script>
+<script src='clients/forecasts/views/timeframes/timeframes.js'></script>
+<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
+<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
+<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
+<script src='clients/forecasts/views/progress/progress.js'></script>
+<script src='clients/forecasts/views/chart/chart.js'></script>
+<script src='clients/forecasts/views/alert/alert-view.js'></script>
+<script scr='clients/forecasts/fields/userLink/userLink.js'></script>
+<script scr='clients/forecasts/fields/recordLink/recordLink.js'></script>
+<script src='modules/Forecasts/tpls/SidecarView.js'></script>
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;

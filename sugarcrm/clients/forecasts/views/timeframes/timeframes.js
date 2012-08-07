@@ -6,11 +6,11 @@
  */
 ({
 
-    viewSelector: '.filterOptions',
+    viewSelector: '.timeframeOptions',
 
     bindDataChange: function() {
         var self = this,
-            model = this.context.forecasts.filters;
+            model = this.context.forecasts.timeframes;
 
         model.on('change', function() {
             self.buildDropdowns(this);
@@ -45,20 +45,8 @@
             chosen.setElement($chosenPlaceholder);
             chosen.render();
 
-            if (key == 'timeperiod_id') {
-                self.handleTimePeriodEvents($chosenPlaceholder);
-            } else if (key == 'category') {
-                self.handleCategoryEvents($chosenPlaceholder);
-            }
-        });
-    },
+            self.handleTimePeriodEvents($chosenPlaceholder);
 
-    handleCategoryEvents: function(dropdown) {
-        var self = this;
-        dropdown.on('change', 'select', function(event, data) {
-            var label = $(this).find('option:[value='+data.selected+']').text();
-            var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.forecasts.set('selectedCategory', {"id": id, "label": label});
         });
     },
 
