@@ -144,6 +144,7 @@ $mod_strings = array (
     'LBL_PORTAL_INFORMATION' => 'Portal Information',
     'LBL_PORTAL_NAME' => 'Portal Name:',
     'LBL_PORTAL_PASSWORD_ISSET' => 'Portal Password is Set:',
+    'LBL_PREFERRED_LANGUAGE' => 'Portal Language:',
     'LBL_STREET' => 'Street',
     'LBL_POSTAL_CODE' => 'Postal Code:',
     'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',

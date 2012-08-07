@@ -525,6 +525,15 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'source'=>'non-db',
         'vname'=>'LBL_PROSPECT_LIST',
       ),
+        'preferred_language' =>
+            array(
+                'name' => 'preferred_language',
+                'type' => 'enum',
+                'group'=>'portal',
+                'default' => '',
+                'vname' => 'LBL_PREFERRED_LANGUAGE',
+                'options' => 'available_language_dom',
+            ),
 
 )
                                                       , 'indices' => array (

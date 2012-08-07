@@ -235,6 +235,13 @@ $viewdefs['Contacts']['DetailView'] = array(
  		    	  'hideIf' => 'empty($PORTAL_ENABLED)',
 		        ),
 		    ),
+        array(
+            array('name' => 'preferred_language',
+                  'label' => 'LBL_PREFERRED_LANGUAGE',
+                  'hideIf' => 'empty($PORTAL_ENABLED)',
+            ),
+            array(),
+        ),
 	    //END SUGARCRM flav=ent ONLY
 
       ),

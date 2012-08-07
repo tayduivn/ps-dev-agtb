@@ -1040,6 +1040,10 @@ function return_app_list_strings_language($language)
 	$return_value = $app_list_strings;
 	$app_list_strings = $temp_app_list_strings;
 
+    //Add to the app_list_strings the list of language available in the application.
+    $return_value['available_language_dom'][""] = "";
+    $return_value['available_language_dom'] = array_merge($return_value['available_language_dom'], get_languages());
+
 	sugar_cache_put($cache_key, $return_value);
 
 	return $return_value;
