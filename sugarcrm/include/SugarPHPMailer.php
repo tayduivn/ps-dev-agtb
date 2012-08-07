@@ -395,13 +395,12 @@ eoq;
 	} // fn
 
     /*
-     * overloads PreSend to add a check for the body being empty.  If the body is empty,
-     * then php mailer will not allow to email to go out and throw an exception.
-     * returns the output of PhpMailer->PreSend()
+     * overloads PHPMailer::PreSend() to allow for empty messages to go out.
      */
     protected function PreSend() {
-        //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
+        //check to see if message body is empty
         if(empty($this->Body)){
+            //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
             $this->Body = " ";
         }
         return parent::PreSend();
