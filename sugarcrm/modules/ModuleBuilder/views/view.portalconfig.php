@@ -56,7 +56,10 @@ class ViewPortalConfig extends SugarView
    	 */
 	function display() 
 	{
+        $portalFields = array('appStatus'=>'offline', 'logoURL'=>
+        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'10', 'defaultUser'=>'');
         $userList = get_user_array();
+        $userList[''] = '';
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();
@@ -71,8 +74,6 @@ class ViewPortalConfig extends SugarView
           }
         };
 
-        $portalFields = array('on'=>'0', 'logoURL'=>
-        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'3', 'defaultUser'=>'');
         $admin = new Administration();
        	$admin->retrieveSettings();
 

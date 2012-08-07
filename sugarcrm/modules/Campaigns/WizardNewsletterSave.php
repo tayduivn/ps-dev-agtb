@@ -144,7 +144,7 @@ global $mod_strings;
 
 
     //save  campaign trackers and save if defined
-    if(isset($_REQUEST['wiz_list_of_existing_trackers'])){
+    if(!empty($_REQUEST['wiz_list_of_existing_trackers'])){
         $tracker_strings = explode(",", $_REQUEST['wiz_list_of_existing_trackers']);
         foreach($tracker_strings as $trkr_string){
             $tracker_values = explode("@@", $trkr_string);
@@ -165,7 +165,7 @@ global $mod_strings;
 
 
     //create new campaign tracker and save if defined
-    if(isset($_REQUEST['wiz_list_of_trackers'])){
+    if(!empty($_REQUEST['wiz_list_of_trackers'])){
         $tracker_strings = explode(",", $_REQUEST['wiz_list_of_trackers']);
         foreach($tracker_strings as $trkr_string){
             $tracker_values = explode("@@", $trkr_string);

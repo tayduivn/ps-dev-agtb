@@ -56,7 +56,7 @@ class ACLAction  extends SugarBean
                 $result = $db->query($query);
                 //only add if an action with that name and category don't exist
                 $row=$db->fetchByAssoc($result);
-                if ($row == null) {
+                if (empty($row)) {
                     $action->name = $action_name;
                     $action->category = $category;
                     $action->aclaccess = $action_def['default'];
@@ -97,7 +97,7 @@ class ACLAction  extends SugarBean
                 }
             }
         }else{
-            sugar_die("FAILED TO REMOVE: $category : $name - TYPE $type NOT DEFINED IN modules/ACLActions/actiondefs.php");
+            sugar_die("FAILED TO REMOVE: - CATEGORY : $category - TYPE $type NOT DEFINED IN modules/ACLActions/actiondefs.php");
         }
     }
 

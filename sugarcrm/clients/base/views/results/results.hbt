@@ -4,10 +4,10 @@
                 <ul class="nav nav-tabs results">
                     {{#each collection.models}}
                     <li class="search">
-                        <a data-toggle="tab"><span class="label label-log">{{str "LBL_MODULE_NAME" attributes._module}}</span></a>
+                        <a href="javascript:void(0)" data-toggle="tab"><span class="label label-{{attributes._module}}">{{str "LBL_MODULE_NAME_SINGULAR" attributes._module}}</span></a>
                         <p><a href="#{{attributes._module}}/{{id}}">{{attributes.name}}</a></p>
                         <div class="actions">
-                           <a><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                           <a href="javascript:void(0)" rel="tooltip" data-title="{{str "LBL_PREVIEW"}}"><i class="icon-eye-open"></i></a>
                         </div>
                     </li>
                     {{/each}}
@@ -18,28 +18,5 @@
                     {{/each}}
                 {{/notEq}}
             </div>
-            <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
-                <li>
-                    {{field ../this ../model}}
-                </li>
-                {{/each}}
-                {{#if collection.page}}
-                {{#eq collection.page "1"}}
-                {{#notEq collection.next_offset "-1"}}
-                <li>
-                    <div class="page_counter">
-                        <small>Page {{collection.page}}</small>
-                    </div>
-                </li>
-                {{/notEq}}
-                {{else}}
-                <li>
-                    <div class="page_counter">
-                        <small>Page {{collection.page}}</small>
-                    </div>
-                </li>
-                {{/eq}}
-                {{/if}}
-            </ul>
         </div>
     </div>

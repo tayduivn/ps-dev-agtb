@@ -27,6 +27,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SupportPortalVisibility extends SugarVisibility
 {
     protected $wherePart = '';
+    protected static $accountIds;
+
+    /**
+     * Pull the list of account id's for a particular contact, we can't cache this because
+     * there are requirements about the account id's changing fairly often for a contact.
+     */
+    public function getAccountIds() 
+    {
+        if ( ! isset($this->accountIds) ) {
+            $db = DBManagerFactory::getInstance();
+
+            if ( !empty($_SESSION['contact_id']) ) {
+                // Using a raw query here, if we attempt to load in a bean and relationships
+                // we end up back here again trying to load the same data.
+                $ret = $db->query("SELECT accounts_contacts.account_id FROM accounts_contacts INNER JOIN accounts ON accounts_contacts.account_id = accounts.id WHERE accounts_contacts.contact_id = '".$db->quote($_SESSION['contact_id'])."' AND accounts_contacts.deleted = 0 AND accounts.deleted = 0");
+                $this->accountIds = array();
+                while ( $row = $db->fetchByAssoc($ret) ) {
+                    $this->accountIds[] = $row['account_id'];
+                }
+            } else {
+                $this->accountIds = array();
+            }
+        }
+        return $this->accountIds;
+    }
 
     /**
      * This function is here so we can put all the rules in one local section and just have it return the part of the query for that particular type
@@ -51,14 +76,17 @@ class SupportPortalVisibility extends SugarVisibility
             $table_alias = $this->bean->table_name;
         }
 
-        if ( !empty($_SESSION['account_ids']) ) {
-            $accountIn = "('".implode("','",$_SESSION['account_ids'])."')";
+        $accountIds = $this->getAccountIds();
+
+        if ( !empty($accountIds) ) {
+            $accountIn = "('".implode("','",$accountIds)."')";
         } else {
             // No accounts
-            $accountIn = '()';
+            // According to the SQL specification this should never return any records
+            $accountIn = "(NULL)";
         }
         // $_SESSION['contact_id']
-        // $_SESSION['account_ids']
+        // $accountIds
 
         $queryPart = '';
 
@@ -66,9 +94,16 @@ class SupportPortalVisibility extends SugarVisibility
         switch ($this->bean->module_dir) {
             case 'Contacts':
                 // Contacts: Any contact related to the account list
-                if ( $queryType == 'from' ) {
-                    $this->bean->load_relationship('accounts');
-                    $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                // Special case, if there are no accounts in the list, at least allow them access to their own contact
+                if ( count($accountIds) == 0 && !empty($_SESSION['contact_id']) ) {
+                    if ( $queryType == 'where' ) {
+                        $queryPart = " $table_alias.id = '".$_SESSION['contact_id']."' ";
+                    }
+                } else {
+                    if ( $queryType == 'from' ) {
+                        $this->bean->load_relationship('accounts');
+                        $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                    }
                 }
                 break;
             case 'Accounts':
@@ -88,8 +123,11 @@ class SupportPortalVisibility extends SugarVisibility
                 break;
             case 'KBDocuments':
                 // KBDocuments: Any KBDocument where is_external_article = 1 AND ( exp_date is empty or > today ) AND status_id = Published
-                if ( $queryPart == 'where' ) {
-                    $queryPart = " {$table_alias}.is_external_article = 1 AND ( {$table_alias}.exp_date IS NULL OR {$table_alias}.exp_date = '' OR {$table_alias}.exp_date > NOW() ) AND {$table_alias}.status_id = 'Published' ";
+                if ( $queryType == 'where' ) { 
+                    $queryPart = " {$table_alias}.is_external_article = 1 "
+                        ."AND ( {$table_alias}.exp_date IS NULL OR {$table_alias}.exp_date = '' OR {$table_alias}.exp_date > NOW() ) "
+                        ."AND ( {$table_alias}.active_date IS NULL OR {$table_alias}.active_date = '' OR {$table_alias}.active_date < NOW() ) "
+                        ."AND {$table_alias}.status_id = 'Published' ";
                 }
 
                 break;

@@ -38,7 +38,7 @@
         <tr>
             <td colspan='2' nowrap>
             {$mod.LBL_PORTAL_ENABLE}:
-                <input type="checkbox" name="on" {if $on eq 1}checked{/if} class='portalField' id="on" value="1"/>
+                <input type="checkbox" name="appStatus" {if $appStatus eq 'online'}checked{/if} class='portalField' id="appStatus" value="online"/>
             </td>
         </tr>
         <tr>
@@ -78,7 +78,7 @@
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>
-                <select data-placeholder="Select a user..." class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
+                <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
                 {foreach from=$userList item=user key=userId}
                     <option value="{$userId}" {if $userId == $defaultUser}selected{/if}>{$user}</option>
                 {/foreach}
@@ -95,7 +95,7 @@
 </form>
 <div>
 
-    {if disabledDisplayModules}
+    {if $disabledDisplayModules}
     <br>
     <p>
         {$mod.LBL_PORTAL_DISABLED_MODULES}
@@ -114,7 +114,7 @@
 {literal}
 
 <script language='javascript'>
-    $('.chzn-select').chosen();
+    $('.chzn-select').chosen({allow_single_deselect: true});
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
     addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 

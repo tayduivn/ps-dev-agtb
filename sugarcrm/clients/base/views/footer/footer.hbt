@@ -19,7 +19,7 @@
 <!-- Tour Guide -->
 <div class="modal hide" id="systemTour">
   <div class="modal-header">
-    <a class="close" data-dismiss="modal">?</a>
+    <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
     <h3>Tour the Portal</h3>
   </div>
   <div class="modal-body">
@@ -32,7 +32,7 @@
   <div id="tourModules" class="tourSee"><span>Modules</span></div>
   <div id="tourUSearch" class="tourSee"><span>Universal search</span></div>
   <div id="tourSort" class="tourSee"><span>Sort columns</span></div>
-  <div id="tourRefine" class="tourSee"><span>Filter<br>items</span></div>
-  <div id="tourAdd" class="tourSee"><span>Add<br>item</span></div>
+  <div id="tourRefine" class="tourSee"><span>Filter items</span></div>
+  <div id="tourAdd" class="tourSee"><span>Add item</span></div>
   </div>
 </div>

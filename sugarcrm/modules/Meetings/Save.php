@@ -30,5 +30,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Meetings/MeetingFormBase.php');
 $formBase = new MeetingFormBase();
+if ($formBase->prepareRecurring()) {
+    if ($limit = $formBase->checkRecurringLimitExceeded()) {
+        echo str_replace('$limit', $limit, $GLOBALS['mod_strings']['LBL_REPEAT_LIMIT_ERROR']);
+        sugar_cleanup(true);
+    }
+}
 $formBase->handleSave('', true, false);
 ?>

@@ -59,6 +59,7 @@ class RestTestPortalSecurity extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->notes = array();
+        $this->kbdocs = array();
     }
     public function tearDown()
     {
@@ -97,6 +98,11 @@ class RestTestPortalSecurity extends RestTestBase {
             $noteIds[] = $note->id;
         }
         $noteIds = "('".implode("','",$noteIds)."')";
+        $kbdocIds = array();
+        foreach ( $this->kbdocs as $kbdoc ) {
+            $kbdocIds[] = $kbdoc->id;
+        }
+        $kbdocIds = "('".implode("','",$kbdocIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -115,6 +121,8 @@ class RestTestPortalSecurity extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM cases_bugs WHERE bug_id IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
         $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
         
         parent::tearDown();
     }
@@ -264,6 +272,44 @@ class RestTestPortalSecurity extends RestTestBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
+        // Add some KBDocuments
+        for ( $i = 0 ; $i < 5 ; $i++ ) {
+            $kbdoc = new KBDocument();
+            $kbdoc->kbdocument_name = "KBDocument ".($i+1)." - ".create_guid();
+            $kbdoc->body = 'This is a document for the unit test system';
+            $startDate = new DateTime();
+            $startDate->modify('-7 weeks');
+            $endDate = new DateTime();
+            $endDate->modify('+7 weeks');
+            $kbdoc->active_date = $startDate->format('Y-m-d');
+            $kbdoc->exp_date = $endDate->format('Y-m-d');
+            $kbdoc->status_id = 'Published';
+            $kbdoc->is_external_article = '1';
+
+            switch($i) {
+                case 0:
+                    $kbdoc->status_id = 'Not Published';
+                    break;
+                case 1:
+                    $kbdoc->is_external_article = '0';
+                    break;
+                case 2:
+                    // Set the start date to the future.
+                    $startDate->modify('+8 weeks');
+                    $kbdoc->active_date = $startDate->format('Y-m-d');
+                    break;
+                case 3:
+                    // Set the end date to the past
+                    $endDate->modify('-8 weeks');
+                    $kbdoc->exp_date = $endDate->format('Y-m-d');
+                    break;
+            }
+
+            $kbdoc->save();
+            $this->kbdocs[] = $kbdoc;
+        }
+
+
         // How about some cases?
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $acase = new aCase();
@@ -576,5 +622,160 @@ class RestTestPortalSecurity extends RestTestBase {
         $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
 
+
+        // Validate KBDocuments
+        $restReply = $this->_restCall("KBDocuments/");
+        foreach ( $restReply['reply']['records'] as $kbdoc ) {
+            $this->assertEquals('1',$kbdoc['is_external_article']);
+            $this->assertEquals('Published',$kbdoc['status_id']);
+            $startTime = DateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
+            $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);
+            $endTime = DateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp();
+            $this->assertGreaterThan(time(),$endTime,"Current date is after: ".$kbdoc['exp_date']);
+        }
+        // Should not be able to fetch some of the records, let's test that.
+        for ( $i = 0; $i < 4 ; $i++ ) {
+            $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[$i]->id);
+            $this->assertEquals('not_found',$restReply['reply']['error']);
+        }
+
+        $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[4]->id);
+        $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
+
     }
+
+    public function testPortalSecurityNoAccount() {
+        for ( $i = 0 ; $i < 10 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+
+            if ( $i == 5 ) {
+                // This guy is our guy
+                $contact->portal_active = true;
+                $contact->portal_name = "unittestportal";
+                $contact->portal_password = User::getPasswordHash("unittest");
+                
+                $this->portalGuy = $contact;
+            }
+            $this->contacts[$i] = $contact;
+
+            $contact->save();
+        }
+
+
+        // Negative test: Try and fetch a Contact you shouldn't be able to see
+        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
+        // Positive test: Fetch a Contact that you should be able to see
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals($this->portalGuy->id,$restReply['reply']['id']);
+
+        // Positive test: Should be able to change the name of our Contact
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+
+        // Negative test: Should not be able to create a new Contact
+        $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
+        // Negative test: Should not be able to create a new Case
+        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+        
+        // Fetch contacts, make sure we can only see the correct one.
+        $restReply = $this->_restCall("Contacts");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals($this->portalGuy->id,$record['id']);
+        }
+
+    }
+
+    public function testPortalSecurityChangeAccount() {
+        // Build three accounts, we'll associate to two of them.
+        for ( $i = 0 ; $i < 3 ; $i++ ) {
+            $account = new Account();
+            $account->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $account->billing_address_postalcode = sprintf("%08d",($i+1));
+            $account->save();
+            $this->accounts[] = $account;
+        }
+        for ( $i = 0 ; $i < 10 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+            $this->contacts[$i] = $contact;
+
+            $contact->load_relationship('accounts');
+            if ( $i > 4 ) {
+                // The final account gets all the fun.
+                $accountNum = 2;
+            } else {
+                $accountNum = $i%2;
+            }
+            $contact->accounts->add(array($this->accounts[$accountNum]));
+            if ( $i == 5 ) {
+                // This guy is our guy
+                $contact->portal_active = true;
+                $contact->portal_name = "unittestportal";
+                $contact->portal_password = User::getPasswordHash("unittest");
+                
+                // Add it to two accounts, just to make sure we get that much visibility
+                $contact->accounts->add(array($this->accounts[1]));
+
+                $this->portalGuy = $contact;
+            }
+            $contact->save();
+        }
+
+        // Negative test: Try and fetch a Contact you shouldn't be able to see
+        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
+        // Positive test: Fetch a Contact that you should be able to see
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals($this->portalGuy->id,$restReply['reply']['id']);
+
+        // Positive test: Fetch another Contact that you should be able to see
+        $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
+        $this->assertEquals($this->contacts[1]->id,$restReply['reply']['id']);
+
+        // Positive test: Should be able to change the name of our Contact
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
+
+        // Positive test: Make sure we can see both accounts for now
+        $restReply = $this->_restCall('Accounts/');
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertNotEquals($this->accounts[0]->id,$record['id']);
+        }
+
+        // Positive test: Make sure we can access this account first
+        $restReply = $this->_restCall('Accounts/'.$this->accounts[1]->id);
+        $this->assertEquals($this->accounts[1]->id,$restReply['reply']['id']);
+        
+        // Remove the contact from one of the accounts and make sure that
+        // it doesn't come up on the list
+        $this->portalGuy->accounts->delete($this->portalGuy->id,$this->accounts[1]);
+
+        // Positive test: Make sure we can only see one account now
+        $restReply = $this->_restCall('Accounts/');
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals($this->accounts[2]->id,$record['id']);
+        }
+
+        // Negative test: Try and fetch the account we unlinked
+        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+    }
+
 }

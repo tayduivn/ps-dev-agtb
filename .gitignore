@@ -15,6 +15,7 @@ sidecar/extensions/core/config.js
 sidecar/extensions/portal/config.js
 sidecar/extensions/nomad/config.js
 sugarcrm/config_si.php
+sugarcrm/portal2/config.js
 *~
 translations/
 /.idea

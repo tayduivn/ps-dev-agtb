@@ -218,7 +218,7 @@ class KBDocument extends SugarBean {
 		}
 
         $this->name = $this->kbdocument_name;
-        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
+        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id), ENT_COMPAT|ENT_QUOTES, 'UTF-8');
 	}
 
 	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
@@ -283,13 +283,16 @@ class KBDocument extends SugarBean {
             $ret_array['from'] .= ' ' . $custom_join['join'];
         }
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_admin($current_user) && !$this->disable_row_level_security){
-            $this->add_team_security_where_clause($ret_array['from']);
+        if (!$this->disable_row_level_security){
+            $this->addVisibilityFrom($ret_array['from']);
+        }
+        if(!$this->disable_row_level_security) {
+            $this->addVisibilityWhere($where);
         }
         //END SUGARCRM flav=pro ONLY
         if(!empty($where) && trim($where) != '') {
             // Strip leading AND or OR for bug 48173
-            $ret_array['where'] = ' WHERE '. preg_replace('#^\s*(AND)|(OR)\s+#i', '', $where);
+            $ret_array['where'] = ' WHERE '. preg_replace('#^\s*(AND|OR)\s+#i', '', $where);
         } else {
             $ret_array['where'] = '';
         }

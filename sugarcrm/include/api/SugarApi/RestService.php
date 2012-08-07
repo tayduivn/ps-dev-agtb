@@ -62,7 +62,7 @@ class RestService extends ServiceBase {
                 $getVars = $_GET;
                 if ( !empty($route['jsonParams']) ) {
                     foreach ( $route['jsonParams'] as $fieldName ) {
-                        if ( isset($_GET[$fieldName]) && $_GET[$fieldName]{0} == '{' ) {
+                        if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName]) &&  $_GET[$fieldName]{0} == '{' ) {
                             // This may be JSON data
                             $rawValue = $GLOBALS['RAW_REQUEST'][$fieldName];
                             $jsonData = json_decode($rawValue,true,32);
@@ -408,23 +408,14 @@ class RestService extends ServiceBase {
      * @TODO Handle proper content disposition based on response content type
      * @access protected
      * @param mixed $content
-     * @param string $encoding
      * @param array $args The request arguments
      */
-    protected function sendContent($content, $encoding, $args) {
-        // @TODO: Handle other content types for rendering
-        if ( $encoding !== false ) {
-            header('Content-Encoding: '.$encoding);
-            $gzData = gzencode(json_encode($content));
-            header('Content-Length: '.strlen($gzData));
-            echo $gzData;
-        } else {
-            $response = json_encode($content);
-            if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
-                $response = htmlentities($response);
-            }
-            echo $response;
+    protected function sendContent($content, $args) {
+        $response = json_encode($content);
+        if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
+            $response = htmlentities($response);
         }
+        echo $response;
     }
 
     /**
@@ -470,24 +461,11 @@ class RestService extends ServiceBase {
         if (!empty($route['rawReply'])) {
             echo $output;
         } else {
-            if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
-                $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
-            }
-            if( headers_sent() || empty($httpAccept) ) {
-                $encoding = false;
-            } else if( strpos($httpAccept,'x-gzip') !== false ) {
-                $encoding = 'x-gzip';
-            } else if( strpos($httpAccept,'gzip') !== false ) {
-                $encoding = 'gzip';
-            } else {
-                $encoding = false;
-            }
-
             // Handle content type header sending
             $this->sendContentTypeHeader($args);
 
             // Send the content
-            $this->sendContent($output, $encoding, $args);
+            $this->sendContent($output, $args);
         }
     }
 }

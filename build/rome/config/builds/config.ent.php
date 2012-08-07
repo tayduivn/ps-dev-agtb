@@ -32,6 +32,7 @@ $config['builds']['ent']['languages']= array(
 'it_it',
 'lt_LT',
 'ja_JP',
+'lv_LV',
 'nb_NO',
 'nl_NL',
 'pl_PL',

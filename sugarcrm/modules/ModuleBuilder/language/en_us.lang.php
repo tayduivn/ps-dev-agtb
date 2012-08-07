@@ -634,6 +634,7 @@ $mod_strings = array(
 'LBL_QUESTION_SUGAR_PORTAL' => 'Select a Sugar Portal layout to edit.',
 'LBL_QUESTION_PORTAL' => 'Select a portal layout to edit.',
 'LBL_SUGAR_PORTAL'=>'Sugar Portal Editor',
+'LBL_USER_SELECT' => '-- Select --',
 
 //PORTAL PREVIEW
 'LBL_CASES'=>'Cases',

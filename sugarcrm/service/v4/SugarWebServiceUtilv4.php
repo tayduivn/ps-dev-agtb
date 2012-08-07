@@ -39,8 +39,10 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
                     //$results = self::formatWirelessListViewResultsToArray($results);
-                    $results = $results['panels'][0]['fields'];
-
+                    
+                    // Needed for conversion
+                    require_once 'include/MetaDataManager/MetaDataConverter.php';
+                    $results = MetaDataConverter::toLegacy('list', $results);
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($moduleName, $type);
@@ -52,10 +54,15 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require($metadataFile);
+                    
+                    // For handling view def conversion
+                    $viewtype = strtolower($view);
 
                     // Handle found view defs
-                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)]) {
-                        $results = $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)];
+                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]) {
+                        // Needed for conversion
+                        require_once 'include/MetaDataManager/MetaDataConverter.php';
+                        $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
                     } else {
                         //Wireless detail metadata may actually be just edit metadata.
                         $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
@@ -200,7 +207,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    foreach ($metadata['panels'] as $row)
 	    {
 	        $aclRow = array();
-	        foreach ($row['fields'] as $field)
+	        foreach ($row as $field)
 	        {
 	            $aclField = array();
 	            if( is_string($field) )
@@ -249,15 +256,14 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    $seed = new $class_name();
 
 	    $results = array();
-	    foreach ($metadata as $entry)
+	    foreach ($metadata as $field_name => $entry)
 	    {
-	        $field_name = $entry['name'];
 	        if($seed->bean_implements('ACL'))
 	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
 	        else
 	            $entry['acl'] = 99;
 
-	        $results[] = $entry;
+	        $results[$field_name] = $entry;
 	    }
 
 	    return $results;

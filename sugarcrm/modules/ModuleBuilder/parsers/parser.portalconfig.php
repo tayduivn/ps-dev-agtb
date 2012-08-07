@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('on', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
+        $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
@@ -79,7 +79,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 'KBDocuments' => array(
                     'field' => 'date_modified',
                     'direction' => 'desc'
-                ) 
+                )
             )
         );
         foreach ($portalFields as $field) {
@@ -88,15 +88,21 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
-        if (isset($portalConfig['on']) && $portalConfig['on'] == 'true') {
+        if (isset($portalConfig['appStatus']) && $portalConfig['appStatus'] == 'true') {
+            $portalConfig['appStatus'] = 'online';
             $portalConfig['on'] = 1;
         } else {
+            $portalConfig['appStatus'] = 'offline';
             $portalConfig['on'] = 0;
         }
 
         foreach ($portalConfig as $fieldKey => $fieldValue) {
             $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
         }
+
+        // Clear the Contacts file b/c portal flag affects rendering
+        if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
+            unlink($cachedfile);
 
         if (isset($portalConfig['on']) && $portalConfig['on'] == 1) {
             $u = $this->getPortalUser();
@@ -136,6 +142,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->portal_only = '1';
             $user->save();
             $id = $user->id;
+
+            // set user id in system settings
+            $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);
         }
         $resultUser = new User();
         $resultUser->retrieve($id);
@@ -149,7 +158,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     function getPortalACLRole()
     {
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
-        $allowedActions = array('edit','admin', 'access', 'list', 'view');
+        $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         if (empty($role->id)) {

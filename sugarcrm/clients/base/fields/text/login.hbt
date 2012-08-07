@@ -1,5 +1,0 @@
-<div class="controls">
-    <label class="hide">{{label}}</label>
-    <input type="text" class="center" value="{{value}}" placeholder="{{label}}">
-    <p class="help-block"></p>
-</div>

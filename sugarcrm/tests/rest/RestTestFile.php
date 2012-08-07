@@ -32,10 +32,7 @@ class RestTestFile extends RestTestBase {
 
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        parent::setUp();
 
         // Create a test contact and a test note
         $contact = new Contact();
@@ -55,7 +52,7 @@ class RestTestFile extends RestTestBase {
     
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
 
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact_id}'");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id = '{$this->_note_id}'");
@@ -176,6 +173,11 @@ class RestTestFile extends RestTestBase {
     }
 
     protected function _restCallPut($urlPart, $args, $passInQueryString = true) {
+        // Auth check early to prevent work when not needed
+        if ( empty($this->authToken) ) {
+            $this->_restLogin();
+        }
+        
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
@@ -186,7 +188,7 @@ class RestTestFile extends RestTestBase {
 
         $filedata = file_get_contents($args['filename']);
 
-        $auth = (!empty($this->authToken)) ? "oauth_token: $this->authToken\r\n" : '';
+        $auth = "oauth_token: $this->authToken\r\n";
         $options = array(
             'http' => array(
                 'method' => 'PUT',
