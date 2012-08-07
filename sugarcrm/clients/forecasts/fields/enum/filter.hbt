@@ -1,9 +1,8 @@
 <div class="row-fluid">
     <div class="span12">
-        <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}} style="width:100%" value="{{this.def.value}}">
-            <option value=""></option>
+        <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}} style="width:100%">
             {{#eachOptions def.options}}
-            <option value="{{{this.key}}}" {{#has this.key ../def.selected}}selected{{/has}}>{{this.value}}</option>
+            <option value="{{{this.key}}}" {{#has this.key ../def.value}}selected{{/has}}>{{this.value}}</option>
             {{/eachOptions}}
         </select>
         <p class="help-block"></p>

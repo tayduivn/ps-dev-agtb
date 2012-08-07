@@ -96,8 +96,7 @@ class ViewSidecar extends SidecarView
         $defaultSelections["timeperiod_id"]["label"] = $timeframes["timeperiod_id"]["options"][$defaultTimePeriodId];
 
         $defaultCategoryId = $filters["category"];
-        $defaultSelections["category"]["id"] = $defaultCategoryId;
-        $defaultSelections["category"]["label"] = $app_list_strings['forecasts_filters_category'][$defaultCategoryId];
+        $defaultSelections["category"][$defaultCategoryId] = $app_list_strings['forecasts_filters_category'][$defaultCategoryId];
 
         /***
          * CHART OPTIONS
