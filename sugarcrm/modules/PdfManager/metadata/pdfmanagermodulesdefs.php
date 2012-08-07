@@ -43,6 +43,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         );
 */
 
+$bannedPdfManagerFieldsAndLinks['Accounts'] = array (
+    'fields' => array(
+        'billing_address_street_2',
+        'billing_address_street_3',
+        'billing_address_street_4',
+        'shipping_address_street_2',
+        'shipping_address_street_3',
+        'shipping_address_street_4',        
+    ),
+);
+$bannedPdfManagerFieldsAndLinks['Contacts'] = array (
+    'fields' => array(
+        'primary_address_street_2',
+        'primary_address_street_3',
+        'alt_address_street_2',
+        'alt_address_street_3',
+    ),
+);
+$bannedPdfManagerFieldsAndLinks['Leads'] = array (
+    'fields' => array(
+        'primary_address_street_2',
+        'primary_address_street_3',
+        'alt_address_street_2',
+        'alt_address_street_3',
+    ),
+);
 $bannedPdfManagerFieldsAndLinks['Employees'] = array (
     'relationships' => array(
         'holidays',
