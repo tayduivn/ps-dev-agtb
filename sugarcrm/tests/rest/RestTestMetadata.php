@@ -43,4 +43,39 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 
+    public function testMetadataLanguage() {
+        $langContent = <<<EOQ
+        <?php
+        \$app_strings = array (
+            'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'UnitTest',
+            );
+EOQ;
+
+        $fileLoc = "include/language/ua_UA.lang.php";
+        $this->createdFiles[] = $fileLoc;
+        file_put_contents($fileLoc, $langContent);
+        // No current user
+        $restReply = $this->_restCall('metadata/public?lang=ua_UA&app_name=superAwesome&platform=portal');
+        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+
+        // Current user is logged in & submit language
+        $restReply = $this->_restCall('metadata?lang=ua_UA&app_name=superAwesome&platform=portal');
+
+        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        $GLOBALS['current_user']->retrieve($GLOBALS['current_user']->id);
+        $this->assertEquals($GLOBALS['current_user']->lanuage_preferrence, 'ua_UA');
+
+        // Current user logged in but submit with language
+        $restReply = $this->_restCall('metadata?&app_name=superAwesome&platform=portal');
+
+        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+
+        // Cleanup
+        foreach($this->createdFiles as $file)
+        {
+            if (is_file($file))
+                unlink($file);
+        }
+    }
+
 }

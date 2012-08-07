@@ -75,6 +75,27 @@ class MetadataApi extends SugarApi {
     }
 
     public function getAllMetadata($api, $args) {
+        global $current_language, $app_strings, $current_user;
+        // get the currrent person object of interest
+        $apiPerson = $current_user;
+        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        }
+
+        // if were sending prefs down then set and save
+        if (isset($args['lang']) && !empty($args['lang'])) {
+            $lang = $args['lang'];
+            $current_language = $lang;
+            $app_strings = return_application_language($lang);
+            $apiPerson->preferred_language = $lang;
+            $apiPerson->save();
+        // load prefs otherwise
+        } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
+            $lang = $args['lang'];
+            $current_language = $lang;
+            $app_strings = return_application_language($lang);
+        }
+
         // Default the type filter to everything
         $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts','relationships');
         if ( !empty($args['typeFilter']) ) {
@@ -156,6 +177,13 @@ class MetadataApi extends SugarApi {
                     $configs[$key] = json_decode(html_entity_decode($setting_value));
                 }
             }
+        }
+
+        if(isset($args['lang'])) {
+            global $current_language, $app_strings;
+                $lang = $args['lang'];
+            	$current_language = $lang;
+                $app_strings = return_application_language($lang);
         }
 
         // Default the type filter to everything available to the public, no module info at this time
