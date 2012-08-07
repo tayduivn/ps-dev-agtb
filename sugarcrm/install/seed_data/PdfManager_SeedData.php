@@ -60,7 +60,7 @@ if (empty($templatesArray)) {
     $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_quote']['body_html']);
     $pdfTemplate->template_name = $modStringSrc['pdf_template_quote']['template_name'];;
     $pdfTemplate->author = PDF_AUTHOR;
-    $pdfTemplate->title = PDF_HEADER_TITLE;
+    $pdfTemplate->title = PDF_TITLE;
     $pdfTemplate->subject = PDF_SUBJECT;
     $pdfTemplate->keywords = PDF_KEYWORDS;
     $pdfTemplate->published = 'yes';
@@ -75,7 +75,7 @@ if (empty($templatesArray)) {
     $pdfTemplate->body_html = to_html($modStringSrc['pdf_template_invoice']['body_html']);
     $pdfTemplate->template_name = $modStringSrc['pdf_template_invoice']['template_name'];;
     $pdfTemplate->author = PDF_AUTHOR;
-    $pdfTemplate->title = PDF_HEADER_TITLE;
+    $pdfTemplate->title = PDF_TITLE;
     $pdfTemplate->subject = PDF_SUBJECT;
     $pdfTemplate->keywords = PDF_KEYWORDS;
     $pdfTemplate->published = 'yes';
