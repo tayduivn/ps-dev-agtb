@@ -691,4 +691,22 @@ class MetaDataManager {
         $moduleList['_hash'] = md5(serialize($moduleList));
         return $moduleList;
     }
+
+    public static function getPlatformList() {
+        $platforms = array();
+        foreach(array("clients", "custom/clients") as $path)
+        {
+            if (is_dir($path)) {
+                $dirs = scandir($path);
+                foreach($dirs as $dir) {
+                    if (!empty($dir) && $dir[0] != "." && $dir[0] != "_" && is_dir("$path/$dir"))
+                    {
+                        $platforms[$dir] = true;
+                    }
+                }
+            }
+        }
+
+        return array_keys($platforms);
+    }
 }

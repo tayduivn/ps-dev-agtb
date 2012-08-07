@@ -32,7 +32,18 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'comment' => 'The software or service release that manifested the bug',
     'duplicate_merge' => 'disabled',
     'audited' =>true,
-  	'studio' => array('fields' => 'false', 'listview' => false, 'wirelesslistview' => false ), // tyoung bug 16442 - don't show in studio fields list
+  	'studio' => array(
+          'fields' => 'false', 
+          'listview' => false, 
+          //BEGIN SUGARCRM flav=pro ONLY
+          // Bug 54507 - Add wireless and portal to exclude list
+          'wirelesslistview' => false,
+          //END SUGARCRM flav=pro ONLY
+          //BEGIN SUGARCRM flav=ent ONLY
+          // Bug 54507 - Add wireless and portal to exclude list
+          'portallistview' => false,
+          //END SUGARCRM flav=ent ONLY
+    ), // tyoung bug 16442 - don't show in studio fields list
     'massupdate' => true,
   	),
 'release_name'=>
@@ -57,13 +68,20 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        'quickcreate' => false, 
        'basic_search' => false, 
        'advanced_search' => false,
-	   //BEGIN SUGARCRM flav=pro
+	   //BEGIN SUGARCRM flav=pro ONLY
 	   'wirelesseditview' => false,
 	   'wirelessdetailview' => false,
 	   'wirelesslistview' => 'visible',
 	   'wireless_basic_search' => false,
 	   'wireless_advanced_search' => false,
-	   //END SUGARCRM flav=pro
+	   //END SUGARCRM flav=pro ONLY
+       //BEGIN SUGARCRM flav=ent ONLY
+       // Bug 54507 - Add portal to exclude from layout list
+       'portaleditview' => false,
+       'portaldetailview' => false,
+       'portallistview' => 'visible',
+       'portalsearchview' => false,
+       //END SUGARCRM flav=ent ONLY
 	   ),
   ),
 
@@ -77,7 +95,18 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'comment' => 'The software or service release that corrected the bug',
     'duplicate_merge' => 'disabled',
     'audited' =>true,
-  	'studio' => array('fields' => 'false', 'listview' => false, 'wirelesslistview' => false), // tyoung bug 16442 - don't show in studio fields list
+  	'studio' => array(
+          'fields' => 'false', 
+          'listview' => false, 
+          //BEGIN SUGARCRM flav=pro ONLY
+          // Bug 54507 - Add wireless and portal to exclude list
+          'wirelesslistview' => false,
+          //END SUGARCRM flav=pro ONLY
+          //BEGIN SUGARCRM flav=ent ONLY
+          // Bug 54507 - Add wireless and portal to exclude list
+          'portallistview' => false,
+          //END SUGARCRM flav=ent ONLY
+      ), // tyoung bug 16442 - don't show in studio fields list
   	'massupdate' => true,
   	),
    'fixed_in_release_name'=>
@@ -102,13 +131,20 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        'quickcreate' => false, 
        'basic_search' => false, 
        'advanced_search' => false,
-       //BEGIN SUGARCRM flav=pro
+       //BEGIN SUGARCRM flav=pro ONLY
        'wirelesseditview' => false,
        'wirelessdetailview' => false,
        'wirelesslistview' => 'visible',
        'wireless_basic_search' => false,
        'wireless_advanced_search' => false,
-       //END SUGARCRM flav=pro
+       //END SUGARCRM flav=pro ONLY
+       //BEGIN SUGARCRM flav=ent ONLY
+       // Bug 54507 - Add portal to exclude from layout list
+       'portaleditview' => false,
+       'portaldetailview' => false,
+       'portallistview' => 'visible',
+       'portalsearchview' => false,
+       //END SUGARCRM flav=ent ONLY
        ),
   ),
     'source' =>

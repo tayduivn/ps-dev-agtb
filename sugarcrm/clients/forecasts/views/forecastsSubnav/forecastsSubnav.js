@@ -14,6 +14,13 @@
     currentTreeUrl:'',
     currentRootId:'',
 
+    // Target id of the modal in SidecarView.tpl to pull up when settings cog icon is clicked
+    modalTargetId: 'forecastSubnavSettingsModal',
+
+    events: {
+        "click #forecastSettings" : "handleForecastSettingsClick"
+    },
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -37,6 +44,15 @@
         app.view.View.prototype.bindDataChange.call(this);
 
         this.context.forecasts.on('change:selectedUser', this.checkRender, this);
+    },
+
+    /**
+     * Handler function when user clicks the settings button in forecasts
+     * @param e Event object
+     */
+    handleForecastSettingsClick: function(e) {
+        e.preventDefault();
+        $('#' + this.modalTargetId).modal();
     },
 
     /***

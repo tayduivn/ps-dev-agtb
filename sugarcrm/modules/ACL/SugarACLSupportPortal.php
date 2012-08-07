@@ -85,9 +85,20 @@ class SugarACLSupportPortal extends SugarACLStatic
             if (!$bean) {
                 // There is no bean, without a bean portal ACL's wont work
                 // So for security we will deny the request
-                $accessGranted = false;
+                return false;
             }
-            
+
+            // If the portal user isn't linked to any accounts they can only do anything with Contacts and Bugs
+            // Get the account_id list and make sure there is something on it.
+            $vis = new SupportPortalVisibility($bean);
+            $accounts = $vis->getAccountIds();
+
+            if ( count($accounts) == 0 
+                 && $bean->module_dir != 'Contacts' 
+                 && $bean->module_dir != 'Bugs' ) {
+                return false;
+            }
+
             $context['owner_override'] = $this->isPortalOwner($bean);
             
             if(isset(self::$action_translate[$action])) {
