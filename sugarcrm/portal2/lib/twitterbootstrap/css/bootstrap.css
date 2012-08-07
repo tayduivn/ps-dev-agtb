@@ -50,7 +50,9 @@ right:40px;
 
 
 
-
+.control-group.email {
+margin-bottom:0;
+}
 
 .control-group.email .btn-mini {
 
