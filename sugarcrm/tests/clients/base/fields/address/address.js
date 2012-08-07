@@ -1,35 +1,42 @@
 describe("Address", function() {
-
-    var app, view, context;
+    var app, field, controller, Address;
 
     beforeEach(function() {
         app = SugarTest.app;
-        //app.metadata.set(meta);
-        context = app.context.getContext();
-        view = new app.view.View({ name: "test", context: context });
-        console.log(app);
-        if (!app.view.fields.AddressField)
-        {
-
-            $.ajax("../clients/base/fields/address/address.js", {
-                async : false,
-                success : function(o) {
-                    console.log(o);
-                    app.view.declareComponent("field", "address", null, o, null, true);
-                }
-            });
-        } else {
-            console.log(app);
-        }
+        controller = SugarFieldTest.loadSugarField('address/address');
+        field = SugarFieldTest.createField("address", "detail");
+        field = _.extend(field, controller);
+        Address = Backbone.Model.extend({
+        });
+        field.model = new Address({ 
+            address: '1 Foo Way',
+            address_city: 'Castro Valley',
+            address_state: 'CA',
+            address_postalcode: '94546',
+            address_country: 'USA'
+        });
     });
 
     afterEach(function() {
         app.cache.cutAll();
         delete Handlebars.templates;
+        field.model = null;
+        field = null;
+        controller = null;
+        Address = null;
     });
 
-    it("should exist", function() {
-       expect(app.view.fields.AddressField).toBeDefined();
+    it('should format', function() {
+        var obj = {};
+        obj = field.format(obj);
+        expect(obj.street).toEqual('1 Foo Way');
+        expect(obj.city).toEqual('Castro Valley');
+        expect(obj.state).toEqual('CA');
+        expect(obj.postalcode).toEqual('94546');
+        expect(obj.country).toEqual('USA');
+    });
+    it('should unformat', function() {
+        expect(field.unformat("foo")).toEqual('foo');
     });
 });
 
