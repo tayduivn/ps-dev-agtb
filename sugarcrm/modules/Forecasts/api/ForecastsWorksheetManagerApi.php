@@ -33,6 +33,26 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
     }
 
+    /**
+     * Set the user_id for the class
+     *
+     * @param $user_id
+     */
+    public function setUserId($user_id)
+    {
+        $this->user_id = $user_id;
+    }
+
+    /**
+     * Set the time period for the class
+     *
+     * @param $timeperiod_id
+     */
+    public function setTimePeriodId($timeperiod_id)
+    {
+        $this->timeperiod_id = $timeperiod_id;
+    }
+
     public function registerApiRest()
     {
         $parentApi = parent::registerApiRest();
@@ -260,7 +280,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $data;
     }
 
-    protected function getWorksheetBestLikelyAdjusted()
+    /**
+     * Get the Worksheet Adjusted Values
+     *
+     * @return array
+     */
+    public function getWorksheetBestLikelyAdjusted()
     {
         //getting data from worksheet table for reportees
         $reportees_query = "SELECT u.user_name user_name,
@@ -294,53 +319,51 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
 
     public function forecastManagerWorksheet($api, $args) {
-         // Load up a seed bean
-         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
-         $seed = new ForecastManagerWorksheet();
+        // Load up a seed bean
+        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+        $seed = new ForecastManagerWorksheet();
 
-         if (!$seed->ACLAccess('list') ) {
-             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-         }
+        if (!$seed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
+        }
 
-         return $this->worksheetManager($api, $args);
-     }
+        return $this->worksheetManager($api, $args);
+    }
 
 
-     public function forecastManagerWorksheetSave($api, $args) {
-         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
-         require_once('include/SugarFields/SugarFieldHandler.php');
-         $seed = new ForecastManagerWorksheet();
-         $seed->loadFromRow($args);
-         $sfh = new SugarFieldHandler();
+    public function forecastManagerWorksheetSave($api, $args) {
+        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $seed = new ForecastManagerWorksheet();
+        $seed->loadFromRow($args);
+        $sfh = new SugarFieldHandler();
 
-         foreach ($seed->field_defs as $properties)
-         {
-             $fieldName = $properties['name'];
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
 
-             if(!isset($args[$fieldName]))
-             {
+            if (!isset($args[$fieldName])) {
                 continue;
-             }
+            }
 
-             //BEGIN SUGARCRM flav=pro ONLY
-             if (!$seed->ACLFieldAccess($fieldName,'save') ) {
-                 // No write access to this field, but they tried to edit it
-                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
-             }
-             //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName, 'save')) {
+                // No write access to this field, but they tried to edit it
+                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field ' . $fieldName . ' in module: ' . $args['module']);
+            }
+            //END SUGARCRM flav=pro ONLY
 
-             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-             $field = $sfh->getSugarField($type);
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
 
-             if($field != null)
-             {
+            if ($field != null) {
                 $field->save($seed, $args, $fieldName, $properties);
-             }
-         }
-         
-		 $seed->setWorksheetArgs($args);
-         $seed->save();
-         return $seed->id;
-     }
+            }
+        }
+
+        $seed->setWorksheetArgs($args);
+        $seed->save();
+        return $seed->id;
+    }
 
 }

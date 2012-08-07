@@ -55,6 +55,8 @@ class ForecastsChartApi extends ChartApi
      */
     protected $isManager = false;
 
+    protected $managerAdjustedField = 'likely_adjusted';
+
     /**
      * Rest Api Registration Method
      *
@@ -111,8 +113,10 @@ class ForecastsChartApi extends ChartApi
         } else {
             $filters = array(
                 'timeperiod_id' => array('$is' => $timeperiod_id),
-                'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id)))
+                'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
             );
+            // no matter what for the manager we need to get the group by to be "forecast";
+            $args['group_by'] = "forecast";
         }
 
         if (isset($args['category']) && $args['category'] == "Committed") {
@@ -170,7 +174,6 @@ class ForecastsChartApi extends ChartApi
         // decode the data to add stuff to the properties
         $dataArray = json_decode($json, true);
 
-
         if (!$this->isManager) {
             $validTimePeriods = $this->getTimePeriodMonths($timeperiod_id);
 
@@ -186,6 +189,45 @@ class ForecastsChartApi extends ChartApi
                 $dataArray = $this->combineReportData($dataArray, $reportees);
             }
 
+            // since we are on a manager, we want to show the adjusted values for which ever data set we are on
+            require_once("modules/Forecasts/api/ForecastsWorksheetManagerApi.php");
+            $mgr_worksheet = new ForecastsWorksheetManagerApi();
+            $mgr_worksheet->setUserId($user_id);
+            $mgr_worksheet->setTimePeriodId($timeperiod_id);
+
+            $adjusted_values = $mgr_worksheet->getWorksheetBestLikelyAdjusted();
+
+            // find where the included is at if we have more than one label
+            $pos = 0;
+            if(count($dataArray['label']) > 1) {
+                foreach($dataArray['label'] as $pos => $label) {
+                    if($label == "1") {
+                        break;
+                    }
+                }
+            }
+
+            // apply the adjusted values to the chart data
+            foreach($dataArray['values'] as $key => $value) {
+                if(isset($adjusted_values[$value['label']])) {
+                    $dataArray['values'][$key]['values'][$pos] = floatval($adjusted_values[$value['label']][$this->managerAdjustedField]);
+                    $dataArray['values'][$key]['valuelabels'][$pos] = $adjusted_values[$value['label']][$this->managerAdjustedField];
+
+                    // adjust the group total
+                    $sum = array_sum($dataArray['values'][$key]['values']);
+                    $dataArray['values'][$key]['gvalue'] = floatval($sum);
+                    $dataArray['values'][$key]['gvaluelabel'] = $sum;
+                    if(isset($likely_values[$value['label']])) {
+                        $likely_values[$value['label']]['amount'] = $sum;
+                    }
+                }
+
+            }
+
+            // fix the labels to show that it's the adjusted values
+            $this->goalParetoLabel .= ' (Adjusted)';
+            $this->xaxisLabel .= ' (Adjusted)';
+
             // always make sure that the columns go from the largest to the smallest
             // if we are displaying the manager chart
             usort($dataArray['values'], array($this, 'sortChartColumns'));
@@ -195,9 +237,9 @@ class ForecastsChartApi extends ChartApi
             if($args['group_by'] == "forecast")
             {
                 // fix the labels
-                $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'No' : 'Yes';
+                $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'Not Included' : 'Included';
                 if(isset($dataArray['label'][1])) {
-                    $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'No' : 'Yes';
+                    $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'Not Included' : 'Included';
                 }
             } else if($args['group_by'] == "probability") {
                 foreach($dataArray['label'] as $key => $value) {
@@ -221,8 +263,6 @@ class ForecastsChartApi extends ChartApi
         foreach ($dataArray['values'] as $key => $value) {
 
             $likely = 0;
-
-            //$dataArray['values'][$key]['sales_stage'] = $dataArray['label'];
 
             // format the value labels
             if ($rb->getChartColumnType() == "currency") {
@@ -260,7 +300,6 @@ class ForecastsChartApi extends ChartApi
             $dataArray['values'][$key]['goalmarkervalue'] = array(floatval($quota['amount']), $likely_sum);
             $dataArray['values'][$key]['goalmarkervaluelabel'] = array($quota['formatted_amount'], $likely_label);
         }
-
         // return the data now
         return $dataArray;
     }
@@ -415,12 +454,14 @@ class ForecastsChartApi extends ChartApi
         switch (strtolower($args['dataset'])) {
             case 'best_case':
             case 'best':
+                $this->managerAdjustedField = 'best_adjusted';
                 $this->goalParetoLabel = 'Best';
                 $rb->addSummaryColumn('best_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('best_case');
                 break;
             case 'worst_case':
             case 'worst':
+                $this->managerAdjustedField = 'worst_adjusted';
                 $this->goalParetoLabel = 'Worst';
                 $rb->addSummaryColumn('worst_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('worst_case');
@@ -428,6 +469,7 @@ class ForecastsChartApi extends ChartApi
             case 'likely_case':
             case 'likely':
             default:
+                $this->managerAdjustedField = 'likely_adjusted';
                 $this->goalParetoLabel = 'Likely';
                 $rb->addSummaryColumn('likely_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
                 $rb->setChartColumn('likely_case');
