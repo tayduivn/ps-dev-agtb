@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 *}
 <link rel="stylesheet" type="text/css" href="portal2/lib/twitterbootstrap/css/bootstrap.css" />
 <h1>Customize Theme</h1>
@@ -94,7 +94,6 @@ var App = SUGAR.App.theme.initTheme({/literal}'{$token}'{literal});
 App.api.isAuthenticated = function () {
     return true;
 };
-App.api.debug = true;
 
 // Disabling the app sync complete event which starts sidecars competing router
 App.events.off("app:sync:complete");
