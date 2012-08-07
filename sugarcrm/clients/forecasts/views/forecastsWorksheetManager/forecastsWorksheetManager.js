@@ -233,12 +233,14 @@
                 
         });
 
-        self.totalModel.set('amount', amount);
-        self.totalModel.set('quota', quota);
-        self.totalModel.set('best_case', best_case);
-        self.totalModel.set('best_adjusted', best_adjusted);
-        self.totalModel.set('likely_case', likely_case);
-        self.totalModel.set('likely_adjusted', likely_adjusted);
+        self.totalModel.set({
+            amount : amount,
+            quota : quota,
+            best_case : best_case,
+            best_adjusted : best_adjusted,
+            likely_case : likely_case,
+            likely_adjusted : likely_adjusted
+        });
         
         //in case this is needed later..
         var totals = {

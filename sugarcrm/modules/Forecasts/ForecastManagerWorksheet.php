@@ -20,8 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class ForecastManagerWorksheet extends SugarBean {
-	
+class ForecastManagerWorksheet extends SugarBean
+{
 	var $args;
     var $id;
     var $name;
@@ -51,19 +51,25 @@ class ForecastManagerWorksheet extends SugarBean {
 			$forecast->forecast = ($this->forecast) ? 1 : 0;
 			$forecast->save();
     	}*/
-		
+
 		//save quota
-		$quota = new Quota();
-		$quota->retrieve($this->args["quota_id"]);
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas', $this->args['quota_id']);
 		$quota->timeperiod_id = $this->args["timeperiod_id"];
 		$quota->user_id = $this->args["user_id"];
-		$quota->quota_type = 'Direct';
+        $quota->committed = 1;
+		if($this->args["user_id"] == $this->args["current_user"]) {
+			$quota->quota_type = 'Direct';
+		} else {
+			$quota->quota_type = 'Rollup';
+		}
+
 		$quota->amount = $this->args["quota"];
 		$quota->save();
-		
+
 		//recalc manager quota if necessary
-		$this->recalcQuota();
-		
+		$this->recalcQuotas();
+
 		//save worksheet
 		$worksheet  = new Worksheet();
 		$worksheet->retrieve($this->args["worksheet_id"]);
@@ -78,49 +84,54 @@ class ForecastManagerWorksheet extends SugarBean {
         $worksheet->related_id = $this->args["user_id"];
         $worksheet->save();
     }
-    
+
     /**
      * Sets Worksheet args so that we save the supporting tables.
      * @param array $args Arguments passed to save method through PUT
      */
-	public function setWorksheetArgs($args){
+	public function setWorksheetArgs($args)
+	{
 		$this->args = $args;
 	}
-	
+
 	/**
-	 * Gets a sum of the current user's reportees quotas for a specific timeperiod
-	 * 
+	 * Gets a sum of the passed in user's reportees quotas for a specific timeperiod
+	 *
+	 * @param string $userId The userID for which you want a reportee quota sum.
 	 * @return int Sum of quota amounts.
 	 */
-	private function getQuotaSum(){
+	protected function getQuotaSum($userId)
+	{
 		$sql = "SELECT sum(q.amount) amount " .
 				"FROM `quotas` q " .
-				"INNER JOIN users u ON u.reports_to_id = '" . $this->args["current_user"] . "' " .
+				"INNER JOIN users u ON u.reports_to_id = '" . $userId . "' " .
 				"AND q.user_id = u.id " .
 				"AND q.timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
-				"AND q.quota_type = 'direct'";
+				"AND q.quota_type = 'Rollup'";
 		$amount = 0;
-				
+
 		$result = $GLOBALS['db']->query($sql);
 		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
 			$amount = $row['amount'];
 		}
-		
+
 		return $amount;
 	}
-	
+
 	/**
-	 * Gets the current manager user's comitted quota value and direct quota ID
-	 * 
+	 * Gets the passed in user's comitted quota value and direct quota ID
+	 *
+	 * @param string userId User id to query for
 	 * @return array id, Quota value
 	 */
-	private function getManagerQuota(){
+	protected function getManagerQuota($userId)
+	{
 		/*
-		 * This info is in two rows, and either of them might not exist.  The union 
+		 * This info is in two rows, and either of them might not exist.  The union
 		 * is here to make sure data is returned if one or the other exists.  This statement
 		 * lets us grab both bits with one call to the db rather than two separate smaller
 		 * calls.
-		 * 
+		 *
 		 * We are looking for the ID of the quota where quota_type = Direct
 		 * and the AMOUNT of the quota where quota_type = Rollup
 		 */
@@ -129,7 +140,7 @@ class ForecastManagerWorksheet extends SugarBean {
 					"on q1.user_id = q2.user_id " .
 					"and q1.timeperiod_id = q2.timeperiod_id " .
 					"and q2.quota_type = 'Direct' " .
-				"where q1.user_id = '" . $this->args["current_user"] . "' " .
+				"where q1.user_id = '" . $userId . "' " .
 					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
 					"and q1.quota_type = 'Rollup' " .
 				"union all " .
@@ -138,48 +149,60 @@ class ForecastManagerWorksheet extends SugarBean {
 					"on q1.user_id = q2.user_id " .
 					"and q1.timeperiod_id = q2.timeperiod_id " .
 					"and q2.quota_type = 'Rollup' " .
-				"where q1.user_id = '" . $this->args["current_user"] . "' " .
+				"where q1.user_id = '" . $userId . "' " .
 					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
 					"and q1.quota_type = 'Direct'";
-		
+
 		$quota = array();
-				
+
 		$result = $GLOBALS["db"]->query($sql);
 		while(($row=$GLOBALS["db"]->fetchByAssoc($result))!=null){
 			$quota["amount"] = $row["amount"];
 			$quota["id"] = $row["id"];
 		}
-		
+
 		return $quota;
 	}
-	
+
 	/**
-	 * Recalculates manager quota based on committed values and reportees' quota values
+	 * Recalculates quotas based on committed values and reportees' quota values
 	 */
-	 private function recalcQuota(){
-	 	
+	 protected function recalcQuotas()
+	 {
+
 	 	//don't recalc if we are editing the manager row
 	 	if($this->args["user_id"] != $this->args["current_user"]){
-		 			 			 	
-		 	$reporteeTotal = $this->getQuotaSum();
-		 	$managerQuota = $this->getManagerQuota();
-		 	$managerAmount = ($managerQuota["amount"]) ? $managerQuota["amount"] : 0;
-		 	$newTotal = $managerAmount - $reporteeTotal;
-		 			 	
-		 	if($newTotal < 0){
-		 		$newTotal = 0;
-		 	}
-		 	
-		 	//save quota
-		 	if(isset($managerQuota["id"])){
-				$quota = new Quota();
-				$quota->retrieve($managerQuota["id"]);
-				$quota->amount = $newTotal;
-				$quota->save();
-		 	}
+			//Recalc Manager direct
+			$this->recalcUserQuota($this->args["current_user"]);
+
+			//Recalc reportee direct
+			$this->recalcUserQuota($this->args["user_id"]);
 	 	}
 	 }
-		
+
+	 /**
+	  * Recalculates a specific user's direct quota
+	  *
+	  * @param string $userId User Id of quota that needs recalculated.
+	  */
+	  protected function recalcUserQuota($userId)
+	  {
+	  	$reporteeTotal = $this->getQuotaSum($userId);
+	 	$managerQuota = $this->getManagerQuota($userId);
+	 	$managerAmount = ($managerQuota["amount"]) ? $managerQuota["amount"] : 0;
+	 	$newTotal = $managerAmount - $reporteeTotal;
+	 	if($newTotal < 0){
+	 		$newTotal = 0;
+	 	}
+
+	 	//save Manager quota
+	 	if(isset($managerQuota["id"])){
+			$quota = BeanFactory::getBean('Quotas', $managerQuota['id']);
+			$quota->amount = $newTotal;
+			$quota->save();
+	 	}
+	  }
+
 
 }
 

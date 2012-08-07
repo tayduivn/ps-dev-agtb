@@ -313,8 +313,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         if ( $userType != 'user' ) {
             $_SESSION['type'] = $userType;
             $_SESSION['contact_id'] = $contactBean->id;
-            $contactBean->load_relationship('accounts');
-            $_SESSION['account_ids'] = $contactBean->accounts->get();
             $_SESSION['portal_user_id'] = $userBean->id;
             //BEGIN SUGARCRM flav=pro ONLY
             // This is to make sure the licensing is handled correctly for portal logins

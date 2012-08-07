@@ -1,1 +1,0 @@
-<input type="checkbox" name="{{name}}" class="checkbox"{{#if value}} checked="checked"{{/if}}>
