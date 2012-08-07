@@ -60,7 +60,10 @@ class CurrentUserApi extends SugarApi {
             $user_data['user_id'] = $current_user->id;
             $user_data['user_name'] = $current_user->user_name;
             $user_data['id'] = $_SESSION['contact_id'];
-            $user_data['account_ids'] = $_SESSION['account_ids'];
+            if(isset($_SESSION['account_ids']) && !empty($_SESSION['account_ids'])) 
+            {
+                $user_data['account_ids'] = $_SESSION['account_ids'];
+            }
             $user_data['full_name'] = $contact->full_name;
             $user_data['portal_name'] = $contact->portal_name;
         } else {
