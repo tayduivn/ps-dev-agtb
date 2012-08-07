@@ -427,17 +427,23 @@
         var forecast = new this._collection.model();
         forecast.url = self.url;
         var user = this.context.forecasts.get('selectedUser');
+
+        var forecastData = {};
+
         if(user.isManager == true && user.showOpps == false) {
-            forecast.set('best_case', self.totals.best_adjusted);
-            forecast.set('likely_case', self.totals.likely_adjusted);
+            forecastData.best_case = self.totals.best_adjusted;
+            forecastData.likely_case = self.totals.likely_adjusted;
         } else {
-            forecast.set('best_case', self.totals.best_case);
-            forecast.set('likely_case', self.totals.likely_case);
+            forecastData.best_case = self.totals.best_case;
+            forecastData.likely_case = self.totals.likely_case;
         }
-        forecast.set('timeperiod_id', self.timePeriodId);
-        forecast.set('forecast_type', self.forecastType);
-        forecast.set('amount', self.totals.amount);
-        forecast.set('opp_count', self.totals.opp_count);
+        forecastData.timeperiod_id = self.timePeriodId;
+        forecastData.forecast_type = self.forecastType;
+        forecastData.amount = self.totals.amount;
+        forecastData.opp_count = self.totals.opp_count;
+
+        // apply data to model then save
+        forecast.set(forecastData);
         forecast.save();
 
         // clear out the arrows

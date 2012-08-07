@@ -1,6 +1,1 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span10">
-        {{#if value}}<img src="{{fileURL}}">{{/if}}
-    </div>
-</div>
+       {{#if value}}<img src="{{fileURL}}">{{/if}}

@@ -1,6 +1,3 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span4">
         <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}}>
             <option value="" selected></option>
             {{#eachOptions def.options}}
@@ -8,5 +5,3 @@
             {{/eachOptions}}
         </select>
         <p class="help-block"></p>
-    </div>
-</div>
