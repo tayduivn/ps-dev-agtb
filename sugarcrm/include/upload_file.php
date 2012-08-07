@@ -563,6 +563,14 @@ class UploadStream
     protected static $instance;
 
     /**
+     * Empty parent ctor
+     */
+    public function __construct()
+    {
+
+    }
+
+    /**
      * Method checks Suhosin restrictions to use streams in php
      *
      * @static
