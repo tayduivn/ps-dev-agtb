@@ -17,12 +17,8 @@ describe("sugarfields", function() {
             "comment": "The name of the account represented by the account_id field",
             "required": true, "importable": "required"
         };
-        var controller = SugarFieldTest.loadSugarField('relate/relate');
-        this.field = SugarFieldTest.createField("account_name", "relate");
-        var model = new Backbone.Model({account_id: "1234", account_name: "bob"});
-        this.field = _.extend(this.field, controller);
-        this.field.def = fieldDef;
-        this.field.model = model;
+        this.field = SugarTest.createField("base","account_name", "iframe", "detail", fieldDef);
+        this.field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
 
     });
 

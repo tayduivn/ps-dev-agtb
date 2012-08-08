@@ -3,10 +3,8 @@ describe("sugarfields", function() {
     describe("datetime", function() {
         it("should format the value", function() {
 
-            var controller = SugarFieldTest.loadSugarField('datetimecombo/datetimecombo'),
-                field = SugarFieldTest.createField("datetimecombo", "detail"),
+            var field = SugarTest.createField("base","datetimecombo", "datetimecombo", "detail"),
                 unformatedValue, expectedValue;
-            field = _.extend(field, controller);
 
             unformatedValue = new Date(2012, 3, 9, 9, 50, 58);
             expectedValue =
