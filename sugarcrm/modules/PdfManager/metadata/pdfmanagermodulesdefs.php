@@ -86,6 +86,16 @@ $bannedPdfManagerFieldsAndLinks['Opportunities'] = array (
         'campaigns',
     ),
 );
+$bannedPdfManagerFieldsAndLinks['Prospects'] = array (
+    'fields' => array(
+        'accept_status_id',
+        'accept_status_name',
+        'alt_address_street_2',
+        'alt_address_street_3',
+        'primary_address_street_2',
+        'primary_address_street_3',
+    ),
+);
 $bannedPdfManagerFieldsAndLinks['Users'] = array (
     'fields' => array(
         'address_city',
