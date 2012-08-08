@@ -80,6 +80,12 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
         'primary_address_street_3',
     ),
 );
+$bannedPdfManagerFieldsAndLinks['Opportunities'] = array (
+    'relationships' => array(
+        'campaign_link',
+        'campaigns',
+    ),
+);
 $bannedPdfManagerFieldsAndLinks['Users'] = array (
     'fields' => array(
         'address_city',
