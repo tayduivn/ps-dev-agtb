@@ -1,0 +1,83 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <a class="btn btn-primary" name="save_button">Save & Deploy</a>
+        </div>
+        <div class="span6">
+            <a class="btn btn-danger pull-right" name="reset_button">Restore Default Theme</a>
+        </div>
+    </div>
+</div>
+
+<header class="subhead">
+    <h1>Colors
+        <small>LESS variables</small>
+    </h1>
+</header>
+
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.hex}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col" style="background-color: {{value}}"><span class="swatch"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td> -->
+        <td>
+
+            <input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="hexvar span10">
+        </td>
+    </tr>
+    {{/each}}
+    {{#each lessVars.rgba}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{name}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>}} -->
+        <td><input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="rgbavar span10">
+        </td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+{{#if lessVars.rel}}
+<header class="subhead">
+    <h1>Related colors
+        <small>LESS variables</small>
+    </h1>
+</header>
+
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.rel}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{relname}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>  -->
+        <td><input type="text" name="{{name}}" value="{{value}}" class="span10"></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+{{/if}}
+
+{{#if lessVars.bg}}
+<header class="subhead">
+    <h1>Backgrounds
+        <small>LESS variables</small>
+    </h1>
+</header>
+
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.bg}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{name}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>  -->
+        <td><input type="text" name="{{name}}" value="{{value}}" class="bgvar span10"></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+        {{/if}}

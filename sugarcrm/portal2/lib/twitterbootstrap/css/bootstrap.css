@@ -14,4 +14,52 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
- */.hidden{display:none;visibility:hidden}#searchForm{position:relative;display:inline-block;float:right}#searchForm .btn{margin-right:0}#searchForm input.search-query{min-width:200px}@media(max-width:480px){.nav-collapse{-webkit-transform:translate3d(0,0,0)}.page-header h1 small{display:block;line-height:18px}input[class*="span"],select[class*="span"],textarea[class*="span"],.uneditable-input{display:block;width:100%;min-height:28px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box}.input-prepend input[class*="span"],.input-append input[class*="span"]{width:auto}input[type="checkbox"],input[type="radio"]{border:1px solid #ccc}.form-horizontal .control-group>label{float:none;width:auto;padding-top:0;text-align:left}.form-horizontal .controls{margin-left:0}.form-horizontal .control-list{padding-top:0}.form-horizontal .form-actions{padding-left:10px;padding-right:10px}.carousel-caption{position:static}}@media(max-width:768px){body{padding-top:30px}.container,.container-fluid{width:auto;padding:0}.container-fluid .row-fluid{width:100%}.row{margin-left:0}.row>[class*="span"],.container-fluid .row-fluid>[class*="span"]{float:none;display:block;width:auto;margin:10px}.subnav{margin-top:17px}.thumbnail{-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}#searchForm,#createList,#userList{display:none}.thumbnail{overflow:scroll}.modal{height:100%;width:100%;top:0;left:0;margin:0}}
+
+
+ */.hidden{display:none;visibility:hidden}#searchForm{position:relative;display:inline-block;float:right}#searchForm .btn{margin-right:0}#searchForm input.search-query{min-width:200px}@media(max-width:480px){
+.error .input-append > .add-on
+{
+position: relative !important;
+margin-right: -28px;
+right: 27px !important;
+}
+
+.nav-collapse{-webkit-transform:translate3d(0,0,0)}.page-header h1 small{display:block;line-height:18px}input[class*="span"],select[class*="span"],textarea[class*="span"],.uneditable-input{display:block;width:100%;min-height:28px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box}.input-prepend input[class*="span"],.input-append input[class*="span"]{width:auto}input[type="checkbox"],input[type="radio"]{border:1px solid #ccc}.form-horizontal .control-group>label{float:none;width:auto;padding-top:0;text-align:left}.form-horizontal .controls{margin-left:0}.form-horizontal .control-list{padding-top:0}.form-horizontal .form-actions{padding-left:10px;padding-right:10px}.carousel-caption{position:static}}@media(max-width:768px){
+
+.error .input-append > .add-on
+{
+position: relative !important;
+margin-right: -28px;
+right: 27px !important;
+}
+
+body{padding-top:30px}.container,.container-fluid{width:auto;padding:0}.container-fluid .row-fluid{width:100%}.row{margin-left:0}.row>[class*="span"],.container-fluid .row-fluid>[class*="span"]{float:none;display:block;width:auto;margin:10px}.subnav{margin-top:17px}.thumbnail{-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}#searchForm,#createList,#userList{display:none}.thumbnail{overflow:scroll}.modal{height:100%;width:100%;top:0;left:0;margin:0}}
+
+
+
+.control-group.error > .input-append > input {
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+}
+
+.error .input-append > .add-on {
+position:absolute;
+right:40px;
+}
+
+
+
+
+
+.control-group.email .btn-mini {
+
+margin-right:0;
+width:auto;
+height:auto;
+}
+
+.control-group.email .controls.pull-left {
+overflow: hidden;
+text-overflow: ellipsis;
+}
