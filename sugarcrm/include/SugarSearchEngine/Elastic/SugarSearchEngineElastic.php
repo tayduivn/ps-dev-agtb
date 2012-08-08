@@ -541,9 +541,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $queryObj = new Elastica_Query_QueryString($qString);
             $queryObj->setAnalyzeWildcard(true);
             $queryObj->setAutoGeneratePhraseQueries(false);
-            if( !empty($options['append_wildcard']) )
+            if( !empty($options['append_wildcard']) ) {
                 // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
                 $queryObj->setRewrite('top_terms_5');
+                $queryObj->setAnalyzer('whitespace');
+            }
             
             // set query string fields
             $fields = $this->getSearchFields($options);
