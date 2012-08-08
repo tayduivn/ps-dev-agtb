@@ -62,13 +62,8 @@ EOQ;
         $restReply = $this->_restCall('metadata?lang=ua_UA&app_name=superAwesome&platform=portal');
 
         $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
-        $GLOBALS['current_user']->retrieve($GLOBALS['current_user']->id);
-        $this->assertEquals($GLOBALS['current_user']->lanuage_preferrence, 'ua_UA');
 
-        // Current user logged in but submit with language
-        $restReply = $this->_restCall('metadata?&app_name=superAwesome&platform=portal');
-
-        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        // TODO add test for user pref when that field gets added
 
         // Cleanup
         foreach($this->createdFiles as $file)

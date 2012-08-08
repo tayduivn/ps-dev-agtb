@@ -82,13 +82,11 @@ class MetadataApi extends SugarApi {
             $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
         }
 
-        // if were sending prefs down then set and save
+        // asking for a specific language
         if (isset($args['lang']) && !empty($args['lang'])) {
             $lang = $args['lang'];
             $current_language = $lang;
             $app_strings = return_application_language($lang);
-            $apiPerson->preferred_language = $lang;
-            $apiPerson->save();
         // load prefs otherwise
         } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
             $lang = $args['lang'];
