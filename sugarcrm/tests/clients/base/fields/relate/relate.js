@@ -3,6 +3,7 @@ describe("sugarfields", function() {
     var app;
 
     beforeEach(function() {
+        app = SugarTest.app;
         var fieldDef = {
             "name": "account_name",
             "rname": "name", "id_name": "account_id",
