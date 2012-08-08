@@ -151,7 +151,7 @@
       </select>
         </span>
         <span id="le_panelcollapse_{$idCount}" style="float:right;{if isset($tabDefs[$panel_upper].newTab) && $tabDefs[$panel_upper].newTab == true}display:none;{/if}">
-        &nbsp;{sugar_translate label="LBL_TABDEF_COLLAPSE" module="ModuleBuilder"} ?
+        &nbsp;{sugar_translate label="LBL_TABDEF_COLLAPSE" module="ModuleBuilder"}?
         <input type="checkbox" title="{sugar_translate label="LBL_TABDEF_COLLAPSE_HELP" module="ModuleBuilder"}" {if $tabDefs[$panel_upper].panelDefault == "collapsed"}checked="checked"{/if}
           onclick="{literal}if(this.checked) { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='collapsed'; } else { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='expanded';}{/literal}" />
         </span>
