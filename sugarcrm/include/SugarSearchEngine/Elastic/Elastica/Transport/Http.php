@@ -60,6 +60,9 @@ class Elastica_Transport_Http extends Elastica_Transport_Abstract {
 
 		if (!empty($data)) {
 			if (is_array($data)) {
+				if (isset($data['query']['query_string']['query'])) {
+				    $data['query']['query_string']['analyzer'] = "whitespace";
+				}
 				$content = json_encode($data);
 			} else {
 				$content = $data;
