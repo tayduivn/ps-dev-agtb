@@ -40,7 +40,6 @@
                 dataset: 'selectedDataSet'
             };
             return function(event, input) {
-                debugger;
                 this.view.context.forecasts.set(contextMap[fieldName], input.selected);
             };
         }(field.name);
