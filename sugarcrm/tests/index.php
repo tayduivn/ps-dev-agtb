@@ -16,8 +16,13 @@
     <script type="text/javascript" src='../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
     <script type="text/javascript" src='../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
     <script type="text/javascript" src="../sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
+    <script type="text/javascript" src='../sidecar/tests/spec-helper.js'></script>
     <link rel="stylesheet" href="../sidecar/lib/jasmine/jasmine.css"/>
-    <!-- Begin test files -->
+
+    <!-- Fixtures -->
+    <script type="text/javascript" src='../sidecar/tests/fixtures/api.js'></script>
+    <script type="text/javascript" src='../sidecar/tests/fixtures/metadata.js'></script>
+    <script type="text/javascript" src='../sidecar/tests/fixtures/language.js'></script>
 <?php
 
 /**
@@ -72,11 +77,6 @@
             function execJasmine() {
                 jasmineEnv.execute();
             }
-
-
-            SugarTest = {};
-            SugarTest.app = SUGAR.App;
-
         })();
     </script>
 </head>
