@@ -1,4 +1,7 @@
 describe("sugarfields", function() {
+
+    var app;
+
     beforeEach(function() {
         var fieldDef = {
             "name": "account_name",
@@ -19,7 +22,14 @@ describe("sugarfields", function() {
         };
         this.field = SugarTest.createField("base","account_name", "iframe", "detail", fieldDef);
         this.field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+    });
 
+    afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
+        delete Handlebars.templates;
+        this.field.model = null;
+        this.field = null;
     });
 
     describe("relate", function() {
