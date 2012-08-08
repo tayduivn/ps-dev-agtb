@@ -7,6 +7,7 @@
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span8">
+                    <div class="view-timeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-filter"></div>
                     <div>
@@ -19,10 +20,11 @@
                     </div>
                 </div>
 
-                <div class="span4 tab-content" id="folded">
+                <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
                             <div class="view-chart"></div>
+                            <div class="view-chartOptions"></div>
                         </div>
                         <div class="clearfix"></div>
                         <div class="block" id="guages">
@@ -31,51 +33,42 @@
                     </div>
                 </div>
 
-            {*
-            <div class="view-chartOptions"></div>
-            <div class="view-tree"></div>
-            <div class="view-timeframes"></div>
-            *}
+                <div class="modal hide fade" id="forecastSubnavSettingsModal" style="display:block">
+                    <div class="modal-header">
+                        <a class="close" data-dismiss="modal">×</a>
+                        <h3>Admin</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Body....................</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn">Cancel</a>
+                        <a href="#" class="btn btn-primary">Save</a>
 
-          {*<div class="span2" id="drawer">*}
-            {*<a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>*}
-            {*<div class="bordered">*}
-                    {*</div>*}
-                {*</div>*}
-                {*<div id="charts" class="span10">*}
-                    {*<div class="row-fluid">*}
-                        {*<div class="span12">*}
-                            {*<hr/>*}
-                        {*</div>*}
-                    {*</div>*}
-                    {*<div class="row-fluid">*}
-                        {*<div class="topline thumbnail span12">*}
-                          {**}
-                          {*<hr>*}
-                          {**}
-                        {*</div>*}
-                    {*</div>*}
-                {*</div>*}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{*temporarily adding the footer here manually to aid in development.  This should get added automatically once the footer is updated for all of Sugar*}
 <footer>
     <div class="row-fluid">
-      <div class="span6">
-        <a href="" class="logo">SugarCRM</a>
-      </div>
-      <div class="span6">
-        <div class="btn-toolbar pull-right">
-          <div class="btn-group">
-            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
-          </div>
+        <div class="span6">
+            <a href="" class="logo">SugarCRM</a>
         </div>
-      </div>
+        <div class="span6">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                    <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+                    <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </footer>
+</footer>
+
 {literal}
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>

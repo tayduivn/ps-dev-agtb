@@ -26,7 +26,7 @@
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : app.defaultSelections.group_by.id,
             dataset : app.defaultSelections.dataset.id,
-            category : app.defaultSelections.category.id
+            category : app.defaultSelections.category
         };
 
         app.view.View.prototype._render.call(this);
@@ -45,13 +45,17 @@
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            self.handleRenderOptions({group_by: groupBy.id});
+            self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            self.handleRenderOptions({dataset: dataset.id});
+            self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category: value.id});
+            if (app.config.showBuckets) {
+                // TODO: this.
+            } else {
+                self.handleRenderOptions({category:_.first(value)});
+            }
         });
         this.context.forecasts.on('change:updatedTotals', function(context, totals){
             if(!_.isEmpty(self.chart)) {

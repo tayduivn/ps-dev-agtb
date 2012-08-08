@@ -34,14 +34,6 @@ class ForecastsFiltersApi extends ModuleApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'filters' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','filters'),
-                'pathVars' => array('',''),
-                'method' => 'filters',
-                'shortHelp' => 'forecast filters',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#filters',
-            ),
             'timeframes' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts','timeframes'),
@@ -49,14 +41,6 @@ class ForecastsFiltersApi extends ModuleApi {
                 'method' => 'timeframes',
                 'shortHelp' => 'forecast timeframes',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeframes',
-            ),
-            'chartoptions' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','chartoptions'),
-                'pathVars' => array('',''),
-                'method' => 'chartOptions',
-                'shortHelp' => 'forecasting chart options',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#chartOptions',
             ),
             'reportees' => array(
                 'reqType' => 'GET',
@@ -70,22 +54,6 @@ class ForecastsFiltersApi extends ModuleApi {
         return $parentApi;
     }
 
-    public function filters($api, $args) {
-        // placeholder for filters
-        // todo: really make this work
-        global $app_list_strings, $current_language;
-        $app_list_strings = return_app_list_strings_language($current_language);
-        $mod_strings = return_module_language($current_language, 'Forecasts');
-
-        return array(
-//            'name' => 'category',
-//            'label' => get_label('LBL_FORECAST_CATEGORY', $mod_strings),
-//            'default' => 'Committed',
-//            'options' => 'forecasts_filters_category',
-            'category' => 'Committed',
-        );
-    }
-
     public function timeframes($api, $args) {
         global $app_list_strings, $current_language;
         $app_list_strings = return_app_list_strings_language($current_language);
@@ -97,26 +65,6 @@ class ForecastsFiltersApi extends ModuleApi {
                 'default' => TimePeriod::getCurrentId(),
                 'options' => TimePeriod::get_not_fiscal_timeperiods_dom(),
             ),
-        );
-    }
-
-    public function chartOptions($api, $args) {
-        // placeholder for filters
-        global $current_language;
-        $app_list_strings = return_app_list_strings_language($current_language);
-        $mod_strings = return_module_language($current_language, 'Forecasts');
-
-        return array(
-            'group_by' => array(
-                'label' => get_label('LBL_GROUP_BY', $mod_strings),
-                'default' => 'sales_stage',
-                'options' => $app_list_strings['forecasts_chart_options_group'],
-            ),
-            'dataset' => array(
-                'label' => get_label('LBL_DATA_SET', $mod_strings),
-                'default' => 'likely',
-                'options' => $app_list_strings['forecasts_chart_options_dataset'],
-            )
         );
     }
 

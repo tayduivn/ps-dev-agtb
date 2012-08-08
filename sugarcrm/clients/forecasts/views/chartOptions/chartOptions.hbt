@@ -1,2 +1,8 @@
-<h4>{{str "LBL_CHART_OPTIONS" "Forecasts"}}</h4>
-<div class="chartOptions"></div>
+<div class="chartOptions">
+    {{#each meta.panels}}
+        <h4>{{str label "Forecasts"}}</h4>
+        {{#each fields}}
+            {{field ../../this ../../model}}
+        {{/each}}
+    {{/each}}
+</div>
