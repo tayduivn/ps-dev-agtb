@@ -5,12 +5,6 @@
  * @extends View.View
  */
 ({
-
-    initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this.model = this.context.forecasts.filters;
-    },
-
     /**
      * Overriding _renderField because we need to determine whether the config settings are set to show buckets or
      * binary for forecasts and adjusts the category filter accordingly

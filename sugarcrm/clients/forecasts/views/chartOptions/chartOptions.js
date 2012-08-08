@@ -34,15 +34,16 @@
          * @param input the (de)selection
          * @private
          */
-        if (field.name == 'group_by') {
-            field._updateSelections = function(event, input) {
-                this.view.context.forecasts.set('selectedGroupBy', input.selected);
+        field._updateSelections = function(fieldName) {
+            var contextMap = {
+                group_by: 'selectedGroupBy',
+                dataset: 'selectedDataSet'
             };
-        } else if (field.name == 'dataset') {
-            field._updateSelections = function(event, input) {
-                this.view.context.forecasts.set('selectedDataSet', input.selected);
+            return function(event, input) {
+                debugger;
+                this.view.context.forecasts.set(contextMap[fieldName], input.selected);
             };
-        };
+        }(field.name);
 
         return field;
     }
