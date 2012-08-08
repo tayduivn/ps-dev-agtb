@@ -82,9 +82,26 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
 );
 $bannedPdfManagerFieldsAndLinks['Users'] = array (
     'fields' => array(
+        'address_city',
+        'address_country',
+        'address_postalcode',
+        'address_state',
+        'address_street',
         'date_entered',
         'date_modified',
+        'department',
+        'description',
+        'email1',
+        'employee_status',
+        'phone_fax',
+        'phone_home',
+        'messenger_id',
+        'messenger_type',
+        'phone_mobile',
+        'phone_other',
         'status',
+        'title',
+        'phone_work',
     ),
 );
 

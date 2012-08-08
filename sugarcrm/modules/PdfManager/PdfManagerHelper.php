@@ -337,6 +337,7 @@ class PdfManagerHelper
                     break;
                 case "varchar":
                 case "name":
+                case "user_name":
                 case "phone":
                 case "text":
                 case "url":
