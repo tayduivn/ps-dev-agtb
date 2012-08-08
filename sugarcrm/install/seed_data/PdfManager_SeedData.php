@@ -34,7 +34,7 @@ global $mod_strings, $installer_mod_strings;
 
 $modStringSrc = return_mod_list_strings_language($GLOBALS['current_language'], 'PdfManager');
 
-if (defined(PDF_HEADER_LOGO)) {
+if (defined('PDF_HEADER_LOGO')) {
     $logo = K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO;
     $imsize = @getimagesize($logo);
     if ($imsize === FALSE) {
