@@ -54,23 +54,15 @@ describe("Results View", function() {
         expect(stubRenderSubnav.args[0][0]).toMatch(/No.?results.*/i);
     });
 
-    it("should use context's collection's next_offset when showMoreResults called", function() {
-        var stubFireSearch, stubCtxGet, stubRenderSubnav, stubDismiss, stubShow, lContext, lView;
-
-        // Create context with get that returns stubbed collection w/next_offset property
-        lContext     = app.context.getContext();
-        lContext.get = function() {};
-        stubCtxGet   = sinon.stub(lContext, 'get', function() { return {next_offset:99};});
-        lView        = new app.view.views.ResultsView({context: lContext});
-
-        stubFireSearch = sinon.stub(lView, "fireSearchRequest", function(cb) {
-            cb({});
-        });
-        stubRenderSubnav     = sinon.stub(lView, 'renderSubnav', function(){});
-        stubDismiss          = sinon.stub(app.alert, 'dismiss', function(){});
-        stubShow             = sinon.stub(app.alert, 'show', function(){});
-
-        lView.showMoreResults();
-        expect(stubFireSearch.args[0][1]).toEqual(99);
+    it("should use mixed collection for showMoreResults", function() {
+        var stubCtxGet, localContext, localView, spyPaginate; 
+        spyPaginate = sinon.spy(app.bean, 'paginate', function() {});
+        localContext     = app.context.getContext();
+        localContext.get = function() {};
+        stubCtxGet   = sinon.stub(localContext, 'get', function() { return {paginate: spyPaginate}; });
+        localView        = new app.view.views.ResultsView({context: localContext});
+        localView.showMoreResults();
+        expect(spyPaginate.args[0][0].add).toEqual(true);
+        expect(spyPaginate.args[0][0].success).toBeDefined(true);
     });
 });

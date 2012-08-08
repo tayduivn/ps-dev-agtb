@@ -218,7 +218,7 @@ class KBDocument extends SugarBean {
 		}
 
         $this->name = $this->kbdocument_name;
-        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
+        $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id), ENT_COMPAT|ENT_QUOTES, 'UTF-8');
 	}
 
 	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {

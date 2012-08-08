@@ -35,7 +35,7 @@
 
         <!-- App Scripts -->
         <script src='sidecar/minified/sidecar.min.js'></script>
-        <script src='sidecar/minified/sugar.min.js'></script>
+        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
 
         <!-- CSS -->

@@ -414,9 +414,6 @@ logThis('call addNewSystemTabsFromUpgrade(' . $from_dir . ')');
 addNewSystemTabsFromUpgrade($from_dir);
 logThis('finished addNewSystemTabsFromUpgrade');
 
-//run fix on dropdown lists that may have been incorrectly named
-//fix_dropdown_list();
-
 	///////////////////////////////////////////////////////////////////////////////
 	////	REGISTER UPGRADE
 
