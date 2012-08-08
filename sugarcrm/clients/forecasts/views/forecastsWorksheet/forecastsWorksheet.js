@@ -74,38 +74,8 @@
             }
         )
 
-
-        var TotalView = Backbone.View.extend({
-            id : 'summary',
-
-            tagName : 'tfoot',
-
-            render: function() {
-                var self = this;
-                var hb = Handlebars.compile("<tr>" +
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_INCLUDED_TOTAL", "Forecasts") + "</th>" +
-                								"<th>{{formatNumber includedAmount}}</th>" +
-                								"<th>{{formatNumber includedBest}}</th>" + "<th>{{formatNumber includedLikely}}</th>" +
-                							"</tr>" +
-                							"<tr class='overall'>" +
-                								"<th colspan='5' style='text-align: right;'>" + app.lang.get("LBL_OVERALL_TOTAL", "Forecasts") + "</th>" +
-                    							"<th>{{formatNumber overallAmount}}</th>" +
-                    							"<th>{{formatNumber overallBest}}</th>" +
-                    							"<th>{{formatNumber overallLikely}}</th>" +
-                    						"</tr>");
-                $('#summary').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.totalView = new TotalView({
-            model : this.totalModel
-        });
-
         // INIT tree with logged-in user       
-        this.updateWorksheetBySelectedUser(this.selectedUser);
-        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
-        this.updateWorksheetBySelectedTimePeriod(app.defaultSelections.timeperiod_id)
+        this.timePeriod = app.defaultSelections.timeperiod_id.id;
     },
 
     createURL:function() {
@@ -284,18 +254,18 @@
             });
         }
 
+        //Create the view for expected opportunities
         var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
-        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta});
+        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
 
         $("#expected_opportunities").remove();
+        view.fetchCollection();
         $("#summary").prepend(view.$el);
-        view.render();
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(input[type=checkbox])').addClass('center');
 
         this.calculateTotals();
-
         this.createSubViews();
         this.includedView.render();
         this.overallView.render();

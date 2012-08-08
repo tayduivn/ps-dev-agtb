@@ -153,7 +153,6 @@ describe("The expected opportunities view tests", function(){
 
     describe("test change:include_expected updates the model", function() {
 
-
         it("should update the model on change:include_expected", function() {
             var moduleName = "ForecastSchedule", bean, collection;
             dm.declareModel(moduleName, metadata.modules[moduleName]);

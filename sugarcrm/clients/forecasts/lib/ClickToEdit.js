@@ -83,8 +83,14 @@
                         values[settings.field.name] = value;
                         values["timeperiod_id"] = settings.field.context.forecasts.get("selectedTimePeriod").id;
             			values["current_user"] = app.user.get('id');
-                        
-                        settings.field.model.url = settings.view.url + "/" + ((id != "") ? id : "-1");
+
+                        //If there is an id, add it to the URL
+                        if(id)
+                        {
+                            settings.view.url += "/" + id;
+                        }
+
+                        settings.field.model.url = settings.view.url;
                         settings.field.model.save(values, {wait:true});
                         	
                         

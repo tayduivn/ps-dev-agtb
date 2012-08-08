@@ -47,7 +47,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_amount',
                     'label' => 'LBL_EXPECTED_AMOUNT',
-                    'type' => 'text',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -55,7 +55,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_best_case',
                     'label' => 'LBL_EXPECTED_BEST_CASE',
-                    'type' => 'text',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -63,7 +63,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_likely_case',
                     'label' => 'LBL_EXPECTED_LIKELY_CASE',
-                    'type' => 'text',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -71,7 +71,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_worst_case',
                     'label' => 'LBL_EXPECTED_WORST_CASE',
-                    'type' => 'text',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => false,
                     'clickToEdit' => true
