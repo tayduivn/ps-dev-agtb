@@ -72,7 +72,7 @@ class AttachmentListApi extends ListApi {
             $rowCount++;
             $note = BeanFactory::getBean('Notes',$noteId);
             $data['records'][] = $this->formatBean($api,$args,$note);
-            if ( $rowCount == $options['max_records'] ) {
+            if ( $rowCount == $options['limit'] ) {
                 // We have hit our limit.
                 break;
             }
