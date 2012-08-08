@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="span4 tab-content" id="folded">
+                <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
                             <div class="view-chart"></div>
