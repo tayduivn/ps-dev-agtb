@@ -48,6 +48,7 @@ if(isset($_POST['record']) && $_POST['record']!=""){
 
 //check if we need to remove the old stuff
 if(!$is_new && ((!empty($_POST['base_module']) && ($_POST['base_module'] != $focus->base_module)) || (!empty($_POST['type']) && ($_POST['type'] != $focus->type)))){
+    $focus->delete_workflow_on_cascade = false;
     $focus->mark_deleted($_POST['record']);
     $focus->deleted = 0;
 }
