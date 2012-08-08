@@ -1,22 +1,26 @@
 describe("Results View", function() {
-    var app, spyContextGet, context, ResultsView, view;
+
+    var app, spyContextGet, context, view;
 
     beforeEach(function() {
-        var controller;
-        //SugarTest.app.config.env = "dev"; // so I can see app.data ;=)
-        controller = SugarTest.loadFile('../../../../sugarcrm/clients/base/views/results', 'results', 'js', function(d){ return d;});
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        context        = app.context.getContext();
+        context = app.context.getContext();
         context.set('query', 'fubar');
+        view = SugarTest.createView("base","Cases", "results", null, context);
+        view.model = new Backbone.Model();
         spyContextGet = sinon.spy(context, 'get');
-        ResultsView = app.view.declareComponent('view', 'Results', null, controller);
-        view = new ResultsView({context: context});
         view.collection = new app.MixedBeanCollection();
     });
+    
     afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
         context.get.restore();
+        delete Handlebars.templates;
+        view = null;
     });
+
     it("should initialize with custom meta", function() {
         expect(view.meta).toBeDefined();
     });
@@ -34,11 +38,11 @@ describe("Results View", function() {
         stubFireSearch = sinon.stub(view, "fireSearchRequest", function(cb) {
             cb({next_offset: 1,
                     records: [{
-                        id: "824ac1ce-8ef2-1c42-7d5e-4fc193416db2",
-                        name: "System not responding"}]});
+                    id: "824ac1ce-8ef2-1c42-7d5e-4fc193416db2",
+                    name: "System not responding"}]});
         });
-        stubRenderSubnav     = sinon.stub(view, 'renderSubnav', function(){});
 
+        stubRenderSubnav = sinon.stub(view, 'renderSubnav', function(){});
         view.render();
         expect(stubRenderSubnav).toHaveBeenCalled();
     });
