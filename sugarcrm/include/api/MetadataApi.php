@@ -87,11 +87,9 @@ class MetadataApi extends SugarApi {
             $lang = $args['lang'];
             $current_language = $lang;
             $app_strings = return_application_language($lang);
-        // load prefs otherwise
+        // load prefs if set
         } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
-            $lang = $args['lang'];
-            $current_language = $lang;
-            $app_strings = return_application_language($lang);
+            $app_strings = return_application_language($apiPerson->preferred_language);
         }
 
         // Default the type filter to everything
