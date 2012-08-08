@@ -7045,6 +7045,9 @@ table tfoot td {
 #folded > div {
   width: inherit;
 }
+#folded {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+}
 #dashboard #folded .tab-pane.active {
   position: fixed !important;
   top: 47px;
@@ -8389,4 +8392,38 @@ color: @red;
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
+}
+
+/* CSS for forecasts subnav */
+#headerbar h1 {
+    float:left;
+    margin-right:5px;
+    margin-left:12px;
+}
+
+#overview {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+    border-left:3px solid #cdcccb;
+    border-top:3px solid #cdcccb;
+}
+
+.viz {
+    min-height: 300px;
+    float: left;
+    width: 90% !important;
+    margin-left: 5% !important;
+    padding-top: 20px;
+}
+
+.btn-invisible {
+    background:none;
+    border:1px solid transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.btn-invisible:hover {
+    border:1px solid #d0cfce;
+    *border:0;
+    border-top-color:#c1bfbe;
 }
