@@ -1,77 +1,50 @@
 /**
- *
+ * View that displays the chart options for forecasts module
  * @class View.Views.ChartOptionsView
  * @alias SUGAR.App.layout.ChartOptionsView
  * @extends View.View
  */
 ({
 
-    viewSelector: '.chartOptions',
-
-    bindDataChange: function() {
-        var self = this,
-            model = this.context.forecasts.chartoptions;
-
-        model.on('change', function() {
-            self.buildDropdowns(this);
-        });
+    /**
+     * Overriding _renderField because we need to set up the events to set the proper value depending on which field is
+     * being changed.
+     * binary for forecasts and adjusts the category filter accordingly
+     * @param field
+     * @private
+     */
+    _renderField: function(field) {
+        field = this._setUpCategoryField(field);
+        app.view.View.prototype._renderField.call(this, field);
     },
 
-    buildDropdowns:function (model) {
-        var self = this,
-            default_values = {};
-        self.$el.find('.chartOptions').empty();
+    /**
+     * Sets up the save event and handler for the  dropdown fields in the chart options view.
+     * @param field the commit_stage field
+     * @return {*}
+     * @private
+     */
+    _setUpCategoryField: function (field) {
+        field.events = _.extend({"change select": "_updateSelections"}, field.events);
+        field.bindDomChange = function() {};
 
-        _.each(model.attributes, function (data, key) {
-            var modelData = model.get(key);
-            var chosen = app.view.createField({
-                    def:{
-                        name:key,
-                        type:'enum',
-                        options: modelData.options
-                    },
-                    view:self
-                }),
-                $chosenPlaceholder = $(chosen.getPlaceholder().toString());
+        /**
+         * updates the selection when a change event is triggered from a dropdown/multiselect
+         * @param event the event that was triggered
+         * @param input the (de)selection
+         * @private
+         */
+        if (field.name == 'group_by') {
+            field._updateSelections = function(event, input) {
+                this.view.context.forecasts.set('selectedGroupBy', input.selected);
+            };
+        } else if (field.name == 'dataset') {
+            field._updateSelections = function(event, input) {
+                this.view.context.forecasts.set('selectedDataSet', input.selected);
+            };
+        };
 
-            self.$el.find(self.viewSelector).append($chosenPlaceholder);
-
-            chosen.options.viewName = 'drawer';
-            chosen.label = modelData.label;
-
-            if (modelData.default) {
-                chosen.model.set(key, modelData.default);
-                default_values.id = modelData.default;
-                default_values.label = modelData.options[modelData.default];
-            }
-            chosen.setElement($chosenPlaceholder);
-            chosen.render();
-
-            if (key === 'group_by') {
-                self.handleGroupByEvents($chosenPlaceholder);
-            } else if (key === 'dataset') {
-                self.handleDataSetEvents($chosenPlaceholder);
-            }
-
-        });
-    },
-
-    handleGroupByEvents: function($dropdown) {
-        var self = this;
-        $dropdown.on('change', 'select', function(event, data) {
-            var label = $(this).find('option:[value='+data.selected+']').text();
-            var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.forecasts.set('selectedGroupBy', {"id": id, "label": label});
-        });
-    },
-
-    handleDataSetEvents: function($dropdown) {
-        var self = this;
-        $dropdown.on('change', 'select', function(event, data) {
-            var label = $(this).find('option:[value='+data.selected+']').text();
-            var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.forecasts.set('selectedDataSet', {"id": id, "label": label});
-        });
+        return field;
     }
 
 })

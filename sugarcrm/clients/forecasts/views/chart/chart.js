@@ -45,10 +45,10 @@
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            self.handleRenderOptions({group_by: groupBy.id});
+            self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            self.handleRenderOptions({dataset: dataset.id});
+            self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
             if (app.config.showBuckets) {
