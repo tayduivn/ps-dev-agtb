@@ -36,7 +36,6 @@
      */
     _setUpCategoryField: function (field) {
 
-        // theshark: this may be better to go inside the bindDomChange instead of in an events object...
         field.events = _.extend({"change select": "_updateSelections"}, field.events);
         field.bindDomChange = function() {};
 
@@ -56,7 +55,6 @@
             }
 
             if(this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
-                // theshark:  This needs to be implemented across all views affected by filters, based on the decisions made for how buckets get defined.
                 if (_.has(input, "selected")) {
                     id = input.selected;
                     if (!_.has(selectedCategory, id)) {
