@@ -52,4 +52,9 @@
 <script type="text/javascript" src='{sugar_getjspath file ='modules/ModuleBuilder/javascript/JSTransaction.js'}' ></script>
 <script type="text/javascript" src='{sugar_getjspath file ='include/javascript/tiny_mce/tiny_mce.js'}' ></script>
 
+
+<script src='sidecar/minified/sidecar.min.js'></script>
+<script src='include/javascript/sugarAuthStore.js'></script>
+<script src='portal2/lib/twitterbootstrap/js/bootstrap-colorpicker.js'></script>
+
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />

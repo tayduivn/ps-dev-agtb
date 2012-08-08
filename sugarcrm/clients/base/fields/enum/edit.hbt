@@ -1,4 +1,4 @@
-        <select data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}}>
+        <select data-placeholder=" " name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
             <option value="" selected></option>
             {{#eachOptions def.options}}
             <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
