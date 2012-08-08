@@ -51,7 +51,11 @@
             self.handleRenderOptions({dataset: dataset.id});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category: value});
+            if (app.config.showBuckets) {
+                // TODO: this.
+            } else {
+                self.handleRenderOptions({category:_.first(value)});
+            }
         });
         this.context.forecasts.on('change:updatedTotals', function(context, totals){
             if(!_.isEmpty(self.chart)) {

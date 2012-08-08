@@ -508,7 +508,7 @@
              // TODO:  this.
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(params[0] == "70") {
+            if(_.first(params) == "70") {
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
