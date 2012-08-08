@@ -193,6 +193,9 @@
                         $('.view-tree').show();
                     }
                 }
+                
+                // add proper class onto the tree
+                $("#people").addClass("jstree-sugar");
             }
         });
     }
