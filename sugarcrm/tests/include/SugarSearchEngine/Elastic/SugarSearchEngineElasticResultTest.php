@@ -41,10 +41,17 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $response = new Elastica_Response($this->_responseString);
         $elasticResultSet = new Elastica_ResultSet($response);
         $results = $elasticResultSet->getResults();
         $this->_elasticResult = new SugarSeachEngineElasticResult($results[0]);
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
     }
 
     public function testElasticResultGetId()
