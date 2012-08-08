@@ -1,15 +1,12 @@
 describe("Address", function() {
-    var app, field, controller, Address;
+    var app, field, Address;
 
     beforeEach(function() {
         app = SugarTest.app;
-        controller = SugarFieldTest.loadSugarField('address/address');
-        field = SugarFieldTest.createField("address", "detail");
-        field = _.extend(field, controller);
-        Address = Backbone.Model.extend({
-        });
+        field = SugarTest.createField("base","address_street", "address", "detail");
+        Address = Backbone.Model.extend({});
         field.model = new Address({ 
-            address: '1 Foo Way',
+            address_street: '1 Foo Way',
             address_city: 'Castro Valley',
             address_state: 'CA',
             address_postalcode: '94546',
@@ -19,10 +16,10 @@ describe("Address", function() {
 
     afterEach(function() {
         app.cache.cutAll();
+        app.view.reset();
         delete Handlebars.templates;
         field.model = null;
         field = null;
-        controller = null;
         Address = null;
     });
 
