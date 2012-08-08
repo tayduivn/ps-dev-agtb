@@ -214,7 +214,8 @@ class ForecastsChartApi extends ChartApi
 
             // apply the adjusted values to the chart data
             foreach($dataArray['values'] as $key => $value) {
-                if(isset($adjusted_values[$value['label']])) {
+                // don't overwrite if we get 0's back for the one we are replacing.
+                if(isset($adjusted_values[$value['label']]) && $adjusted_values[$value['label']][$this->managerAdjustedField] != '0') {
                     $dataArray['values'][$key]['values'][$pos] = floatval($adjusted_values[$value['label']][$this->managerAdjustedField]);
                     $dataArray['values'][$key]['valuelabels'][$pos] = $adjusted_values[$value['label']][$this->managerAdjustedField];
 
