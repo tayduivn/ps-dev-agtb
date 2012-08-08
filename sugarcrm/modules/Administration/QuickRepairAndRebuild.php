@@ -406,7 +406,7 @@ class RepairAndClear
         $sd->clearCache();
         //clear out the api metadata cache
         require_once("include/MetaDataManager/MetaDataManager.php");
-        // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the caceh dir
+        // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
         $metadata_cache_dir = sugar_cached("api/metadata");
         if ($handle = opendir($metadata_cache_dir)) {
             while (false !== ($cache_file = readdir($handle))) {
