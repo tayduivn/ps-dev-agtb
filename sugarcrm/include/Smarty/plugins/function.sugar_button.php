@@ -470,7 +470,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                         'email_action' => '',
                                         
                                     );
-                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>',
+                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $path . '</a>',
                                                             'items' => array(),
                                                         );
                                 }
@@ -515,7 +515,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                             'sugarpdf' => $sugarpdf,
                                             'email_action' => '',
                                         );
-                                        $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>' ;
+                                        $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $path . '</a>' ;
                                     }
                                 }
                                 
