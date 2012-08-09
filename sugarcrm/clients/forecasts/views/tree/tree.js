@@ -23,10 +23,6 @@
         this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
         this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
         this.currentRootId = app.user.get('id');
-
-        // Hide the whole tree view until jsTree gets it's data back
-        // if current user has reportees, then we'll show the tree view
-        $('.view-tree').hide();
     },
 
     /***
@@ -190,10 +186,10 @@
 
                     self.currentRootId = rootId;
                     if (showTree) {
-                        $('.view-tree').show();
+                        $('#forecastsTree').show();
                     }
                 }
-                
+
                 // add proper class onto the tree
                 $("#people").addClass("jstree-sugar");
             }
