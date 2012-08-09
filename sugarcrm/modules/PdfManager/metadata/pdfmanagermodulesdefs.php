@@ -80,11 +80,44 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
         'primary_address_street_3',
     ),
 );
+$bannedPdfManagerFieldsAndLinks['Opportunities'] = array (
+    'relationships' => array(
+        'campaign_link',
+        'campaigns',
+    ),
+);
+$bannedPdfManagerFieldsAndLinks['Prospects'] = array (
+    'fields' => array(
+        'accept_status_id',
+        'accept_status_name',
+        'alt_address_street_2',
+        'alt_address_street_3',
+        'primary_address_street_2',
+        'primary_address_street_3',
+    ),
+);
 $bannedPdfManagerFieldsAndLinks['Users'] = array (
     'fields' => array(
+        'address_city',
+        'address_country',
+        'address_postalcode',
+        'address_state',
+        'address_street',
         'date_entered',
         'date_modified',
+        'department',
+        'description',
+        'email1',
+        'employee_status',
+        'phone_fax',
+        'phone_home',
+        'messenger_id',
+        'messenger_type',
+        'phone_mobile',
+        'phone_other',
         'status',
+        'title',
+        'phone_work',
     ),
 );
 
