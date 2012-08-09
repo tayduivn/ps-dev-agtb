@@ -38,10 +38,8 @@ class SugarPortalModule{
 		$this->name = $moduleNames[strtolower($module)];
 		$this->module = $module;
 		
-		$views = array('edit.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_EDITVIEW'] , 'type'=>'editView'),
-					   'detail.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type'=>'detailView'),
-					   'list.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_LISTVIEW'] , 'type'=>'list'),);
 		$path = 'modules/'.$this->module.'/metadata/portal/views/';
+        $views = self::getViewFiles();
 		foreach($views as $file => $def) {
 			if(file_exists($path . $file)){
 				$this->views[$file] = $def;
@@ -68,7 +66,23 @@ class SugarPortalModule{
 		return $nodes;
 	}
 	
-	
+    /**
+     * Gets an array of expected view files for portal layouts
+     * 
+     * Added as a helper to bug 55003
+     * 
+     * @static
+     * @return array
+     */
+	public static function getViewFiles()
+    {
+        // These mod_strings are ModuleBuilder module strings
+        return array(
+            'edit.php'   => array('name' => $GLOBALS['mod_strings']['LBL_EDITVIEW'],    'type' => 'editView'),
+            'detail.php' => array('name' => $GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type' => 'detailView'),
+            'list.php'   => array('name' => $GLOBALS['mod_strings']['LBL_LISTVIEW'],    'type' => 'list'),
+        );
+    }
 	
 	
 	
