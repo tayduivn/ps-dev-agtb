@@ -112,9 +112,6 @@ class SugarSearchEngineElasticMapping
                     $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
-                if ($fieldName == 'email1' || $fieldName == 'email2')
-                    $tmpArray['index'] = 'not_analyzed';
-
                 $properties[$fieldName] = $tmpArray;
             }
         }

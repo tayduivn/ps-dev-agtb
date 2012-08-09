@@ -544,7 +544,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !empty($options['append_wildcard']) ) {
                 // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
                 $queryObj->setRewrite('top_terms_5');
-                $queryObj->setAnalyzer('whitespace');
+                if (preg_match('/@/', $qString)) {
+                    $queryObj->setAnalyzer('whitespace');
+                }
             }
             
             // set query string fields
