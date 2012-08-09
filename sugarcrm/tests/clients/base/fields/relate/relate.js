@@ -34,7 +34,7 @@ describe("sugarfields", function() {
     });
 
     describe("relate", function() {
-        it("should have options template", function() {
+        xit("should have options template", function() {
             expect(this.field.optionsTemplateC).toEqual(Handlebars.templates["f.relate.options"]);
         });
     });
