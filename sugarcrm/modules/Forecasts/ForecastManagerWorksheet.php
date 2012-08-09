@@ -81,7 +81,7 @@ class ForecastManagerWorksheet extends SugarBean
         $worksheet->likely_case = $this->args["likely_adjusted"];
         $worksheet->forecast_type = ($this->args["user_id"] == $GLOBALS['current_user']->id) ? "Direct" : "Rollup";
         $worksheet->related_forecast_type = $worksheet->forecast_type;
-        $worksheet->worst_case = $this->worst_case;
+        $worksheet->worst_case = (isset($this->args["worst_adjusted"])) ? $this->args["worst_adjusted"] : 0;
         $worksheet->related_id = $this->args["user_id"];
         $worksheet->save();
     }

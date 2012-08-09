@@ -93,21 +93,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
 		$current_module_strings = return_module_language($current_language, 'Forecasts');
 
-        if(!User::isManager($current_user->id))
-        {
-           return array();
-        }
-
-        if(isset($args['user_id']))
-        {
-            $user = new User();
-            $user->retrieve($args['user_id']);
-            if(!User::isManager($user->id))
-            {
-                return array();
-            }
-        } else {
+        if(isset($args['user_id']) && User::isManager($args['user_id'])) {
+            $user = BeanFactory::getBean('Users', $args['user_id']);
+        } elseif(!isset($args['user_id']) && User::isManager($current_user->id)){
             $user = $current_user;
+        } else {
+            return array();
         }
 
         $app_list_strings = return_app_list_strings_language($current_language);
@@ -205,6 +196,11 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         //Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers
         foreach($data_grid as $rep => $val)
         {
+            // we dont have a forecast yet, set the amount to 0
+            if(empty($val['forecast_id'])) {
+                $data_grid[$rep]['amount'] = 0;
+            }
+
             $data_grid[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
             $data_grid[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
             $data_grid[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
@@ -244,7 +240,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
      *
      * @return array Array of entries with deltas best_case, likely_case, worst_case, id and forecast_id
      */
-    protected function getForecastValues()
+    public function getForecastValues()
     {
         $query = "SELECT id, user_name FROM users WHERE reports_to_id = '{$this->user_id}' AND deleted = 0";
         $db = DBManagerFactory::getInstance();
