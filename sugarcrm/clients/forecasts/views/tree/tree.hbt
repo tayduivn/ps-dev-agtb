@@ -1,4 +1,4 @@
-<div class="block">
+<div class="block" id="forecastsTree" style="display: none">
     <h4>{{str "LBL_TREE_TEAMS" "Forecasts"}}</h4>
     <div id="people" class="jstree-sugar" id="forecasts-jstree"></div>
 </div>
