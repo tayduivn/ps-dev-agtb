@@ -68,9 +68,9 @@ class Bug44896Test extends Sugar_PHPUnit_Framework_TestCase
 
 class Bug44896PackageManger
 {
-	static $manifest_location = "upload/upgrades/module/Bug44896-manifest.php";
-    static $zip_location = "upload/upgrades/module/Bug44896.zip";
-    static $location = "upload/upgrades/module/";
+	static $manifest_location = "upload://upgrades/module/Bug44896-manifest.php";
+    static $zip_location = "upload://upgrades/module/Bug44896.zip";
+    static $location = "upload://upgrades/module/";
 
 	public function __construct()
     {
