@@ -71,7 +71,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     }
 
 </style>
-<script type="text/javascript" src="<? echo SugarConfig::get('site_url') ?>/include/javascript/jquery/jquery.js"></script>
+<script type="text/javascript" src="<?php echo SugarConfig::get('site_url') ?>/include/javascript/jquery/jquery.js"></script>
 </head>
 
 <body>
@@ -82,26 +82,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   foreach ( $endpointList as $i => $endpoint ) {
       if ( empty($endpoint['shortHelp']) ) { continue; }
 ?>
-  <tr id="endpoint_<? echo $i ?>" class="endpointMain">
-    <td class="showHide" id="showHide<? echo $i ?>">+</td>
-    <td class="reqType"><? echo htmlspecialchars($endpoint['reqType']) ?></td>
-    <td class="fullPath"><? echo htmlspecialchars($endpoint['fullPath']) ?></td>
-    <td class="shortHelp"><? echo htmlspecialchars($endpoint['shortHelp']) ?></td>
-    <td class="score"><? echo sprintf("%.02f",$endpoint['score']) ?></td>
+  <tr id="endpoint_<?php echo $i ?>" class="endpointMain">
+    <td class="showHide" id="showHide<?php echo $i ?>">+</td>
+    <td class="reqType"><?php echo htmlspecialchars($endpoint['reqType']) ?></td>
+    <td class="fullPath"><?php echo htmlspecialchars($endpoint['fullPath']) ?></td>
+    <td class="shortHelp"><?php echo htmlspecialchars($endpoint['shortHelp']) ?></td>
+    <td class="score"><?php echo sprintf("%.02f",$endpoint['score']) ?></td>
   </tr>
-  <tr id="endpoint_<? echo $i ?>_full" class="endpointExtra hidden">
+  <tr id="endpoint_<?php echo $i ?>_full" class="endpointExtra hidden">
     <td class="empty">&nbsp;</td>
-    <td class="fullHelp" colspan=4>
-      <?php if ( file_exists($endpoint['longHelp']) ) { ?>
-          <? echo file_get_contents($endpoint['longHelp']) ?>
-      <? } else if ( !empty($endpoint['longHelp']) ) { ?>
-          Long help file not found: <? echo htmlspecialchars($endpoint['longHelp']) ?>
-      <? } else { ?>
-          No additional help.
-      <? } ?>
+    <td class="fullHelp" colspan="4">
+      <?php
+      if ( file_exists($endpoint['longHelp']) ) {
+          echo file_get_contents($endpoint['longHelp']);
+      } else if ( !empty($endpoint['longHelp']) ) {
+          echo 'Long help file not found: ' . htmlspecialchars($endpoint['longHelp']);
+      } else {
+          echo 'No additional help.';
+      }
+      ?>
       <hr>
-      <b>File:</b><? echo $endpoint['file'] ?><br>
-      <b>Method:</b><? echo $endpoint['method'] ?><br>
+      <b>File:</b><?php echo $endpoint['file']; ?><br>
+      <b>Method:</b><?php echo $endpoint['method']; ?><br>
     </td>
   </tr>
 <?php
