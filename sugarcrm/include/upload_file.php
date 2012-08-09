@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/externalAPI/ExternalAPIFactory.php');
-require_once('include/UploadS3.php');
 /**
  * @api
  * Manage uploaded files
@@ -670,8 +669,18 @@ class UploadStream
      */
     public function register()
     {
-        if(isset($GLOBALS['sugar_config']['upload_wrapper_class']) && class_exists($GLOBALS['sugar_config']['upload_wrapper_class'])) {
-            self::$wrapper_class = $GLOBALS['sugar_config']['upload_wrapper_class'];
+        if(isset($GLOBALS['sugar_config']['upload_wrapper_class'])) {
+            // FIXME: after file loading patch is merged, make it use autoloader API
+            if(file_exists("custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
+                require_once "custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
+            } else if(file_exists("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
+                require_once "include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
+            }
+            if(class_exists($GLOBALS['sugar_config']['upload_wrapper_class'])) {
+                self::$wrapper_class = $GLOBALS['sugar_config']['upload_wrapper_class'];
+            } else {
+                self::$wrapper_class = __CLASS__;
+            }
         } else {
             self::$wrapper_class = __CLASS__;
         }

@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'Zend/Service/Amazon/S3.php';
 require_once 'Zend/Service/Amazon/S3/Stream.php';
 
-class S3UploadStream extends UploadStream
+class SugarUploadS3 extends UploadStream
 {
     protected $s3;
     protected $s3dir;
@@ -30,14 +30,12 @@ class S3UploadStream extends UploadStream
     protected $localpath;
     protected $write;
     protected $bucket;
+    protected $metadata;
 
     public function __construct()
     {
         parent::__construct();
         $this->init();
-        // TODO: add location support
-        // TODO: initialization?
-        //$this->s3->createBucket($GLOBALS['sugar_config']['s3']['upload_bucket']);
     }
 
     protected function init()
@@ -53,6 +51,8 @@ class S3UploadStream extends UploadStream
             $GLOBALS['log']->fatal("S3 keys are not set!");
             throw new Exception("S3 keys are not set!");
         }
+        // TODO: add location support for buckets
+        $this->metadata = array(array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE));
         $this->s3 = new Zend_Service_Amazon_S3($GLOBALS['sugar_config']['s3']['aws_key'], $GLOBALS['sugar_config']['s3']['aws_secret']);
         $this->s3->registerAsClient(self::STREAM_NAME);
         $this->bucket = $GLOBALS['sugar_config']['s3']['upload_bucket'];
@@ -123,7 +123,7 @@ class S3UploadStream extends UploadStream
     public function registerFile($path)
     {
         return $this->s3->putFileStream(parent::getFSPath($path), $this->urlToObject($path, false),
-            array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE));
+            $this->metadata);
     }
 
    /**
@@ -180,6 +180,7 @@ class S3UploadStream extends UploadStream
      */
     public function createDir($path)
     {
+        // TODO: support locations
         return $this->s3->createBucket($this->urlToBucketName($path, false));
     }
 
