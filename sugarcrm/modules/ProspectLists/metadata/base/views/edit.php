@@ -54,9 +54,16 @@ $viewdefs['ProspectLists']['base']['view']['edit'] = array(
             'fields' =>
             array(
                 array('name' => 'name', 'displayParams' => array('required' => true)),
-                array('name' => 'list_type', 'displayParams' => array('required' => true)),
                 'description',
-                'domain_name',
+                array('name' => 'list_type', 'displayParams' => array('required' => true)),
+                array(
+                    'name' => 'domain_name',
+                    'type' => 'secondary',
+                    'primary' => array(
+                        'field' => 'list_type',
+                        'value' => 'exempt_domain',
+                    )
+                ),
                 'assigned_user_name',
 
                 //BEGIN SUGARCRM flav=pro ONLY

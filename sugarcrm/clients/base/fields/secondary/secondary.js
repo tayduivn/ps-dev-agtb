@@ -48,6 +48,7 @@
                 self.$el.show();
             } else {
                 self.$el.hide();
+                model.set(self.name, '');
             }
         });
     }

@@ -52,9 +52,16 @@ $viewdefs['ProspectLists']['base']['view']['detail'] = array(
             array(
                 'name',
                 array('name' => 'entry_count', 'label' => 'LBL_ENTRIES'),
-                'list_type',
-                'domain_name',
                 'description',
+                'list_type',
+                array(
+                    'name' => 'domain_name',
+                    'type' => 'secondary',
+                    'primary' => array(
+                        'field' => 'list_type',
+                        'value' => 'exempt_domain',
+                    )
+                ),
 
                 'assigned_user_name',
                  array (
