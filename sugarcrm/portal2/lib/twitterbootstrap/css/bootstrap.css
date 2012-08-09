@@ -65,3 +65,7 @@ height:auto;
 overflow: hidden;
 text-overflow: ellipsis;
 }
+
+#systemTour .pointsolight {
+padding:0 15px 15px;
+}
