@@ -1626,7 +1626,7 @@ return str_replace(' > ','_',
             require_once($beanFiles[$table_def['bean_name']]);
             $focus = new $table_def['bean_name']();
             //BEGIN SUGARCRM flav!=sales ONLY
-            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
+            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($focus->module_dir) && !$focus->disable_row_level_security) {
                 $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
                                     tst INNER JOIN team_memberships team_memberships ON tst.team_id =
                                     team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
