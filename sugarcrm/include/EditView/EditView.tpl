@@ -81,9 +81,9 @@ class="yui-navset"
 {{* Only show header if it is not default or an int value *}}
 {{if !empty($label) && !is_int($label) && $label != 'DEFAULT' && $showSectionPanelsTitles && (!isset($tabDefs[$label_upper].newTab) || (isset($tabDefs[$label_upper].newTab) && $tabDefs[$label_upper].newTab == false)) && $view != "QuickCreate"}}
 <h4>&nbsp;&nbsp;
-  <a href="javascript:void(0)" class="collapseLink" onclick="setCollapseState('{{$module}}_e', '{{$smarty.foreach.section.iteration}}', true); collapsePanel({{$smarty.foreach.section.iteration}});">
+  <a href="javascript:void(0)" class="collapseLink" onclick="collapsePanel({{$smarty.foreach.section.iteration}});">
   <img border="0" id="detailpanel_{{$smarty.foreach.section.iteration}}_img_hide" src="{sugar_getimagepath file="basic_search.gif"}"></a>
-  <a href="javascript:void(0)" class="expandLink" onclick="setCollapseState('{{$module}}_e', '{{$smarty.foreach.section.iteration}}', false); expandPanel({{$smarty.foreach.section.iteration}});">
+  <a href="javascript:void(0)" class="expandLink" onclick="expandPanel({{$smarty.foreach.section.iteration}});">
   <img border="0" id="detailpanel_{{$smarty.foreach.section.iteration}}_img_show" src="{sugar_getimagepath file="advanced_search.gif"}"></a>
   {sugar_translate label='{{$label}}' module='{{$module}}'}
   {{if ( isset($tabDefs[$label_upper].panelDefault) && $tabDefs[$label_upper].panelDefault == "collapsed" && isset($tabDefs[$label_upper].newTab) && $tabDefs[$label_upper].newTab == false) }}
@@ -309,17 +309,4 @@ window.onbeforeunload = function () {ldelim} return disableOnUnloadEditView(); {
 {{else}}
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};
 {{/if}}
-
-SUGAR.util.doWhen("typeof collapsePanel == 'function'",
-        function(){ldelim}
-            var sugar_panel_collase = Get_Cookie("sugar_panel_collase");
-            if(sugar_panel_collase != null) {ldelim}
-                sugar_panel_collase = YAHOO.lang.JSON.parse(sugar_panel_collase);
-                for(panel in sugar_panel_collase['{{$module}}_e'])
-                    if(sugar_panel_collase['{{$module}}_e'][panel])
-                        collapsePanel(panel);
-                    else
-                        expandPanel(panel);
-            {rdelim}
-        {rdelim});
 </script>
