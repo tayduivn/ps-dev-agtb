@@ -10,6 +10,8 @@
     id: 'expected_opportunities',
     viewModule: {},
     selectedUser: {},
+    selectedUserId: null,
+    timePeriodId: null,
     _collection:{},
 
     /**
@@ -20,23 +22,16 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.selectedUserId = options.user_id ? options.user_id : app.user.get('id');
+        this.timePeriodId = options.timeperiod_id ? options.timeperiod_id : app.defaultSelections.timeperiod_id.id;
         this._collection = this.context.forecasts.forecastschedule;
         this._collection.url = this.createURL();
-        this.selectedUser = this.context.forecasts.get('selectedUser');
-        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
     },
 
     createURL : function() {
         var args = {};
-        if(this.timePeriod) {
-           args.timeperiod_id = this.timePeriod;
-        }
-
-        if(this.selectedUser)
-        {
-           args.user_id = this.selectedUser.id;
-        }
-
+        args.timeperiod_id = this.timePeriodId;
+        args.user_id = this.selectedUserId;
         return app.api.buildURL('ForecastSchedule', null, null, args);
     },
 
@@ -46,7 +41,8 @@
     fetchCollection: function()
     {
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        var self = this;
+        this._collection.fetch({success : function() { self.render() } });
     },
 
 
@@ -62,7 +58,7 @@
 
         app.view.View.prototype._renderField.call(this, field);
 
-        if(this.isMyWorksheet() && this.showMe())
+        if(this.isMyWorksheet())
         {
             if (field.def.clickToEdit === true) {
                 new app.view.ClickToEditField(field, this);
@@ -79,27 +75,20 @@
         this._collection = this.context.forecasts.forecastschedule;
 
         if (this._collection) {
-            this._collection.on("reset", function() { self.render() }, this);
+            //this._collection.on("reset", function() { self.render() }, this);
 
             this._collection.on("change:include_expected", function() {
                 _.each(this._collection.models, function(model) {
                     if(model.hasChanged("include_expected")) {
-                        model.save();
+                       model.url = this.url;
+                       if(model.get('id') && model.url.indexOf(model.get('id')) === -1)
+                       {
+                           model.url += "/" + model.get('id');
+                       }
+                       model.save();
                     }
                 }, this);
             }, this);
-        }
-
-
-        if (this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser",
-                function(context, selectedUser) {
-                    this.updateScheduleBySelectedUser(selectedUser);
-                }, this);
-            this.context.forecasts.on("change:selectedTimePeriod",
-                function(context, timePeriod) {
-                    this.updateScheduleBySelectedTimePeriod(timePeriod);
-                }, this);
         }
     },
 
@@ -130,42 +119,7 @@
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
-        return _.isEqual(app.user.get('id'), this.selectedUser.id);
-    },
-
-    /**
-     * Determines if this Worksheet should be rendered
-     */
-    showMe: function()
-    {
-        return this.selectedUser.showOpps || !this.selectedUser.isManager;
-    },
-
-
-    /**
-     * Event Handler for updating the worksheet by a selected user
-     *
-     * @param params is always a context
-     */
-    updateScheduleBySelectedUser:function (selectedUser) {
-        this.selectedUser = selectedUser;
-        if(this.selectedUser.showOpps)
-        {
-            this.fetchCollection();
-        }
-    },
-
-    /**
-     * Event Handler for updating the worksheet by a timeperiod id
-     *
-     * @param params is always a context
-     */
-    updateScheduleBySelectedTimePeriod:function (params) {
-        this.timePeriod = params.id;
-        if(this.selectedUser && this.selectedUser.showOpps)
-        {
-            this.fetchCollection();
-        }
+        return _.isEqual(app.user.get('id'), this.selectedUserId);
     }
 
 })

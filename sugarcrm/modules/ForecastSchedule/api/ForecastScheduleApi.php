@@ -79,18 +79,21 @@ class ForecastScheduleApi extends ModuleApi {
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
         $where = "timeperiod_id = '{$timeperiod_id}' AND user_id = '{$user_id}'";
-        $query = $seed->create_export_query('forecast_schedule.forecast_start_date', $where);
+        $query = $seed->create_export_query('forecast_schedule.date_modified DESC', $where);
 
-        $result = $seed->db->query($query);
+        $result = $seed->db->limitQuery($query, 0, 1);
+
+        $GLOBALS['log']->fatal($query);
+
         $data = array();
         
         while($row = $seed->db->fetchByAssoc($result))
         {
             $data[] = $row;
         }
-        
+
 		if(empty($data)){
-			$data[] = array("expected_best_case" => "0.0",
+		   $data[] = array("expected_best_case" => "0.0",
         				 "expected_likely_case" => "0.0",
         				 "expected_worst_case" => "0.0",
         				 "expected_amount" => "0.0",
@@ -99,7 +102,11 @@ class ForecastScheduleApi extends ModuleApi {
         				 "user_id" => $user_id,
         				 "timeperiod_id" => $timeperiod_id);
 		}
-        return array('next_offset'=>1, 'records'=>$data);
+
+        //return array('next_offset'=>1, 'records'=>$data);
+
+        $GLOBALS['log']->fatal(var_export($data, true));
+        return $data;
     }
 
     /**

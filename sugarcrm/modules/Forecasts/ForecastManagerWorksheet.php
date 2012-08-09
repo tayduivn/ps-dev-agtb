@@ -65,6 +65,7 @@ class ForecastManagerWorksheet extends SugarBean
 		}
 
 		$quota->amount = $this->args["quota"];
+
 		$quota->save();
 
 		//recalc manager quota if necessary

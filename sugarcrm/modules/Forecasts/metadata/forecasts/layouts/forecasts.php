@@ -37,6 +37,14 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         ),
 
         7 => array(
+            'view' => 'forecastSchedule',
+            'contextCollection' => array(
+                'module' => 'ForecastSchedule',
+                'name' => 'ForecastSchedule',
+            )
+        ),
+
+        8 => array(
             'view' => 'forecastsWorksheetManager',
 
             'contextCollection' => array(
@@ -46,23 +54,16 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
 
         ),
         
-        8 => array(
+        9 => array(
             'view' => 'forecastsSubnav',
         ),
 
-        9 => array(
-            'view' => 'forecastSchedule',
-
-            'contextCollection' => array(
-                'module' => 'ForecastSchedule',
-                'name' => 'forecastschedule'
-            )
-        ),
         10 => array(
             'view' => 'timeframes',
             'model' => array(
                 'name' => 'Timeframes'
             )
         ),
+
     )
 );

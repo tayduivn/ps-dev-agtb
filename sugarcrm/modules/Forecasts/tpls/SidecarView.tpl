@@ -70,6 +70,8 @@
 </footer>
 
 {literal}
+
+
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
     <th>{{formatNumber includedAmount}}</th>
