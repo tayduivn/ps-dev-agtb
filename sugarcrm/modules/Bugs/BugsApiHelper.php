@@ -44,13 +44,12 @@ class BugsApiHelper extends SugarBeanApiHelper
 
             $bean->assigned_user_id = $contact->assigned_user_id;
 
-            $support_portal_user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id);
+            $support_portal_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
 
             //BEGIN SUGARCRM flav=pro ONLY
-            $bean->team_id = $support_portal_user->default_team;
-            $bean->team_set_id = $support_portal_user->team_set_id;
+            $bean->team_id = $support_portal_user->fetched_row['default_team'];
+            $bean->team_set_id = $support_portal_user->fetched_row['team_set_id'];
             //END SUGARCRM flav=pro ONLY
-
             $bean->load_relationship('contacts');
             $bean->contacts->add($contact->id);
             $bean->load_relationship('accounts');
@@ -59,7 +58,7 @@ class BugsApiHelper extends SugarBeanApiHelper
         // not support_ports
         else
         {
-            $bean->assigned_user_id = $_SESSION['user_id'];
+            $bean->assigned_user_id = $_SESSION['authenticated_user_id'];
         }
         return $data;
     }
