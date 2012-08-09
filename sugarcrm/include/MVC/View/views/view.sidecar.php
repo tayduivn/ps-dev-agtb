@@ -23,13 +23,26 @@ class ViewSidecar extends SugarView
  		parent::SugarView();
  	}
 
-    public function display()
+    /**
+     * This method checks to see if the configuration file exists and, if not, creates one by default
+     *
+     */
+    public function preDisplay()
     {
-        if (!is_file($this->configFile)) {
+        if (!is_file($this->configFile))
+        {
             $this->buildConfig();
         }
+    }
+
+    /**
+     * This method sets the config file to use and renders the template
+     *
+     */
+    public function display()
+    {
         $this->ss->assign("configFile", $this->configFile);
-        $this->ss->display('include/MVC/View/tpls/sidecar.tpl');
+        $this->ss->display(get_custom_file_if_exists('include/MVC/View/tpls/sidecar.tpl'));
     }
 
     protected function buildConfig(){
