@@ -31,7 +31,7 @@
 $module_name = 'PdfManager';
 $listViewDefs[$module_name] =
 array (
-  'name' =>
+  'NAME' =>
   array (
     'width' => '32%',
     'label' => 'LBL_NAME',
