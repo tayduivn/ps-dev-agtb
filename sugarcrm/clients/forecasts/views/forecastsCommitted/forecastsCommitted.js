@@ -369,8 +369,8 @@
         var hb = Handlebars.compile("{{str_format key module args}}");
         var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
-        var current_date = new Date(current.get('date_entered'));
-        var previous_date = new Date(previousModel.get('date_entered'));
+        var current_date = App.date.parse(current.get('date_entered'));
+        var previous_date = App.date.parse(previousModel.get('date_entered'));
 
         var yearDiff = current_date.getYear() - previous_date.getYear();
         var monthsDiff = current_date.getMonth() - previous_date.getMonth();
