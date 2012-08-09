@@ -68,7 +68,7 @@ class="yui-navset"
 {{if $label == 'DEFAULT'}}
   <div id="detailpanel_{{$smarty.foreach.section.iteration}}" >
 {{else}}
-  <div id="detailpanel_{{$smarty.foreach.section.iteration}}" class="{$def.templateMeta.panelClass|default:'edit view'}">
+  <div id="detailpanel_{{$smarty.foreach.section.iteration}}" class="{$def.templateMeta.panelClass|default:'edit view edit508'}">
 {{/if}}
 
 {counter name="panelFieldCount" start=0 print=false assign="panelFieldCount"}
