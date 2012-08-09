@@ -1,3 +1,0 @@
-        <input type="text" name="{{name}}" class="input-xlarge wide tleft" value="{{value}}">
-        <p class="help-block"></p>
-

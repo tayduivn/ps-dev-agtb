@@ -2064,7 +2064,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
 
-            $this->assertEquals(0, mb_strpos($str, $strresult));
+			$this->assertNotEmpty($strresult, "Failed to read data just written to temp table");
+            $this->assertEquals(0, mb_strpos($str, $strresult), "String returned from temp table did not match data just written");
         }
     }
 

@@ -8,7 +8,7 @@
             {{#notEq name "name"}}
             <div class="row-fluid">
                 <div class="span2">{{str  this.label ../../../this.model.module}}</div>
-                <div class="span4" name="{{this.name}}">
+                <div class="span10" name="{{this.name}}">
                 {{field ../../../this}}
                 </div>
                 </div>

@@ -14,6 +14,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
+
+
  */.hidden{display:none;visibility:hidden}#searchForm{position:relative;display:inline-block;float:right}#searchForm .btn{margin-right:0}#searchForm input.search-query{min-width:200px}@media(max-width:480px){
 .error .input-append > .add-on
 {
@@ -48,3 +50,18 @@ right:40px;
 
 
 
+.control-group.email {
+margin-bottom:0;
+}
+
+.control-group.email .btn-mini {
+
+margin-right:0;
+width:auto;
+height:auto;
+}
+
+.control-group.email .controls.pull-left {
+overflow: hidden;
+text-overflow: ellipsis;
+}

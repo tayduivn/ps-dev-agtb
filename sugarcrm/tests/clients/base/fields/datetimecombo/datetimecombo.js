@@ -1,13 +1,22 @@
 describe("sugarfields", function() {
 
+    var app, field;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        field = SugarTest.createField("base","datetimecombo", "datetimecombo", "detail");
+    });
+
+    afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
+        delete Handlebars.templates;
+        field = null;
+    });
+
     describe("datetime", function() {
         it("should format the value", function() {
-
-            var controller = SugarFieldTest.loadSugarField('datetimecombo/datetimecombo'),
-                field = SugarFieldTest.createField("datetimecombo", "detail"),
-                unformatedValue, expectedValue;
-            field = _.extend(field, controller);
-
+            var unformatedValue, expectedValue;
             unformatedValue = new Date(2012, 3, 9, 9, 50, 58);
             expectedValue =
             {
