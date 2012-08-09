@@ -52,7 +52,7 @@ class SugarUploadS3 extends UploadStream
             throw new Exception("S3 keys are not set!");
         }
         // TODO: add location support for buckets
-        $this->metadata = array(array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE));
+        $this->metadata = array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE);
         $this->s3 = new Zend_Service_Amazon_S3($GLOBALS['sugar_config']['s3']['aws_key'], $GLOBALS['sugar_config']['s3']['aws_secret']);
         $this->s3->registerAsClient(self::STREAM_NAME);
         $this->bucket = $GLOBALS['sugar_config']['s3']['upload_bucket'];
@@ -252,10 +252,12 @@ class SugarUploadS3 extends UploadStream
 
     public function stream_flush ()
     {
-        if($this->write) {
-            $this->registerFile($this->path);
-        }
         parent::stream_flush();
+        if($this->write) {
+            if(file_exists($this->path) && filesize($this->path)) {
+                $this->registerFile($this->path);
+            }
+        }
     }
 
     public function stream_open($path, $mode)
@@ -288,8 +290,7 @@ class SugarUploadS3 extends UploadStream
             return parent::url_stat($path, $flags);
         }
         $stat = $this->callS3("url_stat", func_get_args());
-        if(!isset($stat['size'])) {
-            // no file
+        if(empty($stat['size'])) {
             return false;
         }
         return $stat;
