@@ -3,17 +3,23 @@
 # the portal2 Jasmine based test suite.
 #
 # Example:
-# portal2/tests/ci_runner.sh 
+# sugarcrm/tests/ci/ci_runner.sh \
 # -o FOO \
 # -m ~/programming/sugar/Mango \
-# -p ~/bin/phantomjs-1.5.0/bin/phantomjs \
-# -q
+# -p ~/bin/phantomjs-1.5.0/bin/phantomjs
 # In the above example the output files would be placed in ./FOO, using the
 # phantomjs provided. The script would subshell into the -m directory and
 # no output would be produced. This is probably the most secure was to run.
+#
+# Or if you'd like to specify the URL to where you have the tests behind a server do:
+# sugarcrm/tests/ci/ci_runner.sh -r http://localhost:8888/ent/sugarcrm/tests/ ...etc 
 
-RUNNER="index.html"
+# Default server uri for runner if -r not provided
+RUNNER_URI="http://localhost:8888/ent/sugarcrm/tests/"
+
+# Following file likely in sugarcrm/tests/ci directory
 JASMINE_2_JUNITXML_RUNNER="phantomjs_jasminexml_runner.js"
+
 QUIET=-1
 
 function main() {
@@ -30,7 +36,7 @@ function setup_paths() {
     # Gets full path to our "required" directories
     ABS_OUTPUT_DIR=$(get_full_path_to_dir $OUTPUT_DIR)
     MANGO_DIR=$(get_full_path_to_dir $MANGO_DIR)
-    ABS_TEST_DIR="${MANGO_DIR}/portal2/tests"
+    ABS_TEST_DIR="${MANGO_DIR}/sugarcrm/tests"
 }
 function check_if_output_dir_exists() {
     if [ -d ${ABS_OUTPUT_DIR} ]; then
@@ -52,10 +58,10 @@ function execute_jasmine_runner() {
     # Need to be in test directory
     pushd ${ABS_TEST_DIR} > /dev/null 2>&1
     if [ ${QUIET} -eq 1 ]; then
-        ${PHANTOMJS} ${ABS_TEST_DIR}/runners/${JASMINE_2_JUNITXML_RUNNER} ${ABS_TEST_DIR}/runners/${RUNNER} ${ABS_OUTPUT_DIR} > /dev/null 2>&1
+        ${PHANTOMJS} ${ABS_TEST_DIR}/ci/${JASMINE_2_JUNITXML_RUNNER} ${RUNNER_URI} ${ABS_OUTPUT_DIR} > /dev/null 2>&1
     else
         echo "About to build JUnit XML Reports for Portal2 tests .. may take a minute"
-        ${PHANTOMJS} runners/${JASMINE_2_JUNITXML_RUNNER} runners/${RUNNER} ${ABS_OUTPUT_DIR}
+        ${PHANTOMJS} ${ABS_TEST_DIR}/ci/${JASMINE_2_JUNITXML_RUNNER} ${RUNNER_URI} ${ABS_OUTPUT_DIR}
         echo
         echo "Wrote JUnit XML Reports to ${OUTPUT_DIR}"
         echo
@@ -77,8 +83,9 @@ function usage() {
     echo "
 Usage: $(basename $0) -o <output_dir> -m <mango_dir> [-q quiet] [-p phantomjs] 
     -o specifies the output directory where JUnit XML files will be written (required)
-    -m specifies the Mango directory - directory where the repo was checked out to (required)
+    -m specifies the Mango directory (required)
     -p specifies location of phantomjs command (optional). If not provided assumes 'phantomjs' command on PATH (not aliased!)
+    -r specifies URI of tests  (optional - will default to http://localhost:8888/ent/sugarcrm/tests/)
     -q run in quiet mode (optional). User should note that we remove the output directory provided in -o if exists. Be careful!
 "
     exit 1
@@ -87,12 +94,13 @@ function parse_args() {
     if [ $# -eq 0 ] ; then
         usage
     fi
-    while getopts "qo:p:m:" opt; do
+    while getopts "qo:p:m:r:" opt; do
         case $opt in
             q) QUIET=1	;;
             o) OUTPUT_DIR="$OPTARG" ;;
             m) MANGO_DIR="$OPTARG" ;;
             p) PHANTOMJS="$OPTARG" ;;
+            r) RUNNER_URI="$OPTARG" ;;
         esac
     done
     shift $(($OPTIND - 1))

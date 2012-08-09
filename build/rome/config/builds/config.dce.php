@@ -79,5 +79,8 @@ $config['blackList']['dce'] = array(
 'sugarcrm/include/EditView/InlineEdit.php'=>1,
 'sugarcrm/include/MVC/View/views/view.inlinefield.php'=>1,
 'sugarcrm/include/MVC/View/views/view.inlinefieldsave.php'=>1,
+
+'sugarcrm/portal2' =>1,
+'sugarcrm/tests/portal2'=>1,
 );
 $build = 'dce';

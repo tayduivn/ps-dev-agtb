@@ -11,7 +11,7 @@ var htmlrunner,
     page,
     fs;
 
-phantom.injectJs("../../../sidecar/lib/jasmine-ci/utils/core.js");
+phantom.injectJs("../sidecar/lib/jasmine-ci/utils/core.js");
 
 if ( phantom.args.length !== 2 ) {
     console.log("Usage: phantom_test_runner.js HTML_RUNNER RESULT_DIR");
@@ -28,7 +28,6 @@ if ( phantom.args.length !== 2 ) {
     };
 
     page.open(htmlrunner, function(status) {
-
         if (status === "success") {
             utils.core.waitfor(function() { // wait for this to be true
                 return page.evaluate(function() {
