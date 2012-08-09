@@ -28,16 +28,20 @@ class RestTestBug54528 extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-                // Create a portal API user
+        // Create a portal API user
         $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = "UNIT-TEST-createRecord0";
+        $this->apiuser->id = "UNIT-TEST-portalCreateUser";
         $this->apiuser->new_with_id = true;
         $this->apiuser->first_name = "Portal";
         $this->apiuser->last_name = "Apiuserson";
         $this->apiuser->username = "_unittest_apiuser";
         $this->apiuser->portal_only = true;
         $this->apiuser->status = 'Active';
+        $this->apiuser->team_id = 1;
+        $this->apiuser->default_team = 1;
+        $this->apiuser->team_set_id = 1;
         $this->apiuser->save();
+
 
         // create account
         $account = new Account();
@@ -47,7 +51,7 @@ class RestTestBug54528 extends RestTestBase {
         $this->account = $account;
         // create contact
         $this->contact = BeanFactory::newBean('Contacts');
-        $this->contact->id = "UNIT-TEST-portalContact0";
+        $this->contact->id = "UNIT-TEST-portalContact" . create_guid();
         $this->contact->new_with_id = true;
         $this->contact->first_name = "Little";
         $this->contact->last_name = "Unittest";
@@ -102,10 +106,12 @@ class RestTestBug54528 extends RestTestBase {
             'client_id' => 'support_portal',
             'client_secret' => '',
         );
+        // reload user
 
         // Prevents _restCall from automatically logging in
         $this->authToken = 'LOGGING_IN';
         $reply = $this->_restCall('oauth2/token', json_encode($args));
+
         // flip to the portal auth
         $this->authToken = $reply['reply']['access_token'];
         // create case
@@ -116,14 +122,17 @@ class RestTestBug54528 extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['id']),
                           "A case was not created (or if it was, the ID was not returned)");
 
+        $this->case_id = $restReply['reply']['id'];
+
+        // load case to check teamset and user id match
+        $case = BeanFactory::getBean('Cases',$this->case_id);
+
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertTrue(isset($restReply['reply']['team_set_id']), "A team set id was not set.");
-        $this->assertTrue(isset($restReply['reply']['team_id']), "A team id was not set.");
+        $this->assertEquals($this->apiuser->team_id, $case->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->apiuser->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
         //END SUGARCRM flav=pro ONLY
 
-        $this->assertTrue(isset($restReply['reply']['assigned_user_id']), "An assigned user id was not set.");
-
-        $this->case_id = $restReply['reply']['id'];
+        $this->assertEquals($this->contact->assigned_user_id, $case->assigned_user_id, "Assigned user id doesn't match.");
 
         $restReply = null;
 
@@ -134,14 +143,18 @@ class RestTestBug54528 extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['id']),
                           "A bug was not created (or if it was, the ID was not returned)");
 
+        $this->bug_id = $restReply['reply']['id'];
+
+        $bug = BeanFactory::getBean('Bugs', $this->bug_id);
+
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertTrue(isset($restReply['reply']['team_set_id']), "A team set id was not set.");
-        $this->assertTrue(isset($restReply['reply']['team_id']), "A team id was not set.");
+        $this->assertEquals($this->apiuser->default_team, $bug->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->apiuser->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");        
         //END SUGARCRM flav=pro ONLY
 
-        $this->assertTrue(isset($restReply['reply']['assigned_user_id']), "An assigned user id was not set.");
+        $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");
 
-        $this->bug_id = $restReply['reply']['id'];
+        
     }
 
 }
