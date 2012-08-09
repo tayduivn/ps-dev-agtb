@@ -35,6 +35,7 @@ echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></sc
 <script src='sidecar/lib/sugarapi/sugarapi.js'></script>
 <script src='sidecar/src/app.js'></script>
 <script src='sidecar/src/utils/utils.js'></script>
+<script src='sidecar/src/utils/date.js'></script>
 <script src='sidecar/src/core/cache.js'></script>
 <script src='sidecar/src/core/events.js'></script>
 <script src='sidecar/src/core/error.js'></script>
