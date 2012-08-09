@@ -544,6 +544,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !empty($options['append_wildcard']) ) {
                 // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
                 $queryObj->setRewrite('top_terms_5');
+                // bug_54567: whitespace analyzer is only used for query that searches email address now
+                // it makes whitespace the divider for the query keyword
                 if (preg_match('/@/', $qString)) {
                     $queryObj->setAnalyzer('whitespace');
                 }
