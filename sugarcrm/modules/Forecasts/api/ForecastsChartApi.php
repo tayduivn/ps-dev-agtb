@@ -200,7 +200,11 @@ class ForecastsChartApi extends ChartApi
             $mgr_worksheet->setUserId($user_id);
             $mgr_worksheet->setTimePeriodId($timeperiod_id);
 
+            // get the adjusted values
             $adjusted_values = $mgr_worksheet->getWorksheetBestLikelyAdjusted();
+
+            // get the forecast rows
+            $forecast_rows = $mgr_worksheet->getForecastValues();
 
             // find where the included is at if we have more than one label
             $pos = 0;
@@ -215,9 +219,16 @@ class ForecastsChartApi extends ChartApi
             // apply the adjusted values to the chart data
             foreach($dataArray['values'] as $key => $value) {
                 // don't overwrite if we get 0's back for the one we are replacing.
-                if(isset($adjusted_values[$value['label']]) && $adjusted_values[$value['label']][$this->managerAdjustedField] != '0') {
-                    $dataArray['values'][$key]['values'][$pos] = floatval($adjusted_values[$value['label']][$this->managerAdjustedField]);
-                    $dataArray['values'][$key]['valuelabels'][$pos] = $adjusted_values[$value['label']][$this->managerAdjustedField];
+                if(isset($adjusted_values[$value['label']])) {
+                    $adj_value = $adjusted_values[$value['label']][$this->managerAdjustedField];
+
+                    // if we don't have a forecast for this person set the value to 0
+                    if(!isset($forecast_rows[$value['label']])) {
+                        $adj_value = 0;
+                    }
+
+                    $dataArray['values'][$key]['values'][$pos] = floatval($adj_value);
+                    $dataArray['values'][$key]['valuelabels'][$pos] = $adj_value;
 
                     // adjust the group total
                     $sum = array_sum($dataArray['values'][$key]['values']);
@@ -227,7 +238,6 @@ class ForecastsChartApi extends ChartApi
                         $likely_values[$value['label']]['amount'] = $sum;
                     }
                 }
-
             }
 
             // fix the labels to show that it's the adjusted values

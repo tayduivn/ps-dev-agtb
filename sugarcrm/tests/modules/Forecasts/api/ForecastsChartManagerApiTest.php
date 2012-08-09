@@ -191,6 +191,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     /**
      * Utility Method to run the same command for each test.
      *
+     * @param string $dataset           What data set we want to test for
      * @return mixed
      */
     protected function runRestCommand($dataset = 'likely')
@@ -271,5 +272,39 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         $data = $this->runRestCommand('worst');
         $this->assertSame(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
+    }
+    
+    public function testThirdReporteeValueZeroWithoutForecastRecord()
+    {
+
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language('en_us');
+        $rep = SugarTestUserUtilities::createAnonymousUser();
+        $rep->reports_to_id = self::$user->id;
+        $rep->save();
+
+        $repOpp = SugarTestOpportunityUtilities::createOpportunity();
+        $repOpp->assigned_user_id = self::$user->id;
+        $repOpp->timeperiod_id = self::$timeperiod->id;
+        $repOpp->amount = 1800;
+        $repOpp->likely_case = 1700;
+        $repOpp->best_case = 1900;
+        $repOpp->forecast = -1;
+        $repOpp->probability = '85';
+        $repOpp->date_closed = '2012-01-30';
+        $repOpp->team_id = '1';
+        $repOpp->team_set_id = '1';
+        $repOpp->save();
+
+        //setup quotas
+        $repQuota = SugarTestQuotaUtilities::createQuota(2000);
+        $repQuota->user_id = self::$user->id;
+        $repQuota->quota_type = "Direct";
+        $repQuota->timeperiod_id = self::$timeperiod->id;
+        $repQuota->team_set_id = 1;
+        $repQuota->save();
+
+        $data = $this->runRestCommand();
+        $this->assertSame(0, $data['values'][2]['values'][0]);
     }
 }
