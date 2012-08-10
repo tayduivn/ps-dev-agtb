@@ -40,6 +40,10 @@ class ForecastsViewSidecar extends SidecarView
         parent::SidecarView($bean = null, $view_object_map = array());
     }
 
+    /**
+     * Override the display method to set Forecasts specific variables and use a custom layout template
+     *
+     */
     function display()
     {
         global $current_user, $sugar_config;
@@ -47,15 +51,16 @@ class ForecastsViewSidecar extends SidecarView
 
         // begin initializing all default params
         $this->ss->assign("initData" , json_encode($forecastInitData));
-
-        //$this->ss->assign("isManager", User::isManager($current_user->id));
         $this->ss->assign("token", session_id());
-        //$this->ss->assign("forecast_opportunity_buckets", $sugar_config['forecast_opportunity_buckets']);
         $this->ss->assign("module", $this->module);
-        $this->ss->assign("configFile", $this->configFile);
-        $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
+        $this->ss->display(get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl"));
     }
 
+    /**
+     * Returns an Array of initial default data settings for Forecasts module
+     *
+     * @return array Array of initial default data for Forecasts module
+     */
     function forecastsInitialization() {
         global $current_user, $app_list_strings;
 
@@ -103,6 +108,10 @@ class ForecastsViewSidecar extends SidecarView
         return $returnInitData;
     }
 
+    /**
+     * Override the buildConfig method to create a config.js file with specific settings for Forecasts.
+     * Todo: This method will need to be removed in the future when everything shifts to the base platform
+     */
     protected function buildConfig(){
         global $sugar_config;
         $sidecarConfig = array(
@@ -117,7 +126,7 @@ class ForecastsViewSidecar extends SidecarView
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'unsecureRoutes' => array('login', 'error'),
             'clientID' => 'sugar',
-            'authStore' => 'sugarAuthStore',
+            'authStore'  => 'sugarAuthStore',
             'keyValueStore' => 'sugarAuthStore'
         );
         $configString = json_encode($sidecarConfig);
@@ -126,12 +135,14 @@ class ForecastsViewSidecar extends SidecarView
     }
 
 
+    /**
+     * Override the _displayJavascript function to output sidecar libraries for this view
+     * Todo: Change to use minified libraries or at least allow for some way (developerMode?) to switch to non-minified
+     */
     public function _displayJavascript()
     {
         parent::_displayJavascript();
 
-if(true || inDeveloperMode())
-{
 echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
 <script src='sidecar/lib/backbone/underscore.js'></script>
 <script src='sidecar/lib/backbone/backbone.js'></script>
@@ -167,10 +178,7 @@ echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></sc
 <script src='sidecar/src/view/field.js'></script>
 <script src='sidecar/src/view/layout.js'></script>
 <script src='sidecar/src/view/alert.js'></script>";
-} else {
-echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
-<script src='sidecar/minified/sidecar.min.js'></script>";
-}
+
     }
 
 }

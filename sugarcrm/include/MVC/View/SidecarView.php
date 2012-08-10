@@ -29,6 +29,9 @@ class SidecarView extends SugarView
         {
             $this->buildConfig();
         }
+
+        $this->ss->assign("configFile", $this->configFile);
+
     }
 
     /**
@@ -37,7 +40,6 @@ class SidecarView extends SugarView
      */
     public function display()
     {
-        $this->ss->assign("configFile", $this->configFile);
         $this->ss->display(get_custom_file_if_exists('include/MVC/View/tpls/sidecar.tpl'));
     }
 
