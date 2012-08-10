@@ -1,67 +1,88 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to
+ * *******************************************************************************/
+
+/**
+ * SidecarView.php
+ *
+ * This class extends SugarView to provide sidecar framework specific support.  Modules
+ * that may wish to use the sidecar framework may extend this class to provide module
+ * specific support.
+ *
+ * @see include/MVC/View/views/view.sidecar.php
+ */
 
 require_once('include/MVC/View/SugarView.php');
 
 class SidecarView extends SugarView
 {
-    public function SidecarView($bean = null, $view_object_map = array())
+    public $configFile = "config.js";
+
+    /**
+     * This method checks to see if the configuration file exists and, if not, creates one by default
+     *
+     */
+    public function preDisplay()
     {
-        $this->options['use_table_container'] = false;
-        parent::SugarView($bean, $view_object_map);
+        if (!is_file($this->configFile))
+        {
+            $this->buildConfig();
+        }
     }
 
+    /**
+     * This method sets the config file to use and renders the template
+     *
+     */
+    public function display()
+    {
+        $this->ss->assign("configFile", $this->configFile);
+        $this->ss->display(get_custom_file_if_exists('include/MVC/View/tpls/sidecar.tpl'));
+    }
+
+    /**
+     * This method creates the config.js file sidecar to be used by the base platform
+     *
+     */
+    protected function buildConfig(){
+        global $sugar_config;
+        $sidecarConfig = array(
+            'appId' => 'SugarCRM',
+            'env' => 'dev',
+            'platform' => 'base',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header'
+                ),
+                'footer' => array(
+                    'target' => '#footer'
+                ),
+                'alert' => array(
+                    'target' => '#alert'
+                )
+            ),
+            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'unsecureRoutes' => array('login', 'error'),
+            'clientID' => 'sugar'
+        );
+        $configString = json_encode($sidecarConfig);
+        $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+        sugar_file_put_contents($this->configFile, $sidecarJSConfig);
+    }
+
+    /**
+     * This method returns the theme specific CSS code to be used for the view
+     *
+     * @return string HTML formatted string of the CSS stylesheet files to use for view
+     */
     public function getThemeCss()
     {
         $themeObject = SugarThemeRegistry::current();
-
         $html = '<link rel="stylesheet" type="text/css" href="'.$themeObject->getCSSURL('bootstrap.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" />';
         $html .= '<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">';
         return $html;
-    }
-
-    public function _displayJavascript()
-    {
-        parent::_displayJavascript();
-
-echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
-<script src='sidecar/lib/backbone/underscore.js'></script>
-<script src='sidecar/lib/backbone/backbone.js'></script>
-<script src='sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js'></script>
-<script src='sidecar/lib/stash/stash.js'></script>
-<script src='sidecar/lib/async/async.js'></script>
-<script src='sidecar/lib/chosen/chosen.jquery.js'></script>
-<script src='sidecar/lib/sinon/sinon.js'></script>
-<script src='sidecar/lib/sugarapi/sugarapi.js'></script>
-<script src='sidecar/src/app.js'></script>
-<script src='sidecar/src/utils/utils.js'></script>
-<script src='sidecar/src/utils/date.js'></script>
-<script src='sidecar/src/core/cache.js'></script>
-<script src='sidecar/src/core/events.js'></script>
-<script src='sidecar/src/core/error.js'></script>
-<script src='sidecar/src/view/template.js'></script>
-<script src='sidecar/src/core/context.js'></script>
-<script src='sidecar/src/core/controller.js'></script>
-<script src='sidecar/src/core/router.js'></script>
-<script src='sidecar/src/core/language.js'></script>
-<script src='sidecar/src/core/metadata-manager.js'></script>
-<script src='sidecar/src/core/acl.js'></script>
-<script src='sidecar/src/core/user.js'></script>
-<script src='sidecar/src/utils/logger.js'></script>
-<script src='sidecar/src/data/bean.js'></script>
-<script src='sidecar/src/data/bean-collection.js'></script>
-<script src='sidecar/src/data/data-manager.js'></script>
-<script src='sidecar/src/data/validation.js'></script>
-<script src='sidecar/src/view/hbt-helpers.js'></script>
-<script src='sidecar/src/view/view-manager.js'></script>
-<script src='sidecar/src/view/component.js'></script>
-<script src='sidecar/src/view/view.js'></script>
-<script src='sidecar/src/view/field.js'></script>
-<script src='sidecar/src/view/layout.js'></script>
-<script src='sidecar/src/view/alert.js'></script>
-<script src='include/javascript/sugarAuthStore.js'></script>
-<script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
-<script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>";
     }
 
 }

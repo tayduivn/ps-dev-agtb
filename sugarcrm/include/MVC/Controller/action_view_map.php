@@ -43,6 +43,7 @@ $action_view_map['importvcardsave']= 'importvcardsave';
 $action_view_map['modulelistmenu']= 'modulelistmenu';
 $action_view_map['favorites']= 'favorites';
 $action_view_map['ajaxui']= 'ajaxui';
+$action_view_map['sidecar']= 'sidecar';
 $action_view_map['noaccess']= 'noaccess';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 $action_view_map['quickedit']= 'quickedit';
