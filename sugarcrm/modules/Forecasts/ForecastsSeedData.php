@@ -158,6 +158,26 @@ public static function populateSeedData($timeperiods)
     		}
     	}
     }
+    
+    self::setupForecastSettings();
+}
+
+/*
+ * setup default forecast settings
+ * they will be stored in the 'config' table
+ * and will be retrieved through getPublicMetadata API call
+ */
+public static function setupForecastSettings()
+{
+    $forecastConfig = array(
+            'show_buckets' => 'false',
+            'committed_probability' => 70,
+        );
+    $admin = new Administration();
+    foreach ($forecastConfig as $name => $value)
+    {
+        $admin->saveSetting('base', $name, $value);
+    }
 }
 
 }

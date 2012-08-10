@@ -50,7 +50,7 @@ class ForecastsViewSidecar extends SidecarView
 
         //$this->ss->assign("isManager", User::isManager($current_user->id));
         $this->ss->assign("token", session_id());
-        $this->ss->assign("forecast_opportunity_buckets", $sugar_config['forecast_opportunity_buckets']);
+        //$this->ss->assign("forecast_opportunity_buckets", $sugar_config['forecast_opportunity_buckets']);
         $this->ss->assign("module", $this->module);
         $this->ss->assign("configFile", $this->configFile);
         $this->ss->display("modules/Forecasts/tpls/SidecarView.tpl");
