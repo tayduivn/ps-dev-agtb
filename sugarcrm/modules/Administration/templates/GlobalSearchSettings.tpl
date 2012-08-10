@@ -435,9 +435,12 @@
         if($(this).val() == '')
         {
             $('.sched_button').attr('disabled', 'disabled');
+            // bug 27981 - if not fts type is specified (meaning we will rely on non-fts search, then uncheck this flag,
+            // Otherwise, having this flag checked can cause performance degredation
+            $('#prepend_wildcard').attr('checked',false);
         } else {
             // bug 27981 - if fts type is not blank, then we need to check the prepend wildcard flag
-            $('#prepend_wildcard').attr('checked','checked');
+            $('#prepend_wildcard').attr('checked',true);
         }
     });
     {/literal}
