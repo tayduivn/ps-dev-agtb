@@ -1,3 +1,8 @@
+
+<script src='include/javascript/sugarAuthStore.js'></script>
+<script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
+<script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
+
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
     <div id="forecasts" style="" >
@@ -100,7 +105,7 @@
 {/literal}
 
 <div class="content"></div>
-<script src='clients/forecasts/config.js'></script>
+<script src='{$configFile}'></script>
 <script src='clients/forecasts/helper/hbt-helpers.js'></script>
 <script src='clients/forecasts/lib/ClickToEdit.js'></script>
 <script src='clients/forecasts/lib/BucketGridEnum.js'></script>
