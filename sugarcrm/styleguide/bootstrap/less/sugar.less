@@ -219,7 +219,6 @@ pointsolight{
 #dashboard  #folded .tab-pane.active .thumbnail {margin: 0 20px 20px;}
 .block span.label {
      width: auto;
-     height: 30px;
      margin: -6px 10px 0 -10px;
  }
 
@@ -429,8 +428,10 @@ z-index: 1;
   margin: 0;
 }
 
-.control-group.email .btn-mini {margin-right:0;width:auto;height:auto;}.control-group.email .controls.pull-left {overflow: hidden;text-overflow: ellipsis;}
-
+.control-group.email {
+margin-bottom:0;
+.btn-mini {margin-right:0;width:auto;height:auto;}.control-group.email .controls.pull-left {overflow: hidden;text-overflow: ellipsis;}
+}
 input[disabled],
 select[disabled],
 textarea[disabled],
@@ -646,7 +647,12 @@ position: relative;
 
 .card2 {
   margin: 0 0 20px;
+  &>span[sfuuid] {
+    display:block;
+    clear:left;
+  }
 }
+
 .card2 .row-fluid .btn-small { margin-top: -4px; margin-right: 8px; height: 16px; width: 16px;}
 .card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
@@ -1574,4 +1580,9 @@ table th:gt(3), table td:gt(3)  {
 
 #date_filter_chzn.chzn-container .chzn-drop.carettop {
     .caret-top(auto,auto,24px,23px);
+}
+
+/* Tour (to be relocated to tour.less) */
+#systemTour .pointsolight {
+padding:0 15px 15px;
 }

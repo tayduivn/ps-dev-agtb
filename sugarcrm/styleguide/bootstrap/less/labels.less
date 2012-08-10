@@ -5,12 +5,12 @@
 .label,
 .badge {
   font-size: @baseFontSize * .846;
-  line-height: 14px; // ensure proper line-height if floated
+  line-height: 12px; // ensure proper line-height if floated
   color: @black;
   vertical-align: baseline;
   white-space: nowrap;
   background-color: @grayLight;
-  height:14px;
+  height:12px;
   display:inline-block;
 }
 // Set unique padding and border-radii
@@ -35,6 +35,11 @@ a {
 
 
 
+// Portal local
+ul.nav.nav-tabs li.activity > a,
+ul.nav.nav-tabs li.activity > p {
+display:inline-block;
+}
 
 // Colors
 // Only give background-color difference to links (and to simplify, we don't qualify with `a` but [href] attribute)
