@@ -153,21 +153,24 @@ class ForecastsProgressApi extends ModuleApi
       	 *
       	 * @param null $user_id
       	 * @param null $timeperiod_id
+        *  @param false $should_rollup
       	 */
       	protected function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false )
       	{
       		global $current_user;
       		$revenue = 0;
+            $db = DBManagerFactory::getInstance();
 
       		if ( is_null($user_id) ) {
       			$user_id = $current_user->id;
       		}
 
-           if( $should_rollup ) {
-               $where = "opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
-           } else {
-               $where = "opportunities.assigned_user_id = " . $GLOBALS['db']->quoted($user_id);
-           }
+            $where = " (users.id = " . $db->quoted($user_id);
+
+            if($should_rollup && !is_null($user_id)) {
+                $where .= " OR users.reports_to_id = " . $db->quoted($user_id);
+            }
+            $where .= ")";
 
       		if ( is_null($timeperiod_id) ) {
       			$timeperiod_id = TimePeriod::getCurrentId();
@@ -176,14 +179,13 @@ class ForecastsProgressApi extends ModuleApi
       		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
                   . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
       		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-      		       . " AND opportunities.deleted = 0"
-                  . " AND opportunities.forecast = 1";
+      		       . " AND opportunities.deleted = 0";
 
       		$query  = $this->opportunity->create_list_query(NULL, $where);
 
-      		$result = $GLOBALS['db']->query($query);
+      		$result = $db->query($query);
 
-      		while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) {
+      		while ( $row = $db->fetchByAssoc($result) ) {
       			$revenue += $row['likely_case'];
       		}
 
@@ -197,13 +199,13 @@ class ForecastsProgressApi extends ModuleApi
    	 *
    	 * @param null $user_id
    	 * @param null $timeperiod_id
+     * @param false $should_rollup
    	 */
    	protected function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false  )
    	{
    		global $current_user;
    		$revenue = 0;
-
-        $where = "";
+        $db = DBManagerFactory::getInstance();
 
    		if ( is_null($user_id) ) {
    			$user_id = $current_user->id;
@@ -212,11 +214,12 @@ class ForecastsProgressApi extends ModuleApi
    			$timeperiod_id = TimePeriod::getCurrentId();
    		}
 
-           if ($should_rollup and !is_null($user_id)) {
-              $where .= " opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
-           } else if ( !is_null($user_id) ) {
-              $where .= " opportunities.assigned_user_id='$user_id'";
-           }
+       $where = " (users.id = " . $db->quoted($user_id);
+
+       if($should_rollup && !is_null($user_id)) {
+           $where .= " OR users.reports_to_id = " . $db->quoted($user_id);
+       }
+       $where .= ")";
 
    		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
    		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
@@ -225,9 +228,9 @@ class ForecastsProgressApi extends ModuleApi
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
 
-   		$result = $GLOBALS['db']->query($query);
+   		$result = $db->query($query);
 
-   		while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) {
+   		while ( $row = $db->fetchByAssoc($result) ) {
    			$revenue += $row['amount'];
    		}
 
@@ -406,7 +409,7 @@ class ForecastsProgressApi extends ModuleApi
     {
         $this->loadProgressData($args);
 
-           $revenue = $this->getRevenue($api, $args);
+           $revenue = $this->getRevenue($api, $args) + $this->closed;
            $likelyToClose = $this->forecastData["likely_case"] - $this->closed;
 
            if($likelyToClose > 0)
