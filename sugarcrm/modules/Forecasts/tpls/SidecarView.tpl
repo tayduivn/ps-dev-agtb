@@ -138,7 +138,7 @@
                 app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
-                app.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
+                //app.config.showBuckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
                 app.init({
                     el: "forecasts",
                     contentEl: ".content",
