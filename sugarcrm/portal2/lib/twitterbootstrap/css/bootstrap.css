@@ -50,7 +50,9 @@ right:40px;
 
 
 
-
+.control-group.email {
+margin-bottom:0;
+}
 
 .control-group.email .btn-mini {
 
@@ -62,4 +64,8 @@ height:auto;
 .control-group.email .controls.pull-left {
 overflow: hidden;
 text-overflow: ellipsis;
+}
+
+#systemTour .pointsolight {
+padding:0 15px 15px;
 }

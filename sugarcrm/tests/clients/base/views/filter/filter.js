@@ -1,11 +1,20 @@
 describe("sugarviews", function() {
+
     var view, app;
+
     beforeEach(function() {
         view = SugarTest.createView("base","Cases", "filter");
         view.model = new Backbone.Model();
         view.collection = new Backbone.Collection(view.model);
         view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
         app = SUGAR.App;
+    });
+
+    afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
+        delete Handlebars.templates;
+        view = null;
     });
 
     describe("filter", function() {
