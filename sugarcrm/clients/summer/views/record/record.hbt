@@ -1,0 +1,32 @@
+   {{#each meta.panels}}
+    <div class="card2">
+        <div class="modelNotLoaded">
+            {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+        </div>
+        <div class="modelLoaded hide">
+            {{#each fields}}
+                {{#notEq name "name"}}
+                    <div class="row-fluid record-row">
+                        <div class="span2">{{str  this.label ../../../this.model.module}}</div>
+                        <div class="span4" name="{{this.name}}">
+                            {{field ../../../this}}
+                        </div>
+                        <div class="span2">
+                            <a style="cursor: pointer" class="record-edit-link" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;edit</a>
+                        </div>
+                    </div>
+                {{/notEq}}
+            {{/each}}
+            <span class="extend">
+              <div class="row-fluid">
+                  <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                  <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+              </div>
+            </span>
+        </div>
+        <div class="record-save-prompt" style="display: none">
+            <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
+            <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
+        </div>
+    </div>
+    {{/each}}
