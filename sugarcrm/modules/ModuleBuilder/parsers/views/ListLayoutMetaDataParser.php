@@ -72,6 +72,9 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct()" ) ;
+        
+        // Set the client
+        $this->client = $client;
 
         // Simple validation
         if (!in_array($view, $this->allowedViews))

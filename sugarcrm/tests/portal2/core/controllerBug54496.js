@@ -8,11 +8,13 @@ describe("bug 54496", function () {
                 };
             app.config.appStatus = 'offline';
             var logoutSpy = sinon.spy(app, 'logout');
+            var ajaxPrevention = sinon.stub(app.api, 'call', function() {});
 
             app.controller.loadView(params);
 
             expect(logoutSpy).not.toHaveBeenCalled();
             app.config.appStatus = 'online';
+            ajaxPrevention.restore();
         });
     });
 });
