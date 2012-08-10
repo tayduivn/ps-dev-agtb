@@ -1,6 +1,6 @@
 ({
     unformat:function(value){
-        value = this.$el.find('input[type=checkbox]')[0].checked ? "1" : "0";
+        value = this.$el.find(".checkbox").prop("checked") ? "1" : "0";
         return value
     },
     format:function(value){

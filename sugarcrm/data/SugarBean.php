@@ -1082,7 +1082,7 @@ class SugarBean
      * link then it creates a similary named variable and loads the relationship definition.
      *
      * @param string $rel_name  relationship/attribute name.
-     * @return bool true on success, false on failure
+     * @return nothing.
      */
     function load_relationship($rel_name)
     {
@@ -3140,7 +3140,11 @@ function save_relationship_changes($is_update, $exclude=array())
                 $query_array = $subquery['query_array'];
                 $select_position=strpos($query_array['select'],"SELECT");
                 $distinct_position=strpos($query_array['select'],"DISTINCT");
-                if ($select_position !== false && $distinct_position!= false)
+                if (!empty($subquery['params']['distinct']) && !empty($subpanel_def->table_name))
+                {
+                    $query_rows = "( SELECT count(DISTINCT ". $subpanel_def->table_name . ".id)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+                }
+                elseif ($select_position !== false && $distinct_position!= false)
                 {
                     $query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
@@ -4976,7 +4980,46 @@ function save_relationship_changes($is_update, $exclude=array())
     function list_view_parse_additional_sections(&$list_form)
     {
     }
-
+	//BEGIN SUGARCRM flav=pro ONLY
+	/*
+     * fix bug #54042: ListView calculates all field dependencies
+     *
+     * return listDef for bean
+     */
+    function updateDependentFieldForListView($listview_def_main = '')
+    {
+        static $listview_def = '';
+        static $module_name = '';
+        // for subpanels
+        if (!empty($listview_def_main))
+        {
+            $listview_def = $listview_def_main;
+        } elseif (empty($listview_def) || $module_name != $this->module_name)
+        {
+            $view = new SugarView();
+            $view->type = 'list';
+            $view->module = $this->module_name;
+            $listview_meta_file = $view->getMetaDataFile();
+            if (!empty($listview_meta_file))
+            {
+                require $listview_meta_file;
+                $listview_def = $listViewDefs[$this->module_name];
+            }
+            $module_name = $this->module_name;
+        }
+        
+        if (!empty($listview_def))
+        {
+            $temp_field_defs = $this->field_defs;
+            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
+            $this->updateDependentField();
+            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
+        } else
+        {
+            $this->updateDependentField();
+        }
+    }
+	//END SUGARCRM flav=pro ONLY
     /**
      * Assigns all of the values into the template for the list view
      */

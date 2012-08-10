@@ -790,9 +790,9 @@ EOHTML;
 	 * Returns a link HTML tag with or without an embedded image
 	 */
     public function getLink(
-		$url,
-		$title,
-		$other_attributes = '',
+        $url,
+        $title,
+        $other_attributes = '',
         $img_name = '',
         $img_other_attributes = '',
 		$img_width = null,
@@ -820,9 +820,9 @@ EOHTML;
 			$inner_html = $title;
 		}
 
-		return '<a href="'.$url.'" title="'.$title.'" '.$other_attributes.'>'.$inner_html.'</a>';
+        return '<a href="'.$url.'" title="'.$title.'" '.$other_attributes.'>'.$inner_html.'</a>';
 
-	}
+    }
 
     /**
      * Returns the URL for an image in the current theme. If not found in the current theme, will revert

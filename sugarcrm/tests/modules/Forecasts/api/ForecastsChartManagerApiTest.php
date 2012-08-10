@@ -59,6 +59,8 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
         self::$user = SugarTestUserUtilities::createAnonymousUser();
 
         $rep = SugarTestUserUtilities::createAnonymousUser();

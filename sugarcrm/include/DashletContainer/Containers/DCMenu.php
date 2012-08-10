@@ -65,7 +65,7 @@ class DCMenu extends DashletContainer
 
 	public function getSearchIcon() {
 		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', 'class="btn btn-inverse searchIconLink"', "", '',null,null,'','','<i class="icon icon-search"></i>');
+        $iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', 'class="searchIconLink"', "", '',null,null,'','','<i class="icon icon-search"></i>');
 		return $iconSearch;
 	}
 	

@@ -83,8 +83,6 @@ class ForecastScheduleApi extends ModuleApi {
 
         $result = $seed->db->limitQuery($query, 0, 1);
 
-        $GLOBALS['log']->fatal($query);
-
         $data = array();
         
         while($row = $seed->db->fetchByAssoc($result))
