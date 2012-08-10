@@ -15,7 +15,9 @@
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
         options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
+
         this.model = this.context.forecasts.progress;
+        this.updateProgress();
         this.selectedUser = this.context.forecasts.get("selectedUser");
         this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
         this.likelyTotal = 0;
@@ -29,7 +31,7 @@
         var self = this;
 
         if (this.model) {
-            this.model.on('change', this.render);
+            this.model.on('change reset', this.render);
         }
         if (this.worksheetCollection) {
             this.worksheetCollection.on('change reset', this.recalculate);
@@ -41,11 +43,13 @@
             this.context.forecasts.on("change:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
+                this.updateProgress();
             }, this);
 
             this.context.forecasts.on("change:selectedTimePeriod",
             function(context, selectedTimePeriod) {
                 this.updateProgressForSelectedTimePeriod(selectedTimePeriod);
+                this.updateProgress();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
                 self.recalculate();
@@ -75,9 +79,6 @@
     },
 
     calculateLikelyToQuota: function (quota) {
-        if(quota == undefined) {
-            quota = this.defaultModel;
-        }
         quota.amount = parseInt(quota.amount, 10);
 
         quota.likely_case.amount = this.getAbsDifference(this.likelyTotal, quota.amount);
@@ -88,9 +89,6 @@
     },
 
     calculateBestToQuota: function (quota) {
-        if(quota == undefined) {
-            quota = this.defaultModel;
-        }
         quota.amount = parseInt(quota.amount, 10);
 
         quota.best_case.amount = this.getAbsDifference(this.bestTotal, quota.amount);
@@ -101,10 +99,6 @@
     },
 
     calculateLikelyToClose: function (closed) {
-
-        if(closed == undefined) {
-            closed = this.defaultModel;
-        }
         closed.amount = parseInt(closed.amount, 10);
 
         closed.likely_case.amount = this.getAbsDifference(this.likelyTotal, closed.amount);
@@ -115,9 +109,6 @@
     },
 
     calculateBestToClose: function (closed) {
-        if(closed == undefined) {
-            closed = this.defaultModel;
-        }
         closed.amount = parseInt(closed.amount, 10);
 
         closed.best_case.amount = this.getAbsDifference(this.bestTotal, closed.amount);
@@ -157,12 +148,13 @@
 
     calculateBases: function () {
         var quota = this.model.get('quota');
+        var closed = this.model.get('closed');
 
         if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            this.likelyTotal = this.reduceWorksheetManager('likely_case');
+            this.likelyTotal = this.reduceWorksheetManager('likely_case') - closed.amount;
             this.bestTotal = this.reduceWorksheetManager('best_case');
-            this.model.set('revenue', this.reduceWorksheetManager('amount'));
-            this.revenue = this.model.get('revenue');
+            this.model.set('revenue', this.reduceWorksheetManager('amount') - closed.amount);
+            this.revenue = this.model.get('revenue') - closed.amount;
         } else {
             this.likelyTotal = this.reduceWorksheet('likely_case');
             this.bestTotal = this.reduceWorksheet('best_case');
@@ -173,11 +165,10 @@
         this.quota = quota;
     },
 
-    calculatePipelineSize: function (likelyTotal, revenue) {
+    calculatePipelineSize: function (likelyTotal, revenue, closed) {
         var ps = 0;
-
         if ( likelyTotal > 0 ) {
-            ps = revenue / likelyTotal;
+            ps = (revenue + closed.amount) /  likelyTotal;
 
             // Round to 1 decimal place
             ps = Math.round( ps * 10 )/10;
@@ -188,15 +179,17 @@
     },
 
     recalculate: function () {
-        this.calculateBases();
-        this.model.set({
-            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue')),
-            closed : this.calculateBestToClose(this.model.get('closed')),
-            quota : this.calculateBestToQuota(this.model.get('quota')),
-            closed : this.calculateLikelyToClose(this.model.get('closed')),
-            quota :  this.calculateLikelyToQuota(this.model.get('quota'))
-        });
-        this.render();
+        if(this.model.has("revenue")) {
+            this.calculateBases();
+            this.model.set({
+                closed : this.calculateBestToClose(this.model.get('closed')),
+                quota : this.calculateBestToQuota(this.model.get('quota')),
+                closed : this.calculateLikelyToClose(this.model.get('closed')),
+                quota :  this.calculateLikelyToQuota(this.model.get('quota')),
+                pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed'))
+            });
+            this.render();
+        }
     },
 
     _render: function () {
@@ -206,27 +199,27 @@
 
     updateProgressForSelectedTimePeriod: function (selectedTimePeriod) {
         this.seletedTimePeriod = selectedTimePeriod;
-        this.updateProgress();
-
     },
 
     updateProgressForSelectedUser: function (selectedUser) {
         this.selectedUser = selectedUser;
-        this.updateProgress();
     },
 
     updateProgress: function () {
         var getRollup = false;
         var self = this;
+        var urlParams = {};
 
-        if(self.selectedUser.isManager === true && self.selectedUser.showOpps === false)
-            getRollup = true;
+        if(self.selectedUser != undefined && self.selectedTimePeriod != undefined) {
+            if(self.selectedUser.isManager === true && self.selectedUser.showOpps === false)
+                getRollup = true;
 
-        var urlParams = $.param({
-            user_id: self.selectedUser.id,
-            timePeriodId: self.selectedTimePeriod.id,
-            shouldRollup: getRollup ? 1 : 0
-        });
+            var urlParams = $.param({
+                user_id: self.selectedUser.id,
+                timePeriodId: self.selectedTimePeriod.id,
+                shouldRollup: getRollup ? 1 : 0
+            });
+        }
         this.model.fetch({
             data: urlParams
         });
