@@ -12,24 +12,19 @@
 
     unformat:function(value) {
         var jsDate = this.app.date.parse(value,this.app.user.get('datepref')+' '+this.app.user.get('timepref'));
-        var output = this.app.date.format(value,'Y-m-dTH:i:s');
-
-        return output;
+        return this.app.date.format(value,'Y-m-dTH:i:s');
     },
 
     format:function(value) {
-        // The API has gone to the trouble of getting the date in the user's timezone, so we should
-        // display it using the timezone that the API sent it to us.
-        // This should split the date/time into date, time and offset, if we don't pass the offset in the Date class assumes it to be local time.
-        var splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(value);
-        if ( splitValue == null ) {
-            // Could not figure this string out.
-            return '';
+        var jsDate, output, myUser = this.app.user;
+        // Bug 55216 - Custom datetime type field doesn't work correctly on portal edit view 
+        if(!value && this.def.display_default) {
+            value = app.date.parseDisplayDefault(this.def.display_default);
         }
-        var jsDate = new Date(splitValue[1]+' '+splitValue[2]);
-        var myUser = this.app.user;
+
+        jsDate = this.app.date.parse(value);
         jsDate = this.app.date.roundTime(jsDate);
-        var output = {
+        output = {
             dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
             date: this.app.date.format(jsDate, myUser.get('datepref')),
             time: this.app.date.format(jsDate, myUser.get('timepref')),
@@ -38,7 +33,7 @@
             seconds: this.app.date.format(jsDate, 's'),
             amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
-        return output
+        return output;
     },
 
     timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize
@@ -81,23 +76,28 @@
         ]
     },
     bindDomChange: function() {
-        var self = this;
-        var date = this.$('input');
-        var model = this.model;
-        var fieldName = this.name;
-
-        var hour = this.$('.date_time_hours');
-        var minute = this.$('.date_time_minutes');
+        $('select').css({'width': 40});
+        var self  = this, date, model, fieldName, hour, minute, amPm;
+        date      = this.$('input');
+        model     = this.model;
+        fieldName = this.name;
+        hour      = this.$('.date_time_hours');
+        minute    = this.$('.date_time_minutes');
+        amPm      = this.$('.date_time_ampm');
 
         //TODO add AM PM support depending on user prefs
         date.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
         hour.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
         minute.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
+        });
+
+        amPm.on('change', function(ev) {
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
     }
 })
