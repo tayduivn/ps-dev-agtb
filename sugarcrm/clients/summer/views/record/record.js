@@ -53,7 +53,6 @@
     },
 
     handleCancel: function(e) {
-        console.log(this);
         this.editMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
