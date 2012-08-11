@@ -21,6 +21,7 @@
 		<!-- App Scripts -->
         <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
 		<script src='../sidecar/src/app.js'></script>
+        <script src='../sidecar/src/utils/date.js'></script>
         <script src='../sidecar/src/utils/utils.js'></script>
 		<script src='../sidecar/src/core/cache.js'></script>
         <script src="../sidecar/src/core/events.js"></script>
@@ -83,7 +84,7 @@
 
     </head>
     <body>
-    	<div id="portal">
+    	<div>
 			<div id="sidecar">
                 <div id="alert" class="alert-top">
 
@@ -94,20 +95,16 @@
                 <div id="subnav">
 
                 </div>
+
                 <div id="content">
-                    <div class="container welcome">
-                        <div class="row">
-                            <div class="span4 offset4 thumbnail">
-                                <div class="modal-header tcenter">
-                                    <img src="lib/twitterbootstrap/img/throbber.gif"></img>
-                                </div>
-                                <div class="modal-footer">
-                                    Loading...
-                                </div>
-                            </div>
+                    <div class="alert-top">
+                        <div class="alert alert-process">
+                            <strong>Loading</strong>&#8230;
+                            <img style="float:right" src="lib/twitterbootstrap/img/throbber.gif">
                         </div>
                     </div>
                 </div>
+
                 <div id="footer">
 
                 </div>

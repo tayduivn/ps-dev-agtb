@@ -83,7 +83,8 @@ $viewdefs['Contacts']['ConvertLead'] = array(
                 'lead_source',
             ),
             array(
-                'description'
+                'description',
+                'preferred_language'
             ),
         )
     ),

@@ -4,7 +4,7 @@
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",
-                buttonImage: "../lib/jquery-ui/css/smoothness/images/calendar.gif",
+                buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
                 buttonImageOnly: true
             });
         });
@@ -15,17 +15,17 @@
     },
 
     format:function(value) {
-        var jsDate = this.app.utils.date.parse(value);
-        jsDate = this.app.utils.date.roundTime(jsDate);
+        var jsDate = this.app.date.parse(value);
+        jsDate = this.app.date.roundTime(jsDate);
         value = {
             dateTime: value,
             //TODO Account for user prefs
-            date: this.app.utils.date.format(jsDate, 'Y-m-d'),
-            time: this.app.utils.date.format(jsDate, 'h:i:s'),
-            hours: this.app.utils.date.format(jsDate, 'H'),
-            minutes: this.app.utils.date.format(jsDate, 'i'),
-            seconds: this.app.utils.date.format(jsDate, 's'),
-            amPm: this.app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            date: this.app.date.format(jsDate, 'Y-m-d'),
+            time: this.app.date.format(jsDate, 'h:i:s'),
+            hours: this.app.date.format(jsDate, 'H'),
+            minutes: this.app.date.format(jsDate, 'i'),
+            seconds: this.app.date.format(jsDate, 's'),
+            amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return value
     },

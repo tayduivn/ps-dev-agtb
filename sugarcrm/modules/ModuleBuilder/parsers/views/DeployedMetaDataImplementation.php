@@ -120,18 +120,30 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
 
-				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
-				case MB_WIRELESSEDITVIEW:
-				case MB_WIRELESSDETAILVIEW:
-				case MB_WIRELESSBASICSEARCH:
-				case MB_WIRELESSADVANCEDSEARCH:
-				case MB_WIRELESSLISTVIEW:
+                //BEGIN SUGARCRM flav=ent ONLY
                 case MB_PORTALLISTVIEW:
                 case MB_PORTALEDITVIEW:
                 case MB_PORTALDETAILVIEW:
-                    // Set a view type (ie, portal, wireless)
-                    $_viewtype =  in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)) ? 'portal' : 'mobile';
+                //END SUGARCRM flav=ent ONLY
+                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                case MB_WIRELESSEDITVIEW:
+                case MB_WIRELESSDETAILVIEW:
+                case MB_WIRELESSBASICSEARCH:
+                case MB_WIRELESSADVANCEDSEARCH:
+                case MB_WIRELESSLISTVIEW:
+                    $_viewtype = 'mobile';
+                //END SUGARCRM flav=pro || flav=sales ONLY
 
+
+                //BEGIN SUGARCRM flav=ent ONLY
+                    // Set a view type (ie, portal, wireless)
+                    if(in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)))
+                    {
+                        $_viewtype = 'portal';
+                    }
+                //END SUGARCRM flav=ent ONLY
+
+                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 					// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
 					// First, need to identify which SugarObject template would be the best to use
 					$type = $module->getType () ;

@@ -57,6 +57,13 @@ if (is_admin($current_user))
     {
         displayAdminError(translate('LBL_FTS_DISABLED', 'Administration'));
     }
+
+    // if fts indexing is done, show the notification to admin
+    $admin = new Administration();
+    $settings = $admin->retrieveSettings();
+    if (!empty($settings->settings['info_fts_index_done'])) {
+        displayAdminError(translate('LBL_FTS_INDEXING_DONE', 'Administration'));
+    }
 }
 //END SUGARCRM flav=pro
 
