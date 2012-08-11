@@ -535,6 +535,16 @@ class SugarTheme
     }
 
     /**
+     * Returns the fonts path of the theme defaults
+     *
+     * @return string
+     */
+    public final function getDefaultFontPath()
+    {
+        return $this->getDefaultFilePath().'/font';
+    }
+
+    /**
      * Returns CSS for the current theme.
      *
      * @param  $color string optional, specifies the css color file to use if the theme supports it; defaults to cookie value or theme default
@@ -780,15 +790,16 @@ EOHTML;
 	 * Returns a link HTML tag with or without an embedded image
 	 */
     public function getLink(
-		$url,
-		$title,
-		$other_attributes = '',
+        $url,
+        $title,
+        $other_attributes = '',
         $img_name = '',
         $img_other_attributes = '',
 		$img_width = null,
 		$img_height = null,
 		$img_alt = '',
-		$img_placement = 'imageonly'
+		$img_placement = 'imageonly',
+        $font_icon = ''
     )
     {
 
@@ -803,13 +814,15 @@ EOHTML;
 				case 'right':	$inner_html = "<span class='title'>".$title."</span>".$img; break;
 				default:		$inner_html = $img; break;
 			}
-		} else {
+		} else if($font_icon) {
+            $inner_html = $font_icon;
+        } else {
 			$inner_html = $title;
 		}
 
-		return '<a href="'.$url.'" title="'.$title.'" '.$other_attributes.'>'.$inner_html.'</a>';
+        return '<a href="'.$url.'" title="'.$title.'" '.$other_attributes.'>'.$inner_html.'</a>';
 
-	}
+    }
 
     /**
      * Returns the URL for an image in the current theme. If not found in the current theme, will revert
@@ -944,6 +957,18 @@ EOHTML;
 
         // now write the css to cache
         sugar_file_put_contents($cssFilePath,$cssFileContents);
+
+        // make sure that there is the font folder in the cache for the given theme
+        $path = sugar_cached($this->getFilePath() . '/font');
+        if(!sugar_is_dir($path)) {
+            sugar_mkdir($path, null, true);
+            $defaultPath = $this->getDefaultFontPath();
+            foreach(glob($defaultPath ."/*") as $filename) {
+                $name = substr($filename, strrpos($filename, '/'));
+                sugar_file_put_contents($path . $name, sugar_file_get_contents($filename));
+            }
+        }
+
 
         $this->_cssCache[$cssFileName] = $fullFileName;
 

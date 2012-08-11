@@ -307,10 +307,13 @@ class RestService extends ServiceBase {
      */
     protected function authenticateUser() {
         $valid = false;
-        
+
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->verifyAccessToken($this->sessionId);
         } else if ( isset($_POST['oauth_token']) ) {
             $this->sessionId = $_POST['oauth_token'];
         } else if ( isset($_GET['oauth_token']) ) {
@@ -318,9 +321,6 @@ class RestService extends ServiceBase {
         }
 
         if ( !empty($this->sessionId) ) {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
-            $oauthServer->verifyAccessToken($this->sessionId);
-
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -412,6 +412,7 @@ class RestService extends ServiceBase {
      */
     protected function sendContent($content, $args) {
         $response = json_encode($content);
+        $this->generateETagHeader(md5($response));
         if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
             $response = htmlentities($response);
         }
@@ -459,6 +460,7 @@ class RestService extends ServiceBase {
     protected function respond($output, $route, $args) {
         // TODO: gzip, and possibly XML based output
         if (!empty($route['rawReply'])) {
+        	$this->generateETagHeader(md5($output));
             echo $output;
         } else {
             // Handle content type header sending
@@ -468,4 +470,26 @@ class RestService extends ServiceBase {
             $this->sendContent($output, $args);
         }
     }
+    /**
+	 * generateETagHeader
+	 *
+	 * This function generates the necessary cache headers for using ETags with dynamic content. You
+	 * simply have to generate the ETag, pass it in, and the function handles the rest.
+	 *
+	 * @param string $etag ETag to use for this content.
+	 */
+	protected function generateETagHeader($etag){
+		header("cache-control:");
+		header('Expires: ');
+		header("ETag: " . $etag);
+		header("Pragma:");
+		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+				ob_clean();
+				header("Status: 304 Not Modified");
+				header("HTTP/1.0 304 Not Modified");
+				die();
+			}
+		}
+	}
 }

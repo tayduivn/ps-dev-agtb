@@ -1,0 +1,7 @@
+{{#each meta.panels}}
+	<ul>
+	{{#each fields}}
+		<li>{{name}}</li>
+    {{/each}}
+	</ul>
+{{/each}}

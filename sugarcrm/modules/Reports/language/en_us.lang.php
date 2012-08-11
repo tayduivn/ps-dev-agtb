@@ -237,6 +237,11 @@ $mod_strings = array (
   'LBL_PUBLISHED_QUOTE_REPORTS' => 'Published Quote Reports',
   //END SUGARCRM flav!=sales ONLY
 
+  //BEGIN SUGARCRM flav=pro ONLY
+  'LBL_PUBLISHED_FORECAST_REPORTS' => 'Published Forecast Reports',
+  'LBL_PUBLISHED_QUOTA_REPORTS' => 'Published Quota Reports',
+  //END SUGARCRM flav=pro ONLY
+
   'LBL_PUBLISHED_CALL_REPORTS' => 'Published Call Reports',
   'LBL_PUBLISHED_MEETING_REPORTS' => 'Published Meeting Reports',
   'LBL_PUBLISHED_TASK_REPORTS' => 'Published Task Reports',
@@ -476,6 +481,10 @@ $mod_strings = array (
   	'DEFAULT_REPORT_TITLE_51' => 'Opportunities Won By User',
   	'DEFAULT_REPORT_TITLE_52' => 'All Open Opportunities',
   	'DEFAULT_REPORT_TITLE_53' => 'All Closed Opportunities',
+    'DEFAULT_REPORT_TITLE_56' => 'Opportunities Product Breakdown For Past, Current, Next Timeperiod By Month',
+    'DEFAULT_REPORT_TITLE_57' => 'Opportunities Sales Stage For Past, Current, Next Timeperiod By Month',
+    'DEFAULT_REPORT_TITLE_58' => 'Last/Current/Next Quarter Forecast',
+    'DEFAULT_REPORT_TITLE_59' => 'Opportunities By Sales Stage For Reportees in Current Period',
     //END SUGARCRM flav=sales || flav=pro || flav=ent ONLY
 
     //'LBL_CHART_ON_DASHLET' => 'Do not Display Chart on Dashlet',
@@ -543,7 +552,7 @@ $mod_strings = array (
   	'LBL_RELATED_MODULES_PANEL_HELP_DESC'=> 'The primary module and all modules related to the primary module appear here. Select a module.',
   	'LBL_PREVIEW_REPORT'=>'Preview',
 	'LBL_FILTERS_HELP_DESC'=>"<b>Steps to Define Filters:</b><br/><br/>1) Click on the Module in the <b>Related Modules</b> pane that you would like to use to define filters. By default, the primary module (top node in the tree view) is selected. <br/><br/>	You can select a related module (child node in the tree view) by clicking on the module. Expand the node to view additional modules related to the related module. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on a Field in the <b>Available Fields</b> pane to add it to the filters. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select any number of fields to use as filters.<br/><br/>	3) Choose <b>AND</b> or <b>OR</b> to designate whether all filters or any filters, respectively, are used to find results for the report.<br/><br/>	4) [Optional] Click on <b>Add Filter Group</b> to create groups of filters. You can have any number of filter groups and any number of filters in a group to create nested filters.<br/><br/>	5) [Optional] Select the Run-time option for a Filter to allow users to use the filter to further customize the results of the reports while viewing the report.",
-	'LBL_GROUP_BY_HELP_DESC'=>"<b>Steps to Define Group By:</b><br></br>1) Click on a Module in the <b>Related Modules</b> pane that you would like to use to group records in your report. By default, the primary module (top node in the tree view) is selected. <br/><br/>	You can select a related module (child node in the tree view) by clicking on the module. Expand the node to view additional modules related to the related module. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on the Field in the <b>Available Fields</b> pane to group records by the field in your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select any number of fields to group records. However, the report becomes less readable when you group by more than several fields.<br/><br/>	You can change the order of the fields by dragging and dropping them to the desired position.  Changing the order affects the way the results are displayed.<br/><br/>  For Matrix Reports, you can use a maximum of three fields to group records.",	
+	'LBL_GROUP_BY_HELP_DESC'=>"<b>Steps to Define Group By:</b><br/><br/>1) Click on a Module in the <b>Related Modules</b> pane that you would like to use to group records in your report. By default, the primary module (top node in the tree view) is selected. <br/><br/>	You can select a related module (child node in the tree view) by clicking on the module. Expand the node to view additional modules related to the related module. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on the Field in the <b>Available Fields</b> pane to group records by the field in your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select any number of fields to group records. However, the report becomes less readable when you group by more than several fields.<br/><br/>	You can change the order of the fields by dragging and dropping them to the desired position.  Changing the order affects the way the results are displayed.<br/><br/>  For Matrix Reports, you can use a maximum of three fields to group records.",
 	'LBL_DISPLAY_COLS_HELP_DESC'=>"<b>Steps to Choose Display Columns:</b><br/><br/>1) Click on a Module in the <b>Related Modules</b> pane that you would like to use to display data in your report. By default, the primary module (top node in the tree view) that you chose during the 'Select Module' step is selected.<br/><br/>	You can select fields from a related module (child node in the tree view) by clicking on the module. Modules related to the modules related to the primary module can also be selected. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on the Field in the <b>Available Fields</b> pane to display the field data in the records in your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select additional fields. You can select any number of fields, but the report is generated more slowly and becomes less readable when you add more than necessary fields in the report.<br/><br/>	You can change the order fields by dragging and dropping them to the desired position. Changing the field order changes the order in which the columns are displayed in the results." ,
 	'LBL_DISPLAY_SUMMARY_HELP_DESC'=>"<b>Steps to Choose Display Summaries:</b><br/><br/>1) Click on the Module in the <b>Related Modules</b> pane that you would like to use for the summaries in your report. By default, the primary module (top node in the tree view) is selected.<br/><br/>	You can select a related module (child node in the tree view) by clicking on the module. Expand the node to view additional modules related to the related module. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on a Field in the <b>Available Fields</b> pane to select summaries for your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select additional fields for the summaries in your report.<br/><br/>" .	"For Matrix Reports, you can select more than one field to display multiple values within a single cell in your report." ,
 
@@ -572,5 +581,12 @@ $mod_strings = array (
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
+
+//BEGIN SUGARCRM flav=pro ONLY
+    'LBL_REPORTS_TO' => 'Reports To',
+    'LBL_LESS_THAN_EQUAL' => 'Less Than Equal To',
+    'LBL_GREATER_THAN_EQUAL' => 'Greater Than Equal To',
+    'LBL_WORKSHEET' => 'Worksheet',
+//END SUGARCRM flav=pro ONLY
 );
 ?>

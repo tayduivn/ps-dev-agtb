@@ -43,6 +43,16 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+    }
+    
+    public static function tearDownAfterClass() 
+    {
+        unset($GLOBALS['beanList'], $GLOBALS['beanFiles'], $GLOBALS['app_list_strings']);
+        parent::tearDownAfterClass();
     }
     
     public function testBugsPortalEditAvailableFields()

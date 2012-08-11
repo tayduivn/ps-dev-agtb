@@ -23,10 +23,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 abstract class AbstractMetaDataParser
 {
-
-	//Make these properties public for now until we can create some usefull accessors
-	public $_fielddefs;
-	public $_viewdefs;
+    /**
+     * The client making this request for the parser. Default is empty. NOT ALL
+     * PARSERS SET THIS.
+     * 
+     * @var string 
+     */
+    public $client;
+    
+    //Make these properties public for now until we can create some usefull accessors
+    public $_fielddefs;
+    public $_viewdefs;
     public $_paneldefs = array();
 	protected $_moduleName;
     protected $implementation; // the DeployedMetaDataImplementation or UndeployedMetaDataImplementation object to handle the reading and writing of files and field data
@@ -66,8 +73,10 @@ abstract class AbstractMetaDataParser
 
     /*
      * Is this field something we wish to show in Studio/ModuleBuilder layout editors?
-     * @param array $def    Field definition in the standard SugarBean field definition format - name, vname, type and so on
-     * @return boolean      True if ok to show, false otherwise
+     * 
+     * @param array $def     Field definition in the standard SugarBean field definition format - name, vname, type and so on
+     * @param string $view   The name of the view
+     * @return boolean       True if ok to show, false otherwise
      */
     static function validField ( $def, $view = "")
     {

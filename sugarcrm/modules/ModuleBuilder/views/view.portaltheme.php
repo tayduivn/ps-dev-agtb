@@ -60,7 +60,7 @@ class ViewPortalTheme extends SugarView
 
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
-        $smarty->assign("token", $_REQUEST[session_name()]);
+        $smarty->assign("token", session_id());
         $smarty->assign("siteURL", $GLOBALS['sugar_config']['site_url']);
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');

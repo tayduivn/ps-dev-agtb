@@ -42,6 +42,13 @@ class SugarTestProductUtilities
         $product->list_price = '100.00';
         $product->discount_price = '100.00';
         $product->quantity = '100';
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        $product->best_case = '100.00';
+        $product->likely_case = '80.00';
+        $product->worst_case = '50.00';
+        //END SUGARCRM flav=ent ONLY
+
         if(!empty($id))
         {
             $product->new_with_id = true;

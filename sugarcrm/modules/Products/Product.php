@@ -113,6 +113,9 @@ class Product extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 
+    var $expert_id;
+    var $experts;
+
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('quote_id', 'quote_name','related_product_id');
 
@@ -700,8 +703,48 @@ class Product extends SugarBean {
 	}
 
 
+    function getExperts()
+    {
+        $query = "SELECT pt.category_id category_id FROM product_templates pt WHERE pt.id = '$this->id'";
 
+        $result = $this->db->query($query,true, "Error getting product category id: ");
 
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row != null)
+        {
+            $this->product_category_id = $row['category_id'];
+            $this->getProductOwners($this->product_category_id);
+        }
+        else
+        {
+            $this->experts = '';
+        }
+    }
+
+    function getProductOwners($category_id)
+    {
+        $query = "SELECT assigned_user_id, parent_id FROM product_categories pc WHERE id = '$category_id'";
+
+        $result = $this->db->query($query, true, "Error getting product category additional fields: ");
+        $row = $this->db->fetchByAssoc($result);
+
+        if ($row != null)
+        {
+            $this->experts[] = $row['assigned_user_id'];
+            $this->getProductOwners($row['parent_id']);
+            $this->expert_id = $row['assigned_user_id'];
+        }
+        else
+        {
+            $this->expert_id = '';
+        }
+    }
 }
 
-?>
+
+function get_expert_array()
+{
+    require_once("include/utils.php");
+    return get_user_array();
+}

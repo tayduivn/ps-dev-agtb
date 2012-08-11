@@ -36,6 +36,7 @@ class Common {
 	var $all_users=array();  //array of userid's and reports_to_id
 	var $my_managers=array();  //array of users current user reports to. direct and indirect
 	var $my_downline=array();  //array of users reporting to current user. direct and indirect.
+    var $my_direct_downline=array();  //array of users directly reporting to current user
 	var $current_user;  //logged in user's id
 	var $my_direct_reports=array();
 	var $my_timeperiods=array();
@@ -273,5 +274,14 @@ class Common {
 			$this->retrieve_downline($row['id']);
 		}
 	}
+    function retrieve_direct_downline($user_id)
+    {
+        //find the direct reports_to users
+        $query = "SELECT id FROM users WHERE reports_to_id = '$user_id' AND deleted = 0 AND status = 'Active'";
+        $result = $this->db->query($query,true," Error fetching user's reporting hierarchy: ");
+        while (($row  =  $this->db->fetchByAssoc($result)) != null)
+        {
+            $this->my_direct_downline[]= $row['id'];
+        }
+    }
 }
-

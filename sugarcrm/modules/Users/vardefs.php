@@ -25,7 +25,13 @@ $dictionary['User'] = array(
         'id' => array(
             'name' => 'id',
             'vname' => 'LBL_ID',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'type' => 'user_name',
+            'dbType' => 'id',
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav!=pro ONLY
             'type' => 'id',
+            //END SUGARCRM flav!=pro ONLY
             'required' => true,
         ) ,
         'user_name' => array(
@@ -849,6 +855,33 @@ $dictionary['User'] = array(
 			'source' => 'non-db',
 			'vname' => 'LBL_PROJECTS',
 		),
+        'quotas' =>
+        array (
+            'name' => 'quotas',
+            'type' => 'link',
+            'relationship' => 'users_quotas',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_QUOTAS',
+        ),
+        'forecasts' =>
+        array (
+            'name' => 'forecasts',
+            'type' => 'link',
+            'relationship' => 'users_forecasts',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_FORECASTS',
+        ),
+        'worksheets' =>
+        array (
+            'name' => 'worksheets',
+            'type' => 'link',
+            'relationship' => 'users_worksheets',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_WORKSHEETS',
+        ),
     ) ,
     'indices' => array(
         array(
@@ -933,6 +966,41 @@ $dictionary['User'] = array(
 	            'join_key_lhs'      => 'team_set_id',
 	            'join_key_rhs'      => 'team_id',
 			),
+        'users_forecasts' => array(
+            'rhs_module'		=> 'Forecasts',
+            'rhs_table'			=> 'forecasts',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'forecast_type',
+            'relationship_role_column_value'=>'Rollup'
+        ),
+
+        'users_quotas' => array(
+            'rhs_module'		=> 'Quotas',
+            'rhs_table'			=> 'quotas',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'quota_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
+
+        'users_worksheets' => array(
+            'rhs_module'		=> 'Worksheet',
+            'rhs_table'			=> 'worksheet',
+            'rhs_key'			=> 'related_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'related_forecast_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
         'users_team_sets' => array (
             'lhs_module'        => 'Teams',
             'lhs_table'         => 'teams',

@@ -25,6 +25,19 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
+     * Invalid field types for various sidecar clients. Format should be 
+     * $client => array('type', 'type').
+     * 
+     * @var array
+     * @protected
+     */
+    protected $invalidTypes = array(
+        //BEGIN SUGARCRM flav=ent ONLY
+        'portal' => array('parent', 'parent_type', 'iframe', 'encrypt',),
+        //END SUGARCRM flav=ent ONLY
+    );
+        
+    /**
      * Checks for the existence of the view variable for portal metadata
      *
      * @param array $viewdefs The viewdef array
@@ -96,35 +109,45 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             sugar_die(get_class($this) . ': missing panels section in layout definition (case sensitive)');
         }
     }
-
-    /*
-     * Save a draft layout
-     *
-    public function writeWorkingFile() {
-        $this->_populateFromRequest($this->_fielddefs);
-        $viewdefs = $this->_viewdefs ;
-
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+    
+    /**
+     * Validates a field
+     * 
+     * @param string $key The name of the field
+     * @param array $def The defs for this field
+     * @return bool
+     */
+    public function isValidField($key, $def) {
+        if (!empty($this->client)) {
+            $method = 'isValidField' . ucfirst(strtolower($this->client));
+            if (method_exists($this, $method)) {
+                return $this->$method($key, $def);
+            }
+        }
+        
+        return parent::isValidField($key, $def);
     }
-
-    /*
-     * Deploy the layout
-     * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
-     *
-    public function handleSave ($populate = true) {
-    	$GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->handleSave()" ) ;
-
-        if ($populate)
-            $this->_populateFromRequest ( $this->_fielddefs ) ;
-
-        $viewdefs = $this->_viewdefs ;
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->deploy ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Validates portal only fields. Runs the field through a prelimiary check
+     * of type before passing the field on to the parent validator.
+     * 
+     * @param string $key The field
+     * @param array $def Teh field def for this field
+     * @return bool
+     */
+    public function isValidFieldPortal($key, $def) {
+        if (isset($this->invalidTypes['portal'])) {
+            if (!isset($def['type']) || in_array($def['type'], $this->invalidTypes['portal'])) {
+                return false;
+            }
+        } 
+        
+        return parent::isValidField($key, $def);
     }
-    */
+    //END SUGARCRM flav=ent ONLY
+    
     /**
      * helper to pack a row with $cols members of [empty]
      * @param $row

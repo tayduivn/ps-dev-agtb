@@ -30,6 +30,7 @@
     test.createView = function(client, module, viewName, meta) {
         test.loadComponent(client, "view", viewName);
         var context = app.context.getContext();
+
         return app.view.createView({
             name : viewName,
             context : context,
