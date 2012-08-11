@@ -1888,7 +1888,10 @@ EOQ;
 					if(!verify_image_file($path)) {
 					    $this->picture = '';
 					}
-				}
+				}else{
+                    //upload could not be confirmed, set picture field to blank
+                    $this->picture = '';
+                }
 			} else {
 				$this->picture = create_guid().".png";
 				$file = "include/images/default-profile.png";
