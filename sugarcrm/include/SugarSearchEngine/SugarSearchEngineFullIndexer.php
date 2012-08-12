@@ -26,7 +26,8 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- *
+ * Indexer job for Search
+ * @api
  */
 class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 {
