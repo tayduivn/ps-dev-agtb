@@ -51,7 +51,7 @@
             self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (app.config.showBuckets) {
+            if (app.config.show_buckets) {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});

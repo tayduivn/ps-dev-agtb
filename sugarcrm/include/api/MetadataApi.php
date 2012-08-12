@@ -146,6 +146,7 @@ class MetadataApi extends SugarApi {
         // right now we are getting the config only for the portal
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
+
         if(isset($args['platform'])) {
             $prefix = "{$args['platform']}_";
             $admin = new Administration();
@@ -154,7 +155,7 @@ class MetadataApi extends SugarApi {
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
                     $key = str_replace($prefix, '', $setting_name);
-                    $configs[$category] = json_decode(html_entity_decode($setting_value));
+                    $configs[$key] = json_decode(html_entity_decode($setting_value));
                 }
             }
         }

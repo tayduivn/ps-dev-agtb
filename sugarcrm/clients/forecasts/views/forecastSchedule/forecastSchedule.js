@@ -99,10 +99,10 @@
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
-                field.enabled = !app.config.showBuckets;
+                field.enabled = !app.config.show_buckets;
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = app.config.showBuckets;
+                field.enabled = app.config.show_buckets;
                 if(!isOwner)
                 {
                    field.view = 'default';
@@ -110,7 +110,7 @@
                 commitStageField = field;
             }
         });
-        return app.config.showBuckets?forecastField:commitStageField;
+        return app.config.show_buckets?forecastField:commitStageField;
     },
 
     /**
