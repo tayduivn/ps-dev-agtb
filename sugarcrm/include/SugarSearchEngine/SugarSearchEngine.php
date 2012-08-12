@@ -26,7 +26,7 @@ require_once('include/SearchForm/SugarSpot.php');
 /**
  * This class is an adapter to the existing SugarSpot/UnifiedSearch capabilities and is the default
  * search engine if no other external engines have been configured.
- *
+ * @api
  */
 class SugarSearchEngine implements SugarSearchEngineInterface{
 
