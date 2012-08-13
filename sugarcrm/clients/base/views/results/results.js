@@ -81,7 +81,7 @@
      */
     showMoreResults: function() {
         var self = this, options = {};
-        app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
+        app.alert.show('show_more_search_results', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         options.add = true;
         options.success = function() {
             app.alert.dismiss('show_more_search_results');
