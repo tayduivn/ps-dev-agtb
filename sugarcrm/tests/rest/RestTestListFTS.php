@@ -25,7 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 require_once('modules/SugarFavorites/SugarFavorites.php');
 
-class RestTestList extends RestTestBase {
+class RestTestListFTS extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -35,23 +35,10 @@ class RestTestList extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->files = array();
-        // set the FTS engine as down and make sure the config removes FTS
-        searchEngineDown();
-        $this->config_file_override = '';
-        if(file_exists('config_override.php'))
-            $this->config_file_override = file_get_contents('config_override.php');
-        else
-            $this->config_file_override= '<?php' . "\r\n";
-        $new_line= '$sugar_config[\'full_text_engine\'] = true;';
-        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
     }
 
     public function tearDown()
     {
-        // restore FTS and config override
-        restoreSearchEngine();
-        file_put_contents('config_override.php', $this->config_file_override);
-
         $accountIds = array();
         foreach ( $this->accounts as $account ) {
             $accountIds[] = $account->id;
@@ -128,7 +115,8 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
-
+        $sfi = new SugarSearchEngineFullIndexer();
+        $sfi->performFullSystemIndex();
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
@@ -162,24 +150,6 @@ class RestTestList extends RestTestBase {
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
                                  'Second record is not lower than the first, ascending order failed.');
 
-        // Test Favorites
-        $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
-        $this->assertEquals(6,count($restReply['reply']['records']));
-
-        // Test My Items
-        $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
-        $this->assertEquals(10,count($restReply['reply']['records']));
-        
-        // validate each is actually my item
-        foreach($restReply['reply']['records'] AS $record) {
-            $this->assertEquals($record['assigned_user_id'], $GLOBALS['current_user']->id, "A Record isn't assigned to me");
-        }
-
-        // Test Favorites & My Items
-        $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
-        $this->assertEquals(2,count($restReply['reply']['records']));
-
-
         // Get a list, no searching
         $restReply = $this->_restCall("Accounts?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
@@ -193,113 +163,6 @@ class RestTestList extends RestTestBase {
             }
         }
 
-    }
-
-    public function testBugSearch() {
-        $bug = new Bug();
-        $bug->name = "UNIT TEST " . count($this->bugs) . " - " . create_guid();
-        $bug->description = $bug->name;
-        $bug->save();
-        $this->bugs[] = $bug;
-        
-        $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
-        $tmp = array_keys($restReply['reply']['records']);
-        $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
-    }
-
-    public function testCaseSearch() {
-        // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
-        // Make sure there is at least one page of cases
-        for ( $i = 0 ; $i < 40 ; $i++ ) {
-            $aCase = new aCase();
-            $aCase->name = "UNIT TEST ".count($this->cases)." - ".create_guid();
-            $aCase->billing_address_postalcode = sprintf("%08d",count($this->cases));
-            if ( $i > 25 && $i < 36 ) {
-                $aCase->assigned_user_id = $GLOBALS['current_user']->id;
-            } else {
-                // The rest are assigned to admin
-                $aCase->assigned_user_id = '1';
-            }
-            $aCase->save();
-            $this->cases[] = $aCase;
-            if ( $i > 33 ) {
-                // Favorite the last six
-                $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Cases',$aCase->id);
-                $fav->new_with_id = true;
-                $fav->module = 'Cases';
-                $fav->record_id = $aCase->id;
-                $fav->created_by = $GLOBALS['current_user']->id;
-                $fav->assigned_user_id = $GLOBALS['current_user']->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
-        }
-
-        // Test searching for a lot of records
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
-
-        $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
-
-        // Test Offset
-        $restReply2 = $this->_restCall("Cases?offset=".$restReply['reply']['next_offset']);
-
-        $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
-
-        // Test finding one record
-        $restReply3 = $this->_restCall("Cases/?q=".rawurlencode($this->cases[17]->name));
-        
-        $tmp = array_keys($restReply3['reply']['records']);
-        $firstRecord = $restReply3['reply']['records'][$tmp[0]];
-        $this->assertEquals($this->cases[17]->name,$firstRecord['name'],"The search failed for record: ".$this->cases[17]->name);
-
-        // Here is where the problem came
-        // First searching for specific fields broke
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&fields=name,case_number");
-        $this->assertGreaterThan(0,count($restReply['reply']['records']));
-
-        // Then searching without specific fields broke
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST"));
-        $this->assertGreaterThan(0,count($restReply['reply']['records']));
-
-        // add a search field
-        // create a new custom metadata vardef for unified search on status
-        
-        $metadata = '<?php $dictionary["Case"]["fields"]["status"]["unified_search"] = true; ?>';
-        $metadata_dir = 'custom/Extension/modules/Cases/Ext/Vardefs';
-        $metadata_file = 'case_status_unified_search.php';
-        if(!is_dir($metadata_dir)) {
-            mkdir("{$metadata_dir}", 0777, true);
-        }
-        
-        file_put_contents( $metadata_dir . '/' . $metadata_file, $metadata );
-        $user = new User();
-
-        // save old user
-        $old_user = $GLOBALS['current_user'];
-        $GLOBALS['current_user'] = $user->getSystemUser();
-        $this->files[] = $metadata_dir . '/' . $metadata_file;
-        
-        // run repair and rebuild
-        $_REQUEST['repair_silent']=1;
-        $rc = new RepairAndClear();
-        $rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Cases"),  false, false);
-        
-        // switch back to the user
-        $GLBOALS['current_user'] = $old_user;
-
-        $restReply = $this->_restCall("Cases/?q=New");
-
-        foreach($restReply['reply']['records'] AS $record) {
-            $status = trim($record['status']);
-            $name = trim($record['name']);
-            $status = substr($status, 0, 3);
-            $name = substr($status, 0, 3);
-            // this may not be the best way to do this but I can't figure out a better way right now
-            $test = array( ucwords($status), ucwords($name) );
-            $this->assertContains('New', $test, "New does not start either name or status");
-        }
-            
     }
 
 
@@ -382,7 +245,8 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
-
+        $sfi = new SugarSearchEngineFullIndexer();
+        $sfi->performFullSystemIndex();
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
@@ -416,19 +280,6 @@ class RestTestList extends RestTestBase {
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
                                  'Second record is not lower than the first, ascending order failed.');
-
-        // Test Favorites
-        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10");
-        $this->assertEquals(18,count($restReply['reply']['records']));
-
-        // Test My Items
-        $restReply = $this->_restCall("search?my_items=1&max_num=50&max_num_module=20");
-        $this->assertEquals(30,count($restReply['reply']['records']));
-
-        // Test Favorites & My Items
-        $restReply = $this->_restCall("search?favorites=1&my_items=1&max_num=10");
-        $this->assertEquals(6,count($restReply['reply']['records']));
-
 
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
