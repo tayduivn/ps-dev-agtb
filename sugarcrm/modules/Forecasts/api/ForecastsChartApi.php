@@ -109,6 +109,7 @@ class ForecastsChartApi extends ChartApi
 
         $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
+        $args['group_by'] = !isset($args['group_by']) ? "forecast" : $args['group_by'];
 
         if (!$this->isManager) {
             $filters = array(
@@ -241,8 +242,8 @@ class ForecastsChartApi extends ChartApi
             }
 
             // fix the labels to show that it's the adjusted values
-            $this->goalParetoLabel .= ' (Adjusted)';
-            $this->xaxisLabel .= ' (Adjusted)';
+            $this->goalParetoLabel .= $forecast_strings['LBL_CHART_ADJUSTED'];
+            $this->xaxisLabel .= $forecast_strings['LBL_CHART_ADJUSTED'];
 
             // always make sure that the columns go from the largest to the smallest
             // if we are displaying the manager chart
@@ -253,9 +254,9 @@ class ForecastsChartApi extends ChartApi
             if($args['group_by'] == "forecast")
             {
                 // fix the labels
-                $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? 'Not Included' : 'Included';
+                $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? $forecast_strings['LBL_CHART_NOT_INCLUDED'] : $forecast_strings['LBL_CHART_INCLUDED'];
                 if(isset($dataArray['label'][1])) {
-                    $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? 'Not Included' : 'Included';
+                    $dataArray['label'][1] = ($dataArray['label'][1] == 0) ? $forecast_strings['LBL_CHART_NOT_INCLUDED'] : $forecast_strings['LBL_CHART_INCLUDED'];
                 }
             } else if($args['group_by'] == "probability") {
                 foreach($dataArray['label'] as $key => $value) {
