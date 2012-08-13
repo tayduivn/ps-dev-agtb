@@ -389,10 +389,8 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         static $count;
         if(!isset($count))$count = 0;
 
-        $field_acl['DetailView'] = $aItem->ACLAccess('DetailView');
-        $field_acl['ListView'] = $aItem->ACLAccess('ListView');
-        $field_acl['EditView'] = $aItem->ACLAccess('EditView');
-        $field_acl['Delete'] = $aItem->ACLAccess('Delete');
+        // perform ACL checks for $aItem
+        $field_acl = $this->processACLChecksForDynamicListViewRow($aItem);
         foreach($thepanel->get_list_fields() as $field_name=>$list_field)
         {
             //add linked field attribute to the array.
@@ -527,6 +525,22 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     }
 
     $this->xTemplate->parse($xtemplateSection);
+}
+
+/**
+ * Perform additional ACL checks for SugarBean $aItem
+ *
+ * @param SugarBean $aItem
+ * @return array of bool Performed ACL checks
+ */
+function processACLChecksForDynamicListViewRow(SugarBean $aItem)
+{
+    return array(
+        'DetailView' => $aItem->ACLAccess('DetailView'),
+        'ListView' => $aItem->ACLAccess('ListView'),
+        'EditView' => $aItem->ACLAccess('EditView'),
+        'Delete' => $aItem->ACLAccess('Delete'),
+    );
 }
 
 /**sets whether or not to display the xtemplate header and footer
