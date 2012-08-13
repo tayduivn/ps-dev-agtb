@@ -238,7 +238,6 @@ $viewdefs['Contacts']['DetailView'] = array(
         array(
             array('name' => 'preferred_language',
                   'label' => 'LBL_PREFERRED_LANGUAGE',
-                  'hideIf' => 'empty($PORTAL_ENABLED)',
             ),
             array(),
         ),

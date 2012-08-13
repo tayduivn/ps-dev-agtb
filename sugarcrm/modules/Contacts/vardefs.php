@@ -223,7 +223,6 @@ array (
         array(
             'name' => 'preferred_language',
             'type' => 'enum',
-            'group'=>'portal',
             'default' => '',
             'vname' => 'LBL_PREFERRED_LANGUAGE',
             'options' => 'available_language_dom',

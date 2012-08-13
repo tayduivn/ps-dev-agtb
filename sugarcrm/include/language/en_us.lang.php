@@ -3412,7 +3412,7 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
 
-    'LBL_PREFERRED_LANGUAGE' => 'Application Language:',
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
