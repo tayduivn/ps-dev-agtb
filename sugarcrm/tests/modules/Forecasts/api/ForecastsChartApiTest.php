@@ -189,4 +189,19 @@ class ForecastsChartApiTest extends RestTestBase
         $this->assertEquals(2, count($chart['values']));
     }
 
+    public function testNoGroupByReturnsGroupedByForecast()
+    {
+        global $current_language;
+
+        $mod_strings = return_module_language($current_language, 'Forecasts');
+
+        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user->id . '&dataset=likely';
+        $return = $this->_restCall($url);
+
+        $chart = $return['reply'];
+
+        $this->assertEquals($mod_strings['LBL_CHART_INCLUDED'], $chart['label'][0]);
+        //$this->assertEquals("Likely", $chart['properties'][0]['goal_marker_label'][1]);
+    }
+
 }
