@@ -25,9 +25,6 @@ require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSe
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
 
-/**
- * Engine implementation for ElasticSearch
- */
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
     private $_config = array();
@@ -178,10 +175,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
-    /**
-     * (non-PHPdoc)
-     * @see SugarSearchEngineInterface::delete()
-     */
     public function delete(SugarBean $bean)
     {
         if (isSearchEngineDown())
@@ -206,8 +199,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     * (non-PHPdoc)
-     * @see SugarSearchEngineInterface::bulkInsert()
+     *
      */
     public function bulkInsert(array $docs)
     {
@@ -541,7 +533,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
 
-        $GLOBALS['log']->debug("Going to search with query $queryString");
+        $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
         try
         {
@@ -552,7 +544,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !empty($options['append_wildcard']) )
                 // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
                 $queryObj->setRewrite('top_terms_5');
-
+            
             // set query string fields
             $fields = $this->getSearchFields($options);
             $queryObj->setFields($fields);
@@ -646,7 +638,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     protected function loader($className)
     {
-        // FIXME: convert to use autoloader
         $fileName = str_replace('_', '/', $className);
         $path = 'include/SugarSearchEngine/Elastic/' . $fileName . '.php';
         if( file_exists($path) )
@@ -687,19 +678,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
-    /**
-     * Get Elastica client
-     * @return Elastica_Client
-     */
     public function getClient()
     {
         return $this->_client;
     }
 
-    /**
-     * Get the name of the index
-     * @return string
-     */
     public function getIndexName()
     {
         return $this->_indexName;
