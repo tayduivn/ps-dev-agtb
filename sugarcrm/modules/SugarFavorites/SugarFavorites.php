@@ -109,7 +109,7 @@ class SugarFavorites extends Basic
                 $where .= " AND sugarfavorites.module = '$module' ";
         
         $focus = new SugarFavorites;
-		$response = $focus->get_list($orderBy,$where,0,$limit);
+        $response = $focus->get_full_list($orderBy,$where,0,$limit);
 	    
 	    return $response['list'];
 	}
