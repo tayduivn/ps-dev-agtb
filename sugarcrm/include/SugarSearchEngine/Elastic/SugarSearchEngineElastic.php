@@ -533,7 +533,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
 
-        $GLOBALS['log']->info("Going to search with query $queryString");
+        $GLOBALS['log']->debug("Going to search with query $queryString");
         $results = null;
         try
         {

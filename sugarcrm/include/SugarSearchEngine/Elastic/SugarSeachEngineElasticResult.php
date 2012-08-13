@@ -64,6 +64,16 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         return $this->elasticaResult->module;
     }
 
+    public function getBean()
+    {
+        return $this->bean;
+    }
+
+    public function getScore()
+    {
+        return $this->elasticaResult->getScore();
+    }
+
     /**
      * This function returns an array of highlighted key-value pairs.
      *
