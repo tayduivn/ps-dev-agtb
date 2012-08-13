@@ -148,6 +148,9 @@ class MetadataApi extends SugarApi {
         // erroring out. -- rgonzalez
 
         if(isset($args['platform'])) {
+            //temporary replace 'forecasts' w/ 'base'
+            //as forecast settings store in db w/ prefix 'base_'
+            $args['platform'] = 'forecasts' ? 'base' : $args['platform'];
             $prefix = "{$args['platform']}_";
             $admin = new Administration();
             $category = $args['platform'];
