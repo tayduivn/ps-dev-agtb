@@ -20,13 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
+                                                                                       
 
 
 global $current_user;
-
+                                                                                       
 $global_currency_obj = null;
-
+                                                                                       
 function get_currency()
 {
         global $current_user,$global_currency_obj;
@@ -34,7 +34,7 @@ function get_currency()
         {
         $global_currency_obj = new Currency();
       //  $global_currency_symbol = '$';
-
+                                                                                       
         if($current_user->getPreference('currency') )
         {
                 $global_currency_obj->retrieve($current_user->getPreference('currency'));
@@ -52,9 +52,9 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 {
     function SugarWidgetFieldCurrency(&$layout_manager) {
         parent::__construct($layout_manager);
-        $this->reporter = $this->layout_manager->getAttribute('reporter');
+        $this->reporter = $this->layout_manager->getAttribute('reporter');  
     }
-
+    
 
     function & displayList($layout_def)
         {
@@ -67,19 +67,19 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
                     $key = $this->_get_column_alias($layout_def);
                 }
                 $key = strtoupper($key);
-
+                
                 if ( $this->isSystemCurrency($layout_def) ) {
                     $currency_id = '-99';
                 } else {
                     if (isset($layout_def['fields'][$key.'_CURRENCY']))
                         $currency_id = $layout_def['fields'][$key.'_CURRENCY'];
-                    else
+                    else     
                         $currency_id = $layout_def['fields'][$this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency")];
                 }
                 if ( empty($currency_id) ) {
                     $currency_id = '-99';
                 }
-
+                
                 if ( !isset($currencies[$currency_id]) ) {
                     $currencies[$currency_id] = new Currency();
                     $currencies[$currency_id]->retrieve($currency_id);
@@ -97,25 +97,25 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 //                $display =  $global_currency_obj->symbol. round($global_currency_obj->convertFromDollar($this->displayListPlain($layout_def)),2);
             $value = $this->displayListPlain($layout_def);
             $display = $symbol.$value;
-
-
-
+            
+            
+            
         if(!empty($layout_def['column_key'])){
-            $field_def = $this->reporter->all_fields[$layout_def['column_key']];
+            $field_def = $this->reporter->all_fields[$layout_def['column_key']];    
         }else if(!empty($layout_def['fields'])){
             $field_def = $layout_def['fields'];
         }
         $record = '';
         if ($layout_def['table_key'] == 'self' && isset($layout_def['fields']['PRIMARYID']))
             $record = $layout_def['fields']['PRIMARYID'];
-        else if (isset($layout_def['fields'][strtoupper($layout_def['table_alias']."_id")])){
+        else if (isset($layout_def['fields'][strtoupper($layout_def['table_alias']."_id")])){ 
             $record = $layout_def['fields'][strtoupper($layout_def['table_alias']."_id")];
         }
         if (!empty($record)) {
 	        $field_name = $layout_def['name'];
 	        $field_type = $field_def['type'];
 	        $module = $field_def['module'];
-
+	
 	        $div_id = $module ."&$record&$field_name";
 	        $str = "<div id='$div_id'>".$display;
             global $sugar_config;
@@ -128,44 +128,42 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
         else
             return $display;
     }
-
+                             
     function displayListPlain($layout_def) {
 //        $value = $this->_get_list_value($layout_def);
         $value = format_number(parent::displayListPlain($layout_def), null, null, array('convert' => false, 'currency_symbol' => false));
         return $value;
-    }
+    }                                                          
  function queryFilterEquals(&$layout_def)
  {
      return $this->_get_column_select($layout_def)."=".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0']))."\n";
  }
-
+                                                                                       
  function queryFilterNot_Equals(&$layout_def)
  {
      return $this->_get_column_select($layout_def)."!=".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0']))."\n";
  }
-
+                                                                                       
  function queryFilterGreater(&$layout_def)
  {
      return $this->_get_column_select($layout_def)." > ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0']))."\n";
  }
-
+                                                                                       
  function queryFilterLess(&$layout_def)
  {
      return $this->_get_column_select($layout_def)." < ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0']))."\n";
  }
 
-    public function queryFilterGreater_Equal(&$layout_def)
-    {
-        return $this->_get_column_select($layout_def) . " >= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
-    }
-
-    public function queryFilterLess_Equal(&$layout_def)
-    {
-        return $this->_get_column_select($layout_def) . " <= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
-    }
-
  function queryFilterBetween(&$layout_def){
      return $this->_get_column_select($layout_def)." > ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])). " AND ". $this->_get_column_select($layout_def)." < ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name1']))."\n";
+ }
+ public function queryFilterGreater_Equal(&$layout_def)
+ {
+     return $this->_get_column_select($layout_def) . " >= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
+ }
+ public function queryFilterLess_Equal(&$layout_def)
+ {
+     return $this->_get_column_select($layout_def) . " <= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
  }
 
  function isSystemCurrency(&$layout_def)
@@ -179,38 +177,56 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 
  function querySelect(&$layout_def)
  {
-     // We need to fetch the currency id as well
-     if ( !$this->isSystemCurrency($layout_def) && empty($layout_def['group_function'])) {
+    // add currency column to select
+    $table = $this->getCurrencyIdTable($layout_def);
+    if($table) {
+        return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)." , ".$table.".currency_id ". $this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency") . "\n";
+    }
+    return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
+ }
+
+ function queryGroupBy($layout_def)
+ {
+    // add currency column to group by
+    $table = $this->getCurrencyIdTable($layout_def);
+    if($table) {
+        return $this->_get_column_select($layout_def)." , ".$table.".currency_id \n";
+    }
+    return $this->_get_column_select($layout_def)." \n";
+ }
+
+ function getCurrencyIdTable($layout_def)
+ {
+    // We need to fetch the currency id as well
+    if ( !$this->isSystemCurrency($layout_def) && empty($layout_def['group_function'])) {
 
         if ( !empty($layout_def['table_alias']) ) {
-             $table = $layout_def['table_alias'];
-         } else {
-             $table = '';
-         }
+            $table = $layout_def['table_alias'];
+        } else {
+            $table = '';
+        }
 
-         $real_table = '';
-         if (!empty($this->reporter->all_fields[$layout_def['column_key']]['real_table']))
+        $real_table = '';
+        if (!empty($this->reporter->all_fields[$layout_def['column_key']]['real_table']))
             $real_table = $this->reporter->all_fields[$layout_def['column_key']]['real_table'];
 
-         $add_currency_id = false;
-         if(!empty($table)) {
+        $add_currency_id = false;
+        if(!empty($table)) {
             $cols = $GLOBALS['db']->getHelper()->get_columns($real_table);
             $add_currency_id = isset($cols['currency_id']) ? true : false;
 
             if(!$add_currency_id && preg_match('/.*?_cstm$/i', $real_table)) {
-               $table = str_replace('_cstm', '', $table);
-               $cols = $GLOBALS['db']->getHelper()->get_columns($table);
-               $add_currency_id = isset($cols['currency_id']) ? true : false;
+                $table = str_replace('_cstm', '', $table);
+                $cols = $GLOBALS['db']->getHelper()->get_columns($table);
+                $add_currency_id = isset($cols['currency_id']) ? true : false;
             }
-         }
-         if($add_currency_id) {
-            return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)." , ".$table.".currency_id ". $this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency") . "\n";
-         } else {
-            return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
-         }
-     } else {
-         return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
-     }
+            if($add_currency_id) {
+                return $table;
+            }
+        }
+    }
+    return false;
  }
 
 }
+?>

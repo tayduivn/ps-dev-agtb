@@ -2951,6 +2951,8 @@ $app_strings = array (
     'ERROR_MIN_FIELD_LENGTH' => 'Error. The min length of this field is {{this}}.',
     'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
+    'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
+    'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -3450,6 +3452,8 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
+
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',

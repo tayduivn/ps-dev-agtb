@@ -882,6 +882,14 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_WORKSHEETS',
         ),
+        'preferred_language' =>
+        array(
+             'name' => 'preferred_language',
+             'type' => 'enum',
+             'default' => '',
+             'vname' => 'LBL_PREFERRED_LANGUAGE',
+             'options' => 'available_language_dom',
+        ),
     ) ,
     'indices' => array(
         array(
