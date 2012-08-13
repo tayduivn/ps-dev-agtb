@@ -151,8 +151,9 @@
         var closed = this.model.get('closed');
 
         if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            this.likelyTotal = this.reduceWorksheetManager('likely_case') - closed.amount;
-            this.bestTotal = this.reduceWorksheetManager('best_case');
+            debugger;
+            this.likelyTotal = this.reduceWorksheetManager('likely_adjusted') - closed.amount;
+            this.bestTotal = this.reduceWorksheetManager('best_adjusted');
             this.model.set('revenue', this.reduceWorksheetManager('amount') - closed.amount);
             this.revenue = this.model.get('revenue') - closed.amount;
         } else {
