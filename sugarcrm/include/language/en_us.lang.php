@@ -3425,6 +3425,18 @@ $app_strings = array (
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
     'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
 
+    'ERR_RENDER_FAILED_TITLE' => 'View render failed',
+    'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
+    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Render field failed',
+    'ERR_RENDER_FIELD_FAILED_MSG' => 'Failed to render the field: ',
+    'ERR_NO_ACCESS_TITLE' => 'No access',
+    'ERR_NO_ACCESS_MSG' => 'You not have access to this view',
+    'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
+    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact the support',
+    'ERR_INTERNAL_ERR_MSG' => 'Internal error',
+    'ERR_GENERIC_TITLE' => 'Error',
+    'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',
+    
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
