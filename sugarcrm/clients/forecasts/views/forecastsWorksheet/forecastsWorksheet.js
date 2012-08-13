@@ -77,7 +77,14 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
-        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+
+        //If this.showMe() returns true, fetch the collection on initialize; otherwise don't bother
+        if(this.showMe())
+        {
+           this._collection.url = this.createURL();
+           this._collection.fetch();
+           this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        }
     },
 
     createURL:function() {
