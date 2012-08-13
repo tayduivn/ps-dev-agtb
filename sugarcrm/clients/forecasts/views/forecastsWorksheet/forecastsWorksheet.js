@@ -41,6 +41,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
+
         var self = this;
 
         this.viewModule = app.viewModule;
