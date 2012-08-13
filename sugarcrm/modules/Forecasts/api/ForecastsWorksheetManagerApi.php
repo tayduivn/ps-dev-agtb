@@ -191,7 +191,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
 
         $quota = $this->getQuota();
-        $forecast = $this->getForecastValues($data_grid);
+        $forecast = $this->getForecastValues();
         $worksheet = $this->getWorksheetBestLikelyAdjusted();
         $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
 
