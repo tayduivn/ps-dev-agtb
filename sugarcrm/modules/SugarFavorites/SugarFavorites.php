@@ -111,7 +111,7 @@ class SugarFavorites extends Basic
         $focus = new SugarFavorites;
         $response = $focus->get_full_list($orderBy,$where,0,$limit);
 	    
-	    return $response['list'];
+	    return $response;
 	}
 
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
