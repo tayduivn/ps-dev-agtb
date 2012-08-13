@@ -32,7 +32,13 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'comment' => 'The software or service release that manifested the bug',
     'duplicate_merge' => 'disabled',
     'audited' =>true,
-  	'studio' => array('fields' => 'false', 'listview' => false, 'wirelesslistview' => false ), // tyoung bug 16442 - don't show in studio fields list
+    'studio' => array(
+        'fields' => 'false',  // tyoung bug 16442 - don't show in studio fields list
+        'listview' => false,
+//BEGIN SUGARCRM flav=pro ONLY
+        'wirelesslistview' => false,
+//END SUGARCRM flav=pro ONLY
+    ),
     'massupdate' => true,
   	),
 'release_name'=>
@@ -57,13 +63,13 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        'quickcreate' => false, 
        'basic_search' => false, 
        'advanced_search' => false,
-	   //BEGIN SUGARCRM flav=pro
+	   //BEGIN SUGARCRM flav=pro ONLY
 	   'wirelesseditview' => false,
 	   'wirelessdetailview' => false,
 	   'wirelesslistview' => 'visible',
 	   'wireless_basic_search' => false,
 	   'wireless_advanced_search' => false,
-	   //END SUGARCRM flav=pro
+	   //END SUGARCRM flav=pro ONLY
 	   ),
   ),
 
@@ -77,7 +83,13 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'comment' => 'The software or service release that corrected the bug',
     'duplicate_merge' => 'disabled',
     'audited' =>true,
-  	'studio' => array('fields' => 'false', 'listview' => false, 'wirelesslistview' => false), // tyoung bug 16442 - don't show in studio fields list
+    'studio' => array(
+        'fields' => 'false', // tyoung bug 16442 - don't show in studio fields list
+        'listview' => false,
+//BEGIN SUGARCRM flav=pro ONLY
+        'wirelesslistview' => false,
+//END SUGARCRM flav=pro ONLY
+    ),
   	'massupdate' => true,
   	),
    'fixed_in_release_name'=>
@@ -102,13 +114,13 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        'quickcreate' => false, 
        'basic_search' => false, 
        'advanced_search' => false,
-       //BEGIN SUGARCRM flav=pro
+       //BEGIN SUGARCRM flav=pro ONLY
        'wirelesseditview' => false,
        'wirelessdetailview' => false,
        'wirelesslistview' => 'visible',
        'wireless_basic_search' => false,
        'wireless_advanced_search' => false,
-       //END SUGARCRM flav=pro
+       //END SUGARCRM flav=pro ONLY
        ),
   ),
     'source' =>

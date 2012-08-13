@@ -65,7 +65,14 @@
             	{assign var="EMAIL_REMINDER_TIME_DISPLAY" value="inline"}
         {/if}
 
-	{if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit" || $view == "wirelessedit"}
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+{if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit" || $view == "wirelessedit"}
+{* //END SUGARCRM flav=pro ONLY *}
+
+{* //BEGIN SUGARCRM flav!=pro ONLY *}
+{if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit"}
+{* //END SUGARCRM flav!=pro ONLY *}
+
 		<div>
 		    	   	
 		    	<input name="reminder_checked" type="hidden" value="0">
