@@ -76,6 +76,7 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
+        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
     },
 
     createURL:function() {
