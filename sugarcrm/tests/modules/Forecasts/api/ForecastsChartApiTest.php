@@ -189,6 +189,9 @@ class ForecastsChartApiTest extends RestTestBase
         $this->assertEquals(2, count($chart['values']));
     }
 
+    /**
+     * @bug 55246
+     */
     public function testNoGroupByReturnsGroupedByForecast()
     {
         global $current_language;
