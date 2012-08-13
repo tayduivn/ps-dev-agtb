@@ -36,7 +36,6 @@ require_once('modules/Reports/templates/templates_reports_request_js.php');
 
 require_once('modules/Reports/config.php');
 
-require_once('modules/Reports/templates/templates_chart.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 global $global_json;
 $global_json = getJSONobj();
@@ -972,7 +971,10 @@ else
     $report_id = 'unsavedReport';
 
 	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
-	 template_chart($reporter, $reportChartDivStyle);
+     require_once("include/SugarCharts/ChartDisplay.php");
+     $chartDisplay = new ChartDisplay();
+     $chartDisplay->setReporter($reporter);
+     echo $chartDisplay->legacyDisplay(null, false);
 	 echo "</div>";
 	} // if
 

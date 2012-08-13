@@ -46,6 +46,7 @@ class Administration extends SugarBean {
         'ldap',
         'captcha',
         'sugarpdf',
+        'base',
 
             //BEGIN SUGARCRM lic=sub ONLY
 
@@ -83,6 +84,10 @@ class Administration extends SugarBean {
         }
 
         $query = "SELECT category, name, value FROM {$this->table_name}";
+        if (!empty($category))
+        {
+            $query .= " WHERE category = '$category'";
+        }
 
         $result = $this->db->query($query, true, "Unable to retrieve system settings");
 

@@ -72,6 +72,9 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct()" ) ;
+        
+        // Set the client
+        $this->client = $client;
 
         // Simple validation
         if (!in_array($view, $this->allowedViews))
@@ -195,23 +198,30 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {
             if (is_array($def['studio']))
             {
-                $view = !empty($_REQUEST['view']) ? $_REQUEST['view'] : $this->view;
+                // Bug 54507 - Need to set the view properly for portal
+                // Portal editor requests vary in that the requested view is ListView
+                // but what we really need is portallistview, which is in $this->view
+                // All other instances of ListLayoutMetaDataParser set $this->view
+                // to $_REQUEST['view']
+                $view = $this->view;
                 
             	// fix for removing email1 field from studio popup searchview - bug 42902
                 if($view == 'popupsearch' && $key == 'email1')
                 {	
             		return false;
             	} //end bug 42902
-           
-            	if (!empty($view) && isset($def['studio'][$view]) && ($def['studio'][$view] !== false && (string)$def['studio'][$view] != 'false' && (string)$def['studio'][$view] != 'hidden'))
-                {
-					return true;
-                }
 
-                if (isset($def['studio']['listview']) && ($def['studio']['listview'] !== false && (string)$def['studio']['listview'] != 'false' && (string)$def['studio']['listview'] != 'hidden'))
+                // Bug 54507 Return explicit setting of a fields view setting if there is one
+                if (!empty($view) && isset($def['studio'][$view])) 
                 {
-					return true;
+                    return $def['studio'][$view] !== false && (string)$def['studio'][$view] != 'false' && (string)$def['studio'][$view] != 'hidden';
                 }
+                
+                if (isset($def['studio']['listview']))
+                {
+					return $def['studio']['listview'] !== false && (string)$def['studio']['listview'] != 'false' && (string)$def['studio']['listview'] != 'hidden';
+                }
+                // End Bug 54507
                 
                 if (isset($def ['studio']['visible']))
                 {

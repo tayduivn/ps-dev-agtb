@@ -1,26 +1,34 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 /*********************************************************************************
-* $Id: OracleManager.php 56825 2010-06-04 00:09:04Z smalyshev $
+
 * Description: This file handles the Data base functionality for the application using oracle.
 * It acts as the DB abstraction layer for the application. It depends on helper classes
 * which generate the necessary SQL. This sql is then passed to PEAR DB classes.
@@ -36,7 +44,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
-//FILE SUGARCRM flav=ent ONLY
 
 /**
  * Oracle driver
@@ -181,11 +188,9 @@ class OracleManager extends DBManager
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
-	        //BEGIN SUGARCRM flav=pro ONLY
 		    if($this->dump_slow_queries($sql)) {
 			    $this->track_slow_queries($sql);
 			}
-			//END SUGARCRM flav=pro ONLY
 			if($exec_result) {
 			    $result = $stmt;
 			}
@@ -1728,6 +1733,7 @@ EOQ;
         );
     }
 
+
     /**
      * Generates the a recursive SQL query or equivalent stored procedure implementation.
      * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
@@ -1741,7 +1747,7 @@ EOQ;
      * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @return string               Recursive SQL query or equivalent representation.
      */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
     {
         if($lineage) {
             $connectBy = "CONNECT BY $key = PRIOR $parent_key";  // Search up the tree to get lineage
@@ -1755,19 +1761,29 @@ EOQ;
             $startWith = '';
         }
 
-        //if(empty($fields)) { $fields = '*'; }
-
         if(!empty($level)) {
             $fields = "$fields, LEVEL as $level";
         }
-        $sql = "  SELECT $fields
-                  FROM $tablename
-                  $startWith
-                  $connectBy";
 
-        return $sql;
+        // cleanup WHERE clause
+        if (empty($whereClause)) {
+			 $whereClause = '';
+		}
+		else {
+			$whereClause = ltrim($whereClause);
+			if (strtoupper(substr($whereClause, 1, 5)) == 'WHERE' ) {   // remove WHERE
+				$whereClause = substr($whereClause, 6);
+            }
+            if (strtoupper(substr($whereClause, 1, 4)) != 'AND ' ) {  // Add AND
+                $whereClause = "AND $whereClause";
+            }
+            $whereClause .= ' ';  // make sure there is a trailing blank
+		}
+		
+        return "SELECT $fields FROM $tablename $startWith $whereClause $connectBy $whereClause";
     }
 
+  
     /*
      * Returns a DB specific FROM clause which can be used to select against functions.
      * Note that depending on the database that this may also be an empty string.

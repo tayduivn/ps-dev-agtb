@@ -282,8 +282,8 @@
 				'.jstree a > ins { height:16px; width:16px; } ' + 
 				'.jstree a > .jstree-icon { margin-right:3px; } ' + 
 				'.jstree-rtl a > .jstree-icon { margin-left:3px; margin-right:0; } ' + 
-				'li.jstree-open > ul { display:block; } ' + 
-				'li.jstree-closed > ul { display:none; } ';
+				'li.jstree-open > ul { display:block; } ';
+				//'li.jstree-closed > ul { display:none; } ';
 		// Correct IE 6 (does not support the > CSS selector)
 		if(/msie/.test(u) && parseInt(v, 10) == 6) { 
 			is_ie6 = true;
@@ -297,8 +297,8 @@
 				'.jstree li { height:18px; margin-left:0; margin-right:0; } ' + 
 				'.jstree li li { margin-left:18px; } ' + 
 				'.jstree-rtl li li { margin-left:0px; margin-right:18px; } ' + 
-				'li.jstree-open ul { display:block; } ' + 
-				'li.jstree-closed ul { display:none !important; } ' + 
+				'li.jstree-open ul { display:block; } ' +
+				//'li.jstree-closed ul { display:none !important; } ' +
 				'.jstree li a { display:inline; border-width:0 !important; padding:0px 2px !important; } ' + 
 				'.jstree li a ins { height:16px; width:16px; margin-right:3px; } ' + 
 				'.jstree-rtl li a ins { margin-right:0px; margin-left:3px; } ';
@@ -339,7 +339,9 @@
 			rtl			: false,
 			load_open	: false,
 			strings		: {
-				loading		: "Loading ...",
+                // REMOVED loading : "Loading ..." so users whose trees are hidden
+                // never knew there was a tree to begin with, aka confusing message if you have no tree
+                loading		: " ",
 				new_node	: "New node",
 				multiple_selection : "Multiple selection"
 			}
@@ -354,15 +356,19 @@
 				this.data.core.li_height = this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() || 18;
 
 				this.get_container()
-					.delegate("li > ins", "click.jstree", $.proxy(function (event) {
-							var trgt = $(event.target);
-							// if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
-							this.toggle_node(trgt);
-						}, this))
+                    .delegate("li > ins", "click.jstree", $.proxy(function (event) {
+                        // CUSTOM CODE -- thubbard -- sugarcrm
+                        // had to add this code in here to toggle the node when an icon is selected
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                        if(!$(event.currentTarget).hasClass("jstree-loading")) {
+                            this.select_node(event.currentTarget, true, event);
+                        }
+                    }, this))
 					.bind("mousedown.jstree", $.proxy(function () { 
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
 						}, this))
-					.bind("dblclick.jstree", function (event) { 
+					.bind("dblclick.jstree", function (event) {
 						var sel;
 						if(document.selection && document.selection.empty) { document.selection.empty(); }
 						else {
@@ -1417,12 +1423,13 @@
 	$.jstree.plugin("themes", {
 		__init : function () { 
 			this.get_container()
-				.bind("init.jstree", $.proxy(function () {
-						var s = this._get_settings().themes;
-						this.data.themes.dots = s.dots; 
-						this.data.themes.icons = s.icons; 
-						this.set_theme(s.theme, s.url);
-					}, this))
+                // REMOVED so jsTree does not try to load its own CSS over our styleguide css
+                //.bind("init.jstree", $.proxy(function () {
+                //		var s = this._get_settings().themes;
+                //		this.data.themes.dots = s.dots;
+                //		this.data.themes.icons = s.icons;
+                //		this.set_theme(s.theme, s.url);
+                //	}, this))
 				.bind("loaded.jstree", $.proxy(function () {
 						// bound here too, as simple HTML tree's won't honor dots & icons otherwise
 						if(!this.data.themes.dots) { this.hide_dots(); }
@@ -1440,7 +1447,7 @@
 		_fn : {
 			set_theme : function (theme_name, theme_url) {
 				if(!theme_name) { return false; }
-				if(!theme_url) { theme_url = $.jstree._themes + theme_name + '/boostrap.css'; }
+				if(!theme_url) { theme_url = $.jstree._themes + theme_name + '/style.css'; }
 				if($.inArray(theme_url, themes_loaded) == -1) {
 					$.vakata.css.add_sheet({ "url" : theme_url });
 					themes_loaded.push(theme_url);

@@ -420,19 +420,21 @@ require_once('include/EditView/EditView2.php');
 	       				$function_name = $this->fieldDefs[$fvName]['function'];
 	       			}
 
-					if(!empty($this->fieldDefs[$fvName]['function']['returns']) && $this->fieldDefs[$fvName]['function']['returns'] == 'html'){
-						if(!empty($this->fieldDefs[$fvName]['function']['include'])){
-								require_once($this->fieldDefs[$fvName]['function']['include']);
-						}
-						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
-						$this->fieldDefs[$fvName]['value'] = $value;
-					}else{
-					    if(!isset($function['params']) || !is_array($function['params'])) {
-							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
-						} else {
-							$this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
-						}
-					}
+                    if(!empty($this->fieldDefs[$fvName]['function']['include'])  && file_exists($this->fieldDefs[$fvName]['function']['include']))
+                    {
+                        require_once($this->fieldDefs[$fvName]['function']['include']);
+                    }
+
+                    if(!empty($this->fieldDefs[$fvName]['function']['returns']) && $this->fieldDefs[$fvName]['function']['returns'] == 'html'){
+                        $value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
+                        $this->fieldDefs[$fvName]['value'] = $value;
+                    }else{
+                        if(!isset($function['params']) || !is_array($function['params'])) {
+                            $this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
+                        } else {
+                            $this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
+                        }
+                    }
 	       	 	}
 	       	 	if(isset($this->fieldDefs[$name]['type']) && $this->fieldDefs[$fvName]['type'] == 'function'
                        && isset($this->fieldDefs[$fvName]['function_name']))

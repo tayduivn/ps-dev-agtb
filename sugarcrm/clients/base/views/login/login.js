@@ -61,7 +61,7 @@
                 "fields": {
                     "username": {
                         "name": "username",
-                        "type": "varchar",
+                        "type": "base",
                         "required": true
                     },
                     "password": {

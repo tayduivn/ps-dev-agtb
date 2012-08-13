@@ -1,26 +1,31 @@
 <?php
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
@@ -40,6 +45,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['db']->query('DELETE FROM forecast_tree');
     }
 
     static public function tearDownAfterClass()
@@ -51,9 +57,16 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if(empty($this->_db)){
+        if(empty($this->_db))
+        {
             $this->_db = DBManagerFactory::getInstance();
         }
+
+        if($this->_db->tableExists('testRecursive_'))
+        {
+            $this->_db->query('DELETE FROM testRecursive_');
+        }
+
     }
 
     public function tearDown()
@@ -2051,7 +2064,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
 
-            $this->assertEquals(0, mb_strpos($str, $strresult));
+			$this->assertNotEmpty($strresult, "Failed to read data just written to temp table");
+            $this->assertEquals(0, mb_strpos($str, $strresult), "String returned from temp table did not match data just written");
         }
     }
 
@@ -2132,49 +2146,170 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerRecursiveQuery
+     * @group hierarchy
      * @param $startId
      * @param $startDbLevel
      * @param $nrchildren
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
-        $this->markTestSkipped('Skipping recursive tests until functionality complete');
-        //$result = $this->_db->createRecursiveQuerySPs();
-        //echo var_dump($result);
         $idCurrent = $startId;
         $levels = $startDbLevel;
-       //$result = $this->_db->createRecursiveQuerySPs();
-        //echo var_dump($result);
-        //$table = $this->setupRecursiveStructure();
-		$table = 'testRecursive_';
+        $this->_db->preInstall();
+
+        // setup test table and fill it with data if it doesn't already exist
+        $table = 'testRecursive_';
+        if(!$this->_db->tableExists($table)) {
+            $table = $this->setupRecursiveStructure();
+        }
 
         // Testing lineage
-        $lineageSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',true, "id ='$idCurrent'");
+        $lineageSQL = $this->_db->getRecursiveSelectSQL($table, 'id', 'parent_id', 'id, parent_id, db_level', true, "id ='$idCurrent'");
+
         $result = $this->_db->query($lineageSQL);
 
         while($row = $this->_db->fetchByAssoc($result))
         {
-			$this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
-			if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
-			$this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
-		}
-		$this->assertEquals('1', $idCurrent, "Incorrect top node id");
-		$this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
-		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
+            $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
+            if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+            $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
+        }
+        $this->assertEquals('1', $idCurrent, "Incorrect top node id");
+        $this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
 
-		// Testing children
+        // Testing children
         $idCurrent = $startId;
         $childcount = 0;
         $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
+
         $result = $this->_db->query($childrenSQL);
 
-        while($row = $this->_db->fetchByAssoc($result))
+        while(($row = $this->_db->fetchByAssoc($result)) != null)
         {
-			$this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
-			$childcount++;
-		}
-		$this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
-		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
+            $this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
+            $childcount++;
+        }
+        $this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
+
+    }
+
+    // Inserts a 2D array of data into the specified table
+    // First row of array must be the column headers, first column must be PK column name
+    public function insertTableArray( $tableName, $tableDataArray ) {
+
+        $sqlPrefix = "INSERT INTO $tableName ( {$tableDataArray[0][0]} ";  // has to be at least one column
+        for ($col = 1; $col < count($tableDataArray[0]); $col++) {
+            $sqlPrefix .= ", {$tableDataArray[0][$col]}";
+        }
+        $sqlPrefix .= ") VALUES (";
+        $sqlPostfix = ")";
+        $sqlBody = "";
+
+        // do the inserts for each row of data
+        for ($row = 1; $row< count($tableDataArray); $row++) {
+            $rowData = $tableDataArray[$row];
+            $sqlBody = "'{$rowData[0]}'";
+            for ($col = 1; $col < count($rowData); $col++) {
+                $sqlBody .= ",'{$rowData[$col]}'";
+            }
+
+            // Insert the data
+            $sql = $sqlPrefix . $sqlBody . $sqlPostfix;
+            $result = $this->_db->query($sql);
+        }
+    }
+
+    // Deletes a 2D array of data from the specified table
+    // First row of array must be column headers, first column must be PK column name
+    public function deleteTableArray( $tableName, $tableDataArray ) {
+
+        $sql = "DELETE FROM $tableName WHERE {$tableDataArray[0][0]} IN ( '{$tableDataArray[1][0]}'";  // has to be at least one column
+        for ($row = 2; $row < count($tableDataArray); $row++) {
+            $sql .= ",'{$tableDataArray[$row][0]}'";
+        }
+        $sql .= ")";
+
+        // Delete the data
+        $result = $this->_db->query($sql);
+
+    }
+
+
+    /**
+     */
+    public function testRecursiveQueryMultiHierarchy()
+    {
+        $this->_db->preInstall();
+
+        // Setup test data
+        $tableName = 'forecast_tree';
+        $this->assertTrue($this->_db->tableExists($tableName), "Table $tableName does not exist");
+        $tableDataArray = array(  array( 'id',             'parent_id',      'name',     'hierarchy_type', 'user_id' )
+        , array( 'sales_test_1',    null,            'sales1',   'sales_test',     'user1'   )
+        , array( 'sales_test_11',  'sales_test_1',   'sales11',  'sales_test',     'user11'  )
+        , array( 'sales_test_12',  'sales_test_1',   'sales12',  'sales_test',     'user12'  )
+        , array( 'sales_test_13',  'sales_test_1',   'sales13',  'sales_test',     'user13'  )
+        , array( 'sales_test_121', 'sales_test_12',  'sales121', 'sales_test',     'user121' )
+        , array( 'sales_test_122', 'sales_test_12',  'sales122', 'sales_test',     'user122' )
+        , array( 'sales_test_131', 'sales_test_13',  'sales131', 'sales_test',     'user131' )
+        , array( 'sales_test_132', 'sales_test_13',  'sales132', 'sales_test',     'user132' )
+        , array( 'sales_test_133', 'sales_test_13',  'sales133', 'sales_test',     'user133' )
+        , array( 'prod_test_1',     null,            'prod1',    'prod_test',      'user1'   )
+        , array( 'prod_test_11',   'prod_test_1',    'prod11',   'prod_test',      'user11'  )
+        , array( 'prod_test_12',   'prod_test_1',    'prod12',   'prod_test',      'user12'  )
+        , array( 'prod_test_13',   'prod_test_1',    'prod13',   'prod_test',      'user13'  )
+        , array( 'prod_test_121',  'prod_test_12',   'prod121',  'prod_test',      'user121' )
+        , array( 'prod_test_122',  'prod_test_12',   'prod122',  'prod_test',      'user122' )
+        , array( 'prod_test_131',  'prod_test_13',   'prod131',  'prod_test',      'user131' )
+        , array( 'prod_test_132',  'prod_test_13',   'prod132',  'prod_test',      'user132' )
+        , array( 'prod_test_133',  'prod_test_13',   'prod133',  'prod_test',      'user133' )
+        , array( 'prod_test_1321', 'prod_test_132',  'prod1321', 'prod_test',      'user1321')
+        );
+
+        $this->insertTableArray( $tableName, $tableDataArray );
+
+        // idStarting, Up/Down, Forecast_Tree Type, expected result count
+        $resultsDataArray = array( array('sales_test_1',    false, 'sales_test',9)
+                                  ,array('sales_test_13',   false, 'sales_test',4)
+                                  ,array('sales_test_131',  true,  'sales_test',3)
+                                  ,array('sales_test_13',   true,  'sales_test',2)
+                                  ,array('sales_test_1',    true,  'sales_test',1)
+                                  ,array('prod_test_1',     false, 'prod_test',10)
+                                  ,array('prod_test_13',    false, 'prod_test', 5)
+                                  ,array('prod_test_1321',  true,  'prod_test', 4)
+                                  ,array('prod_test_133',   true,  'prod_test', 3)
+                                  ,array('prod_test_1',     true,  'prod_test', 1)
+        );
+
+        // Loop through each test
+        foreach ( $resultsDataArray as $resultsRow ) {
+
+            // Get where clause
+            $whereClause = "hierarchy_type='$resultsRow[2]'";
+
+            // Get hierarchical result set
+            $key = 'id';
+            $parent_key = 'parent_id';
+            $fields = 'id, parent_id';
+            $lineage = $resultsRow[1];
+            $startWith = "id = '{$resultsRow[0]}'";
+            $level = null;
+
+            $hierarchicalSQL = $this->_db->getRecursiveSelectSQL($tableName, $key, $parent_key, $fields, $lineage, $startWith, $level, $whereClause);
+            $result = $this->_db->query($hierarchicalSQL);
+            $resultsCnt = 0;
+
+            while(($row = $this->_db->fetchByAssoc($result)) != null)
+            {
+                $resultsCnt++;
+            }
+
+            $this->assertEquals($resultsCnt, $resultsRow[3], "Incorrect number or records. Found: $resultsCnt Expected: $resultsRow[3] for ID: $resultsRow[0]");
+        }
+
+        // remove data from table
+        $result = $this->deleteTableArray( $tableName, $tableDataArray );
+
     }
 
 
@@ -2211,5 +2346,4 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 			$guids []= $newguid;
 		}
 	}
-
 }
