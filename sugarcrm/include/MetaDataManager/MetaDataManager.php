@@ -188,7 +188,7 @@ class MetaDataManager {
     /**
      * This method collects all view data for a module
      *
-     * @param $moduleName The name of the sugar module to collect info about.
+     * @param string $moduleName The name of the sugar module to collect info about.
      *
      * @return Array A hash of all of the view data.
      */
@@ -199,12 +199,100 @@ class MetaDataManager {
     /**
      * This method collects all view data for a module
      *
-     * @param $moduleName The name of the sugar module to collect info about.
+     * @param string $moduleName The name of the sugar module to collect info about.
      *
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
         return $this->getModuleViewdefs($moduleName, 'layout');
+    }
+
+    /**
+     * Gets the directories for a given path inside of a module's metadata
+     *
+     * @param string $module The module we are looking for items in
+     * @param string $path The directory within a platform
+     * @param bool $full Whether to return full paths or dirnames only
+     * @return array
+     */
+    public function getModuleClientFileDirs($module, $path, $full = false) {
+        $dirs = array();
+        foreach ( $this->platforms as $platform ) {
+            $basedir  = "modules/{$module}/metadata/clients/{$platform}/{$path}/";
+            $custdir  = "custom/$basedir";
+            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
+            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
+            $alldirs  = array_merge($basedirs, $custdirs);
+
+            foreach ($alldirs as $dir) {
+                // To prevent doing the work twice, let's sort this out by basename
+                $dirname = basename($dir);
+                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
+            }
+        }
+
+        return $dirs;
+    }
+
+    /**
+     * This method collects all field data for a module
+     *
+     * @param string $moduleName    The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the view data.
+     */
+    public function getModuleFields($moduleName) {
+
+        $result = array();
+        $typePath = "fields";
+
+        $allModulesFiles = $this->getModuleClientFileDirs($moduleName, $typePath);
+
+        foreach ( $allModulesFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            // Check each platform in order of precendence to find the "best" controller
+            // Add in meta checking here as well
+            $meta = array();
+            foreach ( $this->platforms as $platform ) {
+                $dir = "modules/$moduleName/metadata/clients/$platform/$typePath/$dirname/";
+                $controller = $dir . "$dirname.js";
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir));
+                }
+                if ( file_exists('custom/'.$controller) ) {
+                    $controller = 'custom/'.$controller;
+                }
+                if ( file_exists($controller) ) {
+                    $fileData['controller'] = file_get_contents($controller);
+                    // We found a controller, let's get out of here!
+                    break;
+                }
+            }
+
+            // Reverse the platform order so that "better" templates override worse ones
+            $backwardsPlatforms = array_reverse($this->platforms);
+            $templateDirs = array();
+            foreach ( $backwardsPlatforms as $platform ) {
+                $templateDirs[] = "modules/$moduleName/metadata/clients/$platform/$typePath/$dirname/";
+            }
+            $fileData['templates'] = $this->fetchTemplates($templateDirs);
+            if ($meta) {
+               $fileData['meta'] = array_shift($meta); // Get the first member
+            }
+
+            // Remove empty fileData members
+            foreach ($fileData as $k => $v) {
+                if (empty($v)) {
+                    unset($fileData[$k]);
+                }
+            }
+
+            $result[$dirname] = $fileData;
+        }
+
+        $result['_hash'] = md5(serialize($result));
+        return $result;
     }
 
     /**
@@ -220,7 +308,7 @@ class MetaDataManager {
         $data['fields'] = $vardefs['fields'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
-
+        $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;
