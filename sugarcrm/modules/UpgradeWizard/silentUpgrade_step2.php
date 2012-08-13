@@ -583,6 +583,15 @@ if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
     repairUpgradeHistoryTable();
 }
 
+//BEGIN SUGARCRM flav=PRO ONLY
+//setup forecast defualt settings
+if($origVersion < '670')
+{
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::setupForecastSettings();
+}
+//END SUGARCRM flav=PRO ONLY
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	TAKE OUT TRASH
 if(empty($errors)) {

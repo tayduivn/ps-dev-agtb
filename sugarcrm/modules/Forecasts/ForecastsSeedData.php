@@ -158,8 +158,6 @@ public static function populateSeedData($timeperiods)
     		}
     	}
     }
-    
-    self::setupForecastSettings();
 }
 
 /*
@@ -179,5 +177,4 @@ public static function setupForecastSettings()
         $admin->saveSetting('base', $name, $value);
     }
 }
-
 }
