@@ -23,7 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/Interface.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
-
+/**
+ * Base class for search engine drivers
+ * @api
+ */
 abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterface
 {
     /**
