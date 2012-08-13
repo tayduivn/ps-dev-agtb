@@ -223,7 +223,7 @@ array (
         array(
             'name' => 'preferred_language',
             'type' => 'enum',
-            'default' => '',
+            'default' => 'en_us',
             'vname' => 'LBL_PREFERRED_LANGUAGE',
             'options' => 'available_language_dom',
         ),
