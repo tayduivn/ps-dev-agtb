@@ -1,6 +1,1 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span10">
-        <a href="http://{{value}}">{{value}}</a>
-    </div>
-</div>
+        <a href="{{#if value}}{{value}}{{else}}javascript:void(0){{/if}}" class="password">{{#if value}}{{value}}{{/if}}</a>
