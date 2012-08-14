@@ -72,7 +72,7 @@
                       <li><input type="checkbox"> Opportunities</li>
                       <li><input type="checkbox"> Reports</li>
                     </ul>
-                    <a class="btn" href="#"><i class="icon icon-search"></i></a>
+                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                   </div>
                 </div>
               </div>
@@ -83,18 +83,13 @@
     </div><!-- /navbar-inner -->
   </div>
   <div class="container-fluid" id="dashboard">
-    <div class="thumbnav">
-      <ul>
-        <li><a href="" class=""><i class="icon-plus"></i><br><b>New</b></a></li>
-      </ul>
-    </div>
     <div class="row-fluid">
       <div class="span8 content">
         <h1>Opportunities</h1>
         <table class="table datatable">
           <thead>
             <tr>
-              <th class="nosort">
+              <th class="nosort select-all">
                 <div class="btn-group">
                   <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
                   <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
@@ -124,14 +119,30 @@
               <td><span class="dblclick">Plato's LED MFT</span></td>
               <td><span class="dblclick">30%</span></td>
               <td><span class="dblclick">06/06/2012</span></td>
-              <td>
-                <span class="hide actions dropdown pull-right">
+              <td class="action-cell">
+                <span class="hide actions pull-right">
                   <div class="actions">
                     <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                   </div>
                 </span>
               </td>
-            </tr>                                                                                                                                                                                                                                                                                                                                                                          
+            </tr>
+            <tr>
+              <td><input type="checkbox"> <i class="icon-star"></i></td>
+              <td><a href="opportunity_plato.html">Socrates and Sons, Inc</a></td>
+              <td><span class="dblclick">Prospecting</span></td>
+              <td><span class="dblclick">$450,000 (USD)</span></td>
+              <td><span class="dblclick">Socrates &amp; Sons</span></td>
+              <td><span class="dblclick">20%</span></td>
+              <td><span class="dblclick">07/08/2012</span></td>
+              <td class="action-cell">
+                <span class="hide actions pull-right">
+                  <div class="actions">
+                    <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                  </div>
+                </span>
+              </td>
+            </tr>                                           
           </tbody>
         </table>
       </div>  
@@ -202,8 +213,8 @@
   <script src="../../bootstrap/js/bootstrap-button.js"></script>
   <script src="../../bootstrap/js/bootstrap-typeahead.js"></script>
   <script src="../../bootstrap/js/bootstrapx-clickover.js"></script>
-  <script src="../js/jquery.dataTables.js"></script>
 
+  <script src="../js/jquery.dataTables.js"></script>
   <script src="../js/wicked.js"></script>        
   <script src="../js/jquery.jeditable.js"></script>        
   <script src="../js/editable.js"></script>
