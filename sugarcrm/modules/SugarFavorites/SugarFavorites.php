@@ -109,9 +109,9 @@ class SugarFavorites extends Basic
                 $where .= " AND sugarfavorites.module = '$module' ";
         
         $focus = new SugarFavorites;
-		$response = $focus->get_list($orderBy,$where,0,$limit);
+        $response = $focus->get_full_list($orderBy,$where,0,$limit);
 	    
-	    return $response['list'];
+	    return $response;
 	}
 
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
