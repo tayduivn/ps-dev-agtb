@@ -1054,6 +1054,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
 
         // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
+	$exemptDropdowns[] = "moduleListSingular";
         $exemptDropdowns[] = "parent_type_display";
         $exemptDropdowns[] = "record_type_display";
         $exemptDropdowns[] = "record_type_display_notes";
