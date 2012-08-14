@@ -8428,6 +8428,6 @@ color: @red;
     border-top-color:#c1bfbe;
 }
 
-#view-sales-rep input, #view-manager input{
+#view-sales-rep input[type="text"], #view-manager input[type="text"]{
 	width: 100%;
 }
