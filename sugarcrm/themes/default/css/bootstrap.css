@@ -8427,3 +8427,7 @@ color: @red;
     *border:0;
     border-top-color:#c1bfbe;
 }
+
+#view-sales-rep input[type="text"], #view-manager input[type="text"]{
+	width: 100%;
+}
