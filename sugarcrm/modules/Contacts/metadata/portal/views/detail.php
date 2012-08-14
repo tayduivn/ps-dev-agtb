@@ -113,6 +113,11 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                             'colspan' => 2
                         ),
                     ),
+                    array (
+                        'name' => 'preferred_language',
+                        'type' => 'enum',
+                        'options' => 'available_language_dom',
+                    ),
                 ),
             ),
         ),
