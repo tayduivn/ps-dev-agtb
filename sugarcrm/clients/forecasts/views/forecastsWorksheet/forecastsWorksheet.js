@@ -193,7 +193,7 @@
             	this.calculateTotals();
             }, this);
             this.context.forecasts.forecastschedule.on("change", function() {
-                this.render();
+                this.calculateTotals();
             }, this);
         }
     },
