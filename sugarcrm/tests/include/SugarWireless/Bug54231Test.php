@@ -36,27 +36,23 @@
  */
 class Bug54231Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $_beanFiles;
-	var $_beanList;
-	var $_app_list_strings_moduleList;
 	var $_view_object_map;
 	
 	public function setUp()
 	{
-		global $current_user;
-		$current_user = SugarTestUserUtilities::createAnonymousUser();
-		
-		$this->_beanFiles = $GLOBALS['beanFiles'];
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
+
 		$GLOBALS['beanFiles'] = array(
 			'Opportunity' => 'modules/Opportunities/Opportunity.php'
 		);
-		
-		$this->_beanList = $GLOBALS['beanList'];
+
 		$GLOBALS['beanList'] = array(
 			'Opportunities' => 'Opportunity'
 		);
-		
-		$this->_app_list_strings_moduleList = $GLOBALS['app_list_strings']['moduleList'];
+
 		$GLOBALS['app_list_strings']['moduleList'] = array(
 			'Opportunities' => 'Opportunities'
 		);
@@ -73,11 +69,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		
-		$GLOBALS['beanFiles'] = $this->_beanFiles;
-		$GLOBALS['beanList'] = $this->_beanList;
-		$GLOBALS['app_list_strings']['moduleList'] = $this->_app_list_strings_moduleList;
+        SugarTestHelper::tearDown();
 	}
 
 

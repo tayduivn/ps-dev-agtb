@@ -49,8 +49,8 @@
 			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams=$DETAIL.displayParams typeOverride=$DETAIL.type formName=$form_name}
             {/if}
 		{else}
-            {if !empty($DETAIL.customCode)}
-				{eval var=$DETAIL.customCode}
+            {if !empty($DETAIL.customCodeReadOnly)}
+				{eval var=$DETAIL.customCodeReadOnly}
             {else}
 			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessDetailView' displayParams='' typeOverride=$DETAIL.type}
             {/if}

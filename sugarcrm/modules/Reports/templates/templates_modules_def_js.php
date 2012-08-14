@@ -431,6 +431,13 @@ var filter_defs = new Object();
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
+qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
+filter_defs['encrypt'] = qualifiers;
+
+var qualifiers =  new Array();
+qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
 qualifiers[qualifiers.length] = {name:'does_not_contain',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
 qualifiers[qualifiers.length] = {name:'starts_with',value:'<?php echo $mod_strings['LBL_STARTS_WITH']; ?>'};
@@ -446,12 +453,6 @@ filter_defs['time'] = qualifiers;
 filter_defs['phone'] = qualifiers;
 filter_defs['url'] = qualifiers;
 
-var qualifiers =  new Array();
-qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
-qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
-filter_defs['encrypt'] = qualifiers;
 
 var qualifiers_name = new Array();
 var is_def = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

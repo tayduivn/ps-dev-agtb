@@ -656,6 +656,8 @@ div.actionsContainer
 
 .edit h4
 {
+    font-weight: bold;
+    background-color: #eee;
     text-align: left;
     margin-top: 0;
     padding-top:0;
@@ -4608,6 +4610,10 @@ table.detail
     color: #444444;
 }
 
+.edit h4 {
+    color: #444444;
+}
+
 #EditView hr{
     border-color:#abc3d7; 
 }
@@ -7036,7 +7042,10 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 
 .edit508 tr td[scope="col"]
 {
+    color: #888;
     background-color: #eee;
+    border-color: #ccc;
+    white-space: nowrap;
 }
 
 .listViewEmpty{

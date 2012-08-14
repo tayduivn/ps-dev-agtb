@@ -120,25 +120,28 @@ i.icon-arrow-up:before {
 
 .pointer,.pointer.up{
     background-image:  url('../../include/images/tour/arrow.png');
+    background-repeat: no-repeat;
     width: 42px;
     height: 109px;
 }
 
 .pointer.down {
     background-position: 0px 109px;
+    background-position: 0px -109px\9;
 }
 
 
 
 .pointer.up.left {
-    width: 93px\9;
-    height: 95px\9;
-    background:transparent url('../../include/images/tour/arrow_ie.png') no-repeat 0px 100px\9;
     transform:rotate(-45deg);
     -ms-transform:rotate(-45deg); /* IE 9 */
     -moz-transform:rotate(-45deg); /* Firefox */
     -webkit-transform:rotate(-45deg); /* Safari and Chrome */
     -o-transform:rotate(-45deg); /* Opera */
+    width: 93px\0/;
+    height: 95px\0/;
+    background:transparent url('../../include/images/tour/arrow_ie.png') no-repeat 0px 100px\0/;
+    height: 110px \0/IE9;
 
 }
 
@@ -149,10 +152,12 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(45deg); /* Firefox */
     -webkit-transform:rotate(45deg); /* Safari and Chrome */
     -o-transform:rotate(45deg); /* Opera */
-    background-image:  url('../../include/images/tour/arrow_ie.png')\9;
-    background-position: 0px -280px\9;
-    width: 93px\9;
-    height: 95px\9;
+    background-image:  url('../../include/images/tour/arrow_ie.png')\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px -280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
 }
 
 
@@ -162,10 +167,12 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(-45deg); /* Firefox */
     -webkit-transform:rotate(-45deg); /* Safari and Chrome */
     -o-transform:rotate(-45deg); /* Opera */
-    background-image:  url(../../include/images/tour/arrow_ie.png)\9;
-    background-position: 0px -280px\9;
-    width: 93px\9;
-    height: 95px\9;
+    background-image:  url(../../include/images/tour/arrow_ie.png)\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px -280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
 }
 
 .pointer.down.left {
@@ -174,10 +181,12 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(45deg); /* Firefox */
     -webkit-transform:rotate(45deg); /* Safari and Chrome */
     -o-transform:rotate(45deg); /* Opera */
-    background-image:  url(../../include/images/tour/arrow_ie.png)\9;
-    background-position: 0px 280px\9;
-    width: 93px\9;
-    height: 95px\9;
+    background-image:  url(../../include/images/tour/arrow_ie.png)\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px 280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
 }
 
 

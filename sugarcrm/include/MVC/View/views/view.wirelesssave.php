@@ -162,7 +162,7 @@ class ViewWirelesssave extends SugarWirelessView{
 		
         $errors = array();
         foreach ( $this->wl_required_edit_fields() as $field => $displayname ) {
-            if ( strlen($_POST[$field]) <= 0 ) {
+            if ( !isset($_POST[$field]) || strlen($_POST[$field]) <= 0 ) {
                 $errors[] = "{$GLOBALS['app_strings']['ERR_MISSING_REQUIRED_FIELDS']} '$displayname'";
             }
         }

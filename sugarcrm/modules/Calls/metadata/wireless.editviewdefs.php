@@ -34,7 +34,15 @@ $viewdefs['Calls']['EditView'] = array(
                             ),                                  
                            ),
     'panels' => array(
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
+    	array(
+    	    array(
+    	    	'name'=>'name',
+    	    	'displayParams'=>array(
+    	    		'required'=>true,
+    	    		'wireless_edit_only'=>true,
+    	    		),
+    	    	),
+    	    ),
 		array('date_start'),
 		array('direction'),
 	    array('status'),
