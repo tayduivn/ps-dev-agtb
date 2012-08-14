@@ -12,7 +12,7 @@
 @import "reset";
 
 // Core variables and mixins
-@import "fixed_variables"; // Modify this for custom colors, font-sizes, etc
+@import "mobile/fixed_variables"; // Modify this for custom colors, font-sizes, etc
 @import "mixins";
 
 // Grid system and page structure
@@ -22,38 +22,46 @@
 
 // Base CSS
 @import "type";
+@import "type-sugar";
 @import "code";
-@import "forms";
+@import "code-sugar";
+@import "mobile/forms";
 @import "tables";
 
 // Components: common
 @import "font-awesome";
-//@import "font-misc";
-@import "dropdowns";
-@import "wells";
-@import "component-animations";
+@import "font-awesome-sugar";
+@import "mobile/font-awesome";
+//@import "dropdowns";
+//@import "wells";
+//@import "component-animations";
 @import "close";
 
 // Components: Buttons & Alerts
 @import "buttons";
 @import "button-groups";
-@import "alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
+@import "button-groups-sugar";
+//@import "alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
 
 // Components: Nav
 @import "navs";
+@import "navs-sugar";
+@import "mobile/navs";
 @import "navbar";
+@import "mobile/navbar";
 
 // Components: Popovers
-@import "modals";
+//@import "modals";
 
 // Components: Misc
-@import "thumbnails";
-@import "labels";
-@import "progress-bars";
-@import "accordion";
+//@import "thumbnails";
+@import "labels-badges";
+@import "mobile/labels-badges";
+//@import "progress-bars";
+//@import "accordion";
 
 // Sugar
-@import "sugarmobile";
+@import "mobile/sugarmobile";
 
 // Utility classes
 @import "utilities";
