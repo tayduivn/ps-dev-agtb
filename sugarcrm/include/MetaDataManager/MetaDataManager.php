@@ -184,6 +184,28 @@ class MetaDataManager {
 
         return $data;
     }
+    /**
+     * For a specific module get any existing Subpanel Definitions it may have
+     * @param string $moduleName 
+     * @return array
+     */
+    public function getSubpanelDefs($moduleName)
+    {
+        if(file_exists("modules/{$moduleName}/metadata/subpaneldefs.php"))
+        {
+            require("modules/{$moduleName}/metadata/subpaneldefs.php");
+            
+            if(file_exists("custom/modules/{$moduleName}/metadata/subpaneldefs.php"))
+            {
+                require("custom/modules/{$moduleName}/metadata/subpaneldefs.php");
+            }
+            if(isset($layout_defs) && isset($layout_defs[$moduleName]) && isset($layout_defs[$moduleName]['subpanel_setup']))
+            {
+                return $layout_defs[$moduleName]['subpanel_setup'];
+            }            
+        }
+        return array();
+    }
 
     /**
      * This method collects all view data for a module
@@ -220,7 +242,7 @@ class MetaDataManager {
         $data['fields'] = $vardefs['fields'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
-
+        $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;
