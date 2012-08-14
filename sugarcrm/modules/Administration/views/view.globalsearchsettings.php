@@ -89,15 +89,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 
         $showSchedButton = ($defaultEngine != '' && $this->isFTSConnectionValid()) ? TRUE : FALSE;
 
-        // bug 27981 - Add admin panel option for prepending the wildcard
-        // always go with the explicit value, otherwise suggest prepending the wildcard for FTS installations
-        if (isset($GLOBALS['sugar_config']['search_wildcard_infront'])) {
-            $prependWildCard = ($GLOBALS['sugar_config']['search_wildcard_infront'] == TRUE) ? TRUE : FALSE;
-        } else {
-            $prependWildCard = ($defaultEngine != '' && $this->isFTSConnectionValid()) ? TRUE : FALSE;
-        }
-
-        $sugar_smarty->assign("prepend_wildcard", $prependWildCard);
         $sugar_smarty->assign("showSchedButton", $showSchedButton);
         $sugar_smarty->assign("hide_fts_config", $hide_fts_config);
         $sugar_smarty->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
