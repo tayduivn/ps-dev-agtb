@@ -299,6 +299,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     	
     	self::$repWorksheet->best_case = self::$repWorksheet->best_case + 100;
     	self::$repOpp->probability = self::$repOpp->probability + 10;
+    	self::$repOpp->commit_stage = self::$repOpp->probability - 10;
     	
     	$postData = array("amount" => self::$repOpp->amount,
                              "best_case" => self::$repWorksheet->best_case,
@@ -307,6 +308,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                              "id" => self::$repOpp->id,
                              "worksheet_id" => self::$repWorksheet->id,
                              "probability" => self::$repOpp->probability,                             
+                             "commit_stage" => self::$repOpp->commit_stage,
                              "timeperiod_id" => self::$timeperiod->id
                         );
        
@@ -318,6 +320,9 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 		//check to see if the data to the Opportunity table was saved
 		$this->assertEquals($response["reply"][0]["probability"], self::$repOpp->probability, "Opportunity data was not saved.");
 		
+		//check to see if the data to the Opportunity table was saved
+		$this->assertEquals($response["reply"][0]["commit_stage"], self::$repOpp->commit_stage, "Opportunity data (commit_stage) was not saved.");
+
 		//check to see if the data to the Worksheet table was saved
 		$this->assertEquals($response["reply"][0]["best_case"], self::$repWorksheet->best_case, "Worksheet data was not saved.");
 				

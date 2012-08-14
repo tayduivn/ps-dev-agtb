@@ -101,9 +101,6 @@ class ForecastScheduleApi extends ModuleApi {
         				 "timeperiod_id" => $timeperiod_id);
 		}
 
-        //return array('next_offset'=>1, 'records'=>$data);
-
-        $GLOBALS['log']->fatal(var_export($data, true));
         return $data;
     }
 

@@ -94,8 +94,10 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 		$current_module_strings = return_module_language($current_language, 'Forecasts');
 
         if(isset($args['user_id']) && User::isManager($args['user_id'])) {
+            /** @var $user User */
             $user = BeanFactory::getBean('Users', $args['user_id']);
         } elseif(!isset($args['user_id']) && User::isManager($current_user->id)){
+            /** @var $user User */
             $user = $current_user;
         } else {
             return array();
@@ -169,16 +171,17 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 		}
 		
         $default_data["user_id"] = $user->id;
+        $default_data["id"] = $user->id;
         $data[$user->user_name] = $default_data;
 
         require_once("modules/Forecasts/Common.php");
         $common = new Common();
         $common->retrieve_direct_downline($this->user_id);
 
-        foreach($common->my_direct_downline as $reportee_id)
-        {
-            $reportee = new User();
-            $reportee->retrieve($reportee_id);
+        foreach($common->my_direct_downline as $reportee_id) {
+            /** @var $reportee User */
+            $reportee = BeanFactory::getBean('Users', $reportee_id);
+            $default_data['id'] = $reportee_id;
             $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
             $default_data['user_id'] = $reportee_id;
             $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
@@ -253,22 +256,26 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         }
 
         //Add the manager's data as well
-        $user = new User();
-        $user->retrieve($this->user_id);
+        /** @var $user User */
+        $user = BeanFactory::getBean('Users', $this->user_id);
         $ids[$this->user_id] = $user->user_name;
 
         $data = array();
 
         foreach($ids as $id=>$user_name)
         {
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}' AND forecast_type = 'DIRECT' AND user_id = '{$id}' AND deleted = 0 ORDER BY date_modified DESC";
+            $forecast_query = "SELECT id, best_case, likely_case, worst_case
+                                FROM forecasts
+                                WHERE timeperiod_id = '{$this->timeperiod_id}'
+                                    AND forecast_type = 'DIRECT'
+                                    AND user_id = '" . $id .  "'
+                                    AND deleted = 0 ORDER BY date_modified DESC";
             $result = $db->limitQuery($forecast_query, 0, 1);
-            while($row=$db->fetchByAssoc($result))
-            {
+
+            while($row=$db->fetchByAssoc($result)) {
                 $data[$user_name]['best_case'] = $row['best_case'];
                 $data[$user_name]['likely_case'] = $row['likely_case'];
                 $data[$user_name]['worst_case'] = $row['worst_case'];
-                $data[$user_name]['id'] = $row['id'];
                 $data[$user_name]['forecast_id'] = $row['id'];
             }
         }

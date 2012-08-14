@@ -54,7 +54,7 @@ class ForecastManagerWorksheet extends SugarBean
 
 		//save quota
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas', $this->args['quota_id']);
+        $quota = BeanFactory::getBean('Quotas', (isset($this->args['quota_id'])) ? $this->args['quota_id'] : null );
 		$quota->timeperiod_id = $this->args["timeperiod_id"];
 		$quota->user_id = $this->args["user_id"];
         $quota->committed = 1;
@@ -72,8 +72,7 @@ class ForecastManagerWorksheet extends SugarBean
 		$this->recalcQuotas();
 
 		//save worksheet
-		$worksheet  = new Worksheet();
-		$worksheet->retrieve($this->args["worksheet_id"]);
+        $worksheet = BeanFactory::getBean('Worksheet', (isset($this->args['worksheet_id'])) ? $this->args['worksheet_id'] : null);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->args["current_user"];
 		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
