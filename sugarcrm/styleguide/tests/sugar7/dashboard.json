@@ -1,0 +1,55 @@
+[
+  {
+    "label": "left hand home icon active",
+    "selector": ".content",
+    "tests": 
+    [
+        [ "padding-left", "72px" ]
+      , [ "position", "relative" ]
+    ]
+  }
+, {
+    "label": "right dashboard tab panel",
+    "selector": "#dashboard #folded .tab-pane.active",
+    "tests": 
+    [
+        [ "border-left-color", "#CDCCCB" ]
+      , [ "border-left-style", "solid" ]
+      , [ "border-left-width", "3px" ]
+      , [ "color", "#58595B" ]
+      , [ "display", "block" ]
+      , [ "font-size", "12px" ]
+      , [ "line-height", "18px" ]
+      , [ "padding-bottom", "20px" ]
+      , [ "padding-left", "0px" ]
+      , [ "padding-right", "0px" ]
+      , [ "padding-top", "20px" ]
+      , [ "position", "fixed" ]
+      , [ "right", "0px" ]
+      , [ "top", "47px" ]
+    ]
+  }
+, {
+    "label": "left hand home icon active",
+    "selector": ".thumbnav ul li a.active",
+    "tests": 
+    [
+        [ "background-color", "#1F1F1F" ]
+      , [ "background-image", "-moz-linear-gradient(50% 0%,​ #1A1A1A, #262626)" ]
+      , [ "background-repeat", "repeat-x" ]
+      , [ "box-shadow",  "#000000 0px -1px 20px 0px inset,​ #E61718 0px -12px 0px 0px inset,​ rgba(255,​ 255,​ 255,​ 0.1) 0px 1px 0px 0px inset" ]
+      , [ "color", "#FFFFFF" ]
+      , [ "display", "block" ]
+      , [ "font-size", "11px" ]
+      , [ "height", "72px" ]
+      , [ "line-height", "18px" ]
+      , [ "list-style-image ", "none" ]
+      , [ "list-style-position", "outside" ]
+      , [ "list-style-type", "none" ]
+      , [ "text-align", "center" ]
+      , [ "text-decoration", "none" ]
+      , [ "vertical-align ", "middle" ]
+      , [ "width", "70px" ]
+    ]
+  }
+]
