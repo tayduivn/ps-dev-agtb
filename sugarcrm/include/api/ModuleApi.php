@@ -61,40 +61,6 @@ class ModuleApi extends SugarApi {
         );
     }
 
-    /**
-     * Fetches data from the $args array and updates the bean with that data
-     * @param $bean SugarBean The bean to be updated
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     * @return id Bean id
-     */
-    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
-
-        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
-        if ( $errors !== true ) {
-            // There were validation errors.
-            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
-        }
-
-        $bean->save();
-
-        /*
-         * Refresh the bean with the latest data.
-         * This is necessary due to BeanFactory caching.
-         * Calling retrieve causes a cache refresh to occur.
-         */
-
-        $id = $bean->id;
-
-        $bean->retrieve($id);
-
-        /*
-         * Even though the bean is refreshed above, return only the id
-         * This allows loadBean to be run to handle formatting and ACL
-         */
-        return $id;
-    }
-
     public function createRecord($api, $args) {
         $this->requireArgs($args,array('module'));
 
