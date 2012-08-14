@@ -163,6 +163,14 @@
                     if(element.hasChanged("forecast")) {
                         this.toggleIncludeInForecast(element);
                     }
+                    if(element.hasChanged("commit_stage")) {
+                        if(element.get("commit_stage") == '100') {
+                            this._collection.models[index].set("forecast", '1');
+                        } else {
+                            this._collection.models[index].set("forecast", '0');
+                        }
+                        this.toggleIncludeInForecast(element);
+                    }
                 }, this);
             }, this);
         }
