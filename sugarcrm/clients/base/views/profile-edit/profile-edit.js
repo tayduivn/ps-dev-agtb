@@ -74,8 +74,9 @@
         });
     },
     changePassword: function() {
+debugger
         // triggers an event to show the modal
-        this.layout.trigger("app:view:password:editmodal");
+        this.layout.trigger("app:view:password:editmodal", this);
         return false;
     },
     
