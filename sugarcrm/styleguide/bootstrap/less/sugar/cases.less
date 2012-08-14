@@ -1,0 +1,16 @@
+/* Temporary for cases, to be removed when general note preview gets fixed
+-----------------*/
+.layout_Cases #folded {
+    .tab-pane.active {
+        height:50%;
+        overflow:hidden;
+        &>.block {
+            position:relative;
+            height:100%;
+            .card2 {
+                height:100%;
+                overflow:scroll;
+            }
+        }
+    }
+}

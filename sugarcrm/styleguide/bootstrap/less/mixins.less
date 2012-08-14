@@ -81,10 +81,13 @@
 // Placeholder text
 // -------------------------
 .placeholder(@color: @placeholderText) {
-  :-moz-placeholder {
+  &:-moz-placeholder {
     color: @color;
   }
-  ::-webkit-input-placeholder {
+  &:-ms-input-placeholder {
+    color: @color;
+  }
+  &::-webkit-input-placeholder {
     color: @color;
   }
 }
@@ -166,6 +169,8 @@
     color: @textColor;
   }
   // Style inputs accordingly
+  .checkbox,
+  .radio,
   input,
   select,
   textarea {
@@ -312,6 +317,16 @@
           column-gap: @columnGap;
 }
 
+// Optional hyphenation
+.hyphens(@mode: auto) {
+  word-wrap: break-word;
+  -webkit-hyphens: @mode;
+     -moz-hyphens: @mode;
+      -ms-hyphens: @mode;
+       -o-hyphens: @mode;
+          hyphens: @mode;
+}
+
 // Opacity
 .opacity(@opacity) {
   opacity: @opacity / 100;
@@ -417,7 +432,7 @@
 // Horizontal dividers
 // -------------------------
 // Dividers (basically an hr) within dropdowns and nav lists
-.nav-divider() {
+.nav-divider(@top: #e5e5e5, @bottom: @white) {
   // IE7 needs a set width since we gave a height. Restricting just
   // to IE7 to keep the 1px left/right space in other browsers.
   // It is unclear where IE is getting the extra space that we need
@@ -427,14 +442,8 @@
   margin: ((@baseLineHeight / 2) - 1) 1px; // 8px 1px
   *margin: -5px 0 5px;
   overflow: hidden;
-  background-color: #e5e5e5;
-  border-bottom: 1px solid @white;
-}
-
-.dropdownMinWidth(@columnSpan: 3) {
-  float: none; // undo default grid column styles
-  min-width: ((@gridColumnWidth) * @columnSpan) + (@gridGutterWidth * (@columnSpan - 1)) + 1;
-  margin-left: 0; // undo default grid column styles
+  background-color: @top;
+  border-bottom: 1px solid @bottom;
 }
 
 // Button backgrounds
@@ -513,8 +522,6 @@
   margin-left: auto;
   .clearfix();
 }
-
-
 
 // Table columns
 .tableColumns(@columnSpan: 1) {
@@ -636,31 +643,4 @@
 
   }
 
-}
-
-
-.caret-top(@afterLeftCaretPos: 10px, @beforeLeftCaretPos: 9px,@afterRightCaretPos: auto, @beforeRightCaretPos: auto) {
-        &:after {
-            content: '';
-            display: inline-block;
-            border-left:   6px solid transparent;
-            border-right:  6px solid transparent;
-            border-bottom: 6px solid @white;
-            position: absolute;
-            top: -6px;
-            left: @afterLeftCaretPos;
-            right: @afterRightCaretPos;
-        }
-        &:before {
-            content: '';
-            display: inline-block;
-            border-left:   7px solid transparent;
-            border-right:  7px solid transparent;
-            border-bottom: 7px solid #ccc;
-            border-bottom-color: rgba(0,0,0,.2);
-            position: absolute;
-            top: -7px;
-            left: @beforeLeftCaretPos;
-            right: @beforeRightCaretPos;
-        }
 }

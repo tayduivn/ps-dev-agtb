@@ -3,26 +3,23 @@
 
 // Base alert styles
 .alert {
-  padding: 8px 20px 8px 10px;
+  padding: 8px 35px 8px 14px;
   margin-bottom: @baseLineHeight;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
-  background-color: @grayLighter;
-  border: 1px solid @grayLight;
+  background-color: @warningBackground;
+  border: 1px solid @warningBorder;
   .border-radius(4px);
+  color: @warningText;
 }
-.alert [class^=icon-] {
-  margin: 0 5px 0 0;
-}
-.alert,
 .alert-heading {
-  color:  @gray;
+  color: inherit;
 }
 
 // Adjust close link position
 .alert .close {
   position: relative;
   top: -2px;
-  right: -10px;
+  right: -21px;
   line-height: 18px;
 }
 
@@ -32,72 +29,30 @@
 .alert-success {
   background-color: @successBackground;
   border-color: @successBorder;  
-}
-.alert-success,
-.alert-success .alert-heading {
-  color:  darken(@successBackground, 70%);
+  color: @successText;
 }
 .alert-danger,
 .alert-error {
-  background: @errorBackground;
-  border-color: @errorBorder;  
-}
-.alert-danger,
-.alert-error,
-.alert-danger .alert-heading,
-.alert-error .alert-heading {
-  color: darken(@red, 10%);
-}
-.alert-warning {
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
-  border: 1px solid @warningBorder;
-  background-color: @warningBackground;
+  background-color: @errorBackground;
+  border-color: @errorBorder;
+  color: @errorText;
 }
 .alert-info {
   background-color: @infoBackground;
   border-color: @infoBorder;
+  color: @infoText;
 }
-.alert-info,
-.alert-info .alert-heading {
-  color:  darken(@infoBackground, 70%);
-}
-
 
 // Block alerts
 // ------------------------
-
+.alert-block {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
 .alert-block > p,
 .alert-block > ul {
   margin-bottom: 0;
 }
 .alert-block p + p {
   margin-top: 5px;
-}
-
-.alert-top {
-  position: fixed;
-  top: 38px;
-  width: 100%;
-  z-index: 1060;
-  text-align: center;
-}
-.alert-top .alert {  
-  text-align: left;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  max-width: 50%;
-  @shadow: 0 1px 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-  margin:0 auto;
-}
-.alert-top .alert-process {  
-  width: 80px;
-}
-.alert-top .alert:first-child {
-  margin-top: 0;
-}
-.alert-top .alert {
-  margin-top: @baseLineHeight;
-  margin-bottom: 0;
 }

@@ -1,0 +1,44 @@
+/* activity and twitter
+-----------------*/
+
+article {
+  position: relative;
+	display: block;
+  padding: 10px 30px 10px 10px;
+  line-height: @baseLineHeight;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+}
+
+article .avatar {
+  margin-right: 10px;
+  .border-radius(3px);
+}
+
+article p {
+	display: block;
+}
+
+#activity article.imgs p {  
+  margin-left: 36px;
+}
+
+article p:last-child {
+	margin: 0;
+}
+article:nth-child(even) {
+	background-color: lighten(@grayLighter, 1%);
+}
+.results article:nth-child(even), .results article:nth-child(odd) {
+	background-color: transparent;
+	border-bottom-color: @grayDarker;
+}
+
+//from sidecar
+#sActivity article {
+    padding: 10px 45px 10px 0;
+    position: relative !important;
+}
+
+article:hover {
+	background: #e1f0fa;
+}
