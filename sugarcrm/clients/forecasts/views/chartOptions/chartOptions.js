@@ -34,7 +34,7 @@
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
-                self.selectedUser = {id: user.id, "isManager":user.isManager, showOpps: user.showOpps};
+                self.selectedUser = user;
                 this.toggleGroupByFieldVisibility();
             }, this);
         }
@@ -64,6 +64,15 @@
 
         // save the fields for later use
         this.fields[field.name] = field;
+    },
+
+    /**
+     * Override the render to have call the group by toggle
+     *
+     * @private
+     */
+    _render : function() {
+        app.view.View.prototype._render.call(this);
 
         // toggle the visibility of the group by field for the initial render
         this.toggleGroupByFieldVisibility();
