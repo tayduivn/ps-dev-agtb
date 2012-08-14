@@ -259,6 +259,7 @@ class UnifiedSearchApi extends SugarApi {
                 }
             }
         }
+
         //everything is groovy for FTS, get the FTS Engine Name from the conig
         return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
     }
@@ -273,10 +274,16 @@ class UnifiedSearchApi extends SugarApi {
     protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineElastic $searchEngine, array $options)
     {
         $options['append_wildcard'] = 1;
+    
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
         $returnedRecords = array();
         foreach ( $results as $result ) {
             $record = $result->getBean();
+            // if we cant' get the bean skip it
+            if(!($record instanceof SugarBean))
+            {
+                continue;
+            }
             $module = $record->module_dir;
             // Need to override the filter arg so that it looks like something formatBean expects
             if ( !empty($options['fieldFilters'][$module]) ) {
