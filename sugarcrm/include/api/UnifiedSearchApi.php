@@ -200,7 +200,7 @@ class UnifiedSearchApi extends SugarApi {
 
     
         // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
-        $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), true);
+        $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
 
         if ( $searchEngine instanceOf SugarSearchEngine) {
             $options['resortResults'] = true;
@@ -275,8 +275,8 @@ class UnifiedSearchApi extends SugarApi {
         $options['append_wildcard'] = 1;
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
         $returnedRecords = array();
-        foreach ( $results as $elasticResult ) {
-            $record = $elasticResult->getBean();
+        foreach ( $results as $result ) {
+            $record = $result->getBean();
             $module = $record->module_dir;
             // Need to override the filter arg so that it looks like something formatBean expects
             if ( !empty($options['fieldFilters'][$module]) ) {
@@ -290,7 +290,7 @@ class UnifiedSearchApi extends SugarApi {
             $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
             $formattedRecord['_module'] = $module;
             // The SQL based search engine doesn't know how to score records, so set it to 1
-            $formattedRecord['_score'] = $elasticResult->getScore();
+            $formattedRecord['_score'] = $result->getScore();
             $returnedRecords[] = $formattedRecord;
         }
 
