@@ -40,14 +40,11 @@
                 error: function() {
                     app.alert.dismiss('login');
                     $('#content').show();
-                    console.log("login failed!");
                 },
                 success: function() {
-                    console.log("logged in successfully!");
                     $(".navbar").show();
                     var app = self.app;
                     app.events.on('app:sync:complete', function() {
-                        console.log("sync in successfully!");
                         app.alert.dismiss('login');
                         $('#content').show();
                     });

@@ -45,7 +45,7 @@
         appId:'portal',
         env:'dev',
         debugSugarApi:false,
-        logLevel:'TRACE',
+        logLevel:'FATAL',
         logWriter:'ConsoleWriter',
         logFormatter:'SimpleFormatter',
         serverUrl:'{/literal}{$siteURL}{literal}/rest/v10',
