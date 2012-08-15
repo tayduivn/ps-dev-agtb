@@ -285,12 +285,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $rep2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$reportee['user']->id)));
 
         // create a rollup forecast for the new manager
-        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, self::$reportee['user']);
-        $tmpForecast->best_case = self::$reportee['forecast']->best_case + $rep1['forecast']->best_case + $rep2['forecast']->best_case;
-        $tmpForecast->worst_case = self::$reportee['forecast']->worst_case + $rep1['forecast']->worst_case + $rep2['forecast']->worst_case;
-        $tmpForecast->likely_case = self::$reportee['forecast']->likely_case + $rep1['forecast']->likely_case + $rep2['forecast']->likely_case;
-        $tmpForecast->forecast_type = "ROLLUP";
-        $tmpForecast->save();
+        $tmpForecast = SugarTestForecastUtilities::createManagerRollupForecast(self::$reportee, $rep1, $rep2);
 
         // create a worksheet for the new managers user
         $tmpWorksheet = SugarTestWorksheetUtilities::createWorksheet();
