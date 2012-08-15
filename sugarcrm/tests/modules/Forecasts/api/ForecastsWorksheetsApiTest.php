@@ -42,6 +42,16 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 	protected static $reportee;
 	
 	/**
+	 * @var User Secondary Manager user for "new user" test
+	 */
+	protected static $manager2;
+	
+	/**
+	 * @var User Secondary Reportee user to make manager2 a manager
+	 */
+	protected static $reportee2;
+	
+	/**
 	 * @var Timeperiod Timeperiod ID
 	 */
 	protected static $timeperiod;
@@ -103,6 +113,14 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         self::$reportee = SugarTestUserUtilities::createAnonymousUser();
         self::$reportee->reports_to_id = self::$manager->id;
         self::$reportee->save();
+        
+        self::$manager2 = SugarTestUserUtilities::createAnonymousUser();
+        self::$manager2->reports_to_id = self::$manager->id;
+        self::$manager2->save();
+        
+        self::$reportee2 = SugarTestUserUtilities::createAnonymousUser();
+        self::$reportee2->reports_to_id = self::$manager2->id;
+        self::$reportee2->save();
         
         //create timeperiod
         self::$timeperiod = new TimePeriod();
@@ -355,5 +373,38 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 		
 		//check to see if the Quota was auto calculated
 		$this->assertEquals($response["reply"][0]["quota"], self::$managerQuotaRollup->amount - self::$repQuota->amount, "Quota data was not auto calculated.");
+     }
+     
+     /**
+     * @group forecastapi
+     */
+     public function testForecastWorksheetQuotaRecalcReps(){
+    	  
+    	$postData = array("amount" => 0,
+                             "quota" => 100000,
+                             "quota_id" => '',
+                             "best_case" => 0,
+                             "likely_case" => 0,
+                             "worst_case" => 0,
+                             "best_adjusted" => 0,
+                             "likely_adjusted" => 0,
+                             "worst_adjusted" => 0,
+                             "forecast" => 0,
+                             "forecast_id" => '',
+                             "id" => self::$manager2->id,
+                             "worksheet_id" => '',
+                             "show_opps" => false,
+                             "name" => self::$manager2->first_name . ' ' . self::$manager2->last_name,
+                             "user_id" => self::$manager2->id,
+                             "current_user" => self::$manager->id,
+                             "timeperiod_id" => self::$timeperiod->id
+                        );
+        $response = $this->_restCall("ForecastManagerWorksheets/" . self::$manager2->id, json_encode($postData), "PUT");
+						
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager2->id . "&timeperiod_id=" . self::$timeperiod->id);
+		
+		//check to see if the Quota was auto calculated
+		$this->assertEquals($response["reply"][0]["quota"], 100000, "Quota data was not auto calculated.");
      }
 }
