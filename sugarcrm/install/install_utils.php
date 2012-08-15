@@ -860,7 +860,24 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
+    //BEGIN SUGARCRM flav=ent ONLY
+    handlePortalConfig();
+    //END SUGARCRM flav=ent ONLY
+    ////    END $sugar_config
+    ///////////////////////////////////////////////////////////////////////////////
+    return $bottle;
+}
+
 //BEGIN SUGARCRM flav=ent ONLY
+/**
+ * handles portal config creation
+ */
+function handlePortalConfig()
+{
+    if (!isset($sugar_config)) {
+        global $sugar_config;
+    }
+
     $portalConfig = array(
         'appId' => 'SupportPortal',
         'env' => 'dev',
@@ -876,18 +893,18 @@ function handleSugarConfig() {
                 'target' => '#alert'
             )
         ),
-        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
+        'siteUrl' => $sugar_config['site_url'],
         'unsecureRoutes' => array('signup', 'error'),
         'clientID' => 'support_portal'
     );
     $configString = json_encode($portalConfig);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
     sugar_file_put_contents('portal2/config.js', $portalJSConfig);
-//END SUGARCRM flav=ent ONLY
-    ////    END $sugar_config
-    ///////////////////////////////////////////////////////////////////////////////
-    return $bottle;
+
 }
+//END SUGARCRM flav=ent ONLY
+
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
  */
@@ -914,6 +931,16 @@ RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
+//BEGIN SUGARCRM flav=ent ONLY
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
+</IfModule>
+//END SUGARCRM flav=ent ONLY
 # END SUGARCRM RESTRICTIONS
 EOQ;
 
@@ -934,14 +961,7 @@ $cache_headers = <<<EOQ
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
-<IfModule mod_rewrite.c>
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
-    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-</IfModule>
+
 EOQ;
     if(file_exists($htaccess_file)){
         $fp = fopen($htaccess_file, 'r');

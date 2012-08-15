@@ -26,7 +26,8 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- *
+ * Indexer job for Search
+ * @api
  */
 class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 {
@@ -140,6 +141,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return $this;
         }
+
         //Create the index on the server side
         $this->SSEngine->createIndex($deleteExistingData);
 
@@ -148,6 +150,13 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         //Remove any consumers that may be set to run
         $this->removeExistingFTSConsumers();
+
+        // clear flag
+        $admin = new Administration();
+        $settings = $admin->retrieveSettings();
+        if (!empty($settings->settings['info_fts_index_done'])) {
+            $admin->saveSetting('info', 'fts_index_done', 0);
+        }
 
 
         $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
@@ -423,6 +432,14 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         if(self::isFTSIndexScheduleCompleted())
         {
             $stats = self::getStatistics();
+
+            // indexing completed, set flag to 1
+            $admin = new Administration();
+            $settings = $admin->retrieveSettings();
+            if (empty($settings->settings['info_fts_index_done'])) {
+                $admin->saveSetting('info', 'fts_index_done', 1);
+            }
+
             $GLOBALS['log']->fatal("FTS Indexing completed with the following statistcis: " . var_export($stats, TRUE));
         }
 

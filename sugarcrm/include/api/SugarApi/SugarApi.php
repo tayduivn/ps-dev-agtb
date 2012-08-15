@@ -64,7 +64,7 @@ abstract class SugarApi {
         }
         elseif(!empty($data)) {
             // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
-            $data = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES);
+            $data = html_entity_decode($data, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
         }
 
         return $data;
@@ -80,7 +80,7 @@ abstract class SugarApi {
             }
             elseif(!empty($data) && !empty($value)) {
                 // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
-                $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES);
+                $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
             }
             else {
                 $data[$key] = $value;
@@ -109,6 +109,40 @@ abstract class SugarApi {
         }
 
         return $bean;
+    }
+
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $bean SugarBean The bean to be updated
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return id Bean id
+     */
+    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
+
+        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
+        if ( $errors !== true ) {
+            // There were validation errors.
+            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
+        }
+
+        $bean->save();
+
+        /*
+         * Refresh the bean with the latest data.
+         * This is necessary due to BeanFactory caching.
+         * Calling retrieve causes a cache refresh to occur.
+         */
+
+        $id = $bean->id;
+
+        $bean->retrieve($id);
+
+        /*
+         * Even though the bean is refreshed above, return only the id
+         * This allows loadBean to be run to handle formatting and ACL
+         */
+        return $id;
     }
 
     /**

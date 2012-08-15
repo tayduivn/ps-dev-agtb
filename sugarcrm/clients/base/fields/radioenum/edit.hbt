@@ -1,9 +1,4 @@
-<div class="row-fluid control-group">
-    <div class="span2">{{label}}</div>
-    <div class="span10">
         {{#eachOptions options}}
         <input type="radio" name="{{../name}}" value="{{this}}" {{#eq this ../value}}SELECTED{{/eq}}>{{this}}</label>
         {{/eachOptions}}
         <p class="help-block"></p>
-    </div>
-</div>

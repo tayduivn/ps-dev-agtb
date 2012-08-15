@@ -1,12 +1,13 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-		<meta http-equiv="x-ua-compatible" content="IE=8">
+        <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
 
         <!-- Third party library scripts -->
 		<script src="../sidecar/lib/jquery/jquery.min.js"></script>
         <script src="../sidecar/lib/jquery/jquery.iframe.transport.js"></script>
+        <script src='../sidecar/lib/jquery/jquery.placeholder.min.js'></script>
         <script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="../sidecar/lib/backbone/underscore.js"></script>
 		<script src="../sidecar/lib/backbone/backbone.js"></script>
@@ -20,6 +21,7 @@
 		<!-- App Scripts -->
         <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
 		<script src='../sidecar/src/app.js'></script>
+        <script src='../sidecar/src/utils/date.js'></script>
         <script src='../sidecar/src/utils/utils.js'></script>
 		<script src='../sidecar/src/core/cache.js'></script>
         <script src="../sidecar/src/core/events.js"></script>
@@ -38,6 +40,7 @@
 		<script src='config.js'></script>
 		<script src='../sidecar/src/data/bean.js'></script>
 		<script src='../sidecar/src/data/bean-collection.js'></script>
+		<script src='../sidecar/src/data/mixed-bean-collection.js'></script>
         <script src='../sidecar/src/data/data-manager.js'></script>
 		<script src='../sidecar/src/data/validation.js'></script>
         <script src='../sidecar/src/view/hbt-helpers.js'></script>
@@ -81,7 +84,7 @@
 
     </head>
     <body>
-    	<div id="portal">
+    	<div>
 			<div id="sidecar">
                 <div id="alert" class="alert-top">
 
@@ -92,9 +95,16 @@
                 <div id="subnav">
 
                 </div>
+
                 <div id="content">
-                    
+                    <div class="alert-top">
+                        <div class="alert alert-process">
+                            <strong>Loading</strong>&#8230;
+                            <img style="float:right" src="lib/twitterbootstrap/img/throbber.gif">
+                        </div>
+                    </div>
                 </div>
+
                 <div id="footer">
 
                 </div>

@@ -23,7 +23,7 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
-        if (!app.api.isAuthenticated()) return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
@@ -53,8 +53,9 @@
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
-        mlist = app.metadata.getDelimitedModuleList(',', true);
+        mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
+
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);

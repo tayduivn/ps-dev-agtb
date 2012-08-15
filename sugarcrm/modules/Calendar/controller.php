@@ -46,40 +46,6 @@ class CalendarController extends SugarController
         $module = $this->currentBean->module_dir;
         $bean = $this->currentBean;
         
-        if (empty($_REQUEST['edit_all_recurrences'])) {
-        
-            $repeat_fields = array('type', 'interval', 'count', 'until', 'dow', 'parent_id');
-            foreach ($repeat_fields as $suffix) {
-                unset($_POST['repeat_' . $suffix]);
-            }    
-                        
-        }else if (!empty($_REQUEST['repeat_type']) && !empty($_REQUEST['date_start'])) {
-        
-            $params = array(
-                    'type' => $_REQUEST['repeat_type'],
-                    'interval' => $_REQUEST['repeat_interval'],
-                    'count' => $_REQUEST['repeat_count'],    
-                    'until' => $_REQUEST['repeat_until'],    
-                    'dow' => $_REQUEST['repeat_dow'],            
-            );
-                
-            $repeatArr = CalendarUtils::build_repeat_sequence($_REQUEST['date_start'], $params);            
-            $limit = SugarConfig::getInstance()->get('calendar.max_repeat_count', 1000);
-            
-            if (count($repeatArr) > ($limit - 1)) {
-                ob_clean();
-                $jsonData = array(
-                    'access' => 'yes',
-                    'limit_error' => 'true',
-                    'limit' => $limit,                    
-                );
-                $this->view_object_map['jsonData'] = $jsonData;
-                return;    
-            }                                    
-        }
-        
-        
-        
         $path = "modules/{$bean->module_dir}/{$bean->object_name}FormBase.php";
         if (!file_exists($path)) {
             $GLOBALS['log']->fatal("File {$bean->object_name}FormBase.php doesn't exist");
@@ -96,31 +62,33 @@ class CalendarController extends SugarController
         }
         
         $formBase = new $FBObjectName();
+        
+        $isRecurring = false;
+        if ($formBase->prepareRecurring()) {
+            if ($limit = $formBase->checkRecurringLimitExceeded()) {
+                $this->view_object_map['jsonData'] = $jsonData = array(
+                    'access' => 'yes',
+                    'limit_error' => 'true',
+                    'limit' => $limit,
+                );
+                return;
+            }
+            $isRecurring = true;
+        }
+        
         $bean = $formBase->handleSave('', false, false);
-        unset($_REQUEST['send_invites'], $_POST['send_invites']); // prevent invites sending for recurring activities
 
-        if ($record = $bean->id) {    
-                        
-            if ($module == "Meetings" || $module == "Calls") {
-                if (!empty($_REQUEST['edit_all_recurrences'])) {
-                    CalendarUtils::markRepeatDeleted($bean);
-                }
-                if (isset($repeatArr) && is_array($repeatArr) && count($repeatArr) > 0) {
-                    $repeatCreated = CalendarUtils::save_repeat_activities($bean, $repeatArr);
-                }
-            }    
-                    
-            $bean->retrieve($record);                                
-            $jsonData = CalendarUtils::get_sendback_array($bean);    
-                    
-            if (isset($repeatCreated) && is_array($repeatCreated)) {
-                $jsonData = array_merge($jsonData, array('repeat' => $repeatCreated));
+        if ($record = $bean->id) {
+            $bean->retrieve($record);
+            $jsonData = CalendarUtils::getBeanDataArray($bean);    
+            
+            if ($isRecurring) {
+                $jsonData = array_merge($jsonData, array('repeat' => $formBase->getRecurringCreated()));
             }
             
             if (!empty($_REQUEST['edit_all_recurrences'])) {
                 $jsonData['edit_all_recurrences'] = 'true';
             }
-                
         } else {
             $jsonData = array(
                 'access' => 'no',
@@ -145,6 +113,9 @@ class CalendarController extends SugarController
         $this->view_object_map['currentModule'] = $this->currentBean->module_dir;
         $this->view_object_map['currentBean'] = $this->currentBean;    
 
+        $editAllRecurrences = isset($_REQUEST['edit_all_recurrences']) ? $_REQUEST['edit_all_recurrences'] : false;
+        $dateStart = isset($_REQUEST['date_start']) ? $_REQUEST['date_start'] : false;
+        $this->view_object_map['repeatData'] = CalendarUtils::getRepeatData($this->currentBean, $editAllRecurrences, $dateStart);
     }
     
     /**
@@ -155,7 +126,7 @@ class CalendarController extends SugarController
     {
         $this->view = 'json';
         
-        $commit = true;                
+        $commit = true;
         
         if (!$this->retrieveCurrentBean('Save')) {
             return;
@@ -166,12 +137,12 @@ class CalendarController extends SugarController
         $dateField = "date_start";
         if ($this->currentBean->module_dir == "Tasks") {
             $dateField = "date_due";
-        }            
+        }
 
         if (!empty($_REQUEST['calendar_style']) && $_REQUEST['calendar_style'] == "basic") {
-            list($tmp, $time) = explode(" ", $this->currentBean->$dateField);            
+            list($tmp, $time) = explode(" ", $this->currentBean->$dateField);
             list($date, $tmp) = explode(" ", $_REQUEST['datetime']);
-            $_REQUEST['datetime'] = $date . " " . $time;            
+            $_REQUEST['datetime'] = $date . " " . $time;
         }
         $_POST[$dateField] = $_REQUEST['datetime'];
         
@@ -191,7 +162,7 @@ class CalendarController extends SugarController
             $this->currentBean->save();        
             $this->currentBean->retrieve($_REQUEST['record']);        
                 
-            $this->view_object_map['jsonData'] = CalendarUtils::get_sendback_array($this->currentBean);
+            $this->view_object_map['jsonData'] = CalendarUtils::getBeanDataArray($this->currentBean);
         }    
     }
     

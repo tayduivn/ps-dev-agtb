@@ -33,7 +33,7 @@ require_once 'include/api/SugarApi/RestService.php';
 
 class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    
+
     private $_kb =null;
 
     public function setUp()
@@ -41,9 +41,8 @@ class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['app_strings'] = return_application_language('en_us');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'KBDocuments');
-        
         $this->_api = new RestService();
-
+        SugarTestHelper::setUp('beanList');
     }
 
     public function tearDown()
@@ -72,13 +71,14 @@ class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
 
         $data = ApiHelper::getHelper($this->_api,$this->_kb)->formatForApi($this->_kb);
-        
+
         // Make sure a KBDocument with no attachements returns no values
         $this->assertEquals(0,count($data['attachment_list']));
 
         // Add a KBDocument Revision, and a document revision to it.
         $this->_kb->load_relationship('revisions');
         $this->_docrev = BeanFactory::newBean('DocumentRevisions');
+        $this->assertInstanceOf("SugarBean", $this->_docrev);
         $this->_docrev->change_log = 'Created document revision for KBApiHelper Unit Test';
         $this->_docrev->doc_type = 'Sugar';
         $this->_docrev->revision = '1';

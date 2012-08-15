@@ -57,6 +57,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->__construct( {$view} , {$moduleName} , {$packageName} )" ) ;
+        
+        // set the client
+        $this->client = $client;
 
         $view = strtolower ( $view ) ;
 
@@ -201,12 +204,12 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     function getAvailableFields ()
     {
-
-    	// Obtain the full list of valid fields in this module
+        // Obtain the full list of valid fields in this module
     	$availableFields = array () ;
         foreach ( $this->_fielddefs as $key => $def )
         {
-            if ( GridLayoutMetaDataParser::validField ( $def,  $this->_view ) || isset($this->_originalViewDef[$key]) )
+            
+            if ( $this->isValidField($key, $def) || isset($this->_originalViewDef[$key]) )
             {
                 //If the field original label existing, we should use the original label instead the label in its fielddefs.
             	if(isset($this->_originalViewDef[$key]) && is_array($this->_originalViewDef[$key]) && isset($this->_originalViewDef[$key]['label'])){
@@ -238,13 +241,25 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         
         //eggsurplus: Bug 10329 - sort on intuitive display labels
         //sort by translatedLabel
-        function cmpLabel($a, $b) 
-        {
-            return strcmp($a["translatedLabel"], $b["translatedLabel"]);
-        }
-        usort($availableFields , 'cmpLabel');
+        // See cmpLabel() method
 
+        usort($availableFields , array($this, 'cmpLabel'));
         return $availableFields ;
+    }
+    
+    /**
+     * Compares translated label for sorting. Originally, this function was in
+     * the getAvailableFields() method but was throwing "cannot redefine function" 
+     * errors in some cases. Moved to its own method to eliminate that.
+     * 
+     * eggsurplus: Bug 10329 - sort on intuitive display labels
+     * 
+     * @param array $a The first sort side
+     * @param array $b The second sort side
+     * @return int -1, 0 or 1 based on result of strcmp() function call
+     */
+    protected function cmpLabel($a, $b) {
+        return strcmp($a["translatedLabel"], $b["translatedLabel"]);
     }
 
     function getPanelDependency ( $panelID )
@@ -895,6 +910,17 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      */
     public function getFieldsInPanel($targetPanel) {
         return iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->_viewdefs['panels'][$targetPanel])));
+    }
+    
+    /**
+     * Utility method that allows delegation of validation to child objects
+     * 
+     * @param stirng $key The name of the field to check - used by child validators
+     * @param array $def The field defs
+     * @return bool
+     */
+    protected function isValidField($key, $def) {
+        return GridLayoutMetaDataParser::validField ( $def, $this->_view );
     }
 }
 

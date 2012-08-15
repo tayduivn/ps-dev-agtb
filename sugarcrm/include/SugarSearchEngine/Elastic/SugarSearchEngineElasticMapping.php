@@ -23,7 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
 
-
+/**
+ * Module mapping for Elastica
+ */
 class SugarSearchEngineElasticMapping
 {
     /**

@@ -13,9 +13,11 @@
         // Load the search results route.
         app.router.route("search/:query", "search", function(query) {
             app.controller.loadView({
+                mixed: true,
                 module: "Search",
                 layout: "search",
-                query: query
+                query: query,
+                skipFetch: true
             });
         });
 
@@ -78,7 +80,7 @@
         return true;
     };
 
-    app.view.Field = app.view.Field.extend({
+    app.view.SupportPortalField = app.view.Field.extend({
         /**
          * Handles how validation errors are appended to the fields dom element
          *
@@ -101,7 +103,7 @@
 
             // Remove previous exclamation then add back.
             this.$('.add-on').remove();
-            this.$('.controls').find('input').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            this.$('.controls').find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
         }
     });
 
@@ -209,7 +211,7 @@
                     field: fileField,
                     success: function() {
                         filesToUpload--;
-                        if (filesToUpload==0) {
+                        if (filesToUpload===0) {
                             app.alert.dismiss('upload');
                             if (callbacks.success) callbacks.success();
                         }

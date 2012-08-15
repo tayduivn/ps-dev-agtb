@@ -27,33 +27,25 @@
     initialize: function(options) {
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
-        this.moduleListSingular = app.lang.getAppListStrings("moduleListSingular");
+        this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
-
     /**
      * Uses query in context and fires a search request thereafter rendering
      */
-    _renderHtml: function() {
+    _render: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
-        self.fireSearchRequest(function(data) {
+        self.fireSearchRequest(function(collection) {
             // Add the records to context's collection
-            if(data && data.records && data.records.length) {
-                self.updateCollection(data);
-                app.view.View.prototype._renderHtml.call(self);
+            if(collection && collection.length) {
+                app.view.View.prototype._render.call(self);
                 self.renderSubnav();
             } else {
                 self.renderSubnav(app.lang.getAppString('LNK_SEARCH_NO_RESULTS'));
             }
         });
     },
-    /**
-     * Updates the collection with search results.
-     */
-    updateCollection: function(data) {
-        this.collection.add(data.records, {silent: true});
-        this.collection.next_offset = this.nextOffset = data.next_offset ? data.next_offset : -1;
-    },
+
     /**
      * Renders subnav based on search message appropriate for query term.
      */
@@ -64,30 +56,40 @@
             });
         }
     },
+
     /**
-     * Helper to call api.search
+     * Uses MixedBeanCollection to fetch search results.
      */
     fireSearchRequest: function (cb, offset) {
-        var mlist = '', self = this, params;
-        mlist = app.metadata.getDelimitedModuleList(',', true);
-        params = {q: self.lastQuery, moduleList: mlist, max_num: app.config.maxQueryResult};
-        if (offset) params.offset = offset;
-
-        app.api.search(params, {
-            success:function(data) {
-                cb(data);
+        var mlist = null, self = this, options;
+        mlist = app.metadata.getModuleNames(true); // visible
+        options = {
+            query: self.lastQuery, 
+            success:function(collection) {
+                cb(collection);
             },
+            moduleList: mlist,
             error:function(error) {
-                cb(null); // dismiss the alert
-                app.error.handleHttpError(error, self);
-                app.logger.error("Failed to fetch search results " + this + "\n" + error);
+                cb(null); // lets callback know to dismiss the alert
             }
-        });
+        };
+        if (offset) options.offset = offset;
+        this.collection.fetch(options);
     },
-    bindDataChange: function() {
-        if (this.collection) {
-            this.collection.on("reset", this.render, this);
-        }
+    /**
+     * Show more search results
+     */
+    showMoreResults: function() {
+        var self = this, options = {};
+        app.alert.show('show_more_search_results', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        options.add = true;
+        options.success = function() {
+            app.alert.dismiss('show_more_search_results');
+            console.log(self.collection);
+            app.view.View.prototype._render.call(self);
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
     },
     gotoDetail: function(evt) {
         var href = this.$(evt.currentTarget).parent().parent().attr('href');
@@ -128,24 +130,5 @@
     },
     removePointer: function(evt) {
         this.$(evt.currentTarget).css('cursor', 'none');
-    },
-    /**
-     * Show more search results
-     */
-    showMoreResults: function() {
-        var self = this;
-        app.alert.show('show_more_search_results', {level: 'process', title: 'Loading'});
-
-        self.fireSearchRequest(function(data) {
-            app.alert.dismiss('show_more_search_results');
-
-            // Add the records to context's collection
-            if(data && data.records && data.records.length) {
-                self.updateCollection(data);
-                app.view.View.prototype.render.call(self);
-                self.renderSubnav();
-            } 
-        }, this.collection.next_offset);
     }
-
 })

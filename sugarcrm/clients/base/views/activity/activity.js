@@ -47,7 +47,7 @@
     },
     showMoreRecords: function(evt) {
         var self = this, options;
-        app.alert.show('show_more_records', {level:'process', title:'Loading'});
+        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -67,5 +67,12 @@
         };
         options.limit = this.limit;
         this.collection.paginate(options);
+    },
+    _render: function(){
+        // Bug 54597 activity view not respecting list ACL
+        var oViewName = this.name;
+        this.name = 'list';
+        app.view.View.prototype._render.call(this);
+        this.name = oViewName;
     }
 })

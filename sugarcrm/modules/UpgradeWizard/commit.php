@@ -293,6 +293,29 @@ eoq;
 				set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
          }
 		 //END COPY NEW FILES INTO TARGET INSTANCE
+    
+        // 6.6 metadata enhancements for portal and wireless, should only be 
+        // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
+        // handled AFTER inclusion of the upgrade package files
+        if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
+            if (version_compare($sugar_version, '6.6.0') == -1 && version_compare($manifest['version'], '6.6.0', '>=')) {
+                if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
+                    set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
+                    require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+                    
+                    // Get the sidecar metadata upgrader
+                    $smdUpgrader = new SidecarMetaDataUpgrader();
+                    
+                    // Run the upgrader
+                    $smdUpgrader->upgrade();
+                    
+                    // Reset the progress
+                    set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','done');
+                }
+            }
+        }
+        // END sidecar metadata updates
+
     ///////////////////////////////////////////////////////////////////////////////
 	////	HANDLE POSTINSTALL SCRIPTS
 	logThis('Starting post_install()...');
@@ -413,9 +436,6 @@ $from_dir = remove_file_extension($install_file) . "-restore";
 logThis('call addNewSystemTabsFromUpgrade(' . $from_dir . ')');
 addNewSystemTabsFromUpgrade($from_dir);
 logThis('finished addNewSystemTabsFromUpgrade');
-
-//run fix on dropdown lists that may have been incorrectly named
-//fix_dropdown_list();
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	REGISTER UPGRADE
