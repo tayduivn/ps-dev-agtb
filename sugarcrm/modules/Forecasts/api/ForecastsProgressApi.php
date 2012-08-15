@@ -44,7 +44,6 @@ class ForecastsProgressApi extends ModuleApi
     protected $likelyAmount;
 	protected $should_rollup;
 	protected $quotaData;
-	protected $_loaded;
     protected $opportunity;
 
 
@@ -147,6 +146,76 @@ class ForecastsProgressApi extends ModuleApi
    		return $amountSum;
    	}
 
+    /**
+     * pulls the best amount and sums it from the worksheet
+     *
+     * @param null $user_id
+     * @param null $timeperiod_id
+     */
+    protected function getManagerBestAmount( $user_id = NULL, $timeperiod_id = NULL)
+    {
+        global $current_user;
+
+        $db = DBManagerFactory::getInstance();
+
+        if ( is_null($user_id) ) {
+      		$user_id = $current_user->id;
+        }
+
+        $worksheet_query = "select sum(" . db_convert("best_case","IFNULL",array(0)).") best_value";
+        $worksheet_query .= " from worksheet wt ";
+        $worksheet_query .= " LEFT JOIN users us ON wt.related_id=us.id";
+        $worksheet_query .= " where wt.related_forecast_type = 'Direct'";
+        $worksheet_query .= " AND wt.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
+        $worksheet_query .= " AND wt.user_id = " . $GLOBALS['db']->quoted($user_id);
+        $worksheet_query .= " AND (us.id = " . $db->quoted($user_id);
+        $worksheet_query .= " OR us.reports_to_id = " . $db->quoted($user_id) . " ) ";
+        $worksheet_query .= " and wt.deleted=0";
+
+        $worksheet_result = $db->query($worksheet_query);
+        $worksheet_data =$db->fetchByAssoc($worksheet_result);
+        if (!empty($worksheet_data['best_value'])) {
+            return $worksheet_data['best_value'];
+        }
+
+        return 0;
+    }
+
+    /**
+     * pulls the likely amount and sums it from the worksheet
+     *
+     * @param null $user_id
+     * @param null $timeperiod_id
+     */
+    protected function getManagerLikelyAmount( $user_id = NULL, $timeperiod_id = NULL)
+    {
+        global $current_user;
+
+        $db = DBManagerFactory::getInstance();
+
+        if ( is_null($user_id) ) {
+      		$user_id = $current_user->id;
+        }
+
+        $worksheet_query = "select sum(" . db_convert("likely_case","IFNULL",array(0)).") likely_value";
+        $worksheet_query .= " from worksheet wt ";
+        $worksheet_query .= " LEFT JOIN users us ON wt.related_id=us.id";
+        $worksheet_query .= " where wt.related_forecast_type = 'Direct'";
+        $worksheet_query .= " AND wt.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
+        $worksheet_query .= " AND wt.user_id = " . $GLOBALS['db']->quoted($user_id);
+        $worksheet_query .= " AND (us.id = " . $db->quoted($user_id);
+        $worksheet_query .= " OR us.reports_to_id = " . $db->quoted($user_id) . " ) ";
+        $worksheet_query .= " and wt.deleted=0";
+
+        $worksheet_result = $db->query($worksheet_query);
+        $worksheet_data =$db->fetchByAssoc($worksheet_result);
+        if (!empty($worksheet_data['likely_value'])) {
+            return $worksheet_data['likely_value'];
+        }
+
+        return 0;
+    }
+
        /**
       	 * Get the total amount of likely_case for the given user and timeperiod.  Defaults to the current user
       	 * and current timeperiod.
@@ -160,6 +229,10 @@ class ForecastsProgressApi extends ModuleApi
       		global $current_user;
       		$revenue = 0;
             $db = DBManagerFactory::getInstance();
+
+            if($should_rollup) {
+                return $this->getManagerLikelyAmount($user_id, $timeperiod_id);
+            }
 
       		if ( is_null($user_id) ) {
       			$user_id = $current_user->id;
@@ -247,10 +320,6 @@ class ForecastsProgressApi extends ModuleApi
 	 */
 	protected function loadProgressData( $args )
 	{
-		if ( $this->_loaded ) {
-			return;
-		}
-		$this->_loaded = true;
 
 		$this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
 
@@ -259,9 +328,17 @@ class ForecastsProgressApi extends ModuleApi
 		if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
 		}
-		
-		$forecast           = new Forecast();
-		$this->forecastData = $forecast->getForecastForUser($this->user_id, $this->timeperiod_id, $this->should_rollup);
+
+
+        if($this->should_rollup) {
+            $this->forecastData = array (
+                'likely_case' => $this->getManagerLikelyAmount($this->user_id, $this->timeperiod_id),
+                'best_case' => $this->getManagerBestAmount($this->user_id, $this->timeperiod_id)
+            );
+        } else {
+            $forecast           = new Forecast();
+            $this->forecastData = $forecast->getForecastForUser($this->user_id, $this->timeperiod_id, $this->should_rollup);
+        }
 
 		$quota           = new Quota();
 		$this->quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id, $this->should_rollup);
@@ -332,14 +409,12 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getQuota( $api, $args )
 	{
-		$this->loadProgressData($args);
         return isset($this->quotaData["amount"]) ? $this->quotaData["amount"] :  0;
 	}
 
 
 	public function getLikelyToQuota( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		$likely = $this->forecastData["likely_case"];
 		$quota  = $this->getQuota($api, $args);
@@ -350,7 +425,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getBestToQuota( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		$best  = $this->forecastData["best_case"];
 		$quota = $this->getQuota($api, $args);
@@ -361,7 +435,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getLikelyToClose( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		$likely = $this->forecastData["likely_case"];
 		$closed = $this->getClosed($api, $args);
@@ -372,7 +445,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getBestToClose( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		$best = $this->forecastData["best_case"];
 		$closed = $this->getClosed($api, $args);
@@ -383,7 +455,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getOpportunities( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		return $this->opportunitiesInPipeline;
 	}
@@ -391,7 +462,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getRevenue( $api, $args )
 	{
-		$this->loadProgressData($args);
 
 		return $this->revenueInPipeline;
 	}
@@ -399,7 +469,6 @@ class ForecastsProgressApi extends ModuleApi
 
 	public function getClosed( $api, $args )
 	{
-		$this->loadProgressData($args);
 		
 		return $this->closed;
 	}
@@ -407,7 +476,6 @@ class ForecastsProgressApi extends ModuleApi
 
     public function getPipeline( $api, $args )
     {
-        $this->loadProgressData($args);
 
            $revenue = $this->getRevenue($api, $args) + $this->closed;
            $likelyToClose = $this->forecastData["likely_case"] - $this->closed;
