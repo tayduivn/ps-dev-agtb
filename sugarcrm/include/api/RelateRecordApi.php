@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-
+require_once('include/api/RelateApi.php');
 class RelateRecordApi extends ModuleApi {
     public function registerApiRest() {
         return array(
@@ -154,18 +154,18 @@ class RelateRecordApi extends ModuleApi {
 
 
     function getRelatedRecord($api, $args) {
-        $primaryBean = $this->loadBean($api, $args);
-        
-        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
-
-        $relatedBean->retrieve($args['remote_id']);
-        if ( empty($relatedBean->id) ) {
-            // Retrieve failed, probably doesn't have permissions
-            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        // due to deficiencies in Link2 for the time being we need to use the listRelated from RelateApi and return the specific record
+        // Basically it gets all related records with the related record fields populated and then returns the specific record we want
+        // TODO: Fix this when Link2 has a method to get populated fields
+        $relateApi = new RelateApi;
+        $data = $relateApi->listRelated($api, $args);
+        foreach($data['records'] AS $record)
+        {
+            if($record['id'] == $args['remote_id'])
+            {
+                return $record;
+            }
         }
-
-        return $this->formatBean($api, $args, $relatedBean);
-        
     }
 
     function createRelatedRecord($api, $args) {
