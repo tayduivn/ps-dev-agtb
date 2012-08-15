@@ -2122,7 +2122,11 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 .alert [class^=icon-] { margin:0 5px 0 0; }
 .alert, .alert-heading { color:#58595b; }
 .alert .close { right:-10px; }
-.alert-success, .alert-success .alert-heading { color:#28481c; }
+.alert-success, .alert-success .alert-heading {
+  background-color:#dff0d8;
+  border-color:#8cc66a;
+  color:#28481c;
+}
 .alert-danger, .alert-error {
   background:#ffe9e9;
   border-color:#b60000;
@@ -2133,7 +2137,11 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   border:1px solid #edc959;
   background-color:#fcf8e3;
 }
-.alert-info, .alert-info .alert-heading { color:#134158; }
+.alert-info, .alert-info .alert-heading {
+  background-color:#d9edf7;
+  border-color:#5bbcdc;
+  color:#134158;
+}
 .alert-top {
   position:fixed;
   top:38px;
@@ -3271,8 +3279,8 @@ a.label:hover, a.badge:hover {
 .label-inverse, .badge-inverse { background-color:#343433; }
 .label-inverse[href], .badge-inverse[href] { background-color:#1a1a1a; }
 .label, .badge {
-  font-weight:inherit;
-  text-shadow:inherit;
+  font-weight:normal;
+  text-shadow:none;
   color:#000;
   height:12px;
   display:inline-block;
@@ -4497,6 +4505,10 @@ table th.nosort.select-all { padding:0; }
 table th.nosort.select-all .btn-group {
   position:absolute;
   top:0;
+}
+.select-all .btn-group > .btn:first-child {
+  padding-top:7px;
+  padding-bottom:1px;
 }
 table.dataTable { margin-top:10px; }
 table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
