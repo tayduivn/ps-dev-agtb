@@ -20,12 +20,23 @@ try {
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
-    echo '<h2>bootstrap.css successfully generated.</h2>';
-    echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
-    echo '<p><a href="./index.php">Back</a></p>';
+    //build module-specific.css
+    $modulesRoot = '../bootstrap/less/modules';
+    $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
+
+    foreach ($modulesFile as $module) {
+        $less = new lessc($modulesRoot . '/' . $module);
+        if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+        file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
+    }
+
+    // echo '<h2>bootstrap.css successfully generated.</h2>';
+    // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
+    // echo '<p><a href="./index.php">Back</a></p>';
+    echo 'bootstrap.css successfully generated.';
 
 } catch (exception $ex) {
-    exit('lessc fatal error:<br />'.$ex->getMessage());
+    exit('lessc fatal error:'.$ex->getMessage());
 }
 
 /**
