@@ -191,20 +191,35 @@ class MetaDataManager {
      */
     public function getSubpanelDefs($moduleName)
     {
-        if(file_exists("modules/{$moduleName}/metadata/subpaneldefs.php"))
+        require_once('include/SubPanel/SubPanelDefinitions.php');
+        $parent_bean = BeanFactory::getBean($moduleName);
+
+        $spd = new SubPanelDefinitions($parent_bean);
+        $layout_defs = $spd->layout_defs;
+
+        if(is_array($layout_defs) && isset($layout_defs['subpanel_setup']))
         {
-            require("modules/{$moduleName}/metadata/subpaneldefs.php");
-            
-            if(file_exists("custom/modules/{$moduleName}/metadata/subpaneldefs.php"))
+            foreach($layout_defs['subpanel_setup'] AS $name => $subpanel_info)
             {
-                require("custom/modules/{$moduleName}/metadata/subpaneldefs.php");
+                $aSubPanel = $spd->load_subpanel($name, '', $parent_bean);
+                if($aSubPanel->isCollection())
+                {
+                    $collection = array();
+                    foreach($aSubPanel->sub_subpanels AS $key => $subpanel)
+                    { 
+                        $collection[$key] = $subpanel->panel_definition;
+                    }
+                    $layout_defs['subpanel_setup'][$name]['panel_definition'] = $collection;
+                }
+                else
+                {
+                    $layout_defs['subpanel_setup'][$name]['panel_definition'] = $aSubPanel->panel_definition;
+                }
+                
             }
-            if(isset($layout_defs) && isset($layout_defs[$moduleName]) && isset($layout_defs[$moduleName]['subpanel_setup']))
-            {
-                return $layout_defs[$moduleName]['subpanel_setup'];
-            }            
         }
-        return array();
+        
+        return $layout_defs;
     }
 
     /**
