@@ -5,7 +5,7 @@
 body {
   position: relative;
   padding: 47px 0;
-  background: @grayDarker url(../img/black_linen_v2.png);
+  background: @grayDarker url('@{baseURL}/img/black_linen_v2.png');
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
   -webkit-focus-ring-color:  rgba(0, 0, 0, 0) !important;
 }
@@ -225,7 +225,7 @@ article [id^="listing-action"] span {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: @grayDarker url(../img/black_linen_v2.png);
+  background: @grayDarker url('@{baseURL}/img/black_linen_v2.png');
   @shadow: inset 0 2px 4px @black, inset 0 -2px 4px @black;
   .box-shadow(@shadow);
   list-style: none;
@@ -267,7 +267,7 @@ article p:last-child {
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url(../img/badge_256.png) 50% 50% no-repeat;
+  background: url('@{baseURL}/img/badge_256.png') 50% 50% no-repeat;
   background-size: 50%;
   position: absolute;
   top: 0;
@@ -326,7 +326,7 @@ margin-top: -3px;
 }
 
 .logo {
-  background: url(../img/sugar-red-sm.png) 0 0 no-repeat;
+  background: url('@{baseURL}/img/sugar-red-sm.png') 0 0 no-repeat;
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
@@ -411,7 +411,7 @@ text-decoration:none;
 }
 
 .icon-account-black {
-  background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
+  background: url('@{baseURL}/img/glyphicons_halflings.png') no-repeat -169px 0;
   height: 20px;
   width: 18px;
   margin-bottom: -20%;
@@ -477,7 +477,7 @@ html {
   display: block;
   width:86%;
   height: 100%;
-  background: @grayDarker url(../img/black_linen_v2.png);
+  background: @grayDarker url('@{baseURL}/img/black_linen_v2.png');
 }
  .onR .navbar .nav-collapse  {
   float: none;
@@ -487,7 +487,7 @@ html {
   display: block;
   width:86%;
   height: 100%;
-  background: @grayDarker url(../img/black_linen_v2.png);
+  background: @grayDarker url('@{baseURL}/img/black_linen_v2.png');
 }
 .onL .navbar .nav-collapse #moduleList, .onR .navbar .nav-collapse #createList {
   overflow: scroll;
@@ -1039,7 +1039,7 @@ color: @gray;
 }
 
 .modal .brand {
-  background: url(../img/brand_256.png) 50% 50% no-repeat;
+  background: url('@{baseURL}/img/brand_256.png') 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
   overflow:hidden;
@@ -1051,7 +1051,7 @@ color: @gray;
           transition: all .2s linear;
   } 
 .navbar h1.brand {
-  background: url(../img/brand_256.png) 50% 50% no-repeat;
+  background: url('@{baseURL}/img/brand_256.png') 50% 50% no-repeat;
   background-size: 80%;
   text-indent: -7000px;
   width: 100%;
@@ -1148,7 +1148,7 @@ color: @gray;
 /* Log In
 ----------*/
 .login {
-  background: #000000 url(../img/triangles.png);
+  background: #000000 url('@{baseURL}/img/triangles.png');
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
   height:100%;
@@ -1208,7 +1208,7 @@ float: none !important;}
 .login .btn.btn-sugar {width: 140px!important;}
 
 .login .control-group.error input {
-  background:@white url(../img/exclamation.png) 97% 50% no-repeat;
+  background:@white url('@{baseURL}/img/exclamation.png') 97% 50% no-repeat;
   color:@red;
 }
 
@@ -1249,7 +1249,7 @@ float: none !important;}
     top:0;
     left:0;
     z-index:9999;
-    background: url(../img/triangles.png) 0 0 repeat;
+    background: url('@{baseURL}/img/triangles.png') 0 0 repeat;
 }
 
 /* Alert overrider */
@@ -1355,7 +1355,7 @@ float: none !important;}
     height: 0;
   }
   .navbar-bottom {
-      background: @grayDarker url(../img/black_linen_v2.png);
+      background: @grayDarker url('@{baseURL}/img/black_linen_v2.png');
       width: 100%;
       height: 100%;
       position: fixed;
