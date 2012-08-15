@@ -40,9 +40,15 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $timeperiod;
     protected static $manager;
     protected static $quota;
+    protected static $managerQuota;
 
     public function setUp()
     {
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language('en_us');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+
         //create manager and a sales rep to report to the manager
         self::$manager = SugarTestUserUtilities::createAnonymousUser();
         self::$manager->save();
@@ -60,14 +66,35 @@ class ForecastsProgressApiTest extends RestTestBase
         //give the rep a Quota
         self::$quota = SugarTestQuotaUtilities::createQuota(50000);
         self::$quota->user_id = self::$user->id;
+        self::$quota->quota_type = "Direct";
         self::$quota->timeperiod_id = self::$timeperiod->id;
         self::$quota->save();
+        //give the manager a Quota
+        self::$managerQuota = SugarTestQuotaUtilities::createQuota(56000);
+        self::$managerQuota->user_id = self::$manager->id;
+        self::$managerQuota->quota_type = "Rollup";
+        self::$managerQuota->timeperiod_id = self::$timeperiod->id;
+        self::$managerQuota->save();
+
 
         $opportunities = array();
 
         //create opportunities to be used in tests
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->assigned_user_id = self::$user->id;
+        $opp->probability = '80';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
+        $opp->sales_stage = 'Negotiation/Review';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
+        //create opportunities to be used in tests
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$manager->id;
         $opp->probability = '80';
         $opp->amount = '20000';
         $opp->best_case = '20000';
@@ -111,6 +138,31 @@ class ForecastsProgressApiTest extends RestTestBase
         $forecast->opp_weigh_value = 60000 / 3;
         $forecast->save();
 
+        //setup worksheets
+        $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $managerWorksheet->user_id = self::$manager->id;
+        $managerWorksheet->related_id = self::$manager->id;
+        $managerWorksheet->related_forecast_type = "Direct";
+        $managerWorksheet->forecast_type = "Direct";
+        $managerWorksheet->timeperiod_id = self::$timeperiod->id;
+        $managerWorksheet->best_case = 62000;
+        $managerWorksheet->likely_case = 55000;
+        $managerWorksheet->worst_case = 50000;
+        $managerWorksheet->forecast = 1;
+        $managerWorksheet->save();
+
+        $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $repWorksheet->user_id = self::$manager->id;
+        $repWorksheet->related_id = self::$user->id;
+        $repWorksheet->related_forecast_type = "Direct";
+        $managerWorksheet->forecast_type = "Direct";
+        $repWorksheet->timeperiod_id = self::$timeperiod->id;;
+        $repWorksheet->best_case = 82000;
+        $repWorksheet->likely_case = 74000;
+        $repWorksheet->worst_case = 65000;
+        $repWorksheet->forecast = 1;
+        $repWorksheet->save();
+
         parent::setUp();
     }
 
@@ -121,7 +173,7 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         parent::tearDown();
     }
 
@@ -149,7 +201,51 @@ class ForecastsProgressApiTest extends RestTestBase
         $best_to_quota_percent = 1.20;
 
         $revenue = 30000;
-        $pipeline = 1.3;
+        $pipeline = 2.5;
+
+        //check best/likely numbers
+        // to quota
+        $this->assertEquals($likely_to_quota_total, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
+        $this->assertEquals($likely_to_quota_percent, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
+
+        $this->assertEquals($best_to_quota_total, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
+        $this->assertEquals($best_to_quota_percent, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
+
+        // to close
+        $this->assertEquals($likely_to_close_total, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
+        $this->assertEquals($likely_to_close_percent, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
+
+        $this->assertEquals($best_to_close_total, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
+        $this->assertEquals($best_to_close_percent, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
+
+        $this->assertEquals($revenue, $restReply['revenue'], "Revenue didn't match calculated amount. expected: ".$revenue." received: ".$restReply['revenue']);
+        $this->assertEquals($pipeline, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: ".$pipeline." received: ".$restReply['pipeline']);
+    }
+
+    /**
+     * @group forecastapi
+     */
+    public function testManagerProgress() {
+        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$manager->id .'&should_rollup=1';
+
+        $restResponse = $this->_restCall($url);
+
+        $restReply = $restResponse['reply'];
+
+        //check quotas section
+        $this->assertEquals(self::$managerQuota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
+
+        $likely_to_close_total = 99000;
+        $likely_to_close_percent = 4.3;
+        $best_to_close_total = 114000;
+        $best_to_close_percent = 4.8;
+        $likely_to_quota_total = 73000;
+        $likely_to_quota_percent = 2.30357142857;
+        $best_to_quota_total = 88000;
+        $best_to_quota_percent = 2.57142857143;
+
+        $revenue = 50000;
+        $pipeline = .8;
 
         //check best/likely numbers
         // to quota
