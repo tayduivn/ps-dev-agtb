@@ -27,9 +27,8 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, model) {
+    test.createView = function(client, module, viewName, meta, context) {
         test.loadComponent(client, "view", viewName);
-        var context = app.context.getContext({'model': model});
         return app.view.createView({
             name : viewName,
             context : context,
