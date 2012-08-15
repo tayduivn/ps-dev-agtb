@@ -25,6 +25,7 @@ require_once 'lib/phpmailer/class.phpmailer.php';
 require_once 'MailerException.php';
 require_once 'EmailIdentity.php';
 require_once 'RecipientsCollection.php';
+require_once 'MailerConfig.php';
 
 class Mailer
 {
