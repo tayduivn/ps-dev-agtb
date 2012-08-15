@@ -68,6 +68,7 @@
             var nodeId = 'jstree_node_myopps_' + selectedUser.id;
             this.selectJSTreeNode(nodeId)
 
+            this.render();
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
             // also make sure we're not re-rendering tree for a rep
