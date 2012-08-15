@@ -140,6 +140,10 @@
             }
         );
 
+        if(this.values.display_manager === true) {
+            this.values.category = "Committed";
+        }
+
         // update the chart title
         this.$el.find('h4').html(this.chartTitle);
 
