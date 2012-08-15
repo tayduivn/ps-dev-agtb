@@ -4,7 +4,7 @@ describe("The forecasts log", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../../../../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
     });
 
     describe("test showCommitButton", function() {

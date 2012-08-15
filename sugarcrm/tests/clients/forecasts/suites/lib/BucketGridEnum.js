@@ -3,7 +3,7 @@ describe("ClickToEdit", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadFile("../../../../clients/forecasts/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../clients/forecasts/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
         view = {
             $el: $('<div class="testview"></div>'),
             url: "/test"
