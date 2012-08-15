@@ -277,7 +277,7 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.showBuckets) {
+        if (app.config.show_buckets) {
             // TODO: this.
         } else {
             this.category = _.first(params);

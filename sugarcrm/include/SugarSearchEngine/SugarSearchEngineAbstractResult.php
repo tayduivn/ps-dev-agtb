@@ -25,6 +25,7 @@ require_once("include/SugarSearchEngine/Interface.php");
 
 /**
  * Abstract class to represent a result entry.
+ * @api
  */
 abstract class SugarSearchEngineAbstractResult implements SugarSearchEngineResult
 {

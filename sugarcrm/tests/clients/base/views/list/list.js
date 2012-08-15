@@ -32,29 +32,11 @@ describe("List View", function() {
     });
 
     it("should set order by based on fieldname and orderby field properties", function() {
-        var event, x;
-
-        // test that orderBy property takes precedence over fieldName property
-        var dataProvider = [
-            {
-                'fieldName': 'date_modified',
-                'orderBy': '',
-                'expectedOrderByField': 'date_modified'
-            },
-            {
-                'fieldName': 'full_name',
-                'orderBy': 'last_name',
-                'expectedOrderByField': 'last_name'
-            }
-        ];
-
-        $.each(dataProvider, function(index, value) {
-            view.$el.html('<div id="test" data-fieldname="'+value.fieldName+'" data-orderby="'+value.orderBy+'"></div>');
-
+            var event, x;
             x = view.$el.children('#test');
             event = {target: x};
             view.setOrderBy(event);
-
+    
             expect(collection.orderBy.direction).toEqual('desc');
             expect(collection.orderBy.field).toEqual(value.expectedOrderByField);
             expect(collection.orderBy.columnName).toEqual(value.fieldName);
@@ -63,6 +45,5 @@ describe("List View", function() {
             expect(collection.orderBy.direction).toEqual('asc');
             expect(collection.orderBy.field).toEqual(value.expectedOrderByField);
             expect(collection.orderBy.columnName).toEqual(value.fieldName);
-        });
     });
 });

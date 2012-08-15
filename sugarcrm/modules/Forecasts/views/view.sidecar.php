@@ -31,13 +31,13 @@ require_once('modules/Forecasts/api/ForecastsChartApi.php');
 
 class ForecastsViewSidecar extends SidecarView
 {
-    function ForecastsViewSidecar($bean = null, $view_object_map = array())
+    function __construct($bean = null, $view_object_map = array())
     {
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
         $this->options['show_search'] = false;
         $this->options['use_table_container'] = false;
-        parent::SidecarView($bean = null, $view_object_map = array());
+        parent::__construct($bean = null, $view_object_map = array());
     }
 
     /**

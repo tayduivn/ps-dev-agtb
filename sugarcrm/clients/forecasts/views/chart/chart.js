@@ -42,6 +42,7 @@
             self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
+            self.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + timePeriod.label;
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
@@ -51,7 +52,7 @@
             self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (app.config.showBuckets) {
+            if (app.config.show_buckets) {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});
@@ -85,9 +86,11 @@
      */
     updateChart: function() {
         var self = this;
-        SUGAR.charts.update(self.chart, self.url, self.values, function(chart){
+        SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
             SUGAR.charts.generateLegend(chart, chart.config.injectInto)
-        });
+            // update the chart title
+            self.$el.find('h4').html(self.chartTitle);
+        }, self));
     },
 
     /**
@@ -136,6 +139,9 @@
               }
             }
         );
+
+        // update the chart title
+        this.$el.find('h4').html(this.chartTitle);
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;

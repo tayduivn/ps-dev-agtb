@@ -23,7 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/Interface.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
-
+/**
+ * Base class for search engine drivers
+ * @api
+ */
 abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterface
 {
     /**
@@ -47,6 +50,18 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     {
         return SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
 
+    }
+
+    /**
+     * This is needed to prevent unserialize vulnerability
+     */
+    public function __wakeup()
+    {
+        // clean all properties
+        foreach(get_object_vars($this) as $k => $v) {
+            $this->$k = null;
+        }
+        throw new Exception("Not a serializable object");
     }
 
     /**

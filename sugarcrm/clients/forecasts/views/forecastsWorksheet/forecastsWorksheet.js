@@ -41,6 +41,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
+
         var self = this;
 
         this.viewModule = app.viewModule;
@@ -76,6 +77,9 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
+        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this._collection.url = this.createURL();
+
     },
 
     createURL:function() {
@@ -154,6 +158,14 @@
                     if(element.hasChanged("forecast")) {
                         this.toggleIncludeInForecast(element);
                     }
+                    if(element.hasChanged("commit_stage")) {
+                        if(element.get("commit_stage") == '100') {
+                            this._collection.models[index].set("forecast", '1');
+                        } else {
+                            this._collection.models[index].set("forecast", '0');
+                        }
+                        this.toggleIncludeInForecast(element);
+                    }
                 }, this);
             }, this);
         }
@@ -188,10 +200,10 @@
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
-                field.enabled = !app.config.showBuckets;
+                field.enabled = !app.config.show_buckets;
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = app.config.showBuckets;
+                field.enabled = app.config.show_buckets;
                 if(!isOwner)
                 {
                    field.view = 'default';
@@ -199,7 +211,7 @@
                 commitStageField = field;
             }
         });
-        return app.config.showBuckets?forecastField:commitStageField;
+        return app.config.show_buckets?forecastField:commitStageField;
     },
 
     /**
@@ -474,7 +486,7 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        if (app.config.showBuckets) { // buckets
+        if (app.config.show_buckets) { // buckets
              // TODO:  this.
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio

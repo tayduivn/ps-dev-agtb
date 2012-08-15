@@ -89,6 +89,10 @@ input[type="submit"]
 	padding:0px;
 }
 
+input[type=text],input[type=password] {
+    height: 22px;
+}
+
 input[type=text],input[type=password],textarea
 {
     width: auto;
@@ -2651,9 +2655,6 @@ embed
 		top:0;
 		right:0;
 		position:absolute;
-		-moz-border-radius-topright: 6px;
-		-webkit-border-top-right-radius: 6px;
-		border-radius-topright: 6px;
 		border-width: 1px 1px 0px 0px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -2666,9 +2667,6 @@ embed
 		top:0;
 		left:0;
 		position:absolute;
-		-moz-border-radius-topleft: 6px;
-		-webkit-border-top-left-radius: 6px;
-		border-radius-topleft: 6px;
 		border-width: 1px 0px 0px 1px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -2941,29 +2939,23 @@ embed
   -webkit-border-bottom-right-radius: 6px;
   -webkit-border-bottom-top-radius: 6px;
 	margin-bottom: 0px;
-	border: 1px solid #305678;
 	}
 	
 	.dashletPanel.dc .hd {
 		height: 38px;
 		padding: 0 15px;
-		
-	background-image: -moz-linear-gradient(center top, 
-		rgba(111,137,161,.9) 0%,
-		rgba(71,105,135,1) 50%,
-		rgba(48,86,120,1) 50%,  
-		rgba(48,86,120,.8) 100%
-		);
-	background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, rgba(111,137,161,.9)),
-	    color-stop(.50, rgba(71,105,135,1)),
-	    color-stop(.50, rgba(48,86,120,1)),
-	    color-stop(1, rgba(48,86,120,.8))
-    );
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6f89a1', endColorstr='#305678');
+        border-radius: 3px 3px 0px 0px;
+        -moz-border-radius: 3px 3px 0px 0px;
+        -webkit-border-top-right-radius: 3px;
+        -webkit-border-top-left-radius: 3px;
+        background-color: #303030;
+        background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
+        background-image: -ms-linear-gradient(top, #404040, #1a1a1a);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), to(#1a1a1a));
+        background-image: -webkit-linear-gradient(top, #404040, #1a1a1a);
+        background-image: -o-linear-gradient(top, #404040, #1a1a1a);
+        background-image: linear-gradient(top, #404040, #1a1a1a);
+        background-repeat: repeat-x;
     cursor: move;
 	}
 
@@ -3000,13 +2992,11 @@ embed
 	}	
 	
 	.dashletPanel.dc .bd {
-		padding: 15px;
-	background-color: #fafdff;
-	background-color: rgba(13,58,98,.3);
-		border-radius: 0px 0px 6px 6px;
-	-moz-border-radius: 0px 0px 6px 6px;
-  -webkit-border-bottom-right-radius: 6px;
-  -webkit-border-bottom-top-radius: 6px;
+	background-color: #fff;
+		border-radius: 0px 0px 3px 3px;
+	-moz-border-radius: 0px 0px 3px 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
   position: inherit;
 	}
 	
@@ -3630,94 +3620,75 @@ a:hover
 }
 button, input[type=submit], input[type=reset], input[type=button], .button, .buttons .button, .yui-button button
 {
-	color: #000;
-	-webkit-border-radius: 1px; 
-	-moz-border-radius: 1px; 
-	border-radius: 1px; 
-		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#f1f1f1 10%,
-		#efefef 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.10, #f1f1f1),
-	    color-stop(1, #efefef)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
-	border: 1px solid #aaaaaa;
-	padding: 2px 8px 2px 8px;
-	padding: 2px 8px 1px 8px\9; /* ie hack */
-	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-	font-size: 12px;
+    display: inline-block;
+    padding: 4px 10px 4px;
+    margin-bottom: 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: #262627;
+    font-weight: 500;
+    font-family: 'Helvetica Neue';
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    background-color: #ebebea;
+    background-image: -moz-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -ms-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#cdcccb));
+    background-image: -webkit-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -o-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: linear-gradient(top, #ffffff, #cdcccb);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#cdcccb', GradientType=0);
+    border-color: #cdcccb #cdcccb #a8a6a4;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    cursor: pointer;
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    *margin-left: .3em;
 }
 
 .button.primary,.yui-dialog .ft span.default button  {
-   		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#255e90 2%,
-		#3d74a5 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.02, #255e90),
-	    color-stop(1, #3d74a5)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
-	   	border-color: #000;
-		color: #fff;
+    background-color: #1574d2;
+    background-image: -moz-linear-gradient(top, #177ee5, #1264b7);
+    background-image: -ms-linear-gradient(top, #177ee5, #1264b7);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#177ee5), to(#1264b7));
+    background-image: -webkit-linear-gradient(top, #177ee5, #1264b7);
+    background-image: -o-linear-gradient(top, #177ee5, #1264b7);
+    background-image: linear-gradient(top, #177ee5, #1264b7);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#177ee5', endColorstr='#1264b7', GradientType=0);
+    border-color: #1264b7 #1264b7 #0b3e71;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    color: #ffffff !important;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 button:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=button]:hover,
 button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus,
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
-   		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#255e90 2%,
-		#3d74a5 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.02, #255e90),
-	    color-stop(1, #3d74a5)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
-		border-color: #000;
-		color: #fff;
-
+    color: #313130;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
 }
 
 .button.primary:hover,.button.primary:focus ,button.primary[selected],.yui-dialog .ft span.default button:hover{
-   		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#255e90 2%,
-		#3d74a5 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.02, #255e90),
-	    color-stop(1, #3d74a5)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
-	   	border-color: #000;
-		color: #fff;
+    background-color: #1264b7;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    font-weight: 500;
 }
 
 button[disabled], input[type=submit][disabled], input[type=reset][disabled], input[type=button][disabled]
@@ -3747,6 +3718,9 @@ button[disabled], input[type=submit][disabled], input[type=reset][disabled], inp
 	position: relative;
 	height: 24px;
 	filter: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
 }
 
 .pagination button[name="listViewNextButton"],.pagination button[name="listViewPrevButton"] {
@@ -3812,11 +3786,15 @@ button[disabled], input[type=submit][disabled], input[type=reset][disabled], inp
 
 input,select 
 {
-	border-color: #ccc;
-	background-color: #ffffff;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-border-radius: 2px;
+    display: inline-block;
+    padding: 4px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #58595b;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 
 input:focus,textarea:focus, select:focus 
@@ -4100,7 +4078,7 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus, 
 #moduleList .sf-menu ul a:hover, 
 #moduleList .sf-menu ul a:active {
-	background:		#355B7E;
+	background:		#343433;
 	color: #fff;
 	outline:		0;
 }
@@ -4518,15 +4496,11 @@ ul.subpanelTablist li a.activeSubTab:hover
 }
 
 .list.view  tr:last-child td:first-child ,.list.view  tr:last-child th:first-child{
-	-moz-border-radius-bottomleft: 6px;
-	-webkit-border-bottom-left-radius: 6px;
-	border-border-radius-bottomleft: 6px;
+
 }
 
 .list.view  tr:last-child td:last-child,.list.view  tr:last-child th:last-child  {
-	-moz-border-radius-bottomright: 6px;
-	-webkit-border-bottom-right-radius: 6px;
-	border-border-radius-bottomright: 6px;
+
 }
 
 .list.view  tr:last-child th,.list.view  tr:last-child td {
@@ -5772,7 +5746,6 @@ width:100%;
 .dcmenu .inner {
     height: 44px;
     min-width: 950px;
-    padding-right: 20px;
     background-color: #303030;
     background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
     background-image: -ms-linear-gradient(top, #404040, #1a1a1a);
@@ -6352,12 +6325,9 @@ cursor: pointer;
  	}
  	
 .dashletPanel .dccontent {
-	border: 1px solid #aaa;
+
 	padding: 10px;
 	background-color: #fff;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-webkit-border-radius: 6px;
 	max-height: 500px;
 	overflow: auto;
 }
@@ -6386,7 +6356,7 @@ padding: 2px;
 
 .dashletPanel.dc .hd img{
 border: 0px;
-margin-top: 7px;
+margin-top: 3px;
 }
 .dashletPanel.dc .hd button {
     vertical-align: top;
@@ -6473,35 +6443,45 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 
 ul.clickMenu {
 	list-style: none;
-	padding: 0px;	
-	margin: 0 !important;
-	vertical-align: bottom;
-	-webkit-border-radius: 1px; 
-	-moz-border-radius: 1px; 
-	border-radius: 1px; 
-		background-image: -moz-linear-gradient(center top, 
-		#ffffff 0%,
-		#f1f1f1 10%,
-		#efefef 100%
-		);
-		background-image: -webkit-gradient(
-	    linear,
-	    left top,
-	    left bottom,
-	    color-stop(0, #ffffff),
-	    color-stop(.10, #f1f1f1),
-	    color-stop(1, #efefef)
-	   );	
-	   
-	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
-	   border: 1px solid #aaaaaa;
-	   display: inline-block;
-	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-    /*hack for IE7*/
-    *display:inline;
-    *zoom:1;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #262627;
+    font-weight: 500;
+    font-family: 'Helvetica Neue';
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    background-color: #ebebea;
+    background-image: -moz-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -ms-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#cdcccb));
+    background-image: -webkit-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: -o-linear-gradient(top, #ffffff, #cdcccb);
+    background-image: linear-gradient(top, #ffffff, #cdcccb);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#cdcccb', GradientType=0);
+    border-color: #cdcccb #cdcccb #a8a6a4;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+    cursor: pointer;
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    *margin-left: .3em;
 }
 ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
+
+div.action_buttons input {
+    margin-right: 4px;
+}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6530,7 +6510,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	font-weight: normal !important;
 	padding: 3px 10px 3px 10px !important;
 	color: #000;
-	font-size: 12px;
+	font-size: 13px;
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
@@ -6546,7 +6526,7 @@ text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 20px;
-	height: 21px;
+	height: 24px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 5px -25px;
 	cursor: pointer;
@@ -6710,7 +6690,7 @@ td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
 
 ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-background-color: #355b7e;
+background-color: #E6E6E6;
 color: #fff !important;
 font-weight: normal !important;
 cursor: pointer;
@@ -6756,6 +6736,7 @@ ul#globalLinks.clickMenu li > span a {
     font-size: 14px;
     margin-top: 13px;
 	padding: 0px 10px !important;
+    text-shadow: none;
 }
 
 

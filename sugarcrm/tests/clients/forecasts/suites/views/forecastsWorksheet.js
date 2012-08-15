@@ -166,16 +166,16 @@ describe("The forecasts worksheet", function(){
             ]
         });
 
-        it("should be the 'forecasts' field if showBuckets is false", function() {
-            app.config.showBuckets = false;
+        it("should be the 'forecasts' field if show_buckets is false", function() {
+            app.config.show_buckets = false;
             var unused = view._setForecastColumn(field);
             expect(unused).toEqual(field[1]);
             expect(field[0].enabled).toBeTruthy();
             expect(field[1].enabled).toBeFalsy();
         });
 
-        it("should be the 'commit_stage' field if showBuckets is true", function() {
-            app.config.showBuckets = true;
+        it("should be the 'commit_stage' field if show_buckets is true", function() {
+            app.config.show_buckets = true;
             var unused = view._setForecastColumn(field);
             expect(unused).toEqual(field[0]);
             expect(field[0].enabled).toBeFalsy();
