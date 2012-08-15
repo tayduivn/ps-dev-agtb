@@ -151,7 +151,6 @@
         var closed = this.model.get('closed');
 
         if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            debugger;
             this.likelyTotal = this.reduceWorksheetManager('likely_adjusted') - closed.amount;
             this.bestTotal = this.reduceWorksheetManager('best_adjusted');
             this.model.set('revenue', this.reduceWorksheetManager('amount') - closed.amount);
