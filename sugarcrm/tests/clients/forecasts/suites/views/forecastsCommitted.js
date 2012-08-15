@@ -1,34 +1,11 @@
 describe("The forecasts log", function(){
 
-    var app, view;
+    var app, view, hbt_helper;
 
     beforeEach(function() {
         app = SugarTest.app;
         view = SugarTest.loadFile("../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
-    });
-
-    describe("test showCommitButton", function() {
-        beforeEach(function() {
-            testMethodStub = sinon.stub(app.user, "get", function(id) {
-                return 'a_user_id';
-            });
-        });
-
-        afterEach(function(){
-            testMethodStub.restore();
-        });
-
-        describe("should show commit button", function() {
-            it("is a user viewing their own forecast log", function() {
-                expect(view.showCommitButton('a_user_id')).toBeTruthy();
-            });
-        });
-
-        describe("should not show commit button", function() {
-            it("is a user not viewing their own forecast log", function() {
-                expect(view.showCommitButton('a_different_user_id')).toBeFalsy();
-            });
-        });
+        hbt_heleper = SugarTest.loadFile("../clients/forecasts/helper","hbt-helpers", "js", function(d) { return eval(d); });
     });
 
     describe("test createHistoryLog function", function() {

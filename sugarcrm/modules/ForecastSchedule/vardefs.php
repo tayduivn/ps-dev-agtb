@@ -168,6 +168,17 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
        'type' => 'bool',
        'default' => '0',
    ),
+    /*
+     * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
+     */
+    'expected_commit_stage' =>
+    array (
+        'name' => 'expected_commit_stage',
+        'vname' => 'LBL_COMMIT_STAGE',
+        'type' => 'enum',
+        'options' => 'commit_stage_dom',
+        'len' => '20',
+    ),
 
  )
 , 'indices' => array (

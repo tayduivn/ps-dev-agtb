@@ -16,7 +16,7 @@
    });
 
    /**
-    * Formats given number for display as a percentage. Rounds to 2 decimal places. Includes percentage sign.
+    * Formats given number for display as a percentage. Rounds to 2 decimnal places. Includes percentage sign.
     * @method formatNumber
     * @throws {Error} if given number is greater than 1
     * @param {number} The number to format.
@@ -80,10 +80,9 @@
      *
      */
     Handlebars.registerHelper("expected_opportunity_column", function(tag) {
-        if(this.name == 'include_expected')
+        if(this.name == 'include_expected' || this.name == 'expected_commit_stage')
         {
-           //return tag == 'start' ? '<th>' : '</th>';
-           return tag == 'start' ? '<th><div style="width: 100%; text-align: center;">' : '</div></th>';
+           return tag == 'start' ? '<td><div style="font-weight: normal; width: 100%; text-align: center;">' : '</div></td>';
         } else if (this.name == 'expected_amount') {
            return tag == 'start' ? ('<th colspan="4" style="text-align: right;"><i>' + app.lang.get('LBL_EXPECTED_OPPORTUNITIES', 'Forecasts') + '</i></th><th>') : '</th>';
         }

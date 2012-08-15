@@ -78,7 +78,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("can calculate Pipeline Size", function() {
-            expect(view.calculatePipelineSize(view.likelyTotal, view.model.get('revenue'))).toEqual(1.4);
+            expect(view.calculatePipelineSize(view.likelyTotal, view.model.get('revenue'), view.model.get('closed'))).toEqual(1.4);
         });
 
     });
@@ -153,7 +153,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("can calculate Pipeline Size", function() {
-            expect(view.calculatePipelineSize(view.likelyTotal, view.model.get('revenue'))).toEqual(2.2);
+            expect(view.calculatePipelineSize(view.likelyTotal, view.model.get('revenue'), view.model.get('closed'))).toEqual(2.3);
         });
 
     });

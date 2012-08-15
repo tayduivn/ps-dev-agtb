@@ -33,8 +33,17 @@
                 selectedCategory: defaultSelections.category,
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
-                selectedUser : defaultSelections.selectedUser
+                selectedUser : defaultSelections.selectedUser,
 
+                /**
+                 * boolean to use across components to enable commit button or not
+                 */
+                commitButtonEnabled : false,
+
+                /**
+                 * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
+                 */
+                commitForecastFlag : false
             });
 
             // grab a copy of the init data for forecasts to use
