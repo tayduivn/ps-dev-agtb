@@ -57,6 +57,7 @@ $app_list_strings = array (
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
+
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',
@@ -64,6 +65,8 @@ $app_list_strings = array (
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
+    'ForecastWorksheets' => 'Forecast Worksheets',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
@@ -102,6 +105,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
+    'Worksheet' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -167,6 +171,8 @@ $app_list_strings = array (
     'Products' => 'Product',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
+    'ForecastWorksheets' => 'Forecast Worksheet',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
     'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'Teams' => 'Team',
@@ -340,6 +346,14 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+  //BEGIN SUGARCRM flav=pro ONLY
+  'commit_stage_dom' =>
+  array (
+    '100' => 'Include',
+    '70' => 'Likely',
+    '50' => 'Omit',
+  ),
+  //END SUGARCRM flav=pro ONLY
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
@@ -1864,6 +1878,20 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    'forecasts_filters_category' => array(
+        '70' => 'Committed',
+        '0' => 'Pipeline',
+    ),
+    'forecasts_chart_options_group' => array(
+        'forecast' => 'Included In Forecast',
+        'sales_stage' => 'Sales Stage',
+        'probability' => 'Probability'
+    ),
+    'forecasts_chart_options_dataset' => array(
+        'likely' => 'Likely Case',
+        'best' => 'Best Case',
+        'worst' => 'Worst Case'
+    ),
 );
 
 $app_strings = array (
@@ -2438,6 +2466,14 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
+
+    //Forecast specific error messages
+    'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
+    'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
+    'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
+    'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
     //END SUGARCRM flav=pro ONLY
 
     'LBL_ACCOUNT'=>'Account',
@@ -2934,6 +2970,8 @@ $app_strings = array (
     'ERROR_MIN_FIELD_LENGTH' => 'Error. The min length of this field is {{this}}.',
     'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
+    'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
+    'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -3014,6 +3052,7 @@ $app_strings = array (
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
+    'ERR_DATABSE_RELATIONSHIP_QUERY'=>'Error setting {0} relationship: {1}',
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 
@@ -3408,6 +3447,10 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+
+    //SugarApiExceptionNotAuthorized language string
+    'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
+
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
 
     //for portal
@@ -3428,6 +3471,12 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
+    'LBL_PORTAL_LOADING' => 'Loading',
+    'LBL_PORTAL_SAVING' => 'Saving',
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -3440,7 +3489,20 @@ $app_strings = array (
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
     'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
 
+    'ERR_RENDER_FAILED_TITLE' => 'View render failed',
+    'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
+    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Render field failed',
+    'ERR_RENDER_FIELD_FAILED_MSG' => 'Failed to render the field: ',
+    'ERR_NO_ACCESS_TITLE' => 'No access',
+    'ERR_NO_ACCESS_MSG' => 'You not have access to this view',
+    'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
+    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact the support',
+    'ERR_INTERNAL_ERR_MSG' => 'Internal error',
+    'ERR_GENERIC_TITLE' => 'Error',
+    'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',
+    
 );
+
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');

@@ -40,8 +40,8 @@ class SugarPortalBrowser
         $d = dir('modules');
 		while($e = $d->read()){
 			if (substr($e, 0, 1) == '.' || !is_dir('modules/' . $e)) continue;
-            $path = "modules/$e/metadata/";
-			if ((file_exists($path . 'studio.php')) && $this->isPortalModule($path))
+            
+			if ((file_exists("modules/$e/metadata/studio.php")) && $this->isPortalModule($e))
 			{
 				$this->modules[$e] = new SugarPortalModule($e);
 			}
@@ -68,26 +68,31 @@ class SugarPortalBrowser
     }
 
     /**
-     * Runs through the PHP files in a directory and checks for directories named
-     * portal to determine if the module is a portal module. This replaces
-     * the old file path checker that looked for portal/modules/$module/metadata.
-     * We are now looking for modules/$module/metadata/portal/(views|layouts)/*.php
+     * Runs through the views metadata directory to check for expected portal 
+     * files to verify if a given module is a portal module.
+     * 
+     * This replaces the old file path checker that looked for 
+     * portal/modules/$module/metadata. We are now looking for 
+     * modules/$module/metadata/portal/views/(edit|list|detail).php
      *
-     * @param string $dir The directory to scan
-     * @return bool True if a portal/$type/*.php file was found
+     * @param string $module The module to check portal validity on
+     * @return bool True if a portal/view/$type.php file was found
      */
-    function isPortalModule($dir) {
-        // Standardize the directory path
-        $path = rtrim($dir, '/') . '/portal/';
+    function isPortalModule($module) {
+        // Create the path to search
+        $path = "modules/$module/metadata/portal/views/";
 
         // Handle it
-        foreach (array('views', 'layouts') as $type) {
-            $files = glob($path . $type . '/*.php');
-            if (!empty($files)) {
+        // Bug 55003 - Notes showing as a portal module because it has non 
+        // standard layouts
+        $views = SugarPortalModule::getViewFiles();
+        $viewFiles = array_keys($views);
+        foreach ($viewFiles as $file) {
+            if (file_exists($path . $file)) {
                 return true;
             }
         }
-
+        
         return false;
     }
 

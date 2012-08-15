@@ -80,4 +80,3 @@
         {/literal}
     </body>
 </html>
-

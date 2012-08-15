@@ -131,7 +131,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_AMOUNT',
     //'function'=>array('vname'=>'getCurrencyType'),
     'type' => 'currency',
-//    'disable_num_format' => true,
+    //'disable_num_format' => true,
     'dbType' => 'double',
     'comment' => 'Unconverted amount of the opportunity',
     'importable' => 'required',
@@ -139,6 +139,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'required' => true,
   	'options' => 'numeric_range_search_dom',
     'enable_range_search' => true,
+    //'calculated' => true,
+    //'formula' => 'rollupSum($products, "list_price")',
   ),
   'amount_usdollar' =>
   array (
@@ -238,6 +240,76 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
     'merge_filter' => 'enabled',
   ),
+  //BEGIN SUGARCRM flav=PRO ONLY
+  'best_case' =>
+  array (
+    'name' => 'best_case',
+    'vname' => 'LBL_BEST_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+  ),
+  'likely_case' =>
+  array (
+    'name' => 'likely_case',
+    'vname' => 'LBL_LIKELY_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+  ),
+  'worst_case' =>
+  array (
+    'name' => 'worst_case',
+    'vname' => 'LBL_WORST_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+  ),
+  'timeperiod_id' =>
+  array (
+    'name' => 'timeperiod_id',
+    'vname' => 'LBL_TIMEPERIOD_ID',
+    'type' => 'enum',
+    'dbType' => 'id',
+    'function' => 'getTimePeriodsDropDown',
+  ),
+  'timeperiods' =>
+  array(
+    'name' => 'timeperiods',
+    'type' => 'link',
+    'relationship' => 'opportunities_timeperiods',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'TimePeriods',
+    'bean_name'=>'TimePeriod',
+    'vname'=>'LBL_TIMEPERIODS',
+  ),
+  'primary_quote_id' =>
+  array (
+    'name' => 'primary_quote_id',
+    'type' => 'id',
+    'vname' => 'LBL_PRIMARY_QUOTE_ID',
+    'comment' => 'The primary quote this opportunity is associated with'
+  ),
+  'forecast' =>
+  array (
+    'name' => 'forecast',
+    'vname' => 'LBL_FORECAST',
+    'type' => 'int',
+    'dbType' => 'tinyint',
+    'default' => '-1',
+    'comment' => 'Integer indicating whether or not record should be included in forecast'
+  ),
+  'commit_stage' =>
+  array (
+    'name' => 'commit_stage',
+    'vname' => 'LBL_COMMIT_STAGE',
+    'type' => 'enum',
+    'options' => 'commit_stage_dom',
+    'len' => '20',
+    'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
+  ),
+//END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (
   	'name' => 'accounts',
@@ -247,7 +319,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'link_type'=>'one',
     'module'=>'Accounts',
     'bean_name'=>'Account',
-		'vname'=>'LBL_ACCOUNTS',
+	'vname'=>'LBL_ACCOUNTS',
   ),
   'contacts' =>
   array (
@@ -370,16 +442,33 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname'=>'LBL_CURRENCIES',
   ),
  //BEGIN SUGARCRM flav=pro ONLY
-  'contracts' => array (
-	'name' => 'contracts',
-	'type' => 'link',
-	'vname' => 'LBL_CONTRACTS',
-	'relationship' => 'contracts_opportunities',
-	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
-	'source' => 'non-db',
-
-  ),
- //END SUGARCRM flav=pro ONLY
+    'contracts' => array (
+        'name' => 'contracts',
+        'type' => 'link',
+        'vname' => 'LBL_CONTRACTS',
+        'relationship' => 'contracts_opportunities',
+        //'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
+        'source' => 'non-db',
+    ),
+    'worksheet' =>
+     array(
+        'name' => 'worksheet',
+        'type' => 'link',
+        'vname' => 'LBL_WORKSHEET',
+        'relationship' => 'opportunities_worksheet',
+        'source' => 'non-db',
+     ),
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+  'products' =>
+   array(
+        'name' => 'products',
+        'type' => 'link',
+        'vname' => 'LBL_PRODUCTS',
+        'relationship' => 'opportunities_products',
+        'source' => 'non-db',
+   ),
+//END SUGARCRM flav=ent ONLY
 ),
 		'indices' => array (
 			array(
@@ -448,7 +537,27 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'campaign_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav!=sales ONLY
+
+   //BEGIN SUGARCRM flav=pro ONLY
+   'opportunities_timeperiods' =>
+   array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
+   'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'timeperiod_id',
+   'relationship_type'=>'one-to-many'),
+
+   'opportunities_worksheet' =>
+   array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+   'rhs_module'=> 'Worksheet', 'rhs_table'=> 'worksheet', 'rhs_key' => 'related_id',
+   'relationship_type'=>'one-to-many'),
+   //END SUGARCRM flav=pro ONLY
+
+   //BEGIN SUGARCRM flav=ent ONLY
+   'opportunities_products' =>
+   array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
+   'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'opportunity_id',
+   'relationship_type'=>'one-to-many'),
+   //END SUGARCRM flav=ent ONLY
 )
+
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,
 );

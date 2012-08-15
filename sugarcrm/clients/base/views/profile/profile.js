@@ -28,13 +28,12 @@
             });
         } else {
             app.router.goBack();
-            app.alert.show('not_portal_enabled_user', {level:'error', title:'Page Not Available', messages: "We're Sorry, but this feature is not available at this time.", autoClose: true});
+            app.alert.show('not_portal_enabled_user', {level:'error', title: app.lang.getAppString('LBL_PORTAL_PAGE_NOT_AVAIL'), messages: app.lang.getAppString('LBL_PORTAL_NOT_ENABLED_MSG'), autoClose: true});
         }
-
     },
     loadCurrentUser: function(currentUserAttributes, cb) {
         var self = this;
-        app.alert.show('fetch_contact_record', {level:'process', title:'Loading'});
+        app.alert.show('fetch_contact_record', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         app.api.records("read", "Contacts", currentUserAttributes, null, {
             success: function(data) {
                 app.alert.dismiss('fetch_contact_record');

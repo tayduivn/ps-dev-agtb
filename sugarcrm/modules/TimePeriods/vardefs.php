@@ -34,7 +34,10 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
   array (
     'name' => 'name',
     'vname' => 'LBL_TP_NAME',
-    'type' => 'varchar',
+    'dbType' => 'varchar',
+    //'type' => 'enum',
+    'type' => 'timeperiod',
+    'function' => 'get_timeperiods_dom',
     'len' => '36',
     'isnull' => 'false',
     'importable' => 'required',
