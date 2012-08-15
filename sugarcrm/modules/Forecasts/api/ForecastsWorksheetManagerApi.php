@@ -107,42 +107,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         $this->timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $this->user_id = isset($args['user_id']) ? $args['user_id'] : $user->id;
-		
-        $mgr = new ChartAndWorksheetManager();
-        $report_defs = $mgr->getWorksheetDefinition('manager', 'opportunities');
-
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $this->timeperiod_id),
-            'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
-        );
-
-        // since the default is Committed, we need to use this if it's not set or if it is set to Committed
-        if (!isset($args['category']) || $args['category'] == 'Committed') {
-            $testFilters['forecast'] = array('$is' => 1);
-        }
-
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
-
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs[2]);
-
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        // add the filter to the report builder
-
-        $rb->addFilter($reportFilters);
-
-        // create the json for the reporting engine to use
-        $chart_contents = $rb->toJson();
-
-        $report = new Report($chart_contents);
 
         //populate output with default data
         $default_data = array("amount" => 0,
@@ -188,7 +152,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $data[$reportee->user_name] = $default_data;
         }
 
-        $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
+        $data_grid = array_replace_recursive($data, $this->getReportData($args));
 
         $quota = $this->getQuota();
         $forecast = $this->getForecastValues();
@@ -202,13 +166,79 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             // we dont have a forecast yet, set the amount to 0
             if(empty($val['forecast_id'])) {
                 $data_grid[$rep]['amount'] = 0;
+            } else if($val['user_id'] != $this->user_id && $val['show_opps'] == false) {
+                // we need to get their total amount including sales reps.
+                // first get the reportees that have a forecast submitted for this time period
+                $manager_reportees_forecast = $common->getReporteesWithForecasts($val['user_id'], $this->timeperiod_id);
+                // second, we need to get the data all the reporting users
+                $manager_data = $this->getReportData($args, $val['user_id']);
+                // third we only process the users that actually have a committed forecast;
+                foreach($manager_data as $name => $m_data) {
+                    if(in_array($name, $manager_reportees_forecast)) {
+                        // add it to the managers amount
+                        $data_grid[$rep]['amount'] += $m_data['amount'];
+                    }
+                }
             }
 
             $data_grid[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
             $data_grid[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
             $data_grid[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
+            // set the order by the key to make testing easier;
+            ksort($data_grid[$rep]);
         }
         return array_values($data_grid);
+    }
+
+    /**
+     * Get the report data with filters.
+     *
+     * @param array $args
+     * @param null|string $user_id
+     * @return array
+     */
+    protected function getReportData($args, $user_id = null)
+    {
+        if(empty($user_id)) {
+            $user_id = $this->user_id;
+        }
+        $mgr = new ChartAndWorksheetManager();
+        $report_defs = $mgr->getWorksheetDefinition('manager', 'opportunities');
+
+        $testFilters = array(
+            'timeperiod_id' => array('$is' => $this->timeperiod_id),
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
+        );
+
+        // since the default is Committed, we need to use this if it's not set or if it is set to Committed
+        if (!isset($args['category']) || $args['category'] == 'Committed') {
+            $testFilters['forecast'] = array('$is' => 1);
+        }
+
+        require_once('include/SugarParsers/Filter.php');
+        require_once("include/SugarParsers/Converter/Report.php");
+        require_once("include/SugarCharts/ReportBuilder.php");
+
+        // create the a report builder instance
+        $rb = new ReportBuilder("Opportunities");
+        // load the default report into the report builder
+        $rb->setDefaultReport($report_defs[2]);
+
+        // parse any filters from above
+        $filter = new SugarParsers_Filter(new Opportunity());
+        $filter->parse($testFilters);
+        $converter = new SugarParsers_Converter_Report($rb);
+        $reportFilters = $filter->convert($converter);
+        // add the filter to the report builder
+
+        $rb->addFilter($reportFilters);
+
+        // create the json for the reporting engine to use
+        $chart_contents = $rb->toJson();
+
+        $report = new Report($chart_contents);
+
+        return $mgr->getWorksheetGridData('manager', $report);
     }
 
 
@@ -264,10 +294,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         foreach($ids as $id=>$user_name)
         {
+            // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
+            $forecast_type = (User::isManager($id) && $id != $this->user_id) ? 'ROLLUP' : 'DIRECT';
             $forecast_query = "SELECT id, best_case, likely_case, worst_case
                                 FROM forecasts
                                 WHERE timeperiod_id = '{$this->timeperiod_id}'
-                                    AND forecast_type = 'DIRECT'
+                                    AND forecast_type = '" . $forecast_type . "'
                                     AND user_id = '" . $id .  "'
                                     AND deleted = 0 ORDER BY date_modified DESC";
             $result = $db->limitQuery($forecast_query, 0, 1);
