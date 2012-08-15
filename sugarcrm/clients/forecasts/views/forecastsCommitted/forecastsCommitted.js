@@ -68,11 +68,6 @@
     previousTotals : null,
 
     /**
-     * Used to determine whether or not to show the Commit button
-     */
-    showButton : true,
-
-    /**
      * Template to use when updating the bestCase on the committed bar
      */
     bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
@@ -83,8 +78,6 @@
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
     savedTotal : null,
-
-    commitButtonDisabled : true,
 
     runningFetch : false,
 
@@ -121,13 +114,6 @@
         this._collection.fetch();
     },
 
-    /**
-     * returns boolean value indicating whether or not to show the commit button
-     */
-    showCommitButton: function(id) {
-        return app.user.get('id') == id;
-    },
-
     bindDataChange: function() {
 
         var self = this;
@@ -141,7 +127,6 @@
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
-                self.showButton = self.showCommitButton(user.id);
                 self.userId = user.id;
                 self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
@@ -162,6 +147,13 @@
 
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
+                }
+            }, this);
+            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+                if(flag) {
+                    // reset flag without triggering event
+                    self.context.forecasts.set({commitForecastFlag : false}, {silent:true})
+                    self.commitForecast();
                 }
             }, this);
         }
@@ -230,16 +222,13 @@
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
 
-            var commitBtn = this.$el.find('a[id=commit_forecast]');
-            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && self.commitButtonDisabled == true) {
+            var commitButtonEnabled = self.context.forecasts.get('commitButtonEnabled');
+            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && commitButtonEnabled == false) {
                 // it's different so we should enable the commit button
-                self.commitButtonDisabled = false;
-                commitBtn.removeClass('disabled');
-            } else if(_.isEmpty(self.bestCaseCls) && _.isEmpty(self.likelyCaseCls) && self.commitButtonDisabled == false) {
-                self.commitButtonDisabled = true;
-                commitBtn.addClass('disabled');
+                self.context.forecasts.set({commitButtonEnabled : true});
+            } else if(_.isEmpty(self.bestCaseCls) && _.isEmpty(self.likelyCaseCls) && commitButtonEnabled == true) {
+                self.context.forecasts.set({commitButtonEnabled : false});
             }
-
         }
 
         self.totals = totals;
@@ -307,13 +296,6 @@
         }
 
         self.render();
-
-        var btn = this.$el.find('a[id=commit_forecast]');
-        if(self.commitButtonDisabled === false && btn.hasClass('disabled')) {
-            btn.removeClass('disabled');
-        } else if(self.commitButtonDisabled === true && !btn.hasClass('disabled')) {
-            btn.addClass('disabled');
-        }
 
         if(!_.isEmpty(self.savedTotal)) {
             self.updateTotals(self.savedTotal);
@@ -395,13 +377,6 @@
     },
 
     /**
-     * Add a click event listener to the commit button
-     */
-    events: {
-        "click a[id=commit_forecast]" : "commitForecast"
-    },
-
-    /**
      * commit the forecast and by creating a forecast entry if the totals have been updated and the new forecast entry
      * is different from the previous one (best_case and likely_case are not exactly identical)
      *
@@ -409,14 +384,11 @@
     commitForecast: function() {
         var self = this;
 
-        var btn = this.$el.find('a[id=commit_forecast]');
-
-        if(btn.hasClass('disabled')) {
+        if(!self.context.forecasts.get('commitButtonEnabled')) {
             return false;
         }
 
-        btn.addClass('disabled');
-        self.commitButtonDisabled = true;
+        self.context.forecasts.set({commitButtonEnabled : false});
 
         //If the totals have not been set, don't save
         if(!self.totals)

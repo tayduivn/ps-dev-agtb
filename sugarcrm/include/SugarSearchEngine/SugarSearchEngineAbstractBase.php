@@ -53,6 +53,18 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     }
 
     /**
+     * This is needed to prevent unserialize vulnerability
+     */
+    public function __wakeup()
+    {
+        // clean all properties
+        foreach(get_object_vars($this) as $k => $v) {
+            $this->$k = null;
+        }
+        throw new Exception("Not a serializable object");
+    }
+
+    /**
      * Bulk insert any documents that have been marked for bulk insertion.
      */
     public function __destruct()

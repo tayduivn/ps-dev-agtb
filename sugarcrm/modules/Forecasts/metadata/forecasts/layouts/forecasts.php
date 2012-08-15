@@ -64,6 +64,8 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
                 'name' => 'Timeframes'
             )
         ),
-
+        11 => array(
+            'view' => 'forecastsCommitButtons',
+        ),
     )
 );

@@ -27,16 +27,17 @@ require_once('tests/rest/RestTestBase.php');
 class RestTestCurrentUser extends RestTestBase {
     public function tearDown()
     {
-        if ( isset($this->account_id) ) {
-            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
-        }
         parent::tearDown();
     }
 
     public function testRetrieve() {
         $restReply = $this->_restCall("me");
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
+    }
+
+    public function testUpdate() {
+        $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
+        $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }
 
 }
