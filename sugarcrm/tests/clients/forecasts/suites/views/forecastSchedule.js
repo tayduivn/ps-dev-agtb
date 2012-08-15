@@ -137,13 +137,22 @@ describe("The expected opportunities view tests", function(){
                        vname: "LBL_INCLUDE_EXPECTED",
                        type: "bool",
                        default: "0"
-                   }
+                   },
+                   expected_commit_stage : {
+                       name: "expected_commit_stage",
+                       type: "enum",
+                       options: "commit_stage_dom",
+                       label: "LBL_FORECAST",
+                       default: 0,
+                       enabled: 0
+                   }                
             },
             views: [ ],
             layouts: [ ],
             _hash: "af8d404a4f9961ad14409e92b755a0e6"
         };
         dm.reset();
+
         view = SugarTest.loadFile("../../../../clients/forecasts/views/forecastSchedule", "forecastSchedule", "js", function(d) { return eval(d); });
     });
 
@@ -156,8 +165,7 @@ describe("The expected opportunities view tests", function(){
         it("should update the model on change:include_expected", function() {
             var moduleName = "ForecastSchedule", bean, collection;
             dm.declareModel(moduleName, metadata.modules[moduleName]);
-            forecastSchedule = dm.createBean(moduleName, {  id: "xyz", include_expected : 0, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
-
+            forecastSchedule = dm.createBean(moduleName, {  id: "xyz", include_expected : 0, expected_commit_stage : 50, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
             forecastSchedule.hasChanged = function (attr) { return true; };
             forecastSchedule.save = function() { this.set('include_expected', '1'); };
 
@@ -172,9 +180,71 @@ describe("The expected opportunities view tests", function(){
 
             view.context = context;
             view.bindDataChange();
+            forecastSchedule.set('include_expected', "1");
             view._collection.trigger("change:include_expected");
             expect(forecastSchedule.get("include_expected")).toEqual("1");
         });
+    });
+
+
+    describe("test change:expected_commit_stage updates the model", function() {
+
+        it("should update the model on change:expected_commit_stage", function() {
+            var moduleName = "ForecastSchedule", bean, collection;
+            dm.declareModel(moduleName, metadata.modules[moduleName]);
+            forecastSchedule = dm.createBean(moduleName, {  id: "xyz", include_expected : 0, expected_commit_stage : 50, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
+            forecastSchedule.hasChanged = function (attr) { return true; };
+            forecastSchedule.save = function() { this.set('expected_commit_stage', '100'); };
+
+            var collection = new Backbone.Collection([forecastSchedule]);
+            view._collection = collection;
+
+            context = { forecasts : {
+                            forecastschedule : collection,
+                            on : function() {}
+                      }
+            };
+
+            view.context = context;
+            view.bindDataChange();
+            forecastSchedule.set('expected_commit_stage', "100");
+            view._collection.trigger("change:expected_commit_stage");
+            expect(forecastSchedule.get("expected_commit_stage")).toEqual("100");
+            expect(forecastSchedule.get("include_expected")).toEqual("1");
+        });
+    });
+
+
+    describe("forecast column", function() {
+        beforeEach(function(){
+            field = [
+                {
+                    name: 'include_expected',
+                    enabled: true
+                },
+                {
+                    name: 'expected_commit_stage',
+                    enabled: true
+                }
+            ]
+        });
+
+        it("should be the 'include_expected' field if show_buckets is false", function() {
+            app.config.show_buckets = false;
+            var unused = view._setForecastColumn(field);
+            expect(unused).toEqual(field[1]);
+            expect(field[0].enabled).toBeTruthy();
+            expect(field[1].enabled).toBeFalsy();
+        });
+
+        it("should be the 'expected_commit_stage' field if show_buckets is true", function() {
+            app.config.show_buckets = true;
+            var unused = view._setForecastColumn(field);
+            expect(unused).toEqual(field[0]);
+            expect(field[0].enabled).toBeFalsy();
+            expect(field[1].enabled).toBeTruthy();
+        });
+
     });
 
 });

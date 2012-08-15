@@ -12122,12 +12122,16 @@ $jit.ST.Plot.NodeTypes.implement({
           acum -= dimi;
           var intersec = acum;
           if(mpos.y >= intersec) {
+              var percent = 0;
+              if(node.getData('valueArray')[i] > 0) {
+                  percent = ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1);
+              }
             return {
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
-			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
+			  'percentage': percent,
               'link': url,
               'label': node.name
             };

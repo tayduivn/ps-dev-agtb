@@ -54,6 +54,7 @@ class ForecastWorksheet extends SugarBean {
         $opp->forecast = ($this->forecast) ? 1 : 0;
         $opp->probability = $this->probability;
         $opp->sales_stage = $this->sales_stage;
+        $opp->commit_stage = $this->commit_stage;
         $opp->save();
 
         //Update the Worksheet bean

@@ -12,6 +12,7 @@
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span8">
+                    <div class="view-forecastsCommitButtons"></div>
                     <div class="view-timeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-filter"></div>
@@ -117,12 +118,13 @@
 <script src='clients/forecasts/views/timeframes/timeframes.js'></script>
 <script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
+<script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
 <script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
 <script src='clients/forecasts/views/progress/progress.js'></script>
 <script src='clients/forecasts/views/chart/chart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
-<script scr='clients/forecasts/fields/userLink/userLink.js'></script>
-<script scr='clients/forecasts/fields/recordLink/recordLink.js'></script>
+<script src='clients/forecasts/fields/userLink/userLink.js'></script>
+<script src='clients/forecasts/fields/recordLink/recordLink.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 {literal}
 <script language="javascript">

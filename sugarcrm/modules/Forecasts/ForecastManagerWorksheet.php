@@ -54,7 +54,7 @@ class ForecastManagerWorksheet extends SugarBean
 
 		//save quota
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas', $this->args['quota_id']);
+        $quota = BeanFactory::getBean('Quotas', (isset($this->args['quota_id'])) ? $this->args['quota_id'] : null );
 		$quota->timeperiod_id = $this->args["timeperiod_id"];
 		$quota->user_id = $this->args["user_id"];
         $quota->committed = 1;
@@ -72,8 +72,7 @@ class ForecastManagerWorksheet extends SugarBean
 		$this->recalcQuotas();
 
 		//save worksheet
-		$worksheet  = new Worksheet();
-		$worksheet->retrieve($this->args["worksheet_id"]);
+        $worksheet = BeanFactory::getBean('Worksheet', (isset($this->args['worksheet_id'])) ? $this->args['worksheet_id'] : null);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->args["current_user"];
 		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
@@ -170,14 +169,14 @@ class ForecastManagerWorksheet extends SugarBean
 	 */
 	 protected function recalcQuotas()
 	 {
-
 	 	//don't recalc if we are editing the manager row
-	 	if($this->args["user_id"] != $this->args["current_user"]){
+	 	if($this->args["user_id"] != $this->args["current_user"])
+	 	{
 			//Recalc Manager direct
 			$this->recalcUserQuota($this->args["current_user"]);
-
+			
 			//Recalc reportee direct
-			$this->recalcUserQuota($this->args["user_id"]);
+			$this->recalcUserQuota($this->args["user_id"]);	
 	 	}
 	 }
 
@@ -195,13 +194,14 @@ class ForecastManagerWorksheet extends SugarBean
 	 	if($newTotal < 0){
 	 		$newTotal = 0;
 	 	}
-
+	 	
 	 	//save Manager quota
-	 	if(isset($managerQuota["id"])){
-			$quota = BeanFactory::getBean('Quotas', $managerQuota['id']);
-			$quota->amount = $newTotal;
-			$quota->save();
-	 	}
+		$quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
+		$quota->user_id = $userId;
+		$quota->timeperiod_id = $this->args["timeperiod_id"];
+		$quota->quota_type = "Direct";
+		$quota->amount = $newTotal;
+		$quota->save();		
 	  }
 
 

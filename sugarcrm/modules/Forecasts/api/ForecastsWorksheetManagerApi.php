@@ -94,8 +94,10 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 		$current_module_strings = return_module_language($current_language, 'Forecasts');
 
         if(isset($args['user_id']) && User::isManager($args['user_id'])) {
+            /** @var $user User */
             $user = BeanFactory::getBean('Users', $args['user_id']);
         } elseif(!isset($args['user_id']) && User::isManager($current_user->id)){
+            /** @var $user User */
             $user = $current_user;
         } else {
             return array();
@@ -105,13 +107,107 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         $this->timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $this->user_id = isset($args['user_id']) ? $args['user_id'] : $user->id;
+
+        //populate output with default data
+        $default_data = array("amount" => 0,
+                              "quota" => 0,
+                              "quota_id" => '',
+                              "best_case" => 0,
+                              "likely_case" => 0,
+                              "worst_case" => 0,
+                              "best_adjusted" => 0,
+                              "likely_adjusted" => 0,
+                              "worst_adjusted" => 0,
+                              "forecast" => 0,
+                              "forecast_id" => '',
+                              "worksheet_id" => '',
+                              "show_opps" => false,
+                              "id" => ""
+                            );
 		
+		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
+        	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
+            $default_data["show_opps"] = true;
+        }
+		else
+		{
+			$default_data["name"] = $user->first_name . " " . $user->last_name;
+		}
+		
+        $default_data["user_id"] = $user->id;
+        $default_data["id"] = $user->id;
+        $data[$user->user_name] = $default_data;
+
+        require_once("modules/Forecasts/Common.php");
+        $common = new Common();
+        $common->retrieve_direct_downline($this->user_id);
+
+        foreach($common->my_direct_downline as $reportee_id) {
+            /** @var $reportee User */
+            $reportee = BeanFactory::getBean('Users', $reportee_id);
+            $default_data['id'] = $reportee_id;
+            $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
+            $default_data['user_id'] = $reportee_id;
+            $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
+            $data[$reportee->user_name] = $default_data;
+        }
+
+        $data_grid = array_replace_recursive($data, $this->getReportData($args));
+
+        $quota = $this->getQuota();
+        $forecast = $this->getForecastValues();
+        $worksheet = $this->getWorksheetBestLikelyAdjusted();
+        $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
+
+        //bug 54619:
+        //Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers
+        foreach($data_grid as $rep => $val)
+        {
+            // we dont have a forecast yet, set the amount to 0
+            if(empty($val['forecast_id'])) {
+                $data_grid[$rep]['amount'] = 0;
+            } else if($val['user_id'] != $this->user_id && $val['show_opps'] == false) {
+                // we need to get their total amount including sales reps.
+                // first get the reportees that have a forecast submitted for this time period
+                $manager_reportees_forecast = $common->getReporteesWithForecasts($val['user_id'], $this->timeperiod_id);
+                // second, we need to get the data all the reporting users
+                $manager_data = $this->getReportData($args, $val['user_id']);
+                // third we only process the users that actually have a committed forecast;
+                foreach($manager_data as $name => $m_data) {
+                    if(in_array($name, $manager_reportees_forecast)) {
+                        // add it to the managers amount
+                        $data_grid[$rep]['amount'] += $m_data['amount'];
+                    }
+                }
+            }
+
+            $data_grid[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
+            $data_grid[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
+            $data_grid[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
+            // set the order by the key to make testing easier;
+            ksort($data_grid[$rep]);
+        }
+        return array_values($data_grid);
+    }
+
+    /**
+     * Get the report data with filters.
+     *
+     * @param array $args
+     * @param null|string $user_id
+     * @return array
+     */
+    protected function getReportData($args, $user_id = null)
+    {
+        if(empty($user_id)) {
+            $user_id = $this->user_id;
+        }
         $mgr = new ChartAndWorksheetManager();
         $report_defs = $mgr->getWorksheetDefinition('manager', 'opportunities');
 
         $testFilters = array(
             'timeperiod_id' => array('$is' => $this->timeperiod_id),
-            'assigned_user_link' => array('id' => array('$or' => array('$is' => $this->user_id, '$reports' => $this->user_id))),
+            'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
         );
 
         // since the default is Committed, we need to use this if it's not set or if it is set to Committed
@@ -142,70 +238,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         $report = new Report($chart_contents);
 
-        //populate output with default data
-        $default_data = array("amount" => 0,
-                              "quota" => 0,
-                              "quota_id" => '',
-                              "best_case" => 0,
-                              "likely_case" => 0,
-                              "worst_case" => 0,
-                              "best_adjusted" => 0,
-                              "likely_adjusted" => 0,
-                              "worst_adjusted" => 0,
-                              "forecast" => 0,
-                              "forecast_id" => '',
-                              "worksheet_id" => '',
-                              "show_opps" => false,
-                              "id" => ""
-                            );
-		
-		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
-        	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
-            $default_data["show_opps"] = true;
-        }
-		else
-		{
-			$default_data["name"] = $user->first_name . " " . $user->last_name;
-		}
-		
-        $default_data["user_id"] = $user->id;
-        $data[$user->user_name] = $default_data;
-
-        require_once("modules/Forecasts/Common.php");
-        $common = new Common();
-        $common->retrieve_direct_downline($this->user_id);
-
-        foreach($common->my_direct_downline as $reportee_id)
-        {
-            $reportee = new User();
-            $reportee->retrieve($reportee_id);
-            $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
-            $default_data['user_id'] = $reportee_id;
-            $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
-            $data[$reportee->user_name] = $default_data;
-        }
-
-        $data_grid = array_replace_recursive($data, $mgr->getWorksheetGridData('manager', $report));
-
-        $quota = $this->getQuota();
-        $forecast = $this->getForecastValues();
-        $worksheet = $this->getWorksheetBestLikelyAdjusted();
-        $data_grid = array_replace_recursive($data_grid, $quota, $forecast, $worksheet);
-
-        //bug 54619:
-        //Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers
-        foreach($data_grid as $rep => $val)
-        {
-            // we dont have a forecast yet, set the amount to 0
-            if(empty($val['forecast_id'])) {
-                $data_grid[$rep]['amount'] = 0;
-            }
-
-            $data_grid[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
-            $data_grid[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
-            $data_grid[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
-        }
-        return array_values($data_grid);
+        return $mgr->getWorksheetGridData('manager', $report);
     }
 
 
@@ -253,22 +286,28 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         }
 
         //Add the manager's data as well
-        $user = new User();
-        $user->retrieve($this->user_id);
+        /** @var $user User */
+        $user = BeanFactory::getBean('Users', $this->user_id);
         $ids[$this->user_id] = $user->user_name;
 
         $data = array();
 
         foreach($ids as $id=>$user_name)
         {
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case FROM forecasts WHERE timeperiod_id = '{$this->timeperiod_id}' AND forecast_type = 'DIRECT' AND user_id = '{$id}' AND deleted = 0 ORDER BY date_modified DESC";
+            // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
+            $forecast_type = (User::isManager($id) && $id != $this->user_id) ? 'ROLLUP' : 'DIRECT';
+            $forecast_query = "SELECT id, best_case, likely_case, worst_case
+                                FROM forecasts
+                                WHERE timeperiod_id = '{$this->timeperiod_id}'
+                                    AND forecast_type = '" . $forecast_type . "'
+                                    AND user_id = '" . $id .  "'
+                                    AND deleted = 0 ORDER BY date_modified DESC";
             $result = $db->limitQuery($forecast_query, 0, 1);
-            while($row=$db->fetchByAssoc($result))
-            {
+
+            while($row=$db->fetchByAssoc($result)) {
                 $data[$user_name]['best_case'] = $row['best_case'];
                 $data[$user_name]['likely_case'] = $row['likely_case'];
                 $data[$user_name]['worst_case'] = $row['worst_case'];
-                $data[$user_name]['id'] = $row['id'];
                 $data[$user_name]['forecast_id'] = $row['id'];
             }
         }

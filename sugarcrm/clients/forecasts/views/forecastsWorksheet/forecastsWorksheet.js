@@ -41,6 +41,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
+
         var self = this;
 
         this.viewModule = app.viewModule;
@@ -77,6 +78,8 @@
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this._collection.url = this.createURL();
+
     },
 
     createURL:function() {
@@ -155,6 +158,14 @@
                     if(element.hasChanged("forecast")) {
                         this.toggleIncludeInForecast(element);
                     }
+                    if(element.hasChanged("commit_stage")) {
+                        if(element.get("commit_stage") == '100') {
+                            this._collection.models[index].set("forecast", '1');
+                        } else {
+                            this._collection.models[index].set("forecast", '0');
+                        }
+                        this.toggleIncludeInForecast(element);
+                    }
                 }, this);
             }, this);
         }
@@ -177,7 +188,7 @@
             	this.calculateTotals();
             }, this);
             this.context.forecasts.forecastschedule.on("change", function() {
-                this.render();
+                this.calculateTotals();
             }, this);
         }
     },
