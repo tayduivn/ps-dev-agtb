@@ -112,6 +112,7 @@ class UploadFile
 	 * Get URL of the uploaded file related to the document
 	 * @param SugarBean $document
 	 * @param string $type Type of the document, if different from $document
+	 * @return string the URL
 	 */
 	public static function get_upload_url($document, $type = null)
 	{
@@ -125,6 +126,7 @@ class UploadFile
 	 * Try renaming a file to bean_id name
 	 * @param string $filename
 	 * @param string $bean_id
+	 * @return bool Success?
 	 */
 	protected static function tryRename($filename, $bean_id)
 	{
@@ -140,9 +142,9 @@ class UploadFile
 
 	/**
 	 * builds a URL path for an anchor tag
-	 * @param string stored_file_name File name in filesystem
-	 * @param string bean_id note bean ID
-	 * @return string path with file name
+	 * @param string $stored_file_name File name in filesystem
+	 * @param string $bean_id note bean ID
+	 * @return string $path with file name
 	 */
 	static public function get_file_path($stored_file_name, $bean_id, $skip_rename = false)
 	{
@@ -165,9 +167,9 @@ class UploadFile
 
 	/**
 	 * duplicates an already uploaded file in the filesystem.
-	 * @param string old_id ID of original note
-	 * @param string new_id ID of new (copied) note
-	 * @param string filename Filename of file (deprecated)
+	 * @param string $old_id ID of original note
+	 * @param string $new_id ID of new (copied) note
+	 * @param string $filename Filename of file (deprecated)
 	 */
 	public static function duplicate_file($old_id, $new_id, $file_name)
 	{
@@ -364,7 +366,7 @@ class UploadFile
 
 	/**
 	 * moves uploaded temp file to permanent save location
-	 * @param string bean_id ID of parent bean
+	 * @param string $bean_id ID of parent bean
 	 * @return bool True on success
 	 */
 	function final_move($bean_id)
@@ -454,8 +456,8 @@ class UploadFile
 
 	/**
 	 * returns the path with file name to save an uploaded file
-	 * @param string bean_id ID of the parent bean
-	 * @return string
+	 * @param string $bean_id ID of the parent bean
+	 * @return string path
 	 */
 	function get_upload_path($bean_id)
 	{
@@ -470,8 +472,9 @@ class UploadFile
 
 	/**
 	 * deletes a file
-	 * @param string bean_id ID of the parent bean
-	 * @param string file_name File's name
+	 * @param string $bean_id ID of the parent bean
+	 * @param string $file_name File's name
+	 * @return bool Success?
 	 */
 	static public function unlink_file($bean_id,$file_name = '')
 	{
@@ -492,6 +495,7 @@ class UploadFile
     /**
      * Return real FS path of the file
      * @param string $path
+     * @return string path
      */
     public static function realpath($path)
     {
@@ -505,6 +509,7 @@ class UploadFile
     /**
      * Return path of uploaded file relative to uploads dir
      * @param string $path
+     * @return string path
      */
     public static function relativeName($path)
     {

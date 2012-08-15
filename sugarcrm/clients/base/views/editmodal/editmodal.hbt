@@ -1,6 +1,6 @@
 <div class="modal hide" id="noteModal">
     <div class="modal-header">
-        <a class="close" data-dismiss="modal">?</a>
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
         <h3>{{str "LBL_NEW_FORM_TITLE" module}}</h3>
     </div>
     <div class="modal-body">

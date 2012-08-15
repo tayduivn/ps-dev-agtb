@@ -9,7 +9,8 @@
     events: {
         'click #moduleList li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
-        'click .typeahead a': 'clearSearch'
+        'click .typeahead a': 'clearSearch',
+        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
     },
 
     /**
@@ -34,7 +35,16 @@
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
-            buttonElement: '.navbar-search a.btn'
+            onEnterFn: function(hrefOrTerm, isHref) {
+                // if full href treat as user clicking link
+                if(isHref) {
+                    window.location = hrefOrTerm;
+                } else {
+                    // It's the term only (user didn't select from drop down
+                    // so this is essentially the term typed
+                    app.router.navigate('#search/'+hrefOrTerm, {trigger: true});
+                }
+            }
         });
     },
     /** 
@@ -48,8 +58,28 @@
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);
+            },
+            error:function(error) {
+                app.error.handleHttpError(error, plugin);
+                app.logger.error("Failed to fetch search results in search ahead. " + error);
             }
         });
+    },
+    /**
+     * Takes user to full search results page 
+     */
+    gotoFullSearchResultsPage: function(evt) {
+        var term;
+        // Don't let plugin kick in. Navigating directly to search results page
+        // when clicking on adjacent button is, to my mind, special case portal
+        // application requirements so I'd rather do here than change plugin.
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        term = this.$('.search-query').val();
+        if(term && term.length) {
+            app.router.navigate('#search/'+term, {trigger: true});
+        }
     },
 
     /**

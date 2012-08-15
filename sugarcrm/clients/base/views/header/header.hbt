@@ -3,21 +3,21 @@
         <div class="container-fluid">
             <div class="nav-collapse">
                 <ul class="nav" id="moduleList">
-                    <li><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
+                    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
                     {{#each moduleList}}
-                    <li {{#eq this ../currentModule}}class="active"{{/eq}}>
+                    <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}">
                         <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
                     </li>
                     {{/each}}
                 </ul>
                 <ul class="nav pull-right" id="userList">
                     <li class="divider-vertical"></li>
-                    <li class="dropdown">
+                    <li class="dropdown" id="userActions">
                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{fullName}} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
+                            <li class="profile"><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
                             <li class="divider"></li>
-                            <li><a href="#logout">{{str "LBL_LOGOUT"}}</a></li>
+                            <li class="logout"><a href="#logout">{{str "LBL_LOGOUT"}}</a></li>
                         </ul>
                     </li>
                     <li class="divider-vertical"></li>
@@ -26,7 +26,7 @@
                             <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             {{#each createListLabels}}
-                            <li><a href="#{{this}}/create">{{str "LNK_CREATE" this}}</a></li>
+                            <li class="{{this}}"><a href="#{{this}}/create">{{str "LNK_CREATE" this}}</a></li>
                             {{/each}}
                         </ul>
                     </li>
