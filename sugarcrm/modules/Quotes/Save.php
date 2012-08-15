@@ -54,16 +54,20 @@ else {
 	$check_notify = FALSE;
 }
 
-$focus->tax = 0;
-$focus->total = 0;
-$focus->subtotal = 0;
-$focus->deal_tot = 0;
-$focus->new_sub = 0;
-$focus->shipping = 0;
-$focus->tax_usdollar = 0;
-$focus->total_usdollar = 0;
-$focus->subtotal_usdollar = 0;
-$focus->shipping_usdollar = 0;
+//bug55337 - Inline edit to different stage, cause total amount to display 0
+if(!isset($_REQUEST['from_dcmenu']))
+{
+    $focus->tax = 0;
+    $focus->total = 0;
+    $focus->subtotal = 0;
+    $focus->deal_tot = 0;
+    $focus->new_sub = 0;
+    $focus->shipping = 0;
+    $focus->tax_usdollar = 0;
+    $focus->total_usdollar = 0;
+    $focus->subtotal_usdollar = 0;
+    $focus->shipping_usdollar = 0;
+}
 
 if(empty($_REQUEST['calc_grand_total'])){
 	$focus->calc_grand_total = 0;
