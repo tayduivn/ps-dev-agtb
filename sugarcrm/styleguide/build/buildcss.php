@@ -9,9 +9,17 @@ try {
     $variablesLess = file_get_contents( $root . 'variables.less' );
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../bootstrap"';
+
+    //build bootstrap.css
     $less = new lessc('../bootstrap/less/bootstrap.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
+    
+    //build bootstrap-mobile.css
+    $less = new lessc('../bootstrap/less/bootstrap-mobile.less');
+    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+    file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
+
     echo '<h2>bootstrap.css successfully generated.</h2>';
     echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
     echo '<p><a href="./index.php">Back</a></p>';
