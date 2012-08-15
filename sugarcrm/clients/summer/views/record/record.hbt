@@ -10,9 +10,9 @@
                         <div class="span2">{{str  this.label ../../../this.model.module}}</div>
                         <div class="span4" name="{{this.name}}">
                             {{field ../../../this}}
+                            <a style="cursor: pointer" class="record-edit-link" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i>edit</a>
                         </div>
                         <div class="span2">
-                            <a style="cursor: pointer" class="record-edit-link" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;edit</a>
                         </div>
                     </div>
                 {{/notEq}}
@@ -30,3 +30,47 @@
         </div>
     </div>
     {{/each}}
+
+<style>
+
+span[sfuuid] {
+display:inline-block;
+}
+
+.record-edit-link {
+text-decoration:none;
+}
+
+.card2 .icon-pencil {
+position:relative;
+left:0;
+top:0;
+padding:0;
+}
+
+.record-row > .span4 > span[sfuuid] > div.row-fluid > [class^="span"] {
+display:inline;
+float:none;
+}
+
+
+
+.record-row .record-edit-link {
+display:none;
+line-height:14px;
+}
+
+.record-row:hover .record-edit-link {
+display:inline-block;
+}
+
+
+
+
+
+
+
+
+
+
+</style>
