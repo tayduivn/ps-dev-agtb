@@ -137,4 +137,15 @@ class RestTestCurrentUserPortal extends RestTestBase {
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }
+
+    public function testPasswordUpdate() {
+        $reply = $this->_restCall("me/password",
+            json_encode(array('portal_password' => 'fubar')),
+            'PUT');
+
+        $this->assertNotEmpty($reply['reply']['current_user']['valid']);
+        $this->assertEquals($reply['reply']['current_user']['valid'], User::getPasswordHash("fubar"));
+        $this->assertNotEquals($this->portalGuy->portal_password, User::getPasswordHash("fubar")); // actually changed
+    }
+
 }

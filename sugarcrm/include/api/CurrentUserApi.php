@@ -42,6 +42,14 @@ class CurrentUserApi extends SugarApi {
                 'shortHelp' => 'Updates current user',
                 'longHelp' => 'include/api/help/me.html',
             ),
+            'updatePassword' =>  array(
+                'reqType' => 'PUT',
+                'path' => array('me','password'),
+                'pathVars'=> array(''),
+                'method' => 'updatePassword',
+                'shortHelp' => "Updates current user' password",
+                'longHelp' => 'include/api/html/help/me.html',
+            ),
         );
     }
 
@@ -117,4 +125,40 @@ class CurrentUserApi extends SugarApi {
 
         return $this->retrieveCurrentUser($api, $args);
     }
+
+    /**
+     * Updates the current user's password
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updatePassword($api, $args) {
+
+        global $current_user;
+        
+        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+
+            $oldPassword = $contact->portal_password;
+
+            // update password
+            if (!empty($args['portal_password']) && $args['portal_password'] != $oldPassword && $args['portal_password'] != 'value_setvalue_setvalue_set') {
+                $contact->portal_password = User::getPasswordHash($args['portal_password']);
+                $user_data['valid'] = true;
+                $contact->save();
+            } else {
+                $user_data['valid'] = false;
+                // TODO: Is this standard with our REST Api? Even needed?
+                $user_data['message'] = 'Error: Password empty or same as old password.';
+            }
+            $user_data['expiration'] = null;
+        } else {
+            // TODO: update password for normal non support_portal user
+            //
+            //
+        }
+        return $data = array('current_user'=>$user_data);
+    }
+
 }
