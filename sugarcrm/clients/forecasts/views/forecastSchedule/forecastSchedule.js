@@ -64,7 +64,7 @@
                 new app.view.ClickToEditField(field, this);
             }
 
-            if (field.name == "commit_stage") {
+            if (field.name == "expected_commit_stage") {
                 new app.view.BucketGridEnum(field, this);
             }
         }
@@ -77,14 +77,19 @@
         if (this._collection) {
             //this._collection.on("reset", function() { self.render() }, this);
 
-            this._collection.on("change:include_expected", function() {
-                _.each(this._collection.models, function(model) {
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(model, index) {
                     if(model.hasChanged("include_expected")) {
-                       model.url = this.url;
-                       if(model.get('id') && model.url.indexOf(model.get('id')) === -1)
-                       {
-                           model.url += "/" + model.get('id');
+                        this._collection.url = this.url;
+                        model.save();
                        }
+                    if(model.hasChanged("expected_commit_stage")) {
+                        if(model.get("expected_commit_stage") == '100') {
+                            this._collection.models[index].set("include_expected", '1');
+                        } else {
+                            this._collection.models[index].set("include_expected", '0');
+                        }
+                        this._collection.url = this.url;
                        model.save();
                     }
                 }, this);
@@ -98,10 +103,10 @@
         var isOwner = self.isMyWorksheet();
 
         _.each(fields, function(field) {
-            if (field.name == "forecast") {
+            if (field.name == "include_expected") {
                 field.enabled = !app.config.show_buckets;
                 forecastField = field;
-            } else if (field.name == "commit_stage") {
+            } else if (field.name == "expected_commit_stage") {
                 field.enabled = app.config.show_buckets;
                 if(!isOwner)
                 {
@@ -111,6 +116,17 @@
             }
         });
         return app.config.show_buckets?forecastField:commitStageField;
+    },
+
+    /**
+     * Renders view
+     */
+    _render:function () {
+
+        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+
+        app.view.View.prototype._render.call(this);
+
     },
 
     /**
