@@ -7176,7 +7176,7 @@ article .avatar {
   line-height: 16px;
 }
 .logo {
-  background: url(../img/sugar-red-sm.png) 0 0 no-repeat;
+  background: url(../../../../index.php?entryPoint=getImage&imageName=sugar-red-sm.png) 0 0 no-repeat;
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
