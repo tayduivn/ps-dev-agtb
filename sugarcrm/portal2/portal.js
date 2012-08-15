@@ -42,7 +42,8 @@
             "search",
             "error",
             "profile",
-            "profileedit"
+            "profileedit",
+            "logout"
         ];
 
         app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
@@ -128,7 +129,7 @@
                     });
                 };
                 if(app.api.isAuthenticated()) {
-                    app.logout({success: callback, error: callback});
+                    app.logout({success: callback, error: callback}, {clear:true});
                 } else {
                     callback();
                 }
