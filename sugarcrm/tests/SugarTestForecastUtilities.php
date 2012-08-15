@@ -55,7 +55,7 @@ class SugarTestForecastUtilities
         $forecast->worst_case = 100;
         $forecast->forecast_type = 'DIRECT';
         $forecast->user_id = $user->id;
-        $forecast->date_modified = db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime');
+        $forecast->date_modified = db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime');
         $forecast->date_entered = $forecast->date_modified;
         $forecast->save();
         self::$_createdForecasts[] = $forecast;
@@ -82,10 +82,202 @@ class SugarTestForecastUtilities
     public static function getCreatedForecastIds()
     {
         $forecast_ids = array();
-        foreach (self::$_createdForecasts as $fs)
-        {
+        foreach (self::$_createdForecasts as $fs) {
             $forecast_ids[] = $fs->id;
         }
         return $forecast_ids;
     }
+
+    protected static $timeperiod;
+
+    /**
+     * @return TimePeriod
+     */
+    public static function getCreatedTimePeriod()
+    {
+        if (empty(self::$timeperiod)) {
+            self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
+        }
+
+        return self::$timeperiod;
+    }
+
+    /**
+     * This method will create a new user with opportunities with a variable number of items based on an array passed in
+     */
+    public static function createForecastUser(array $config = array())
+    {
+
+        $default_config = array(
+            'timeperiod_id' => null,
+            'user' => array(
+                'reports_to' => null,
+            ),
+            'createOpportunities' => true,
+            'opportunities' => array(
+                'total' => 5,
+                'include_in_forecast' => 3
+            ),
+            'createForecast' => true,
+            'createWorksheet' => true,
+            'createQuota' => true,
+            'quota' => array(
+                'amount' => 2000
+            )
+        );
+
+        $config = array_merge($default_config, $config);
+
+
+        $return = array(
+            'opportunities' => array(),
+            'opportunities_total' => 0
+        );
+
+
+        if (empty($config['timeperiod_id'])) {
+            $config['timeperiod_id'] = self::getCreatedTimePeriod()->id;
+        }
+
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        if (!empty($config['user']['reports_to'])) {
+            $user->reports_to_id = $config['user']['reports_to'];
+            $user->save();
+        }
+
+        $return['user'] = $user;
+
+        if ($config['createOpportunities'] === true) {
+            // create opportunities
+            $included = 0;
+            $opportunities = array();
+
+            $forecast_likely_total = 0;
+            $forecast_best_total = 0;
+            $forecast_worst_total = 0;
+            for ($x = 0; $config['opportunities']['total'] > $x; $x++) {
+                $opp_amount = rand(1000, 2500);
+
+                $include = 0;
+                if ($included < $config['opportunities']['include_in_forecast']) {
+                    $included++;
+                    $include = 1;
+                }
+
+                // random date
+                $int_date_closed = rand(strtotime(self::$timeperiod->start_date), strtotime(self::$timeperiod->end_date));
+                $date_closed = date('Y-m-d', $int_date_closed);
+
+
+                $opp = SugarTestOpportunityUtilities::createOpportunity();
+                $opp->assigned_user_id = $user->id;
+                $opp->timeperiod_id = $config['timeperiod_id'];
+                $opp->amount = $opp_amount;
+                $opp->likely_case = ($opp_amount - 200);
+                $opp->best_case = ($opp_amount + 200);
+                $opp->worst_case = ($opp_amount - 400);
+                $opp->forecast = $include;
+                $opp->probability = rand(50, 90);
+                $opp->date_closed = $date_closed;
+                $opp->team_id = '1';
+                $opp->team_set_id = '1';
+                $opp->save();
+
+                if ($include) {
+                    $forecast_likely_total += $opp->likely_case;
+                    $forecast_best_total += $opp->best_case;
+                    $forecast_worst_total += $opp->worst_case;
+                    $return['opportunities_total'] += $opp_amount;
+                }
+
+                $opportunities[] = $opp;
+
+                $return['opportunities'][] = $opp;
+            }
+
+            if ($config['createForecast'] === true) {
+                $forecast = self::createForecast(self::$timeperiod, $user);
+
+                $forecast->best_case = $forecast_best_total;
+                $forecast->worst_case = $forecast_worst_total;
+                $forecast->likely_case = $forecast_likely_total;
+                $forecast->save();
+
+                $return['forecast'] = $forecast;
+            }
+
+            if ($config['createQuota'] === true) {
+                $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
+                $quota->user_id = $user->id;
+                $quota->quota_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $quota->timeperiod_id = $config['timeperiod_id'];
+                $quota->team_set_id = 1;
+                $quota->save();
+
+                $return['quota'] = $quota;
+            }
+
+            if ($config['createWorksheet'] === true) {
+                $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+                $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
+                $worksheet->related_id = $user->id;
+                $worksheet->forecast_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $worksheet->timeperiod_id = $config['timeperiod_id'];
+                $worksheet->best_case = $forecast_best_total + 100;
+                $worksheet->likely_case = $forecast_likely_total + 100;
+                $worksheet->worst_case = $forecast_likely_total + 100;
+                $worksheet->forecast = 1;
+                $worksheet->save();
+
+                $return['worksheet'] = $worksheet;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     *
+     * @param array $manager        A manager created from createForecastUser
+     * @param $user                 N+ number of users that report to $manager to create in the forecast
+     * @return Forecast
+     */
+    public static function createManagerRollupForecast($manager, $user)
+    {
+        $users = array($user);
+        $numargs = func_num_args();
+        if ($numargs > 2) {
+            for ($i = 2; $i < $numargs; $i++) {
+                $users[] = func_get_arg($i);
+            }
+        }
+        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, $manager['user']);
+        $tmpForecast->best_case = $manager['forecast']->best_case;
+        $tmpForecast->worst_case = $manager['forecast']->worst_case;
+        $tmpForecast->likely_case = $manager['forecast']->likely_case;
+        $tmpForecast->forecast_type = "ROLLUP";
+
+        foreach($users as $user) {
+            if($user['user']->reports_to_id == $manager['user']->id) {
+                $tmpForecast->best_case += $user['forecast']->best_case;
+                $tmpForecast->worst_case += $user['forecast']->worst_case;
+                $tmpForecast->likely_case += $user['forecast']->likely_case;
+            }
+        }
+        $tmpForecast->save();
+
+        return $tmpForecast;
+    }
+
+    public static function cleanUpCreatedForecastUsers()
+    {
+        if (!empty(self::$timeperiod)) {
+            SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        }
+        SugarTestForecastUtilities::removeAllCreatedForecasts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+    }
+
 }
