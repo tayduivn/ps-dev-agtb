@@ -55,6 +55,7 @@
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
+               'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			//jquery libraries
 			$sugar_grp_jquery = array(
