@@ -129,6 +129,10 @@
             'Notes': {
                 field: 'name',
                 direction: 'desc'
+            },
+            'Tasks': {
+                field: 'priority',
+                direction: 'asc'
             }
         },
  
@@ -152,6 +156,9 @@
             },
             footer: {
                 target: '#footer'
+            },
+            todo: {
+                target: '#todo-widget-container'
             }
         },
 
@@ -169,7 +176,8 @@
             'Accounts',
             'Contacts',
             'Opportunities',
-            'Notes'
+            'Notes',
+            'Tasks'
         ],
         /**
          * Client ID for oAuth

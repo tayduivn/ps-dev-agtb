@@ -1,0 +1,21 @@
+<div class="btn-group dropup" id="todo-list-widget">
+    <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
+        <i class="icon-list-alt"></i> Todo</button>
+    <div style="width: 192px; padding:12px" id="todo-container" class="dropdown-menu">
+        <div class="input-append todo-header">
+            <input style="float: left; width: 150px;" class="span2" id="todo-description" type="text" placeholder="What needs to be done?">
+            <button class="btn btn-success" id="todo-add" type="button"><i class="icon-plus-sign"></i></button>
+        </div>
+        <div class="todo-list-container">
+            <ul style="padding-top: 25px; margin-bottom: 0px" class="todo-list">
+                {{#each description}}
+                <label style="display: inline" class="checkbox">
+                    <input type="checkbox">
+                </label>
+                <li style="padding: 0; list-style: none">{{this}}"</li>
+                <i style="float:right" class="icon-trash"></i>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
