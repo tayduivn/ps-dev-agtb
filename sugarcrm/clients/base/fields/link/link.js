@@ -42,7 +42,7 @@
         self.listItems = [];
         // Add all of the pre-existing selections
         for ( var i = 0; i < currItems.length; i++ ) {
-            self.listItems[self.listItems.length] = { 'module': self.currCollection.module, 'name': currItems[i].get('name'), 'id': currItems[i].id, 'selected': 'selected' };
+            self.listItems[self.listItems.length] = { 'module': self.currCollection.module, 'name': currItems[i].get('name'), 'id': currItems[i].id, 'selected': 'selected="selected"' };
             // mySelect.append($(new Option(currItems[i].get('name'),currItems[i].id,'selected')).attr('selected',true));
         }
         for ( var i = 0; i < addItems.length; i++ ) {
@@ -56,7 +56,7 @@
         // Reset the html for this
         myEl.html(self.myListTemplate(self));
         if ( self.myView == 'edit' ) {
-            mySelect.trigger("liszt:updated");
+            myEl.trigger("liszt:updated");
         }
     },
 
