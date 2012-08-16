@@ -50,7 +50,6 @@
         <script src='../sidecar/src/view/field.js'></script>
         <script src='../sidecar/src/view/layout.js'></script>
         <script src='views/alert-view.js'></script>
-        <script src='views/footer-view.js'></script>
         <script src='../sidecar/src/view/alert.js'></script>
 		<script src='portal.js'></script>
 
@@ -58,30 +57,31 @@
         <script src="../sidecar/lib/sugarapi/demoServerData.js"></script>
         <script src="../sidecar/lib/sugarapi/demoRestServer.js"></script>
 		<script src="../sidecar/lib/sinon/sinon.js"></script>
-		<link rel="stylesheet" href="./lib/twitterbootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
 
-        <!-- Styleguide scripts that are not useful yet -->
-        <script src="./lib/twitterbootstrap/js/bootstrap-transition.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-collapse.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-scrollspy.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-tab.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-typeahead.js"></script>
-        <script src="./lib/twitterbootstrap/js/jquery.dataTables.js"></script>
-        <script src="./lib/twitterbootstrap/js/wicked.js"></script>
-        <script src="./lib/twitterbootstrap/js/jquery.jeditable.js"></script>
-        <script src="./lib/twitterbootstrap/js/editable.js"></script>
+        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
+
+        <!-- Styleguide scripts that are not useful yet
+        <script src="../styleguide/bootstrap/js/bootstrap-transition.js"></script>
+        <script src="../styleguide/bootstrap/js/bootstrap-collapse.js"></script>
+        <script src="../styleguide/bootstrap/js/bootstrap-scrollspy.js"></script>
+        <script src="../styleguide/bootstrap/js/bootstrap-tab.js"></script>
+        <script src="../styleguide/bootstrap/js/bootstrap-typeahead.js"></script>
+        <script src="../styleguide/bootstrap/js/jquery.dataTables.js"></script>
+        <script src="../styleguide/bootstrap/js/wicked.js"></script>
+        <script src="../styleguide/bootstrap/js/jquery.jeditable.js"></script>
+        <script src="../styleguide/bootstrap/js/editable.js"></script>
+        -->
 
         <!-- Styleguide scripts that need to be included -->
-        <script src="./lib/twitterbootstrap/js/bootstrap-button.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-tooltip.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-popover.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-dropdown.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-modal.js"></script>
-        <script src="./lib/twitterbootstrap/js/bootstrap-alert.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-button.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-tooltip.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-popover.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-modal.js"></script>
+        <script src="../styleguide/assets/js/bootstrap-alert.js"></script>
         <script src="portal-ui.js"></script>
-
     </head>
     <body>
     	<div>
@@ -97,10 +97,12 @@
                 </div>
 
                 <div id="content">
-                    <div class="alert-top">
-                        <div class="alert alert-process">
-                            <strong>Loading</strong>&#8230;
-                            <img style="float:right" src="lib/twitterbootstrap/img/throbber.gif">
+                    <div class="loading-middle">
+                        <div class="loading alert-process">
+                            <strong>Initialization</strong>
+                            <div class="loading">
+                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

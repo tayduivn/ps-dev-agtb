@@ -3,6 +3,11 @@
     // Add custom events here for now
     app.events.on("app:init", function() {
 
+       var $loading = $('.loading');
+        $loading.children('strong:last-child').append('.');
+        $loading.children('div').remove();
+        $loading.children('strong:last-child').after('<br><strong>Loading modules</strong> <div class="loading"><span class="l1"></span><span class="l2"></span><span class="l3"></span></div>');
+
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({

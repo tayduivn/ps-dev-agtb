@@ -1,0 +1,101 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 18px;
+}
+.loading-middle {
+    padding: 8px 20px 8px 10px;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    background-color: whiteSmoke;
+    border: 1px solid #CDCCCB;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    color: #58595B;
+    width: 40%;
+    min-width: 200px;
+    position: fixed;
+    top: 10%;
+    left: 30%;
+    right: 30%;
+
+}
+.loading {
+    display: inline;
+}
+.loading span {
+    background-color:#000000;
+    border-width:1px;border-style:solid;border-color:#efefef #efefef #eee #eee;
+    display:inline-block;
+    width:2px;
+    height:2px;
+    margin-right:1px;
+    opacity:0.1;
+    margin-top:0.3em;
+    -moz-transform:scale(0.7);
+    -webkit-transform:scale(0.7);
+    -moz-animation:move 1s infinite linear;
+    -webkit-animation:move 1s infinite linear;
+}
+.loading .l1 {
+     -moz-animation-delay: .1s;
+    -webkit-animation-delay: .1s;
+ }
+.loading .l2 {
+     -moz-animation-delay: .2s;
+    -webkit-animation-delay: .2s;
+}
+.loading .l3 {
+     -moz-animation-delay: .3s;
+    -webkit-animation-delay: .3s;
+}
+
+@-moz-keyframes move{
+    0%{-moz-transform: scale(1.2);opacity:1;}
+    100%{-moz-transform: scale(0.5);opacity:0.1;}
+}
+@-webkit-keyframes move{
+    0%{-webkit-transform: scale(1.2);opacity:1;}
+    100%{-webkit-transform: scale(0.5);opacity:0.1;}
+}​
+
+/* ALERTS */
+.alert-heading {
+  color: inherit;
+}
+
+.alert .close {
+  position: relative;
+  top: -2px;
+  right: -21px;
+  line-height: 18px;
+}
+
+.alert-success {
+  background-color: #DFF0D8;
+  border-color: #8CC66A;
+  color: #28481C;
+}
+.alert-danger,
+.alert-error {
+  background-color: #FFE9E9;
+  border-color: #B60000;
+  color: #B81213;
+}
+.alert-info {
+  background-color: #D9EDF7;
+  border-color: #5BBCDC;
+  color: #134158;
+}
+
+.alert-block {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.alert-block > p,
+.alert-block > ul {
+  margin-bottom: 0;
+}
+.alert-block p + p {
+  margin-top: 5px;
+}
