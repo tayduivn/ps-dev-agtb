@@ -176,12 +176,12 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        if(isset($args['lang'])) {
-            global $current_language, $app_strings;
-                $lang = $args['lang'];
-            	$current_language = $lang;
-                $app_strings = return_application_language($lang);
-        }
+        global $current_language, $app_strings, $app_list_strings;
+        $lang = isset($args['lang']) ? $args['lang'] : "en_us";
+        $current_language = $lang;
+        $app_strings = return_application_language($lang);
+        $app_list_strings = return_app_list_strings_language($lang);
+
 
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','viewTemplates','appStrings','views', 'layouts', 'config');
@@ -208,6 +208,15 @@ class MetadataApi extends SugarApi {
         // since this is a public metadata call pass true to the meta data manager to only get public/
         $mm = $this->getMetadataManager( TRUE );
 
+        // Exception for the AppListStrings.
+        $app_list_strings = $mm->getAppListStrings();
+        $app_list_strings_public = array();
+        $app_list_strings_public['available_language_dom'] = $app_list_strings['available_language_dom'];
+        if (isset($args['platform']) && $args['platform'] == 'portal') {
+            $app_list_strings_public['countries_dom'] = $app_list_strings['countries_dom'];
+            $app_list_strings_public['state_dom'] = $app_list_strings['state_dom'];
+        }
+
         // Start collecting data
         $data = array();
 
@@ -216,6 +225,7 @@ class MetadataApi extends SugarApi {
         $data['layouts'] = $mm->getSugarLayouts();
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
+        $data['appListStrings'] = $app_list_strings_public;
         $data['config'] = $configs;
         $md5 = serialize($data);
         $md5 = md5($md5);

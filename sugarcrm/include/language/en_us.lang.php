@@ -3392,6 +3392,12 @@ $app_strings = array (
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_TOUR' => 'Activity View Tour',
+    'LNK_TOUR' => 'Tour',
+    'LBL_TOP' => 'Top',
+    'LBL_LANGUAGE' => 'Language',
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
+    'LBL_LOADING_LANGUAGE' => 'Loading language pack',
 
     //for portal
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
@@ -3415,8 +3421,6 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
-
-    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
