@@ -305,6 +305,7 @@
         /*********** Main actions happening here **************/
         var targetTokens = $(this).attr('name').split('_');
         var shareManager = new ShareManager(targetTokens[0], targetTokens[1]);
+        console.log(this);
 
         // a draggable element inside browser
         if (!event.originalEvent.dataTransfer) {
@@ -324,7 +325,7 @@
                     if (shareManager2.linkModels('Notes', newNoteId)) {
                         ShareManager.addNewFileView();
                     }
-                    ShareManager.alertViews.shareSuccess('<p style="font-size: 16px; text-align: center;">You have shared with someone.  <a id="undo-link"><strong>Undo</strong></a></p>', '',
+                    ShareManager.alertViews.shareSuccess('<p style="font-size: 16px; text-align: center;">You have shared with' + $(this).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>', '',
                         {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
                 }
             }
