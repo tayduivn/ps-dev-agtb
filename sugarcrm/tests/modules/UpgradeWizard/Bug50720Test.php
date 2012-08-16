@@ -38,6 +38,7 @@ class Bug50720Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp() 
     {
+        SugarTestHelper::setup('app_list_strings');
         if(file_exists($this->file))
         {
             $this->customConnectors = file_get_contents($this->file);
@@ -49,6 +50,7 @@ class Bug50720Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown() 
     {
+        SugarTestHelper::tearDown();
         if(!empty($this->customConnectors))
         {
             file_put_contents($this->file, $this->customConnectors);

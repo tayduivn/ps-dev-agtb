@@ -1,0 +1,29 @@
+<div class="longHelpTitle">Run LessPHP and outputs the compiled css</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    <p>This endpoint allows you to preview what would be the output bootstrap.css after compiling a theme. It interprets
+        the arguments as less variables and run LessPHP based on the set of arguments you furnished.</p>
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+    <table>
+        <tr><th>Param</th><th>Description</th><th>Optional</th></tr>
+        <tr><td>platform</td><td>/themes/clients/***PLATFORM***/themeName/</td><td>true</td></tr>
+        <tr><td>themeName</td><td>/themes/clients/platform/***THEMENAME***/</td><td>true</td></tr>
+        <tr><td>min</td><td>Compress or not the css</td><td>true</td></tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    platform: 'portal',
+    themeName: 'default',
+    min: false
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <p>.article { font-size: 16px; }</p>
+</div>
