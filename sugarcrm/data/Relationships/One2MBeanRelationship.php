@@ -93,6 +93,8 @@ class One2MBeanRelationship extends One2MRelationship
         //If we aren't already in a relationship save, intitiate a save now.
         if (empty($GLOBALS['resavingRelatedBeans']))
             SugarRelationship::resaveRelatedBeans();
+        
+        return true;
     }
 
     protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
@@ -127,7 +129,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         //If this relationship has already been removed, we can just return
         if ($rhs->$rhsID != $lhs->id)
-            return;
+            return false;
 
         $rhs->$rhsID = '';
 
@@ -148,6 +150,8 @@ class One2MBeanRelationship extends One2MRelationship
             $this->callAfterDelete($lhs, $rhs);
             $this->callAfterDelete($rhs, $lhs);
         }
+
+        return true;
     }
 
     /**
