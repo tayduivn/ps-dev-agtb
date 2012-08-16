@@ -7,11 +7,8 @@ describe("toggle field", function() {
                 "type": "toggle",
                 "view": "detail"
             };
-            var controller = SugarFieldTest.loadSugarField('toggle/toggle');
-            this.field = SugarFieldTest.createField("forecast", "toggle", "detail", fieldDef);
+            this.field = SugarTest.createField("forecast","checkbox", "toggle", "detail", fieldDef);
             var model = new Backbone.Model({forecast: true});
-            this.field = _.extend(this.field, controller);
-            this.field.def = fieldDef;
             this.field.model = model;
             expect(this.field.def.view).toEqual(fieldDef.view);
         });
@@ -24,11 +21,8 @@ describe("toggle field", function() {
                 "type": "toggle",
                 "view": "default"
             };
-            var controller = SugarFieldTest.loadSugarField('toggle/toggle');
-            this.field = SugarFieldTest.createField("forecast", "toggle", "default", fieldDef);
+            this.field = SugarTest.createField("forecast","checkbox", "toggle", "default", fieldDef);
             var model = new Backbone.Model({forecast: true});
-            this.field = _.extend(this.field, controller);
-            this.field.def = fieldDef;
             this.field.model = model;
             expect(this.field.def.view).toEqual(fieldDef.view);
         });

@@ -3,7 +3,7 @@ var SugarFieldTest = {};
 (function(test) {
 
     test.loadSugarField = function(file) {
-        return SugarTest.loadFile("../../../../clients/forecasts/fields", file, "js", function(data) {
+        return SugarTest.loadFile("../clients/forecasts/fields", file, "js", function(data) {
             return eval("(" + data + ")");
         });
     };

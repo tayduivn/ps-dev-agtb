@@ -1,10 +1,11 @@
 describe("The forecasts log", function(){
 
-    var app, view;
+    var app, view, hbt_helper;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../../../../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
+        hbt_heleper = SugarTest.loadFile("../clients/forecasts/helper","hbt-helpers", "js", function(d) { return eval(d); });
     });
 
     describe("test createHistoryLog function", function() {
