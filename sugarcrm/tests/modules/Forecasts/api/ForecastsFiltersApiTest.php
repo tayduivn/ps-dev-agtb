@@ -82,7 +82,10 @@ class ForecastsFiltersApiTest extends RestTestBase
         $this->assertEquals($restReply['reply']['metadata']['id'], $this->currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
 
         // get the user ids from first level
-        $firstLevel = array( $restReply['reply']['children'][0]['metadata']['id'], $restReply['reply']['children'][1]['metadata']['id']);
+        $firstLevel = array();
+        foreach($restReply['reply']['children'] as $children ) {
+            array_push($firstLevel, $children['metadata']['id']);
+        }
 
         // assertContains in case the order is ever jumbled
         $this->assertContains($this->employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
@@ -111,7 +114,7 @@ class ForecastsFiltersApiTest extends RestTestBase
 
     public function testTimeperiods()
     {
-        $restReply = $this->_restCall("Forecasts/filters/");
+        $restReply = $this->_restCall("Forecasts/timeframes/");
 
         $db = DBManagerFactory::getInstance();
 

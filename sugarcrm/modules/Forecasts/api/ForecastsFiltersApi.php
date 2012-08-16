@@ -157,40 +157,35 @@ class ForecastsFiltersApi extends ModuleApi {
         // if no children, the user tree will be hidden anyways, so don't bother getting Opportunities
         // if so, we want to grab any Opportunities the user might have
         if(!empty($treeData['children'])) {
-            $result = $GLOBALS['db']->query("SELECT count(id) ct FROM opportunities WHERE assigned_user_id = '{$id}' ");
-            $row = $GLOBALS['db']->fetchByAssoc($result);
+            global $current_language;
+            //grab language defs
+            $current_module_strings = return_module_language($current_language, 'Forecasts');
 
-            if($row['ct'] > 0) {
-                global $current_language;
-                //grab language defs
-                $current_module_strings = return_module_language($current_language, 'Forecasts');
+            $myOpp = array(
+                'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
+                    array($treeData['metadata']['first_name'] . " " . $treeData['metadata']['last_name'])),
+                'children' => array(),
+                // Give myOpp the same metadata as the root Manager user
+                'metadata' => array(
+                    "id" => $treeData['metadata']['id'],
+                    "user_name" => $treeData['metadata']['user_name'],
+                    "full_name" => $treeData['metadata']['full_name'],
+                    "first_name" => $treeData['metadata']['first_name'],
+                    "last_name" => $treeData['metadata']['last_name'],
+                    "reports_to_id" => $treeData['metadata']['reports_to_id'],
+                    "level" => "1"
+                ),
+                'state' => 'closed',
+                'attr' => array(
+                    'rel' => 'my_opportunities',
 
-                $myOpp = array(
-                    'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
-                        array($treeData['metadata']['first_name'] . " " . $treeData['metadata']['last_name'])),
-                    'children' => array(),
-                    // Give myOpp the same metadata as the root Manager user
-                    'metadata' => array(
-                        "id" => $treeData['metadata']['id'],
-                        "user_name" => $treeData['metadata']['user_name'],
-                        "full_name" => $treeData['metadata']['full_name'],
-                        "first_name" => $treeData['metadata']['first_name'],
-                        "last_name" => $treeData['metadata']['last_name'],
-                        "reports_to_id" => $treeData['metadata']['reports_to_id'],
-                        "level" => "1"
-                    ),
-                    'state' => 'closed',
-                    'attr' => array(
-                        'rel' => 'my_opportunities',
+                    // adding id tag for QA's voodoo tests
+                    'id' => 'jstree_node_myopps_' . $treeData['metadata']['user_name']
 
-                        // adding id tag for QA's voodoo tests
-                        'id' => 'jstree_node_myopps_' . $treeData['metadata']['user_name']
-
-                    )
-                );
-                // add myOpp to the beginning of children
-                array_unshift($treeData['children'], $myOpp);
-            }
+                )
+            );
+            // add myOpp to the beginning of children
+            array_unshift($treeData['children'], $myOpp);
 
             // Since user has children,
             // handle if user clicked a manager and we need to return a Parent link in the set
