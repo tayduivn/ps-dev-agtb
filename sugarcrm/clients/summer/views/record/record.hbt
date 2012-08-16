@@ -10,7 +10,7 @@
                         <div class="span2">{{str  this.label ../../../this.model.module}}</div>
                         <div class="span4" name="{{this.name}}">
                             {{field ../../../this}}
-                            <a style="cursor: pointer" class="record-edit-link" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i>edit</a>
+                            <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
                         </div>
                         <div class="span2">
                         </div>
@@ -57,12 +57,36 @@ float:none;
 
 .record-row .record-edit-link {
 display:none;
-line-height:14px;
+
+line-height: 14px;
+position: absolute;
+left: 1px;
+top: -2px;
+width: 328px;
+line-height: 26px;
+text-align: right;
+border: 1px solid #dddddd;
+
+z-index:99;
+
+border-radius:4px;
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+
+
 }
 
 .record-row:hover .record-edit-link {
 display:inline-block;
 }
+
+
+.record-row.edit-mode input {
+width:300px;
+z-index:100;
+border-color:#dddddd;
+}
+
 
 
 
