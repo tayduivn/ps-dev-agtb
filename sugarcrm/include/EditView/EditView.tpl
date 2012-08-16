@@ -309,4 +309,8 @@ window.onbeforeunload = function () {ldelim} return disableOnUnloadEditView(); {
 {{else}}
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};
 {{/if}}
+// bug 55468 -- IE is too aggressive with onUnload event
+$(function() {ldelim}
+    $(".collapseLink,.expandLink").click(function (e) {ldelim} e.preventDefault(); {rdelim});
+  {rdelim});
 </script>
