@@ -1,0 +1,3 @@
+{{#each listItems}}
+    <option value="{{this.id}}" selected="{{this.selected}}">{{this.name}}</option>
+{{/each}}
