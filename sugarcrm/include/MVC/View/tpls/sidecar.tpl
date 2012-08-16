@@ -31,18 +31,31 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
-        <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-
-        <!-- App Scripts -->
-        <script src='sidecar/minified/sidecar.min.js'></script>
-        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
-        <script src='{$configFile}'></script>
-
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
         <link rel="stylesheet" href="include/javascript/twitterbootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
+
+        <!-- App Scripts -->
+        <script src='sidecar/minified/sidecar.js'></script>
+        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
+        <script src='{$configFile}'></script>
+        <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
+        <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-transition.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-alert.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-modal.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-collapse.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-dropdown.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-scrollspy.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-tab.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-tooltip.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-popover.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-button.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-typeahead.js"></script>
+        <script src="styleguide/bootstrap/js/bootstrap-datepicker.js"></script>
     </head>
     <body>
     	<div id="sugarcrm">
