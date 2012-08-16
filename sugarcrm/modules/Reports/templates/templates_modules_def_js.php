@@ -240,7 +240,7 @@ option_arr_<?php echo $module_name; ?>[option_arr_<?php echo $module_name; ?>.le
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].options=option_arr_<?php echo $module_name; ?>;
 
 <?php
-				} else if(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function']))
+				} else if(isset($field_def['type']) && ($field_def['type'] == 'enum' || $field_def['type'] == 'timeperiod') && isset($field_def['function']))
 				{
 ?>
 					var option_arr_<?php echo $module_name; ?> = new Array();
@@ -388,7 +388,7 @@ for(module_name in module_defs)
 		      module_defs[module_name].group_by_field_defs[ field_def.name] = field_def;
         }
 
-		if(field_type == 'int' || field_type == 'float' || field_type=='currency' || field_type=='decimal')
+		if(field_type == 'int' || field_type == 'float' || field_type=='currency' || field_type=='decimal' || field_type == 'long')
 		{
 			// create a new "column" for each summary type
 			for(stype in summary_types)
@@ -408,8 +408,6 @@ for(module_name in module_defs)
 				module_defs[module_name].group_by_field_defs[field_def.name+':'+stype] = { name: field_def.name+':'+stype, field_def_name: field_def.name, vname: date_summary_types[stype]+': '+ field_def.vname,column_function:stype,summary_type:'column',field_type:field_type };
 			}
 
-
-//			module_defs[module_name].group_by_field_defs[ field_def.name ] = field_def;
 		}
 
 		if(field_def.name == 'amount')
@@ -467,6 +465,10 @@ var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
 var is_not_empty_def = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 var is_empty_def = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+//BEGIN SUGARCRM flav=pro ONLY
+var reports_to_def = {name:'reports_to',value:'<?php echo $mod_strings['LBL_REPORTS_TO']; ?>'};
+//END SUGARCRM flav=pro ONLY
+qualifiers_name.unshift(reports_to_def);
 qualifiers_name.unshift(is_not_empty_def);
 qualifiers_name.unshift(is_empty_def);
 qualifiers_name.unshift(not_one_of_def);
@@ -489,10 +491,6 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 qualifiers[qualifiers.length] = {name:'tp_yesterday',value:'<?php echo $mod_strings['LBL_YESTERDAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_today',value:'<?php echo $mod_strings['LBL_TODAY']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_tomorrow',value:'<?php echo $mod_strings['LBL_TOMORROW']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_week',value:'<?php echo $mod_strings['LBL_LAST_WEEK']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_next_week',value:'<?php echo $mod_strings['LBL_NEXT_WEEK']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_7_days',value:'<?php echo $mod_strings['LBL_LAST_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_7_days',value:'<?php echo $mod_strings['LBL_NEXT_7_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_month',value:'<?php echo $mod_strings['LBL_LAST_MONTH']; ?>'};
@@ -500,10 +498,6 @@ qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_str
 qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
-/*
-qualifiers[qualifiers.length] = {name:'tp_last_quarter',value:'<?php echo $mod_strings['LBL_LAST_QUARTER']; ?>'};
-qualifiers[qualifiers.length] = {name:'tp_this_quarter',value:'<?php echo $mod_strings['LBL_THIS_QUARTER']; ?>'};
-*/
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
@@ -538,11 +532,14 @@ var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_equals',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'less',value:'<?php echo $mod_strings['LBL_LESS_THAN']; ?>'};
+qualifiers[qualifiers.length] = {name:'less_equal',value:'<?php echo $mod_strings['LBL_LESS_THAN_EQUAL']; ?>'};
+qualifiers[qualifiers.length] = {name:'greater_equal',value:'<?php echo $mod_strings['LBL_GREATER_THAN_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'greater',value:'<?php echo $mod_strings['LBL_GREATER_THAN']; ?>'};
 qualifiers[qualifiers.length] = {name:'between',value:'<?php echo $mod_strings['LBL_IS_BETWEEN']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['int'] = qualifiers;
+filter_defs['long'] = qualifiers;
 filter_defs['float'] = qualifiers;
 filter_defs['decimal'] = qualifiers;
 filter_defs['currency'] = qualifiers;
@@ -558,7 +555,7 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 filter_defs['enum'] = qualifiers;
 filter_defs['radioenum'] = qualifiers;
 filter_defs['parent_type'] = qualifiers;
-
+filter_defs['timeperiod'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

@@ -1,26 +1,34 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 /*********************************************************************************
-* $Id: DBManager.php 56151 2010-04-28 21:02:22Z jmertic $
+
 * Description: This file handles the Data base functionality for the application.
 * It acts as the DB abstraction layer for the application. It depends on helper classes
 * which generate the necessary SQL. This sql is then passed to PEAR DB classes.
@@ -371,7 +379,6 @@ abstract class DBManager
 		return false;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Tracks slow queries in the tracker database table
 	 *
@@ -438,7 +445,6 @@ abstract class DBManager
 		}
 	}
 
-	//END SUGARCRM flav=pro ONLY
 /**
 	* Scans order by to ensure that any field being ordered by is.
 	*
@@ -3870,13 +3876,13 @@ protected function checkQuery($sql, $object_name = false)
      * @param string    $tablename       table name
      * @param string    $key             primary key field name
      * @param string    $parent_key      foreign key field name self referencing the table
-     * @param string    $fields          list of fields that should be returned
+     * @param string    $fields          list of fields that should be returned. The pseudocolumn "level" may be in the list
      * @param bool      $lineage         find the lineage, if false, find the children
      * @param string    $startWith       identifies starting element(s) as in a where clause
-     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
-     * @return string               Recursive SQL query or equivalent representation.
+     * @param string    $max_level       when not null is the maximum number of levels to traverse in the the tree
+	 * @return string               Recursive SQL query or equivalent representation.
      */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
     {
 
         if($lineage) {
@@ -3891,21 +3897,50 @@ protected function checkQuery($sql, $object_name = false)
             $startWith = '';
         }
 
-		$fieldsTop = $fields;
-		$fieldsBottom = 'e.'.preg_replace('/,\s*/', ',e.', $fields);
-        if(!empty($level)) {
-            $fieldsTop = "$fieldsTop, 1 as $level";
-            $fieldsBottom = "$fieldsBottom, sg.$level + 1";
-        }
+		//$fieldsTop = $fields;
+		//$fieldsBottom = 'e.'.preg_replace('/,\s*/', ',e.', $fields);
+
+        // cleanup WHERE clause
+        if (empty($whereClause)) {
+			 $whereClause = '';
+		}
+		else {
+			$whereClause = ltrim($whereClause);
+			if (strtoupper(substr($whereClause, 1, 5)) == 'WHERE' ) {   // remove WHERE
+				$whereClause = substr($whereClause, 6);
+            }
+            if (strtoupper(substr($whereClause, 1, 4)) != 'AND ' ) {  // Add AND
+                $whereClause = "AND $whereClause";
+            }
+            $whereClause .= ' ';  // make sure there is a trailing blank
+		}
+		
+        // compose level clause of query if Level is in the fieldList passed
+		$tokens = explode(',', $fields);
+		$fieldsTop = "";
+		$fieldsBottom = "";
+		$delimiter = "";
+		foreach ($tokens as $token) {
+			if (trim($token) == 'level') {
+	            $fieldsTop = $fieldsTop . $delimiter . " 1 as level";
+		        $fieldsBottom = $fieldsBottom . $delimiter . " sg.level + 1";
+                $delimiter = ",";
+			}
+			else {
+	            $fieldsTop = $fieldsTop . $delimiter . $token;
+		        $fieldsBottom = $fieldsBottom . $delimiter . "e.$token";
+                $delimiter = ",";
+			}
+		}
 
         $sql = "WITH search_graph AS (
-                   SELECT $fieldsTop
+                   SELECT $fieldsTop 
                    FROM $tablename e
-                   $startWith
+                   $startWith $whereClause
                  UNION ALL
-                   SELECT $fieldsBottom
+                   SELECT $fieldsBottom 
                    FROM $tablename e, search_graph sg
-                   WHERE $connectWhere
+                   WHERE $connectWhere $whereClause
                 )
                 SELECT * FROM search_graph";
 

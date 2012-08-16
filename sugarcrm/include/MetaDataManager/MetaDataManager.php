@@ -678,9 +678,12 @@ class MetaDataManager {
             $moduleList = array_keys($wireless_module_registry);
         } else {
             // Loading a standard module list
+            /*
             require_once("modules/MySettings/TabController.php");
             $controller = new TabController();
             $moduleList = array_keys($controller->get_user_tabs($this->user));
+            */
+            global $moduleList;
         }
         
         $oldModuleList = $moduleList;

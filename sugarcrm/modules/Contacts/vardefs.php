@@ -219,6 +219,14 @@ array (
 			'len' => '255',
 			'comment' => 'Reference to the portal'
 		),
+    'preferred_language' =>
+        array(
+            'name' => 'preferred_language',
+            'type' => 'enum',
+            'default' => 'en_us',
+            'vname' => 'LBL_PREFERRED_LANGUAGE',
+            'options' => 'available_language_dom',
+        ),
 	//END SUGARCRM flav=ent ONLY
 	'accounts' =>
 		array (

@@ -39,10 +39,10 @@
                            ),
                     'layout' => array(  					
 						'basic_search' => array(
-						    'name' => array('name' => 'name', 'label' => 'LBL_TP_NAME',),
+						    'name' => array('name' => 'name', 'label' => 'LBL_TP_NAME', 'type' => 'name',),
 						    ),
 						'advanced_search' => array(
-						    'name' => array('name' => 'name', 'label' => 'LBL_TP_NAME',),
+						    'name' => array('name' => 'name', 'label' => 'LBL_TP_NAME', 'type' => 'name',),
 						    'parent_id' => array('name' => 'parent_id', 'label' => 'LBL_TP_FISCAL_YEAR',
 						        'type' => 'enum',
 						        'size' => 1,

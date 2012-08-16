@@ -37,7 +37,9 @@ footer {
 .blue {background-color: @blue;}
 .blueDark {background-color: @blueDark;}
 .green {background-color: @green;}
+.font-green { color: @green; }
 .red {background-color: @red;}
+.font-red { color: @red; }
 .yellow {background-color: @yellow;}
 .orange {background-color: @orange;}
 .pink {background-color: @pink;}
@@ -51,13 +53,12 @@ footer {
 .successBackground {background-color: @successBackground;}
 .warningBackground {background-color: @warningBackground;}
 
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", arial, sans-serif;
-  font-weight: 400;
+.table-striped tbody tr.odd.thegray td {
+  background-color: @gray !important;
+  color: @gray !important;  
 }
 
+/* Typography */
 h1 {font-size: 26px !important;}
 
 /* breadcrumbs */
@@ -72,7 +73,7 @@ h1 {font-size: 26px !important;}
 /* tour */
 .tourSee {
   color: @white;
-  position: absolute;
+  position: fixed;
   .border-radius(15px);
   height: 20px;
   width: 20px;
@@ -151,13 +152,34 @@ article p:last-child {
 article:nth-child(even) {
 	background-color: lighten(@grayLighter, 1%);
 }
+.results article:nth-child(even), .results article:nth-child(odd) {
+	background-color: transparent;
+	border-bottom-color: @grayDarker;
+}
 #sActivity article {
 	padding: 10px 45px 10px 0;
 	position: relative !important;
 }
 
-article:hover {
-	background: #e1f0fa;
+// Tables
+// -----------------
+table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, 
+table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
+  .border-radius(0 0 4px 4px)
+}
+table th { white-space: nowrap;}
+table.datatable tbody td { white-space: nowrap; max-width: 100px; overflow-x: hidden;}
+table th, table td { position: relative;}
+
+table th { min-width: 20px; color: @tableHeader !important;}
+table th .btn-group { margin: 0 0 0 -10px; }
+table th .btn input { margin: -2px 0 0 0; }
+table th .toggle-all {margin: 10px;}
+table td .btn-toolbar { margin: -5px 0 -10px; }
+.dblclick input { padding: 3px 3px 2px; position: absolute; top: 1px; width: 80% !important; }
+table tfoot td {
+  font-weight: bold;
+  border-top: 2px solid @grayLight !important;
 }
 
 /* Activity streams */
@@ -185,7 +207,7 @@ article:hover {
 }
 
 #portal .navbar-inner a, #portal .navbar a [class^="icon-"], #portal .navbar a .caret  {
-  color: @gray !important;
+  color: @textColor !important;
   text-shadow: none;
 }
 #portal .navbar .dropdown-menu li:hover a {color: @white !important;}
@@ -200,8 +222,6 @@ border-right: 1px solid @grayLighter;
 
 #portal .cube {
     background: url(../img/badge_256g.png) 50% 50% no-repeat;
-    @shadow: inset -1px 0 0 @grayLight, 1px 0 0 @grayLighter;
-    .box-shadow(@shadow);
 }
 #portal .container-fluid {position: relative;}
 #colright { position: absolute; top: 0; right: -2px; 
@@ -209,33 +229,34 @@ border-right: 1px solid @grayLighter;
 }
 #colleft { position: absolute; top: 0; left: -2px; }
 
-#portal .search-query { border-color: @grayLight;}
+#portal .search-query { border-color: @grayLight !important;}
+#portal .search-query:hover { border-color: @grayLight !important;}
+
 
 #portal .navbar .nav > li > a:hover {
   background-color:  @grayLighter;
-  color: @gray;
+  color: @textColor;
   text-decoration: none;
   text-shadow: none;
+}
+
+.navbar .nav .active > a,
+.navbar .nav .active > a:hover {
+  text-decoration: none;
+  border-bottom: 4px solid darken(@red,15%);
+  padding-bottom: 13px;
+  text-shadow: none;
+  font-weight: bold;
 }
 
 #portal .navbar .nav .active > a,
 #portal .navbar .nav .active > a:hover {
-  color: @gray;
-  text-decoration: none;
-  background-color: @grayLighter;
-  @shadow: inset -1px 0 0 @grayLight;
-  .box-shadow(@shadow);
-  text-shadow: none;
+  color: @textColor;
+  background-color: darken(@grayLighter,5%);
+  border-bottom: 3px solid @gray;
+  padding-bottom: 14px;
 }
 
-#portal .welcome {
- margin-top: 5%;
-}
-
-#portal .welcome .modal {
-  width: 300px;
-  margin-left: -150px;
-}
 
 .modal .brand, .thumbnail .brand {
   background: url(../img/sugar-red.png) 50% 50% no-repeat;
@@ -247,44 +268,37 @@ border-right: 1px solid @grayLighter;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
-  
-/* Messages 
-------------*/
-.alert-top {
-  width: 50%;
-  left: 25%;
-  position: fixed;
-  top: 55px;
-  z-index: 1060;
-}
-.alert-top .alert {  
-  @shadow: 0 1px 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);  
+
+#folded > div {
+    width: inherit;
 }
 
-#folded .tab-pane {
-  overflow: auto;
-  min-height: 600px;
+#dashboard  #folded .tab-pane.active {
+  position: fixed !important;
+  top: 47px;
+  right: 0;
+  background: @grayLighter;
+  height: 100%;
+  width: inherit;
+  padding: 20px 0;
   border-left: 1px solid darken(@grayLighter, 4%);
-}
-
-#folded .tab-pane.active#overview {
-  background: @white;
 }
 #folded .tab-pane.active {
   position: fixed !important;
-  top: 92px;
+  top: 93px;
   right: 0;
   background: @grayLighter;
-
   height: 100%;
   width: inherit;
-  padding: 10px 0;
+  padding: 20px 0;
+  border-left: 1px solid darken(@grayLighter, 4%);
 }
-#folded .tab-pane .block span.label  {margin-left: 0;}
+#folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
 #folded .tab-pane .block {width: 90%; margin-left: 5%;}
-#folded [data-toggle="tab"].actions {top: 12px; color: @gray;}
+#folded [data-toggle="tab"].actions {top: 0; color: @gray;}
 
+#searchActivity {margin-top: -12px;}
+.subhead {margin-top: 20px;}
 .subnav-fixed {
   position: fixed;
   top: 48px;
@@ -306,25 +320,16 @@ border-right: 1px solid @grayLighter;
   margin: 0 auto;
   padding: 0 1px;
 }
-.subnav .nav > li:first-child > a,
-.subnav .nav > li:first-child > a:hover {
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-          border-radius: 0;
-}
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url(../../../include/images/badge_256.png) 50% 50% no-repeat;
-  background-size: 50%;
+  background: url(../img/badge_256g.png) 50% 8px no-repeat;
   float: left;
+  height: 19px;
+  width: 26px;
   z-index: 2000;
   display: block;
-  height: 44px;
-  width: 44px;
-  @shadow: inset -1px 0 0 @black, 1px 0 0 lighten(@black, 20%);
-  .box-shadow(@shadow);
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
@@ -345,6 +350,7 @@ border-right: 1px solid @grayLighter;
 .avatar {
 	.border-radius(3px);
 }
+.avatar.thumbnail {padding: 3px;}
 
 .navbar .avatar, .block .avatar {
   height: 24px;
@@ -365,30 +371,14 @@ article .avatar {
 	.border-radius(3px);
 }
 
+
 .navbar form .btn {
-	margin-top: 8px;
-	margin-left: -33px;
-	padding: 5px 10px;
-	min-width: 16px;
-	display: inline;
-  .border-radius (0 4px 4px 0);
-}
-
-.navbar .btn {
-	margin-top: 8px;
-	min-width: 16px;
-	display: inline;
-}
-
-.navbar .dropdown .btn {
-	margin-top: 8px;
-	min-width: 16px;
-	padding: 3px 4px !important;	
-	display: block;
+	margin-left: -11px;
+	line-height: 16px;
 }
 
 .logo {
-  background: url(../../../index.php?entryPoint=getImage&imageName=company_logo.png) 0 0 no-repeat;
+  background: url(../../../../index.php?entryPoint=getImage&imageName=sugar-red-sm.png) 0 0 no-repeat;
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
@@ -432,9 +422,20 @@ article .avatar {
   margin: 0;
 }
 
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  cursor: not-allowed;
+  background-color: transparent !important;
+  border: none !important;
+}
+
 /* blocks */
 .block {
-	margin-bottom: 15px;
+	margin-bottom: 20px;
   position: relative;
 	display: block;
 }
@@ -443,18 +444,21 @@ article .avatar {
 }
 .block:first-child {border-top: none;}
 
-.block ul.list {
+.block ul.list{
   margin: 0 0 20px;
   padding: 0;
 }
-.block .list li {
+.block .list li, .listed li  {
   list-style: none;
   margin: 0 0 15px;
   position: relative;
 }
+.listed {margin: 0; padding: 0;}
+.listed li {border-bottom: 1px solid @grayLighter; margin: 0; padding: 5px;}
+
 .block .list li.active a {
   background: @grayLighter;
-  color: @gray;
+  color: @textColor;
   display: block;
   border: none;
   padding: 4px;
@@ -476,7 +480,7 @@ article .avatar {
 }
 
 .block.tabs-left .nav-tabs p {
-  margin: -18px 0 10px 90px;
+  margin: -18px 80px 10px 70px;
 }
 
 .block.tabs-left .nav-tabs li li .avatar {
@@ -484,7 +488,7 @@ article .avatar {
 }
 
 .block.tabs-left .nav-tabs li li{
-  margin: 0 0 10px 65px;
+  margin: 0 0 10px 45px;
   padding: 10px 0 0;
   border-top: 1px solid @grayLighter;
   border-bottom: none;
@@ -494,51 +498,54 @@ article .avatar {
   margin: 0 0 10px 38px;
 }
 
-
-#moduleActivity article p {
-  margin: -2px 0 0 40px;
-}
-
-#moduleActivity article .label {margin: 1px;}
-
 .block.tabs-left .nav-tabs > li > a:hover, .block.tabs-left .nav-tabs > li > a {
   background: none !important;
   border: none !important;
 }
-.block.tabs-left .nav-tabs .active > a { background: none !important; border: none;   }
 
-.block.tabs-left .nav-tabs .active {
-  padding: 11px 0 4px 8px; 
-  float: none;
-  margin: -11px -60px 7px -8px;
-  border: none;   
-  background: darken(@grayLighter, 4%);
-  .border-radius(4px 0 0 4px);
+.block.tabs-left .nav-tabs .on {
+
 }
 
-.bordered .tabs-left .nav-tabs > li > a, .bordered .tabs-left .nav-tabs .active > a, .bordered .tabs-left .nav-tabs .active {
+.bordered .tabs-left .nav-tabs > li > a, .bordered .tabs-left .nav-tabs .on > a, .bordered .tabs-left .nav-tabs .on {
   padding: 4px;
   margin: 4px -10px 4px 0;
 }
 
 .row-fluid > #charts.span12 {margin-left: 0 !important;}
-.drawerTrig {font-size: 8px; padding: 1px 5px 0; z-index: 1020; position: absolute;}
+.drawerTrig {font-size: 6px; padding: 6px 5px 2px 4px; z-index: 1010; position: absolute;}
 h4 i {color: @grayLight;}
 .drawerTrig.pull-right {
-  .border-radius(4px 0 0 4px);
-  margin-right: -1px;
+  .border-radius(0 2px 2px 0);
+  margin-right: -26px;
   position: relative;
 }
 
-.block.tabs-left .nav-tabs li:hover .actions {
-  display: block;
+.drawerTrig.pull-left {
+  .border-radius(2px);
+  margin-right: 0;
+  padding: 4px 4px 0 4px;
+  position: absolute;
+  left: 0;
   top: 0;
 }
 
-.block.tabs-left .nav-tabs li.active:hover .actions {
+.block.tabs-left .nav-tabs li .actions {
   display: block;
-  top: 11px;
-  right: 60px;
+  top: -2px;
+}
+.block.tabs-left .nav-tabs li .actions a i {
+  padding: 4px;
+}
+
+.block.tabs-left .nav-tabs li.on .actions .icon-eye-open {
+  color: @gray;
+  .opacity(100);
+  #gradient > .horizontal(darken(@grayLighter, 4%), darken(@grayLighter, 4%));
+  text-shadow: 0 1px @white;
+  .border-radius(4px);
+  padding-right: 100px;
+  margin-right: -96px;
 }
 
 .block .nav-tabs li {
@@ -546,9 +553,10 @@ h4 i {color: @grayLight;}
   position: relative;
 }
 .block h4 {
-  padding: 10px 0 10px;
+  padding: 0 0 10px;
   font-weight: 600;
   border-bottom: 1px solid @grayLight;
+  margin-bottom: 10px;
 }
 
 .span2 .block .actions {
@@ -558,7 +566,7 @@ h4 i {color: @grayLight;}
 }
 .block .actions, article .actions, .subnav .actions {
   position: absolute;
-  top: 5px;
+  top: -5px;
   right: 0;
 }
 
@@ -582,7 +590,7 @@ h4 i {color: @grayLight;}
     margin: 0 auto !important;
     display: block;
     cursor: pointer;
-    color: @gray;
+    color: @textColor;
     width: 100%;
     height: 100%;
   }
@@ -593,14 +601,6 @@ h4 i {color: @grayLight;}
     margin: 0 auto;
     width: 100%;
   }
-}
-
-.actions a {
-  color: #000;
-}
-
-.actions .btn {
-  .border-radius(3px);
 }
 
 .thumbnail .actions {
@@ -628,31 +628,24 @@ table.datatable tr td .actions a:hover {
 position: relative;
 }
 
-.btn-group .actions {
-  float: none;
-}
-
 .card2 {
-  margin: 0 0 20px;
+  margin: -10px 0 20px;
 }
-.card2 .control-group {
-  margin: 0!important;
-  padding: 12px 0 4px !important;
-}
-
-.card2 .row-fluid {
+.card2 .row-fluid, .card2 span .row-fluid {
   position: relative;
-  padding: 10px 0 11px;
+  padding: 10px 0 0;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
-.card2 .extend + .row-fluid {
+#folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
+.card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 
 .card2 .input-append .add-on {  
   margin-top: -2px;
 }
-.card2 .btn-toolbar {padding-left: 20px;}
+
+.btn-toolbar {padding-left: 20px;}
 
 .actions li {
   border-left: darken(@grayLighter, 5%) solid 1px;
@@ -672,12 +665,8 @@ article:hover .actions,  tr:hover .actions {
   display: block;
 }
 
-.subnav .span2 .btn-group {margin: 8px 0 0 18px;}
-.subnav .span2 .btn-group .btn {float: none;}
-.subnav .span5 h1 {margin: 4px 0 0 16px;}
-
 .divleft {
-	border-left: 1px solid #e7e7e7;
+	border-left: 1px solid darken(@grayLighter, 4%);
 	padding-left: 2%;
 	margin-right: -2.3%;
 }
@@ -685,15 +674,15 @@ article:hover .actions,  tr:hover .actions {
 	margin-right: 15px;
 }
 .bordered {
-	box-shadow: @grayLight 1px 0 0;
+ border-right: @btnBorder 1px solid;
+ margin-right: -10px;
+}
+#drawer {
+	position: relative;
 }
 
 .search-query {
   .border-radius(4px);
-}
-
-.block h4+ul.list {
-  margin-top: 10px;
 }
 
 .block ul.list ul {
@@ -707,8 +696,108 @@ article:hover .actions,  tr:hover .actions {
 }
 
 .control-group .btn-toolbar {
-  margin: -4px 0 0 !important;
+  margin: 0 0 0 5px !important;
   display: inline;
+}
+
+#guages .row-fluid  {
+  padding: 10px 0 0;
+  border-bottom: 1px solid @grayLighter;
+}
+#guages, #guages h4  {
+  border-bottom: 3px solid @grayLight;
+  margin: 0;
+}
+#guages {
+  margin-bottom: 10px;
+}
+
+.topline h2 {
+  padding: 0 !important;
+  font-size: 20px;
+  line-height: 28px;
+}
+.topline .btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.topline .title {
+  padding: 10px 10px 0;
+}
+.topline .datapoint1 {
+  position: absolute;
+  right: 280px;
+  top: 10px;
+  width: 120px;
+}
+.topline .datapoint2 {
+  position: absolute;
+  right: 140px;
+  top: 10px;
+  width: 120px;
+}
+.topline .divider {
+  border-right: 1px solid  @grayLight;
+  height: 60px;
+  width: 1px;
+  position: absolute;
+  right: 280px;
+  top: 0;
+}
+.topline .toggle {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.topline .log {
+  background: @grayLighter;
+  position: relative;
+    overflow: hidden;
+    height: 36px;
+  border-bottom: 2px solid @grayLight;
+  color: @gray !important;
+}
+
+.topline .extend {
+  background-color: darken(@gray, 10%);
+  background-color: darken(@gray, 15%) e("\9");
+  background-image: none;
+  color: @grayLighter !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.75);
+  outline: 0;
+  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
+}
+
+.topline .row-fluid {
+  margin: 0;  
+  padding: 0;
+}
+.topline hr {
+  margin: 8px 0 -1px;
+  padding: 0;
+  border-top: 2px solid @grayLight;
+}
+.topline table {
+  margin: 0;
+}
+
+
+#riskPreview .progress {
+    position: relative;
+}
+
+#riskPreview .progress, #riskPreview .progress .bar  {
+  height: 10px;
+  line-height: 20px;
+  text-align: left;
+}
+.progress .bar b {
+  color: @gray;
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  font-weight: normal;
 }
 
 /* vcard */
@@ -722,12 +811,13 @@ article:hover .actions,  tr:hover .actions {
 .block span.add-on {margin-left:0 !important;}
 .span2 .input-prepend input {width: inherit;}
 
-.vcard span, .block span {
+.vcard span {
 	display: block;	
 }
 .block span.label {
-	width: 55px;
-	margin: -2px 10px 0 -5px;
+	width: 20px;
+	height: 30px;
+	margin: -6px 10px 0 -10px;
 }
 .vcard span.tel,
 .vcard span.url,
@@ -773,48 +863,6 @@ hr.soften {
   border: 0;
 }
 
-/* Masthead (docs home) */
-.masthead {
-  padding-top: 36px;
-  margin-bottom: 72px;
-}
-.masthead h1,
-.masthead p {
-  text-align: center;
-}
-.masthead h1 {
-  margin-bottom: 18px;
-}
-.masthead p {
-  margin-left: 5%;
-  margin-right: 5%;
-  font-size: 30px;
-  line-height: 36px;
-}
-
-.subhead .span2 {
-  margin-top: -22px;
-	padding-top: 10px;
-}
-.subhead {
-  padding-bottom: 0;
-  margin: 10px 0;
-}
-.subhead table {margin-top: -16px;}
-.subhead th {
-	border-right: 1px solid #e7e7e7;
-	padding-top: 10px;
-padding-bottom: 15px;
-}
-.subhead th:last-child {border: none;}
-.subhead th:first-child {padding-bottom: 10px;}
-.subhead .btn-group.views {margin-bottom: 10px;}
-
-.subhead h1 {
-  font-size: 54px;
-}
-
-
 /* Subnav */
 .subnav, footer {
   width: 100%;
@@ -826,62 +874,36 @@ padding-bottom: 15px;
   .box-shadow(@shadow);
 }
 .subnav h1 {
-  color: @grayDark;
   text-shadow: 0 -1px 1px rbga(255,255,255,.1);
   font-size: 20px !important;
   font-weight: 500;
   margin-top: -5px;
 }
+.subnav {
+  z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
+  border: solid @grayLight 1px; /* drop the border on the fixed edges */
+  .border-radius(4px);
+  @shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+}
+.subnav .nav {margin: 0;}
 .subnav .btn-toolbar.pull-right {margin: 9px 20px 0 0;}
-.subnav .btn-toolbar.pull-left {margin: 9px 0 0 20px;}
-.subnav .actions {left: 8px; top: 9px}
-
-.subnav .nav {
-  margin-bottom: 0;
+.subnav .btn-toolbar.pull-left {margin: 9px 0 0 0;}
+.subnav .nav > li {margin: 0; padding: 0;}
+.subnav .nav > li a {
+  color: @gray; 
+  text-shadow: 0 1px 1px rgba(255,255,255,.9); 
+  padding: 8px; 
+  margin: 6px 0 6px 6px;
 }
-
-.subnav .nav > li > a {
-  margin: 0;
-  padding-top:    15px;
-  padding-bottom: 15px;
-  border-left: 1px solid @grayLighter;
-  border-right: 1px solid @grayLight;
-  .border-radius(0px);
-  color: @gray;
-}
-.subnav .nav > a,
-.subnav .nav > a:hover {
-  color: @gray;
-  background-color: @grayLight;
-  border-right-color: @gray;
-  border-left: 0;
-  @shadow: inset 0 1px 5px rgba(0,0,0,.2);
-  .box-shadow(@shadow);
-}
-.subnav .nav > .active > a,
-.subnav .nav > .active > a:hover {
-  color: @gray;
-  background-color: @grayLight;
-  border-right-color: @grayLight;
-  border-left: 0;
-  @shadow: inset 0 1px 5px rgba(0,0,0,.2);
-  .box-shadow(@shadow);
-}
-.subnav .nav > .active > a .caret,
-.subnav .nav > .active > a:hover .caret {
-  border-top-color: @gray;
-}
-.subnav .nav > li:first-child > a,
-.subnav .nav > li:first-child > a:hover {
-  border-left: 0;
-  padding-left: 12px;
-  .border-radius(4px 0 0 4px);
-}
-.subnav .nav > li:last-child > a {
-  border-right: 0;
-}
-.subnav .dropdown-menu {
-  .border-radius(0 0 4px 4px);
+.subnav .nav > li.active a {
+background-color: darken(@gray, 10%);
+background-color: darken(@gray, 15%) e("\9");
+background-image: none;
+color: @grayLighter !important;
+text-shadow: 0 1px 1px rgba(0,0,0,.75);
+outline: 0;
+.box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
 }
 
 /* Fixed subnav on scroll, but only for 980px and up (sorry IE!) */
@@ -904,16 +926,10 @@ padding-bottom: 15px;
     margin: 0 auto;
     padding: 0 1px;
   }
-  .subnav .nav > li:first-child > a,
-  .subnav .nav > li:first-child > a:hover {
-    -webkit-border-radius: 0;
-       -moz-border-radius: 0;
-            border-radius: 0;
-  }
 }
 
 .navbar .container-fluid {margin-top: 0;}
-.container-fluid {margin-top: 16px;}
+.container-fluid {margin-top: 20px;}
 
 /* Quick links
 -------------------------------------------------- */
@@ -960,11 +976,10 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 --------------*/
 .card2 div [class^="span"]  {position: relative;}
 .card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
-tr td > i.icon-pencil {position: absolute; left: -5px; top: 10px; padding: 0 2px !important;.opacity(60);}
 
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   position: relative;
-  margin: -2px 0 -3px -2px !important;
+  margin: -5px 0 0 -2px !important;
 }
 table input {
   position: relative;
@@ -1061,10 +1076,10 @@ z-index: 1000;
   border-bottom: 2px solid @grayLight;
   padding: 7px 80px 7px 10px;
 }
-
 .thumbnail h4 a, .thumbnail h1 a {
-  color: @gray;
+  color: @textColor;
 }
+
 .thumbnail .actions a:hover {
   color: @white;
 }
@@ -1147,11 +1162,13 @@ form.well {
 /* Icons
 ------------------------- */
 [class^="icon-"] {
-  font-size: 16px;
+  font-size: 15px;
 }
 .actions [class^="icon-"] {
   .opacity(50);
 }
+.actions a [class^="icon-"] {color: @black;}
+.actions a.btn.active [class^="icon-"] {color: @white;}
 
 a [class^="icon-"] {
   .opacity(80);
@@ -1205,15 +1222,17 @@ color: @red;
     font-size: 14px;
 }
 .navbar .advanced {
-  padding: 6px 10px;
-  margin-right: -10px;
-  margin-left: -10px;
-  margin-top: -30px;
-  text-decoration: none;
+  position: absolute;
+  right: 2px;
+  top: -2px;
+}
+.navbar .advanced .dropdown-menu {
+  right: 35px;
 }
 
-.btn [class^="icon-"] {
-  margin-top: 1px;
+.navbar .nav > li > a.btn {
+  padding: 4px 8px;
+  margin-top: 8px;
 }
 
 .btn-small .caret  {
@@ -1228,6 +1247,25 @@ color: @red;
   width: 98%;
   text-align: center;
 }
+
+.thumbnav {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+}
+.thumbnav li {
+  display: block;
+  margin: 0 0 8px;
+}
+.thumbnav li i {
+  font-size: 18px;
+  padding-top: 6px
+}
+.thumbnav li a {
+  font-size: 11px;
+  min-width: 32px;
+}
+
 
 /* Progress
 ------------------------- */
@@ -1297,606 +1335,47 @@ table th:gt(3), table td:gt(3)  {
 
 }
 
+#folded {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+}
 
-@media (max-width: 768px) {
+/* CSS for forecasts subnav */
+#headerbar h1 {
+    float:left;
+    margin-right:5px;
+    margin-left:12px;
+}
 
-.navbar .nav-collapse {height: 0}
+#overview {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+    border-left:3px solid #cdcccb;
+    border-top:3px solid #cdcccb;
+}
 
-/* Body and structure
--------------------*/
-body {
-  position: relative;
-  padding: 47px 0 0;
+.viz {
+    min-height: 300px;
+    float: left;
+    width: 90% !important;
+    margin-left: 5% !important;
+    padding-top: 20px;
+}
+
+.btn-invisible {
+    background:none;
+    border:1px solid transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.btn-invisible:hover {
+    border:1px solid #d0cfce;
+    *border:0;
+    border-top-color:#c1bfbe;
+
 }
 
 
-.cube {
-  background: url(../img/badge_256.png) 50% 50% no-repeat;
-  background-size: 50%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  display: block;
-  height: 44px;
-  width: 44px;
-  @shadow: inset -1px 0 0 @black, inset 1px 0 0 @black;
-  .box-shadow(@shadow);
-  -webkit-transition: all .2s linear;
-     -moz-transition: all .2s linear;
-          transition: all .2s linear;
-  }
-
-footer {
-	display: none;
-}
-
-// Hide everything in the navbar save .brand and toggle button */
-.nav-collapse {
-  overflow: hidden;
-  height: 0;
-}
-
-
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", arial, sans-serif;
-  font-weight: 400;
-}
-
-h1 {font-size: 26px !important;}
-
-/* activity and twitter */
-
-.block .nav-tabs li {
-  position: relative;
-	display: block;
-  padding: 8px 32px 8px 52px;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  height: 52px;
-}
-
-article {
-  position: relative;
-	display: block;
-  padding: 8px 32px 8px 52px;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  height: 52px;
-}
-
-article [class^="icon-star"] {
-position: absolute;
-top: 24px;
-left: 16px;
-font-size: 24px;
-}
-article [id^="listing-action"] i.grip {
-  position: absolute;
-  vertical-align: middle;
-  top: 0;
-  right: 0;
-  padding: 0 4px 0 8px;
-  line-height: 68px;
-  width: 16px;
-  letter-spacing: -4px;
-  z-index: 1;
-  font-style: normal;
-  height: 100%;
-  color: darken(@grayLight, 15%);
-}
-article [id^="listing-action"] i.on {
-  left: 0;
-  #gradient > .horizontal( darken(@grayDarker, 8%), darken(@grayDarker, 2%));
-  color: @black;
-  text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
-  @shadow: 1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
-article [id^="listing-action"] span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset 0 2px 4px @black, inset 0 -2px 4px @black;
-  .box-shadow(@shadow);
-  list-style: none;
-  text-align: center;
-}
-
-article [id^="listing-action"] a, #record-action a {
-padding: 4px 0 0 12%;
- display: inline-block;
- width: 26px;
- height: 26px;
- color: @white;
- text-shadow: 0 1px 0 @black, 0 1px 4px @black;
- text-decoration: none;
- text-align: center;
-}
-article [id^="listing-action"] a {
-  padding: 26px 0 0 5%;
-}
-
-article p, #moduleActivity li p {
-	display: block;
-}
-article p:last-child, #moduleActivity li p:last-child {
-	margin: 0;
-}
-article.more {
-  padding-left: 0;
-  background: 0;
-  border: none;
-}
-
-/* mobile menu foo */
-
-html {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-.onL .navbar {
-  position: absolute;
-  left: 86%;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
-.onR .navbar {
-  position: absolute;
-  left: -86%;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
-}
-.onL .row-fluid *, .onL .bizcard *, .onR #listing *, .onR .bizcard * {
-  visibility: hidden;
-}
-.onL .navbar .nav-collapse  {
-  float: none;
-  position: absolute;
-  top: 0;
-  left: -86%;
-  display: block;
-  width:86%;
-  height: 100%;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-.onR .navbar .nav-collapse {
-  float: none;
-  position: absolute;
-  top: 0;
-  right: -86%;
-  display: block;
-  width:86%;
-  height: 100%;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-
-.onL #moduleList, .onR #createList {
-  overflow: scroll;
-  -webkit-overflow-scrolling:touch;
-  height: 100%;
-}
-.onR .nav#moduleList, .onL .nav#createList {
-  display: none;
-}
-
-#listing {
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 46px;
-  width: 100%;
-  overflow: scroll;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom: 46px;
-  display: block;
-}
-
-.navbar [class^="icon-"] {
-  color: @white;
-  text-shadow: 0 -1px 0 @black;
-}
-
-#backRecord {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2000;
-}
-
-#saveRecord {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2000;
-}
-
-.navbar #search {
-  position: absolute;
-  top: 11px;
-  left: 58px;
-}
-
-.navbar #edit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 34px;
-  width: 44px;
-  @shadow: inset 1px 0 0 lighten(@black, 20%), -1px 0 0 @black;
-  .box-shadow(@shadow);
-  text-align: center;
-  padding-top: 10px;
-}
-
-#detailListing #listing {
- top: 202px; 
- padding-bottom: 190px;
-}
-
-#searchForm {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  width: 100%;
-  height: 44px !important;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-#searchForm .btn {
-  position: absolute;
-  top:8px;
-  right: 10px;
-  width: inherit;
-  }
-  
-.search-query {
-  #gradient > .vertical(darken(@grayDarker, 5%), @grayDarker);
-  border-color: #000;
-  color: @white;
-  position: absolute;
-  padding: 4px;
-  left: 10px;
-  top: 9px;
-  width: 70% !important;
-  .border-radius(4px);
-  z-index: 1080;
-}
-
-.navbar h1 {
-  font-size: 16px !important;
-  text-align: center;
-  font-weight: 700;
-  width: auto !important;
-  overflow: hidden;
-  margin: 0 auto;
-  text-shadow: 0 -1px 0 @black;
-  z-index: 0;
-  color: @white;
-}
-
-.bizcard {
-  position: fixed;
-  top: 46px;
-  width: 100%;
-  z-index: 1000;
-  min-height: 70px;
-  overflow: auto;
-  padding: 16px 0 66px 0;
-  color: @white;
-  text-shadow: 0 -1px 0 @black;
-  #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
-  @shadow: 0 1px 4px rgba(0,0,0,.6);
-  .box-shadow(@shadow);  
-}
-
-.bizcard .avatar {
-  height: 68px;
-  width: 68px;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  .border-radius(6px);
-  @shadow:  0 -1px 0 rgba(255,255,255,.2), 0 1px 0 rgba(0,0,0,.9), 0 1px 4px rgba(0,0,0,.6);
-  .box-shadow(@shadow);
-}
-
-.bizcard h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: @white;
-  margin: 0;
-  padding: 0;
-  line-height: 20px;
-}
-.bizcard .card {
-  margin: 0 92px 0 16px;
-}
-
-#record-action {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  #gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
-   height: 52px;
-  @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
-  .box-shadow(@shadow);  
-}
-
-.onL .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset -2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
-.onR .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset 2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
-
-.navbar a {text-decoration: none;}
-
-.nav-collapse .nav > li > a {
-  margin: 0 !important;
-  .border-radius(0px);
-}
-
-.navbar .nav li.active a {
-#gradient > .vertical(darken(@grayDarker, 15%), darken(@grayDarker, 5%));
-color: @gray;
-@shadow: inset -2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-.box-shadow(@shadow);
-}
-
-.navbar .nav li a:hover {background: none !important;}
-
-.nav-collapse li a .btn {
-  margin: -2px 0 0 !important;
-  border-color: @black;
-  color: @white;
-}
-
-.nav-collapse li li a {
- background: none;
- margin: 0;
-} 
-
-.alert {
- z-index: 2000;
- position: absolute;
- width: 100%;
- height: 20px;
- bottom: 0;
- .border-radius(0px);
- padding: 3px 10px;
- .opacity(96);
- font-weight: bold;
- margin: 0;
-}
-
-.modal .brand {
-  background: url(../img/brand_256.png) 50% 50% no-repeat;
-  background-size: 50%;
-  text-indent: -7000px;
-  margin: 1% auto 5%;
-  width: 80%;
-  height: 30%;
-  -webkit-transition: all .2s linear;
-     -moz-transition: all .2s linear;
-          transition: all .2s linear;
-  } 
-  
-.navbar h1.brand {
-  background: url(../img/brand_256.png) 50% 50% no-repeat;
-  background-size: 80%;
-  text-indent: -7000px;
-  width: 100%;
-  margin: 0 auto;
-  } 
-
-
-/* edit record
---------------*/
-#createRecord {
-  background: @white;
-  margin: 60px 10px;
-	.border-radius(3px);
-}
-#createRecord.form-horizontal .control-group > label  {
-  width: 30% !important;
-  margin-right: 2% !important;
-  float: left !important;
-  text-align: right !important;
-  font-weight: bold;
-}
-#createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
-  width: 68% !important;
-  border: none;
-  background: none;
-  box-shadow: none;
-}
-#createRecord.form-horizontal .control-group:first-child {
-  border-top: none;
-}
-#createRecord.form-horizontal .control-group {
-  position: relative;
-	display: block;
-  padding: 10px;
-  margin: 0;
-  border-top: 1px solid darken(@grayLighter, 5%);
-}
-#createRecord.form-horizontal .control-label {
-  margin-top: 4px;
-}
-
-
-/* Log In
-----------*/
-#login {
-	background: #E61718 url(../img/sugar_bg.png);
-  @shadow: inset 0 -4px 60px rgba(0,0,0,.8);
-  .box-shadow(@shadow);
-}
-#login .modal, #login .modal-header, #login .modal-footer, #login .modal-body {
-border: none;
-padding: 0 !important;
-margin: 0 !important;
-background: none;
-@shadow: none;
-.box-shadow(@shadow);
-}
-#login .modal input, #login .btn {
-  width: 80% !important; 
-  margin: 1% auto !important;
-  padding: 3% !important; 
-  @shadow:  1px 2px 0 rgba(0,0,0,.2);
-  .box-shadow(@shadow);
-  border: none;
-}
-
-#login .modal input[type=submit] {  
-  @shadow:  1px 1px 0 rgba(0,0,0,.2);
-  .box-shadow(@shadow);
-  width: 86% !important;
-}
-#login .modal input:focus {
-  border: none;
-  @shadow: 2px 2px 0 lighten(@red, 20%), 2px 2px 0 lighten(@red, 20%);
-  .box-shadow(@shadow);
-  outline: 0;
-}
-
-#login {text-align: center;}
-#login .btn-sugar {
-  float: none;
-  margin: 0 auto;
-  position: absolute; 
-  bottom: 20%;
-  width: 50%;
-  left: 22%;
-}
-#login .modal .btn {float: none !important;}
-
-
-
-/* Alert overrider */
-.alert-success {background: @green;} 
-.alert-danger, .alert-error {background: @red;} 
-
-
-/* Navbar collapse */
-
-.divider-horizontal {
-  background: @black;
-  height: 10px;
-  display: block;
-}
-
-  // Nav collapse clears brand
-  .navbar .nav-collapse {
-    clear: left;
-  }
-  // Block-level the nav
-  .navbar .nav {
-    float: none;
-    margin: 0 0 (@baseLineHeight / 2);
-  }
-  .navbar .nav > li {
-    float: none;
-  }
-  .navbar .nav > li > a {
-    margin-bottom: 2px;
-  }
-  .navbar .nav > .divider-vertical {
-    display: none;
-  }
-  .navbar .nav .nav-header {
-    color: @navbarText;
-    text-shadow: none;
-  }
-  // Nav and dropdown links in navbar
-  .navbar .nav > li > a,
-  .navbar .dropdown-menu a {
-    padding: 12px 15px;
-    font-weight: bold;
-    color: @navbarLinkColor;
-  }
-  .navbar .dropdown-menu li + li a {
-    margin-bottom: 2px;
-  }
-  .navbar .nav > li > a:hover,
-  .navbar .dropdown-menu a:hover {
-    background-color: @navbarBackground;
-  }
-  // Dropdowns in the navbar
-  .navbar .dropdown-menu {
-    position: static;
-    top: auto;
-    left: auto;
-    float: none;
-    display: block;
-    max-width: none;
-    margin: 0 15px;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    .border-radius(0);
-    .box-shadow(none);
-  }
-  .navbar .dropdown-menu:before,
-  .navbar .dropdown-menu:after {
-    display: none;
-  }
-  .navbar .dropdown-menu .divider {
-    display: none;
-  }
-  // Forms in navbar
-  .navbar-form,
-  .navbar-search {
-    float: none;
-    padding: (@baseLineHeight / 2) 15px;
-    margin: (@baseLineHeight / 2) 0;
-    border-top: 1px solid @navbarBackground;
-    border-bottom: 1px solid @navbarBackground;
-    @shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
-    .box-shadow(@shadow);
-  }
-  // Pull right (secondary) nav content
-  .navbar .nav.pull-right {
-    float: none;
-    margin-left: 0;
-  }
-  // Static navbar
-  .navbar-static .navbar-inner {
-    padding-left:  10px;
-    padding-right: 10px;
-  }
-  // Navbar button
-  .btn-navbar {
-    display: block;
-  }
-
-  // Hide everything in the navbar save .brand and toggle button */
-  .nav-collapse {
-    overflow: hidden;
-    height: 0;
-  }
-
+/* Forecast worksheets */
+#view-sales-rep input[type="text"], #view-manager input[type="text"]{
+    width: 100%;
 }

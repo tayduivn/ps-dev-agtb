@@ -46,6 +46,7 @@ class RestTestLabels extends RestTestBase {
         $restReply = $this->_restCall('metadata?typeFilter=appListStrings');
         
         $this->assertNotEmpty($restReply['reply']['appListStrings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
+        $this->assertNotEmpty($restReply['reply']['appListStrings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
 
     }
 

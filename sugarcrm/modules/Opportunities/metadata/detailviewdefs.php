@@ -43,7 +43,17 @@ $viewdefs['Opportunities']['DetailView'] = array(
 	        	array('name'=>'amount','label' => '{$MOD.LBL_AMOUNT} ({$CURRENCY})'),
 	        	'date_closed',
 	        ),
-	         
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            array(
+                'best_case',
+                'likely_case',
+            ),
+            array(
+                'worst_case'
+            ),
+            //END SUGARCRM flav=pro ONLY
+
 	        array (
 	        	'sales_stage',
 	        	'opportunity_type'

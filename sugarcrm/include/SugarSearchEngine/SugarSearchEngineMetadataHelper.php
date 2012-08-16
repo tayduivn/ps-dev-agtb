@@ -21,7 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-
+/**
+ * Class dealing with searchable modules
+ * @api
+ */
 class SugarSearchEngineMetadataHelper
 {
     /**

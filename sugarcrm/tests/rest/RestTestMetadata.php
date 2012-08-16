@@ -43,4 +43,34 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 
+    public function testMetadataLanguage() {
+        $langContent = <<<EOQ
+        <?php
+        \$app_strings = array (
+            'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'UnitTest',
+            );
+EOQ;
+
+        $fileLoc = "include/language/ua_UA.lang.php";
+        $this->createdFiles[] = $fileLoc;
+        file_put_contents($fileLoc, $langContent);
+        // No current user
+        $restReply = $this->_restCall('metadata/public?lang=ua_UA&app_name=superAwesome&platform=portal');
+        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+
+        // Current user is logged in & submit language
+        $restReply = $this->_restCall('metadata?lang=ua_UA&app_name=superAwesome&platform=portal');
+
+        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+
+        // TODO add test for user pref when that field gets added
+
+        // Cleanup
+        foreach($this->createdFiles as $file)
+        {
+            if (is_file($file))
+                unlink($file);
+        }
+    }
+
 }

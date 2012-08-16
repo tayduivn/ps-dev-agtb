@@ -46,6 +46,7 @@ class Administration extends SugarBean {
         'ldap',
         'captcha',
         'sugarpdf',
+        'base',
 
             //BEGIN SUGARCRM lic=sub ONLY
 

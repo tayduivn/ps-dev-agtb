@@ -1,0 +1,80 @@
+{{#if quota}}
+<table class="table">
+	<thead>
+		<th>{{str "LBL_PROJECTED" "Forecasts"}}</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{str "LBL_QUOTA" "Forecasts"}}</td>
+			<td></td>
+			<td>{{formatNumber quota.amount}}</td>
+		</tr>
+		<tr>
+			<td>
+				{{#if quota.likely_case.above}}
+					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA" "Forecasts"}}
+				{{else}}
+					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA" "Forecasts"}}
+				{{/if}}
+			</td>
+			<td>{{formatPercentage quota.likely_case.percent}}</td>
+			<td>{{formatNumber quota.likely_case.amount}}</td>
+		</tr>
+		<tr>
+			<td>
+				{{#if quota.best_case.above}}
+					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA" "Forecasts"}}
+				{{else}}
+					{{str "LBL_DISTANCE_LEFT_BEST_TO_QUOTA" "Forecasts"}}
+				{{/if}}
+			</td>
+			<td>{{formatPercentage quota.best_case.percent}}</td>
+			<td>{{formatNumber quota.best_case.amount}}</td>
+		</tr>
+
+		<tr>
+			<th>{{str "LBL_CLOSED" "Forecasts"}}</th>
+			<th></th>
+			<th>{{formatNumber closed.amount}}</th>
+		</tr>
+		<tr>
+			<td>
+				{{#if closed.likely_case.above}}
+					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED" "Forecasts"}}
+				{{else}}
+					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED" "Forecasts"}}
+				{{/if}}
+			</td>
+			<td>{{formatPercentage closed.likely_case.percent}}</td>
+			<td>{{formatNumber closed.likely_case.amount}}</td>
+		</tr>
+		<tr>
+			<td>
+				{{#if closed.best_case.above}}
+					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED" "Forecasts"}}
+				{{else}}
+					{{str "LBL_DISTANCE_LEFT_BEST_TO_CLOSED" "Forecasts"}}
+				{{/if}}
+			</td>
+			<td>{{formatPercentage closed.best_case.percent}}</td>
+			<td>{{formatNumber closed.best_case.amount}}</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<td>
+			<div>{{str "LBL_PIPELINE_OPPORTUNITIES" "Forecasts"}}</div>
+			<div>{{formatNumber opportunities}}</div>
+		</td>
+		<td>
+			<div>{{str "LBL_PIPELINE_REVENUE" "Forecasts"}}</div>
+			<div>{{formatNumber revenue}}</div>
+		</td>
+		<td>
+			<div>{{str "LBL_PIPELINE_SIZE" "Forecasts"}}</div>
+			<div>{{pipeline}}x</div>
+		</td>
+	</tfoot>
+</table>
+{{else}}
+	<strong>{{str "LBL_LOADING" "Forecasts"}}&hellip;</strong>
+{{/if}}

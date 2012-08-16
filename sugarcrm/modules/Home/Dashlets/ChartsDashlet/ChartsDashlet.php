@@ -77,14 +77,16 @@ class ChartsDashlet extends Dashlet {
             $reporter->get_total_header_row();
 			$reporter->run_chart_queries();
 			
-			require_once("modules/Reports/templates/templates_chart.php");
-	
-			ob_start();	
-			template_chart($reporter, true, true, $this->id);
+			ob_start();
+            require_once("include/SugarCharts/ChartDisplay.php");
+            $chartDisplay = new ChartDisplay();
+            $chartDisplay->setReporter($reporter);
+            echo $chartDisplay->legacyDisplay($this->id, true);
+
 			$str = ob_get_contents();	
 			ob_end_clean();
 			
-			$xmlFile = get_cache_file_name($reporter);
+			$xmlFile = $chartDisplay->get_cache_file_name($reporter);
 			
 			$html = parent::display() . "<div align='center'>" . $str . "</div>" . "<br />"; // return parent::display for title and such
 	
@@ -105,6 +107,7 @@ class ChartsDashlet extends Dashlet {
      */
     function displayScript() {
     	require_once("modules/Reports/Report.php");
+        require_once("include/SugarCharts/ChartDisplay.php");
 			
 	
 		$chartReport = new SavedReport();		
@@ -122,7 +125,10 @@ class ChartsDashlet extends Dashlet {
 			$reporter = new Report($chartReport->content);
 			$reporter->is_saved_report = true;
 			$reporter->saved_report_id = $chartReport->id;
-			$xmlFile = get_cache_file_name($reporter);
+
+            $chartDisplay = new ChartDisplay();
+
+			$xmlFile = $chartDisplay->get_cache_file_name($reporter);
 
 	        $str = $sugarChart->getDashletScript($this->id,$xmlFile);
 	        return $str;

@@ -69,7 +69,7 @@ SUGAR.reportsInlineEdit = function() {
 				document.getElementById(div).innerHTML = "<input type ='text' id='input_"+ div +"' value='"+ current_value +"' onBlur='SUGAR.reportsInlineEdit.inlineSave(\""+div+"\",\""+module+"\",\""+record+"\",\""+field_name+"\",\""+field_type+"\",\""+current_value+"\")'>";
 				document.getElementById('input_'+ div).focus();
 			}
-			else if (field_type == 'enum') {
+			else if (field_type == 'enum' || field_type == 'timeperiod') {
 				options = eval("field_defs_" + module)[field_name].options;
 				document.getElementById(div).innerHTML = SUGAR.reportsInlineEdit.inlineSelect(options, div, current_value,module, record, field_name, field_type);
 			}

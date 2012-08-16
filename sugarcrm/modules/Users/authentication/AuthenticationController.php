@@ -122,6 +122,7 @@ class AuthenticationController
 			$config = new Administration();
 			$config->retrieveSettings();
 		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && $_REQUEST['action'] != 'AdminWizard' ) {
+
                 if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true ) {
                     $this->nextStep = array('module'=>'Configurator','action'=>'AdminWizard');
                 } else {

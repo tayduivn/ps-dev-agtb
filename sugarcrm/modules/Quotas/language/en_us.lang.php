@@ -55,6 +55,8 @@ $mod_strings = array (
   'LBL_COMMIT' => 'Commit:',
   'LBL_SELECT_USER' => 'Select User...',
   
+  'LBL_ASSIGNED_TO_USER' => 'Assigned to User',
+  'LBL_TIMEPERIOD_ID' => 'Timeperiod',
   'LBL_NO_QUOTAS_TIMEPERIOD' => 'No quotas for your direct reports have been entered for this time period.',
   'LBL_CURRENT_USER_QUOTA' => 'Your assigned quota for this time period is: ',
   'LBL_CURRENT_USER_NO_QUOTA' => 'You have not been assigned a quota for this time period.',

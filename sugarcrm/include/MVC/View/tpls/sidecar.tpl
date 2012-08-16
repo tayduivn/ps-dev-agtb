@@ -93,4 +93,3 @@
         {/literal}
     </body>
 </html>
-

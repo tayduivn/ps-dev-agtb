@@ -166,6 +166,8 @@ if( is_file("config_override.php") ){
 }
 
 $db                 = DBManagerFactory::getInstance();
+//Call preInstall function
+$db->preInstall();
 $startTime          = microtime(true);
 $focus              = 0;
 $processed_tables   = array(); // for keeping track of the tables we have worked on
@@ -393,6 +395,7 @@ echo "<br>";
     );
 
     global $db;
+
     addDefaultRoles($ACLaccessOverride);
 //END SUGARCRM flav=dce ONLY
 
