@@ -28,6 +28,7 @@
     };
 
     test.createView = function(client, module, viewName, meta, context) {
+        context = context || app.context.getContext();
         test.loadComponent(client, "view", viewName);
         return app.view.createView({
             name : viewName,
