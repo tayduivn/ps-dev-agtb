@@ -853,11 +853,12 @@
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
+            action = action || "detail";
             app.controller.loadView({
                 module: module,
                 modelId: id,
                 action: action,
-                layout: "record"
+                layout: action
             });
         }
 

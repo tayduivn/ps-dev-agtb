@@ -187,5 +187,6 @@ $mod_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
+    'LBL_FILENAME' => 'Attachment',
 );
 ?>

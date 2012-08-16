@@ -1,0 +1,47 @@
+
+{{#each meta.panels}}
+<table class="table">
+    <thead>
+    <tr role="row">
+        {{#each fields}}
+        <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.field name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            role="columnheader" data-fieldname="{{name}}">
+            {{str label ../../module}}
+        </th>
+        {{/each}}
+    </tr>
+    </thead>
+    <tbody role="alert" aria-live="polite" aria-relevant="all">
+    {{#each ../collection.models}}
+
+    <tr name="{{module}}_{{attributes.id}}" class="draggable droppable filedrop" rel="tooltip">
+        <div>
+            {{#each ../fields}}
+                <td> {{field ../../../this ../this}} </td>
+            {{/each}}
+        </div>
+    </tr>
+
+
+    {{/each}}
+    </tbody>
+</table>
+{{/each}}
+
+
+<div class="modal hide attachPopUp">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h2>Attachment</h2>
+    </div>
+    <div class="modal-body">
+
+        <div id="messages">
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-primary" data-dismiss="modal">Confirm</a>
+    </div>
+</div>

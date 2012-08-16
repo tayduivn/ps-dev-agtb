@@ -1,0 +1,39 @@
+{{#each meta.panels}}
+<table class="table" id="attachments_table">
+    <thead>
+    <tr role="row">
+        {{#each fields}}
+        <th class=""
+            role="columnheader" data-fieldname="{{name}}">
+            {{str label ../../module}}
+        </th>
+        {{/each}}
+    </tr>
+    </thead>
+    <tbody role="alert" aria-live="polite" aria-relevant="all">
+    {{#each ../collection.models}}
+    <tr name="Notes_{{attributes.id}}" class="draggable">
+        <div>
+            {{#each ../fields}}
+            <td>{{field ../../../this ../this}}</td>
+            {{/each}}
+        </div>
+    </tr>
+
+    {{/each}}
+    </tbody>
+</table>
+
+<div class='dropbox'>
+    <p>Drop file here</p>
+</div>
+
+</div>
+{{/each}}
+
+
+<!--<div class="alert alert-success">-->
+    <!--<a class="close" data-dismiss="alert" href="#">x</a>-->
+    <!--<h4 class="alert-heading">Warning</h4>-->
+    <!--check-->
+<!--</div>-->

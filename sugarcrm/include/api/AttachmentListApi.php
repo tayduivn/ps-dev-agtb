@@ -27,8 +27,8 @@ class AttachmentListApi extends ListApi {
         return array(
             'listAttachments' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?','attachments'),
-                'pathVars' => array('module','record',''),
+                'path' => array('<module>','?', 'link','attachments'),
+                'pathVars' => array('module','record','', ''),
                 'method' => 'listAttachments',
                 'shortHelp' => 'List attachments related to this module',
                 'longHelp' => 'include/api/html/module_attach_help.html',
@@ -77,6 +77,6 @@ class AttachmentListApi extends ListApi {
                 break;
             }
         }
-        return $data;
+        return $data['records'];
     }
 }
