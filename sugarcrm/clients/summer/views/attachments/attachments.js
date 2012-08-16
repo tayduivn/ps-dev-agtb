@@ -46,7 +46,7 @@
         // make elements dropbox for file drop
         $('.dropbox').on('dragover', that.dragOverDropbox);
         $('.dropbox').on('dragleave', that.dragLeaveDropbox);
-        $('.dropbox').on('drop', function (event, ui) { that.dropOnDropbox(event, ui, that) });
+        $('.dropbox').on('drop', that.dropOnDropbox);
     },
 
 
@@ -127,107 +127,184 @@
      * @param event
      * @param ui
      */
-    dropOnDropbox: function (event, ui, that) {
-        if (!event.originalEvent.dataTransfer) {
-            return;
-        }
-        console.log('drop file on dropbox');
+    dropOnDropbox: function (event) {
 
-        // define alert views for sharing success and error
-        var alertViews =  {
 
-            // enable undo functionality for share success
-            uploadSuccess: function () {
-                App.alert.show('shareSuccess', {
-                    level: "success",
-                    title: '<p style="font-size: 16px; text-align: center;">You have uploaded a file.</p>',
-                    autoClose: true
-                });
-            },
+        var ShareNote = function (event) {
 
-            // error alert view
-            uploadError: function (msg) {
-                App.alert.show('shareError', {
-                    level: "error",
-                    title: "Error",
-                    messages: [msg],
-                    autoClose: true
-                });
-            }
+            var self = this;
+
+            this.quitFlag = false;
+
+            this.file = event.originalEvent.dataTransfer.files[0] || event.dataTransfer.files[0];
+
+            this.filename = this.file.name || this.file.fileName;
+
+            this.filesize = this.file.size || this.file.fileSize;
+
+            this.newNoteId = '';
+
+            this.attachments_table = $('#attachments_table').find('tbody')[0];
+
+            this.addedFileView = '';
+
+            this.alertViews =  {
+
+                // enable undo functionality for share success
+                uploadSuccess: function (title, msg, params) {
+
+                    if(!params || !params.undo) params.undo = false;
+
+                    App.alert.show('uploadSuccess', {
+                        level: "success",
+                        title: title,
+                        messages: [msg],
+                        autoClose: true
+                    });
+
+                    $('#undo-upload-file').css('cursor', 'pointer');
+                    $('#undo-upload-file').on('click', function (event) {
+                        //TODO delete a the note
+                        App.api.call('delete', '../rest/v10/Notes/' + self.newNoteId + '/file/filename', null, null, null);
+                        App.api.call('delete', '../rest/v10/Notes/' + self.newNoteId, null, null, null);
+                        self.removeNewFileView();
+                        $('.close').click();
+                    });
+                },
+
+                // error alert view
+                uploadError: function (title, msg) {
+                    App.alert.show('uploadError', {
+                        level: "error",
+                        title: title,
+                        messages: [msg],
+                        autoClose: true
+                    });
+                }
+            };
+
         };
 
-        // define exit this function for callback functions
-        var exit = function () {
-            return false;
-        }
+        /**
+         *
+         * @return {Boolean}
+         */
+        ShareNote.prototype.isValidFile = function () {
+            var self = this;
+            var attachmentList = $('#attachments_table').find('td');
+            var attachmentNames = [];
+            $.each(attachmentList, function (index, value) {
+                attachmentNames.push($(value).text());
+            });
+            $.each(attachmentNames, function (index, value) {
+                if (self.filename == value) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', 'cannot upload file with same name');
+                }
+            });
+            return !self.quitFlag;
+        };
 
-        var file = event.originalEvent.dataTransfer.files[0]; // grab the file
-        var filename = file.name;
-        var attachmentList = $('#attachments_table').find('td');
-        var attachmentNames = [];
-        $.each(attachmentList, function (index, value) {
-            attachmentNames.push($(value).text());
-        });
+        /**
+         *
+         * @return {Boolean}
+         */
+        ShareNote.prototype.createNote = function () {
+            var self = this;
+            App.api.call('create', '../rest/v10/Notes', null, {
+                success: function (result) {
+                    self.newNoteId = result.id;
+                },
+                error: function (msg) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', msg);
+                }
+            }, {async: false});
+            return self.quitFlag ? false : true;
+        };
 
-        // check if there is already a file with same name in attachment list
-        console.log(filename);
-        console.log(attachmentNames);
-        $.each(attachmentNames, function (index, value) {
-            if (filename === value) {
-                alertViews.uploadError('cannot upload file with the same name');
-                exit();
-            }
-        });
-
-        var newNoteId = '';
-
-        App.api.call('create', '../rest/v10/Notes', null, {
-            success : function (result) {
-                newNoteId = result.id;
-            },
-            error: function () {
-                console.log('cannot create new record');
-                alertViews.uploadError('cannot create a note for this attachment');
-            }
-        }, {async: false});
-
-
-        // if a new note is successfully created
-        if (newNoteId) {
+        /**
+         *
+         * @param newNoteId
+         * @param file
+         * @return {Boolean}
+         */
+        ShareNote.prototype.uploadFileToNote = function (newNoteId, file) {
+            var self = this;
+            var file = this.file || file;
             //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
             App.api.uploadFileHtml5('create', {
                 module: 'Notes',
-                id: newNoteId,
+                id: self.newNoteId || newNoteId,
                 field: 'filename'
-            }, file, {success: function(o) {console.log(o)}}, null);
+            },
+            file, {
+                success: function(o) {console.log(o);},
+                error: function (msg) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', msg);
+                }
+            }, null);
+            return self.quitFlag ? false : true;
+        };
 
-            // establish the relationship between note with this current main module
+        /**
+         *
+         * @return {Boolean}
+         */
+        ShareNote.prototype.linkNoteToModel = function () {
+            var self = this;
             var mainModule = app.controller.context.attributes.module;
             var mainModelId = app.controller.context.attributes.modelId;
             var mainBean = app.data.createBean(mainModule, {id: mainModelId});
             mainBean.fetch({
                 success: function (model) {
                     try {
-                        var _note = app.data.createRelatedBean(model, null, 'notes', {id: newNoteId});
+                        var _note = app.data.createRelatedBean(model, null, 'notes', {id: self.newNoteId});
                         _note.save(null, {relate: true});
-                        alertViews.uploadSuccess();
+                        self.alertViews.uploadSuccess('<p style="font-size:16px;text-align:center;">You have uploaded a file.  <a id="undo-upload-file"><strong>Undo</strong></a></p>', '', {undo: true});
                     } catch (err) {
-                        console.log('cannnot relate note to current module');
-                        alertViews.uploadError('cannot upload the file');
+                        self.quitFlag = true;
+                        self.alertViews.uploadError('Upload Failed', err);
                     }
                 },
-                error: function () {
-                    console.log('cannot relate file to this module');
-                    alertViews.uploadError('cannot relate note to current module');
+                error: function (err) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', err);
                 }
-            })
+            });
+            return self.quitFlag ? false : true;
+        };
 
-            var tableBody = $('#attachments_table').find('tbody')[0];
-            var addedEl = '<tr name="Notes_' + newNoteId + '" class="draggable ui-draggable">';
-            addedEl += '<td>' + filename + '</td></tr>';
-            $(tableBody).append(addedEl);
-            that.makeDraggableElements();
+        /**
+         *
+         */
+        ShareNote.prototype.showNewFile = function () {
+            this.addedFileView = '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
+            this.addedFileView += '<td>' + this.filename + '</td></tr>';
+            $(this.attachments_table).append(this.addedFileView);
+        };
+
+        /**
+         *
+         */
+        ShareNote.prototype.removeNewFileView = function () {
+            console.log('delete');
+            $(this.attachments_table).children("tr:last").remove();
         }
+
+
+        // Main actions happens here
+        var shareNote = new ShareNote(event);
+        if (shareNote.file && shareNote.filename && shareNote.isValidFile()) {
+            var result = shareNote.createNote() ? shareNote.uploadFileToNote() : false;
+            if (result) {
+                result = shareNote.linkNoteToModel() ? shareNote.showNewFile() : false;
+            } else {
+                return false;
+            }
+        }
+
     },
 
 

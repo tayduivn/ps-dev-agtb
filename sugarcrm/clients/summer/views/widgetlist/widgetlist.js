@@ -104,7 +104,7 @@
         $(this).tooltip({title: 'Share with', trigger: 'manual', placement: 'left'});
         event.stopPropagation();
         event.preventDefault();
-        if ($(this).data('filehover') == '0') {
+        if ($(this).data('filehover') == '0') { // track mouse dragging file hovering
             $(this).tooltip('show');
             $(this).data('filehover', '1');
         }
@@ -138,120 +138,195 @@
         $(this).tooltip('hide');
         $(this.children[0]).removeAttr("style");
 
-        // define alert views for sharing success and error
-        var alertViews =  {
 
-            // enable undo functionality for share success
-            shareSuccess: function (targetModule, targetId, draggableElModule, draggableElId) {
+        var ShareManager = function (targetModule, targetId) {
+
+            var self = this;
+
+            this.targetModule = targetModule;
+
+            this.targetId = targetId;
+
+            this.targetBean = app.data.createBean(this.targetModule, {id: this.targetId});
+        }
+
+        /**
+         *
+         * @type {Object}
+         */
+        ShareManager.alertViews = {
+
+            // alert sharing sucess view
+            shareSuccess: function (title, msg, params) {
+
+                var targetModule, targetId, draggableModule, draggableId;
+
+                if (!params) {
+                    params.undo = false;
+                } else {
+                    params.undo = true;
+                    draggableModule = params.draggableModule;
+                    draggableId = params.draggableId;
+                    targetModule = params.targetModule;
+                    targetId = params.targetId;
+                }
+
                 App.alert.show('shareSuccess', {
                     level: "success",
-                    title: '<p style="font-size: 16px; text-align: center;">You have shared with someone.  <a id="undo-link"><strong>Undo</strong></a></p>',
+                    title: title,
+                    messages: [msg],
                     autoClose: true
                 });
-                $('#undo-link').css('cursor', 'pointer');
-                $('#undo-link').on('click', function (event) {
-                    //TODO unlink relationship, new api might eventually implemented (see sugarapi.js)
-                    App.api.call('delete', '../rest/v10/' + targetModule + '/' + targetId + '/link/' + draggableElModule.toLowerCase() + '/' + draggableElId , null, null, null);
-                    $('.close').click();
-                });
+
+                // enable undo option (delete all the relationships)
+                if (params.undo) {
+                    console.log('undoing');
+                    $('#undo-link').css('cursor', 'pointer');
+                    $('#undo-link').on('click', function (event) {
+
+                        //TODO unlink relationship, new api might eventually implemented (see sugarapi.js)
+                        App.api.call('delete', '../rest/v10/' + targetModule + '/' + targetId + '/link/' + draggableModule.toLowerCase() + '/' + draggableId , null, null, null);
+
+                        if (ShareManager.newNoteId) {
+                            App.api.call('delete', '../rest/v10/Notes/' + ShareManager.newNoteId, null, null, null);
+                            ShareManager.removeNewFileView();
+                        }
+                        $('.close').click();
+                    });
+                }
+
             },
 
             // error alert view
-            shareError: function (msg) {
+            shareError: function (title, msg) {
                 App.alert.show('shareError', {
                     level: "error",
-                    title: "Error",
+                    title: title,
                     messages: [msg],
                     autoClose: true
                 });
             }
-        };
+        }
 
-        // a draggable element inside browser, not a file from local desktop
-        if (!event.originalEvent.dataTransfer) {
-            var target = this;
-            var targetModule = $(target).attr('name').split('_')[0];
-            var targetId = $(target).attr('name').split('_')[1];
-            var draggableEl = ui.draggable[0];
-            var draggableElModule = $(draggableEl).attr('name').split('_')[0];
-            var draggableElId = $(draggableEl).attr('name').split('_')[1];
-
-            // establish relationship between beans
-            var targetBean = app.data.createBean(targetModule, {id: targetId});
-            targetBean.fetch({
+        /**
+         * create link relationship between the current bean and another bean
+         *
+         * @param {String} relatedModule - the name of another bean module
+         * @param {String} relatedId - the id of another bean id
+         * @return {Boolean} true if success, false otherwise
+         */
+        ShareManager.prototype.linkModels = function (relatedModule, relatedId) {
+            var self = this;
+            this.targetBean.fetch({
                 success: function (model) {
-                    try {
-                        var _relatedBean = app.data.createRelatedBean(model, null, draggableElModule.toLowerCase(), {id: draggableElId});
-                        _relatedBean.save(null, {relate: true});
-                        alertViews.shareSuccess(targetModule, targetId, draggableElModule, draggableElId);
-                    } catch (err) {
-                        alertViews.shareError(err);
-                    }
+                    var _relatedBean = app.data.createRelatedBean(model, null, relatedModule.toLowerCase(), {id: relatedId});
+                    _relatedBean.save(null, {relate: true});
                 },
                 error: function (msg) {
-                    console.log('cannot relate draggable item to target');
-                    alertViews.shareError(msg);
+                    ShareManager.quitFlag = 1;
+                    ShareManager.alertViews.shareError('Share Failed', 'cannot share relationship');
                 }
             });
+            return ShareManager.quitFlag ? false : true;
+        };
 
-         // a file from local desktop, a note will be created
-        } else {
-            var target = this;
-            var targetModule = $(target).attr('name').split('_')[0];
-            var targetId = $(target).attr('name').split('_')[1];
-            var file = event.originalEvent.dataTransfer.files[0]; // grab the file
-            var newNoteId = '';
-
-            // create a brand new Note
+        /**
+         * create new note
+         *
+         * @return {String} new note id, otherwise empty string
+         */
+        ShareManager.prototype.createNote = function () {
+            console.log('create new note');
+            var self = this;
             App.api.call('create', '../rest/v10/Notes', null, {
                 success : function (result) {
-                    newNoteId = result.id;
+                    ShareManager.newNoteId = result.id;
                 },
                 error: function (msg) {
-                    console.log('cannot create new record');
-                    alertViews.shareError(msg);
+                    ShareManager.quitFlag = 1;
+                    ShareManager.alertViews.shareError('Share Failed', 'cannot create a new note');
                 }
             }, {async: false});
+            return ShareManager.newNoteId;
+        };
 
+        /**
+         * upload a file to a note
+         *
+         * @param {String} noteId - note id
+         * @param {File} file - file to upload (if dragged from browser, obtain with event.originalEvent.dataTransfer[0]
+         * @return {Boolean} true if success, false otherwise
+         */
+        ShareManager.prototype.uploadFileToNote = function (noteId, file) {
+            var self = this;
+            ShareManager.filename = file.name || file.fileName;
+
+            //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
+            App.api.uploadFileHtml5('create', {
+                module: 'Notes',
+                id: ShareManager.newNoteId || noteId,
+                field: 'filename'
+            },
+            file, {
+                success: function(o) {
+                    console.log(o);
+                },
+                error: function () {
+                    ShareManager.quitFlag = true;
+                    ShareManager.alertViews.shareError('Share Failed', 'cannot create upload a file to note');
+                }
+            }, {async: false});
+            return ShareManager.quitFlag ? false : true;
+        };
+
+
+        /**
+         *
+         */
+        ShareManager.addNewFileView = function () {
+            ShareManager.addFileView = '';
+            ShareManager.addedFileView = '<tr name="Notes_"' + ShareManager.newNoteId + '" class="draggable ui-draggable">';
+            ShareManager.addedFileView += '<td>' + ShareManager.filename + '</td></tr>';
+            $(ShareManager.attachments_table).append(ShareManager.addedFileView);
+        };
+
+        /**
+         *
+         */
+        ShareManager.removeNewFileView = function () {
+            console.log('delete');
+            $(ShareManager.attachments_table).children("tr:last").remove();
+        };
+
+        ShareManager.attachments_table = $('#attachments_table').find('tbody')[0];
+
+
+
+        /*********** Main actions happening here **************/
+        var targetTokens = $(this).attr('name').split('_');
+        var shareManager = new ShareManager(targetTokens[0], targetTokens[1]);
+
+        // a draggable element inside browser
+        if (!event.originalEvent.dataTransfer) {
+
+            var draggableModule = $(ui.draggable[0]).attr('name').split('_')[0];
+            var draggableId = $(ui.draggable[0]).attr('name').split('_')[1];
+            var result = shareManager.linkModels(draggableModule, draggableId);
+
+         // a file from local desktop
+        } else {
+
+            var file = event.originalEvent.dataTransfer.files[0]; // grab the file
+            var newNoteId = shareManager.createNote();
             if (newNoteId) {
-                //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
-                App.api.uploadFileHtml5('create', {
-                    module: 'Notes',
-                    id: newNoteId,
-                    field: 'filename'
-                }, file, {success: function(o) {console.log(o)}}, null);
-
-                // establish relationship between beans
-                var targetBean = app.data.createBean(targetModule, {id: targetId});
-                targetBean.fetch({
-                    success: function (model) {
-                        try {
-                            var _note = app.data.createRelatedBean(model, null, "notes", {id: newNoteId});
-                            _note.save(null, {relate: true});
-                            alertViews.shareSuccess(targetModule, targetId, "Notes", newNoteId);
-                        } catch (err) {
-                            alertViews.shareError(err);
-                        }
-                    },
-                    error: function (msg) {
-                        console.log('cannot relate note with target');
-                        alertViews.shareError(msg);
+                if (shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId)) {
+                    var shareManager2 = new ShareManager(app.controller.context.attributes.module, app.controller.context.attributes.modelId);
+                    if (shareManager2.linkModels('Notes', newNoteId)) {
+                        ShareManager.addNewFileView();
                     }
-                });
-
-                // establish relationship with main current module (won't alert any views if fail or succeed)
-                var mainModule = app.controller.context.attributes.module;
-                var mainModelId = app.controller.context.attributes.modelId;
-                var mainBean = app.data.createBean(mainModule, {id: mainModelId});
-                mainBean.fetch({
-                    success: function (model) {
-                        var _note = app.data.createRelatedBean(model, null, 'notes', {id: newNoteId});
-                        _note.save(null, {relate: true});
-                    },
-                    error: function (msg) {
-                        console.log('cannot relate file note to main module');
-                    }
-                });
+                    ShareManager.alertViews.shareSuccess('<p style="font-size: 16px; text-align: center;">You have shared with someone.  <a id="undo-link"><strong>Undo</strong></a></p>', '',
+                        {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
+                }
             }
 
         }
