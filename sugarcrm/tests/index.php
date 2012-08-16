@@ -33,6 +33,7 @@
  */
 
     $exclude = array("jshelpers", "jssource", "PHPUnit", 'ci');
+
     $dirItr = new RecursiveDirectoryIterator('.');
     $itrItr = new RecursiveIteratorIterator($dirItr);
     foreach($itrItr as $path => $file) {
