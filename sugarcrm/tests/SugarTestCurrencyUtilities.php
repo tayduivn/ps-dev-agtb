@@ -28,7 +28,6 @@ $beanFiles = array();
 require('include/modules.php');
 $GLOBALS['beanList'] = $beanList;
 $GLOBALS['beanFiles'] = $beanFiles;
-require_once 'modules/Currencies/Currency.php';
 
 class SugarTestCurrencyUtilities
 {
@@ -50,11 +49,12 @@ class SugarTestCurrencyUtilities
      */
     public static function createCurrency($name, $symbol, $iso4217, $conversion_rate, $id = null)
     {
-        $currency = new Currency();
+        $currency = BeanFactory::getBean('Currencies');
         $currency->name = $name;
         $currency->symbol = $symbol;
         $currency->iso4217 = $iso4217;
         $currency->conversion_rate = $conversion_rate;
+        $currency->status = 'Active';
         if(!empty($id))
         {
             $currency->new_with_id = true;
@@ -75,7 +75,7 @@ class SugarTestCurrencyUtilities
      */
     public static function getCurrencyByISO($iso4217)
     {
-        $currency = new Currency();
+        $currency = BeanFactory::getBean('Currencies');
         $currency->retrieve($currency->retrieveIDByISO($iso4217));
         return $currency;
     }
@@ -83,13 +83,10 @@ class SugarTestCurrencyUtilities
     public static function removeAllCreatedCurrencies()
     {
         $currency_ids = self::getCreatedCurrencyIds();
-        if(!empty($currency_ids))
-        {
-            $GLOBALS['db']->query(
-                sprintf("DELETE FROM currencies WHERE id IN ('%s');",
-                implode("','", $currency_ids))
-            );
-        }
+        $GLOBALS['db']->query(
+            sprintf("DELETE FROM currencies WHERE id IN ('%s');",
+            implode("','", $currency_ids))
+        );
         self::$_createdCurrencies = array();
     }
 

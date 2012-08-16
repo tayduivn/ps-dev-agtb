@@ -24,67 +24,86 @@
 
 require_once 'include/SugarCurrency.php';
 
+/**
+ * tests for SugarCurrency class
+ *
+ */
 class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private static $currency_ids = array();
+
+    /**
+     * store $sugar_config for later revert
+     * @access public
+     * @var    array $sugar_config
+     */
     private static $sugar_config;
 
+    /**
+     * pre-class environment setup
+     *
+     * @access public
+     */
     public static function setUpBeforeClass()
     {
-
+        // setup test user
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->status = 'Active';
-        $currency->name = 'Singapore';
-        $currency->iso4217 = 'SGD';
-        $currency->symbol = '$';
-        $currency->conversion_rate = 1.246171;
-        self::$currency_ids[] = $currency->save();
-
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->status = 'Active';
-        $currency->name = 'Philippines';
-        $currency->iso4217 = 'PHP';
-        $currency->symbol = '₱';
-        $currency->conversion_rate = 41.82982;
-        self::$currency_ids[] = $currency->save();
-
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->status = 'Active';
-        $currency->name = 'Yen';
-        $currency->iso4217 = 'YEN';
-        $currency->symbol = '¥';
-        $currency->conversion_rate = 78.87;
-        self::$currency_ids[] = $currency->save();
+        SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
+        SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
+        SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
 
     }
 
+    /**
+     * object setup
+     *
+     * @access public
+     */
     public function setUp()
     {
     }
 
+    /**
+     * object teardown
+     *
+     * @access public
+     */
     public function tearDown()
     {
     }
 
+    /**
+     * post-object environment teardown
+     *
+     * @access public
+     */
     public static function tearDownAfterClass()
     {
+        // remove test user
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 
-        $GLOBALS['db']->query(sprintf("DELETE FROM currencies WHERE id IN ('%s');",
-            implode("','",self::$currency_ids)));
-        self::$currency_ids = array();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
+    /**
+     * test base currency retrieval
+     *
+     * @access public
+     */
     public function testBaseCurrency()
     {
         $currency = SugarCurrency::getBaseCurrency();
         $this->assertInstanceOf('Currency',$currency);
+        // base currency is always a rate of 1.0
         $this->assertEquals(1.0,$currency->conversion_rate);
     }
 
+    /**
+     * test currency retrieval by currency_id
+     *
+     * @access public
+     */
     public function testCurrencyGetByID()
     {
         $currency = SugarCurrency::getCurrencyByID('-99');
@@ -92,14 +111,24 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('-99',$currency->id);
     }
 
+    /**
+     * test currency retrieval by ISO code
+     *
+     * @access public
+     */
     public function testCurrencyGetByISO()
     {
-        $currency = SugarCurrency::getCurrencyByISO('USD');
+        $currency = SugarCurrency::getCurrencyByISO('PHP');
         $this->assertInstanceOf('Currency',$currency);
-        $this->assertEquals('USD',$currency->iso4217);
-        $this->assertEquals(1.0,$currency->conversion_rate);
+        $this->assertEquals('PHP',$currency->iso4217);
+        $this->assertEquals(41.82982,$currency->conversion_rate);
     }
 
+    /**
+     * test dollar amount conversions between currencies
+     *
+     * @access public
+     */
     public function testCurrencyConvert()
     {
         $currency1 = SugarCurrency::getCurrencyByISO('SGD');
@@ -116,6 +145,11 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($converted_amount,$amount);
     }
 
+    /**
+     * test formatting of currency amount
+     *
+     * @access public
+     */
     public function testCurrencyFormat()
     {
         $currency = SugarCurrency::getCurrencyByISO('PHP');
@@ -132,6 +166,12 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $format = SugarCurrency::formatAmount($amount,$currency->id);
         $this->assertEquals($currency->symbol . '1,000.00',$format);
     }
+
+    /**
+     * test affects of changing base currency type
+     *
+     * @access public
+     */
 
     public function testBaseCurrencyChange()
     {
