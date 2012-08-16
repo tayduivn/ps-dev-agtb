@@ -141,13 +141,10 @@ class RelateRecordApi extends ModuleApi {
      */
     protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, SugarBean $relatedBean, $linkName, $relatedData = array()) {
         $recordArray = $this->formatBean($api, $args, $primaryBean);
-        $relatedArray = $this->formatBean($api, $args, $relatedBean);
+        //$relatedArray = $this->formatBean($api, $args, $relatedBean);
 
-        // TODO: When the related data is fixed and we can fetch it from the link class, replace this with that
-        foreach ( $relatedData as $key => $value ) {
-            $relatedArray[$key] = $value;
-        }
-        
+        // need to use the same as getRealtedRecord, so just call it
+        $relatedArray = $this->getRelatedRecord($api, $args);
         return array('record'=>$recordArray,
                      'related_record'=>$relatedArray);
     }
@@ -159,12 +156,14 @@ class RelateRecordApi extends ModuleApi {
         // TODO: Fix this when Link2 has a method to get populated fields
         $relateApi = new RelateApi;
         $data = $relateApi->listRelated($api, $args);
-        foreach($data['records'] AS $record)
+        if(empty($data['records']))
         {
-            if($record['id'] == $args['remote_id'])
-            {
-                return $record;
-            }
+            throw new SugarApiExceptionNotFound('Could not find record: '.$args['remote_id']);
+        }
+        else
+        {
+            // its always the first record
+            return reset($data['records']);
         }
     }
 
