@@ -48,19 +48,18 @@ class Bug55003Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->portalBrowser = new SugarPortalBrowser();
-        require 'include/modules.php';
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
         
         // Mod strings is required for Portal Browser, must use ModuleBuilder
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
     
     public function tearDown()
     {
-        unset($GLOBALS['beanList'], $GLOBALS['beanFiles'], $GLOBALS['current_user'], $GLOBALS['app_list_strings'], $GLOBALS['mod_strings']);
+        SugarTestHelper::tearDown();
         unset($this->portalBrowser);
     }
     

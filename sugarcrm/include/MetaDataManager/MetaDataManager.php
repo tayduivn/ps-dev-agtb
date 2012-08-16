@@ -184,6 +184,43 @@ class MetaDataManager {
 
         return $data;
     }
+    /**
+     * For a specific module get any existing Subpanel Definitions it may have
+     * @param string $moduleName 
+     * @return array
+     */
+    public function getSubpanelDefs($moduleName)
+    {
+        require_once('include/SubPanel/SubPanelDefinitions.php');
+        $parent_bean = BeanFactory::getBean($moduleName);
+
+        $spd = new SubPanelDefinitions($parent_bean);
+        $layout_defs = $spd->layout_defs;
+
+        if(is_array($layout_defs) && isset($layout_defs['subpanel_setup']))
+        {
+            foreach($layout_defs['subpanel_setup'] AS $name => $subpanel_info)
+            {
+                $aSubPanel = $spd->load_subpanel($name, '', $parent_bean);
+                if($aSubPanel->isCollection())
+                {
+                    $collection = array();
+                    foreach($aSubPanel->sub_subpanels AS $key => $subpanel)
+                    { 
+                        $collection[$key] = $subpanel->panel_definition;
+                    }
+                    $layout_defs['subpanel_setup'][$name]['panel_definition'] = $collection;
+                }
+                else
+                {
+                    $layout_defs['subpanel_setup'][$name]['panel_definition'] = $aSubPanel->panel_definition;
+                }
+                
+            }
+        }
+        
+        return $layout_defs;
+    }
 
     /**
      * This method collects all view data for a module
@@ -220,7 +257,7 @@ class MetaDataManager {
         $data['fields'] = $vardefs['fields'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
-
+        $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;
