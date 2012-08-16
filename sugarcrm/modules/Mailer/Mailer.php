@@ -24,20 +24,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'lib/phpmailer/class.phpmailer.php';
 require_once 'MailerException.php';
 require_once 'EmailIdentity.php';
-require_once 'RecipientsCollection.php';
 require_once 'MailerConfig.php';
 
 class Mailer
 {
 	protected $config;
 	protected $from;
-	protected $recipients;
+	protected $toRecipients;
+    protected $ccRecipients;
+    protected $bccRecipients;
 	protected $subject;
 	protected $htmlBody;
 	protected $textBody;
 
 	public function __construct() {
-		$this->recipients = new RecipientsCollection();
+        $this->toRecipients  = array();
+        $this->ccRecipients  = array();
+        $this->bccRecipients = array();
 	}
 
 	/**
@@ -73,49 +76,48 @@ class Mailer
 	}
 
 	/**
-	 * Provide a partial or complete recipient list from scratch. Passing no parameters will effectively
-	 * clear the list, if one exists.
-	 *
-	 * @param array $to     Array of EmailIdentity objects representing the recipients in the TO header.
-	 * @param array $cc     Array of EmailIdentity objects representing the recipients in the CC header.
-	 * @param array $bcc    Array of EmailIdentity objects representing the recipients in the BCC header.
+	 * @param array $recipient   EmailIdentity object.
 	 */
-	public function setRecipients($to = array(), $cc = array(), $bcc = array()) {
-		$this->recipients->clearAll();
-		$this->addRecipientsTo($to);
-		$this->addRecipientsCc($cc);
-		$this->addRecipientsBcc($bcc);
+	public function addToRecipient(EmailIdentity $recipient) {
+		$this->toRecipients[] = $recipient;
 	}
 
 	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
+     * @param array $recipient   EmailIdentity object.
 	 */
-	public function addRecipientsTo($recipients = array()) {
-		$this->recipients->addTo($recipients);
+	public function addCcRecipient(EmailIdentity $recipient) {
+        $this->ccRecipients[] = $recipient;
 	}
 
 	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
+     * @param array $recipient   EmailIdentity object.
 	 */
-	public function addRecipientsCc($recipients = array()) {
-		$this->recipients->addCc($recipients);
+	public function addBccRecipient(EmailIdentity $recipient) {
+        $this->bccRecipients[] = $recipient;
 	}
 
-	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
-	 */
-	public function addRecipientsBcc($recipients = array()) {
-		$this->recipients->addBcc($recipients);
-	}
+    /**
+     * @return array $toRecipients   Array of EmailIdentity objects.
+     */
+    public function getToRecipients() {
+        return $this->toRecipients;
+    }
 
-	/**
-	 * @return RecipientsCollection
-	 */
-	public function getRecipients() {
-		return $this->recipients;
-	}
+    /**
+     * @return array $ccRecipients   Array of EmailIdentity objects.
+     */
+    public function getCcRecipients() {
+        return $this->ccRecipients;
+    }
 
-	/**
+    /**
+     * @return array $toRecipients   Array of EmailIdentity objects.
+     */
+    public function getBccRecipients() {
+        return $this->bccRecipients;
+    }
+
+    /**
 	 * @param string $subject
 	 */
 	public function setSubject($subject) {
@@ -158,15 +160,16 @@ class Mailer
 	}
 
 	/**
-	 * @throws MailerException
+     * @return boolean  true=success
 	 */
 	public function send() {
 		$mail = new PHPMailer();
-
+        $success=false;
 		try {
 			$this->transferConnectionData($mail);
 			$this->transferHeaders($mail);
 			$this->transferRecipients($mail);
+            $this->transferBody($mail);
 
 			if (!$mail->IsError()) {
 				$mail->Send();
@@ -175,9 +178,13 @@ class Mailer
 			if ($mail->IsError()) {
 				throw new MailerException($mail->ErrorInfo);
 			}
+
+            $success=true;
 		} catch (MailerException $me) {
 			$GLOBALS['log']->error($me->getMessage());
 		}
+
+        return $success;
 	}
 
 	/**
@@ -217,20 +224,15 @@ class Mailer
 	 * @param PHPMailer $mail
 	 */
 	protected function transferRecipients(PHPMailer &$mail) {
-		$recipients = $this->getRecipients();
-		$to = $recipients->getTo();
-		$cc = $recipients->getCc();
-		$bcc = $recipients->getBcc();
-
-		foreach ($to as $recipient) {
+		foreach ($this->toRecipients  as $recipient) {
 			$mail->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
 
-		foreach ($cc as $recipient) {
+		foreach ($this->ccRecipients  as $recipient) {
 			$mail->AddCC($recipient->getEmail(), $recipient->getName());
 		}
 
-		foreach ($bcc as $recipient) {
+		foreach ($this->bccRecipients as $recipient) {
 			$mail->AddBCC($recipient->getEmail(), $recipient->getName());
 		}
 	}
