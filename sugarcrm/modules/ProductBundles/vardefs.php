@@ -235,17 +235,6 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
         'vname'=>'LBL_PRODUCTS',
       ),
 
-    'product_bundles' =>
-        array(
-            'name' => 'product_bundles',
-            'type' => 'link',
-            'relationship' => 'product_bundle_quote',
-            'module' => 'Quotes',
-            'bean_name' => 'Quote',
-            'source' => 'non-db',
-            'rel_fields' => array('bundle_index' => array('type' => 'integer')),
-            'vname' => 'LBL_QUOTES',
-        ),
 )
                                                       , 'indices' => array (
        array('name' =>'procuct_bundlespk', 'type' =>'primary', 'fields'=>array('id')),
