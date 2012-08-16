@@ -186,7 +186,7 @@ class ForecastsFiltersApi extends ModuleApi {
             );
             // add myOpp to the beginning of children
             array_unshift($treeData['children'], $myOpp);
-            
+
             // Since user has children,
             // handle if user clicked a manager and we need to return a Parent link in the set
             if($returnParent)  {
