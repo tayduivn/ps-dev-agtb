@@ -23,9 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerConfig
 {
-	protected $protocol = 'smtp';
-	protected $host     = 'localhost';
-	protected $port     = 25;
+	protected $protocol = 'mail'; // smtp or other send mail program
+	protected $host     = 'localhost'; // smtp host
+	protected $port     = 25; // smtp port
 
 	public function setProtocol($protocol) {
 		$this->protocol = $protocol;
