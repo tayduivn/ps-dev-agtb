@@ -29,58 +29,40 @@ class SugarCurrency
 {
 
     /**
-     * @access private
-     * @var $currency_obj currency bean object
-     */
-    private static $_currency;
-
-    /**
-     * get a currency object
-     *
-     * @access private
-     * @return object   currency object
-     */
-    private static function _getCurrencyObj() {
-        if(!self::$_currency) {
-            self::$_currency = BeanFactory::getBean('Currencies');
-        }
-        return self::$_currency;
-    }
-
-    /**
      * convert a currency from one to another
      *
      * @access public
      * @param  float  $amount
      * @param  string $from_id source currency_id
      * @param  string $to_id target currency_id
-     * @param  string $datetime the date/time of exchange rate (default is current)
      * @return float   returns the converted amount
      */
-    public static function convertAmount( $amount, $from_id, $to_id, $datetime = null ) {
-        // TODO: implement datetime
-        $currency = self::_getCurrencyObj();
-        $currency1 = $currency->retrieve($from_id);
-        $currency2 = $currency->retrieve($to_id);
+    public static function convertAmount( $amount, $from_id, $to_id ) {
+        $currency1 = BeanFactory::getBean('Currencies');
+        $currency1->retrieve($from_id);
+        $currency2 = BeanFactory::getBean('Currencies');
+        $currency2->retrieve($to_id);
+        // NOTE: we always calculate in maximum precision, which the database defines to 6
+        // formatting to two decimals is done with formatting functions
         return round($amount * $currency1->conversion_rate / $currency2->conversion_rate, 6);
     }
 
     /**
-     * format a currency amount with symbol and user locale
+     * format a currency amount with symbol and user formatting
      *
      * @access public
      * @param  float  $amount
      * @param  string $currency_id
-     * @param  string $separator the separator used between symbol and amount
+     * @param  string $separator what is between symbol and amount
      * @return float   returns the converted amount
      */
-    public static function formatAmountUserLocale(
+    public static function formatAmount(
         $amount,
         $currency_id,
         $separator = ''
     ) {
         global $locale;
-        $currency = self::_getCurrencyObj();
+        $currency = BeanFactory::getBean('Currencies');
         $currency->retrieve($currency_id);
 
         // get user defined preferences
@@ -92,33 +74,43 @@ class SugarCurrency
     }
 
     /**
-     * get a currency record by currency_id
+     * get system base currency object
      *
      * @access public
-     * @param  string   $currency_id
-     * @param  datetime $datetime the date/time of exchange rate (default current)
-     * @return array     returns the currency record
+     * @return object     currency object
      */
-    public static function getCurrency( $currency_id = null, $datetime = null ) {
-        // TODO: implement datetime
-        $currency = self::_getCurrencyObj();
+    public static function getBaseCurrency( ) {
+        // the base currency has a hard-coded currency_id of -99
+        $currency = BeanFactory::getBean('Currencies');
+        $currency->retrieve('-99');
+        return $currency;
+    }
+
+    /**
+     * get a currency object by currency_id
+     *
+     * @access public
+     * @param  string $currency_id
+     * @return object currency object
+     */
+    public static function getCurrencyByID( $currency_id = null ) {
+        $currency = BeanFactory::getBean('Currencies');
         $currency->retrieve($currency_id);
         return $currency;
     }
 
     /**
-     * get a currency record by ISO
+     * get a currency object by ISO
      *
      * @access public
-     * @param  string   $ISO ISO4217 value
-     * @param  datetime $datetime the date/time of exchange rate (default current)
-     * @return array     returns the currency record
+     * @param  string $ISO ISO4217 value
+     * @return object currency object
      */
-    public static function getCurrencyByISO( $ISO, $datetime = null ) {
-        // TODO: implement datetime
-        $currency = self::_getCurrencyObj();
+    public static function getCurrencyByISO( $ISO ) {
+        $currency = BeanFactory::getBean('Currencies');
         $currency_id = $currency->retrieveIDByISO($ISO);
-        return $currency->retrieve($currency_id);
+        $currency->retrieve($currency_id);
+        return $currency;
     }
 
 }
