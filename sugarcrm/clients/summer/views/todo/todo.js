@@ -3,7 +3,7 @@
         'click #todo-container': 'onClickNotification',
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
-        'keyup #todo-description':'todoSubmit'
+        'keyup #todo-subject':'todoSubmit'
     },
     initialize: function(options) {
         var self = this;
@@ -15,7 +15,6 @@
         console.log("initializing todo view");
         console.log(this);
         console.log(options);
-        console.log(options.context.id);
     },
     onClickNotification: function(e) {
         // This will prevent the dropup menu from closing
@@ -34,31 +33,31 @@
             }
         });
     },
-    renderTodo: function(e) {
+    renderTodo: function(model) {
         console.log("render");
-        console.log(e);
-    },
-    addOne: function(model) {
-        //todoList.add(model);
-        //console.log(todoList.toJSON());
-        //$(".todo-list").append('<li style="list-style: none"><label style="display: inline" class="checkbox"><input type="checkbox"></label>' + _.escape(model.get("description")) + '</li>');
-        console.log(this.el);
+        console.log(this);
+        console.log(model);
+        console.log("---");
+        console.log(app.additionalComponents.todo.collection);
+        $("#todo-subject").val("");
     },
     validateTodo: function(e) {
-        var desc = $("#todo-description").val();
-        if( desc == "" ) {
+        var subject = $("#todo-subject").val();
+        if( subject == "" ) {
             console.log("invalid input data");
             return false;
         }
         else {
-            //var todoItem = new TodoItem({"description": desc});
-            console.log(this);
-            //this.addOne(todoItem);
-            $("#todo-description").val("");
+            this.model = app.data.createBean("Tasks", {"name": subject});
+            this.model.save();
+            app.additionalComponents.todo.collection.add(this.model);
+
+            this.renderTodo(this.model);
+            this.render();
         }
     },
     todoSubmit: function(e) {
-        if( e.target.id == "todo-description" ) {
+        if( e.target.id == "todo-subject" ) {
             // if enter was pressed
             if( e.keyCode == 13 ) {
                 // validate
