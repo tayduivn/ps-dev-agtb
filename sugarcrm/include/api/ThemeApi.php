@@ -69,7 +69,7 @@ class ThemeApi extends SugarApi
      * Generate bootstrap.css
      * @param $api
      * @param $args
-     * @return plain text/css
+     * @return plain text/css or css file url
      */
     public function previewCSS($api, $args)
     {
@@ -79,16 +79,22 @@ class ThemeApi extends SugarApi
         $minify = isset($args['min']) ? true : false;
 
         $theme = new SidecarTheme($platform, $themeName);
-        $variables = $theme->getThemeVariables(true);
 
+        // If `preview` is defined, it means that the call was made by the Theme Editor in Studio so we want to return
+        // plain text/css
         if (isset($args['preview'])) {
+            $variables = $theme->getThemeVariables(true);
             $variables = array_merge($variables, $args);
+            $css = $theme->compileBootstrapCss($variables, $minify);
+
+            header('Content-type: text/css');
+            exit($css);
+        } else {
+            // Otherwise we just return the CSS Url so the application can load the CSS file.
+            // getCSSURL method takes of generating bootstrap.css if it doesn't exist in cache.
+            return $theme->getCSSURL();
         }
 
-        $css = $theme->compileBootstrapCss($variables, $minify);
-
-        header('Content-type: text/css');
-        exit($css);
     }
 
     /**
