@@ -23,6 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class RecipientsCollection
 {
+	const FunctionAddTo  = 'addTo';
+	const FunctionAddCc  = 'addCc';
+	const FunctionAddBcc = 'addBcc';
+
 	protected $to;
 	protected $cc;
 	protected $bcc;
@@ -53,16 +57,36 @@ class RecipientsCollection
 		$this->bcc = array();
 	}
 
-	public function addTo($recipients = array()) {
-		$this->to = $this->castRecipientsAsArray($recipients);
+	/**
+	 * @param array  $recipients    Array of EmailIdentity objects.
+	 * @param string $function      The name of the RecipientsCollection method to use for adding recipients.
+	 * @return array    Array of invalid recipients
+	 */
+	public function addRecipients($recipients = array(), $function = RecipientsCollection::FunctionAddTo) {
+		$recipients = $this->castRecipientsAsArray($recipients);
+		$invalidRecipients = array();
+
+		foreach ($recipients as $recipient) {
+			if ($recipient instanceof EmailIdentity) {
+				$this->$function($recipient);
+			} else {
+				$invalidRecipients[] = $recipient;
+			}
+		}
+
+		return $invalidRecipients;
 	}
 
-	public function addCc($recipients = array()) {
-		$this->cc = $this->castRecipientsAsArray($recipients);
+	public function addTo(EmailIdentity $recipient) {
+		$this->to[] = $recipient;
 	}
 
-	public function addBcc($recipients = array()) {
-		$this->bcc = $this->castRecipientsAsArray($recipients);
+	public function addCc(EmailIdentity $recipient) {
+		$this->cc[] = $recipient;
+	}
+
+	public function addBcc(EmailIdentity $recipient) {
+		$this->bcc[] = $recipient;
 	}
 
 	public function getAll() {

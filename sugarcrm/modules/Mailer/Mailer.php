@@ -29,6 +29,7 @@ require_once 'MailerConfig.php';
 
 class Mailer
 {
+	protected $mailer;
 	protected $config;
 	protected $from;
 	protected $recipients;
@@ -37,6 +38,11 @@ class Mailer
 	protected $textBody;
 
 	public function __construct() {
+		$this->reset();
+	}
+
+	public function reset() {
+		$this->mailer = new PHPMailer();
 		$this->recipients = new RecipientsCollection();
 	}
 
@@ -48,7 +54,7 @@ class Mailer
 	}
 
 	/**
-	 * @return MailConfig
+	 * @return MailerConfig
 	 */
 	public function getConfig() {
 		if (!($this->config instanceof MailerConfig)) {
@@ -73,46 +79,27 @@ class Mailer
 	}
 
 	/**
-	 * Provide a partial or complete recipient list from scratch. Passing no parameters will effectively
-	 * clear the list, if one exists.
-	 *
-	 * @param array $to     Array of EmailIdentity objects representing the recipients in the TO header.
-	 * @param array $cc     Array of EmailIdentity objects representing the recipients in the CC header.
-	 * @param array $bcc    Array of EmailIdentity objects representing the recipients in the BCC header.
-	 */
-	public function setRecipients($to = array(), $cc = array(), $bcc = array()) {
-		$this->recipients->clearAll();
-		$this->addRecipientsTo($to);
-		$this->addRecipientsCc($cc);
-		$this->addRecipientsBcc($bcc);
-	}
-
-	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsTo($recipients = array()) {
-		$this->recipients->addTo($recipients);
+		return $this->recipients->addRecipients($recipients);
 	}
 
 	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsCc($recipients = array()) {
-		$this->recipients->addCc($recipients);
+		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
 	}
 
 	/**
-	 * @param array $recipients   Array of EmailIdentity objects.
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsBcc($recipients = array()) {
-		$this->recipients->addBcc($recipients);
-	}
-
-	/**
-	 * @return RecipientsCollection
-	 */
-	public function getRecipients() {
-		return $this->recipients;
+		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
 	}
 
 	/**
@@ -161,97 +148,86 @@ class Mailer
 	 * @throws MailerException
 	 */
 	public function send() {
-		$mail = new PHPMailer();
-
 		try {
-			$this->transferConnectionData($mail);
-			$this->transferHeaders($mail);
-			$this->transferRecipients($mail);
-
-			if (!$mail->IsError()) {
-				$mail->Send();
+			if (!($this->mailer instanceof PHPMailer)) {
+				throw new MailerException("Invalid mailer");
 			}
 
-			if ($mail->IsError()) {
-				throw new MailerException($mail->ErrorInfo);
+			$this->transferConnectionData();
+			$this->transferHeaders();
+			$this->transferRecipients();
+
+			if (!$this->mailer->IsError()) {
+				$this->mailer->Send();
+			}
+
+			if ($this->mailer->IsError()) {
+				throw new MailerException($this->mailer->ErrorInfo);
 			}
 		} catch (MailerException $me) {
 			$GLOBALS['log']->error($me->getMessage());
+			return false;
 		}
+
+		return true;
 	}
 
-	/**
-	 * @param PHPMailer $mail
-	 */
-	protected function transferConnectionData(PHPMailer &$mail) {
+	protected function transferConnectionData() {
 		$config = $this->getConfig();
-		$mail->Mailer = $config->getProtocol();
-		$mail->Host = $config->getHost();
-		$mail->Port = $config->getPort();
+		$this->mailer->Mailer = $config->getProtocol();
+		$this->mailer->Host = $config->getHost();
+		$this->mailer->Port = $config->getPort();
 	}
 
-	/**
-	 * @param PHPMailer $mail
-	 */
-	protected function transferHeaders(PHPMailer &$mail) {
-		$from = $this->getFrom();
-		$fromEmail = $from->getEmail();
+	protected function transferHeaders() {
+		$fromEmail = $this->from->getEmail();
 
+		//@todo should we really validate this email address? can that be done reliably further up in the stack?
 		if (!is_string($fromEmail)) {
 			throw new MailerException("Invalid from email address");
 		}
 
-		$mail->From = $fromEmail;
-		$mail->FromName = $from->getName();
+		$this->mailer->From = $fromEmail;
+		$this->mailer->FromName = $this->from->getName();
 
-		$subject = $this->getSubject();
-
-		if (!is_string($subject)) {
+		if (!is_string($this->subject)) {
 			throw new MailerException("Invalid subject");
 		}
 
-		$mail->Subject = $this->getSubject();
+		$this->mailer->Subject = $this->subject;
 	}
 
-	/**
-	 * @param PHPMailer $mail
-	 */
-	protected function transferRecipients(PHPMailer &$mail) {
-		$recipients = $this->getRecipients();
-		$to = $recipients->getTo();
-		$cc = $recipients->getCc();
-		$bcc = $recipients->getBcc();
+	protected function transferRecipients() {
+		$to = $this->recipients->getTo();
+		$cc = $this->recipients->getCc();
+		$bcc = $this->recipients->getBcc();
 
 		foreach ($to as $recipient) {
-			$mail->AddAddress($recipient->getEmail(), $recipient->getName());
+			$this->mailer->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($cc as $recipient) {
-			$mail->AddCC($recipient->getEmail(), $recipient->getName());
+			$this->mailer->AddCC($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($bcc as $recipient) {
-			$mail->AddBCC($recipient->getEmail(), $recipient->getName());
+			$this->mailer->AddBCC($recipient->getEmail(), $recipient->getName());
 		}
 	}
 
 	/**
-	 * @param PHPMailer $mail
 	 * @throws MailerException
 	 */
-	protected function transferBody(PHPMailer &$mail) {
-		$htmlBody = $this->getHtmlBody();
-		$textBody = $this->getTextBody();
-
-		if ($htmlBody && $textBody) {
-			$mail->IsHTML(true);
-			$mail->Body = $htmlBody;
-			$mail->AltBody = $textBody;
-		} elseif ($htmlBody) {
+	protected function transferBody() {
+		if ($this->htmlBody && $this->textBody) {
+			$this->mailer->IsHTML(true);
+			$this->mailer->Body = $this->htmlBody;
+			$this->mailer->AltBody = $this->textBody;
+		} elseif ($this->textBody) {
+			$this->mailer->Body = $this->textBody;
+		} elseif ($this->htmlBody) {
 			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
-			$mail->Body = $htmlBody;
-		} elseif ($textBody) {
-			$mail->Body = $textBody;
+			$this->mailer->Body = $this->htmlBody;
 		} else {
 			throw new MailerException("No email body was provided");
 		}
