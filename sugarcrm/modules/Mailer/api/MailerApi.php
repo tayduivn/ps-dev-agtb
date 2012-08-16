@@ -76,9 +76,9 @@ class MailerApi extends ModuleApi {
         $mailConfig = new MailerConfig();
         if($admin->settings['mail_sendtype'] == "SMTP")
         {
-            $mailConfig->setProtocol("smtp");
-            $mailConfig->setHost($admin->settings['mail_smtpserver']);
-            $mailConfig->setPort($admin->settings['mail_smtpport']);
+            //$mailConfig->setProtocol("smtp");
+            //$mailConfig->setHost($admin->settings['mail_smtpserver']);
+            //$mailConfig->setPort($admin->settings['mail_smtpport']);
 
             //if($admin->settings['mail_smtpauth_req']) {
             //    $mail->SMTPAuth = TRUE;
@@ -106,7 +106,7 @@ class MailerApi extends ModuleApi {
             foreach($args["to_addresses"] AS $toAddress) {
                 $recipient = $this->getRecipient($toAddress);
                 if ($recipient) {
-                    $mailer->addToRecipient($recipient);
+                    $mailer->addRecipientsTo($recipient);
                 }
             }
         }
@@ -115,7 +115,7 @@ class MailerApi extends ModuleApi {
             foreach($args["cc_addresses"] AS $ccAddress) {
                 $recipient = $this->getRecipient($ccAddress);
                 if ($recipient) {
-                    $mailer->addCcRecipient($recipient);
+                    $mailer->addRecipientsCc($recipient);
                 }
             }
         }
@@ -124,7 +124,7 @@ class MailerApi extends ModuleApi {
             foreach($args["bcc_addresses"] AS $bccAddress) {
                 $recipient = $this->getRecipient($bccAddress);
                 if ($recipient) {
-                    $mailer->addBccRecipient($recipient);
+                    $mailer->addRecipientsBcc($recipient);
                 }
             }
         }
@@ -138,7 +138,7 @@ class MailerApi extends ModuleApi {
         }
 
         if (isset($args["html_body"])) {
-            // $args["html_body"] = urldecode($args["html_body"]);
+            $args["html_body"] = urldecode($args["html_body"]);
             $mailer->setHtmlBody($args["html_body"]);
         }
 
