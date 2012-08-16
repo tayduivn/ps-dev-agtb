@@ -21,7 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-
+/**
+ * Search Engines drivers factory class
+ * @api
+ */
 class SugarSearchEngineFactory
 {
     /**

@@ -84,6 +84,15 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'reportable'=>false,
     'comment' => 'If product created via Quote, this is quote ID'
   ),
+  'opportunity_id' =>
+  array (
+    'name' => 'opportunity_id',
+    'type' => 'id',
+    'vname' => 'LBL_OPPORTUNITY_ID',
+    'required'=>false,
+    'reportable'=>false,
+    'comment' => 'If product created via Opportunity, this is quote ID'
+  ),
   'currency_symbol' =>
 	array (
 		'name' => 'currency_symbol',
@@ -445,9 +454,35 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
       'name' => 'quotes',
       'type' => 'link',
       'relationship' => 'quote_products',
-      'vname' => 'LBL_QUOTES',
+      'vname' => 'LBL_QUOTE',
       'source'=>'non-db',
     ),
+//BEGIN SUGARCRM flav=ent ONLY
+    'best_case' =>
+    array (
+        'name' => 'best_case',
+        'vname' => 'LBL_BEST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+    'likely_case' =>
+    array (
+        'name' => 'likely_case',
+        'vname' => 'LBL_LIKELY_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+    'worst_case' =>
+    array (
+        'name' => 'worst_case',
+        'vname' => 'LBL_WORST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+//END SUGARCRM flav=ent ONLY
   'related_products' =>
   array (
   	'name' => 'related_products',
@@ -515,7 +550,68 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'source'=>'non-db',
     'comment' => 'Manufacturer Name'
   ),
-
+//BEGIN SUGARCRM flav=ent ONLY
+'expert_id' =>
+    array (
+    'name' => 'expert_id',
+    'vname' => 'LBL_EXPERT_ID',
+    'type' => 'enum',
+    'function' => 'get_expert_array',
+    'dbType' => 'varchar',
+),
+'opportunity_id' =>
+array (
+  'name' => 'opportunity_id',
+  'type' => 'id',
+  'vname' => 'LBL_OPPORTUNITY_ID',
+  'required'=>false,
+  'reportable' => false,
+  'comment' => 'The opportunity id for the line item entry'
+),
+'opportunities' =>
+  array(
+    'name' => 'opportunities',
+    'type' => 'link',
+    'relationship' => 'opportunities_products',
+    'source'=>'non-db',
+    'link_type'=>'one',
+    'module'=>'Opportunities',
+    'bean_name'=>'Opportunity',
+    'vname'=>'LBL_OPPORTUNITIES',
+  ),
+'best_case' =>
+array (
+    'name' => 'best_case',
+    'vname' => 'LBL_BEST_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'likely_case' =>
+array (
+    'name' => 'likely_case',
+    'vname' => 'LBL_LIKELY_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'worst_case' =>
+array (
+    'name' => 'worst_case',
+    'vname' => 'LBL_WORST_CASE',
+    'dbType' => 'decimal',
+    'type' => 'currency',
+    'len' => '26,6',
+),
+'forecast' =>
+array (
+    'name' => 'forecast',
+    'vname' => 'LBL_FORECAST',
+    'type' => 'bool',
+    'default' => '-1',
+    'comment' => 'Boolean indicating whether or not record should be included in forecast'
+),
+//END SUGARCRM flav=ent ONLY
   'type_name' =>
   array (
       'name' => 'type_name',
@@ -620,6 +716,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
         'rel_fields'=>array('product_index'=>array('type'=>'integer')),
         'vname'=>'LBL_PRODUCTS',
       ),
+
 )
  , 'indices' => array (
        array('name' =>'idx_products', 'type'=>'index', 'fields'=>array('name','deleted')),

@@ -32,6 +32,6 @@ $themedef = array(
     'description' => "508 Compliant Theme",
 	'parentTheme' => 'Sugar',
     'version' => array(
-        'regex_matches' => array('6\.*.*'),
+        'regex_matches' => array('[6|7]\.*.*'),
         ),
     );

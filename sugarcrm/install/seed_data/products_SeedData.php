@@ -98,6 +98,10 @@ $last_name_max = $last_name_count - 1;
 	$category = new ProductCategory();
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] .$sugar_demodata['category_ext_name'];
 	$category->parent_id = $parent_id;
+    //BEGIN SUGARCRM flav=pro ONLY
+    $key = array_rand($sugar_demodata['users']);
+    $category->assigned_user_id = $sugar_demodata['users'][$key]['id'];
+    //END SUGARCRM flav=pro ONLY
 	$category->save();
 	$cat_id = $category->id;
 	unset($category);
@@ -127,8 +131,8 @@ $first_name_max = $first_name_count - 1;
 	$template->cost_usdollar = 500.00;
 	$template->list_price = 800.00;
 	$template->list_usdollar = 800.00;
-	$template->discount_price = 800.00;
-	$template->discount_usdollar = 800.00;
+	$template->discount_price = 700.00;
+	$template->discount_usdollar = 700.00;
 	$template->pricing_formula = "IsList";
 	$template->mft_part_num = $company_name_array[mt_rand(0,$company_name_count-1)].' '.mt_rand(1,1000000) ."XYZ987";
 	$template->pricing_factor = "1";

@@ -145,10 +145,11 @@ class TimePeriod extends SugarBean {
 
 		return $query;
 	}
-	
-	//Fiscal year domain is stored in the timeperiods table, and not staticaly defined like the rest of the
+
+
+	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
 	//domains, This method builds the domain array.
-	function get_fiscal_year_dom() {
+	static function get_fiscal_year_dom() {
 
 		static $fiscal_years;
 
@@ -169,8 +170,178 @@ class TimePeriod extends SugarBean {
 		}
 		return $fiscal_years;
 	}
+
+
+    /**
+     * getTimePeriod
+     *
+     */
+    static function getTimePeriod($timedate=null)
+    {
+        global $app_strings;
+        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+
+        if(!empty($timeperiod_id))
+        {
+           $timeperiod = new TimePeriod();
+           $timeperiod->retrieve($timeperiod_id);
+           return $timeperiod;
+        }
+
+        return null;
+    }
+
+
+    /**
+     * getCurrentName
+     *
+     * Returns the current timeperiod name if a timeperiod entry is found
+     *
+     */
+    static function getCurrentName($timedate=null)
+    {
+        global $app_strings;
+        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiods = array();
+        if(!empty($timeperiod))
+        {
+            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        }
+        return $timeperiods;
+    }
+
+    /**
+     * getCurrentId
+     *
+     * Returns the current timeperiod name if a timeperiod entry is found
+     *
+     */
+    static function getCurrentId($timedate=null)
+    {
+        static $currentId;
+
+        if(!isset($currentId))
+        {
+            global $app_strings;
+            $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+            //get current timeperiod
+            $db = DBManagerFactory::getInstance();
+            $queryDate = $timedate->getNow();
+            $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        }
+        return $currentId;
+    }
+
+    /**
+     * getLastCurrentNextIds
+     * Returns the quarterly ids of the last, current and next timeperiod
+     * @static
+     * @param $timedate Optional TimeDate instance to calculate values off of
+     * @return $ids Mixed array of id=>name value(s) depending on the current system date or timedate parameter (if supplied)
+     */
+    static function getLastCurrentNextIds($timedate=null)
+    {
+        global $app_strings;
+        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+        $timeperiods = array();
+
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if(!empty($timeperiod))
+        {
+            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        }
+
+        //previous timeperiod (3 months ago)
+        $queryDate = $queryDate->modify('-3 month');
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if(!empty($timeperiod))
+        {
+            $timeperiods[$timeperiod] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
+        }
+
+        //next timeperiod (3 months from today)
+        $queryDate = $queryDate->modify('+6 month');
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if(!empty($timeperiod))
+        {
+            $timeperiods[$timeperiod] = $app_strings['LBL_NEXT_TIMEPERIOD'];
+        }
+        return $timeperiods;
+    }
+
+    /**
+     * get_timeperiods_dom
+     * @static
+     * @return array
+     */
+    static function get_timeperiods_dom()
+    {
+        static $timeperiods;
+
+        if(!isset($timeperiods))
+        {
+            $db = DBManagerFactory::getInstance();
+            $timeperiods = array();
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE deleted=0');
+            while(($row = $db->fetchByAssoc($result)))
+            {
+                if(!isset($timeperiods[$row['id']]))
+                {
+                    $timeperiods[$row['id']]=$row['name'];
+                }
+            }
+        }
+        return $timeperiods;
+    }
+
+    static function get_not_fiscal_timeperiods_dom()
+    {
+        static $not_fiscal_timeperiods;
+
+        if(!isset($not_fiscal_timeperiods))
+        {
+            $db = DBManagerFactory::getInstance();
+            $not_fiscal_timeperiods = array();
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 0 AND deleted=0');
+            while(($row = $db->fetchByAssoc($result)))
+            {
+                if(!isset($not_fiscal_timeperiods[$row['id']]))
+                {
+                    $not_fiscal_timeperiods[$row['id']]=$row['name'];
+                }
+            }
+        }
+        return $not_fiscal_timeperiods;
+    }
 }
 
-function get_fiscal_year_dom() {
-    return TimePeriod::get_fiscal_year_dom();
+function get_timeperiods_dom()
+{
+    return TimePeriod::get_timeperiods_dom();
+}
+
+function get_not_fiscal_timeperiods_dom()
+{
+    return TimePeriod::get_not_fiscal_timeperiods_dom();
 }

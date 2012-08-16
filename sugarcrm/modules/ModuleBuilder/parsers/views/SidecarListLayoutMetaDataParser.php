@@ -23,6 +23,20 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
 
 class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
+    /**
+     * Invalid field types for various sidecar clients. Format should be 
+     * $client => array('type', 'type').
+     * 
+     * @var array
+     * @protected
+     */
+    protected $invalidTypes = array(
+        //BEGIN SUGARCRM flav=ent ONLY
+        'portal' => array('iframe', 'encrypt', 'html', 'relate',),
+        //END SUGARCRM flav=ent ONLY
+    );
+            
+    
     /*
      * Constructor, builds the parent ListLayoutMetaDataParser then adds the
      * panel data to it
@@ -109,6 +123,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      */
     public function getAvailableFields() {
         $availableFields = array();
+        
         // Select available fields from the field definitions - don't need to worry about checking if ok to include as the Implementation has done that already in its constructor
         foreach ($this->_fielddefs as $key => $def)
         {
@@ -186,7 +201,46 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
 
         return array();
     }
-
+    
+    /**
+     * Sidecar specific method that delegates validity checking to client specific
+     * methods if they exists, otherwise passes through to the parent checker
+     * 
+     * @param string $key The field name
+     * @param array $def The field defs for key
+     * @return bool
+     */
+    public function isValidField($key, $def) {
+        if (!empty($this->client)) {
+            $method = 'isValidField' . ucfirst(strtolower($this->client));
+            if (method_exists($this, $method)) {
+                return $this->$method($key, $def);
+            }
+        }
+        
+        return parent::isValidField($key, $def);
+    }
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Validates portal only fields. Runs the field through a prelimiary check
+     * of type before passing the field on to the parent validator.
+     * 
+     * @param string $key The field name to check for
+     * @param array $def The field defs for the key
+     * @return bool
+     */
+    public function isValidFieldPortal($key, $def) {
+        if (isset($this->invalidTypes['portal'])) {
+            if (!isset($def['type']) || in_array($def['type'], $this->invalidTypes['portal'])) {
+                return false;
+            }
+        } 
+        
+        return parent::isValidField($key, $def);
+    }
+    //END SUGARCRM flav=ent ONLY
+    
     /**
      * Populates the panel defs, and the view defs, from the request
      *

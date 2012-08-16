@@ -972,7 +972,10 @@ class Report
     function register_field_for_query(&$layout_def)
     {
         if (!$this->is_layout_def_valid($layout_def)) {
-            global $mod_strings;
+            global $current_language;
+            $mod_strings = return_module_language($current_language, $this->module_dir);
+
+            echo var_export($layout_def, true);
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 
@@ -1667,7 +1670,9 @@ return str_replace(' > ','_',
                 return $field;
             }
             $field_type = $this->focus->field_name_map[$field_data[1]]['type'];
-            if ($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
+            if(!in_array($field_type, array('currency','floast')))
+            {
+            //if ($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
                 // add IFNULL to the field and then re-add alias back
                 return $this->db->convert($field_name, "IFNULL", array("''")) . " " . substr($field, $has_space + 1) . "\n";
             }

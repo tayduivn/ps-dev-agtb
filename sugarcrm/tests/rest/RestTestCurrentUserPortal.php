@@ -133,4 +133,8 @@ class RestTestCurrentUserPortal extends RestTestBase {
         $this->assertEquals('support_portal',$restReply['reply']['current_user']['type']);
     }
 
+    public function testUpdate() {
+        $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
+        $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
+    }
 }

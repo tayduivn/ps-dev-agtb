@@ -34,6 +34,14 @@ class CurrentUserApi extends SugarApi {
                 'shortHelp' => 'Returns current user',
                 'longHelp' => 'include/api/help/me.html',
             ),
+            'update' => array(
+                'reqType' => 'PUT',
+                'path' => array('me',),
+                'pathVars' => array(),
+                'method' => 'updateCurrentUser',
+                'shortHelp' => 'Updates current user',
+                'longHelp' => 'include/api/help/me.html',
+            ),
         );
     }
 
@@ -60,7 +68,10 @@ class CurrentUserApi extends SugarApi {
             $user_data['user_id'] = $current_user->id;
             $user_data['user_name'] = $current_user->user_name;
             $user_data['id'] = $_SESSION['contact_id'];
-            $user_data['account_ids'] = $_SESSION['account_ids'];
+            if(isset($_SESSION['account_ids']) && !empty($_SESSION['account_ids'])) 
+            {
+                $user_data['account_ids'] = $_SESSION['account_ids'];
+            }
             $user_data['full_name'] = $contact->full_name;
             $user_data['portal_name'] = $contact->portal_name;
         } else {
@@ -72,5 +83,28 @@ class CurrentUserApi extends SugarApi {
         return $data = array('current_user'=>$user_data);
 
     }
+    /**
+     * Updates current user info
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateCurrentUser($api, $args) {
+        global $current_user;
 
+        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+            $bean = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+        } else {
+            $bean = $current_user;
+        }
+
+        // setting these for the loadBean
+        $args['module'] = $bean->module_name;
+        $args['record'] = $bean->id;
+
+        $id = $this->updateBean($bean, $api, $args);
+
+        return $this->retrieveCurrentUser($api, $args);
+    }
 }

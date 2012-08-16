@@ -25,6 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Generic interface all sublcasses must implement in order to be pluggable with FTS.
+ * @api
  */
 interface SugarSearchEngineInterface{
 

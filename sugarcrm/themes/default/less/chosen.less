@@ -1,6 +1,3 @@
-// CHOSEN
-// ---------
-
 /* @group Base */
 .chzn-container {
   font-size: 13px;
@@ -8,11 +5,11 @@
   display: inline-block;
   zoom: 1;
   *display: inline;
-  text-align: left;
+  min-height: 26px;
 }
 .chzn-container .chzn-drop {
   background: #fff;
-  border: 1px solid #aaa;
+  border: 1px solid @grayLight;
   border-top: 0;
   position: absolute;
   top: 29px;
@@ -21,23 +18,15 @@
   -moz-box-shadow   : 0 4px 5px rgba(0,0,0,.15);
   -o-box-shadow     : 0 4px 5px rgba(0,0,0,.15);
   box-shadow        : 0 4px 5px rgba(0,0,0,.15);
-  z-index: 999;
+  z-index: 1010;
 }
 /* @end */
 
 /* @group Single Chosen */
 .chzn-container-single .chzn-single {
   background-color: #ffffff;
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0 );   
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
-  background-image: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
-  background-image: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
-  background-image: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
-  background-image: -ms-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
-  background-image: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%); 
-  -webkit-border-radius: 5px;
-  -moz-border-radius   : 5px;
-  border-radius        : 5px;
+  #gradient > .vertical(@white, darken(@grayLighter, 4%));
+  .border-radius(4px);
   -moz-background-clip   : padding;
   -webkit-background-clip: padding-box;
   background-clip        : padding-box;
@@ -49,14 +38,14 @@
   overflow: hidden;
   white-space: nowrap;
   position: relative;
-  height: 23px;
+  height: 26px;
   line-height: 24px;
   padding: 0 0 0 8px;
   color: #444444;
   text-decoration: none;
 }
 .chzn-container-single .chzn-default {
-	color: #999;
+  color: #999;
 }
 .chzn-container-single .chzn-single span {
   margin-right: 26px;
@@ -75,10 +64,13 @@
   width: 12px;
   height: 13px;
   font-size: 1px;
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') right top no-repeat;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') right top no-repeat;
 }
 .chzn-container-single .chzn-single abbr:hover {
   background-position: right -11px;
+}
+.chzn-container-single.chzn-disabled .chzn-single abbr:hover {
+  background-position: right top;
 }
 .chzn-container-single .chzn-single div {
   position: absolute;
@@ -89,7 +81,7 @@
   width: 18px;
 }
 .chzn-container-single .chzn-single div b {
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 0 0;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 0 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -102,13 +94,13 @@
   z-index: 1010;
 }
 .chzn-container-single .chzn-search input {
-  background: #fff url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px;
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: #fff url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat 100% -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   margin: 1px 0;
   padding: 4px 20px 4px 5px;
   outline: 0;
@@ -134,13 +126,10 @@
 /* @group Multi Chosen */
 .chzn-container-multi .chzn-choices {
   background-color: #fff;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-  background-image: -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  border: 1px solid #aaa;
+  border: 1px solid @grayLight;
+  .border-radius(4px);
+  @shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  .box-shadow(@shadow);
   margin: 0;
   padding: 0;
   cursor: text;
@@ -205,7 +194,6 @@
 .chzn-container-multi .chzn-choices .search-choice-focus {
   background: #d4d4d4;
 }
-
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close {
   display: block;
   position: absolute;
@@ -214,7 +202,7 @@
   width: 12px;
   height: 13px;
   font-size: 1px;
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') right top no-repeat;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') right top no-repeat;
 }
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close:hover {
   background-position: right -11px;
@@ -232,6 +220,7 @@
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .chzn-container-multi .chzn-results {
   margin: -1px 0 0;
@@ -286,7 +275,7 @@
   margin: 0 4px;
   position: absolute;
   text-align: center;
-  width: 321px; /* This should by dynamic with js */
+  width: 100%; /* This should by dynamic with js */
   z-index: 1;
 }
 .chzn-container .chzn-results-scroll span {
@@ -299,10 +288,10 @@
   bottom: 0;
 }
 .chzn-container .chzn-results-scroll-down span {
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -4px -3px;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -4px -3px;
 }
 .chzn-container .chzn-results-scroll-up span {
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -22px -3px;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -22px -3px;
 }
 /* @end */
 
@@ -321,13 +310,7 @@
   -o-box-shadow     : 0 1px 0 #fff inset;
   box-shadow        : 0 1px 0 #fff inset;
   background-color: #eee;
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0 );
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #eeeeee), color-stop(80%, #ffffff));
-  background-image: -webkit-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
-  background-image: -moz-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
-  background-image: -o-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
-  background-image: -ms-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
-  background-image: linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  #gradient > .vertical(@white, darken(@grayLighter, 4%));
   -webkit-border-bottom-left-radius : 0;
   -webkit-border-bottom-right-radius: 0;
   -moz-border-radius-bottomleft : 0;
@@ -384,13 +367,13 @@
 .chzn-rtl .chzn-results .group-option { padding-left: 0; padding-right: 15px; }
 .chzn-rtl.chzn-container-active .chzn-single-with-drop div { border-right: none; }
 .chzn-rtl .chzn-search input {
-  background: #fff url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px;
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);  
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background: url('../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: #fff url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px;
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: url('../../../../index.php?entryPoint=getImage&imageName=chosen-sprite.png') no-repeat -38px -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   padding: 4px 5px 4px 20px;
   direction: rtl;
 }

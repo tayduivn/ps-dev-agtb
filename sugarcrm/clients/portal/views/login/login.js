@@ -33,7 +33,7 @@
         var self = this;
         if (this.model.isValid()) {
             $('#content').hide();
-            app.alert.show('login', {level: 'process', title: 'Loading', autoclose: false});
+            app.alert.show('login', {level:'process', title:'LBL_PORTAL_LOADING', autoClose:false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
             this.app.login(args, null, {

@@ -75,6 +75,24 @@ class MetadataApi extends SugarApi {
     }
 
     public function getAllMetadata($api, $args) {
+        global $current_language, $app_strings, $current_user;
+        // get the currrent person object of interest
+        $apiPerson = $current_user;
+        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        }
+
+        // asking for a specific language
+        if (isset($args['lang']) && !empty($args['lang'])) {
+            $lang = $args['lang'];
+            $current_language = $lang;
+            $app_strings = return_application_language($lang);
+        // load prefs if set
+        } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
+            $app_strings = return_application_language($apiPerson->preferred_language);
+            $current_language = $apiPerson->preferred_language;
+        }
+
         // Default the type filter to everything
         $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts','relationships');
         if ( !empty($args['typeFilter']) ) {
@@ -146,16 +164,28 @@ class MetadataApi extends SugarApi {
         // right now we are getting the config only for the portal
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
-        if(isset($args['platform']) && $args['platform'] == 'portal') {
 
+        if(isset($args['platform'])) {
+            //temporary replace 'forecasts' w/ 'base'
+            //as forecast settings store in db w/ prefix 'base_'
+            $args['platform'] = 'forecasts' ? 'base' : $args['platform'];
+            $prefix = "{$args['platform']}_";
             $admin = new Administration();
-            $admin->retrieveSettings();
+            $category = $args['platform'];
+            $admin->retrieveSettings($category, true);
             foreach($admin->settings AS $setting_name => $setting_value) {
-                if(stristr($setting_name, 'portal_')) {
-                    $key = str_replace('portal_', '', $setting_name);
+                if(stristr($setting_name, $prefix)) {
+                    $key = str_replace($prefix, '', $setting_name);
                     $configs[$key] = json_decode(html_entity_decode($setting_value));
                 }
             }
+        }
+
+        if(isset($args['lang'])) {
+            global $current_language, $app_strings;
+                $lang = $args['lang'];
+            	$current_language = $lang;
+                $app_strings = return_application_language($lang);
         }
 
         // Default the type filter to everything available to the public, no module info at this time
