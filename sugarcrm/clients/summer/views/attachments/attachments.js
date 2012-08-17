@@ -16,19 +16,206 @@
      * @param options
      */
     initialize: function(options) {
-        var self = this;
-        app.view.View.prototype.initialize.call(self, options);
-        self.collection = new Backbone.Collection();
-        self.collection.link = {
-            bean: self.model,
+        app.view.View.prototype.initialize.call(this, options);
+        this.collection = new Backbone.Collection();
+        this.collection.link = {
+            bean: this.model,
             name: 'attachments'
         };
-        self.collection.sync = app.BeanCollection.prototype.sync;
+        this.collection.sync = app.BeanCollection.prototype.sync;
 
-        self.collection.fetch({relate:true})
-        console.log(self.collection);
-        self.collection.on('change', self.render);
+        this.collection.fetch({relate:true})
 
+        this.collection.on('change', this.render);
+
+        /**
+         * Sharing Manager
+         *
+         * @param event
+         * @constructor
+         */
+        this.ShareNote = function (event) {
+
+            var self = this;
+
+            this.quitFlag = false;
+
+            this.file = event.originalEvent.dataTransfer.files[0] || event.dataTransfer.files[0];
+
+            this.filename = this.file.name || this.file.fileName;
+
+            this.filesize = this.file.size || this.file.fileSize;
+
+            this.newNoteId = '';
+
+
+            /**
+             * Alert views definitions
+             *
+             * @type {Object}
+             */
+            this.alertViews =  {
+
+                /**
+                 * upload success alert view
+                 *
+                 * @param {String} title
+                 * @param {String} msg
+                 * @param {Object} params - undo options
+                 */
+                uploadSuccess: function (title, msg, params) {
+
+                    if(!params || !params.undo) params.undo = false;
+
+                    app.alert.show('uploadSuccess', {
+                        level: "success",
+                        title: title,
+                        messages: [msg],
+                        autoClose: true
+                    });
+
+                    $('#undo-upload-file').css('cursor', 'pointer');
+                    $('#undo-upload-file').on('click', function (event) {
+                        //TODO delete a the note
+                        app.api.call('delete', '../rest/v10/Notes/' + self.newNoteId, null, null, null);
+                        self.removeNewFileView();
+                        $('.close').click();
+                    });
+                },
+
+                /**
+                 * upload error alert view
+                 *
+                 * @param title
+                 * @param msg
+                 */
+                uploadError: function (title, msg) {
+                    app.alert.show('uploadError', {
+                        level: "error",
+                        title: title,
+                        messages: [msg],
+                        autoClose: true
+                    });
+                }
+            };
+
+
+        };
+
+        /**
+         * checking if the file is valid to upload
+         *
+         * @return {Boolean} true if not the same file that has been uploaded in attachment list, false otherwise
+         */
+        this.ShareNote.prototype.isValidFile = function () {
+            var self = this;
+            var attachmentList = $('#attachments_table').find('td');
+            var attachmentNames = [];
+            _.each(attachmentList, function (value) {
+                attachmentNames.push($(value).text());
+            });
+            _.each(attachmentNames, function (value) {
+                if (self.filename == value) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', 'cannot upload file with same name');
+                }
+            });
+            return !self.quitFlag;
+        };
+
+        /**
+         * create a new note and set new note id into the current object
+         *
+         * @return {Boolean} true if succeeding creating a note
+         */
+        this.ShareNote.prototype.createNote = function () {
+            var self = this;
+            app.api.call('create', '../rest/v10/Notes', null, {
+                success: function (result) {
+                    self.newNoteId = result.id;
+                },
+                error: function (msg) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', msg);
+                }
+            }, {async: false});
+            return !self.quitFlag;
+        };
+
+        /**
+         * upload a file to a note
+         *
+         * @param {String} newNoteId - pass in the new note id in this case
+         * @param {File} file - obtained with event.originalEvent.dataTransfer.file[0]
+         * @return {Boolean} true if succeeding uploading file
+         */
+        this.ShareNote.prototype.uploadFileToNote = function (newNoteId, file) {
+            var self = this;
+            var file = this.file || file;
+            //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
+            app.api.uploadFileHtml5('create', {
+                    module: 'Notes',
+                    id: self.newNoteId || newNoteId,
+                    field: 'filename'
+                },
+                file, {
+                    success: function(o) {},
+                    error: function (msg) {
+                        self.quitFlag = true;
+                        self.alertViews.uploadError('Upload Failed', msg);
+                    }
+                }, null);
+            return !self.quitFlag;
+        };
+
+        /**
+         * Relate the current model to a note
+         *
+         * @return {Boolean} true if succeed, false otherwise
+         */
+        this.ShareNote.prototype.linkNoteToModel = function () {
+            var self = this;
+            var mainModule = app.controller.context.attributes.module;
+            var mainModelId = app.controller.context.attributes.modelId;
+            var mainBean = app.data.createBean(mainModule, {id: mainModelId});
+            mainBean.fetch({
+                success: function (model) {
+                    try {
+                        var _note = app.data.createRelatedBean(model, null, 'notes', {id: self.newNoteId});
+                        _note.save(null, {relate: true});
+                        self.alertViews.uploadSuccess('<p style="font-size:16px;text-align:center;">You have uploaded a file.  <a id="undo-upload-file"><strong>Undo</strong></a></p>', '', {undo: true});
+                    } catch (err) {
+                        self.quitFlag = true;
+                        self.alertViews.uploadError('Upload Failed', err);
+                    }
+                },
+                error: function (err) {
+                    self.quitFlag = true;
+                    self.alertViews.uploadError('Upload Failed', err);
+                }
+            });
+            return !self.quitFlag;
+        };
+
+        /**
+         * Real-time added a new row that contains file just uploaded
+         */
+        this.ShareNote.prototype.showNewFile = function () {
+            var addedFileView = '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
+            addedFileView += '<td>' + this.filename + '</td></tr>';
+            var table = self.$('#attachments_table').find('tbody')[0];
+            self.$(table).append(addedFileView);
+        };
+
+        /**
+         * Real-time remove the new row that contains file just uploaded
+         */
+        this.ShareNote.prototype.removeNewFileView = function () {
+            var table = self.$('#attachments_table').find('tbody')[0];
+            self.$(table).children("tr:last").remove();
+        };
+
+        _.bindAll(this);
     },
 
 
@@ -44,17 +231,17 @@
         this.styleDropbox();
 
         // make elements dropbox for file drop
-        $('.dropbox').on('dragover', that.dragOverDropbox);
-        $('.dropbox').on('dragleave', that.dragLeaveDropbox);
-        $('.dropbox').on('drop', that.dropOnDropbox);
+        this.$('.dropbox').on('dragover', that.dragOverDropbox);
+        this.$('.dropbox').on('dragleave', that.dragLeaveDropbox);
+        this.$('.dropbox').on('drop', that.dropOnDropbox);
     },
 
 
     /**
-     *
+     * make the rows of attachment table draggable
      */
     makeDraggableElements: function () {
-        $(".draggable").draggable({
+        this.$('.draggable').draggable({
             opacity: 1,
             revert: 'invalid',
             snapMode: 'inner',
@@ -78,10 +265,10 @@
 
 
     /**
-     *
+     * intializes style of the dropbox
      */
     styleDropbox: function () {
-        $('.dropbox').css({
+        this.$('.dropbox').css({
             width: '300px',
             height: '30px',
             border: '3px dashed #ccc',
@@ -93,209 +280,50 @@
             'background': '#C0C0C0'
         });
 
-        $('.dropbox p').css({
+        this.$('.dropbox p').css({
             margin: '7px 0'
         });
     },
 
 
     /**
+     * style the drop box when hovering over
      *
      * @param event
      */
     dragOverDropbox: function (event) {
         event.stopPropagation();
         event.preventDefault();
-        $(this).css({"background": "#fff", "width": '320px', "height":'35px'});
+        this.$('.dropbox').css({"background": "#fff", "width": '320px', "height":'35px'});
         event.originalEvent.dataTransfer.dropEffect = 'copy';
     },
 
 
     /**
+     * stle the drop box when mouse leaves
      *
      * @param event
      */
     dragLeaveDropbox: function (event) {
         event.stopPropagation();
         event.preventDefault();
-        $(this).css({"background": '#C0C0C0', "width": '300px', "height":'30px'});
+        this.$('.dropbox').css({"background": '#C0C0C0', "width": '300px', "height":'30px'});
     },
 
 
     /**
+     * This is where all the actions happen when a file is dropped on the drop box
      *
      * @param event
      * @param ui
      */
     dropOnDropbox: function (event) {
+        event.stopPropagation();
+        event.preventDefault();
 
+        //*********************** Main actions happens here *********************//
+        var shareNote = new this.ShareNote(event);
 
-        var ShareNote = function (event) {
-
-            var self = this;
-
-            this.quitFlag = false;
-
-            this.file = event.originalEvent.dataTransfer.files[0] || event.dataTransfer.files[0];
-
-            this.filename = this.file.name || this.file.fileName;
-
-            this.filesize = this.file.size || this.file.fileSize;
-
-            this.newNoteId = '';
-
-            this.attachments_table = $('#attachments_table').find('tbody')[0];
-
-            this.addedFileView = '';
-
-            this.alertViews =  {
-
-                // enable undo functionality for share success
-                uploadSuccess: function (title, msg, params) {
-
-                    if(!params || !params.undo) params.undo = false;
-
-                    App.alert.show('uploadSuccess', {
-                        level: "success",
-                        title: title,
-                        messages: [msg],
-                        autoClose: true
-                    });
-
-                    $('#undo-upload-file').css('cursor', 'pointer');
-                    $('#undo-upload-file').on('click', function (event) {
-                        //TODO delete a the note
-                        App.api.call('delete', '../rest/v10/Notes/' + self.newNoteId + '/file/filename', null, null, null);
-                        App.api.call('delete', '../rest/v10/Notes/' + self.newNoteId, null, null, null);
-                        self.removeNewFileView();
-                        $('.close').click();
-                    });
-                },
-
-                // error alert view
-                uploadError: function (title, msg) {
-                    App.alert.show('uploadError', {
-                        level: "error",
-                        title: title,
-                        messages: [msg],
-                        autoClose: true
-                    });
-                }
-            };
-
-        };
-
-        /**
-         *
-         * @return {Boolean}
-         */
-        ShareNote.prototype.isValidFile = function () {
-            var self = this;
-            var attachmentList = $('#attachments_table').find('td');
-            var attachmentNames = [];
-            $.each(attachmentList, function (index, value) {
-                attachmentNames.push($(value).text());
-            });
-            $.each(attachmentNames, function (index, value) {
-                if (self.filename == value) {
-                    self.quitFlag = true;
-                    self.alertViews.uploadError('Upload Failed', 'cannot upload file with same name');
-                }
-            });
-            return !self.quitFlag;
-        };
-
-        /**
-         *
-         * @return {Boolean}
-         */
-        ShareNote.prototype.createNote = function () {
-            var self = this;
-            App.api.call('create', '../rest/v10/Notes', null, {
-                success: function (result) {
-                    self.newNoteId = result.id;
-                },
-                error: function (msg) {
-                    self.quitFlag = true;
-                    self.alertViews.uploadError('Upload Failed', msg);
-                }
-            }, {async: false});
-            return self.quitFlag ? false : true;
-        };
-
-        /**
-         *
-         * @param newNoteId
-         * @param file
-         * @return {Boolean}
-         */
-        ShareNote.prototype.uploadFileToNote = function (newNoteId, file) {
-            var self = this;
-            var file = this.file || file;
-            //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
-            App.api.uploadFileHtml5('create', {
-                module: 'Notes',
-                id: self.newNoteId || newNoteId,
-                field: 'filename'
-            },
-            file, {
-                success: function(o) {console.log(o);},
-                error: function (msg) {
-                    self.quitFlag = true;
-                    self.alertViews.uploadError('Upload Failed', msg);
-                }
-            }, null);
-            return self.quitFlag ? false : true;
-        };
-
-        /**
-         *
-         * @return {Boolean}
-         */
-        ShareNote.prototype.linkNoteToModel = function () {
-            var self = this;
-            var mainModule = app.controller.context.attributes.module;
-            var mainModelId = app.controller.context.attributes.modelId;
-            var mainBean = app.data.createBean(mainModule, {id: mainModelId});
-            mainBean.fetch({
-                success: function (model) {
-                    try {
-                        var _note = app.data.createRelatedBean(model, null, 'notes', {id: self.newNoteId});
-                        _note.save(null, {relate: true});
-                        self.alertViews.uploadSuccess('<p style="font-size:16px;text-align:center;">You have uploaded a file.  <a id="undo-upload-file"><strong>Undo</strong></a></p>', '', {undo: true});
-                    } catch (err) {
-                        self.quitFlag = true;
-                        self.alertViews.uploadError('Upload Failed', err);
-                    }
-                },
-                error: function (err) {
-                    self.quitFlag = true;
-                    self.alertViews.uploadError('Upload Failed', err);
-                }
-            });
-            return self.quitFlag ? false : true;
-        };
-
-        /**
-         *
-         */
-        ShareNote.prototype.showNewFile = function () {
-            this.addedFileView = '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
-            this.addedFileView += '<td>' + this.filename + '</td></tr>';
-            $(this.attachments_table).append(this.addedFileView);
-        };
-
-        /**
-         *
-         */
-        ShareNote.prototype.removeNewFileView = function () {
-            console.log('delete');
-            $(this.attachments_table).children("tr:last").remove();
-        }
-
-
-        // Main actions happens here
-        var shareNote = new ShareNote(event);
         if (shareNote.file && shareNote.filename && shareNote.isValidFile()) {
             var result = shareNote.createNote() ? shareNote.uploadFileToNote() : false;
             if (result) {
@@ -304,6 +332,7 @@
                 return false;
             }
         }
+        //********************** End of Main actions ****************************//
 
     },
 
@@ -366,14 +395,15 @@
         collection.fetch(options);
     },
 
+    /**
+     *
+     */
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
             this.collection.on("change", this.render, this);
         }
-        if (this.model) {
-            this.model.on("change", this.render, this);
-        }
+
     }
 })
 

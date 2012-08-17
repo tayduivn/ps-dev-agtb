@@ -15,11 +15,9 @@
     {{#each ../collection.models}}
 
     <tr name="{{module}}_{{attributes.id}}" class="draggable droppable filedrop" rel="tooltip">
-        <div>
-            {{#each ../fields}}
-                <td> {{field ../../../this ../this}} </td>
-            {{/each}}
-        </div>
+          {{#each ../fields}}
+              <td> {{field ../../../this ../this}}</td>
+          {{/each}}
     </tr>
 
 

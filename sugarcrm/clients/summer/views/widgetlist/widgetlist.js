@@ -10,154 +10,44 @@
         'click [class*="orderBy"]': 'setOrderBy'
     },
 
+    /**
+     * Initializes widget list
+     *
+     * @param options
+     */
     initialize: function (options) {
-        app.view.View.prototype.initialize.call(this, options);
-    },
-
-    _renderHtml: function() {
         var self = this;
-        app.view.View.prototype._renderHtml.call(this);
+        app.view.View.prototype.initialize.call(this, options);
 
-        // Dashboard layout injects shared context with limit: 5.
-        // Otherwise, we don't set so fetches will use max query in config.
-        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+        this.ShareManager = function (targetModule, targetId) {
 
-        // prevent the whole site from unexpecting behavior
-        $(document).on('drop', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        });
-
-        this.makeDraggableElements();
-
-        // define droppable element for contacts
-        this.makeDroppableElements();
-
-        $('.filedrop').data('filehover', '0');
-        // make elements file droppable
-        $('.filedrop').on('dragover', self.dragOverFiledrop);
-
-        // remove style form file droppable elements
-        $('.filedrop').on('dragleave', self.dragLeaveFiledrop);
-
-        // make action for droppable elements
-        $('.filedrop').on('drop', self.dropOnFiledrop);
-
-    },
-
-
-    /**
-     *
-     * @param event
-     */
-    makeDraggableElements: function () {
-        $(".draggable").draggable({
-            opacity: 1,
-            revert: 'invalid',
-            snapMode: 'inner',
-            containment: 'document',
-            stack: 'div',
-            cursor: 'pointer',
-            hoverClass: 'hover',
-            cursorAt: {top: 0, left: 0},
-            helper: function(event) {
-                var original = $(event.currentTarget);
-                original.css("background", "#FBF9EA");
-                mirror = $('<div></div>').append(original.clone());
-                $(mirror).css("border", "1px solid black");
-                return mirror;
-            },
-            stop: function(event, ui) {
-                $(this).removeAttr("style");
-            }
-        });
-    },
-
-
-    /**
-     *
-     * @param event
-     */
-    makeDroppableElements: function () {
-        $('.droppable').droppable({
-            accept: '.draggable',
-            over: function(event, ui) {
-                event.stopPropagation();
-                event.preventDefault();
-                $(this.children[0]).css({"border": "2px dashed blue", "background": "#C0C0C0"});
-                $(this).tooltip({title: 'Share with', trigger: 'manual', placement: 'left'});
-                $(this).tooltip('show');
-            },
-            out: function(event, ui) {
-                $(this).tooltip('hide');
-                $(this.children[0]).removeAttr("style");
-            }
-        });
-    },
-
-
-    /**
-     * Handle drag over if dragging element is the file from local desktop
-     * @param event
-     */
-    dragOverFiledrop: function (event) {
-        $(this).tooltip({title: 'Share with', trigger: 'manual', placement: 'left'});
-        event.stopPropagation();
-        event.preventDefault();
-        if ($(this).data('filehover') == '0') { // track mouse dragging file hovering
-            $(this).tooltip('show');
-            $(this).data('filehover', '1');
-        }
-        $(this.children[0]).css({"border": "2px dashed blue", "background": "#C0C0C0"});
-        event.originalEvent.dataTransfer.dropEffect = 'copy';
-    },
-
-
-    /**
-     * handle drag leave if dragging elements from local desktop leave
-     * @param event
-     */
-    dragLeaveFiledrop: function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-        if ($(this).data('filehover') == '1') {
-            $(this).tooltip('hide');
-            $(this).data('filehover', '0');
-        }
-        $(this.children[0]).removeAttr("style");
-    },
-
-
-    /**
-     *
-     * @param event
-     */
-    dropOnFiledrop: function (event, ui) {
-        event.stopPropagation();
-        event.preventDefault();
-        $(this).tooltip('hide');
-        $(this.children[0]).removeAttr("style");
-
-
-        var ShareManager = function (targetModule, targetId) {
-
-            var self = this;
+            this.quitFlag = false;
 
             this.targetModule = targetModule;
 
             this.targetId = targetId;
 
             this.targetBean = app.data.createBean(this.targetModule, {id: this.targetId});
+
         }
 
         /**
+         * Define alert views after sharing
          *
          * @type {Object}
          */
-        ShareManager.alertViews = {
+        this.ShareManager.prototype.alertViews = {
 
-            // alert sharing sucess view
-            shareSuccess: function (title, msg, params) {
+
+            /**
+             * success alert view
+             *
+             * @param {String} title
+             * @param {String} msg
+             * @param {String} a note id to undo, delete
+             * @param {Object} params - specified undo options (see code below)
+             */
+            shareSuccess: function (shareManager,title, msg, newNoteId, params) {
 
                 var targetModule, targetId, draggableModule, draggableId;
 
@@ -171,7 +61,7 @@
                     targetId = params.targetId;
                 }
 
-                App.alert.show('shareSuccess', {
+                app.alert.show('shareSuccess', {
                     level: "success",
                     title: title,
                     messages: [msg],
@@ -180,16 +70,16 @@
 
                 // enable undo option (delete all the relationships)
                 if (params.undo) {
-                    console.log('undoing');
+
                     $('#undo-link').css('cursor', 'pointer');
                     $('#undo-link').on('click', function (event) {
 
                         //TODO unlink relationship, new api might eventually implemented (see sugarapi.js)
-                        App.api.call('delete', '../rest/v10/' + targetModule + '/' + targetId + '/link/' + draggableModule.toLowerCase() + '/' + draggableId , null, null, null);
+                        app.api.call('delete', '../rest/v10/' + targetModule + '/' + targetId + '/link/' + draggableModule.toLowerCase() + '/' + draggableId , null, null, null);
 
-                        if (ShareManager.newNoteId) {
-                            App.api.call('delete', '../rest/v10/Notes/' + ShareManager.newNoteId, null, null, null);
-                            ShareManager.removeNewFileView();
+                        if (newNoteId) {
+                            app.api.call('delete', '../rest/v10/Notes/' + newNoteId, null, null, null);
+                            shareManager.removeNewFileView();
                         }
                         $('.close').click();
                     });
@@ -197,9 +87,14 @@
 
             },
 
-            // error alert view
+            /**
+             * error alert view when something goes wrong
+             *
+             * @param {String} title
+             * @param {String} msg
+             */
             shareError: function (title, msg) {
-                App.alert.show('shareError', {
+                app.alert.show('shareError', {
                     level: "error",
                     title: title,
                     messages: [msg],
@@ -215,7 +110,7 @@
          * @param {String} relatedId - the id of another bean id
          * @return {Boolean} true if success, false otherwise
          */
-        ShareManager.prototype.linkModels = function (relatedModule, relatedId) {
+        this.ShareManager.prototype.linkModels = function (relatedModule, relatedId) {
             var self = this;
             this.targetBean.fetch({
                 success: function (model) {
@@ -223,11 +118,11 @@
                     _relatedBean.save(null, {relate: true});
                 },
                 error: function (msg) {
-                    ShareManager.quitFlag = 1;
-                    ShareManager.alertViews.shareError('Share Failed', 'cannot share relationship');
+                    self.quitFlag = true;
+                    self.alertViews.shareError('Share Failed', 'cannot share relationship');
                 }
             });
-            return ShareManager.quitFlag ? false : true;
+            return !self.quitFlag;
         };
 
         /**
@@ -235,19 +130,18 @@
          *
          * @return {String} new note id, otherwise empty string
          */
-        ShareManager.prototype.createNote = function () {
-            console.log('create new note');
+        this.ShareManager.prototype.createNote = function () {
             var self = this;
-            App.api.call('create', '../rest/v10/Notes', null, {
+            app.api.call('create', '../rest/v10/Notes', null, {
                 success : function (result) {
-                    ShareManager.newNoteId = result.id;
+                    self.newNoteId = result.id;
                 },
                 error: function (msg) {
-                    ShareManager.quitFlag = 1;
-                    ShareManager.alertViews.shareError('Share Failed', 'cannot create a new note');
+                    self.quitFlag = true;
+                    self.alertViews.shareError('Share Failed', 'cannot create a new note');
                 }
             }, {async: false});
-            return ShareManager.newNoteId;
+            return self.newNoteId;
         };
 
         /**
@@ -257,80 +151,244 @@
          * @param {File} file - file to upload (if dragged from browser, obtain with event.originalEvent.dataTransfer[0]
          * @return {Boolean} true if success, false otherwise
          */
-        ShareManager.prototype.uploadFileToNote = function (noteId, file) {
+        this.ShareManager.prototype.uploadFileToNote = function (noteId, file) {
             var self = this;
-            ShareManager.filename = file.name || file.fileName;
+            self.filename = file.name || file.fileName;
 
             //TODO this uploadFileHtml5 might be changed (see sugarapi.js)
-            App.api.uploadFileHtml5('create', {
-                module: 'Notes',
-                id: ShareManager.newNoteId || noteId,
-                field: 'filename'
-            },
-            file, {
-                success: function(o) {
-                    console.log(o);
+            app.api.uploadFileHtml5('create', {
+                    module: 'Notes',
+                    id: self.newNoteId || noteId,
+                    field: 'filename'
                 },
-                error: function () {
-                    ShareManager.quitFlag = true;
-                    ShareManager.alertViews.shareError('Share Failed', 'cannot create upload a file to note');
+                file, {
+                    success: function(o) {
+
+                    },
+                    error: function () {
+                        self.quitFlag = true;
+                        self.alertViews.shareError('Share Failed', 'cannot create upload a file to note');
+                    }
+                }, {async: false});
+            return !self.quitFlag;
+        };
+
+
+        /**
+         * Real-time adding a new row with the new file just uploaded
+         *
+         */
+        this.ShareManager.prototype.addNewFileView = function () {
+            var addedFileView = '';
+            addedFileView += '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
+            addedFileView += '<td>' + this.filename + '</td></tr>';
+            var table = $('#attachments_table').find('tbody')[0];
+            $(table).append(addedFileView);
+        };
+
+        /**
+         * Real-time removing the last row that has just been added
+         *
+         */
+        this.ShareManager.prototype.removeNewFileView = function () {
+            var table = $('#attachments_table').find('tbody')[0];
+            $(table).children('tr:last').remove();
+        };
+
+        /**
+         * check for the valid file
+         *
+         * @param {Boolean} true if already have this filename on attachment table, false otherwise
+         */
+        this.ShareManager.prototype.isValidFile = function (file) {
+            var self = this;
+            var filename = file.name || file.fileName;
+            var attachmentList = $('#attachments_table').find('td');
+            var attachmentNames = [];
+            _.each(attachmentList, function (value) {
+                attachmentNames.push($(value).text());
+            });
+            _.each(attachmentNames, function (value) {
+                if (filename == value) {
+                    self.quitFlag = true;
+                    self.alertViews.shareError('Share Failed', 'cannot upload file with same name, please drag available file here to share');
                 }
-            }, {async: false});
-            return ShareManager.quitFlag ? false : true;
-        };
+            });
+            return !self.quitFlag;
+        }
 
 
-        /**
-         *
-         */
-        ShareManager.addNewFileView = function () {
-            ShareManager.addFileView = '';
-            ShareManager.addedFileView = '<tr name="Notes_"' + ShareManager.newNoteId + '" class="draggable ui-draggable">';
-            ShareManager.addedFileView += '<td>' + ShareManager.filename + '</td></tr>';
-            $(ShareManager.attachments_table).append(ShareManager.addedFileView);
-        };
+        _.bindAll(this);
+    },
 
-        /**
-         *
-         */
-        ShareManager.removeNewFileView = function () {
-            console.log('delete');
-            $(ShareManager.attachments_table).children("tr:last").remove();
-        };
+    /**
+     * Render template and bind events
+     *
+     * @private
+     */
+    _renderHtml: function() {
+        var self = this;
+        app.view.View.prototype._renderHtml.call(this);
 
-        ShareManager.attachments_table = $('#attachments_table').find('tbody')[0];
+        // Dashboard layout injects shared context with limit: 5.
+        // Otherwise, we don't set so fetches will use max query in config.
+        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+
+        this.makeDraggableElements();
+
+        // define droppable element for contacts
+        this.makeDroppableElements();
+
+        this.$('.filedrop').data('filehover', '0');
+        this.$('.filedrop').on('dragover', self.dragOverFiledrop);
+        this.$('.filedrop').on('dragleave', self.dragLeaveFiledrop);
+        this.$('.filedrop').on('drop', self.dropOnFiledrop);
+
+    },
 
 
+    /**
+     * Style the each row inside the table and make them draggable
+     *
+     * @param event
+     */
+    makeDraggableElements: function () {
+        this.$(".draggable").draggable({
+            opacity: 5,
+            revert: 'invalid',
+            snapMode: 'inner',
+            containment: 'document',
+            stack: 'div',
+            cursor: 'pointer',
+            hoverClass: 'hover',
+            cursorAt: {top: 0, left: 0},
+            helper: function(event) {
+                var original = $(event.currentTarget);
+                original.css("background", "#FBF9EA");
+                mirror = $('<div></div>').append(original.clone());
+                $(mirror).css({border: "1px solid black", 'font-weight': 'bold'});
+                return mirror;
+            },
+            stop: function(event, ui) {
+                $(this).removeAttr("style");
+            }
+        });
+    },
+
+
+    /**
+     * Style each row inside the table and make them droppable
+     *
+     * @param event
+     */
+    makeDroppableElements: function () {
+        this.$('.droppable').droppable({
+            accept: '.draggable',
+            over: function(event, ui) {
+                event.stopPropagation();
+                event.preventDefault();
+                $(this).css({"border": "2px dashed blue", "background": "#C0C0C0"});
+                $(this).tooltip({title: 'Share with', trigger: 'manual', placement: 'left'});
+                $(this).tooltip('show');
+            },
+            out: function(event, ui) {
+                $(this).tooltip('hide');
+                $(this).removeAttr("style");
+            }
+        });
+    },
+
+
+    /**
+     * Handle drag over if dragging element is the file from local desktop
+     * @param event
+     */
+    dragOverFiledrop: function (event) {
+        var targetRow = this.$(event.target).parent('tr')[0];
+        this.$(targetRow).tooltip({title: 'Share with', trigger: 'manual', placement: 'left'});
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.$(targetRow).data('filehover') == '0') { // track mouse dragging file hovering
+            this.$(targetRow).tooltip('show');
+            this.$(targetRow).data('filehover', '1');
+        }
+        this.$(targetRow).css({"border": "2px dashed blue", "background": "#C0C0C0"});
+        event.originalEvent.dataTransfer.dropEffect = 'copy';
+    },
+
+
+    /**
+     * handle drag leave if dragging elements from local desktop leave
+     * @param event
+     */
+    dragLeaveFiledrop: function (event) {
+        var targetRow = this.$(event.target).parent('tr')[0];
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.$(targetRow).data('filehover') == '1') {
+            this.$(targetRow).tooltip('hide');
+            this.$(targetRow).data('filehover', '0');
+        }
+        this.$(targetRow).removeAttr("style");
+    },
+
+
+    /**
+     * there is where all the action happens when a file / element dropped on a row
+     *
+     * @param event
+     */
+    dropOnFiledrop: function (event, ui) {
+        var targetRow = this.$(event.currentTarget)[0];
+        event.stopPropagation();
+        event.preventDefault();
+        this.$(targetRow).tooltip('hide');
+        this.$(targetRow).removeAttr("style");
 
         /*********** Main actions happening here **************/
-        var targetTokens = $(this).attr('name').split('_');
-        var shareManager = new ShareManager(targetTokens[0], targetTokens[1]);
-        console.log(this);
+
+        // get the target module and associated id where the file is dropped (eg. contact)
+        var targetTokens = this.$(targetRow).attr('name').split('_');
+        var shareManager = new this.ShareManager(targetTokens[0], targetTokens[1]);
 
         // a draggable element inside browser
         if (!event.originalEvent.dataTransfer) {
 
+            // get the 'Notes' module and associated id
             var draggableModule = $(ui.draggable[0]).attr('name').split('_')[0];
             var draggableId = $(ui.draggable[0]).attr('name').split('_')[1];
             var result = shareManager.linkModels(draggableModule, draggableId);
+            if (result) {
+                var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
+                shareManager.alertViews.shareSuccess(shareManager, successTitle, '', null,
+                    {undo: true, draggableModule: draggableModule, draggableId: draggableId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
+            }
 
          // a file from local desktop
         } else {
 
             var file = event.originalEvent.dataTransfer.files[0]; // grab the file
             var newNoteId = shareManager.createNote();
+
             if (newNoteId) {
-                if (shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId)) {
-                    var shareManager2 = new ShareManager(app.controller.context.attributes.module, app.controller.context.attributes.modelId);
+                // the first manager is to link target (eg. contact) with a note+attachment
+                if (shareManager.isValidFile(file) && shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId)) {
+
+                    // this 2nd share manager is to link current main model (eg. account) with note+attachment (subject to change depending on specs)
+                    // alert error view will not be raised if fail this link action
+                    var shareManager2 = new this.ShareManager(app.controller.context.attributes.module, app.controller.context.attributes.modelId);
                     if (shareManager2.linkModels('Notes', newNoteId)) {
-                        ShareManager.addNewFileView();
+                        shareManager.addNewFileView();
                     }
-                    ShareManager.alertViews.shareSuccess('<p style="font-size: 16px; text-align: center;">You have shared with' + $(this).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>', '',
+
+                    var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
+                    shareManager.alertViews.shareSuccess(shareManager, successTitle, '', newNoteId,
                         {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
                 }
             }
 
         }
+        /*********** End of main action *************************/
     },
 
 
@@ -399,9 +457,7 @@
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }
-        if (this.model) {
-            this.model.on("change", this.render, this);
-        }
+
     }
 })
 
