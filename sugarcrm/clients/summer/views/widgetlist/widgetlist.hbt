@@ -26,20 +26,54 @@
 </table>
 {{/each}}
 
-
-<div class="modal hide attachPopUp">
+<div id="attachPopUp3" class="modal hide">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">&times;</a>
-        <h2>Attachment</h2>
+        <h2>Send Email</h2>
     </div>
     <div class="modal-body">
 
         <div id="messages">
+            <form class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="input01">Subject</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input01">
+                        </div>
+                    </div>
 
+
+                    <div class="control-group">
+                        <label class="control-label" for="multiSelect">CC To:</label>
+                        <div class="controls">
+                            <select multiple="multiple" id="multiSelect">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="fileInput">Attachment</label>
+                        <div class="controls">
+                            <input class="input-file" id="fileInput" type="file">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="textarea">Text</label>
+                        <div class="controls">
+                            <textarea class="input-xlarge" id="textarea" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button class="btn">Cancel</button>
+                    </div>
+                </fieldset>
+            </form>
         </div>
-
-    </div>
-    <div class="modal-footer">
-        <a class="btn btn-primary" data-dismiss="modal">Confirm</a>
     </div>
 </div>

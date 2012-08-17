@@ -365,9 +365,10 @@
             var callbacks = function () {
 
                 //TODO modal form pop up asking to send email to contact
+                self.$('#attachPopUp3').attr("style", "").modal("show");
 
                 var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
-                shareManager.alertViews.shareSfuccess(shareManager, successTitle, '', null,
+                shareManager.alertViews.shareSuccess(shareManager, successTitle, '', null,
                     {undo: true, draggableModule: draggableModule, draggableId: draggableId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
             }
             shareManager.linkModels(draggableModule, draggableId, callbacks);
