@@ -214,7 +214,7 @@ class PHPMailer {
    * is in a different directory than the PHP include path.
    * @var string
    */
-  public $PluginDir         = 'include/phpmailer/';
+  public $PluginDir         = '';
 
   /**
    * Holds PHPMailer version.

@@ -145,7 +145,7 @@ class Mailer
 	}
 
 	/**
-	 * @throws MailerException
+     * @return boolean  true=success
 	 */
 	public function send() {
 		try {
@@ -156,6 +156,7 @@ class Mailer
 			$this->transferConnectionData();
 			$this->transferHeaders();
 			$this->transferRecipients();
+            $this->transferBody();
 
 			if (!$this->mailer->IsError()) {
 				$this->mailer->Send();
