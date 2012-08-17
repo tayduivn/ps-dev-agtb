@@ -297,5 +297,6 @@ $mod_strings = array (
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
 
+    'LBL_SAVE_DRAFT' => 'Save Draft',
 
 );
