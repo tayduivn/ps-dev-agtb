@@ -24,48 +24,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineIndexerBase.php');
 
 /**
  * Indexer job for Search
  * @api
  */
-class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
+class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
 {
-
-    /**
-     * @var SchedulersJob
-     */
-    private $schedulerJob;
-
-    /**
-     * @var \SugarSearchEngineAbstractBase
-     */
-    private $SSEngine;
-
-    /**
-     * @var array
-     */
-    private $results;
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_THRESHOLD = 5000;
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_QUERY_THRESHOLD = 15000;
-
-    /**
-     * The max number of beans we delete at a time
-     */
-    const MAX_BULK_DELETE_THRESHOLD = 3000;
-
-    /**
-     * Number of time to postpone a job by so it's not executed twice during the same request.
-     */
-    const POSTPONE_JOB_TIME = 20;
 
     /**
      * Name of the scheduler to perform a full index
@@ -74,26 +40,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     public static $schedulerName = "Full Text Search Indexer";
 
     /**
-     * The name of the queue table
-     */
-    const QUEUE_TABLE = 'fts_queue';
-
-    /**
-     * @var DBManager
-     */
-    protected $db;
-
-    /**
      * @param SugarSearchEngineAqbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
     {
-        if($engine != null)
-            $this->SSEngine = $engine;
-        else
-            $this->SSEngine = SugarSearchEngineFactory::getInstance();
-
-        $this->db = DBManagerFactory::getInstance('fts');
+        parent::__construct();
         $this->results = array();
     }
 
@@ -212,14 +163,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         return $job->id;
     }
 
-    public function __get($name)
-    {
-        if($name == 'table_name')
-            return self::QUEUE_TABLE;
-        else
-            return $this->$name;
-    }
-
     /**
      * Index the entire system. This should only be called from a worker process as this is a time intensive process and
      * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
@@ -237,16 +180,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
-    }
-
-    /**
-     * Set the scheduler job that initiated the run call.
-     *
-     * @param SchedulersJob $job
-     */
-    public function setJob(SchedulersJob $job)
-    {
-        $this->schedulerJob = $job;
     }
 
     public function indexRecords($module, $fieldDefinitions)
@@ -320,59 +253,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     }
 
 
-
-    /**
-     * Generate the query necessary to retrieve FTS enabled fields for a bean.
-     *
-     * @param $module
-     * @param $fieldDefinitions
-     * @return string
-     */
-    protected function generateFTSQuery($module, $fieldDefinitions)
-    {
-        $queuTableName = self::QUEUE_TABLE;
-        $bean = BeanFactory::getBean($module, null);
-        $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
-        $selectFields = array($id,'team_id','team_set_id');
-        $ownerField = $bean->getOwnerField(true);
-        if (!empty($ownerField))
-        {
-            $selectFields[] = $ownerField;
-        }
-
-        foreach($fieldDefinitions as $key => $value)
-        {
-            if(isset($value['name'])) {
-                if ($value['name'] == 'email1')
-                    continue;
-                $selectFields[] = $value['name'];
-            }
-        }
-
-        $ret_array['select'] = " SELECT " . implode(",", $selectFields);
-        $ret_array['from'] = " FROM {$bean->table_name} ";
-        $custom_join = FALSE;
-        if(isset($bean->custom_fields))
-        {
-            $custom_join = $bean->custom_fields->getJOIN();
-            if($custom_join)
-                $ret_array['select'] .= ' ' .$custom_join['select'];
-        }
-
-        if($custom_join)
-            $ret_array['from'] .= ' ' . $custom_join['join'];
-
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
-        $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
-
-        if(isset($fieldDefinitions['email1'])) {
-            $ret_array['select'].= ", email_addresses.email_address email1";
-            $ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$bean->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$module}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id=email_addr_bean_rel.email_address_id ";
-        }
-
-        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
-    }
-
     /**
      * TODO: For the 6.5.1 release this logic will need to be updted as we support additional field types
      *
@@ -438,46 +318,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         return TRUE;
 
-    }
-
-    /**
-     * Given a set of bean ids processed from the queue table, mark them as being processed.  We will
-     * throttle the update query as there is a limit on the size of records that can be passed to an in clause yet
-     * we don't want to update them individually for performance reasons.
-     *
-     * @param $beanIDs array of bean ids to delete
-     */
-    protected function markBeansProcessed($beanIDs)
-    {
-        $count = 0;
-        $deleteIDs = array();
-        foreach($beanIDs as $beanID)
-        {
-            $deleteIDs[] = $beanID;
-            $count++;
-            if($count != 0 && $count % self::MAX_BULK_DELETE_THRESHOLD == 0)
-            {
-                $this->setBeanIDsProcessed($deleteIDs);
-                $deleteIDs = array();
-            }
-        }
-
-        if( count($deleteIDs) > 0)
-            $this->setBeanIDsProcessed($deleteIDs);
-    }
-
-    /**
-     * Internal function to mark records within queue table as processed.
-     *
-     * @param $deleteIDs
-     */
-    private function setBeanIDsProcessed($deleteIDs)
-    {
-        $tableName = self::QUEUE_TABLE;
-        $inClause = implode("','", $deleteIDs);
-        $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
-        $GLOBALS['db']->query($query);
     }
 
     /**
