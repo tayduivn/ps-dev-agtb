@@ -308,18 +308,26 @@ class ForecastsProgressApi extends ModuleApi
 	public function progress( $api, $args )
 	{
 		$this->loadProgressData($args);
+        $quotaLikely = $this->getLikelyToQuota($api, $args);
+        $quotaBest = $this->getBestToQuota($api, $args);
+        $closedLikely = $this->getLikelyToClose($api, $args);
+        $closedBest = $this->getBestToClose($api, $args);
 
 		$progressData = array(
-			"quota"         => array(
-				"amount"      => $this->getQuota($api, $args),
-				"likely_case" => $this->getLikelyToQuota($api, $args),
-				"best_case"   => $this->getBestToQuota($api, $args),
-			),
-			"closed"        => array(
-				"amount"      => $this->getClosed($api, $args),
-				"likely_case" => $this->getLikelyToClose($api, $args),
-				"best_case"   => $this->getBestToClose($api, $args),
-			),
+            "quota_amount"      => $this->getQuota($api, $args),
+            "quota_likely_amount" => $quotaLikely["amount"],
+            "quota_likely_percent" => $quotaLikely["percent"],
+            "quota_likely_above" => $quotaLikely["above"],
+            "quota_best_amount" => $quotaBest["amount"],
+            "quota_best_percent" => $quotaBest["percent"],
+            "quota_best_above" => $quotaBest["above"],
+            "closed_amount"      => $this->getClosed($api, $args),
+            "closed_likely_amount" => $closedLikely["amount"],
+            "closed_likely_percent" => $closedLikely["percent"],
+            "closed_likely_above" => $closedLikely["above"],
+            "closed_best_amount" => $closedBest["amount"],
+            "closed_best_percent" => $closedBest["percent"],
+            "closed_best_above" => $closedBest["above"],
 			"opportunities" => $this->getOpportunities($api, $args),
 			"revenue"       => $this->getRevenue($api, $args),
             "pipeline"      => $this->getPipeline($api, $args),

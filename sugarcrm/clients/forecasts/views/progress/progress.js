@@ -8,7 +8,6 @@
 
     likelyTotal: 0,
     bestTotal: 0,
-    defaultModel: {amount: 0, best_case : {amount: 0, above: false, percent: 0.0}, likely_case : {amount: 0, above: false, percent: 0.0}},
 
     initialize: function (options) {
         _.bindAll(this); // Don't want to worry about keeping track of "this"
@@ -22,7 +21,6 @@
         this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
         this.likelyTotal = 0;
         this.bestTotal = 0;
-        this.worksheetCollection = this.context.forecasts.worksheet;
         this.worksheetManagerCollection = this.context.forecasts.worksheetmanager;
     },
 
@@ -32,12 +30,6 @@
 
         if (this.model) {
             this.model.on('change reset', this.render);
-        }
-        if (this.worksheetCollection) {
-            this.worksheetCollection.on('change reset', this.recalculate);
-        }
-        if (this.worksheetManagerCollection) {
-            this.worksheetManagerCollection.on('change reset', this.recalculate);
         }
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
@@ -52,11 +44,53 @@
                 this.updateProgress();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                self.recalculate();
+                self.recalculate(totals);
             });
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                self.recalculate();
+                self.recalculate(totals);
+
             });
+        }
+    },
+
+    recalculate: function (totals) {
+        if(this.model.has("revenue")) {
+            this.calculateBases(totals);
+            this.model.set("opportunities", totals.included_opp_count + totals.closed_opp_count);
+            this.model.set("revenue", totals.amount);
+            this.model.set("closed_amount", totals.closed_amount);
+            this.model.set({
+                closed_likely_amount : this.getAbsDifference(this.likelyTotal, totals.closed_amount),
+                closed_likely_percent : this.getPercent(totals.closed_amount, this.likelyTotal),
+                closed_likely_above : this.checkIsAbove(totals.closed_amount, this.likelyTotal ),
+                quota_likely_amount : this.getAbsDifference(this.likelyTotal, this.quota_amount),
+                quota_likely_percent : this.getPercent(this.likelyTotal, this.quota_amount),
+                quota_likely_above : this.checkIsAbove(this.likelyTotal, this.quota_amount),
+                closed_best_amount : this.getAbsDifference(this.bestTotal, totals.closed_amount),
+                closed_best_percent : this.getPercent(totals.closed_amount, this.bestTotal),
+                closed_best_above : this.checkIsAbove(totals.closed_amount, this.bestTotal),
+                quota_best_amount : this.getAbsDifference(this.bestTotal, this.quota_amount),
+                quota_best_percent : this.getPercent(this.bestTotal, this.quota_amount),
+                quota_best_above : this.checkIsAbove(this.bestTotal, this.quota_amount),
+
+                pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
+            });
+        }
+    },
+
+    calculateBases: function (totals) {
+        var closed = this.model.get('closed');
+
+        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
+            this.likelyTotal = this.reduceWorksheetManager('likely_case') - closed.amount;
+            this.bestTotal = this.reduceWorksheetManager('best_case');
+            this.model.set('revenue', this.reduceWorksheetManager('amount') - closed.amount);
+            this.revenue = this.model.get('revenue') - closed.amount;
+        } else {
+            this.likelyTotal = totals.likely_case;
+            this.bestTotal = totals.best_case
+            this.model.set('revenue', totals.amount);
+            this.model.set('closed_amount', totals.closed_amount);
         }
     },
 
@@ -78,97 +112,10 @@
         return 0;
     },
 
-    calculateLikelyToQuota: function (quota) {
-        quota.amount = parseInt(quota.amount, 10);
-
-        quota.likely_case.amount = this.getAbsDifference(this.likelyTotal, quota.amount);
-        quota.likely_case.above = this.checkIsAbove(this.likelyTotal, quota.amount);
-        quota.likely_case.percent = this.getPercent(this.likelyTotal, quota.amount);
-
-        return quota;
-    },
-
-    calculateBestToQuota: function (quota) {
-        quota.amount = parseInt(quota.amount, 10);
-
-        quota.best_case.amount = this.getAbsDifference(this.bestTotal, quota.amount);
-        quota.best_case.above = this.checkIsAbove(this.bestTotal, quota.amount);
-        quota.best_case.percent = this.getPercent(this.bestTotal, quota.amount);
-
-        return quota;
-    },
-
-    calculateLikelyToClose: function (closed) {
-        closed.amount = parseInt(closed.amount, 10);
-
-        closed.likely_case.amount = this.getAbsDifference(this.likelyTotal, closed.amount);
-        closed.likely_case.above = this.checkIsAbove(closed.amount, this.likelyTotal );
-        closed.likely_case.percent = this.getPercent(closed.amount, this.likelyTotal);
-
-        return closed;
-    },
-
-    calculateBestToClose: function (closed) {
-        closed.amount = parseInt(closed.amount, 10);
-
-        closed.best_case.amount = this.getAbsDifference(this.bestTotal, closed.amount);
-        closed.best_case.above = this.checkIsAbove(closed.amount, this.bestTotal);
-        closed.best_case.percent = this.getPercent(closed.amount, this.bestTotal);
-
-        return closed
-    },
-
-    reduceWorksheet: function(attr) {
-      return this.worksheetCollection.reduce(function(memo, model) {
-                          // Only add up values that are "included" in the worksheet.
-                          if ( (model.get('forecast') === true || model.get('forecast') === '1') && !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
-                              memo += parseInt(model.get(attr), 10);
-                          }
-                          return memo;
-                      }, 0);
-    },
-
-    countWorksheetOpportunities: function() {
-      return this.worksheetCollection.reduce(function(memo, model) {
-                          // Only add up values that are "included" in the worksheet.
-                          if ( (model.get('forecast') === true || model.get('forecast') === '1')&& !(/closed (?:won|lost)/i).test(model.get("sales_stage")) ) {
-                              memo ++;
-                          }
-                          return memo;
-                      }, 0);
-    },
-
-    reduceWorksheetManager: function(attr) {
-      return this.worksheetManagerCollection.reduce(function(memo, model) {
-                          // Only add up values that are "included" in the worksheet.
-                        memo += parseInt(model.get(attr), 10);
-                        return memo;
-                      }, 0);
-    },
-
-    calculateBases: function () {
-        var quota = this.model.get('quota');
-        var closed = this.model.get('closed');
-
-        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            this.likelyTotal = this.reduceWorksheetManager('likely_case') - closed.amount;
-            this.bestTotal = this.reduceWorksheetManager('best_case');
-            this.model.set('revenue', this.reduceWorksheetManager('amount') - closed.amount);
-            this.revenue = this.model.get('revenue') - closed.amount;
-        } else {
-            this.likelyTotal = this.reduceWorksheet('likely_case');
-            this.bestTotal = this.reduceWorksheet('best_case');
-            this.model.set('quota', this.reduceWorksheet('amount'));
-        }
-
-        this.model.set('quota', quota);
-        this.quota = quota;
-    },
-
     calculatePipelineSize: function (likelyTotal, revenue, closed) {
         var ps = 0;
         if ( likelyTotal > 0 ) {
-            ps = (revenue + closed.amount) /  likelyTotal;
+            ps = (revenue + closed) /  likelyTotal;
 
             // Round to 1 decimal place
             ps = Math.round( ps * 10 )/10;
@@ -178,18 +125,12 @@
         return ps;
     },
 
-    recalculate: function () {
-        if(this.model.has("revenue")) {
-            this.calculateBases();
-            this.model.set({
-                closed : this.calculateBestToClose(this.model.get('closed')),
-                quota : this.calculateBestToQuota(this.model.get('quota')),
-                closed : this.calculateLikelyToClose(this.model.get('closed')),
-                quota :  this.calculateLikelyToQuota(this.model.get('quota')),
-                pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed'))
-            });
-            this.render();
-        }
+    reduceWorksheetManager: function(attr) {
+      return this.worksheetManagerCollection.reduce(function(memo, model) {
+                          // Only add up values that are "included" in the worksheet.
+                        memo += parseInt(model.get(attr), 10);
+                        return memo;
+                      }, 0);
     },
 
     _render: function () {
