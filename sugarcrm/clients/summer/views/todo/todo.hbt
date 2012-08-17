@@ -1,22 +1,25 @@
 <div class="btn-group dropup" id="todo-list-widget">
     <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
         <i class="icon-list-alt"></i> Todo</button>
-    <div style="width: 192px; padding:12px" id="todo-container" class="dropdown-menu">
+    <div style="width: 192px; max-height: 217px; overflow-y: scroll; padding:12px" id="todo-container" class="dropdown-menu">
         <div class="input-append todo-header">
             <input style="float: left; width: 150px;" class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
             <button class="btn btn-success" id="todo-add" type="button"><i class="icon-plus-sign"></i></button>
         </div>
         <div class="todo-list-container">
             <ul style="padding-top: 25px; margin-bottom: 0px" class="todo-list">
-                {{log this.collection}}
                 {{#each this.collection.models}}
+                    {{log this}}
                     <label style="display: inline" class="checkbox">
                         <input class="todo-status" type="checkbox">
                     </label>
-                    <li class="todo-item" style="padding: 0; list-style: none">{{this.attributes.name}}</li>
-                    <i class="icon-trash" style="float:right"></i>
+                    <li class="todo-item" style="padding: 0; list-style: none">
+                        {{this.attributes.name}}
+                        <i class="icon-trash" style="float:right"></i>
+                    </li>
                 {{/each}}
             </ul>
+            <a href="#Tasks">{{str "LBL_SHOW_MORE"}}</a>
         </div>
     </div>
 </div>
