@@ -81,6 +81,15 @@ color:#000;
 text-decoration:none;
 }
 
+.card2 .row-fluid.record-row .span2:first-child {
+background: #EEE;
+padding: 1em;
+margin-top: -1em;
+border-radius:5px;
+-moz-border-radius:5px;
+-webkit-border-radius:5px;
+}
+
 .record-row:hover .w {
 display:inline-block;
 }
