@@ -25,8 +25,11 @@
 require_once 'include/SugarCurrency.php';
 
 /**
- * tests for SugarCurrency class
+ * SugarCurrencyTest
  *
+ * unit tests for currencies
+ *
+ * @author Monte Ohrt <mohrt@sugarcrm.com>
  */
 class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -106,9 +109,14 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrencyGetByID()
     {
-        $currency = SugarCurrency::getCurrencyByID('-99');
-        $this->assertInstanceOf('Currency',$currency);
-        $this->assertEquals('-99',$currency->id);
+        // get a currency to test with
+        $currency = SugarCurrency::getCurrencyByISO('PHP');
+        $currency_id = $currency->id;
+        // now fetch by currency_id
+        $currency2 = SugarCurrency::getCurrencyByID($currency_id);
+        $this->assertInstanceOf('Currency',$currency2);
+        // test they are the same currency
+        $this->assertEquals($currency_id,$currency2->id);
     }
 
     /**
@@ -133,16 +141,27 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $currency1 = SugarCurrency::getCurrencyByISO('SGD');
         $currency2 = SugarCurrency::getCurrencyByISO('PHP');
+        $base_currency = SugarCurrency::getBaseCurrency();
         $this->assertInstanceOf('Currency',$currency1);
         $this->assertInstanceOf('Currency',$currency2);
         $this->assertTrue(is_numeric($currency1->conversion_rate));
         $this->assertTrue(is_numeric($currency2->conversion_rate));
         $dollar_value = 1000.00;
+
+        // test convert to base currency
+        $converted_amount = round($dollar_value * $currency1->conversion_rate / $base_currency->conversion_rate,6);
+        $this->assertTrue(is_numeric($converted_amount));
+        $amount = SugarCurrency::convertAmountToBase($dollar_value,$currency1->id);
+        $this->assertTrue(is_numeric($amount));
+        $this->assertEquals($converted_amount,$amount);
+
+        // test convert from one currency to another
         $converted_amount = round($dollar_value * $currency1->conversion_rate / $currency2->conversion_rate,6);
         $this->assertTrue(is_numeric($converted_amount));
         $amount = SugarCurrency::convertAmount($dollar_value,$currency1->id,$currency2->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount,$amount);
+
     }
 
     /**
@@ -152,19 +171,119 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrencyFormat()
     {
+        // locale formatting tests
         $currency = SugarCurrency::getCurrencyByISO('PHP');
         $amount = 1000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id);
+        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
         $this->assertEquals($currency->symbol . '1,000.00',$format);
         $amount = 1000.0;
-        $format = SugarCurrency::formatAmount($amount,$currency->id);
+        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
         $this->assertEquals($currency->symbol . '1,000.00',$format);
         $amount = 1000.00;
-        $format = SugarCurrency::formatAmount($amount,$currency->id);
+        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
         $this->assertEquals($currency->symbol . '1,000.00',$format);
         $amount = 1000.000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id);
+        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
         $this->assertEquals($currency->symbol . '1,000.00',$format);
+        // manual formatting tests
+        $amount = 1000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','');
+        $this->assertEquals($currency->symbol . '1,000.00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',','');
+        $this->assertEquals($currency->symbol . '1,000.000',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','','');
+        $this->assertEquals($currency->symbol . '1000,00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.','');
+        $this->assertEquals($currency->symbol . '1.000,00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','&nbsp;');
+        $this->assertEquals($currency->symbol . '&nbsp;1,000.00',$format);
+        // manual formatting tests, negative amounts
+        $amount = -1000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','');
+        $this->assertEquals($currency->symbol . '-1,000.00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',','');
+        $this->assertEquals($currency->symbol . '-1,000.000',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','','');
+        $this->assertEquals($currency->symbol . '-1000,00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.','');
+        $this->assertEquals($currency->symbol . '-1.000,00',$format);
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','&nbsp;');
+        $this->assertEquals($currency->symbol . '&nbsp;-1,000.00',$format);
+        // large amounts
+        $amount = 10000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '10,000.00',$format);
+        $amount = 100000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '100,000.00',$format);
+        $amount = 1000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '1,000,000.00',$format);
+        $amount = 10000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '10,000,000.00',$format);
+        $amount = 100000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '100,000,000.00',$format);
+        $amount = 1000000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '1,000,000,000.00',$format);
+        $amount = -10000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-10,000.00',$format);
+        $amount = -100000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-100,000.00',$format);
+        $amount = -1000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-1,000,000.00',$format);
+        $amount = -10000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-10,000,000.00',$format);
+        $amount = -100000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-100,000,000.00',$format);
+        $amount = -1000000000;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-1,000,000,000.00',$format);
+        // decimal amounts, rounding
+        $amount = 0.9;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '0.90',$format);
+        $amount = 0.09;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '0.09',$format);
+        $amount = 0.099;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '0.10',$format);
+        $amount = 0.094;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '0.09',$format);
+        $amount = 0.09499999;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '0.09',$format);
+        $amount = 0.09499999;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,6);
+        $this->assertEquals($currency->symbol . '0.095000',$format);
+        $amount = -0.9;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-0.90',$format);
+        $amount = -0.09;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-0.09',$format);
+        $amount = -0.099;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-0.10',$format);
+        $amount = -0.094;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-0.09',$format);
+        $amount = -0.09499999;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
+        $this->assertEquals($currency->symbol . '-0.09',$format);
+        $amount = -0.09499999;
+        $format = SugarCurrency::formatAmount($amount,$currency->id,6);
+        $this->assertEquals($currency->symbol . '-0.095000',$format);
+
     }
 
     /**

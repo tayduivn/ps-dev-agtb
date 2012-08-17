@@ -21,9 +21,11 @@
  ********************************************************************************/
 
 /**
- * Sugar Currency container
+ * SugarCurrency
  *
- * @api
+ * A class for manipulating currencies and currency amounts
+ *
+ * @author Monte Ohrt <mohrt@sugarcrm.com>
  */
 class SugarCurrency
 {
@@ -34,7 +36,7 @@ class SugarCurrency
      * @access public
      * @param  float  $amount
      * @param  string $from_id source currency_id
-     * @param  string $to_id target currency_id
+     * @param  string $to_id target currency_id, default base currency
      * @return float   returns the converted amount
      */
     public static function convertAmount( $amount, $from_id, $to_id ) {
@@ -48,32 +50,67 @@ class SugarCurrency
     }
 
     /**
-     * format a currency amount with symbol and user formatting
+     * convenience function: convert a currency to base currency
+     *
+     * @access public
+     * @param  float  $amount
+     * @param  string $from_id source currency_id
+     * @return float   returns the converted amount
+     */
+    public static function convertAmountToBase( $amount, $from_id ) {
+        return self::convertAmount($amount, $from_id, '-99');
+    }
+
+    /**
+     * format a currency amount with symbol and defined formatting
      *
      * @access public
      * @param  float  $amount
      * @param  string $currency_id
-     * @param  string $separator what is between symbol and amount
+     * @param  int    $decimal_precision Optional the number of decimal places to use
+     * @param  string $decimal_separator Optional the string to use as decimal separator
+     * @param  string $number_grouping_separator Optional the string to use for thousands grouping
+     * @param  string $separator Optional string between symbol and amount
      * @return float   returns the converted amount
      */
     public static function formatAmount(
         $amount,
         $currency_id,
+        $decimal_precision = 2,
+        $decimal_separator = '.',
+        $number_grouping_separator = ',',
         $separator = ''
     ) {
-        global $locale;
         $currency = BeanFactory::getBean('Currencies');
         $currency->retrieve($currency_id);
-
-        // get user defined preferences
-        $decimal_separator = $locale->getDecimalSeparator();
-        $number_grouping_separator = $locale->getNumberGroupingSeparator();
-        $decimal_precision = $locale->getPrecision();
 
         return $currency->symbol . $separator . number_format($amount, $decimal_precision, $decimal_separator, $number_grouping_separator);
     }
 
     /**
+     * format a currency amount with symbol and user defs
+     *
+     * @access public
+     * @param  float  $amount
+     * @param  string $currency_id
+     * @param  string $separator Optional string between symbol and amount
+     * @return float   returns the converted amount
+     */
+    public static function formatAmountUserLocale(
+        $amount,
+        $currency_id,
+        $separator = ''
+    ) {
+        global $locale;
+        // get user defined preferences
+        $decimal_precision = $locale->getPrecision();
+        $decimal_separator = $locale->getDecimalSeparator();
+        $number_grouping_separator = $locale->getNumberGroupingSeparator();
+
+        return self::formatAmount($amount, $currency_id, $decimal_precision, $decimal_separator, $number_grouping_separator, $separator);
+    }
+
+        /**
      * get system base currency object
      *
      * @access public
