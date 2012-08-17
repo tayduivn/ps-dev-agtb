@@ -17,6 +17,7 @@
 # Default server uri for runner if -r not provided
 RUNNER_URI="http://localhost:8888/ent/sugarcrm/tests/"
 
+
 # Following file likely in sugarcrm/tests/ci directory
 JASMINE_2_JUNITXML_RUNNER="phantomjs_jasminexml_runner.js"
 
@@ -36,6 +37,15 @@ function setup_paths() {
     # Gets full path to our "required" directories
     ABS_OUTPUT_DIR=$(get_full_path_to_dir $OUTPUT_DIR)
     MANGO_DIR=$(get_full_path_to_dir $MANGO_DIR)
+
+######
+# Temporary hotfix .. in sugar7 a sugarcrm/config.js
+# will be generated at install time and this can be removed
+####
+SUGARCRM_PATH="/Applications/MAMP/htdocs/ent/sugarcrm/"
+cp -R $MANGO_DIR/sugarcrm/sidecar/tests/config.js $SUGARCRM_PATH
+#####
+
     ABS_TEST_DIR="${MANGO_DIR}/sugarcrm/tests"
 }
 function check_if_output_dir_exists() {
