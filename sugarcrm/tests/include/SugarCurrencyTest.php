@@ -157,6 +157,14 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount,$amount);
 
+        // test convert from base currency
+        $converted_amount = round($dollar_value * $base_currency->conversion_rate / $currency1->conversion_rate, 6);
+        $this->assertTrue(is_numeric($converted_amount));
+        $amount = SugarCurrency::convertAmountFromBase($dollar_value,$currency1->id);
+        $this->assertTrue(is_numeric($amount));
+        $this->assertEquals($converted_amount,$amount);
+
+
         // test convert from one currency to another
         $converted_amount = round($dollar_value * $currency1->conversion_rate / $currency2->conversion_rate, 6);
         $this->assertTrue(is_numeric($converted_amount));

@@ -34,9 +34,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 /**
- * Currency.php
- * This class encapsulates the handling of currency conversions and
- * formatting in the SugarCRM application.
+ * Currency
+ *
+ * This is the Currency module for obtaining and manipulating
+ * currency objects. Note that a lot of currency utility functions
+ * such as conversion and formatting are now implemented in the
+ * include/SugarCurrency.php class.
  *
  */
 class Currency extends SugarBean
@@ -63,6 +66,11 @@ class Currency extends SugarBean
 	var $disable_num_format = true;
 
 
+    /**
+     * class constructor
+     *
+     * @access public
+     */
     function __construct()
 	{
 		parent::SugarBean();
@@ -74,11 +82,15 @@ class Currency extends SugarBean
 
     /**
      * convertToDollar
-     * This method accepts a currency amount and converts it to the US Dollar amount
      *
-     * @param $amount The currency amount to convert to US Dollars
-     * @param $precision The rounding precision scale
-     * @return currency value in US Dollars from conversion
+     * This method accepts a currency amount and converts it to the US Dollar amount
+     * This method is deprecated and has been moved to the SugarCurrency utility class
+     * as convertAmountToBase()
+     *
+     * @deprecated
+     * @param  $amount    amount to convert to US Dollars
+     * @param  $precision rounding precision scale
+     * @return float      currency value in US Dollars from conversion
      */
 	function convertToDollar($amount, $precision = 6) {
 		return round(($amount / $this->conversion_rate), $precision);
@@ -86,12 +98,16 @@ class Currency extends SugarBean
 
     /**
      * convertFromDollar
+     *
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
+     * This method is deprecated and has been moved to the SugarCurrency utility class
+     * as convertAmountFromBase()
      *
-     * @param $amount The currency amount in US Dollars
-     * @param $precision The rounding precision scale
-     * @return currency value from US Dollar conversion
+     * @deprecated
+     * @param  $amount    currency amount in US Dollars
+     * @param  $precision rounding precision scale
+     * @return float      currency value from US Dollar conversion
      */
 	function convertFromDollar($amount, $precision = 6){
 		return round(($amount * $this->conversion_rate), $precision);
@@ -101,7 +117,8 @@ class Currency extends SugarBean
      * getDefaultCurrencyName
      *
      * Returns the default currency name as defined in application
-     * @return String value of default currency name
+     *
+     * @return string value of default currency name
      */
 	function getDefaultCurrencyName(){
 		global $sugar_config;
@@ -111,8 +128,9 @@ class Currency extends SugarBean
     /**
      * getDefaultCurrencySymbol
      *
-     * Returns the default currency symobol in application
-     * @return String value of default currency symbol(e.g. $)
+     * Returns the default currency symbol in application
+     *
+     * @return string value of default currency symbol (e.g. $)
      */
 	function getDefaultCurrencySymbol(){
 		global $sugar_config;
@@ -123,7 +141,8 @@ class Currency extends SugarBean
      * getDefaultISO4217
      *
      * Returns the default ISO 4217 standard currency code value
-     * @return String value for the ISO 4217 standard code(e.g. EUR)
+     *
+     * @return string value for the ISO 4217 standard code (e.g. EUR)
      */
 	function getDefaultISO4217(){
 		global $sugar_config;
@@ -133,12 +152,12 @@ class Currency extends SugarBean
     /**
      * retrieveIDBySymbol
      *
-     * Returns the id value for given currency symbol in Currencies table
+     * Returns the id value for given currency symbol in currencies table
      * and currency entry for symbol is not set to deleted.
      *
-     * @param $symbol Symbol value
-     * @return String id value for symbol defined in Currencies table, blank String value
-     *         if none found
+     * @param  $symbol currency symbol
+     * @return string  id value for symbol defined in currencies table,
+     *                 blank value for nothing found
      */
 	function retrieveIDBySymbol($symbol) {
 	 	$query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0;",
@@ -161,9 +180,9 @@ class Currency extends SugarBean
      * Returns the id value for given currency iso4217 in Currencies table
      * and currency entry for ISO is not set to deleted.
      *
-     * @param $ISO iso4217 value
-     * @return String id value for symbol defined in Currencies table, blank String value
-     *         if none found
+     * @param  $ISO   iso4217 value
+     * @return string id value for symbol defined in currencies table,
+     *                blank value for nothing found
      */
     function retrieveIDByISO($ISO) {
         $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0;",
@@ -181,6 +200,11 @@ class Currency extends SugarBean
     }
 
 
+    /**
+     * list_view_parse_additional_sections
+     *
+     * @return object $list_form with merged currency id
+     */
     function list_view_parse_additional_sections(&$list_form) {
 		global $isMerge;
 
@@ -196,9 +220,9 @@ class Currency extends SugarBean
      * Returns the id value for given currency name in Currencies table
      * and currency entry for name is not set to deleted.
      *
-     * @param $name currency name
-     * @return String id value for symbol defined in Currencies table, blank String value
-     *         if none found
+     * @param  $name  currency name
+     * @return string id value for symbol defined in currencies table,
+     *                blank value for nothing found
      */
     function retrieveIDByName($name) {
 	 	$query = sprintf("select id from currencies where name='%s' and deleted=0;",
@@ -218,11 +242,22 @@ class Currency extends SugarBean
      * retrieve_id_by_name
      *
      * deprecated, see retrieveIDByName
+     * @deprecated
      */
     function retrieve_id_by_name($name) {
         $this->retrieveIDByName($name);
     }
 
+    /**
+     * retrieve
+     *
+     * returns currency object for given id, or base if not found
+     *
+     * @param  $id      currency id
+     * @param  $encode  boolean
+     * @param  $deleted boolean
+     * @return object   currency object, base currency if id is not found
+     */
     function retrieve($id, $encode = true, $deleted = true){
      	if($id == '-99'){
      		$this->name = 	$this->getDefaultCurrencyName();

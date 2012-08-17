@@ -62,6 +62,18 @@ class SugarCurrency
     }
 
     /**
+     * convenience function: convert a currency from base currency
+     *
+     * @access public
+     * @param  float  $amount
+     * @param  string $from_id source currency_id
+     * @return float   converted amount
+     */
+    public static function convertAmountFromBase( $amount, $to_id ) {
+        return self::convertAmount($amount, '-99', $to_id);
+    }
+
+    /**
      * format a currency amount with symbol and defined formatting
      *
      * @access public
