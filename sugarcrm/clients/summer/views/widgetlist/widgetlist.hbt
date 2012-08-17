@@ -1,6 +1,6 @@
 
 {{#each meta.panels}}
-<table class="table">
+<table class="table table-striped">
     <thead>
     <tr role="row">
         {{#each fields}}
@@ -16,7 +16,7 @@
 
     <tr name="{{module}}_{{attributes.id}}" class="draggable droppable filedrop" rel="tooltip">
           {{#each ../fields}}
-              <td> {{field ../../../this ../this}}</td>
+              <td>{{field ../../../this ../this}}</td>
           {{/each}}
     </tr>
 

@@ -110,19 +110,24 @@
          * @param {String} relatedId - the id of another bean id
          * @return {Boolean} true if success, false otherwise
          */
-        this.ShareManager.prototype.linkModels = function (relatedModule, relatedId) {
+        this.ShareManager.prototype.linkModels = function (relatedModule, relatedId, callbacks) {
             var self = this;
             this.targetBean.fetch({
                 success: function (model) {
-                    var _relatedBean = app.data.createRelatedBean(model, null, relatedModule.toLowerCase(), {id: relatedId});
-                    _relatedBean.save(null, {relate: true});
+                    try {
+                        var _relatedBean = app.data.createRelatedBean(model, null, relatedModule.toLowerCase(), {id: relatedId});
+                        _relatedBean.save(null, {relate: true});
+                        callbacks();
+                    } catch (err) {
+                        self.quitFlag = true;
+                        self.alertViews.shareError('Share Failed', err);
+                    }
                 },
                 error: function (msg) {
                     self.quitFlag = true;
                     self.alertViews.shareError('Share Failed', 'cannot share relationship');
                 }
             });
-            return !self.quitFlag;
         };
 
         /**
@@ -181,7 +186,7 @@
         this.ShareManager.prototype.addNewFileView = function () {
             var addedFileView = '';
             addedFileView += '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
-            addedFileView += '<td>' + this.filename + '</td></tr>';
+            addedFileView += '<td style="color:red;">' + this.filename + '</td></tr>';
             var table = $('#attachments_table').find('tbody')[0];
             $(table).append(addedFileView);
         };
@@ -206,10 +211,10 @@
             var attachmentList = $('#attachments_table').find('td');
             var attachmentNames = [];
             _.each(attachmentList, function (value) {
-                attachmentNames.push($(value).text());
+                attachmentNames.push($(value).text().trim());
             });
             _.each(attachmentNames, function (value) {
-                if (filename == value) {
+                if (filename.trim() == value) {
                     self.quitFlag = true;
                     self.alertViews.shareError('Share Failed', 'cannot upload file with same name, please drag available file here to share');
                 }
@@ -232,7 +237,7 @@
 
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
-        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+//        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
 
         this.makeDraggableElements();
 
@@ -266,7 +271,7 @@
                 var original = $(event.currentTarget);
                 original.css("background", "#FBF9EA");
                 mirror = $('<div></div>').append(original.clone());
-                $(mirror).css({border: "1px solid black", 'font-weight': 'bold'});
+                $(mirror).css({border: "1px solid black", 'font-weight': 'bold', "background": "#FBF9EA"});
                 return mirror;
             },
             stop: function(event, ui) {
@@ -357,12 +362,15 @@
             // get the 'Notes' module and associated id
             var draggableModule = $(ui.draggable[0]).attr('name').split('_')[0];
             var draggableId = $(ui.draggable[0]).attr('name').split('_')[1];
-            var result = shareManager.linkModels(draggableModule, draggableId);
-            if (result) {
+            var callbacks = function () {
+
+                //TODO modal form pop up asking to send email to contact
+
                 var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
-                shareManager.alertViews.shareSuccess(shareManager, successTitle, '', null,
+                shareManager.alertViews.shareSfuccess(shareManager, successTitle, '', null,
                     {undo: true, draggableModule: draggableModule, draggableId: draggableId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
             }
+            shareManager.linkModels(draggableModule, draggableId, callbacks);
 
          // a file from local desktop
         } else {
@@ -371,8 +379,16 @@
             var newNoteId = shareManager.createNote();
 
             if (newNoteId) {
+                var callbacks = function () {
+
+                    //TODO modal form pop up to send email to user here
+
+                    var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
+                    shareManager.alertViews.shareSuccess(shareManager, successTitle, '', newNoteId,
+                        {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
+                }
                 // the first manager is to link target (eg. contact) with a note+attachment
-                if (shareManager.isValidFile(file) && shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId)) {
+                if (shareManager.isValidFile(file) && shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId, callbacks)) {
 
                     // this 2nd share manager is to link current main model (eg. account) with note+attachment (subject to change depending on specs)
                     // alert error view will not be raised if fail this link action
@@ -380,10 +396,6 @@
                     if (shareManager2.linkModels('Notes', newNoteId)) {
                         shareManager.addNewFileView();
                     }
-
-                    var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
-                    shareManager.alertViews.shareSuccess(shareManager, successTitle, '', newNoteId,
-                        {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
                 }
             }
 

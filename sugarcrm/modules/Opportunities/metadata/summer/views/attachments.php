@@ -34,6 +34,7 @@ $viewdefs['Opportunities']['summer']['view']['attachments'] = array(
             'fields' => array(
                 array(
                     'name' => 'filename',
+                    'type' => 'file',
                     'width' => '15',
                     'label' => 'LBL_FILENAME',
                     'link' => true,

@@ -1,5 +1,5 @@
 {{#each meta.panels}}
-<table class="table" id="attachments_table">
+<table class="table table-striped" id="attachments_table">
     <thead>
     <tr role="row">
         {{#each fields}}
@@ -19,7 +19,6 @@
             {{/each}}
         </div>
     </tr>
-
     {{/each}}
     </tbody>
 </table>

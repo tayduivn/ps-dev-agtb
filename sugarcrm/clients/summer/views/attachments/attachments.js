@@ -115,10 +115,12 @@
                 attachmentNames.push($(value).text());
             });
             _.each(attachmentNames, function (value) {
-                if (self.filename == value) {
+                if (self.filename.trim() == value.trim()) {
                     self.quitFlag = true;
                     self.alertViews.uploadError('Upload Failed', 'cannot upload file with same name');
+                    return;
                 }
+
             });
             return !self.quitFlag;
         };
@@ -171,9 +173,8 @@
         /**
          * Relate the current model to a note
          *
-         * @return {Boolean} true if succeed, false otherwise
          */
-        this.ShareNote.prototype.linkNoteToModel = function () {
+        this.ShareNote.prototype.linkNoteToModel = function (callbacks) {
             var self = this;
             var mainModule = app.controller.context.attributes.module;
             var mainModelId = app.controller.context.attributes.modelId;
@@ -184,6 +185,7 @@
                         var _note = app.data.createRelatedBean(model, null, 'notes', {id: self.newNoteId});
                         _note.save(null, {relate: true});
                         self.alertViews.uploadSuccess('<p style="font-size:16px;text-align:center;">You have uploaded a file.  <a id="undo-upload-file"><strong>Undo</strong></a></p>', '', {undo: true});
+                        callbacks(self.newNoteId, self.filename);
                     } catch (err) {
                         self.quitFlag = true;
                         self.alertViews.uploadError('Upload Failed', err);
@@ -194,25 +196,24 @@
                     self.alertViews.uploadError('Upload Failed', err);
                 }
             });
-            return !self.quitFlag;
         };
 
         /**
          * Real-time added a new row that contains file just uploaded
          */
-        this.ShareNote.prototype.showNewFile = function () {
-            var addedFileView = '<tr name="Notes_"' + this.newNoteId + '" class="draggable ui-draggable">';
-            addedFileView += '<td>' + this.filename + '</td></tr>';
-            var table = self.$('#attachments_table').find('tbody')[0];
-            self.$(table).append(addedFileView);
+        this.ShareNote.prototype.showNewFile = function (newNoteId, filename) {
+            var addedFileView = '<tr name="Notes_"' + newNoteId + '" class="draggable ui-draggable">';
+            addedFileView += '<td style="color:red;">' + filename + '</td></tr>';
+            var table = $('#attachments_table').find('tbody')[0];
+            $(table).append(addedFileView);
         };
 
         /**
          * Real-time remove the new row that contains file just uploaded
          */
         this.ShareNote.prototype.removeNewFileView = function () {
-            var table = self.$('#attachments_table').find('tbody')[0];
-            self.$(table).children("tr:last").remove();
+            var table = $('#attachments_table').find('tbody')[0];
+            $(table).children("tr:last").remove();
         };
 
         _.bindAll(this);
@@ -226,7 +227,7 @@
     _renderHtml: function() {
         var that = this;
         app.view.View.prototype._renderHtml.call(this);
-        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+//        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
         this.makeDraggableElements();
         this.styleDropbox();
 
@@ -254,7 +255,7 @@
                 var original = $(event.currentTarget);
                 original.css("background", "#FBF9EA");
                 mirror = $('<div></div>').append(original.clone());
-                $(mirror).css("border", "1px solid black");
+                $(mirror).css({"border": "1px solid black", "font-weight": "bold", "background": "#FBF9EA"});
                 return mirror;
             },
             stop: function(event, ui) {
@@ -320,6 +321,7 @@
     dropOnDropbox: function (event) {
         event.stopPropagation();
         event.preventDefault();
+        this.$('.dropbox').css({"background": '#C0C0C0', "width": '300px', "height":'30px'});
 
         //*********************** Main actions happens here *********************//
         var shareNote = new this.ShareNote(event);
@@ -327,9 +329,8 @@
         if (shareNote.file && shareNote.filename && shareNote.isValidFile()) {
             var result = shareNote.createNote() ? shareNote.uploadFileToNote() : false;
             if (result) {
-                result = shareNote.linkNoteToModel() ? shareNote.showNewFile() : false;
-            } else {
-                return false;
+                var callbacks = shareNote.showNewFile;
+                shareNote.linkNoteToModel(callbacks);
             }
         }
         //********************** End of Main actions ****************************//
@@ -405,5 +406,6 @@
         }
 
     }
+
 })
 
