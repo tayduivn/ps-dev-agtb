@@ -202,6 +202,7 @@ class MetaDataManager {
             foreach($layout_defs['subpanel_setup'] AS $name => $subpanel_info)
             {
                 $aSubPanel = $spd->load_subpanel($name, '', $parent_bean);
+
                 if(!$aSubPanel)
                 {
                     continue;
