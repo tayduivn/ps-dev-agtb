@@ -55,14 +55,6 @@ abstract class SugarSearchEngineAbstractResult implements SugarSearchEngineResul
         return __CLASS__ . " " . $this->getModule() . ": " . $this->getSummaryText() . " " . $this->getId();
     }
 
-    /**
-     *
-     * @return object|bool
-     */
-    public function getBean()
-    {
-        return $this->bean;
-    }
 
     /**
      *
