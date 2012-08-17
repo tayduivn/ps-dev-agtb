@@ -63,7 +63,7 @@ class Currency extends SugarBean
 	var $disable_num_format = true;
 
 
-    function Currency()
+    function __construct()
 	{
 		parent::SugarBean();
 		global $app_strings, $current_user, $sugar_config, $locale;
@@ -85,7 +85,7 @@ class Currency extends SugarBean
 	}
 
     /**
-     * convertFromCollar
+     * convertFromDollar
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
      *
@@ -131,7 +131,7 @@ class Currency extends SugarBean
 	}
 
     /**
-     * retrieveIDBySmbol
+     * retrieveIDBySymbol
      *
      * Returns the id value for given currency symbol in Currencies table
      * and currency entry for symbol is not set to deleted.
@@ -141,7 +141,9 @@ class Currency extends SugarBean
      *         if none found
      */
 	function retrieveIDBySymbol($symbol) {
-	 	$query = "SELECT id FROM currencies WHERE symbol='$symbol' AND deleted=0;";
+	 	$query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0;",
+             mysql_real_escape_string($symbol)
+         );
 	 	$result = $this->db->query($query);
 	 	if($result){
 	 	  $row = $this->db->fetchByAssoc($result);
@@ -153,17 +155,55 @@ class Currency extends SugarBean
 	 	return '';
 	 }
 
-	 function list_view_parse_additional_sections(&$list_form) {
+    /**
+     * retrieveIDByISO
+     *
+     * Returns the id value for given currency iso4217 in Currencies table
+     * and currency entry for ISO is not set to deleted.
+     *
+     * @param $ISO iso4217 value
+     * @return String id value for symbol defined in Currencies table, blank String value
+     *         if none found
+     */
+    function retrieveIDByISO($ISO) {
+        $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0;",
+            mysql_real_escape_string($ISO)
+        );
+        $result = $this->db->query($query);
+        if($result){
+            $row = $this->db->fetchByAssoc($result);
+            if($row){
+                return $row['id'];
+            }
+        }
+
+        return '';
+    }
+
+
+    function list_view_parse_additional_sections(&$list_form) {
 		global $isMerge;
 
 		if(isset($isMerge) && $isMerge && $this->id != '-99'){
-		$list_form->assign('PREROW', '<input name="mergecur[]" type="checkbox" value="'.$this->id.'">');
+		    $list_form->assign('PREROW', '<input name="mergecur[]" type="checkbox" value="'.$this->id.'">');
 		}
 		return $list_form;
 	}
 
-	function retrieve_id_by_name($name) {
-	 	$query = "select id from currencies where name='$name' and deleted=0;";
+    /**
+     * retrieveIDByName
+     *
+     * Returns the id value for given currency name in Currencies table
+     * and currency entry for name is not set to deleted.
+     *
+     * @param $name currency name
+     * @return String id value for symbol defined in Currencies table, blank String value
+     *         if none found
+     */
+    function retrieveIDByName($name) {
+	 	$query = sprintf("select id from currencies where name='%s' and deleted=0;",
+             mysql_real_escape_string($name)
+         );
 	 	$result = $this->db->query($query);
 	 	if($result){
 	 	$row = $this->db->fetchByAssoc($result);
@@ -173,7 +213,16 @@ class Currency extends SugarBean
 	 	}
 	 	return '';
 	}
-	
+
+    /**
+     * retrieve_id_by_name
+     *
+     * deprecated, see retrieveIDByName
+     */
+    function retrieve_id_by_name($name) {
+        $this->retrieveIDByName($name);
+    }
+
     function retrieve($id, $encode = true, $deleted = true){
      	if($id == '-99'){
      		$this->name = 	$this->getDefaultCurrencyName();
@@ -227,6 +276,49 @@ class Currency extends SugarBean
 } // end currency class
 
 /**
+ * CurrencyWithISO
+ * This is an extension of the Currency class
+ * requiring the ISO as the currency identifier
+ *
+ * @param $ISO the ISO of the currency
+ */
+class CurrencyWithISO extends Currency
+{
+    function __construct($ISO)
+    {
+        parent::__construct();
+        if(empty($ISO) || strlen($ISO) !== 3) {
+            throw new Exception('Invalid ISO: ' . $ISO);
+        }
+        $currency_id = $this->retrieveIDByISO($ISO);
+        if(empty($currency_id)) {
+            throw new Exception('No currency found for ISO: ' . $ISO);
+        }
+        $this->retrieve($currency_id);
+    }
+}
+
+/**
+ * CurrencyWithID
+ * This is an extension of the Currency class
+ * requiring the currency_id as the currency identifier
+ *
+ * @param $currency_id the currency_id of the currency
+ */
+class CurrencyWithID extends Currency
+{
+    function __construct($currency_id)
+    {
+        parent::__construct();
+        if(empty($currency_id)) {
+            throw new Exception('Invalid Currency ID: ' . $currency_id);
+        }
+        $this->retrieve($currency_id);
+    }
+}
+
+
+/**
  * currency_format_number
  *
  * This method is a wrapper designed exclusively for formatting currency values
@@ -239,6 +331,7 @@ class Currency extends SugarBean
  * @return String representation of amount with formatting applied
  */
 function currency_format_number($amount, $params = array()) {
+
     global $locale;
     if(isset($params['round']) && is_int($params['round'])){
 	    $real_round = $params['round'];
