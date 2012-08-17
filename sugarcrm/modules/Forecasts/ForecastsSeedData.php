@@ -169,13 +169,15 @@ public static function populateSeedData($timeperiods)
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
-            'show_buckets' => 'false',
+            'show_buckets' => false,
             'committed_probability' => 70,
+            //Default exclude sales stages to 'Closed Won' and 'Closed Lost'
+            'excluded_sale_stages' => array('Closed Won', 'Closed Lost')
         );
     $admin = new Administration();
     foreach ($forecastConfig as $name => $value)
     {
-        $admin->saveSetting('base', $name, $value);
+        $admin->saveSetting('base', $name, json_encode($value));
     }
 }
 }

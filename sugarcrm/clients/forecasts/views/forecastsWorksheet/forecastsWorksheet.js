@@ -369,8 +369,6 @@
      */
     calculateTotals: function() {
 
-
-
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
@@ -379,7 +377,9 @@
         var overallBest = 0;
         var overallLikely = 0;
         var includedCount = 0;
-
+        var closedCount = 0;
+        var closedAmount = 0;
+        var totalCount = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
@@ -387,25 +387,40 @@
                 'likely_case' : includedLikely,
                 'best_case' : includedBest,
                 'timeperiod_id' : self.timePeriod,
-                'opp_count' : includedCount,
-                'amount' : includedAmount
+                'included_opp_count' : includedCount,
+                'closed_opp_count' : closedCount,
+                'total_opp_count' : totalCount,
+                'amount' : includedAmount,
+                'closed_amount' : closedAmount
             });
             return false;
         }
 
+        //Get the excluded_sales_stage property.  Default to empty array if not set
+        app.config.excluded_sales_stages = app.config.excluded_sales_stages || [];
+
         _.each(self._collection.models, function (model) {
-            var included = model.get('forecast');
+
+            var excludeFromForecast = app.config.excluded_sales_stages.indexOf(model.get('sales_stage')) !== -1;
             var amount = parseFloat(model.get('amount'));
+            var included = model.get('forecast');
             var likely = parseFloat(model.get('likely_case'));
             var best = parseFloat(model.get('best_case'));
 
-            if(included == true || included == 1)
+            //If we exclude it, keep a track of the count as well as the amount
+            if(excludeFromForecast)
             {
+                closedAmount += amount;
+                closedCount++;
+            }
+
+            if(included == true || included == 1) {
                 includedAmount += amount;
                 includedLikely += likely;
                 includedBest += best;
                 includedCount++;
             }
+
             overallAmount += amount;
             overallLikely += likely;
             overallBest += best;
@@ -432,6 +447,7 @@
                         includedLikely += likely;
                         includedBest += best;
                     }
+
                     overallAmount += amount;
                     overallLikely += likely;
                     overallBest += best;
@@ -458,8 +474,11 @@
             'likely_case' : includedLikely,
             'best_case' : includedBest,
             'timeperiod_id' : self.timePeriod,
-            'opp_count' : includedCount,
-            'amount' : includedAmount
+            'included_opp_count' : includedCount,
+            'closed_opp_count' : closedCount,
+            'total_opp_count' : self._collection.models.length,
+            'amount' : includedAmount,
+            'closed_amount' : closedAmount
         };
 
         this.context.forecasts.set("updatedTotals", totals);
