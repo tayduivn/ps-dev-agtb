@@ -13,7 +13,6 @@
 
         // Re delegate events adding some of our custom
         this.delegateEvents(_.extend(this.events, extraEvents));
-        this.meta.type = "detail";
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {

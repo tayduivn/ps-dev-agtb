@@ -1,0 +1,6 @@
+<select data-placeholder="Loading..." name="{{name}}" class="relateEdit" multiple>
+    {{#each this.collection.models}}
+        <option value="{{this.id}}" selected>{{attributes.name}}</option>
+    {{/each}}
+</select>
+<p class="help-block"></p>
