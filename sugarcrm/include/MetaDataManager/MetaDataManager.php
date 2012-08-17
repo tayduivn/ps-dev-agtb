@@ -202,11 +202,17 @@ class MetaDataManager {
             foreach($layout_defs['subpanel_setup'] AS $name => $subpanel_info)
             {
                 $aSubPanel = $spd->load_subpanel($name, '', $parent_bean);
+
+                if(!$aSubPanel)
+                {
+                    continue;
+                }
+
                 if($aSubPanel->isCollection())
                 {
                     $collection = array();
                     foreach($aSubPanel->sub_subpanels AS $key => $subpanel)
-                    { 
+                    {
                         $collection[$key] = $subpanel->panel_definition;
                     }
                     $layout_defs['subpanel_setup'][$name]['panel_definition'] = $collection;
@@ -215,10 +221,10 @@ class MetaDataManager {
                 {
                     $layout_defs['subpanel_setup'][$name]['panel_definition'] = $aSubPanel->panel_definition;
                 }
-                
+
             }
         }
-        
+
         return $layout_defs;
     }
 
@@ -273,7 +279,7 @@ class MetaDataManager {
     public function getRelationshipData() {
         require_once('data/Relationships/RelationshipFactory.php');
         $relFactory = SugarRelationshipFactory::getInstance();
-        
+
         $data = $relFactory->getRelationshipDefs();
         foreach ( $data as $relKey => $relData ) {
             unset($data[$relKey]['table']);
@@ -334,7 +340,7 @@ class MetaDataManager {
         $outputAcl = array('fields'=>array());
         if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
-            
+
             if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
                 $outputAcl['admin'] = 'yes';
                 $isAdmin = true;
@@ -342,19 +348,19 @@ class MetaDataManager {
                 $outputAcl['admin'] = 'no';
                 $isAdmin = false;
             }
-            
+
             if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
                 $outputAcl['developer'] = 'yes';
             } else {
                 $outputAcl['developer'] = 'no';
             }
-            
+
             if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
                 $outputAcl['access'] = 'yes';
             } else {
                 $outputAcl['access'] = 'no';
             }
-            
+
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
 
@@ -367,13 +373,13 @@ class MetaDataManager {
                         $outputAcl[$action] = 'no';
                     }
                 }
-                
+
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
-                
+
                 // Now time to dig through the fields
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
-                
+
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl ) {
                         case ACL_READ_WRITE:
@@ -402,13 +408,13 @@ class MetaDataManager {
                             break;
                     }
                 }
-                
+
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
         return $outputAcl;
     }
-    
+
     /**
      * Fields accessor, gets sugar fields
      *
@@ -592,7 +598,7 @@ class MetaDataManager {
                         $templateName = basename($templateFile, $extension);
                         $templates[$templateName] = file_get_contents($templateFile);
                     }
-                }                    
+                }
             }
             // Do the custom directory last so it will override anything in the core product
             if ( is_dir('custom/'.$searchDir) ) {
@@ -607,7 +613,7 @@ class MetaDataManager {
         }
         return $templates;
     }
-    
+
     /**
      * The collector method for view templates
      *
@@ -706,7 +712,7 @@ class MetaDataManager {
                     require($prefix.'include/MVC/Controller/wireless_module_registry.php');
                 }
             }
-            
+
             // $wireless_module_registry is defined in the file loaded above
             $moduleList = array_keys($wireless_module_registry);
         } else {

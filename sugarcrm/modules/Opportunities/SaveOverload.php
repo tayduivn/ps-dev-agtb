@@ -83,6 +83,9 @@ function perform_save(&$focus){
 		$currency = new Currency();
 		$currency->retrieve($focus->currency_id);
 		$focus->amount_usdollar = $currency->convertToDollar($focus->amount);
-	}	
+        $focus->best_case_base_currency = $currency->convertToDollar($focus->best_case);
+        $focus->likely_case_base_currency = $currency->convertToDollar($focus->likely_case);
+        $focus->worst_case_base_currency = $currency->convertToDollar($focus->worst_case);
+    }
 }
 ?>
