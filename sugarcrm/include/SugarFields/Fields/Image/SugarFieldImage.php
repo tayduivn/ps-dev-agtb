@@ -72,12 +72,13 @@ class SugarFieldImage extends SugarFieldBase {
 			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
 			if (in_array($_FILES[$field]["type"], $imgType))
 			{
-				if ($upload_file->confirm_upload())
-				{
-					$bean->$field = create_guid();
-					$upload_file->final_move($bean->$field);
-				}
-			}
+                //only move from temp directory if it is a confirmed uploaded image
+                if($upload_file->confirm_upload() && verify_image_file($_FILES[$field]['tmp_name'])) {
+                     $bean->$field = create_guid();
+                    $upload_file->final_move($bean->$field);
+
+                }
+            }
 		}
 
 		//Check if we have the duplicate value set and use it if $bean->$field is empty
