@@ -412,7 +412,7 @@
         forecastData.timeperiod_id = self.timePeriodId;
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
-        forecastData.opp_count = self.totals.opp_count;
+        forecastData.opp_count = self.totals.included_opp_count;
 
         // apply data to model then save
         forecast.set(forecastData);
