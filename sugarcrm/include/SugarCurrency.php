@@ -36,8 +36,8 @@ class SugarCurrency
      * @access public
      * @param  float  $amount
      * @param  string $from_id source currency_id
-     * @param  string $to_id target currency_id, default base currency
-     * @return float   returns the converted amount
+     * @param  string $to_id target currency_id
+     * @return float   converted amount
      */
     public static function convertAmount( $amount, $from_id, $to_id ) {
         $currency1 = BeanFactory::getBean('Currencies');
@@ -55,7 +55,7 @@ class SugarCurrency
      * @access public
      * @param  float  $amount
      * @param  string $from_id source currency_id
-     * @return float   returns the converted amount
+     * @return float   converted amount
      */
     public static function convertAmountToBase( $amount, $from_id ) {
         return self::convertAmount($amount, $from_id, '-99');
@@ -71,7 +71,7 @@ class SugarCurrency
      * @param  string $decimal_separator Optional the string to use as decimal separator
      * @param  string $number_grouping_separator Optional the string to use for thousands separator
      * @param  string $symbol_separator Optional string between symbol and amount
-     * @return float   returns the converted amount
+     * @return string  formatted amount
      */
     public static function formatAmount(
         $amount,
@@ -94,7 +94,7 @@ class SugarCurrency
      * @param  float  $amount
      * @param  string $currency_id
      * @param  string $symbol_separator Optional string between symbol and amount
-     * @return float   returns the converted amount
+     * @return string  formatted amount
      */
     public static function formatAmountUserLocale(
         $amount,
