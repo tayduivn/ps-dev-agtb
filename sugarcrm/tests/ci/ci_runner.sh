@@ -37,16 +37,15 @@ function setup_paths() {
     # Gets full path to our "required" directories
     ABS_OUTPUT_DIR=$(get_full_path_to_dir $OUTPUT_DIR)
     MANGO_DIR=$(get_full_path_to_dir $MANGO_DIR)
+    ABS_TEST_DIR="${MANGO_DIR}/sugarcrm/tests"
 
 ######
 # Temporary hotfix .. in sugar7 a sugarcrm/config.js
 # will be generated at install time and this can be removed
 ####
-SUGARCRM_PATH="/Applications/MAMP/htdocs/ent/sugarcrm/"
 cp -R $MANGO_DIR/sugarcrm/sidecar/tests/config.js $SUGARCRM_PATH
 #####
 
-    ABS_TEST_DIR="${MANGO_DIR}/sugarcrm/tests"
 }
 function check_if_output_dir_exists() {
     if [ -d ${ABS_OUTPUT_DIR} ]; then
@@ -104,13 +103,14 @@ function parse_args() {
     if [ $# -eq 0 ] ; then
         usage
     fi
-    while getopts "qo:p:m:r:" opt; do
+    while getopts "qo:p:m:r:t:" opt; do
         case $opt in
             q) QUIET=1	;;
             o) OUTPUT_DIR="$OPTARG" ;;
             m) MANGO_DIR="$OPTARG" ;;
             p) PHANTOMJS="$OPTARG" ;;
             r) RUNNER_URI="$OPTARG" ;;
+            t) SUGARCRM_PATH="$OPTARG" ;;
         esac
     done
     shift $(($OPTIND - 1))
