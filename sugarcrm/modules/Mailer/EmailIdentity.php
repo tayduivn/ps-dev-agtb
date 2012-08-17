@@ -21,10 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * This is not the best name but it is used to avoid conflicts with the existing EmailAddress class.
- * @todo choose a better name
- */
 class EmailIdentity
 {
 	protected $email;
@@ -35,23 +31,19 @@ class EmailIdentity
 		$this->setName($name);
 	}
 
-	public function setEmail($email)
-	{
+	public function setEmail($email) {
 		$this->email = trim($email);
 	}
 
-	public function getEmail()
-	{
+	public function getEmail() {
 		return $this->email;
 	}
 
-	public function setName($name)
-	{
+	public function setName($name) {
 		$this->name = trim($name);
 	}
 
-	public function getName()
-	{
+	public function getName() {
 		return $this->name;
 	}
 }

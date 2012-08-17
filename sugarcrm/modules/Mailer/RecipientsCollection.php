@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'EmailIdentity.php';
+
 class RecipientsCollection
 {
 	const FunctionAddTo  = 'addTo';
@@ -77,16 +79,43 @@ class RecipientsCollection
 		return $invalidRecipients;
 	}
 
+	/**
+	 * Use the recipient's email address as the key to avoid adding duplicate recipients. This will overwrite a
+	 * recipient if a duplicate does exist. However, duplicates can still exist within the different recipient
+	 * classifications (to/cc/bcc).
+	 *
+	 * @todo consider returning response codes to indicate success/failure/overwrite
+	 *
+	 * @param EmailIdentity $recipient
+	 */
 	public function addTo(EmailIdentity $recipient) {
-		$this->to[] = $recipient;
+		$this->to[$recipient->getEmail()] = $recipient;
 	}
 
+	/**
+	 * Use the recipient's email address as the key to avoid adding duplicate recipients. This will overwrite a
+	 * recipient if a duplicate does exist. However, duplicates can still exist within the different recipient
+	 * classifications (to/cc/bcc).
+	 *
+	 * @todo consider returning response codes to indicate success/failure/overwrite
+	 *
+	 * @param EmailIdentity $recipient
+	 */
 	public function addCc(EmailIdentity $recipient) {
-		$this->cc[] = $recipient;
+		$this->cc[$recipient->getEmail()] = $recipient;
 	}
 
+	/**
+	 * Use the recipient's email address as the key to avoid adding duplicate recipients. This will overwrite a
+	 * recipient if a duplicate does exist. However, duplicates can still exist within the different recipient
+	 * classifications (to/cc/bcc).
+	 *
+	 * @todo consider returning response codes to indicate success/failure/overwrite
+	 *
+	 * @param EmailIdentity $recipient
+	 */
 	public function addBcc(EmailIdentity $recipient) {
-		$this->bcc[] = $recipient;
+		$this->bcc[$recipient->getEmail()] = $recipient;
 	}
 
 	public function getAll() {

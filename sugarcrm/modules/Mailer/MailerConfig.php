@@ -43,13 +43,11 @@ class MailerConfig
 		return $this->host;
 	}
 
-	public function setPort($port)
-	{
+	public function setPort($port) {
 		$this->port = $port;
 	}
 
-	public function getPort()
-	{
+	public function getPort() {
 		return $this->port;
 	}
 }
