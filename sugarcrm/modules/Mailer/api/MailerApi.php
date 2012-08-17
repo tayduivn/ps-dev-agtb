@@ -23,173 +23,149 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/api/ModuleApi.php');
 require_once('modules/Mailer/Mailer.php');
 
-class MailerApi extends ModuleApi {
+class MailerApi extends ModuleApi
+{
+	public function __construct() {}
 
-    public function __construct()
-    {
+	public function registerApiRest() {
+		$api = array(
+			'listMail'     => array(
+				'reqType'   => 'GET',
+				'path'      => array('Mail'),
+				'pathVars'  => array(''),
+				'method'    => 'listMail',
+				'shortHelp' => 'List Mail Records',
+				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#listMail',
+			),
 
-    }
+			'retrieveMail' => array(
+				'reqType'   => 'GET',
+				'path'      => array('Mail', '?'),
+				'pathVars'  => array('', 'email_id'),
+				'method'    => 'retrieveMail',
+				'shortHelp' => 'Retrieve Mail Record',
+				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#retrieveMail',
+			),
 
-    public function registerApiRest()
-    {
-        $api = array (
-            'listMail' => array(
-                'reqType' => 'GET',
-                'path' => array('Mail'),
-                'pathVars' => array(''),
-                'method' => 'listMail',
-                'shortHelp' => 'List Mail Records',
-                'longHelp' => 'include/api/html/modules/Mailer/MailApi.html#listMail',
-            ),
+			'sendMail'     => array(
+				'reqType'   => 'POST',
+				'path'      => array('Mail'),
+				'pathVars'  => array(''),
+				'method'    => 'createMail',
+				'shortHelp' => 'Create Mail Item',
+				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#createMail',
+			),
+		);
 
-            'retrieveMail' => array(
-                'reqType' => 'GET',
-                'path' => array('Mail','?'),
-                'pathVars' => array('','email_id'),
-                'method' => 'retrieveMail',
-                'shortHelp' => 'Retrieve Mail Record',
-                'longHelp' => 'include/api/html/modules/Mailer/MailApi.html#retrieveMail',
-            ),
-
-            'sendMail' => array(
-                'reqType' => 'POST',
-                'path' => array('Mail'),
-                'pathVars' => array(''),
-                'method' => 'createMail',
-                'shortHelp' => 'Create Mail Item',
-                'longHelp' => 'include/api/html/modules/Mailer/MailApi.html#createMail',
-            ),
-        );
-
-        return $api;
-    }
+		return $api;
+	}
 
 
-    /**
-     *
-     */
-    public function createMail($api, $args)
-    {
-        $admin = new Administration();
-        $admin->retrieveSettings();
+	/**
+	 * @param $api
+	 * @param $args
+	 * @return array
+	 */
+	public function createMail($api, $args) {
+		$admin = new Administration();
+		$admin->retrieveSettings();
 
-        $mailConfig = new MailerConfig();
-        if($admin->settings['mail_sendtype'] == "SMTP")
-        {
-            //$mailConfig->setProtocol("smtp");
-            //$mailConfig->setHost($admin->settings['mail_smtpserver']);
-            //$mailConfig->setPort($admin->settings['mail_smtpport']);
+		$mailer = new Mailer();
+		$mailer->setSender(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
 
-            //if($admin->settings['mail_smtpauth_req']) {
-            //    $mail->SMTPAuth = TRUE;
-            //    $mail->Username = $admin->settings['mail_smtpuser'];
-            //    $mail->Password = $admin->settings['mail_smtppass'];
-            //}
-            //if ($admin->settings['mail_smtpssl'] == 1) {
-            //    $mail->SMTPSecure = 'ssl';
-            //}
-            //else if ($admin->settings['mail_smtpssl'] == 2) {
-            //    $mail->SMTPSecure = 'tls';
-            //}
-        }
-        else
-            $mailConfig->setProtocol("sendmail");
+		if (is_array($args["to_addresses"])) {
+			foreach ($args["to_addresses"] AS $toAddress) {
+				$recipient = $this->generateEmailIdentity($toAddress);
+				if ($recipient) {
+					$mailer->addRecipientsTo($recipient);
+				}
+			}
+		}
 
-        $mailer = new Mailer();
-        $mailer->setConfig($mailConfig);
+		if (is_array($args["cc_addresses"])) {
+			foreach ($args["cc_addresses"] AS $ccAddress) {
+				$recipient = $this->generateEmailIdentity($ccAddress);
+				if ($recipient) {
+					$mailer->addRecipientsCc($recipient);
+				}
+			}
+		}
 
-        $fromEmail = $admin->settings['notify_fromaddress'];
-        $fromName  = empty($admin->settings['notify_fromname']) ? ' ' : $admin->settings['notify_fromname'];
-        $mailer->setFrom(new EmailIdentity($fromEmail, $fromName));
+		if (is_array($args["bcc_addresses"])) {
+			foreach ($args["bcc_addresses"] AS $bccAddress) {
+				$recipient = $this->generateEmailIdentity($bccAddress);
+				if ($recipient) {
+					$mailer->addRecipientsBcc($recipient);
+				}
+			}
+		}
 
-        if (is_array($args["to_addresses"])) {
-            foreach($args["to_addresses"] AS $toAddress) {
-                $recipient = $this->getRecipient($toAddress);
-                if ($recipient) {
-                    $mailer->addRecipientsTo($recipient);
-                }
-            }
-        }
+		if (isset($args["subject"])) {
+			$mailer->setSubject($args["subject"]);
+		}
 
-        if (is_array($args["cc_addresses"])) {
-            foreach($args["cc_addresses"] AS $ccAddress) {
-                $recipient = $this->getRecipient($ccAddress);
-                if ($recipient) {
-                    $mailer->addRecipientsCc($recipient);
-                }
-            }
-        }
+		if (isset($args["text_body"])) {
+			$mailer->setTextBody($args["text_body"]);
+		}
 
-        if (is_array($args["bcc_addresses"])) {
-            foreach($args["bcc_addresses"] AS $bccAddress) {
-                $recipient = $this->getRecipient($bccAddress);
-                if ($recipient) {
-                    $mailer->addRecipientsBcc($recipient);
-                }
-            }
-        }
+		if (isset($args["html_body"])) {
+			$args["html_body"] = urldecode($args["html_body"]);
+			$mailer->setHtmlBody($args["html_body"]);
+		}
 
-        if (isset($args["subject"])) {
-            $mailer->setSubject($args["subject"]);
-        }
+		$success = $mailer->send();
+		if (!$success) {
 
-        if (isset($args["text_body"])) {
-            $mailer->setTextBody($args["text_body"]);
-        }
+		}
 
-        if (isset($args["html_body"])) {
-            $args["html_body"] = urldecode($args["html_body"]);
-            $mailer->setHtmlBody($args["html_body"]);
-        }
+		$result = array(
+			"FUNCTION"   => "sendMail",
+			"ARGS"       => $args,
+			"SUCCESS"    => $success
+		);
 
-        $success = $mailer->send();
-        if (!$success) {
-
-        }
-
-        $result = array(
-            "FUNCTION"   =>  "sendMail",
-            "ARGS" => $args,
-            "SUCCESS" => $success
-        );
-
-        return $result;
-    }
+		return $result;
+	}
 
 
-    /**
-     *
-     */
-    public function listMail($api, $args)
-    {
-        $result = array();
-        return $result;
-    }
+	/**
+	 * @param $api
+	 * @param $args
+	 * @return array
+	 */
+	public function listMail($api, $args) {
+		$result = array();
+		return $result;
+	}
 
 
-    /**
-     *
-     */
-    public function retrieveMail($api, $args)
-    {
-        $result = array();
-        return $result;
-    }
+	/**
+	 * @param $api
+	 * @param $args
+	 * @return array
+	 */
+	public function retrieveMail($api, $args) {
+		$result = array();
+		return $result;
+	}
 
 
+	/**
+	 *  Local Functions
+	 */
 
-    /**
-     *  Local Functions
-     */
-
-    protected function getRecipient($data) {
-        if (is_array($data) && !empty($data['email'])) {
-            $email = $data['email'];
-            if (isset($data['name'])) {
-                $name = $data['name'];
-            }
-            $recipient = new EmailIdentity($email, $name);
-        }
-        return $recipient;
-    }
+	/**
+	 * @param $data
+	 * @return EmailIdentity
+	 */
+	protected function generateEmailIdentity($data) {
+		if (is_array($data) && !empty($data['email'])) {
+			$email = $data['email'];
+			if (isset($data['name'])) {
+				$name = $data['name'];
+			}
+			$recipient = new EmailIdentity($email, $name);
+		}
+		return $recipient;
+	}
 }

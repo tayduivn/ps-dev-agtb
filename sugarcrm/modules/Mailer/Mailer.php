@@ -25,13 +25,12 @@ require_once 'lib/phpmailer/class.phpmailer.php';
 require_once 'MailerException.php';
 require_once 'EmailIdentity.php';
 require_once 'RecipientsCollection.php';
-require_once 'MailerConfig.php';
 
 class Mailer
 {
 	protected $mailer;
-	protected $config;
-	protected $from;
+	protected $configs;
+	protected $sender;
 	protected $recipients;
 	protected $subject;
 	protected $htmlBody;
@@ -43,39 +42,58 @@ class Mailer
 
 	public function reset() {
 		$this->mailer = new PHPMailer();
+		$this->loadDefaultConfigs();
 		$this->recipients = new RecipientsCollection();
+		$this->subject = null;
+		$this->htmlBody = null;
+		$this->textBody = null;
 	}
 
 	/**
-	 * @param $config
+	 * Initialize or replace the configurations with the defaults for this sending strategy.
 	 */
-	public function setConfig($config) {
-		$this->config = $config;
+	public function loadDefaultConfigs() {
+		//@todo for now use the PHPMailer defaults, but eventually use this as a way to default to SMTP
+		$defaults = array(
+			'protocol' => 'mail', // smtp or other send mail program
+			'host'     => 'localhost', // smtp host
+			'port'     => 25 // smtp port
+		);
+
+		$this->setConfigs($defaults);
 	}
 
 	/**
-	 * @return MailerConfig
+	 * Use this method to replace the default configurations. This will replace the previous configurations;
+	 * it will not merge the configurations.
+	 *
+	 * @param array $configs
 	 */
-	public function getConfig() {
-		if (!($this->config instanceof MailerConfig)) {
-			$this->config = new MailerConfig(); // load the defaults
-		}
-
-		return $this->config;
+	public function setConfigs($configs) {
+		$this->configs = $configs;
 	}
 
 	/**
-	 * @param EmailIdentity $from
+	 * Merge the passed in configurations with the existing configurations.
+	 *
+	 * @param array $configs
 	 */
-	public function setFrom(EmailIdentity $from) {
-		$this->from = $from;
+	public function mergeConfigs($configs) {
+		$this->configs = array_merge($this->configs, $configs);
 	}
 
 	/**
-	 * @return EmailIdentity
+	 * @return array
 	 */
-	public function getFrom() {
-		return $this->from;
+	public function getConfigs() {
+		return $this->configs;
+	}
+
+	/**
+	 * @param EmailIdentity $sender
+	 */
+	public function setSender(EmailIdentity $sender) {
+		$this->sender = $sender;
 	}
 
 	/**
@@ -124,24 +142,10 @@ class Mailer
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getTextBody() {
-		return $this->textBody;
-	}
-
-	/**
 	 * @param string $htmlBody
 	 */
 	public function setHtmlBody($htmlBody) {
 		$this->htmlBody = $htmlBody;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getHtmlBody() {
-		return $this->htmlBody;
 	}
 
 	/**
@@ -156,7 +160,7 @@ class Mailer
 			$this->transferConnectionData();
 			$this->transferHeaders();
 			$this->transferRecipients();
-            $this->transferBody();
+			$this->transferBody();
 
 			if (!$this->mailer->IsError()) {
 				$this->mailer->Send();
@@ -174,22 +178,21 @@ class Mailer
 	}
 
 	protected function transferConnectionData() {
-		$config = $this->getConfig();
-		$this->mailer->Mailer = $config->getProtocol();
-		$this->mailer->Host = $config->getHost();
-		$this->mailer->Port = $config->getPort();
+		$this->mailer->Mailer = $this->configs->getProtocol();
+		$this->mailer->Host = $this->configs->getHost();
+		$this->mailer->Port = $this->configs->getPort();
 	}
 
 	protected function transferHeaders() {
-		$fromEmail = $this->from->getEmail();
+		$senderEmail = $this->sender->getEmail();
 
 		//@todo should we really validate this email address? can that be done reliably further up in the stack?
-		if (!is_string($fromEmail)) {
-			throw new MailerException("Invalid from email address");
+		if (!is_string($senderEmail)) {
+			throw new MailerException("Invalid sender email address");
 		}
 
-		$this->mailer->From = $fromEmail;
-		$this->mailer->FromName = $this->from->getName();
+		$this->mailer->From = $senderEmail;
+		$this->mailer->FromName = $this->sender->getName();
 
 		if (!is_string($this->subject)) {
 			throw new MailerException("Invalid subject");
@@ -203,6 +206,7 @@ class Mailer
 		$cc = $this->recipients->getCc();
 		$bcc = $this->recipients->getBcc();
 
+		//@todo should you be able to initiate a send without any To recipients?
 		foreach ($to as $recipient) {
 			$this->mailer->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
