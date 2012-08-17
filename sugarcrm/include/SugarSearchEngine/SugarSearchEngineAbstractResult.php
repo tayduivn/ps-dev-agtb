@@ -62,7 +62,7 @@ abstract class SugarSearchEngineAbstractResult implements SugarSearchEngineResul
      */
     public function getScore()
     {
-        return '';
+        return 0;
     }
 
 }
