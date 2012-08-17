@@ -274,13 +274,19 @@ class UnifiedSearchApi extends SugarApi {
     protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineElastic $searchEngine, array $options)
     {
         $options['append_wildcard'] = 1;
-    
+        if(empty($options['moduleList']))
+        {
+            $options['moduleList'] = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+        }
+        $options['moduleFilter'] = $options['moduleList'];
+
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
         $returnedRecords = array();
         foreach ( $results as $result ) {
-            $record = $result->getBean();
+            $record = BeanFactory::getBean($result->getModule(), $result->getId());
+
             // if we cant' get the bean skip it
-            if(!($record instanceof SugarBean))
+            if($record === false)
             {
                 continue;
             }
@@ -301,20 +307,20 @@ class UnifiedSearchApi extends SugarApi {
             $returnedRecords[] = $formattedRecord;
         }
 
-        if(!empty($options['offset']) && !empty($options['limit']) && $options['offset'] != 'end')
+
+        $total = $results->getTotalHits();
+
+        if ( $total > $options['limit'] )
         {
-            $total = $results->getTotalHits();
-            if ( $total > $options['limit'] ) {
-                $nextOffset = $options['offset']+$options['limit'];
-            } else {
-                $nextOffset = -1;
-            }
+            $nextOffset = $options['offset']+$options['limit'];
         }
         else
         {
             $nextOffset = -1;
         }
         
+
+ 
         return array('next_offset'=>$nextOffset,'records'=>$returnedRecords);        
     }
 

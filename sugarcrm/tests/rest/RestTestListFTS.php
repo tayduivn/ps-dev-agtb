@@ -24,6 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 require_once('modules/SugarFavorites/SugarFavorites.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 class RestTestListFTS extends RestTestBase {
     public function setUp()
@@ -35,36 +36,29 @@ class RestTestListFTS extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->files = array();
+        $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
     }
 
     public function tearDown()
     {
         $accountIds = array();
         foreach ( $this->accounts as $account ) {
+            $this->search_engine->delete($account);
             $accountIds[] = $account->id;
         }
         $accountIds = "('".implode("','",$accountIds)."')";
         $oppIds = array();
         foreach ( $this->opps as $opp ) {
+            $this->search_engine->delete($opp);
             $oppIds[] = $opp->id;
         }
         $oppIds = "('".implode("','",$oppIds)."')";
         $contactIds = array();
         foreach ( $this->contacts as $contact ) {
+            $this->search_engine->delete($contact);
             $contactIds[] = $contact->id;
         }
         $contactIds = "('".implode("','",$contactIds)."')";
-        $caseIds = array();
-        foreach ( $this->cases as $aCase ) {
-            $caseIds[] = $aCase->id;
-        }
-        $caseIds = "('".implode("','",$caseIds)."')";
-
-        $bugIds = array();
-        foreach( $this->bugs AS $bug ) {
-            $bugIds[] = $bug->id;
-        }
-        $bugIds = "('" . implode( "','", $bugIds) . "')";
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -75,14 +69,9 @@ class RestTestListFTS extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
-        $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
-        $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
-        $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
-        $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    
         foreach($this->files AS $file) {
             unlink($file);
         }
@@ -94,32 +83,16 @@ class RestTestListFTS extends RestTestBase {
             $account = new Account();
             $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
             $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
-            if ( $i > 25 && $i < 36 ) {
-                $account->assigned_user_id = $GLOBALS['current_user']->id;
-            } else {
-                // The rest are assigned to admin
-                $account->assigned_user_id = '1';
-            }
+            $account->assigned_user_id = $GLOBALS['current_user']->id;
+            $account->team_id = 1;
+            $account->team_set_id = 1;
             $account->save();
+            $this->search_engine->indexBean($account, FALSE);
             $this->accounts[] = $account;
-            if ( $i > 33 ) {
-                // Favorite the last six
-                $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
-                $fav->new_with_id = true;
-                $fav->module = 'Accounts';
-                $fav->record_id = $account->id;
-                $fav->created_by = $GLOBALS['current_user']->id;
-                $fav->assigned_user_id = $GLOBALS['current_user']->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
         }
-        $sfi = new SugarSearchEngineFullIndexer();
-        $sfi->performFullSystemIndex();
+
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
-
         $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -127,13 +100,14 @@ class RestTestListFTS extends RestTestBase {
 
         $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
 
-        // Test finding one record
-        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
-        
+        // Test finding one record exact match, needs quotes in elastic or it returns a match for each word..thus returning all unit tests
+        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode('"' . $this->accounts[17]->name . '"'));
+
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->accounts[17]->name,$firstRecord['name'],"The search failed for record: ".$this->accounts[17]->name);
 
+        /*
         // Sorting descending
         $restReply4 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
         
@@ -142,6 +116,7 @@ class RestTestListFTS extends RestTestBase {
                               $restReply4['reply']['records'][$tmp[1]]['id'],
                               'Second record is not lower than the first, decending order failed.');
 
+        
         // Sorting ascending
         $restReply5 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
         
@@ -153,7 +128,6 @@ class RestTestListFTS extends RestTestBase {
         // Get a list, no searching
         $restReply = $this->_restCall("Accounts?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
-
         // Get 2 pages, verify the data is different [check guids]
         $restReply_page1 = $this->_restCall("Accounts?offset=0&max_num=5");
         $restReply_page2 = $this->_restCall("Accounts?offset=5&max_num=5");
@@ -162,9 +136,8 @@ class RestTestListFTS extends RestTestBase {
                 $this->assertNotEquals($page2_record['id'], $page1_record['id'], "ID's match, pagination may be broke");
             }
         }
-
+        */
     }
-
 
     public function testGlobalSearch() {
         // Make sure there is at least one page of accounts
@@ -172,85 +145,34 @@ class RestTestListFTS extends RestTestBase {
             $account = new Account();
             $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
             $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
-            if ( $i > 25 && $i < 36 ) {
-                $account->assigned_user_id = $GLOBALS['current_user']->id;
-            } else {
-                // The rest are assigned to admin
-                $account->assigned_user_id = '1';
-            }
+            $account->assigned_user_id = $GLOBALS['current_user']->id;
             $account->save();
+            $this->search_engine->indexBean($account, false);
             $this->accounts[] = $account;
-            if ( $i > 33 ) {
-                // Favorite the last six
-                $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
-                $fav->new_with_id = true;
-                $fav->module = 'Accounts';
-                $fav->record_id = $account->id;
-                $fav->created_by = $GLOBALS['current_user']->id;
-                $fav->assigned_user_id = $GLOBALS['current_user']->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $contact = new Contact();
             $contact->first_name = "UNIT ".count($this->contacts);
             $contact->last_name = "TEST ".create_guid();
-            if ( $i > 15 && $i < 26 ) {
-                $contact->assigned_user_id = $GLOBALS['current_user']->id;
-            } else {
-                // The rest are assigned to admin
-                $contact->assigned_user_id = '1';
-            }
+            $contact->assigned_user_id = $GLOBALS['current_user']->id;
             $contact->save();
+            $this->search_engine->indexBean($contact, false);
             $this->contacts[] = $contact;
-            if ( $i > 23 ) {
-                // Favorite the last six
-                $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Contacts',$contact->id);
-                $fav->new_with_id = true;
-                $fav->module = 'Contacts';
-                $fav->record_id = $contact->id;
-                $fav->created_by = $GLOBALS['current_user']->id;
-                $fav->assigned_user_id = $GLOBALS['current_user']->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $opportunity = new Opportunity();
             $opportunity->name = "UNIT ".count($this->opps)." TEST ".create_guid();
-            
-            if ( $i > 15 && $i < 26 ) {
-                $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
-            } else {
-                // The rest are assigned to admin
-                $opportunity->assigned_user_id = '1';
-            }
+            $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
             $opportunity->save();
+            $this->search_engine->indexBean($opportunity, false);
             $this->opps[] = $opportunity;
-            if ( $i > 23 ) {
-                // Favorite the last six
-                $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Opportunities',$opportunity->id);
-                $fav->new_with_id = true;
-                $fav->module = 'Opportunities';
-                $fav->record_id = $opportunity->id;
-                $fav->created_by = $GLOBALS['current_user']->id;
-                $fav->assigned_user_id = $GLOBALS['current_user']->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
         }
-        $sfi = new SugarSearchEngineFullIndexer();
-        $sfi->performFullSystemIndex();
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
-
+        
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -259,12 +181,12 @@ class RestTestListFTS extends RestTestBase {
         $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
 
         // Test finding one record
-        $restReply3 = $this->_restCall("search/?q=".rawurlencode($this->opps[17]->name));
+        $restReply3 = $this->_restCall("search/?q=".rawurlencode('"' . $this->opps[17]->name . '"'));
         
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->opps[17]->name,$firstRecord['name'],"The search failed for record: ".$this->opps[17]->name);
-
+/*
         // Sorting descending
         $restReply4 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
         
@@ -280,12 +202,13 @@ class RestTestListFTS extends RestTestBase {
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
                                  'Second record is not lower than the first, ascending order failed.');
-
+*/
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
         
     }
+
 
 }
 

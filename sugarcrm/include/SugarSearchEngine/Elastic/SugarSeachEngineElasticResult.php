@@ -63,14 +63,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     {
         return $this->elasticaResult->module;
     }
-    /**
-     *
-     * @return object|bool
-     */
-    public function getBean()
-    {
-        return $this->bean;
-    }
+
 
     /**
      *
