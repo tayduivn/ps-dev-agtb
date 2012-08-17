@@ -53,7 +53,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_client = new Elastica_Client($this->_config);
     }
 
-
+    /**
+     * Either index single bean or add the record to be indexed into _documents for later batch indexing,
+     * depending on the $batch parameter
+     *
+     * @param $bean SugarBean object to be indexed
+     * @param $batch boolean whether to do batch index
+     */
     public function indexBean($bean, $batch = TRUE)
     {
         if(!$this->isModuleFtsEnabled($bean->module_dir) )
@@ -64,11 +70,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         else
         {
             $GLOBALS['log']->info("Adding bean to doc list with id: {$bean->id}");
-
-            //Group our beans by index type for bulk insertion
-            $indexType = $this->getIndexType($bean);
-            if(! isset($this->_documents[$indexType]) )
-                $this->_documents = array();
 
             //Create and store our document index which will be bulk inserted later, do not store beans as they are heavy.
             $this->_documents[] = $this->createIndexDocument($bean);
