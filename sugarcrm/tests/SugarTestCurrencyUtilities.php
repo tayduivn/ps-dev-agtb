@@ -49,7 +49,7 @@ class SugarTestCurrencyUtilities
      *
      * @param $name the name of the currency
      * @param $symbol the symbol for the currency
-     * @param iso4217 the 3-letter ISO for the currency
+     * @param $iso4217 the 3-letter ISO for the currency
      * @param $conversion_rate the conversion rate from the US dollar
      * @param $id the id for the currency record
      * @return new currency object
@@ -77,7 +77,7 @@ class SugarTestCurrencyUtilities
      *
      * get an existing currency by its ISO
      *
-     * @param iso4217 the 3-letter ISO for the currency
+     * @param  $iso4217 the 3-letter ISO for the currency
      * @return new currency object
      */
     public static function getCurrencyByISO($iso4217)
@@ -91,6 +91,7 @@ class SugarTestCurrencyUtilities
      * removeAllCreatedCurrencies
      *
      * remove currencies created by this test utility
+     *
      * @return boolean true on successful removal
      */
     public static function removeAllCreatedCurrencies()
