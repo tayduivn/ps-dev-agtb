@@ -40,4 +40,21 @@ class RestTestCurrentUser extends RestTestBase {
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }
 
+    public function testPasswordUpdate() {
+        $reply = $this->_restCall("me/password",
+            json_encode(array('new_password' => 'W0nkY123', 'old_password' => $GLOBALS['current_user']->user_name)),
+            'PUT');
+        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $reply = $this->_restCall("me/password",
+            json_encode(array('new_password' => 'Y3s1tWorks', 'old_password' => 'W0nkY123')),
+            'PUT');
+        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+
+        // Incorrect old password returns valid:false
+        $reply = $this->_restCall("me/password",
+            json_encode(array('new_password' => 'Y@ky1234', 'old_password' => 'justwrong!')),
+            'PUT');
+        $this->assertEquals($reply['reply']['current_user']['valid'], false);
+    }
+        
 }

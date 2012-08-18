@@ -48,7 +48,7 @@ class CurrentUserApi extends SugarApi {
                 'pathVars'=> array(''),
                 'method' => 'updatePassword',
                 'shortHelp' => "Updates current user' password",
-                'longHelp' => 'include/api/html/help/me.html',
+                'longHelp' => 'include/api/help/change_password.html',
             ),
         );
     }
@@ -136,28 +136,49 @@ class CurrentUserApi extends SugarApi {
     public function updatePassword($api, $args) {
 
         global $current_user;
+        $user_data['valid'] = false;
         
+        // Deals with missing required args else assigns oldpass and new paswords
+        if (empty($args['old_password']) || empty($args['new_password'])) {
+            // TODO: This should probably throw???
+            $user_data['message'] = 'Error: Missing argument.';
+            return $data = array($user_data);
+        } else {
+            $oldpass = $args['old_password'];
+            $newpass = $args['new_password'];
+        }
+
+        // Create the user from Contacts (if portal user), otherwise from Users
         if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+            $currentPassword = $contact->portal_password;
 
-            $oldPassword = $contact->portal_password;
-
-            // update password
-            if (!empty($args['portal_password']) && $args['portal_password'] != $oldPassword && $args['portal_password'] != 'value_setvalue_setvalue_set') {
-                $contact->portal_password = User::getPasswordHash($args['portal_password']);
-                $user_data['valid'] = true;
+            // Update password for portal user. They must have entered correct "old password"
+            if (User::checkPassword($oldpass, $currentPassword)) {
+                $contact->portal_password = User::getPasswordHash($newpass);
                 $contact->save();
+                $user_data['valid'] = true;
             } else {
                 $user_data['valid'] = false;
-                // TODO: Is this standard with our REST Api? Even needed?
-                $user_data['message'] = 'Error: Password empty or same as old password.';
+                $user_data['message'] = 'Error: Incorrect password.'; 
             }
-            $user_data['expiration'] = null;
         } else {
-            // TODO: update password for normal non support_portal user
-            //
-            //
+            // Update password for normal non support_portal user
+            $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
+            $currentPassword = $user->user_hash;
+
+            // Update password for user. They must have entered correct "old password"
+            if (User::checkPassword($oldpass, $currentPassword)) {
+                if($user->change_password($oldpass, $newpass)) {
+                    $user_data['valid'] = true;
+                } else {
+                    $user_data['message'] = 'Error: There was a problem updating password for this user.';
+                }
+            } else {
+                $user_data['message'] = 'Error: Incorrect password.'; 
+            }
         }
+        $user_data['expiration'] = null;
         return $data = array('current_user'=>$user_data);
     }
 

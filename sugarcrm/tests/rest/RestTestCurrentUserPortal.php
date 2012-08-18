@@ -139,13 +139,21 @@ class RestTestCurrentUserPortal extends RestTestBase {
     }
 
     public function testPasswordUpdate() {
+        $this->_restLogin();
+        // Change password twice to be sure working as expected
         $reply = $this->_restCall("me/password",
-            json_encode(array('portal_password' => 'fubar')),
+            json_encode(array('new_password' => 'fubar', 'old_password' => 'unittest')),
             'PUT');
-
-        $this->assertNotEmpty($reply['reply']['current_user']['valid']);
-        $this->assertEquals($reply['reply']['current_user']['valid'], User::getPasswordHash("fubar"));
-        $this->assertNotEquals($this->portalGuy->portal_password, User::getPasswordHash("fubar")); // actually changed
+        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $reply = $this->_restCall("me/password",
+            json_encode(array('new_password' => 'newernew', 'old_password' => 'fubar')),
+            'PUT');
+        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        // Now use an incorrect old_password .. this should return valid:false
+        $reply = $this->_restCall("me/password",
+            json_encode(array('new_password' => 'hello', 'old_password' => 'nope')),
+            'PUT');
+        $this->assertEquals($reply['reply']['current_user']['valid'], false);
     }
 
 }
