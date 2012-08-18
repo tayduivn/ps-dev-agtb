@@ -31,3 +31,22 @@
             right: @beforeRightCaretPos;
         }
 }
+
+// CSS3 PROPERTIES
+// --------------------------------------------------
+
+// Border Radi
+.border-radii(@tr-radius,@br-radius,@bl-radius,@tl-radius) {
+  -webkit-border-top-right-radius: @tr-radius;
+    -moz-border-radius-topright: @tr-radius;
+      border-top-right-radius: @tr-radius;
+  -webkit-border-bottom-right-radius: @br-radius;
+    -moz-border-radius-bottomright: @br-radius;
+      border-bottom-right-radius: @br-radius;
+  -webkit-border-bottom-left-radius: @bl-radius;
+    -moz-border-radius-bottomleft: @bl-radius;
+      border-bottom-left-radius: @bl-radius;
+  -webkit-border-top-left-radius: @tl-radius;
+    -moz-border-radius-topleft: @tl-radius;
+      border-top-left-radius: @tl-radius;
+}
