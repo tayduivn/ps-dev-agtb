@@ -1,0 +1,33 @@
+#portal .navbar-inner {
+  color:#444;
+  -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #cdcccb;
+  -moz-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #cdcccb;
+  box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #cdcccb;
+}
+#portal .navbar-inner a, #portal .navbar a [class^="icon-"], #portal .navbar a .caret {
+  color:#58595b !important;
+  text-shadow:none;
+}
+#portal .navbar .dropdown-menu li:hover a { color:#fff !important; }
+#portal .navbar a .caret { border-top-color:#58595b; }
+#portal .navbar .divider-vertical {
+  background-color:#cdcccb;
+  border-right:1px solid #f5f5f5;
+}
+#portal .cube { background:url('../../bootstrap/img/badge_256g.png') 50% 50% no-repeat; }
+#portal .container-fluid { position:relative; }
+#portal .search-query { border-color:#cdcccb !important; }
+#portal .search-query:hover { border-color:#cdcccb !important; }
+#portal .navbar .nav > li > a:hover {
+  background-color:#f5f5f5;
+  color:#58595b;
+  text-decoration:none;
+  text-shadow:none;
+}
+#portal .navbar .nav .active > a, #portal .navbar .nav .active > a:hover {
+  color:#58595b;
+  background-color:#e8e8e8;
+  border-bottom:3px solid #58595b;
+  padding-bottom:14px;
+}
+ul.nav.nav-tabs li.activity > a, ul.nav.nav-tabs li.activity > p { display:inline-block; }
