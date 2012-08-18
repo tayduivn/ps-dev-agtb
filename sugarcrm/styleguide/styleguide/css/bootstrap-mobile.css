@@ -1268,7 +1268,8 @@ ul.icons li .icon-large:before, ul.icons li .icon-large:before { vertical-align:
   vertical-align:top;
   font-size:68px;
 }
-.navbar .icon-plus:before { padding-top:2px; }
+.navbar .icon-plus.icon-md { line-height:14px; }
+.navbar .icon-plus:before { margin:3px 0 -2px; }
 @font-face {
   font-family:'FontAwesome';
   src:url('../../bootstrap/font/fontawesome-webfont.ttf') format('truetype');
