@@ -26,10 +26,10 @@
     {{previousLikelyCase}}
     </div>
     <div class="toggle">
-        <i class="icon-chevron-down"></i>
+        <i id="show_hide_history_log" class="icon-chevron-down"></i>
     </div>
 </div>
-<div class="extend results hide">
+<div class="extend results hide" id="history_log_results">
 {{#each historyLog}}
    <article>
    {{this.text}}
@@ -39,7 +39,7 @@
 {{/each}}
 {{#if moreLog.length}}
 <div class="title" id="more"><p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br /></div>
-<div class="extend results hide">
+<div class="extend results hide" id="more_log_results">
 {{#each moreLog}}
    <article>
    {{this.text}}
@@ -52,28 +52,3 @@
 </div>
 {{/if}}
 </div>
-
-<script type="text/javascript">
-    $('.drawer').toggle(
-    function (e) {
-        $(this).next('.extend').removeClass('hide');
-        $(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
-        return false;
-    },
-    function (e) {
-        $(this).next('.extend').addClass('hide');
-        $(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
-        return false;
-    })
-    $('#more').toggle(
-    function (e) {
-        $(this).next('.extend').removeClass('hide');
-        $(this).html('<p><span class=" icon-minus-sign">&nbsp;{{str "LBL_LESS" "Forecasts"}}</span></p><br />');
-        return false;
-    },
-    function (e) {
-        $(this).next('.extend').addClass('hide');
-        $(this).html('<p><span class=" icon-plus-sign">&nbsp;{{str "LBL_MORE" "Forecasts"}}</span></p><br />');
-        return false;
-    })
-</script>

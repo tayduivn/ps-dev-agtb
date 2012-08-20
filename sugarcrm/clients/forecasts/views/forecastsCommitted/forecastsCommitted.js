@@ -81,6 +81,21 @@
 
     runningFetch : false,
 
+    /**
+     * Used to determine whether or not to visibly show the Commit log
+     */
+    showHistoryLog : false,
+
+    /**
+     * Used to determine whether or not to visibly show the extended Commit log
+     */
+    showMoreLog : false,
+
+    events : {
+        'click i[id=show_hide_history_log]' : 'showHideHistoryLog',
+        'click div[id=more]' : 'showHideMoreLog'
+    },
+
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.committed;
@@ -95,6 +110,40 @@
 
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.showHistoryLog = false;
+    },
+
+    /**
+     * Switch showHistoryLog flag for expanding/collapsing log after commit
+     */
+    showHideHistoryLog: function() {
+        this.showHistoryLog = this.showHistoryLog ? false : true;
+        this._render();
+    },
+
+    /**
+     * Switch showMoreLog flag for expanding/collapsing extended log after commit
+     */
+    showHideMoreLog: function() {
+        this.showMoreLog = this.showMoreLog ? false : true;
+        this._render();
+    },
+
+    /**
+     * Renders the component
+     * @private
+     */
+    _render: function() {
+        app.view.View.prototype._render.call(this);
+
+        if(this.showHistoryLog) {
+            this.$el.find('i[id=show_hide_history_log]').toggleClass('icon-chevron-down icon-chevron-up');
+            this.$el.find('div[id=history_log_results]').removeClass('hide');
+            if(this.showMoreLog) {
+                this.$el.find('div[id=more_log_results]').removeClass('hide');
+                this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + App.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
+            }
+        }
     },
 
     createUrl : function() {
