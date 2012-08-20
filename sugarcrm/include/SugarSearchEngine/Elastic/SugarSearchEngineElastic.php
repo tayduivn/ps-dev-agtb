@@ -545,18 +545,25 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $results = null;
         try
         {
-            $qString = html_entity_decode($queryString, ENT_QUOTES);
-            $queryObj = new Elastica_Query_QueryString($qString);
-            $queryObj->setAnalyzeWildcard(true);
-            $queryObj->setAutoGeneratePhraseQueries(false);
-            if( !empty($options['append_wildcard']) )
-                // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
-                $queryObj->setRewrite('top_terms_5');
+            // trying to match everything, make a MatchAll query
+            if($queryString == '*')
+            {
+                $queryObj = new Elastica_Query_MatchAll();
+            }
+            else
+            {
+                $qString = html_entity_decode($queryString, ENT_QUOTES);
+                $queryObj = new Elastica_Query_QueryString($qString);
+                $queryObj->setAnalyzeWildcard(true);
+                $queryObj->setAutoGeneratePhraseQueries(false);
+                if( !empty($options['append_wildcard']) )
+                    // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
+                    $queryObj->setRewrite('top_terms_5');
 
-            // set query string fields
-            $fields = $this->getSearchFields($options);
-            $queryObj->setFields($fields);
-
+                // set query string fields
+                $fields = $this->getSearchFields($options);
+                $queryObj->setFields($fields);
+            }
             $s = new Elastica_Search($this->_client);
             //Only search across our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -618,7 +625,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
-
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
 
