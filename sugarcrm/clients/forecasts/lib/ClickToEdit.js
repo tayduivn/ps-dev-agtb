@@ -73,8 +73,6 @@
                         if(_.include(settings.numberTypes, settings.field.type)) {
                             if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
                                 value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
-                            } else if (!value.match(/^[0-9]*$/)) {
-                                value = orig;
                             }
                         }
                                                                                           
