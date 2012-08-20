@@ -122,6 +122,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast_id" => '',
                               "worksheet_id" => '',
                               "show_opps" => false,
+                              "timeperiod_id" => $this->timeperiod_id,
                               "id" => ""
                             );
 		
