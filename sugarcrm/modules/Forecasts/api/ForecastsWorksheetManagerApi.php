@@ -323,21 +323,26 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     public function getWorksheetBestLikelyAdjusted()
     {
         //getting data from worksheet table for reportees
-        $reportees_query = "SELECT u.user_name user_name,
-                            w.id worksheet_id,
-                            w.forecast,
-                            w.best_case best_adjusted,
-                            w.likely_case likely_adjusted,
-                            w.worst_case worst_adjusted
-                            FROM worksheet w, users u
-                            WHERE w.related_id = u.id
-                            AND w.timeperiod_id = '{$this->timeperiod_id}'
-                            AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))
-                            AND w.deleted = 0";
-
+		$reportees_query = "SELECT u2.user_name, " .
+						   "w.id worksheet_id, " .
+						   "w.forecast, " .
+						   "w.best_case best_adjusted, " .
+						   "w.likely_case likely_adjusted, " .
+						   "w.worst_case worse_adjusted, " .
+						   "w.forecast_type, " .
+						   "w.related_id " .
+						   "from users u " .
+						   "inner join users u2 " .
+						   		"on u.id = u2.reports_to_id " .
+						   		"or u.id = u2.id " .
+						   "inner join worksheet w " .
+						   		"on w.user_id = u.id " .
+						   		"and w.timeperiod_id = '" . $this->timeperiod_id . "'" .
+						   		"and ((w.related_id = u.id and u2.id = u.id)" .
+						   			 "or(w.related_id = u2.id)) " .
+						   "where u.id = '" . $this->user_id . "' " .
+						   		"and w.deleted = 0";
         $result = $GLOBALS['db']->query($reportees_query);
-
         $data = array();
 
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
@@ -348,7 +353,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
         }             
-
+		
         return $data;
     }
 
