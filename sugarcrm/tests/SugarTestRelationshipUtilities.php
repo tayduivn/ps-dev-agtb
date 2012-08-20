@@ -70,6 +70,10 @@ class SugarTestRelationshipUtilities
         LanguageManager::clearLanguageCache($relationship_def['lhs_module']);
 
         SugarRelationshipFactory::rebuildCache();
+        // rebuild the dictionary to make sure that it has the new relationship in it
+        SugarTestHelper::setUp('dictionary');
+        // reset the link fields since we added one
+        VardefManager::$linkFields = array();
 
         $_REQUEST = $REQUEST_Backup;
         unset($REQUEST_Backup);

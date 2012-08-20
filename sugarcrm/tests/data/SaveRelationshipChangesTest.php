@@ -28,16 +28,17 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-
-        $GLOBALS['current_user'] = new User();
-        $GLOBALS['current_user']->retrieve('1');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        $GLOBALS['current_user'] = BeanFactory::getBean("Users", 1);
     }
 
     public function tearDown()
     {
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
     }
 
     public function setRelationshipInfoDataProvider()
