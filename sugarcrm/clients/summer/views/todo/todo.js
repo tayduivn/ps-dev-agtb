@@ -3,15 +3,16 @@
         'click #todo-container': 'onClickNotification',
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
-        'keyup #todo-subject':'todoSubmit'
+        'keyup #todo-subject':'todoSubmit',
+        'click .todo-status': 'changeStatus'
     },
     initialize: function(options) {
         var self = this;
-        app.view.View.prototype.initialize.call(this, options);
         console.log("---------");
         console.log("initializing todo view");
         console.log(this);
         console.log(options);
+        app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", function() {
             console.log("---------");
             console.log("app:sync:complete");
@@ -39,20 +40,53 @@
             }
         });
     },
-    reset: function(context) {
-        console.log();
+    changeStatus: function(e) {
+        console.log("---------");
+        console.log("changeStatus");
+        //console.log(this);
+        //console.log(e);
+        var clickedEl = $(e.target).parents(".todo-list-item")[0];
+        var modelIndex = $(".todo-list-item").index(clickedEl);
+
+        console.log(this.collection.models[modelIndex]);
+        console.log(app.additionalComponents.todo.collection.models[modelIndex]);
+        if( this.collection.models[modelIndex].attributes.status == "Completed" ) {
+            // todo: localize this
+            app.additionalComponents.todo.collection.models[modelIndex].set({
+                "status": "In Progress"
+            });
+        }
+        else {
+            // todo: localize this
+            app.additionalComponents.todo.collection.models[modelIndex].set({
+                "status": "Completed"
+            });
+        }
+
+        app.additionalComponents.todo.collection.models[modelIndex].save();
+        console.log(app.additionalComponents.todo.collection.models[modelIndex]);
+        this._render();
+        //console.log(this.collection.where({"name": "mang"}));
+        //console.log(this.collection.models[0]);
+        // figure out which model was clicked, set it = this.model
+        // toggle status to completed/not started, save the model
+        // call _render(), since hbt file will change styling
     },
     _render: function() {
         console.log("---------");
         console.log("render");
         console.log(this);
         //console.log(app.additionalComponents.todo.collection);
+
+        // try e.stopPropagation() and e.preventDefault() to prevent
+        // closing the dropup menu maybe
+
         app.view.View.prototype._render.call(this);
-        $("#todo-subject").val("");
     },
     validateTodo: function(e) {
         var subject = $("#todo-subject").val();
         if( subject == "" ) {
+            // change the input field styling to error class
             console.log("invalid input data");
             return false;
         }
@@ -60,6 +94,7 @@
             this.model = app.data.createBean("Tasks", {"name": subject});
             app.additionalComponents.todo.collection.add(this.model);
             this.model.save();
+            $("#todo-subject").val("");
             this._render();
         }
     },

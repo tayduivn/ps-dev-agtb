@@ -67,9 +67,11 @@ $viewdefs['Tasks']['summer']['view']['edit'] = array(
                         'wireless_edit_only' => true,
                     ),
                 ),
-                'status',
                 'priority',
+                'status',
+                'date_start',
                 'date_due',
+                'description',
                 'contact_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

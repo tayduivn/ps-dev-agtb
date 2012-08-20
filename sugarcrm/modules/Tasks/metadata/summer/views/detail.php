@@ -56,8 +56,8 @@ $viewdefs['Tasks']['summer']['view']['detail'] = array(
                         'wireless_edit_only' => true,
                     )
                 ),
-                'status',
                 'priority',
+                'status',
                 'date_due',
                 'contact_name',
                 'assigned_user_name',

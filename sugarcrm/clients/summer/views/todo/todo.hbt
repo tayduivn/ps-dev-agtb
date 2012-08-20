@@ -1,25 +1,103 @@
+<style>
+    .priority-Low {
+        color: #2ED400;
+    }
+    .priority-Medium {
+        color: yellow;
+    }
+    .priority-High {
+        color: red;
+    }
+
+#todo-add {
+    float: none;
+    margin-left: -4px;
+}
+
+#todo-container {
+    width: 208px;
+    max-height: 217px;
+    overflow: auto;
+    padding: 12px;
+}
+
+#todo-subject {
+    /*float: left;*/
+    width: 150px;
+}
+
+.todo-list-container {
+    height: 189px;
+    width: 200px;
+    /*overflow: auto;*/
+    list-style: none;
+    margin: 0;
+}
+
+.todo-list-item {
+    width: 200px;
+    display: table-row;
+    list-style: none;
+}
+
+.todo-list-item div {
+    float: left;
+    display: table-cell;
+}
+
+.todo-checkbox-container {
+    width: 20px;
+}
+
+.todo-description-container {
+    width: 160px;
+}
+
+.todo-item-finished {
+    text-decoration: line-through;
+}
+
+.todo-remove {
+    width: 20px;
+}
+</style>
+
 <div class="btn-group dropup" id="todo-list-widget">
     <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
         <i class="icon-list-alt"></i> Todo</button>
-    <div style="width: 192px; max-height: 217px; overflow-y: scroll; padding:12px" id="todo-container" class="dropdown-menu">
+    <div id="todo-container" class="dropdown-menu">
         <div class="input-append todo-header">
-            <input style="float: left; width: 150px;" class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
+            <input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
             <button class="btn btn-success" id="todo-add" type="button"><i class="icon-plus-sign"></i></button>
         </div>
-        <div class="todo-list-container">
-            <ul style="padding-top: 25px; margin-bottom: 0px" class="todo-list">
-                {{#each this.collection.models}}
-                    {{log this}}
-                    <label style="display: inline" class="checkbox">
-                        <input class="todo-status" type="checkbox">
-                    </label>
-                    <li class="todo-item" style="padding: 0; list-style: none">
-                        {{this.attributes.name}}
-                        <i class="icon-trash" style="float:right"></i>
-                    </li>
-                {{/each}}
-            </ul>
+        <ul class="todo-list-container">
+            {{#each this.collection.models}}
+                <li class="todo-list-item">
+                    {{#notEq this.attributes.status "Completed"}}
+                        <div class="todo-checkbox-container">
+                            <label class="checkbox">
+                                <input class="todo-status" type="checkbox"/>
+                            </label>
+                        </div>
+                        <div class="todo-description-container">
+                            <span>{{this.attributes.name}}</span>
+                        </div>
+                    {{else}}
+                        <div class="todo-checkbox-container">
+                            <label class="checkbox">
+                                <input class="todo-status" type="checkbox" checked="checked"/>
+                            </label>
+                        </div>
+                        <div class="todo-description-container">
+                            <span class="todo-item-finished">{{this.attributes.name}}</span>
+                        </div>
+                    {{/notEq}}
+                    <div class="todo-remove">
+                        <i class="icon-trash"></i>
+                    </div>
+                </li>
+            {{/each}}
             <a href="#Tasks">{{str "LBL_SHOW_MORE"}}</a>
-        </div>
+        </ul>
     </div>
 </div>
