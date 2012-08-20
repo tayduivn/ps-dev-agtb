@@ -66,7 +66,6 @@
         return !isError;
     },
     saveButton: function() {
-debugger
     var self = this, contactModel = this.context.get('contactModel');
         if(self.verify(contactModel)) {
             self.saveModel(contactModel);
@@ -75,32 +74,46 @@ debugger
         }
     },
     saveModel: function(contactModel) {
-        var self = this, confirmPassword = this.$('[name=confirm_password]').val();
+        var self = this, 
+            oldPass = contactModel.get('current_password'),
+            newPass = contactModel.get('new_password');
         
         // Add the new pass to portal_password and remove temp fields
-        contactModel.set({'portal_password':confirmPassword}, {silent: true});
         contactModel.unset('current_password', {silent: true});
         contactModel.unset('confirm_password', {silent: true});
         contactModel.unset('new_password', {silent: true});
 
-        // Check Contact is valid .. if so, attempt to save
-        if(contactModel.isValid()) {
-            app.alert.show('passreset', {level: 'process', title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), autoClose: false});
+        app.alert.show('passreset', {level: 'error', title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), autoClose: false});
 
-            contactModel.save(null, {
-                success: function(data) {
-                    app.alert.dismiss('passreset');
-                    console.log("SUCCESS: data: ", data);
+        app.api.updatePassword(oldPass, newPass, {
+            success: function(data) {
+                app.alert.dismiss('passreset');
+                contactModel.set({'portal_password': 'value_setvalue_setvalue_set'}, {silent: true});
+                if(self.checkUpdatePassWorked(data)) {
                     self.saveComplete();
-                },
-                error: function(error) {
-                    app.alert.dismiss('passreset');
-                    console.log("ERROR: ", error);
-                    app.error.handleHttpError(error, self);
-                    self.resetButton();
+                } else {
+                    app.alert.show('pass_update_failed', {
+                        level: 'error',
+                        title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'),
+                        messages: app.lang.get('LBL_PORTAL_PASSWORD_UPDATE_FAILED'),
+                        autoClose: true});
+                    self.$('.modal').modal().find('input:text, input:password').val('');
+                    self.$('[name=save_button]').button().text(app.lang.get('LBL_SAVE_BUTTON_LABEL'));
                 }
-            });
-        }
+            },
+            error: function(error) {
+                app.alert.dismiss('passreset');
+                app.error.handleHttpError(error, self);
+                self.resetButton();
+            }
+        });
+    },
+    checkUpdatePassWorked: function(data) {
+        if(!data || !data.current_user || !data.current_user.valid) {
+            return false;
+            app.logger.error("Failed to update password. "); 
+        } 
+        return true;
     },
     saveComplete: function() {
         //reset the form

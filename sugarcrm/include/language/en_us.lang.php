@@ -3462,7 +3462,7 @@ $app_strings = array (
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
-
+    'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',                                                                                                            
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
     'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
