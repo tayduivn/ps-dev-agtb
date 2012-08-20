@@ -184,7 +184,7 @@ class SidecarTheme
         if ($min === true) {
             $less->setFormatter('compressed');
         }
-        $variables['baseUrl'] = '"' . $GLOBALS['sugar_config']['site_url'] . '/styleguide/bootstrap"';
+        $variables['baseUrl'] = '"../../../../../styleguide/bootstrap"';
 
         try {
             $css = $less->parse($variables);
