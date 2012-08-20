@@ -62,8 +62,8 @@ class ForecastsProgressApi extends ModuleApi
 		$parentApi = array(
 			'progress' => array(
 				'reqType'   => 'GET',
-				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?', '?'),
-				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','excluded_sales_stages','committed_probability'),
+				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?'),
+				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','excluded_sales_stages'),
 				'method'    => 'progress',
 				'shortHelp' => 'Progress data',
 				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
@@ -125,20 +125,25 @@ class ForecastsProgressApi extends ModuleApi
    	 *
    	 * @return int
    	 */
-   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $committed_probability = 100 )
+   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $excluded_sales_stages )
    	{
    		$amountSum = 0;
-   		$where     = "opportunities.probability >= $committed_probability";
+   		$where     = "";
 
         if ($should_rollup and !is_null($user_id)) {
-            $where .= " AND opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
+            $where .= " opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
         } else if ( !is_null($user_id) ) {
-            $where .= " AND opportunities.assigned_user_id='$user_id'";
+            $where .= " opportunities.assigned_user_id='$user_id'";
    		}
 
    		if ( !is_null($timeperiod_id) ) {
    			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
    		}
+
+       foreach($excluded_sales_stages as $exclusion)
+       {
+           $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+       }
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
    		$result = $GLOBALS['db']->query($query);
@@ -164,19 +169,14 @@ class ForecastsProgressApi extends ModuleApi
 
 		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
 		$this->should_rollup = (array_key_exists("should_rollup", $args) ? $args["should_rollup"] : User::isManager($this->user_id));
-		$this->excluded_sales_stages = (array_key_exists("excluded_sales_stages", $args) ? $args["excluded_sales_stages"] : array());
-        $this->committed_probability = (array_key_exists("committed_probability", $args) ? $args["committed_probability"] : 100);
+		$this->excluded_sales_stages = (array_key_exists("excluded_sales_stages", $args) ? explode(',', $args["excluded_sales_stages"]) : array());
         if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
 		}
-
-        error_log(print_r($args, 1));
-        error_log(print_r($this,1));
-
         if($this->should_rollup) {
             $this->opportunity = new Opportunity();
             $this->quotaData = array('amount' => 0);
-            $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->committed_probability);
+            $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->excluded_sales_stages);
             $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->excluded_sales_stages);
         } else {
             $this->opportunitiesInPipeline = 0;

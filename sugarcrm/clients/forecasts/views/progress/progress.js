@@ -204,15 +204,6 @@
             url += self.selectedTimePeriod.id + "/";
             url += getRollup ? "1/" : "0/";
             url += app.config.excluded_sales_stages + "/";
-            url += app.config.committed_probability + "/";
-
-            urlParams = {
-                user_id: self.selectedUser.id,
-                timeperiod_id: self.selectedTimePeriod.id,
-                should_rollup: getRollup ? 1 : 0,
-                excluded_sales_stages : app.config.excluded_sales_stages,
-                committed_probability : app.config.committed_probability
-            };
         }
 
 
