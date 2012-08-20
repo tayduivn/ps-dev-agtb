@@ -34,7 +34,7 @@
 
         switch (field.type) {
             default:
-                this.toggleField(field);
+                this.toggleField(field, target);
         }
     },
 
@@ -59,11 +59,16 @@
         }
     },
 
-    toggleField: function(field) {
-        var self = this;
+    toggleField: function(field, target) {
+        var target = target,
+            self = this;
 
+        $(target).closest('.record-row').toggleClass('edit-mode');
+
+
+        
         function fieldClose(e) {
-            self.toggleField(field);
+            self.toggleField(field, target);
 
             field.$el.off("focusout", "input", fieldClose);
             field.$el.off("change", "input", fieldClose);
