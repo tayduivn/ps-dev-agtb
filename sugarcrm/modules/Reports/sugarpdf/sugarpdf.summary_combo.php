@@ -97,7 +97,9 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                     "bgcolor" => $this->options['header']['fill'],
                     "color"   => $this->options['header']['textColor']),
                 "td"      => array()
-            )
+            ),
+            'evencolor' => $this->options['evencolor'],
+            'oddcolor' => $this->options['oddcolor'],
         );
         while(($row = $this->bean->get_summary_next_row()) != 0) {
             $item = array();
