@@ -109,13 +109,9 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
     protected function addRecordsToQueue($records)
     {
-        $GLOBALS['log']->fatal('addRecordsToQueue');
-        global $db;
-        if (empty($db))
-        {
-            $db = DBManagerFactory::getInstance('fts');
-            $db->resetQueryCount();
-        }
+        $GLOBALS['log']->info('addRecordsToQueue');
+        $db = DBManagerFactory::getInstance('fts');
+        $db->resetQueryCount();
 
         foreach ($records as $rec)
         {
