@@ -323,4 +323,23 @@ class DownloadFile {
 
         return $mimetype;
     }
+
+    /**
+     * Gets the conents of a file
+     *
+     * @param string $filename Path to the file
+     * @return string
+     */
+    public function getFileByFilename($file)
+    {
+        if(!file_exists($file))
+        {
+            // handle exception elsewhere
+            throw new Exception('File information could not be retrieved for this record', 'FILE_DOWNLOAD_INCORRECT_DEF_TYPE');
+            return;
+        }
+        
+        return file_get_contents($file);
+
+    }
 }

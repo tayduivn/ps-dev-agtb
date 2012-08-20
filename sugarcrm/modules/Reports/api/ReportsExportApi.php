@@ -21,13 +21,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('data/BeanFactory.php');
-
+require_once('include/download_file.php');
+/**
+ * @api
+ */
 class ReportsExportApi extends SugarApi {
     public function registerApiRest() {
         return array(
-            'pdf' => array(
+            'exportRecord' => array(
                 'reqType' => 'GET',
-                'path' => array('Reports', '?', 'pdf'),
+                'path' => array('Reports', '?', '?'),
                 'pathVars' => array('Reports', 'record', 'export_type'),
                 'method' => 'exportRecord',
                 'shortHelp' => 'This method exports a record in the specified type',
@@ -36,37 +39,51 @@ class ReportsExportApi extends SugarApi {
         );
     }
 
-    public function export($api, $args)
+    /**
+     * Export Report records into various files, now just pdf
+     * @param ServiceBase $api The service base
+     * @param array $args Arguments array built by the service base
+     * @return binary file
+     */
+    public function exportRecord($api, $args)
     {
         global  $beanList, $beanFiles;
         global $sugar_config,$current_language;
         $this->requireArgs($args,array('record', 'export_type'));
-        $args['module'] = 'SavedReport';
+        $args['module'] = 'Reports';
  
         $GLOBALS['disable_date_format'] = FALSE;
         require_once('modules/Reports/templates/templates_pdf.php');
 
         $saved_report = $this->loadBean($api, $args, 'view');
 
+        $method = 'export' . ucwords($args['export_type']);
+
+        $contents = $this->$method($saved_report);
+
+        return array('file_contents' => base64_encode($contents));
+    }
+
+    /**
+     * Export a PDF Report
+     * @param SugarBean report
+     * @return file contents
+     */
+    protected function exportPdf(SugarBean $report)
+    {
         $contents = '';
-        if($saved_report->id != null)
+        if($report->id != null)
         {
-            $reporter = new Report(html_entity_decode($saved_report->content));
-            $reporter->layout_manager->setAttribute("no_sort",1);
             //Translate pdf to correct language
-            $module_for_lang = $reporter->module;
             $mod_strings = return_module_language($current_language, 'Reports');
 
             //Generate actual pdf
-            $report_filename = template_handle_pdf($reporter, false);
+            // TODO: Add caching here
+            $report_filename = template_handle_pdf($report, false);
 
-            //Get file pdf file contents
-            $contents = self::$helperObject->get_file_contents_base64($report_filename, TRUE);
+            $dl = new DownloadFile();
+            $contents = $dl->getFileByFilename($report_filename);
         }
-
-        return array('file_contents' => $contents);
-
-        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');        
-
+        return $contents;
     }
 }
