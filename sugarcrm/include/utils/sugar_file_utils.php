@@ -181,28 +181,6 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
 }
 
 /**
- * sugar_force_file_put_contents
- * This is an custom version of sugar_file_put_contents.  It attempts to write a file on the file system. If the path to
- * access this file doesn't exist, we create the folders for.
- *
- * @param $filename - String value of the file to create
- * @param $data - The data to be written to the file
- */
-function sugar_force_file_put_contents($file, $contents) {
-    if (!file_exists($file)) {
-        $paths = explode('/', $file);
-        $root = '';
-        foreach ($paths as $key => $dir) {
-            if ($key == sizeof($paths) - 1) break;
-            $root .= $dir . '/';
-            if (!is_dir($root)) mkdir($root);
-        }
-    }
-    file_put_contents($file, $contents);
-}
-
-
-/**
  * sugar_file_get_contents
  *
  * @param $filename - String value of the file to create

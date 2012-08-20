@@ -24,21 +24,21 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
         array(
             'name' => 'cancel_button',
             'type' => 'button',
-            'label' => 'Cancel',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'value' => 'cancel',
             'primary' => false,
         ), 
         array(
             'name' => 'save_button',
             'type' => 'button',
-            'label' => 'Save',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'value' => 'save',
             'primary' => true,
         ),
     ),
     'panels' => array(
         array(
-            'label' => 'Edit',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'fields' => array(
                 0 =>
                 array(

@@ -3396,7 +3396,7 @@ $app_strings = array (
     'LNK_TOUR' => 'Tour',
     'LBL_TOP' => 'Top',
     'LBL_LANGUAGE' => 'Language',
-    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
+    'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
 
     //for portal

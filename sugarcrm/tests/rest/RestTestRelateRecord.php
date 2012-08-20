@@ -105,9 +105,10 @@ class RestTestRelateRecord extends RestTestBase {
 
         // Test normal fetch
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
+        
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
-        // FIXME: Need to wait for this to be repaired in link2.php
-        // $this->assertEquals($this->contacts[0]->contact_role,$restReply['reply']['contact_role'],"Did not fetch the related contact's role");
+        $this->assertNotEmpty($restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship was not populated.");
+        $this->assertEquals($this->contacts[0]->contact_role, $restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship does not match the bean.");
 
         // Test fetch where the opp id is not there
         $restReply = $this->_restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
