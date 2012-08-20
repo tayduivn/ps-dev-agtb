@@ -872,5 +872,13 @@ class RestTestPortalSecurity extends RestTestBase {
         // Add it to the list of beans so we can properly delete it.
         $this->notes[] = BeanFactory::getBean('Notes',$restReply['reply']['id']);
 
+        // Negative test: Should not be able to create a new Opportunity
+        $restReply = $this->_restCall("Opportunities/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
+        // Negative test: Should not be able to create a new Case
+        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','account_id'=>'','portal_viewable'=>1)),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
     }
 }

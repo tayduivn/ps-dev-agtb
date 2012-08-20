@@ -39,6 +39,23 @@ class SugarACLSupportPortal extends SugarACLStatic
     }
 
     /**
+     * Fetch the list of account id's associated to this user
+     * @return array List of account id's associated to this user
+     */
+    protected function getAccountIds()
+    {
+        static $accounts;
+        if ( !isset($accounts) ) {
+            // If the portal user isn't linked to any accounts they can only do anything with Contacts and Bugs
+            // Get the account_id list and make sure there is something on it.
+            $vis = new SupportPortalVisibility($bean);
+            $accounts = $vis->getAccountIds();
+        }
+
+        return $accounts;
+    }
+
+    /**
      * Determines if a portal user "owns" a record
      * @param SugarBean $bean
      */
@@ -88,10 +105,7 @@ class SugarACLSupportPortal extends SugarACLStatic
                 return false;
             }
 
-            // If the portal user isn't linked to any accounts they can only do anything with Contacts and Bugs
-            // Get the account_id list and make sure there is something on it.
-            $vis = new SupportPortalVisibility($bean);
-            $accounts = $vis->getAccountIds();
+            $accounts = $this->getAccountIds();
 
             if ( count($accounts) == 0 
                  && $bean->module_dir != 'Notes'
