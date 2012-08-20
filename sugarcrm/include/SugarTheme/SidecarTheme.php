@@ -169,7 +169,7 @@ class SidecarTheme
 
         // Write bootstrap.css on the file system
         sugar_mkdir($this->paths['cache'], null, true);
-        sugar_file_put_contents($this->paths['cache'] . $this->bootstrapCssName, $myCss);
+        sugar_file_put_contents($this->paths['css'], $myCss);
     }
 
     /**
