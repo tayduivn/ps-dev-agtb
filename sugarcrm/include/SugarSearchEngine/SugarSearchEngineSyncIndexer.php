@@ -45,8 +45,8 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
 
-        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSSyncConsumer' AND deleted = 0");
-        while ($row = $GLOBALS['db']->fetchByAssoc($res))
+        $res = $this->db->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSSyncConsumer' AND deleted = 0");
+        while ($row = $this->db->fetchByAssoc($res))
         {
             $jobBean->mark_deleted($row['id']);
         }
