@@ -168,13 +168,25 @@ class MetaDataManager {
 
             foreach ($moduledirs as $dir) {
                 // Templates and controllers can go here
+
+                // if we are trying to get fields, look to see if a folder exist for the type
+                if($viewdefType == "field") {
+                    $dir .= $type;
+                }
+
                 $templates = $this->fetchTemplates(array($dir));
                 $controllers = $this->fetchTemplates(array($dir), ".js");
 
-                //Next add a custom template if it exists
-                if (!empty($templates[$type])) {
-                    $data[$type]['template'] = $templates[$type];
+                // we need to handle fields differently since we want all the templates back in an array
+                if($viewdefType == "field") {
+                    $data[$type]['templates'] = $templates;
+                } else {
+                    //Next add a custom template if it exists
+                    if (!empty($templates[$type])) {
+                        $data[$type]['template'] = $templates[$type];
+                    }
                 }
+
                 //Finally check if a custom controller exists for this view for this module
                 if (!empty($controllers[$type])) {
                     $data[$type]['controller'] = $controllers[$type];
@@ -186,7 +198,7 @@ class MetaDataManager {
     }
     /**
      * For a specific module get any existing Subpanel Definitions it may have
-     * @param string $moduleName 
+     * @param string $moduleName
      * @return array
      */
     public function getSubpanelDefs($moduleName)
@@ -205,14 +217,14 @@ class MetaDataManager {
 
                 if(!$aSubPanel)
                 {
-                   continue;
+                    continue;
                 }
 
                 if($aSubPanel->isCollection())
                 {
                     $collection = array();
                     foreach($aSubPanel->sub_subpanels AS $key => $subpanel)
-                    { 
+                    {
                         $collection[$key] = $subpanel->panel_definition;
                     }
                     $layout_defs['subpanel_setup'][$name]['panel_definition'] = $collection;
@@ -221,17 +233,17 @@ class MetaDataManager {
                 {
                     $layout_defs['subpanel_setup'][$name]['panel_definition'] = $aSubPanel->panel_definition;
                 }
-                
+
             }
         }
-        
+
         return $layout_defs;
     }
 
     /**
      * This method collects all view data for a module
      *
-     * @param string $moduleName The name of the sugar module to collect info about.
+     * @param $moduleName The name of the sugar module to collect info about.
      *
      * @return Array A hash of all of the view data.
      */
@@ -242,39 +254,12 @@ class MetaDataManager {
     /**
      * This method collects all view data for a module
      *
-     * @param string $moduleName The name of the sugar module to collect info about.
+     * @param $moduleName The name of the sugar module to collect info about.
      *
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
         return $this->getModuleViewdefs($moduleName, 'layout');
-    }
-
-    /**
-     * Gets the directories for a given path inside of a module's metadata
-     *
-     * @param string $module The module we are looking for items in
-     * @param string $path The directory within a platform
-     * @param bool $full Whether to return full paths or dirnames only
-     * @return array
-     */
-    public function getModuleClientFileDirs($module, $path, $full = false) {
-        $dirs = array();
-        foreach ( $this->platforms as $platform ) {
-            $basedir  = "modules/{$module}/metadata/clients/{$platform}/{$path}/";
-            $custdir  = "custom/$basedir";
-            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
-            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
-            $alldirs  = array_merge($basedirs, $custdirs);
-
-            foreach ($alldirs as $dir) {
-                // To prevent doing the work twice, let's sort this out by basename
-                $dirname = basename($dir);
-                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
-            }
-        }
-
-        return $dirs;
     }
 
     /**
@@ -285,57 +270,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleFields($moduleName) {
-
-        $result = array();
-        $typePath = "fields";
-
-        $allModulesFiles = $this->getModuleClientFileDirs($moduleName, $typePath);
-
-        foreach ( $allModulesFiles as $dirname) {
-            // reset $fileData
-            $fileData = array();
-            // Check each platform in order of precendence to find the "best" controller
-            // Add in meta checking here as well
-            $meta = array();
-            foreach ( $this->platforms as $platform ) {
-                $dir = "modules/$moduleName/metadata/clients/$platform/$typePath/$dirname/";
-                $controller = $dir . "$dirname.js";
-                if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir));
-                }
-                if ( file_exists('custom/'.$controller) ) {
-                    $controller = 'custom/'.$controller;
-                }
-                if ( file_exists($controller) ) {
-                    $fileData['controller'] = file_get_contents($controller);
-                    // We found a controller, let's get out of here!
-                    break;
-                }
-            }
-
-            // Reverse the platform order so that "better" templates override worse ones
-            $backwardsPlatforms = array_reverse($this->platforms);
-            $templateDirs = array();
-            foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "modules/$moduleName/metadata/clients/$platform/$typePath/$dirname/";
-            }
-            $fileData['templates'] = $this->fetchTemplates($templateDirs);
-            if ($meta) {
-               $fileData['meta'] = array_shift($meta); // Get the first member
-            }
-
-            // Remove empty fileData members
-            foreach ($fileData as $k => $v) {
-                if (empty($v)) {
-                    unset($fileData[$k]);
-                }
-            }
-
-            $result[$dirname] = $fileData;
-        }
-
-        $result['_hash'] = md5(serialize($result));
-        return $result;
+        return $this->getModuleViewdefs($moduleName, 'field');
     }
 
     /**
@@ -368,7 +303,7 @@ class MetaDataManager {
     public function getRelationshipData() {
         require_once('data/Relationships/RelationshipFactory.php');
         $relFactory = SugarRelationshipFactory::getInstance();
-        
+
         $data = $relFactory->getRelationshipDefs();
         foreach ( $data as $relKey => $relData ) {
             unset($data[$relKey]['table']);
@@ -429,7 +364,7 @@ class MetaDataManager {
         $outputAcl = array('fields'=>array());
         if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
-            
+
             if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
                 $outputAcl['admin'] = 'yes';
                 $isAdmin = true;
@@ -437,19 +372,19 @@ class MetaDataManager {
                 $outputAcl['admin'] = 'no';
                 $isAdmin = false;
             }
-            
+
             if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
                 $outputAcl['developer'] = 'yes';
             } else {
                 $outputAcl['developer'] = 'no';
             }
-            
+
             if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
                 $outputAcl['access'] = 'yes';
             } else {
                 $outputAcl['access'] = 'no';
             }
-            
+
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
 
@@ -462,13 +397,13 @@ class MetaDataManager {
                         $outputAcl[$action] = 'no';
                     }
                 }
-                
+
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
-                
+
                 // Now time to dig through the fields
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
-                
+
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl ) {
                         case ACL_READ_WRITE:
@@ -497,13 +432,13 @@ class MetaDataManager {
                             break;
                     }
                 }
-                
+
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
         return $outputAcl;
     }
-    
+
     /**
      * Fields accessor, gets sugar fields
      *
@@ -687,7 +622,7 @@ class MetaDataManager {
                         $templateName = basename($templateFile, $extension);
                         $templates[$templateName] = file_get_contents($templateFile);
                     }
-                }                    
+                }
             }
             // Do the custom directory last so it will override anything in the core product
             if ( is_dir('custom/'.$searchDir) ) {
@@ -702,7 +637,7 @@ class MetaDataManager {
         }
         return $templates;
     }
-    
+
     /**
      * The collector method for view templates
      *
@@ -801,7 +736,7 @@ class MetaDataManager {
                     require($prefix.'include/MVC/Controller/wireless_module_registry.php');
                 }
             }
-            
+
             // $wireless_module_registry is defined in the file loaded above
             $moduleList = array_keys($wireless_module_registry);
         } else {
@@ -810,7 +745,7 @@ class MetaDataManager {
             $controller = new TabController();
             $moduleList = array_keys($controller->get_user_tabs($this->user));
         }
-        
+
         $oldModuleList = $moduleList;
         $moduleList = array();
         foreach ( $oldModuleList as $module ) {
