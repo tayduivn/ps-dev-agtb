@@ -110,6 +110,8 @@
         this.runningFetch = true;
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.likelyCaseCls = '';
+        this.bestCaseCls = '';
         this._collection.url = this.createUrl();
         this._collection.fetch();
     },
@@ -131,6 +133,8 @@
                 self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
                 self.selectedUser = user;
+                // when ever the users changes, empty out the saved totals
+                self.totals = null;
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
@@ -144,7 +148,6 @@
                 self.updateTotals(totals);
             }, this);
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
