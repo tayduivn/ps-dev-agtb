@@ -34,7 +34,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
             array(
                 'name' => 'save_button',
                 'type' => 'button',
-                'label' => 'Save',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
                 'class' => 'save-profile',
                 'primary' => true,
@@ -42,7 +42,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
             array(
                 'name' => 'cancel_button',
                 'type' => 'button',
-                'label' => 'Cancel',
+                'label' => 'LBL_CANCEL_BUTTON_LABEL',
                 'value' => 'cancel',
                 'events' =>
                 array(
@@ -165,6 +165,11 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                         array(
                             'colspan' => 2,
                         ),
+                    ),
+                    array (
+                        'name' => 'preferred_language',
+                        'type' => 'enum',
+                        'options' => 'available_language_dom',
                     ),
                 ),
             ),

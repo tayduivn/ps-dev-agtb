@@ -40,22 +40,50 @@ class RestTestTheme extends RestTestBase
             //exec("rm -rf custom/themes/clients/" . $this->platformTest);
             rmdir_recursive("custom/themes/clients/" . $this->platformTest);
         }
+        if (is_dir('cache/themes/clients/' . $this->platformTest . '/' . $this->themeTest)) {
+            //exec("rm -rf custom/themes/clients/" . $this->platformTest);
+            rmdir_recursive("cache/themes/clients/" . $this->platformTest);
+        }
         parent::tearDown();
     }
 
-    public function testGenerateBootstrapCss()
+    public function testPreviewCSS()
     {
-        // Test fetch bootstrap.css
-        $restReply = $this->_restCall('bootstrap.css');
+        $args1 = array(
+            'platform' => $this->platformTest,
+            'themeName' => $this->themeTest,
+            'primary' => '#75c1d1',
+            'secondary' => '#192c47',
+            'primaryBtn' => '#f5b30a',
+        );
 
-        $this->assertNotEmpty($restReply);
+        $args2 = array(
+            'platform' => $this->platformTest,
+            'themeName' => $this->themeTest,
+            'primary' => '#aaaaaa',
+            'secondary' => '#aaaaaa',
+            'primaryBtn' => '#aaaaaa',
+        );
+
+        // TEST= GET bootstrap.css with a set of arguments
+        $restReply1 = $this->_restCall('bootstrap.css', json_encode($args1));
+
+        // TEST if the the response is not empty
+        $this->assertNotEmpty($restReply1);
+
+        // TEST= GET bootstrap.css with another set of arguments
+        $restReply2 = $this->_restCall('bootstrap.css', json_encode($args2));
+
+        // TEST the two generated css are different
+        $this->assertNotEquals($restReply1, $restReply2);
     }
 
     public function testGetCustomThemeVars()
     {
-        // Test fetch bootstrap.css
+        // TEST= GET theme
         $restReply = $this->_restCall('theme?platform=' . $this->platformTest);
 
+        // TEST we get a hash of variables
         $this->assertEquals($restReply['reply']['hex'], array(
             0 => array('name' => 'primary', 'value' => '#E61718'),
             1 => array('name' => 'secondary', 'value' => '#000000'),
@@ -77,24 +105,32 @@ class RestTestTheme extends RestTestBase
         $this->_user->is_admin = 1;
         $this->_user->save();
 
-        // Make a POST request to the ThemeApi
+        // TEST= POST theme
         $restReply = $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
 
-        // check the boostrap.css file has been created
-        $this->assertEquals(file_exists('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
+        // TEST the boostrap.css file has been created
+        $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
 
-        // check the boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
+        // TEST the boostrap.css file is not empty
+        $this->assertNotEmpty(file_get_contents('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
+        $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
-        // check if a config var has been added in the DB
+        // TEST we have updated the variables in variables.less
+        $variables = $thisTheme->getThemeVariables();
+        $this->assertEquals($args['primary'], $variables['primary']);
+        $this->assertEquals($args['secondary'], $variables['secondary']);
+        $this->assertEquals($args['primaryBtn'], $variables['primaryBtn']);
+
+        // TEST if a config var has been added in the DB
         $query = $GLOBALS['db']->query("SELECT value FROM config WHERE category = '" . $args['platform'] . "' AND name = 'css'");
         $row = $GLOBALS['db']->fetchByAssoc($query);
 
+        // TEST the config var contains the bootstrap.css url
         $this->assertEquals(html_entity_decode($row['value']),
-            '"' . $GLOBALS['sugar_config']['site_url'] . '/custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"');
+            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"');
     }
 
     public function testResetDefaultTheme()
@@ -110,30 +146,29 @@ class RestTestTheme extends RestTestBase
         $this->_user->is_admin = 1;
         $this->_user->save();
 
-        // Make a POST request to the ThemeApi
-        $restUpdateReply = $this->_restCall('theme', json_encode($args));
+        // TEST= POST theme with reset=true
+        $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
 
-        // check the boostrap.css file has been created
-        $this->assertEquals(file_exists('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
+        // TEST boostrap.css file has been created
+        $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
 
-        // check the boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
+        // TEST boostrap.css file is not empty
+        $this->assertNotEmpty(file_get_contents('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
 
-        // url of the default variables.less falling back to base platform if no default theme for this platform exists
-        if (file_exists('themes/clients/' . $args['platform'] . '/default/variables.less')) {
-            $defaultTheme = 'themes/clients/' . $args['platform'] . '/default/variables.less';
-        } else {
-            $defaultTheme = 'themes/clients/base/default/variables.less';
-        }
+        // TEST variables.less file is not empty
+        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'));
 
-        $themeApi = new ThemeApi();
-        // check that the variables.less generated in the custom folder is the same as the default theme
+        // TEST variables.less generated in the custom folder is the same as the default theme
+        $defaultTheme = new SidecarTheme($args['platform'], 'default');
+        $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
+
+        // TEST they contain the same variables
         $this->assertEquals(
-            $themeApi->get_less_vars('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'),
-            $themeApi->get_less_vars($defaultTheme)
+            $defaultTheme->getThemeVariables(),
+            $thisTheme->getThemeVariables()
         );
     }
 }

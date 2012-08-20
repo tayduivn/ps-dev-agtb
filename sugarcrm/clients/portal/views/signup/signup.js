@@ -59,17 +59,27 @@
         this.model.set({"email": oEmail}, {silent: true});
         if (validFlag) {
             $('#content').hide();
-            app.alert.show('signup', {level: 'process', title: 'LBL_PORTAL_SIGNUP_PROCESS', autoClose: false});
+            app.alert.show('signup', {level:'process', title:'LBL_PORTAL_SIGNUP_PROCESS', autoClose:false});
+            
             var contactData = {
                 first_name: this.model.get("first_name"),
                 last_name: this.model.get("last_name"),
-                email: this.model.get("email"),
+                email: [{
+                    "email_address" : this.model.get("email"),
+                    "is_primary": true,
+                    "is_invalid": false,
+                    "opted_out": false
+                }],
                 phone_work: this.model.get("phone_work"),
-                state: this.model.get("state"),
-                country: this.model.get("country"),
-                company: this.model.get("company"),
-                jobtitle: this.model.get("jobtitle")
+                primary_address_state: this.model.get("state"),
+                primary_address_country: this.model.get("country"),
+                title: this.model.get("jobtitle"),
+                account_name: this.model.get("company")
             };
+            var pref_lang = app.lang.getLanguage();
+            if (pref_lang) {
+                contactData.preferred_language = pref_lang;
+            }
             this.app.api.signup(contactData, null,
                 {
                     error: function() {

@@ -43,6 +43,13 @@ class Bug51242Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
     }
 
     public function providerGetParser()

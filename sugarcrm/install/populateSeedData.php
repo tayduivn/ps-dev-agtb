@@ -768,11 +768,11 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$manufacturer_id_max = count($manufacturer_id_arr) - 1;
 	$productcategory_id_max = count($productcategory_id_arr) - 1;
 	$producttype_id_max = count($producttype_id_arr) - 1;
+	$template = new ProductTemplate;
 	$template->manufacturer_id = $manufacturer_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->category_id = $productcategory_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->type_id = $producttype_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->currency_id = $dollar_id;
-	$template = new ProductTemplate;
 	$template->name = $v['name'];
 	$template->tax_class = $v['tax_class'];
 	$template->cost_price = $v['cost_price'];

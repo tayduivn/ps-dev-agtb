@@ -48,7 +48,7 @@
         logLevel:'TRACE',
         logWriter:'ConsoleWriter',
         logFormatter:'SimpleFormatter',
-        serverUrl:'{/literal}{$siteURL}{literal}/rest/v10',
+        serverUrl:'./rest/v10',
         serverTimeout:30,
         maxQueryResult:20,
         maxSearchQueryResult:3,
