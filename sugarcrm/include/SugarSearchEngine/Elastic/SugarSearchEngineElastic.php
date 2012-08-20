@@ -54,6 +54,31 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
+     * Check if this is an Elastic client exception, disable FTS if it is
+     * @param $e Exception
+     * @return boolean tru if it's an Elastic client exception, false otherwise
+     */
+    protected function checkException($e)
+    {
+        if ($e instanceof Elastica_Exception_Client)
+        {
+            $error = $e->getError();
+            switch ($error) {
+                case CURLE_UNSUPPORTED_PROTOCOL:
+                case CURLE_FAILED_INIT:
+                case CURLE_URL_MALFORMAT:
+                case CURLE_COULDNT_RESOLVE_PROXY:
+                case CURLE_COULDNT_RESOLVE_HOST:
+                case CURLE_COULDNT_CONNECT:
+                case CURLE_OPERATION_TIMEOUTED:
+                    $this->disableFTS();
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Either index single bean or add the record to be indexed into _documents for later batch indexing,
      * depending on the $batch parameter
      *

@@ -76,26 +76,6 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
     }
 
-    protected function checkException($e)
-    {
-        if ($e instanceof Elastica_Exception_Client)
-        {
-            $error = $e->getError();
-            switch ($error) {
-                case CURLE_UNSUPPORTED_PROTOCOL:
-                case CURLE_FAILED_INIT:
-                case CURLE_URL_MALFORMAT:
-                case CURLE_COULDNT_RESOLVE_PROXY:
-                case CURLE_COULDNT_RESOLVE_HOST:
-                case CURLE_COULDNT_CONNECT:
-                case CURLE_OPERATION_TIMEOUTED:
-                    $this->disableFTS();
-                    return true;
-            }
-        }
-        return false;
-    }
-
     protected function disableFTS()
     {
         $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
