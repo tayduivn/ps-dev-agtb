@@ -242,19 +242,21 @@ class MetadataApi extends SugarApi {
 
         $mm = $this->getMetadataManager();
 
-        $this->modules = array_keys(get_user_module_list($this->user));
-
-        $data['modules'] = array();
-        foreach ($this->modules as $modName) {
-            $modData = $mm->getModuleData($modName);
-            $data['modules'][$modName] = $modData;
-        }
-
 
         $data['moduleList'] = $mm->getModuleList($this->platforms[0]);
         $data['fullModuleList'] = $data['moduleList'];
+
+        $data['modules'] = array();
         foreach($data['moduleList'] as $module) {
             $bean = BeanFactory::newBean($module);
+            if (!$bean) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+            $modData = $mm->getModuleData($module);
+            $data['modules'][$module] = $modData;
+
             if (isset($data['modules'][$module]['fields'])) {
                 $fields = $data['modules'][$module]['fields'];
                 foreach($fields as $fieldName => $fieldDef) {
@@ -285,7 +287,7 @@ class MetadataApi extends SugarApi {
         }
 
         $data['acl'] = array();
-        foreach ($this->modules as $modName) {
+        foreach ($data['fullModuleList'] as $modName) {
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
             // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
             if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
