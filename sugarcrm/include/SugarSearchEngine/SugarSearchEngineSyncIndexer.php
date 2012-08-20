@@ -78,6 +78,13 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         return $job->id;
     }
 
+    /**
+     * Index records into search engine
+     *
+     * @param String module
+     * @param array fieldDefinitions
+     * @return integer number of indexed records, -1 if fails
+     */
     public function indexRecords($module, $fieldDefinitions)
     {
         $GLOBALS['log']->fatal('Indexing for module '.$module);
@@ -106,8 +113,12 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
             if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
             {
-                $this->SSEngine->bulkInsert($docs);
-                $this->markBeansProcessed($processedBeans);
+                $ok = $this->SSEngine->bulkInsert($docs);
+                if ($ok) {
+                    $this->markBeansProcessed($processedBeans);
+                } else {
+                    return -1;
+                }
                 $docs = $processedBeans = array();
                 sugar_cache_reset();
                 if( function_exists('gc_collect_cycles') )
@@ -123,7 +134,10 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
         if(count($docs) > 0)
         {
-            $this->SSEngine->bulkInsert($docs);
+            $ok = $this->SSEngine->bulkInsert($docs);
+            if (!$ok) {
+                return -1;
+            }
         }
 
         $this->markBeansProcessed($processedBeans);
@@ -202,13 +216,18 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         foreach ($allFieldDef as $module=>$fieldDefinitions) {
             $count = $this->indexRecords($module, $fieldDefinitions);
+            if ($count == -1) {
+                $GLOBALS['log']->fatal('FTS failed to index records, postponing job for next cron');
+                $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+                return true;
+            }
         }
 
         // check the fts queue to see if any records left, if no, then we are done, succeed the job
         // otherwise postpone the job so it can be invoked by the next cron
         $tableName = self::QUEUE_TABLE;
         $res = $this->db->query("SELECT count(*) as cnt FROM {$tableName} WHERE processed = 0");
-        if ($row = $GLOBALS['db']->fetchByAssoc($res))
+        if ($row = $this->db->fetchByAssoc($res))
         {
             $count = $row['cnt'];
             if( $count == 0)

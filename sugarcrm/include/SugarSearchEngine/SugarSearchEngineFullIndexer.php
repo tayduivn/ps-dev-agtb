@@ -182,6 +182,13 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $jobq->runCycle();
     }
 
+    /**
+     * Index records into search engine
+     *
+     * @param String module
+     * @param array fieldDefinitions
+     * @return integer number of indexed records, -1 if fails
+     */
     public function indexRecords($module, $fieldDefinitions)
     {
         $beanName = BeanFactory::getBeanName($module);
@@ -227,8 +234,12 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
 
             if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
             {
-                $this->SSEngine->bulkInsert($docs);
-                $this->markBeansProcessed($processedBeans);
+                $ok = $this->SSEngine->bulkInsert($docs);
+                if ($ok) {
+                    $this->markBeansProcessed($processedBeans);
+                } else {
+                    return -1;
+                }
                 $docs = $processedBeans = array();
                 sugar_cache_reset();
                 if( function_exists('gc_collect_cycles') )
@@ -244,7 +255,10 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
 
         if(count($docs) > 0)
         {
-            $this->SSEngine->bulkInsert($docs);
+            $ok = $this->SSEngine->bulkInsert($docs);
+            if (!$ok) {
+                return -1;
+            }
         }
 
         $this->markBeansProcessed($processedBeans);
@@ -284,6 +298,11 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
 
         $count = $this->indexRecords($module, $fieldDefinitions);
+        if ($count == -1) {
+            $GLOBALS['log']->fatal('FTS failed to index records, postponing job for next cron');
+            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+            return true;
+        }
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
 
         $messagePacket = unserialize(from_html($this->schedulerJob->message));

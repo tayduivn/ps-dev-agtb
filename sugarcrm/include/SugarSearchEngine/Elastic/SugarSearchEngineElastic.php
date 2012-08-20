@@ -216,7 +216,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         {
             $recordsToBeQueued = $this->getRecordsFromDocs($docs);
             $this->addRecordsToQueue($recordsToBeQueued);
-            return;
+            return false;
         }
 
         try
@@ -253,8 +253,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $recordsToBeQueued = $this->getRecordsFromDocs($batchedDocs);
                 $this->addRecordsToQueue($recordsToBeQueued);
             }
+            return false;
         }
 
+        return true;
     }
 
     protected function getRecordsFromDocs($docs)
