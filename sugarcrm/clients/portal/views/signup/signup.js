@@ -76,7 +76,7 @@
                 title: this.model.get("jobtitle"),
                 account_name: this.model.get("company")
             };
-            var pref_lang = app.getLanguage();
+            var pref_lang = app.lang.getLanguage();
             if (pref_lang) {
                 contactData.preferred_language = pref_lang;
             }

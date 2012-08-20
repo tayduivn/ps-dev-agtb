@@ -122,6 +122,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "forecast_id" => '',
                               "worksheet_id" => '',
                               "show_opps" => false,
+                              "timeperiod_id" => $this->timeperiod_id,
                               "id" => ""
                             );
 		
@@ -208,12 +209,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $testFilters = array(
             'timeperiod_id' => array('$is' => $this->timeperiod_id),
             'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
+            'forecast' => array('$is' => 1) // TODO: fix for when buckets is enabled
         );
-
-        // since the default is Committed, we need to use this if it's not set or if it is set to Committed
-        if (!isset($args['category']) || $args['category'] == 'Committed') {
-            $testFilters['forecast'] = array('$is' => 1);
-        }
 
         require_once('include/SugarParsers/Filter.php');
         require_once("include/SugarParsers/Converter/Report.php");

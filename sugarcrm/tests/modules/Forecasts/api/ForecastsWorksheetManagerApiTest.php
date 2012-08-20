@@ -319,6 +319,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "worksheet_id" => $tmpWorksheet->id,
             "worst_adjusted" => $tmpWorksheet->worst_case,
             "worst_case" => $tmpForecast->worst_case,
+            "timeperiod_id" => self::$timeperiod->id
         );
 
         $this->assertEquals($expected, $restReply['reply'][1]);

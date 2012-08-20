@@ -165,7 +165,7 @@ class Common {
         $query = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy"
             . " FROM forecast_schedule a, timeperiods b"
             . " WHERE a.timeperiod_id = b.id"
-            . " AND a.forecast_start_date <= $nowdate "
+            . " AND b.start_date <= $nowdate "
             . " AND b.end_date >= $nowdate "
             . " AND a.deleted = 0"
             . " AND b.deleted = 0"

@@ -18,17 +18,21 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * The Time period we are working with
-     *
-     * @var string
+     * @var Timeperiod
      */
-    protected $timeperiod_id;
+    protected $timeperiod;
 
     /**
-     * User Id of the Manager
-     *
-     * @var string
+     * Manager
+     * @var User
      */
-    protected $manager_id;
+    protected $manager;
+
+    /**
+     * Sales Rep
+     * @var User
+     */
+    protected $rep;
 
     public static function setUpBeforeClass()
     {
@@ -44,53 +48,31 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        $user = SugarTestUserUtilities::createAnonymousUser();
+        $this->manager = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->manager_id = $user->id;
-
-        $rep = SugarTestUserUtilities::createAnonymousUser();
-        $rep->reports_to_id = $user->id;
-        $rep->save();
+        $this->rep = SugarTestUserUtilities::createAnonymousUser();
+        $this->rep->reports_to_id = $this->manager->id;
+        $this->rep->save();
 
         $rep2 = SugarTestUserUtilities::createAnonymousUser();
-        $rep2->reports_to_id = $user->id;
+        $rep2->reports_to_id = $this->manager->id;
         $rep2->save();
 
-        $timeperiod = new TimePeriod();
-        $timeperiod->start_date = "2012-01-01";
-        $timeperiod->end_date = "2012-03-31";
-        $timeperiod->name = "Test";
-        $timeperiod->save();
+        $this->timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
-        $this->timeperiod_id = $timeperiod->id;
+        SugarTestForecastUtilities::createForecast($this->timeperiod, $this->manager);
 
-        $managerForecast = new Forecast();
-        $managerForecast->user_id = $user->id;
-        $managerForecast->best_case = 1500;
-        $managerForecast->likely_case = 1200;
-        $managerForecast->worst_case = 900;
-        $managerForecast->timeperiod_id = $timeperiod->id;
-        $managerForecast->forecast_type = "Direct";
-        $managerForecast->team_set_id = 1;
-        $managerForecast->save();
+        SugarTestForecastUtilities::createForecast($this->timeperiod, $this->rep);
 
-        $repForecast = new Forecast();
-        $repForecast->user_id = $rep->id;
-        $repForecast->best_case = 1100;
-        $repForecast->likely_case = 900;
-        $repForecast->worst_case = 700;
-        $repForecast->timeperiod_id = $timeperiod->id;
-        $repForecast->forecast_type = "Direct";
-        $repForecast->team_set_id = 1;
-        $repForecast->save();
+        SugarTestForecastScheduleUtilities::createForecastSchedule($this->timeperiod, $this->rep);
     }
 
     public function tearDown()
     {
-        $userIds = SugarTestUserUtilities::getCreatedUserIds();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id ="' . $this->timeperiod_id . '";');
-        $GLOBALS['db']->query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestForecastUtilities::removeAllCreatedForecasts();
+        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
     }
 
     /**
@@ -98,22 +80,33 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetReporteesWithForecastsReturnsOneRecord()
     {
-        $return = self::$common_obj->getReporteesWithForecasts($this->manager_id, $this->timeperiod_id);
+        $return = self::$common_obj->getReporteesWithForecasts($this->manager->id, $this->timeperiod->id);
 
         $this->assertSame(1, count($return));
     }
 
     public function testGetReporteesWithForecastsReturnsEmptyWithInvalidTimePeriod()
     {
-        $return = self::$common_obj->getReporteesWithForecasts($this->manager_id, 'invalid time period');
+        $return = self::$common_obj->getReporteesWithForecasts($this->manager->id, 'invalid time period');
 
         $this->assertEmpty($return);
     }
 
     public function testGetReporteesWithForecastsReturnsEmptyWithInvalidUserId()
     {
-        $return = self::$common_obj->getReporteesWithForecasts('Invalid Manager Id', $this->timeperiod_id);
+        $return = self::$common_obj->getReporteesWithForecasts('Invalid Manager Id', $this->timeperiod->id);
 
         $this->assertEmpty($return);
+    }
+
+    /*
+     * check my_timeriods has current timeperiod for current user
+     */
+    public function testGetMyTimeperiods()
+    {
+        self::$common_obj->current_user = $this->rep->id;
+        self::$common_obj->get_my_timeperiods();
+
+        $this->assertEquals(array($this->timeperiod->id => $this->timeperiod->name), self::$common_obj->my_timeperiods, 'my_timeperiods is empty');
     }
 }
