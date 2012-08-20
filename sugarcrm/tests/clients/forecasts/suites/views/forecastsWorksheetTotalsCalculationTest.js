@@ -38,12 +38,13 @@ describe("The forecasts worksheet totals calculation test", function(){
         var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, forecast: 1,  best_case : 100, likely_case : 100 });
         var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, forecast: 0, best_case : 100, likely_case : 100 });
         var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, forecast: 0,  best_case : 100, likely_case : 100 });
-        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Closed Custom', probability: 70, forecast: 0,  best_case : 100, likely_case : 100 });
-        var collection = new Backbone.Collection([model1, model2, model3, model4]);
+        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Lost Custom', probability: 70, forecast: 0,  best_case : 100, likely_case : 100 });
+        var model5 = new Backbone.Model({amount: 100, sales_stage: 'Won Custom', probability: 70, forecast: 0,  best_case : 100, likely_case : 100 });
+        var collection = new Backbone.Collection([model1, model2, model3, model4, model5]);
         view._collection = collection;
         view.includedModel = new Backbone.Model();
         view.overallModel = new Backbone.Model();
-        app.config.excluded_sales_stages = [];
+
     });
 
 
@@ -128,7 +129,8 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("calculate excluded sales stages correctly", function() {
 
         beforeEach(function() {
-            app.config.excluded_sales_stages = ['Closed Won', 'Closed Lost'];
+            app.config.sales_stage_won = ['Closed Won'];
+            app.config.sales_stage_lost = ['Closed Lost'];
         });
 
         it("should calculate the closed_opp_count and closed_amount values", function() {
@@ -147,9 +149,11 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
-                            expect(updatedTotals.closed_opp_count).toEqual(2);
-                            expect(updatedTotals.total_opp_count).toEqual(4);
-                            expect(updatedTotals.closed_amount).toEqual(200);
+                            expect(updatedTotals.won_count).toEqual(1);
+                            expect(updatedTotals.won_amount).toEqual(100);
+                            expect(updatedTotals.lost_count).toEqual(1);
+                            expect(updatedTotals.lost_amount).toEqual(100);
+                            expect(updatedTotals.total_opp_count).toEqual(5);
                         }
                 }
             };
@@ -158,13 +162,14 @@ describe("The forecasts worksheet totals calculation test", function(){
     })
 
 
-    describe("calculate custom exclude stage correctly", function() {
+    describe("calculate custom won and lost stages correctly", function() {
 
         beforeEach(function() {
-            app.config.excluded_sales_stages = ['Closed Custom'];
+            app.config.sales_stage_won = ['Won Custom'];
+            app.config.sales_stage_lost = ['Lost Custom'];
         });
 
-        it("should calculate the closed_opp_count and closed_amount values for custom exclude sales stage", function() {
+        it("should calculate the correct values for custom sales stages", function() {
             //Expected opportunities model
             var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
             var expectedCollection = new Backbone.Collection([expectedModel]);
@@ -179,10 +184,48 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.best_case).toEqual(100);
                             expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
+                            expect(updatedTotals.won_count).toEqual(1);
+                            expect(updatedTotals.won_amount).toEqual(100);
+                            expect(updatedTotals.lost_count).toEqual(1);
+                            expect(updatedTotals.lost_amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
-                            expect(updatedTotals.closed_opp_count).toEqual(1);
-                            expect(updatedTotals.total_opp_count).toEqual(4);
-                            expect(updatedTotals.closed_amount).toEqual(100);
+                            expect(updatedTotals.total_opp_count).toEqual(5);
+                        }
+                }
+            };
+            view.calculateTotals();
+        });
+    })
+
+
+    describe("calculate multiple custom won and lost stages correctly", function() {
+
+        beforeEach(function() {
+            app.config.sales_stage_won = ['Won Custom', 'Closed Won'];
+            app.config.sales_stage_lost = ['Lost Custom', 'Closed Lost'];
+        });
+
+        it("should calculate the correct values for multiple custom sales stages", function() {
+            //Expected opportunities model
+            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedCollection = new Backbone.Collection([expectedModel]);
+
+            context = app.context.getContext({module:'Forecasts'});
+            view.context = { forecasts :
+                {
+                        forecastschedule : expectedCollection,
+
+                        set : function(model, updatedTotals) {
+                            expect(model).toEqual('updatedTotals');
+                            expect(updatedTotals.best_case).toEqual(100);
+                            expect(updatedTotals.likely_case).toEqual(100);
+                            expect(updatedTotals.amount).toEqual(100);
+                            expect(updatedTotals.won_count).toEqual(2);
+                            expect(updatedTotals.won_amount).toEqual(200);
+                            expect(updatedTotals.lost_count).toEqual(2);
+                            expect(updatedTotals.lost_amount).toEqual(200);
+                            expect(updatedTotals.included_opp_count).toEqual(1);
+                            expect(updatedTotals.total_opp_count).toEqual(5);
                         }
                 }
             };

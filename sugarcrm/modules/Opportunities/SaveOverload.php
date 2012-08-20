@@ -24,9 +24,12 @@ function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     //if forecast value equals -1, set it to 0 or 1 based on probability
     global $sugar_config, $app_list_strings, $timedate;
-    if ( $focus->forecast == -1 )
+    if ($focus->forecast == -1)
     {
-        $focus->forecast = ($focus->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
+        $admin = BeanFactory::getBean('Administration');
+        $admin->retrieveSettings();
+        $committed_probability = isset($admin->settings['base_committed_probability']) ? $admin->settings['base_committed_probability'] : 70;
+        $focus->forecast = ($focus->probability >= $committed_probability) ? 1 : 0;
     }
 
     //if commit_stage isn't set, set it based on the probability
