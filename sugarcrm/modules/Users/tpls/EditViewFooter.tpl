@@ -29,7 +29,7 @@
 <!-- END METADATA GENERATED CONTENT -->
 
 {{if $useTabs}}
-    <!-- include a closing div if the $useTabs variable is set to true -->
+    <!-- include a closing div if the useTabs variable is set to true -->
     </div>
 {{/if}}
             <div id="email_options">
