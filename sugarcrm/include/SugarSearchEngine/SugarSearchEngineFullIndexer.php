@@ -86,7 +86,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
     public function initiateFTSIndexer($modules = array(), $deleteExistingData = TRUE)
     {
         $startTime = microtime(true);
-        $GLOBALS['log']->fatal("Populating Full System Index Queue at $startTime");
+        $GLOBALS['log']->info("Populating Full System Index Queue at $startTime");
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
         {
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
@@ -248,7 +248,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                 $currentMemUsage = memory_get_usage();
                 $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
-                $GLOBALS['log']->fatal("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
                 $lastMemoryUsage = $currentMemUsage;
             }
         }
@@ -316,7 +316,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $this->schedulerJob->message = serialize($messagePacket);
 
         $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
-        $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
+        $GLOBALS['log']->info("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
         if( $count == 0)
@@ -332,7 +332,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         if(self::isFTSIndexScheduleCompleted())
         {
             $stats = self::getStatistics();
-            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistcis: " . var_export($stats, TRUE));
+            $GLOBALS['log']->info("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
         }
 
         return TRUE;

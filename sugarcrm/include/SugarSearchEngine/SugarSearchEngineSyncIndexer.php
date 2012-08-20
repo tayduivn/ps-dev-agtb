@@ -41,7 +41,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
      */
     public function removeExistingFTSSyncConsumer()
     {
-        $GLOBALS['log']->fatal("Removing existing FTS Sync Consumers");
+        $GLOBALS['log']->info("Removing existing FTS Sync Consumers");
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
 
@@ -59,7 +59,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
      */
     public function createJobQueueConsumer()
     {
-        $GLOBALS['log']->fatal("Creating FTS Job queue consumer to sync");
+        $GLOBALS['log']->info("Creating FTS Job queue consumer to sync");
 
         global $timedate;
         if (empty($timedate))
@@ -87,7 +87,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
      */
     public function indexRecords($module, $fieldDefinitions)
     {
-        $GLOBALS['log']->fatal('Indexing for module '.$module);
+        $GLOBALS['log']->info('Indexing for module '.$module);
 
         $count = 0;
         $processedBeans = array();
@@ -127,7 +127,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                 $currentMemUsage = memory_get_usage();
                 $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
-                $GLOBALS['log']->fatal("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
                 $lastMemoryUsage = $currentMemUsage;
             }
         }
@@ -177,7 +177,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         }
         else
         {
-            $GLOBALS['log']->fatal('FTS Server is down?');
+            $GLOBALS['log']->info('FTS Server is down?');
             // server is down
             if (!isSearchEngineDown())
             {
@@ -207,7 +207,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             return true;
         }
 
-        $GLOBALS['log']->fatal("Going to sync records in fts queue...");
+        $GLOBALS['log']->info("Going to sync records in fts queue...");
 
         // Create the index on the server side
         $this->SSEngine->createIndex(false);
@@ -233,12 +233,12 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             if( $count == 0)
             {
                 // If no items were processed we've exhausted the list and can therefore succeed job.
-                $GLOBALS['log']->fatal('succeed job');
+                $GLOBALS['log']->info('succeed job');
                 $this->schedulerJob->succeedJob();
 
                 //Remove any consumers that may be set to run
                 //$this->removeExistingFTSSyncConsumer();
-                $GLOBALS['log']->fatal("FTS Sync Indexing completed.");
+                $GLOBALS['log']->info("FTS Sync Indexing completed.");
             }
             else
             {
