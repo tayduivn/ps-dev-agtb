@@ -69,7 +69,6 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
         $job = new SchedulersJob();
         $job->requeue = 1;
-        $job->execute_time = $timedate->nowDb();
         $job->name = "FTSSyncConsumer";
         $job->target = "class::SugarSearchEngineSyncIndexer";
         $queue = new SugarJobQueue();
@@ -203,7 +202,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         {
             // server is down, postpone the job
             $GLOBALS['log']->fatal('FTS Server is down, postponing the job.');
-            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+            $this->schedulerJob->postponeJob('FTS down', self::POSTPONE_JOB_TIME);
             return true;
         }
 
@@ -218,7 +217,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             $count = $this->indexRecords($module, $fieldDefinitions);
             if ($count == -1) {
                 $GLOBALS['log']->fatal('FTS failed to index records, postponing job for next cron');
-                $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS failed to index', self::POSTPONE_JOB_TIME);
                 return true;
             }
         }
@@ -244,7 +243,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             {
                 // Mark the job that as pending so we can be invoked later.
                 $GLOBALS['log']->info('FTS Sync Indexing partially done, postponing job for next cron');
-                $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS indexing not completed', self::POSTPONE_JOB_TIME);
             }
         }
 

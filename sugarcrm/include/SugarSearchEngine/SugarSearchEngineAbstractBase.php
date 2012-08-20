@@ -76,6 +76,10 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
     }
 
+    /**
+     * Disable FTS and write to config.
+     *
+     */
     protected function disableFTS()
     {
         $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
@@ -87,6 +91,11 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         $cfg->handleOverride();
     }
 
+    /**
+     * This function adds records to FTS queue.
+     *
+     * @param $records array of records
+     */
     protected function addRecordsToQueue($records)
     {
         $GLOBALS['log']->info('addRecordsToQueue');

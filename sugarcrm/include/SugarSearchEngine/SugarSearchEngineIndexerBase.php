@@ -81,6 +81,11 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
     protected $db;
 
     /**
+     * @var table_name
+     */
+    protected $table_name;
+
+    /**
      * @param SugarSearchEngineAqbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
@@ -91,14 +96,13 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
             $this->SSEngine = SugarSearchEngineFactory::getInstance();
 
         $this->db = DBManagerFactory::getInstance('fts');
+
+        $this->table_name = self::QUEUE_TABLE;
     }
 
     public function __get($name)
     {
-        if($name == 'table_name')
-            return self::QUEUE_TABLE;
-        else
-            return $this->$name;
+        return $this->$name;
     }
 
     /**
@@ -212,7 +216,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $inClause = implode("','", $deleteIDs);
         $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
         $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
-        $GLOBALS['db']->query($query);
+        $this->db->query($query);
     }
 
 }
