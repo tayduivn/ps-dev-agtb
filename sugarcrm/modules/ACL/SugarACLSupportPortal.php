@@ -94,6 +94,7 @@ class SugarACLSupportPortal extends SugarACLStatic
             $accounts = $vis->getAccountIds();
 
             if ( count($accounts) == 0 
+                 && $bean->module_dir != 'Notes'
                  && $bean->module_dir != 'Contacts' 
                  && $bean->module_dir != 'Bugs' ) {
                 return false;
