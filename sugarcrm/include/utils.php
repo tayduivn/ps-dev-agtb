@@ -453,8 +453,6 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationlogin' => '',
 		),
     	'use_sprites' => function_exists('imagecreatetruecolor'),
-        //'forecast_opportunity_buckets' => false,
-    	'forecast_committed_probability' => 70,
 	//END SUGARCRM flav=pro ONLY
 		'use_real_names' => true,
 
