@@ -47,8 +47,16 @@ class CurrentUserApi extends SugarApi {
                 'path' => array('me','password'),
                 'pathVars'=> array(''),
                 'method' => 'updatePassword',
-                'shortHelp' => "Updates current user' password",
+                'shortHelp' => "Updates current user's password",
                 'longHelp' => 'include/api/help/change_password.html',
+            ),
+            'verifyPassword' =>  array(
+                'reqType' => 'POST',
+                'path' => array('me','password'),
+                'pathVars'=> array(''),
+                'method' => 'verifyPassword',
+                'shortHelp' => "Verifies current user's password",
+                'longHelp' => 'include/api/help/verify_password.html',
             ),
         );
     }
@@ -148,27 +156,20 @@ class CurrentUserApi extends SugarApi {
             $newpass = $args['new_password'];
         }
 
-        // Create the user from Contacts (if portal user), otherwise from Users
         if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-            $currentPassword = $contact->portal_password;
 
             // Update password for portal user. They must have entered correct "old password"
-            if (User::checkPassword($oldpass, $currentPassword)) {
+            if (null !== ($contact = $this->getPortalUserIfPassword($oldpass))) {
                 $contact->portal_password = User::getPasswordHash($newpass);
                 $contact->save();
                 $user_data['valid'] = true;
             } else {
-                $user_data['valid'] = false;
                 $user_data['message'] = 'Error: Incorrect password.'; 
             }
+
         } else {
             // Update password for normal non support_portal user
-            $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
-            $currentPassword = $user->user_hash;
-
-            // Update password for user. They must have entered correct "old password"
-            if (User::checkPassword($oldpass, $currentPassword)) {
+            if (null !== ($user = $this->getUserIfPassword($oldpass))) {
                 if($user->change_password($oldpass, $newpass)) {
                     $user_data['valid'] = true;
                 } else {
@@ -182,4 +183,52 @@ class CurrentUserApi extends SugarApi {
         return $data = array('current_user'=>$user_data);
     }
 
+    /**
+     * Verifies against the current user's password
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function verifyPassword($api, $args) {
+
+        global $current_user;
+        $user_data['valid'] = false;
+        
+        // Deals with missing required args else assigns oldpass and new paswords
+        if (empty($args['password_to_verify'])) {
+            // TODO: This should probably throw???
+            $user_data['message'] = 'Error: Missing argument.';
+            return $data = array($user_data);
+        } else {
+            if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
+                if(!is_null($this->getPortalUserIfPassword($args['password_to_verify']))) {
+                    $user_data['valid'] = true;
+                } 
+            } else {
+                if(!is_null($this->getUserIfPassword($args['password_to_verify']))) {
+                    $user_data['valid'] = true;
+                } 
+            }
+        }
+        return $data = array('current_user'=>$user_data);
+    }
+
+    private function getPortalUserIfPassword($passwordToVerify) {
+        $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+        $currentPassword = $contact->portal_password;
+        if (User::checkPassword($passwordToVerify, $currentPassword)) {
+            return $contact;
+        }
+        return null;
+    }
+
+    private function getUserIfPassword($passwordToVerify) {
+        $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
+        $currentPassword = $user->user_hash;
+        if (User::checkPassword($passwordToVerify, $currentPassword)) {
+            return $user;
+        }
+        return null;
+    }
 }

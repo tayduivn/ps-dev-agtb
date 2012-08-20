@@ -57,4 +57,15 @@ class RestTestCurrentUser extends RestTestBase {
         $this->assertEquals($reply['reply']['current_user']['valid'], false);
     }
         
+    public function testPasswordVerification() {
+        $reply = $this->_restCall("me/password",
+            json_encode(array('password_to_verify' => $GLOBALS['current_user']->user_name)),
+            'POST');
+        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $reply = $this->_restCall("me/password",
+            json_encode(array('password_to_verify' => 'noway')),
+            'POST');
+        $this->assertEquals($reply['reply']['current_user']['valid'], false);
+    }
+    
 }
