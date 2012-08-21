@@ -30,7 +30,7 @@
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
                             <div class="view-forecastsChart"></div>
-                            <div class="view-chartOptions"></div>
+                            <div class="view-forecastsChartOptions"></div>
                         </div>
                         <div class="clearfix"></div>
                         <div class="block" id="guages">
@@ -116,7 +116,7 @@
 <script src='clients/forecasts/views/tree/tree.js'></script>
 <script src='clients/forecasts/views/filter/filter.js'></script>
 <script src='clients/forecasts/views/timeframes/timeframes.js'></script>
-<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
+<script src='clients/forecasts/views/forecastsChartOptions/forecastsChartOptions.js'></script>
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
 <script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
 <script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>

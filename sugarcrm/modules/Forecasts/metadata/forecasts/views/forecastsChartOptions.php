@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Forecasts']['forecasts']['view']['chartOptions'] = array(
+$viewdefs['Forecasts']['forecasts']['view']['forecastsChartOptions'] = array(
 	'panels' => array(
 		0 => array(
 			'label' => 'LBL_CHART_OPTIONS',
