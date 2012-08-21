@@ -1708,7 +1708,7 @@ class PHPMailer {
    * @access private
    * @return void
    */
-  public function SetError($msg) {
+  private function SetError($msg) {
     $this->error_count++;
     $this->ErrorInfo = $msg;
   }

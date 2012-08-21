@@ -23,4 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerException extends Exception
 {
+	public function log($level) {
+		$GLOBALS['log']->$level($this->message);
+	}
 }

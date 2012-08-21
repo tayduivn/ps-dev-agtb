@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'lib/phpmailer/class.phpmailer.php';
+require_once 'lib/phpmailer/class.smtp.php';
 require_once 'MailerException.php';
 require_once 'EmailIdentity.php';
 require_once 'RecipientsCollection.php';
@@ -158,7 +159,8 @@ class Mailer
 				throw new MailerException("Invalid mailer");
 			}
 
-			$this->transferConnectionData();
+			$this->transferConfigurations();
+			$this->connectToHost();
 			$this->transferHeaders();
 			$this->transferRecipients();
 			$this->transferBody();
@@ -171,19 +173,40 @@ class Mailer
 				throw new MailerException($this->mailer->ErrorInfo);
 			}
 		} catch (MailerException $me) {
-			$GLOBALS['log']->error($me->getMessage());
+			//@todo consider using status codes and grouping them based on the error level that should be used
+			// so that different error levels can be logged
+			// could also catch different Exception classes that extend MailerException and log at the level
+			// particular to that exception type
+			$me->log('error');
 			return false;
 		}
 
 		return true;
 	}
 
-	protected function transferConnectionData() {
+	protected function transferConfigurations() {
 		$this->mailer->Mailer   = $this->configs['protocol'];
 		$this->mailer->Host     = $this->configs['host'];
 		$this->mailer->Port     = $this->configs['port'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
+	}
+
+	protected function connectToHost() {
+		if ($this->configs['protocol'] == 'smtp') {
+			$this->mailer->smtp = new SMTP();
+
+			if (!$this->mailer->SmtpConnect()) {
+				//@todo need to tell the class what error messages to use, so the following is for reference only
+//				global $app_strings;
+//				if(isset($this->oe) && $this->oe->type == "system") {
+//					$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+//				} else {
+//					$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+//				}
+				throw new MailerException('Failed to connect to the remote server');
+			}
+		}
 	}
 
 	protected function transferHeaders() {
