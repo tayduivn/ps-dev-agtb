@@ -473,18 +473,6 @@ class PHPMailer {
       return false;
     }
 
-    //iterate through recipients and add back in html characters (apostrophe ' and ampersand &) to email addresses
-    //this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
-    foreach($this->to as $k=>$addr){
-        $this->to[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
-    }
-    foreach($this->cc as $k=>$addr){
-        $this->cc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
-    }
-    foreach($this->bcc as $k=>$addr){
-        $this->bcc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
-    }
-
     /* Set whether the message is multipart/alternative */
     if(!empty($this->AltBody)) {
       $this->ContentType = 'multipart/alternative';

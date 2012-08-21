@@ -211,14 +211,17 @@ class Mailer
 
 		//@todo should you be able to initiate a send without any To recipients?
 		foreach ($to as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($cc as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddCC($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($bcc as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddBCC($recipient->getEmail(), $recipient->getName());
 		}
 	}
