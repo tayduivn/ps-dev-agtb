@@ -38,10 +38,9 @@
 
     /**
      * Renders the component
-     * @private
      */
-    _render: function() {
-        app.view.View.prototype._render.call(this);
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {

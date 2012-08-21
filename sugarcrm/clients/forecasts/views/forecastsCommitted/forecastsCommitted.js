@@ -131,10 +131,9 @@
 
     /**
      * Renders the component
-     * @private
      */
-    _render: function() {
-        app.view.View.prototype._render.call(this);
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         if(this.showHistoryLog) {
             this.$el.find('i[id=show_hide_history_log]').toggleClass('icon-chevron-down icon-chevron-up');

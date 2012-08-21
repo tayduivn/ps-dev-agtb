@@ -192,9 +192,9 @@
         }
     },
 
-    _render: function () {
+    _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
     },
 
     updateProgressForSelectedTimePeriod: function (selectedTimePeriod) {

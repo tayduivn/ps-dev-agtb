@@ -95,9 +95,9 @@
     /**
      * Renders JSTree
      */
-    _render:function () {
+    _renderHtml:function (ctx, options) {
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var self = this;
         var treeData;

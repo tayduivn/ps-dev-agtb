@@ -118,9 +118,15 @@
     /**
      * Renders JSTree
      */
-    _render:function () {
 
-        app.view.View.prototype._render.call(this);
+    /**
+     * Renders JSTree
+     * @param ctx
+     * @param options
+     * @protected
+     */
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var self = this;
         var treeData;
