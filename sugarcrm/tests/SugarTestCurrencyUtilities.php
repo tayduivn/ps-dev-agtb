@@ -29,6 +29,13 @@ require('include/modules.php');
 $GLOBALS['beanList'] = $beanList;
 $GLOBALS['beanFiles'] = $beanFiles;
 
+/**
+ * SugarTestCurrencyUtilities
+ *
+ * utility class for currencies
+ *
+ * @author Monte Ohrt <mohrt@sugarcrm.com>
+ */
 class SugarTestCurrencyUtilities
 {
     private static $_createdCurrencies = array();
@@ -42,7 +49,7 @@ class SugarTestCurrencyUtilities
      *
      * @param $name the name of the currency
      * @param $symbol the symbol for the currency
-     * @param iso4217 the 3-letter ISO for the currency
+     * @param $iso4217 the 3-letter ISO for the currency
      * @param $conversion_rate the conversion rate from the US dollar
      * @param $id the id for the currency record
      * @return new currency object
@@ -70,7 +77,7 @@ class SugarTestCurrencyUtilities
      *
      * get an existing currency by its ISO
      *
-     * @param iso4217 the 3-letter ISO for the currency
+     * @param  $iso4217 the 3-letter ISO for the currency
      * @return new currency object
      */
     public static function getCurrencyByISO($iso4217)
@@ -80,16 +87,33 @@ class SugarTestCurrencyUtilities
         return $currency;
     }
 
+    /**
+     * removeAllCreatedCurrencies
+     *
+     * remove currencies created by this test utility
+     *
+     * @return boolean true on successful removal
+     */
     public static function removeAllCreatedCurrencies()
     {
+        if(empty(self::$_createdCurrencies))
+            return true;
         $currency_ids = self::getCreatedCurrencyIds();
         $GLOBALS['db']->query(
             sprintf("DELETE FROM currencies WHERE id IN ('%s');",
             implode("','", $currency_ids))
         );
         self::$_createdCurrencies = array();
+        return true;
     }
 
+    /**
+     * getCreatedCurrencyIds
+     *
+     * get array of currency_ids created by this utility
+     *
+     * @return array list of currency_id's
+     */
     public static function getCreatedCurrencyIds()
     {
         $currency_ids = array();

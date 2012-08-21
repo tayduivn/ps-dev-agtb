@@ -99,7 +99,7 @@ class ForecastsViewSidecar extends SidecarView
 
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $defaultSelections["category"] = array("70");
-        $defaultSelections["group_by"] = 'sales_stage';
+        $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 
         // push in defaultSelections

@@ -6,6 +6,46 @@
  */
 ({
     /**
+     * Store the created fields by name in an array
+     */
+    fields: [],
+
+    /**
+     * Initialize because we need to set the selectedUser variable
+     * @param options
+     */
+    initialize:function (options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.selectedUser = {id: app.user.get('id'), isManager:app.user.get('isManager'), showOpps : false};
+    },
+
+    /**
+     * Watch for the selectedUser Change
+     */
+    bindDataChange: function() {
+
+        var self = this;
+
+        if(this.context && this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", function(context, user) {
+                self.selectedUser = user;
+                this.toggleCategoryFieldVisibility();
+            }, this);
+        }
+    },
+
+    /**
+     * Method to toggle the field visibility of the group by field
+     */
+    toggleCategoryFieldVisibility: function() {
+        if(!_.isUndefined(this.fields['category']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
+            this.fields['category'].$el.hide();
+        } else {
+            this.fields['category'].$el.show();
+        }
+    },
+
+    /**
      * Overriding _renderField because we need to determine whether the config settings are set to show buckets or
      * binary for forecasts and adjusts the category filter accordingly
      * @param field
@@ -20,6 +60,20 @@
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
+
+        this.fields[field.name] = field;
+    },
+
+    /**
+     * Override the render to have call the group by toggle
+     *
+     * @private
+     */
+    _render : function() {
+        app.view.View.prototype._render.call(this);
+
+        // toggle the visibility of the group by field for the initial render
+        this.toggleCategoryFieldVisibility();
     },
 
     /**
