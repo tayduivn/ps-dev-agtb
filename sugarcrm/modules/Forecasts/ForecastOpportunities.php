@@ -231,7 +231,7 @@ class ForecastOpportunities extends SugarBean {
             $abc['USER_ID'] = $this->current_user_id;
             $abc['TOTAL_AMOUNT'] =  0;
             $abc['TOTAL_WK_BEST_CASE']=0;
-            $abc['TOTAL_WK_LIKELY_CASE']=0;
+            $abc['TOTAL_WK_LIKELY_CASE']=0;g
             $abc['TOTAL_WK_WORST_CASE']=0;
         } else {
             //make sure that worksheet records were created.
