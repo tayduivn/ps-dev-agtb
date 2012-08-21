@@ -280,7 +280,7 @@ class UnifiedSearchApi extends SugarApi {
         }
         $options['moduleFilter'] = $options['moduleList'];
 
-        $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
+        $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
         $returnedRecords = array();
         foreach ( $results as $result ) {
             $record = BeanFactory::getBean($result->getModule(), $result->getId());
@@ -310,7 +310,7 @@ class UnifiedSearchApi extends SugarApi {
 
         $total = $results->getTotalHits();
 
-        if ( $total > $options['limit'] )
+        if ( $total > ($options['limit'] + $options['offset']))
         {
             $nextOffset = $options['offset']+$options['limit'];
         }
