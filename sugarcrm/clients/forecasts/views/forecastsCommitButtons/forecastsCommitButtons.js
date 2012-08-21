@@ -28,7 +28,7 @@
                 var oldShowButtons = self.showCommitButton;
                 self.showCommitButton = self.checkShowCommitButton(user.id);
                 // if show buttons has changed, need to re-render
-                if(self.showCommitButtons != oldShowButtons) {
+                if(self.showCommitButton != oldShowButtons) {
                     self._render();
                 }
             });
