@@ -42,6 +42,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_TestCase
 	{
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user');
 
