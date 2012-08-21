@@ -1,10 +1,10 @@
 ({
     extends:'BaseeditmodalView',
     initialize: function(options) {
+        var self = this;
         this.options.meta = this._meta.meta;
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";
-
         if (this.layout) {
             this.layout.on("app:view:password:editmodal", function(profileEditView) {
                 this.context.set('contactModel', profileEditView.context.get('model'));
@@ -16,6 +16,45 @@
             }, this);
         }
         this.bindDataChange();
+    },
+    _render: function() {
+        var self = this;
+        this.saveButtonWasClicked = false;
+        app.view.View.prototype._render.call(this);
+        this.events = _.extend(this.events, {
+            "focusin input[name=new_password]" : "verifyCurrentPassword",
+            "focusin input[name=confirm_password]" : "verifyCurrentPassword"
+        });
+        this.delegateEvents();
+    },
+    verifyCurrentPassword: function() {
+        var self = this, currentPassword;
+        currentPassword = self.$('[name=current_password]').val();
+
+        // If user leaving old password text field, actually entered something, and we're sure the user
+        // hasn't already clicked save (potentially a race condition if this completes after saveComplete, etc.)
+        if(currentPassword && currentPassword.length && !self.saveButtonWasClicked) {
+            app.api.verifyPassword(currentPassword, {
+                success: function(data) {
+                    // Since we're essentially looking for valid:true, this works ;=)
+                    if(!self.checkUpdatePassWorked(data)) {
+                        app.alert.show('pass_verification_failed', {
+                            level: 'error',
+                            title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'),
+                            messages: app.lang.get('LBL_PORTAL_PASSWORD_VERIFICATION_FAILED'),
+                            autoClose: true});
+                        self.$('[name=current_password]').val('');
+                        self.$('[name=current_password]').focus();
+                    } else {
+                        app.alert.dismiss('pass_verification_failed');
+                    }
+                },
+                error: function(error) {
+                    app.error.handleHttpError(error, self);
+                    self.resetButton();
+                }
+            });
+        }
     },
     // Since we don't have a true Bean/meta driven validation for matching two temp fields 
     // (password and confirmation password), etc., we manually add validation errors here
@@ -77,7 +116,9 @@
         var self = this, 
             oldPass = contactModel.get('current_password'),
             newPass = contactModel.get('new_password');
-        
+
+        this.saveButtonWasClicked = true;
+
         // Add the new pass to portal_password and remove temp fields
         contactModel.unset('current_password', {silent: true});
         contactModel.unset('confirm_password', {silent: true});
