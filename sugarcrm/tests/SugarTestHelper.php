@@ -271,6 +271,8 @@ class SugarMockLogger
 	}
 }
 
+require_once('ModuleInstall/ModuleInstaller.php');
+
 /**
  * Own exception for SugarTestHelper class
  *
@@ -636,6 +638,8 @@ class SugarTestHelper
      */
     protected static function setUp_dictionary()
     {
+        self::setUp('beanFiles');
+        self::setUp('beanList');
         self::$registeredVars['dictionary'] = true;
 
         global $dictionary;
@@ -644,6 +648,11 @@ class SugarTestHelper
         $moduleInstaller->silent = true;
         $moduleInstaller->rebuild_tabledictionary();
         require 'modules/TableDictionary.php';
+
+        foreach($GLOBALS['beanList'] as $k => $v)
+        {
+            VardefManager::loadVardef($k, $v);
+        }
         return true;
     }
 
