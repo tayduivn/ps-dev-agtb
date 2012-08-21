@@ -279,6 +279,7 @@ class Mailer
 			$this->mailer->Body = $this->textBody;
 		} elseif ($this->htmlBody) {
 			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
+			//$this->mailer->Encoding = 'base64'; //@todo do we need this?
 			$this->mailer->Body = $this->htmlBody;
 		} else {
 			throw new MailerException("No email body was provided");
