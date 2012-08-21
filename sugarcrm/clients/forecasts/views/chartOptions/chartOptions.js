@@ -72,12 +72,12 @@
      * @private
      */
     _render : function() {
-        var ret = app.view.View.prototype._render.call(this);
+        app.view.View.prototype._render.call(this);
 
         // toggle the visibility of the group by field for the initial render
         this.toggleGroupByFieldVisibility();
 
-        return ret;
+        return this;
     },
 
     /**
