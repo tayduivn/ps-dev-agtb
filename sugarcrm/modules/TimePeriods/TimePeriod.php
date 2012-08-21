@@ -49,6 +49,7 @@ class TimePeriod extends SugarBean {
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
 	var $module_dir = 'TimePeriods';
+    var $time_period_type = 'Annually';
 	var $object_name = "TimePeriod";
 	var $user_preferences;
 
@@ -67,8 +68,10 @@ class TimePeriod extends SugarBean {
 
 	function save($check_notify = false){
 		//if (empty($this->id)) $this->parent_id = null;
-		
-		return parent::save($check_notify);		
+
+
+
+		return parent::save($check_notify);
 	}
 
 
@@ -333,6 +336,62 @@ class TimePeriod extends SugarBean {
             }
         }
         return $not_fiscal_timeperiods;
+    }
+
+    /**
+     * Takes the current time period and finds the next one that is in the db of the same type.  If none exists it returns null
+     *
+     * @return mixed
+     */
+    public function getNextTimePeriod() {
+        $db = DBManagerFactory::getInstance();
+
+        $query = "select id from timeperiods where ";
+        $query .= " time_period_type = " . $db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0" . $db->quoted($this->time_period_type);
+
+        $queryDate = $this->end_date;
+        $queryDate = $queryDate->modify('+1 day');
+        $queryDate = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND start_date = {$queryDate}";
+
+        $nextID = $db->getOne($query);
+
+        if(empty($nextID)) {
+            return createNextTimePeriod();
+        }
+
+        return BeanFactory::getBean('TimePerion', $nextID);
+
+    }
+
+
+    /**
+     * Grabs the time period previous of this one and returns it.  If none is found, it returns null
+     *
+     * @return null|SugarBean
+     */
+    public function getPreviousTimePeriod() {
+        $db = DBManagerFactory::getInstance();
+
+        $query = "select id from timeperiods where ";
+        $query .= " time_period_type = " . $db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0" . $db->quoted($this->time_period_type);
+
+        $queryDate = $this->start_date;
+        $queryDate = $queryDate->modify('-1 day');
+        $queryDate = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND end_date = {$queryDate}";
+
+        $nextID = $db->getOne($query);
+
+        if(empty($nextID)) {
+            return NULL;
+        }
+
+        return BeanFactory::getBean('TimePeriod', $nextID);
     }
 }
 

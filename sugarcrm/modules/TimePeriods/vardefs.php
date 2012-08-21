@@ -99,6 +99,19 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'vname' => 'LBL_TP_IS_FISCAL_YEAR',
     'type' => 'bool',
   ),
+    'time_period_type' =>
+    array (
+      'name' => 'time_period_type',
+      'vname' => 'LBL_TP_TYPE',
+      'type' => 'enum',
+      'options' => 'time_period_dom',
+      'len' => '255',
+      'audited'=>true,
+      'comment' => 'Time Period to be Forecast over',
+      'merge_filter' => 'enabled',
+      'importable' => 'required',
+      'required' => true,
+    ),
   'forecast_schedules' =>
   array (
   	'name' => 'forecast_schedules',
