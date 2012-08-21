@@ -162,22 +162,32 @@ public static function populateSeedData($timeperiods)
 }
 
 /*
- * setup default forecast settings
- * they will be stored in the 'config' table
- * and will be retrieved through getPublicMetadata API call
+ * This function is used to setup default forecast settings which are stored in the config table under the base category.
+ *
  */
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
+            //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
             'show_buckets' => false,
+            //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
             'committed_probability' => 70,
+            //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        );
+            //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
+            'sales_stage_lost' => array('Closed Lost'),
+            //base_buckets_dom is used to reference the app_list_string entry to indicate the commit stage list to use
+            'buckets_dom' => 'commit_stage_dom'
+    );
     $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
-        $admin->saveSetting('base', $name, json_encode($value));
+        if(is_array($value))
+        {
+            $admin->saveSetting('base', $name, json_encode($value));
+        } else {
+            $admin->saveSetting('base', $name, $value);
+        }
     }
 }
 
