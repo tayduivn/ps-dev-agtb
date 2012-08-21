@@ -1,6 +1,6 @@
 /**
  * View that displays a list of models pulled from the context's collection.
- * @class View.Views.FilterView
+ * @class View.Views.ForecastsFilterView
  * @alias SUGAR.App.layout.FilterView
  * @extends View.View
  */

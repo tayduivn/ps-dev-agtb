@@ -15,7 +15,7 @@
                     <div class="view-forecastsCommitButtons"></div>
                     <div class="view-timeframes"></div>
                     <div class="view-forecastsCommitted"></div>
-                    <div class="view-filter"></div>
+                    <div class="view-forecastsFilter"></div>
                     <div>
                         <div id="view-sales-rep" style="display:none">
                             <div class="view-forecastsWorksheet"></div>
@@ -114,7 +114,7 @@
 <script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
 <script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
 <script src='clients/forecasts/views/tree/tree.js'></script>
-<script src='clients/forecasts/views/filter/filter.js'></script>
+<script src='clients/forecasts/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/forecasts/views/timeframes/timeframes.js'></script>
 <script src='clients/forecasts/views/forecastsChartOptions/forecastsChartOptions.js'></script>
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
