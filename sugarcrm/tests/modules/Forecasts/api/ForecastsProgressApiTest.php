@@ -203,7 +203,7 @@ class ForecastsProgressApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testProgress() {
-        $url = 'Forecasts/progress/' . self::$user->id . '/' . self::$timeperiod->id . '/0/Closed%20Won,Closed%20Lost';
+        $url = 'Forecasts/progress/' . self::$user->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 
@@ -219,7 +219,7 @@ class ForecastsProgressApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testManagerProgress() {
-        $url = 'Forecasts/progress/' . self::$manager->id . '/' . self::$timeperiod->id . '/1/Closed%20Won,Closed%20Lost';
+        $url = 'Forecasts/progress/' . self::$manager->id . '/' . self::$timeperiod->id . '/1/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 
@@ -242,7 +242,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $newUser->reports_to_id = self::$manager->id;
         $newUser->save();
-        $url = 'Forecasts/progress/' . $newUser->id . '/' . self::$timeperiod->id . '/0/Closed%20Won,Closed%20Lost';
+        $url = 'Forecasts/progress/' . $newUser->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 

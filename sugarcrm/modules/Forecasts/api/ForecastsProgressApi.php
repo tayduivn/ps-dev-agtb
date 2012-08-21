@@ -45,8 +45,9 @@ class ForecastsProgressApi extends ModuleApi
 	protected $should_rollup;
 	protected $quotaData;
 	protected $opportunity;
-    protected $excluded_sales_stages;
     protected $committed_probability;
+    protected $sales_stage_lost;
+    protected $sales_stage_won;
 
 	public function __construct()
 	{
@@ -62,8 +63,8 @@ class ForecastsProgressApi extends ModuleApi
 		$parentApi = array(
 			'progress' => array(
 				'reqType'   => 'GET',
-				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?'),
-				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','excluded_sales_stages'),
+				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?', '?'),
+				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','sales_stage_won', 'sales_stage_lost'),
 				'method'    => 'progress',
 				'shortHelp' => 'Progress data',
 				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
@@ -125,7 +126,7 @@ class ForecastsProgressApi extends ModuleApi
    	 *
    	 * @return int
    	 */
-   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $excluded_sales_stages )
+   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $sales_stage_won )
    	{
    		$amountSum = 0;
    		$where     = "";
@@ -140,9 +141,9 @@ class ForecastsProgressApi extends ModuleApi
    			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
    		}
 
-       foreach($excluded_sales_stages as $exclusion)
+       foreach($sales_stage_won as $inclusion)
        {
-           $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+           $where .= " AND opportunities.sales_stage = " . $GLOBALS['db']->quoted($inclusion);
        }
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
@@ -169,15 +170,16 @@ class ForecastsProgressApi extends ModuleApi
 
 		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
 		$this->should_rollup = (array_key_exists("should_rollup", $args) ? $args["should_rollup"] : User::isManager($this->user_id));
-		$this->excluded_sales_stages = (array_key_exists("excluded_sales_stages", $args) ? explode(',', $args["excluded_sales_stages"]) : array());
+		$this->sales_stage_won = (array_key_exists("sales_stage_won", $args) ? explode(',', $args["sales_stage_won"]) : array());
+        $this->sales_stage_lost = (array_key_exists("sales_stage_lost", $args) ? explode(',', $args["sales_stage_lost"]) : array());
         if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
 		}
         if($this->should_rollup) {
             $this->opportunity = new Opportunity();
             $this->quotaData = array('amount' => 0);
-            $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->excluded_sales_stages);
-            $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->excluded_sales_stages);
+            $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->sales_stage_won);
+            $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, array_merge($this->sales_stage_won, $this->sales_stage_lost));
         } else {
             $this->opportunitiesInPipeline = 0;
             $this->closed = 0;

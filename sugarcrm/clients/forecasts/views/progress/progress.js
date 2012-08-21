@@ -79,6 +79,8 @@
     recalculate: function (totals) {
         this.calculateBases(totals);
 
+        debugger;
+
         if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
             var closedAmount = this.model.get('closed_amount');
             this.model.set({
@@ -101,14 +103,14 @@
         } else {
             var quotaAmount = this.model.get('quota_amount');
             this.model.set({
-                closed_amount : totals.closed_amount,
+                closed_amount : totals.won_amount,
                 opportunities : totals.included_opp_count,
-                closed_likely_amount : this.getAbsDifference(this.likelyTotal, totals.closed_amount),
-                closed_likely_percent : this.getPercent(totals.closed_amount, this.likelyTotal),
-                closed_likely_above : this.checkIsAbove(totals.closed_amount, this.likelyTotal ),
-                closed_best_amount : this.getAbsDifference(this.bestTotal, totals.closed_amount),
-                closed_best_percent : this.getPercent(totals.closed_amount, this.bestTotal),
-                closed_best_above : this.checkIsAbove(totals.closed_amount, this.bestTotal),
+                closed_likely_amount : this.getAbsDifference(this.likelyTotal, totals.won_amount),
+                closed_likely_percent : this.getPercent(totals.won_amount, this.likelyTotal),
+                closed_likely_above : this.checkIsAbove(totals.won_amount, this.likelyTotal ),
+                closed_best_amount : this.getAbsDifference(this.bestTotal, totals.won_amount),
+                closed_best_percent : this.getPercent(totals.won_amount, this.bestTotal),
+                closed_best_above : this.checkIsAbove(totals.won_amount, this.bestTotal),
                 revenue : totals.amount,
                 quota_likely_amount : this.getAbsDifference(this.likelyTotal, quotaAmount),
                 quota_likely_percent : this.getPercent(this.likelyTotal, quotaAmount),
@@ -116,7 +118,7 @@
                 quota_best_amount : this.getAbsDifference(this.bestTotal, quotaAmount),
                 quota_best_percent : this.getPercent(this.bestTotal, quotaAmount),
                 quota_best_above : this.checkIsAbove(this.bestTotal, quotaAmount),
-                pipeline : this.calculatePipelineSize(this.likelyTotal, totals.amount, totals.closed_amount)
+                pipeline : this.calculatePipelineSize(this.likelyTotal, totals.amount, totals.won_amount)
             });
         }
     },
@@ -192,7 +194,8 @@
         var url = this.progressEndpoint;
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        app.config.excluded_sales_stages = app.config.excluded_sale_stages || [];
+        app.config.sales_stage_won = app.config.sales_stage_won || [];
+        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
         app.config.committed_probability = app.config.committed_probability || 101;
 
 
@@ -203,7 +206,8 @@
             url += self.selectedUser.id + "/";
             url += self.selectedTimePeriod.id + "/";
             url += getRollup ? "1/" : "0/";
-            url += app.config.excluded_sales_stages + "/";
+            url += app.config.sales_stage_won + "/";
+            url += app.config.sales_stage_lost + "/";
         }
 
 
@@ -216,13 +220,7 @@
                     });
                 } else {
                     self.model.set({
-                        quota_amount : data.quota_amount,
-                        quota_likely_amount : self.getAbsDifference(self.likelyTotal, data.quota_amount),
-                        quota_likely_percent : self.getPercent(self.likelyTotal, data.quota_amount),
-                        quota_likely_above : self.checkIsAbove(self.likelyTotal, data.quota_amount),
-                        quota_best_amount : self.getAbsDifference(self.bestTotal, data.quota_amount),
-                        quota_best_percent : self.getPercent(self.bestTotal, data.quota_amount),
-                        quota_best_above : self.checkIsAbove(self.bestTotal, data.quota_amount)
+                        quota_amount : data.quota_amount
                     });
                 }
             }
