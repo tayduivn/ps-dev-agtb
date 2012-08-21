@@ -161,6 +161,12 @@
         this.$('.modal').modal('hide').find('form').get(0).reset();
         //reset the `Save` button
         this.resetButton();
+        //"Your password has been successfully updated."
+        app.alert.show('pass_successfully_changes', {
+            level: 'success', 
+            title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), 
+            messages: app.lang.get('LBL_PORTAL_PASSWORD_SUCCESS_CHANGED'),
+            autoClose: true});
     },
     
     _meta: 
