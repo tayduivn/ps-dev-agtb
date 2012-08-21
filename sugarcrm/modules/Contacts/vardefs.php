@@ -226,6 +226,7 @@ array (
             'default' => 'en_us',
             'vname' => 'LBL_PREFERRED_LANGUAGE',
             'options' => 'available_language_dom',
+            'popupHelp' => 'LBL_LANG_PREF_TOOLTIP',
         ),
 	//END SUGARCRM flav=ent ONLY
 	'accounts' =>

@@ -7,8 +7,8 @@
 ({
     fieldsToDisplay: app.config.fieldsToDisplay || 5,
     events: {
-        'click .more': 'showMore',
-        'click .less': 'hideMore'
+        'click .more': 'toggleMoreLess',
+        'click .less': 'toggleMoreLess'
     },
     _renderHtml: function() {
         app.view.View.prototype._renderHtml.call(this);
@@ -23,20 +23,12 @@
             this.$(".more").removeClass("hide");
         }
     },
-    showMore: function() {
-        var fieldsArray = this.$("span[sfuuid]") || [];
-        _.each(fieldsArray, function(field, i) {
-            $(field).parent().parent().show();
-        });
-        this.$(".more").toggleClass("hide");
-        this.$(".less").toggleClass("hide");
-    },
-    hideMore: function() {
+    toggleMoreLess: function() {
         var fieldsArray = this.$("span[sfuuid]") || [];
         var that = this;
         _.each(fieldsArray, function(field, i) {
             if (i > that.fieldsToDisplay - 1) {
-                $(field).parent().parent().hide();
+                $(field).parent().parent().toggle();
             }
         });
         this.$(".less").toggleClass("hide");
@@ -50,9 +42,9 @@
                         'title': this.model.get('name'),
                         'meta': this.meta
                     });
+                    this.model.isNotEmpty = true;
+                    this.render();
                 }
-                this.$('.modelNotLoaded').hide();
-                this.$('.modelLoaded').show();
             }, this);
         }
     }

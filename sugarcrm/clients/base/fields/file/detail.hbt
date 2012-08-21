@@ -1,1 +1,5 @@
-        {{#if value}}<a href="{{fileURL}}">{{value}}</a>{{/if}}
+<ul>
+{{#each attachments}}
+    <li><a class="file" href="javascript:void(0)" data-url="{{url}}">{{name}}</a></li>
+{{/each}}
+</ul>

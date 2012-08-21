@@ -2876,13 +2876,13 @@ protected function checkQuery($sql, $object_name = false)
      * @param SugarBean $bean Sugarbean instance that was changed
      * @return array
      */
-	public function getDataChanges(SugarBean &$bean)
+	public function getDataChanges(SugarBean &$bean, $for = 'audit')
 	{
 		$changed_values=array();
-		$audit_fields=$bean->getAuditEnabledFieldDefinitions();
+		$fields= $for == 'audit' ? $bean->getAuditEnabledFieldDefinitions() : $bean->getActivityEnabledFieldDefinitions();
 
-		if (is_array($audit_fields) and count($audit_fields) > 0) {
-			foreach ($audit_fields as $field=>$properties) {
+		if (is_array($fields) and count($fields) > 0) {
+			foreach ($fields as $field=>$properties) {
 				if (!empty($bean->fetched_row) && array_key_exists($field, $bean->fetched_row)) {
 					$before_value=$bean->fetched_row[$field];
 					$after_value=$bean->$field;

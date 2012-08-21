@@ -184,13 +184,13 @@
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar",
+        clientID: "sugar"
         /**
          * Syncs config from server on app start
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-        syncConfig: true
+        //syncConfig: true
     }, false);
 
 })(SUGAR.App);
