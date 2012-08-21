@@ -34,14 +34,14 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
             array(
                 'name' => 'save_button',
                 'type' => 'button',
-                'label' => 'Save',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
                 'primary' => true,
             ),
             array(
                 'name' => 'cancel_button',
                 'type' => 'button',
-                'label' => 'Cancel',
+                'label' => 'LBL_CANCEL_BUTTON_LABEL',
                 'value' => 'cancel',
                 'events' =>
                 array(

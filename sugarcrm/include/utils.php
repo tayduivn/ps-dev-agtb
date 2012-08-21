@@ -127,7 +127,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -621,7 +621,7 @@ function return_name($row, $first_column, $last_column)
 function get_languages()
 {
 	global $sugar_config;
-	$lang = $sugar_config['languages'];
+	$lang = isset($sugar_config['languages']) ? $sugar_config['languages'] : array();
     if(!empty($sugar_config['disabled_languages'])){
         foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
             unset($lang[$disable]);

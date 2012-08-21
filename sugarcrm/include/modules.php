@@ -571,6 +571,9 @@ $modules_exempt_from_availability_check['SugarFollowing'] = 'SugarFollowing';
 $modInvisList[] = 'SugarFollowing';
 //END SUGARCRM flav=following ONLY
 
+$beanList['ActivityStream'] = 'ActivityStream';
+$beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';
+$modInvisList[] = 'ActivityStream';
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
