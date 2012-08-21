@@ -44,7 +44,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
     {
-        parent::__construct();
+        parent::__construct($engine);
         $this->results = array();
     }
 

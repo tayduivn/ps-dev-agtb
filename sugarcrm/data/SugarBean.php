@@ -1943,7 +1943,7 @@ class SugarBean
     {
         list($new_rel_id, $new_rel_link) = $this->set_relationship_info($exclude);
 
-        $new_rel_id = $this->handle_preset_relationships($new_rel_id, $exclude);
+        $new_rel_id = $this->handle_preset_relationships($new_rel_id, $new_rel_link, $exclude);
 
         $this->handle_remaining_relate_fields($exclude);
 
