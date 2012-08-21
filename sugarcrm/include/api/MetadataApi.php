@@ -298,9 +298,11 @@ class MetadataApi extends SugarApi {
                 $data['acl'][$modName]['massupdate'] = 'no';
             }
         }
+
         if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
             // This is a change in the ACL's for users without Accounts
-            $vis = new SupportPortalVisibility($bean);
+            $vis = new SupportPortalVisibility($apiPerson);
             $accounts = $vis->getAccountIds();
             if (count($accounts)==0) {
                 // This user has no accounts, modify their ACL's so that they match up with enforcement
