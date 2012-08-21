@@ -596,15 +596,14 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'default' => '-1',
     'comment' => 'Boolean indicating whether or not record should be included in forecast'
   ),
-  'sales_stage' =>
+  'commit_stage' =>
   array (
-    'name' => 'sales_stage',
-    'vname' => 'LBL_SALES_STAGE',
+    'name' => 'commit_stage',
+    'vname' => 'LBL_COMMIT_STAGE',
     'type' => 'enum',
-    'options' => 'sales_stage_dom',
-    'len' => '255',
-    'audited'=>true,
-    'comment' => 'Indication of progression towards closure'
+    'options' => 'commit_stage_dom',
+    'len' => '20',
+    'comment' => 'Worksheet Placeholder for the forecast commit category: Include, Likely, Omit etc.',
   ),
   'probability' =>
   array (
@@ -613,7 +612,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'type' => 'int',
     'dbType' => 'double',
     'audited'=>true,
-    'comment' => 'The probability of closure',
+    'comment' => 'Worksheet Placeholder for the probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
     'merge_filter' => 'enabled',
   ),
@@ -621,17 +620,19 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 	array (
 	  'name' => 'quota',
 	  'vname' => 'LBL_AMOUNT',
-	  'type' => 'int',
+	  'type' => 'currency',
 	  'reportable' => true,
 	  'importable' => 'required',
+	  'comment' => 'Worksheet placeholder for quota amount'
 	),
   'version' =>
 	array (
 	  'name' => 'version',
-	  'vname' => 'LBL_AMOUNT',
+	  'vname' => 'LBL_WK_VERSION',
 	  'type'=>'varchar',
   	  'len' => 10,
-	  'default' => 'Committed'
+	  'default' => 'Committed',
+	  'comment' => 'Worksheet version - Committed or Draft.'
 	),
  ),
  'indices' => array (

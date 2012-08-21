@@ -284,9 +284,9 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         					 "or u.id = '" . $this->user_id . "') " .
         		"where f.timeperiod_id = '" . $this->timeperiod_id . "' " .
         			"and ((f.user_id = '" . $this->user_id . "' and f.forecast_type = 'Direct') " .
-        				 "or (f.user_id != '" . $this->user_id . "' and f.forecast_type = 'Rollup'))" .
+        				 "or (f.user_id <> '" . $this->user_id . "' and f.forecast_type = 'Rollup'))" .
         			"and f.deleted = 0 " .
-        			"and f.date_modified = (select max(date_modified) from forecasts where user_id = u.id)";
+        			"and f.date_modified = (select max(date_modified) from forecasts where user_id = u.id and timeperiod_id = '" . $this->timeperiod_id . "')";
         $result = $GLOBALS['db']->query($sql);
         
 		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
