@@ -29,50 +29,53 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs ['Prospects']['base']['view']['detail'] = array(
-	'buttons' => array(
-		array(
-			'name'    => 'edit_button',
-			'type'    => 'button',
-			'label'   => 'Edit',
-			'primary' => true,
-			'events'  => array(
-				'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
-			),
-		),
-	),
-	'panels'  => array(
-		array(
-			'fields' => array(
-				'name',
-				'title',
-				'department',
-				'account_name',
-				'primary_address_street',
-				'primary_address_city',
-				'primary_address_state',
-				'primary_address_postalcode',
-				'primary_address_country',
-				'email',
-				'phone_work',
-				'phone_mobile',
-				'phone_fax',
-				'alt_address_street',
-				'alt_address_city',
-				'alt_address_state',
-				'alt_address_postalcode',
-				'alt_address_country',
-				'description',
-				'email_opt_out',
-				'do_not_call',
-				'assigned_user_name',
-				'created_by_name',
-				'date_entered',
-				'modified_by_name',
-				'date_modified',
-				//BEGIN SUGARCRM flav=pro ONLY
-				'team_name',
-				//END SUGARCRM flav=pro ONLY
-			),
-		),
-	),
+    'buttons' => array(
+        array(
+            'name'    => 'edit_button',
+            'type'    => 'button',
+            'label'   => 'Edit',
+            'primary' => true,
+            'events'  => array(
+                'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
+            ),
+        ),
+    ),
+    'panels' => array(
+        array(
+            'fields' => array(
+                'name',
+                'title',
+                'department',
+                'account_name',
+                'primary_address_street',
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_EMAIL_ADDRESSES',
+                ),
+                'phone_work',
+                'phone_mobile',
+                'phone_fax',
+                'alt_address_street',
+                'alt_address_city',
+                'alt_address_state',
+                'alt_address_postalcode',
+                'alt_address_country',
+                'description',
+                'email_opt_out',
+                'do_not_call',
+                'assigned_user_name',
+                'created_by_name',
+                'date_entered',
+                'modified_by_name',
+                'date_modified',
+                //BEGIN SUGARCRM flav=pro ONLY
+//                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        ),
+    ),
 );
