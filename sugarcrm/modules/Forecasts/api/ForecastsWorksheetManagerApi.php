@@ -273,7 +273,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     {
     	$data = array();
         	
-        $sql = "select u.user_name, f.best_case, f.likely_case, f.worst_case, f.forecast_type, f.date_modified " .
+        $sql = "select u.user_name, f.id, f.best_case, f.likely_case, f.worst_case, f.forecast_type, f.date_modified " .
         		"from forecasts f " .
         		"inner join users u " .
         			"on f.user_id = u.id " .
