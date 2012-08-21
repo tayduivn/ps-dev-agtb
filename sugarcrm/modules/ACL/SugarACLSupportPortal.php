@@ -42,7 +42,7 @@ class SugarACLSupportPortal extends SugarACLStatic
      * Fetch the list of account id's associated to this user
      * @return array List of account id's associated to this user
      */
-    protected function getAccountIds()
+    protected function getAccountIds($bean)
     {
         static $accounts;
         if ( !isset($accounts) ) {
@@ -105,7 +105,7 @@ class SugarACLSupportPortal extends SugarACLStatic
                 return false;
             }
 
-            $accounts = $this->getAccountIds();
+            $accounts = $this->getAccountIds($bean);
 
             if ( count($accounts) == 0 
                  && $bean->module_dir != 'Notes'
