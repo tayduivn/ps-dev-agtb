@@ -291,7 +291,8 @@ $mod_strings = array (
     'LBL_CANCEL' => 'Cancel',
     'LBL_ADMIN' => 'Admin',
 
-    'LBL_CHART_FORECAST_FOR' => 'Forecast for',
+    'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
+    'LBL_FORECAST_TITLE' => 'Forecast: {0}',
 
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',

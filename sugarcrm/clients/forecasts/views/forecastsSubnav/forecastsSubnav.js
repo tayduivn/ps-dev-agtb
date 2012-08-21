@@ -94,6 +94,11 @@
                     this.selectJSTreeNode(nodeId)
                 }
             }
+        } else {
+            // just update the title
+            var hb = Handlebars.compile("{{str_format key module args}}");
+            var text = hb({'key' : "LBL_FORECAST_TITLE", 'module' : 'Forecasts', 'args' : this.fullName});
+            this.$el.find('h1').html(text);
         }
     },
 
