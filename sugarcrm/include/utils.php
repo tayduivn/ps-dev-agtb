@@ -621,7 +621,7 @@ function return_name($row, $first_column, $last_column)
 function get_languages()
 {
 	global $sugar_config;
-	$lang = $sugar_config['languages'];
+	$lang = isset($sugar_config['languages']) ? $sugar_config['languages'] : array();
     if(!empty($sugar_config['disabled_languages'])){
         foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
             unset($lang[$disable]);
@@ -1039,6 +1039,10 @@ function return_app_list_strings_language($language)
 
 	$return_value = $app_list_strings;
 	$app_list_strings = $temp_app_list_strings;
+
+    //Add to the app_list_strings the list of language available in the application.
+    $return_value['available_language_dom'][""] = "";
+    $return_value['available_language_dom'] = array_merge($return_value['available_language_dom'], get_languages());
 
 	sugar_cache_put($cache_key, $return_value);
 

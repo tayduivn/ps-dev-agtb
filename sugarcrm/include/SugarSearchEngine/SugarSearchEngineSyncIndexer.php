@@ -33,7 +33,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- *
+ * @api
  */
 class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
 {

@@ -4,7 +4,7 @@
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",
-                buttonImage: "../lib/jquery-ui/css/smoothness/images/calendar.gif",
+                buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
                 buttonImageOnly: true,
                 dateFormat: "yy-mm-dd"
             });

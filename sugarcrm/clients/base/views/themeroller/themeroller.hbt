@@ -1,0 +1,93 @@
+<header class="subhead">
+    <button href="javascript:void(0)" class="btn pull-right" name="refresh_button" style="margin-left: 10px">
+        <i class="icon-refresh"></i> Reset</button>
+    <h1><small>Colors</small>
+    </h1>
+</header>
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.hex}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col" style="background-color: {{value}}"><span class="swatch"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td> -->
+        <td>
+
+            <input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="hexvar span10">
+        </td>
+    </tr>
+    {{/each}}
+    {{#each lessVars.rgba}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{name}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>}} -->
+        <td><input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="rgbavar span10">
+        </td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+{{#if lessVars.rel}}
+<header class="subhead">
+    <h1>Related colors
+        <small>LESS variables</small>
+    </h1>
+</header>
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.rel}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{relname}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>  -->
+        <td><input type="text" name="{{name}}" value="{{value}}" class="span10"></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+{{/if}}
+
+{{#if lessVars.bg}}
+<header class="subhead">
+    <h1>Backgrounds
+        <small>LESS variables</small>
+    </h1>
+</header>
+<table class="table table-bordered table-striped">
+    <tbody>
+    {{#each lessVars.bg}}
+    <tr>
+        <td class="span2"><code>@{{name}}</code></td>
+        <td class="swatch-col"><span class="swatch {{name}}"></span></td>
+        <!--    <td class="swatch-col">{{value}}</td>  -->
+        <td><input type="text" name="{{name}}" value="{{value}}" class="bgvar span10"></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+{{/if}}
+<div class="row-fluid">
+    <div class="btn-toolbar pull-right">
+        <a href="javascript:void(0)" name="reset_button">Restore Default Theme</a>
+        <button href="javascript:void(0)" class="btn btn-primary" name="save_button" style="margin-left: 10px">
+                <i class="icon-upload"></i> Save & Deploy</button>
+
+    </div>
+</div>
+
+<div id="modal-confirm-reset" class="modal hide">
+    <div class="modal-header">
+      <a href="javascript:void(0)" class="close">x</a>
+      <h3>Reset default theme</h3>
+    </div>
+    <div class="modal-body">
+      <p>You are about to erase your custom theme with the default theme.</p>
+      <p>Do you want to proceed?</p>
+    </div>
+    <div class="modal-footer">
+      <button href="javascript:void(0)" id="buttonYes" class="btn btn-danger">Yes</button>
+      <button href="javascript:void(0)" id="buttonNo" class="btn">No</button>
+    </div>
+</div>

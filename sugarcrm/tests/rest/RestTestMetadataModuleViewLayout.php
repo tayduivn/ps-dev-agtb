@@ -92,6 +92,12 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
     }
 
+    public function testMetadataSubPanels()
+    {
+        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
+    }
+
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/metadata/portal/views/edit.php',
                               'custom/modules/Cases/metadata/portal/views/edit.php',

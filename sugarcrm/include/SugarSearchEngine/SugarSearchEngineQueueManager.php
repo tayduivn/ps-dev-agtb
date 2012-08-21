@@ -21,6 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+/**
+ * Queueing class for after_save hooks
+ * @api
+ */
 class SugarSearchEngineQueueManager
 {
 

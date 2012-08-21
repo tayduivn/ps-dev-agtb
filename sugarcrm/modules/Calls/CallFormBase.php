@@ -305,6 +305,11 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
                 $contactInvitees[] = $_POST['parent_id'];
             }
+            if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Contacts') {
+                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $contactInvitees)) {
+                    $contactInvitees[] = $_REQUEST['relate_id'];
+                } 
+            }
             
             //BEGIN SUGARCRM flav!=sales ONLY            
             if (!empty($_POST['lead_invitees'])) {
@@ -315,6 +320,11 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             }
             if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
                 $leadInvitees[] = $_POST['parent_id'];
+            }
+            if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Leads') {
+                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $leadInvitees)) {
+                    $leadInvitees[] = $_REQUEST['relate_id'];
+                } 
             }
             //END SUGARCRM flav!=sales ONLY
 

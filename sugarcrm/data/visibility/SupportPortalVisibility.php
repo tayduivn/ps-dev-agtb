@@ -134,21 +134,22 @@ class SupportPortalVisibility extends SugarVisibility
             case 'Notes':
                 // Notes: Notes that are connected to a Case or a Bug that is connected to one of our Accounts and has the portal_flag set to true
                 if ( $queryType == 'from' ) {
-                    $this->bean->load_relationship('cases');
-                    
-                    $caseBean = BeanFactory::newBean('Cases');
-                    $caseBean->load_relationship('accounts');
-
-                    $queryPart = $this->bean->cases->getJoin(array('join_table_alias'=>'cases_pv','join_type'=>' LEFT JOIN '));
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    $queryPart .= " AND cases_pv.portal_viewable = 1 ";
-                    //ENd SUGARCRM flav=ent ONLY
-                    $queryPart .= " ".$caseBean->accounts->getJoin(array('join_table_alias'=>'accounts_cases_pv','right_join_table_alias'=>'cases_pv','join_type' => ' LEFT JOIN '))." AND accounts_cases_pv.id IN $accountIn ";
-
+                    if ( !empty($accountIds) ) {
+                        // Only add in this join if the user can see bugs related to cases
+                        $this->bean->load_relationship('cases');
+                        
+                        $caseBean = BeanFactory::newBean('Cases');
+                        $caseBean->load_relationship('accounts');
+                        
+                        $queryPart = $this->bean->cases->getJoin(array('join_table_alias'=>'cases_pv','join_type'=>' LEFT JOIN '));
+                        //BEGIN SUGARCRM flav=ent ONLY
+                        $queryPart .= " AND cases_pv.portal_viewable = 1 ";
+                        //ENd SUGARCRM flav=ent ONLY
+                        $queryPart .= " ".$caseBean->accounts->getJoin(array('join_table_alias'=>'accounts_cases_pv','right_join_table_alias'=>'cases_pv','join_type' => ' LEFT JOIN '))." AND accounts_cases_pv.id IN $accountIn ";
+                    }
                     $this->bean->load_relationship('bugs');
                     
                     $bugBean = BeanFactory::newBean('Bugs');
-                    $bugBean->load_relationship('accounts');
 
                     $queryPart .= " ".$this->bean->bugs->getJoin(array('join_table_alias'=>'bugs_pv','join_type'=>' LEFT JOIN '));
                     //BEGIN SUGARCRM flav=ent ONLY
@@ -156,7 +157,11 @@ class SupportPortalVisibility extends SugarVisibility
                     //ENd SUGARCRM flav=ent ONLY
 
                 } else if ( $queryType == 'where' ) {
-                    $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
+                    if ( !empty($accountIds) ) {
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
+                    } else {
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND bugs_pv.id IS NOT NULL ";
+                    }
                 }
                 break;
             case 'Cases':

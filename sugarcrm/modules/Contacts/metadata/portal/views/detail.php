@@ -35,7 +35,7 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
             array(
                 'name' => 'edit_button',
                 'type' => 'button',
-                'label' => 'Edit',
+                'label' => 'LBL_EDIT_BUTTON_LABEL',
                 'value' => 'edit',
                 'class' => 'edit-profile',
                 'primary' => true,
@@ -112,6 +112,11 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                         array (
                             'colspan' => 2
                         ),
+                    ),
+                    array (
+                        'name' => 'preferred_language',
+                        'type' => 'enum',
+                        'options' => 'available_language_dom',
                     ),
                 ),
             ),
