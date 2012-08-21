@@ -241,7 +241,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $mgr->getWorksheetGridData('manager', $report);
     }
 
-
     protected function getQuota()
     {
         //getting quotas from quotas table
@@ -271,47 +270,34 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
      * associated with the user_id class variable.  It is a helper function used by the manager worksheet api
      * to return forecast related information.
      *
-     * @return array Array of entries with deltas best_case, likely_case, worst_case, id and forecast_id
+     * @return array Array of entries with deltas best_case, likely_case, worst_case, id, date_modified and forecast_id
      */
     public function getForecastValues()
     {
-        $query = "SELECT id, user_name FROM users WHERE reports_to_id = '{$this->user_id}' AND deleted = 0";
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query($query);
-
-        $ids = array();
-        while($row=$db->fetchByAssoc($result))
-        {
-            $ids[$row['id']] = $row['user_name'];
+    	$data = array();
+        	
+        $sql = "select u.user_name, f.best_case, f.likely_case, f.worst_case, f.forecast_type, f.date_modified " .
+        		"from forecasts f " .
+        		"inner join users u " .
+        			"on f.user_id = u.id " .
+        				"and (u.reports_to_id = '" . $this->user_id . "' " .
+        					 "or u.id = '" . $this->user_id . "') " .
+        		"where f.timeperiod_id = '" . $this->timeperiod_id . "' " .
+        			"and ((f.user_id = '" . $this->user_id . "' and f.forecast_type = 'Direct') " .
+        				 "or (f.user_id != '" . $this->user_id . "' and f.forecast_type = 'Rollup'))" .
+        			"and f.deleted = 0 " .
+        			"and f.date_modified = (select max(date_modified) from forecasts where user_id = u.id)";
+        $result = $GLOBALS['db']->query($sql);
+        
+		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+		{
+            $data[$row['user_name']]['best_case'] = $row['best_case'];
+            $data[$row['user_name']]['likely_case'] = $row['likely_case'];
+            $data[$row['user_name']]['worst_case'] = $row['worst_case'];
+            $data[$row['user_name']]['forecast_id'] = $row['id'];
+            $data[$row['user_name']]['date_modified'] = $row['date_modified'];
         }
-
-        //Add the manager's data as well
-        /** @var $user User */
-        $user = BeanFactory::getBean('Users', $this->user_id);
-        $ids[$this->user_id] = $user->user_name;
-
-        $data = array();
-
-        foreach($ids as $id=>$user_name)
-        {
-            // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
-            $forecast_type = (User::isManager($id) && $id != $this->user_id) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case
-                                FROM forecasts
-                                WHERE timeperiod_id = '{$this->timeperiod_id}'
-                                    AND forecast_type = '" . $forecast_type . "'
-                                    AND user_id = '" . $id .  "'
-                                    AND deleted = 0 ORDER BY date_modified DESC";
-            $result = $db->limitQuery($forecast_query, 0, 1);
-
-            while($row=$db->fetchByAssoc($result)) {
-                $data[$user_name]['best_case'] = $row['best_case'];
-                $data[$user_name]['likely_case'] = $row['likely_case'];
-                $data[$user_name]['worst_case'] = $row['worst_case'];
-                $data[$user_name]['forecast_id'] = $row['id'];
-            }
-        }
-
+            
         return $data;
     }
 
