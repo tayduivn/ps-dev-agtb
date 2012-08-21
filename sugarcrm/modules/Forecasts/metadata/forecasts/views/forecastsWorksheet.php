@@ -30,7 +30,7 @@ $viewdefs['Forecasts']['forecasts']['view']['forecastsWorksheet'] = array(
                     array(
                         'module'=>'Opportunities',
                         'action'=>'DetailView',
-                        'recordID'=>'primaryid'
+                        'recordID'=>'id'
                     ),
                     'default' => true,
                     'enabled' => true,

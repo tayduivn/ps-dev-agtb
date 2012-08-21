@@ -369,8 +369,6 @@
      */
     calculateTotals: function() {
 
-
-
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
@@ -379,7 +377,11 @@
         var overallBest = 0;
         var overallLikely = 0;
         var includedCount = 0;
-
+        var lostCount = 0;
+        var lostAmount = 0;
+        var wonCount = 0;
+        var wonAmount = 0;
+        var totalCount = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
@@ -387,25 +389,46 @@
                 'likely_case' : includedLikely,
                 'best_case' : includedBest,
                 'timeperiod_id' : self.timePeriod,
-                'opp_count' : includedCount,
+                'lost_count' : lostCount,
+                'lost_amount' : lostAmount,
+                'won_count' : wonCount,
+                'won_amount' : wonAmount,
+                'included_opp_count' : includedCount,
+                'total_opp_count' : totalCount,
                 'amount' : includedAmount
             });
             return false;
         }
 
+        //Get the excluded_sales_stage property.  Default to empty array if not set
+        app.config.sales_stage_won = app.config.sales_stage_won || [];
+        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
+
         _.each(self._collection.models, function (model) {
-            var included = model.get('forecast');
+
+            var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
+            var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
             var amount = parseFloat(model.get('amount'));
+            var included = model.get('forecast');
             var likely = parseFloat(model.get('likely_case'));
             var best = parseFloat(model.get('best_case'));
 
-            if(included == true || included == 1)
+            if(won)
             {
+                wonAmount += amount;
+                wonCount++;
+            } else if(lost) {
+                lostAmount += amount;
+                lostCount++;
+            }
+
+            if(included == true || included == 1) {
                 includedAmount += amount;
                 includedLikely += likely;
                 includedBest += best;
                 includedCount++;
             }
+
             overallAmount += amount;
             overallLikely += likely;
             overallBest += best;
@@ -432,6 +455,7 @@
                         includedLikely += likely;
                         includedBest += best;
                     }
+
                     overallAmount += amount;
                     overallLikely += likely;
                     overallBest += best;
@@ -458,7 +482,12 @@
             'likely_case' : includedLikely,
             'best_case' : includedBest,
             'timeperiod_id' : self.timePeriod,
-            'opp_count' : includedCount,
+            'lost_count' : lostCount,
+            'lost_amount' : lostAmount,
+            'won_count' : wonCount,
+            'won_amount' : wonAmount,
+            'included_opp_count' : includedCount,
+            'total_opp_count' : self._collection.models.length,
             'amount' : includedAmount
         };
 

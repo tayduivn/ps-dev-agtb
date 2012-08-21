@@ -57,11 +57,7 @@ class ForecastsProgressApiTest extends RestTestBase
         self::$user->reports_to_id = self::$manager->id;
         self::$user->save();
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
-        self::$timeperiod->name = "Test";
-        self::$timeperiod->save();
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
         $GLOBALS['current_user'] = self::$user;
         //give the rep a Quota
         self::$quota = SugarTestQuotaUtilities::createQuota(50000);
@@ -169,7 +165,7 @@ class ForecastsProgressApiTest extends RestTestBase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
@@ -188,7 +184,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $restReply = $restResponse['reply'];
 
         //check quotas section
-        $this->assertEquals(self::$quota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(self::$quota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: " . self::$quota->amount);
 
 
         $likely_to_close_total = 24000;

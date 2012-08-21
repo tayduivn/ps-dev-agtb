@@ -14,7 +14,8 @@
      * Adds event listener to elements
      */
     events: {
-        "click a[id=commit_forecast]" : "triggerCommit"
+        "click a[id=commit_forecast]" : "triggerCommit",
+        "click a[id=save_draft]" : "triggerSaveDraft"
     },
 
     /**
@@ -27,7 +28,6 @@
                 self.showCommitButton = self.checkShowCommitButton(user.id);
             });
             this.context.forecasts.on("change:commitButtonEnabled", this.commitButtonStateChangeHandler, self);
-            this.context.forecasts.on("change:checkCommitButtonFlag", this.checkCommitButtonFlagChangeHandler, self);
         }
     },
 
@@ -41,8 +41,10 @@
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {
                 this.$el.find('a[id=commit_forecast]').removeClass('disabled');
+                this.$el.find('a[id=save_draft]').removeClass('disabled');
             } else {
                 this.$el.find('a[id=commit_forecast]').addClass('disabled');
+                this.$el.find('a[id=save_draft]').addClass('disabled');
             }
         }
     },
@@ -62,6 +64,13 @@
      */
     triggerCommit: function() {
         this.context.forecasts.set({commitForecastFlag: true});
+    },
+
+    /**
+     * Handles Save Draft button being clicked
+     */
+    triggerSaveDraft: function() {
+        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
     },
 
     /**

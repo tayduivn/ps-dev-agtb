@@ -118,10 +118,12 @@ function get_row_remap(& $row, & $reporter) {
     if (!empty($row['cells'][$reporter->chart_numerical_position]['key']))
     {
         $fieldKey = $row['cells'][$reporter->chart_numerical_position]['key'];
-        $fieldDef = $reporter->all_fields[$fieldKey];
-        if ($fieldDef['type'] == 'currency')
-        {
-            $row_remap['numerical_is_currency'] = true;
+        if(!empty($reporter->all_fields[$fieldKey])) {
+            $fieldDef = $reporter->all_fields[$fieldKey];
+            if ($fieldDef['type'] == 'currency')
+            {
+                $row_remap['numerical_is_currency'] = true;
+            }
         }
     }
 

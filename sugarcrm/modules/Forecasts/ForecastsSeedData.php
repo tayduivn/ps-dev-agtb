@@ -159,8 +159,6 @@ public static function populateSeedData($timeperiods)
     		}
     	}
     }
-    
-    self::setupForecastSettings();
 }
 
 /*
@@ -171,13 +169,15 @@ public static function populateSeedData($timeperiods)
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
-            'show_buckets' => 'false',
+            'show_buckets' => false,
             'committed_probability' => 70,
+            'sales_stage_won' => array('Closed Won'),
+            'sales_stage_lost' => array('Closed Lost')
         );
-    $admin = new Administration();
+    $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
-        $admin->saveSetting('base', $name, $value);
+        $admin->saveSetting('base', $name, json_encode($value));
     }
 }
 

@@ -6,7 +6,7 @@ describe("The Forecasts Progress Calculations display", function() {
         SugarTest.seedMetadata(true);
         SugarTest.seedApp();
         app = SugarTest.app;
-        view = SugarTest.loadFile("../../../../clients/forecasts/views/progress", "progress", "js", function(d) {return eval(d); });
+        view = SugarTest.loadFile("../clients/forecasts/views/progress", "progress", "js", function(d) {return eval(d); });
     });
 
     describe("Rep Worksheet changes", function() {

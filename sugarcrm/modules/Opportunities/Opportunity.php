@@ -82,7 +82,10 @@ class Opportunity extends SugarBean
 	var $best_case;
 	var $worst_case;
 	var $likely_case;
-	var $timeperiod_id;
+    var $best_case_base_currency;
+    var $worst_case_base_currency;
+    var $likely_case_base_currency;
+    var $timeperiod_id;
 	var $commit_stage;
 	var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
@@ -274,6 +277,9 @@ class Opportunity extends SugarBean
 			$currency->retrieve($this->currency_id);
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
+                $this->best_case = $this->best_case_base_currency;
+                $this->likely_case = $this->likely_case_base_currency;
+                $this->worst_case = $this->worst_case_base_currency;
 				$this->currency_id = $currency->id;
 			}
 		}
@@ -338,8 +344,28 @@ class Opportunity extends SugarBean
 			$result = $this->db->query($query);
 			
 			while ( $row = $this->db->fetchByAssoc($result) ) {
-				$query = "update opportunities set currency_id='" . $currency->id . "', amount_usdollar='" . $currency->convertToDollar($row['amount']) . "' where id='" . $row['id'] . "';";
-				$this->db->query($query);
+                /*
+				$query = "update opportunities set currency_id='"
+                    . $currency->id . "', amount_usdollar='"
+                    . $currency->convertToDollar($row['amount'])
+                    . "' where id='"
+                    . $row['id']
+                    . "';";
+                */
+                $query = sprintf("update opportunities set currency_id='%s',
+                    amount_usdollar='%s',
+                    best_case_base_currency='%s',
+                    likely_case_base_currency='%s',
+                    worst_case_base_currency='%s'
+                    where id='%s';",
+                    $currency->id,
+                    $currency->convertToDollar($row['amount']),
+                    $currency->convertToDollar($row['best_case']),
+                    $currency->convertToDollar($row['likely_case']),
+                    $currency->convertToDollar($row['worst_case']),
+                    $row['id']
+                );
+                $this->db->query($query);
 			}
 		}
 	}

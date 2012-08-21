@@ -346,6 +346,15 @@ if($_SESSION['current_db_version'] < '620')
 }
 */
 
+//BEGIN SUGARCRM flav=PRO ONLY
+//setup forecast defualt settings
+if($_SESSION['current_db_version'] < '670')
+{
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::setupForecastSettings();
+}
+//END SUGARCRM flav=PRO ONLY
+
 //Update the license
 logThis('Start Updating the license ', $path);
 ob_start();

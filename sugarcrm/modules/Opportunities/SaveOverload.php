@@ -22,11 +22,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
-    //if forecast value equals to -1, set it to 0 or 1 based on probability
+    //if forecast value equals -1, set it to 0 or 1 based on probability
     global $sugar_config, $app_list_strings, $timedate;
-    if ( $focus->forecast == -1 )
+    if ($focus->forecast == -1)
     {
-        $focus->forecast = ($focus->probability >= $sugar_config['forecast_committed_probability']) ? 1 : 0;
+        $admin = BeanFactory::getBean('Administration');
+        $admin->retrieveSettings();
+        $committed_probability = isset($admin->settings['base_committed_probability']) ? $admin->settings['base_committed_probability'] : 70;
+        $focus->forecast = ($focus->probability >= $committed_probability) ? 1 : 0;
     }
 
     //if commit_stage isn't set, set it based on the probability
@@ -45,15 +48,6 @@ function perform_save(&$focus){
         }
     }
 
-    //Bug #54533 - The opportunities with "Closed Lost" stage should not be included in the forecast
-    //if sales_stage was changed to "Closed Lost" set forecast to 0 and commit_stage to "Omit"
-    if ($focus->sales_stage == "Closed Lost")
-    {
-        $focus->forecast = 0;
-        $commit_stage_arr = $app_list_strings['commit_stage_dom'];
-        $focus->commit_stage = min(array_keys($commit_stage_arr));
-    }
-
     //Set the timeperiod_id value
     if ($timedate->check_matching_format($focus->date_closed, $timedate::DB_DATE_FORMAT))
     {
@@ -64,8 +58,7 @@ function perform_save(&$focus){
         $date_close_db = $timedate->to_db_date($focus->date_closed);
     }
 
-    // we only do this if no timeperiod_id is set.  This happens by default form the UI but when running a UnitTest,
-    // we don't want to override any set timeperiod_id
+    //If there is no timeperiod_id value set, calculate one for the opportunity
     if(empty($focus->timeperiod_id))
     {
         $timeperiod = $focus->db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$date_close_db}' AND end_date >= '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
@@ -83,6 +76,9 @@ function perform_save(&$focus){
 		$currency = new Currency();
 		$currency->retrieve($focus->currency_id);
 		$focus->amount_usdollar = $currency->convertToDollar($focus->amount);
-	}	
+        $focus->best_case_base_currency = $currency->convertToDollar($focus->best_case);
+        $focus->likely_case_base_currency = $currency->convertToDollar($focus->likely_case);
+        $focus->worst_case_base_currency = $currency->convertToDollar($focus->worst_case);
+    }
 }
 ?>

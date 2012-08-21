@@ -3433,6 +3433,12 @@ $app_strings = array (
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_TOUR' => 'Activity View Tour',
+    'LNK_TOUR' => 'Tour',
+    'LBL_TOP' => 'Top',
+    'LBL_LANGUAGE' => 'Language',
+    'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
+    'LBL_LOADING_LANGUAGE' => 'Loading language pack',
 
     //for portal
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
@@ -3456,8 +3462,6 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
-
-    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
