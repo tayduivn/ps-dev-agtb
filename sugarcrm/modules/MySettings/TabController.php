@@ -24,6 +24,11 @@ class TabController{
 
 var $required_modules = array('Home');
 
+    /**
+     * @var bool flag of validation of the cache
+     */
+    protected $isCacheValid = false;
+
 function is_system_tabs_in_db(){
         
         $administration = new Administration();
@@ -44,7 +49,7 @@ function get_system_tabs(){
 	static $system_tabs_result = null;
 	
 	// if the value is not already cached, then retrieve it.
-	if(empty($system_tabs_result))
+    if (empty($system_tabs_result) || $this->isCacheValid)
 	{
 		
 		$administration = new Administration();
@@ -72,6 +77,7 @@ function get_system_tabs(){
 		{
 			$system_tabs_result = $this->get_key_array($moduleList);
 		}
+        $this->isCacheValid = true;
 	}
 		
 	return $system_tabs_result;
@@ -105,6 +111,7 @@ function set_system_tabs($tabs){
 	$administration = new Administration();
 	$serialized = base64_encode(serialize($tabs));
 	$administration->saveSetting('MySettings', 'tab', $serialized);
+    $this->isCacheValid = false;
 }
 
 function get_users_can_edit(){
