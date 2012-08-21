@@ -482,7 +482,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 ),
  'indices' => array (
        array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
+       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id', 'date_modified')),
        )
 );
 
@@ -596,10 +596,48 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'default' => '-1',
     'comment' => 'Boolean indicating whether or not record should be included in forecast'
   ),
+  'sales_stage' =>
+  array (
+    'name' => 'sales_stage',
+    'vname' => 'LBL_SALES_STAGE',
+    'type' => 'enum',
+    'options' => 'sales_stage_dom',
+    'len' => '255',
+    'audited'=>true,
+    'comment' => 'Indication of progression towards closure'
+  ),
+  'probability' =>
+  array (
+    'name' => 'probability',
+    'vname' => 'LBL_PROBABILITY',
+    'type' => 'int',
+    'dbType' => 'double',
+    'audited'=>true,
+    'comment' => 'The probability of closure',
+    'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
+    'merge_filter' => 'enabled',
+  ),
+  'quota' =>
+	array (
+	  'name' => 'quota',
+	  'vname' => 'LBL_AMOUNT',
+	  'type' => 'int',
+	  'reportable' => true,
+	  'importable' => 'required',
+	),
+  'version' =>
+	array (
+	  'name' => 'version',
+	  'vname' => 'LBL_AMOUNT',
+	  'type'=>'varchar',
+  	  'len' => 10,
+	  'default' => 'Committed'
+	),
  ),
  'indices' => array (
        array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'deleted')),
+       array('name' =>'idx_worksheet_user_id', 'type' =>'index', 'fields'=>array('user_id')),
+       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'user_id', 'deleted', 'version')),
  )
 
 );
