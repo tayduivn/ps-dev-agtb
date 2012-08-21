@@ -1750,7 +1750,7 @@ class PHPMailer {
    * @access private
    * @return string
    */
-  public function Lang($key) {
+  private function Lang($key) {
     if(count($this->language) < 1) {
       $this->SetLanguage('en'); // set the default language
     }
