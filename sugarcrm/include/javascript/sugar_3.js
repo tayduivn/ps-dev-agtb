@@ -4606,14 +4606,16 @@ SUGAR.append(SUGAR.util, {
         return false;
     },
 
-    isLoginPage: function(content) {
-	//skip if this is packageManager screen
-	if(SUGAR.util.isPackageManager()) {return false;}
-	var loginPageStart = "<!DOCTYPE";
-	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1  && content.indexOf("login_module") != -1) {
-		window.location.href = window.location.protocol + window.location.pathname;
-		return true;
-	}
+    isLoginPage:function (content) {
+        //skip if this is packageManager screen
+        if (SUGAR.util.isPackageManager()) {
+            return false;
+        }
+        var loginPageStart = "<!DOCTYPE";
+        if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html") != -1 && content.indexOf("login_module") != -1) {
+            window.location.href = window.location.protocol + window.location.pathname;
+            return true;
+        }
     },
 
 isPackageManager: function(){
