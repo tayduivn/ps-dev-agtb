@@ -4962,6 +4962,11 @@ article:hover { background:#e1f0fa; }
   text-decoration:underline;
   background:none;
   border-color:transparent;
+  text-shadow:none;
+  color:#1571ce !important;
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+  box-shadow:none;
 }
 #stream { position:relative; }
 #stream table { margin-top:-15px; }
