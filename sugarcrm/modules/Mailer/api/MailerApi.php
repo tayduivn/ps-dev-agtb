@@ -161,6 +161,7 @@ class MailerApi extends ModuleApi
 	protected function generateEmailIdentity($data) {
 		if (is_array($data) && !empty($data['email'])) {
 			$email = $data['email'];
+			$name = null;
 			if (isset($data['name'])) {
 				$name = $data['name'];
 			}

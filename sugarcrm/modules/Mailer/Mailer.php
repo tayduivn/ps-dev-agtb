@@ -53,11 +53,10 @@ class Mailer
 	 * Initialize or replace the configurations with the defaults for this sending strategy.
 	 */
 	public function loadDefaultConfigs() {
-		//@todo for now use the PHPMailer defaults, but eventually use this as a way to default to SMTP
 		$defaults = array(
-			'protocol' => 'mail', // smtp or other send mail program
-			'host'     => 'localhost', // smtp host
-			'port'     => 25 // smtp port
+			'protocol' => 'smtp',
+			'host'     => 'localhost',
+			'port'     => 25,
 		);
 
 		$this->setConfigs($defaults);
@@ -178,9 +177,9 @@ class Mailer
 	}
 
 	protected function transferConnectionData() {
-		$this->mailer->Mailer = $this->configs->getProtocol();
-		$this->mailer->Host = $this->configs->getHost();
-		$this->mailer->Port = $this->configs->getPort();
+		$this->mailer->Mailer = $this->configs['protocol'];
+		$this->mailer->Host = $this->configs['host'];
+		$this->mailer->Port = $this->configs['port'];
 	}
 
 	protected function transferHeaders() {
