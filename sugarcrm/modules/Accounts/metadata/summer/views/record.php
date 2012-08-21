@@ -61,7 +61,7 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
                 array(
                     'name' => 'website',
                     'displayParams' => array(
-                        'type' => 'link',
+                        'type' => 'url',
                     ),
                 ),
                 'email1',
