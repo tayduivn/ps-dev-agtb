@@ -37,7 +37,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         ),
 
         7 => array(
-            'view' => 'forecastSchedule',
+            'view' => 'forecastsSchedule',
             'contextCollection' => array(
                 'module' => 'ForecastSchedule',
                 'name' => 'ForecastSchedule',

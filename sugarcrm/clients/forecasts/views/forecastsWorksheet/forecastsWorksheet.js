@@ -267,8 +267,8 @@
         }
 
         //Create the view for expected opportunities
-        var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
-        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
+        var viewmeta = app.metadata.getView("Forecasts", "forecastsSchedule");
+        var view = app.view.createView({name:"forecastsSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
 
         $("#expected_opportunities").remove();
         view.fetchCollection();

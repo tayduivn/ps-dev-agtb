@@ -6,7 +6,7 @@
 
     url: 'rest/v10/ForecastSchedule',
     tagName: 'tr',
-    class: 'view-forecastSchedule',
+    class: 'view-forecastsSchedule',
     id: 'expected_opportunities',
     viewModule: {},
     selectedUser: {},
