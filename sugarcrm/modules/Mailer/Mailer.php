@@ -56,10 +56,18 @@ class Mailer
 	public function loadDefaultConfigs() {
 		$defaults = array(
 			'protocol' => 'smtp',
-			'host'     => 'localhost',
-			'port'     => 25,
 			'charset'  => 'utf-8',
 			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
+			'smtp'     => array(
+				'host'         => 'localhost',
+				'port'         => 25,
+				'secure'       => '',
+				'authenticate' => false,
+				'username'     => '',
+				'password'     => '',
+				'timeout'      => 10,
+				'persist'      => false,
+			),
 		);
 
 		$this->setConfigs($defaults);
@@ -186,10 +194,19 @@ class Mailer
 
 	protected function transferConfigurations() {
 		$this->mailer->Mailer   = $this->configs['protocol'];
-		$this->mailer->Host     = $this->configs['host'];
-		$this->mailer->Port     = $this->configs['port'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
+
+		if ($this->configs['protocol'] == 'smtp') {
+			$this->mailer->Host          = $this->configs['smtp']['host'];
+			$this->mailer->Port          = $this->configs['smtp']['port'];
+			$this->mailer->SMTPSecure    = $this->configs['smtp']['secure'];
+			$this->mailer->SMTPAuth      = $this->configs['smtp']['authenticate'];
+			$this->mailer->Username      = $this->configs['smtp']['username'];
+			$this->mailer->Password      = from_html($this->configs['smtp']['password']);
+			$this->mailer->Timeout       = $this->configs['smtp']['timeout'];
+			$this->mailer->SMTPKeepAlive = $this->configs['smtp']['persist'];
+		}
 	}
 
 	protected function connectToHost() {
@@ -254,6 +271,7 @@ class Mailer
 	 */
 	protected function transferBody() {
 		if ($this->htmlBody && $this->textBody) {
+			$this->mailer->Encoding = 'base64';
 			$this->mailer->IsHTML(true);
 			$this->mailer->Body = $this->htmlBody;
 			$this->mailer->AltBody = $this->textBody;
