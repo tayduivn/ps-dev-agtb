@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
@@ -29,56 +29,59 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['Prospects']['base']['view']['edit'] = array(
-	'buttons' => array(
-		array(
-			'name'    => 'save_button',
-			'type'    => 'button',
-			'label'   => 'Save',
-			'value'   => 'save',
-			'primary' => true,
-		),
-		array(
-			'name'    => 'cancel_button',
-			'type'    => 'button',
-			'label'   => 'Cancel',
-			'value'   => 'cancel',
-			'events'  =>
-			array(
-				'click' => 'function(){ window.history.back(); }',
-			),
-			'primary' => false,
-		),
-	),
-	'panels'  => array(
-		array(
-			'fields' => array (
-				'salutation',
-				'first_name',
-				'last_name',
-				'title',
-				'department',
-				'phone_work',
-				'phone_mobile',
-				'phone_fax',
-				'account_name',
-				'primary_address_street',
-				'primary_address_city',
-				'primary_address_state',
-				'primary_address_postalcode',
-				'primary_address_country',
-				'alt_address_street',
-				'alt_address_city',
-				'alt_address_state',
-				'alt_address_postalcode',
-				'alt_address_country',
-				'email1',
-				'description',
-				'do_not_call',
-				'assigned_user_name',
-				//BEGIN SUGARCRM flav=pro ONLY
-				'team_name',
-				//END SUGARCRM flav=pro ONLY
-			),
-		),
-	),
+    'buttons' => array(
+        array(
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'Save',
+            'value'   => 'save',
+            'primary' => true,
+        ),
+        array(
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'Cancel',
+            'value'   => 'cancel',
+            'events'  =>
+            array(
+                'click' => 'function(){ window.history.back(); }',
+            ),
+            'primary' => false,
+        ),
+    ),
+    'panels' => array(
+        array(
+            'fields' => array(
+                'salutation',
+                'first_name',
+                'last_name',
+                'title',
+                'department',
+                'phone_work',
+                'phone_mobile',
+                'phone_fax',
+                'account_name',
+                'primary_address_street',
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+                'alt_address_street',
+                'alt_address_city',
+                'alt_address_state',
+                'alt_address_postalcode',
+                'alt_address_country',
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_EMAIL_ADDRESSES',
+                ),
+                'description',
+                'do_not_call',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        ),
+    ),
 );
