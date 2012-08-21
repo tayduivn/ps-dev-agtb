@@ -59,7 +59,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         ),
 
         10 => array(
-            'view' => 'timeframes',
+            'view' => 'forecastsTimeframes',
             'model' => array(
                 'name' => 'Timeframes'
             )

@@ -13,7 +13,7 @@
             <div class="row-fluid">
                 <div class="span8">
                     <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-timeframes"></div>
+                    <div class="view-forecastsTimeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
@@ -115,7 +115,7 @@
 <script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
 <script src='clients/forecasts/views/tree/tree.js'></script>
 <script src='clients/forecasts/views/forecastsFilter/forecastsFilter.js'></script>
-<script src='clients/forecasts/views/timeframes/timeframes.js'></script>
+<script src='clients/forecasts/views/forecastsTimeframes/forecastsTimeframes.js'></script>
 <script src='clients/forecasts/views/forecastsChartOptions/forecastsChartOptions.js'></script>
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
 <script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
