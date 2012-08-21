@@ -78,7 +78,7 @@
          * A list of routes that don't require authentication (in addition to `login`).
          * @cfg {Array}
          */
-        unsecureRoutes: ["signup", "error"],
+        unsecureRoutes: [],
 
         /**
          * Platform name.
@@ -182,7 +182,8 @@
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-        syncConfig: true
+        syncConfig: true,
+        authStore:"sugarAuthStore"
     }, false);
 
 })(SUGAR.App);

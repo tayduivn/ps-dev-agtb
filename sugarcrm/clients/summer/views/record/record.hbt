@@ -1,0 +1,112 @@
+   {{#each meta.panels}}
+    <div class="card2">
+        <div class="modelNotLoaded">
+            {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+        </div>
+        <div class="modelLoaded hide">
+            {{#each fields}}
+                {{#notEq name "name"}}
+                    <div class="row-fluid record-row">
+                        <div class="span2">{{str  this.label ../../../this.model.module}}</div>
+                        <div class="span4" name="{{this.name}}">
+                            {{field ../../../this}}
+                            <span class="w">
+                              <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                            </span>
+                        </div>
+                        <div class="span2">
+                        </div>
+                    </div>
+                {{/notEq}}
+            {{/each}}
+            <span class="extend">
+              <div class="row-fluid">
+                  <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                  <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+              </div>
+            </span>
+        </div>
+        <div class="record-save-prompt" style="display: none">
+            <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
+            <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
+        </div>
+    </div>
+    {{/each}}
+
+<style>
+
+span[sfuuid] {
+display:inline-block;
+}
+
+.record-edit-link {
+text-decoration:none;
+}
+
+.record-row > .span4 > span[sfuuid] > div.row-fluid > [class^="span"] {
+display:inline;
+float:none;
+}
+
+.record-row span.w {
+display:none;
+position: absolute;
+left: -7px;
+top: -5px;
+width: 328px;
+line-height: 14px;
+line-height: 26px;
+text-align: right;
+z-index:99;
+border-radius:4px;
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+border: 1px solid #dddddd;
+}
+
+.record-row span.w .record-edit-link {
+background:#cccccc;
+line-height: 20px;
+display: inline-block;
+border-radius: 3px;
+width: 16px;
+text-align: center;
+margin-right: 3px;
+
+position:relative;
+left:0;
+top:0;
+padding:0;
+color:#000;
+text-decoration:none;
+}
+
+.card2 .row-fluid.record-row .span2:first-child {
+background: #EEE;
+padding: 1em;
+margin-top: -1em;
+border-radius:5px;
+-moz-border-radius:5px;
+-webkit-border-radius:5px;
+}
+
+.record-row:hover .w {
+display:inline-block;
+}
+
+.record-row input {
+width:300px;
+z-index:100;
+border:none;
+background:none;
+-webkit-box-shadow:none;
+-moz-box-shadow:none;
+box-shadow:none;
+padding:0 0 0 2px;
+}
+
+.record-row.edit-mode span.w {
+display:block;
+}
+
+</style>

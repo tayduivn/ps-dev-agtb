@@ -90,24 +90,30 @@ if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 }
 
 
-// config|_override.php
-/*
-if(is_file('config.php')) {
-	require_once('config.php'); // provides $sugar_config
+/**
+ * If we have the BoxOfficeClient let's use it to load the config
+ */
+
+if(file_exists('summer/splash/BoxOfficeClient.php')){
+    require_once('summer/splash/BoxOfficeClient.php');
+    $boc = BoxOfficeClient::getInstance();
+    $sugar_config = $boc->getConfig();
+    if(empty($sugar_config)){
+        throw new Exception('Instance does not have a config');
+    }
+
+}else{
+    // config|_override.php
+    if(is_file('config.php')) {
+        require_once('config.php'); // provides $sugar_config
+    }
+
+    // load up the config_override.php file.  This is used to provide default user settings
+    if(is_file('config_override.php')) {
+        require_once('config_override.php');
+    }
+
 }
-
-// load up the config_override.php file.  This is used to provide default user settings
-if(is_file('config_override.php')) {
-	require_once('config_override.php');
-}
-*/
-
-// TODO: MOCK Config, please fix when we have a license server
-require 'include/SugarAccess/SugarAccess.php';
-
-$sa = SugarAccess::getInstance();
-$sa->authenticate('bob@burger.com', '123');
-$sugar_config = $sa->getConfig();
 
 
 if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))

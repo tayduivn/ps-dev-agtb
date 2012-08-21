@@ -10,7 +10,6 @@
  */
 require_once('include/MVC/Controller/ControllerFactory.php');
 require_once('include/MVC/View/ViewFactory.php');
-require_once('include/SugarAccess/SugarAccess.php');
 
 /**
  * SugarCRM application
@@ -164,8 +163,10 @@ class SugarApplication
 
 	public function ACLFilter() {
         $GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
-        $sa = SugarAccess::getInstance();
-        $GLOBALS['moduleList'] = $sa->filterModules($GLOBALS['moduleList']);
+        if(class_exists('BoxOfficeClient')){
+            $boc = BoxOfficeClient::getInstance();
+            $GLOBALS['moduleList'] = $boc->filterModules($GLOBALS['moduleList']);
+        }
     }
 
 	/**

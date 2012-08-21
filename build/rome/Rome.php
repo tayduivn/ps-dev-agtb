@@ -560,7 +560,7 @@ public function build($path, $skipBuilds=array()){
 	$d = dir($path);
 	while($e = $d->read()){
 		//don't change entryPoint.php
-		if(substr($e, 0, 1) == '.')continue;
+		if(substr($e, 0, 1) == '.' && $e != '.htaccess')continue;
 		if(!empty($this->config['skipDirs'][$e])) continue;
 		$next = $path . '/' . $e;
 		if(is_dir($next)){

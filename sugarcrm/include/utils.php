@@ -127,7 +127,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -1039,6 +1039,10 @@ function return_app_list_strings_language($language)
 
 	$return_value = $app_list_strings;
 	$app_list_strings = $temp_app_list_strings;
+
+    //Add to the app_list_strings the list of language available in the application.
+    $return_value['available_language_dom'][""] = "";
+    $return_value['available_language_dom'] = array_merge($return_value['available_language_dom'], get_languages());
 
 	sugar_cache_put($cache_key, $return_value);
 

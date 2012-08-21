@@ -22,6 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'Zend/Service/Amazon/S3.php';
 require_once 'Zend/Service/Amazon/S3/Stream.php';
 
+/**
+ * S3 uploads driver
+ * @api
+ */
 class SugarUploadS3 extends UploadStream
 {
     protected $s3;
@@ -38,24 +42,28 @@ class SugarUploadS3 extends UploadStream
         $this->init();
     }
 
+    /**
+     * Initialize the data
+     * Not doing it in ctor due to the bug in PHP where ctor is not called on some stream ops
+     */
     protected function init()
     {
         if(!empty($this->s3)) {
             return;
         }
-        if(empty($GLOBALS['sugar_config']['s3'])
-            || empty($GLOBALS['sugar_config']['s3']['aws_key'])
-            || empty($GLOBALS['sugar_config']['s3']['aws_secret'])
-            || empty($GLOBALS['sugar_config']['s3']['upload_bucket'])
+        if(empty($GLOBALS['sugar_config']['aws'])
+            || empty($GLOBALS['sugar_config']['aws']['aws_key'])
+            || empty($GLOBALS['sugar_config']['aws']['aws_secret'])
+            || empty($GLOBALS['sugar_config']['aws']['upload_bucket'])
             ) {
             $GLOBALS['log']->fatal("S3 keys are not set!");
             throw new Exception("S3 keys are not set!");
         }
         // TODO: add location support for buckets
         $this->metadata = array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE);
-        $this->s3 = new Zend_Service_Amazon_S3($GLOBALS['sugar_config']['s3']['aws_key'], $GLOBALS['sugar_config']['s3']['aws_secret']);
+        $this->s3 = new Zend_Service_Amazon_S3($GLOBALS['sugar_config']['aws']['aws_key'], $GLOBALS['sugar_config']['aws']['aws_secret']);
         $this->s3->registerAsClient(self::STREAM_NAME);
-        $this->bucket = $GLOBALS['sugar_config']['s3']['upload_bucket'];
+        $this->bucket = $GLOBALS['sugar_config']['aws']['upload_bucket'];
     }
 
     /**
@@ -153,25 +161,6 @@ class SugarUploadS3 extends UploadStream
     {
         return substr(strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
     }
-
-//     /**
-//      * Get real FS path of the upload stream file
-//      * Non-static version for overrides
-//      * @param string $path Upload stream path (with upload://)
-//      * @return string FS path
-//      */
-//     public function getFSPath($path)
-//     {
-//         $localpath = parent::getFSPath($path);
-//         if(!file_exists($localpath)) {
-//             // TODO: can uploads be modified?
-//             $s3obj = $this->s3->getObjectStream($this->s3Name($path));
-//             if(!empty($s3obj)) {
-//                 copy($s3obj->getStreamName(), $localpath);
-//             }
-//         }
-//         return $localpath;
-//     }
 
     /**
      * Create directory within uploads

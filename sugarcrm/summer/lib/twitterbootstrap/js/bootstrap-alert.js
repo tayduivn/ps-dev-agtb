@@ -1,7 +1,7 @@
-/* ============================================================
- * bootstrap-button.js v2.0.3
- * http://twitter.github.com/bootstrap/javascript.html#buttons
- * ============================================================
+/* ==========================================================
+ * bootstrap-alert.js v2.0.0
+ * http://twitter.github.com/bootstrap/widgets.html#alerts
+ * ==========================================================
  * Copyright 2012 Twitter, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,82 +15,77 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============================================================ */
+ * ========================================================== */
 
 
-!function ($) {
+!function( $ ){
 
-  "use strict"; // jshint ;_;
+  "use strict"
 
+ /* ALERT CLASS DEFINITION
+  * ====================== */
 
- /* BUTTON PUBLIC CLASS DEFINITION
-  * ============================== */
+  var dismiss = '[data-dismiss="alert"]'
+    , Alert = function ( el ) {
+        $(el).on('click', dismiss, this.close)
+      }
 
-  var Button = function (element, options) {
-    this.$element = $(element)
-    this.options = $.extend({}, $.fn.button.defaults, options)
+  Alert.prototype = {
+
+    constructor: Alert
+
+  , close: function ( e ) {
+      var $this = $(this)
+        , selector = $this.attr('data-target')
+        , $parent
+
+      if (!selector) {
+        selector = $this.attr('href')
+        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+      }
+
+      $parent = $(selector)
+      $parent.trigger('close')
+
+      e && e.preventDefault()
+
+      $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+
+      $parent.removeClass('in')
+
+      function removeElement() {
+        $parent.remove()
+        $parent.trigger('closed')
+      }
+
+      $.support.transition && $parent.hasClass('fade') ?
+        $parent.on($.support.transition.end, removeElement) :
+        removeElement()
+    }
+
   }
 
-  Button.prototype.setState = function (state) {
-    var d = 'disabled'
-      , $el = this.$element
-      , data = $el.data()
-      , val = $el.is('input') ? 'val' : 'html'
 
-    state = state + 'Text'
-    data.resetText || $el.data('resetText', $el[val]())
+ /* ALERT PLUGIN DEFINITION
+  * ======================= */
 
-    $el[val](data[state] || this.options[state])
-
-    // push to event loop to allow forms to submit
-    setTimeout(function () {
-      state == 'loadingText' ?
-        $el.addClass(d).attr(d, d) :
-        $el.removeClass(d).removeAttr(d)
-    }, 0)
-  }
-
-  Button.prototype.toggle = function () {
-    var $parent = this.$element.parent('[data-toggle="buttons-radio"]')
-
-    $parent && $parent
-      .find('.active')
-      .removeClass('active')
-
-    this.$element.toggleClass('active')
-  }
-
-
- /* BUTTON PLUGIN DEFINITION
-  * ======================== */
-
-  $.fn.button = function (option) {
+  $.fn.alert = function ( option ) {
     return this.each(function () {
       var $this = $(this)
-        , data = $this.data('button')
-        , options = typeof option == 'object' && option
-      if (!data) $this.data('button', (data = new Button(this, options)))
-      if (option == 'toggle') data.toggle()
-      else if (option) data.setState(option)
+        , data = $this.data('alert')
+      if (!data) $this.data('alert', (data = new Alert(this)))
+      if (typeof option == 'string') data[option].call($this)
     })
   }
 
-  $.fn.button.defaults = {
-    loadingText: 'loading...'
-  }
-
-  $.fn.button.Constructor = Button
+  $.fn.alert.Constructor = Alert
 
 
- /* BUTTON DATA-API
-  * =============== */
+ /* ALERT DATA-API
+  * ============== */
 
   $(function () {
-    $('body').on('click.button.data-api', '[data-toggle^=button]', function ( e ) {
-      var $btn = $(e.target)
-      if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
-      $btn.button('toggle')
-    })
+    $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}(window.jQuery);
+}( window.jQuery )

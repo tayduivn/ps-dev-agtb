@@ -401,6 +401,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         }
 
         if ( $clientInfo['client_type'] != 'support_portal' ) {
+            die('blah');
             // Is just a regular Sugar User
             $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
             $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
