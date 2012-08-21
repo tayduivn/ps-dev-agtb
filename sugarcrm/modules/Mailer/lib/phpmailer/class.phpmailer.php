@@ -332,12 +332,12 @@ class PHPMailer {
   // PROPERTIES, PRIVATE
   /////////////////////////////////////////////////
 
-  public $smtp            = NULL;
+  public  $smtp            = NULL;
   private $to              = array();
   private $cc              = array();
   private $bcc             = array();
   private $ReplyTo         = array();
-  public $attachment      = array();
+  private $attachment      = array();
   private $CustomHeader    = array();
   private $message_type    = '';
   private $boundary        = array();
