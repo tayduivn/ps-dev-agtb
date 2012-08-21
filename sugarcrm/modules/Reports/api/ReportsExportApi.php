@@ -22,19 +22,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 require_once('include/download_file.php');
+require_once('modules/Reports/ReportCache.php');
 /**
  * @api
  */
 class ReportsExportApi extends SugarApi {
+    // how long the cache is ok, in minutes
+    private $cacheLength = 10;
+
     public function registerApiRest() {
         return array(
             'exportRecord' => array(
                 'reqType' => 'GET',
                 'path' => array('Reports', '?', '?'),
-                'pathVars' => array('Reports', 'record', 'export_type'),
+                'pathVars' => array('module', 'record', 'export_type'),
                 'method' => 'exportRecord',
                 'shortHelp' => 'This method exports a record in the specified type',
-                'longHelp' => 'include/api/html/export.html',
+                'longHelp' => '',
             ),
         );
     }
@@ -47,20 +51,28 @@ class ReportsExportApi extends SugarApi {
      */
     public function exportRecord($api, $args)
     {
-        global  $beanList, $beanFiles;
-        global $sugar_config,$current_language;
+
         $this->requireArgs($args,array('record', 'export_type'));
         $args['module'] = 'Reports';
- 
         $GLOBALS['disable_date_format'] = FALSE;
-        require_once('modules/Reports/templates/templates_pdf.php');
 
-        $saved_report = $this->loadBean($api, $args, 'view');
+        // first lets check thecache  and see if this user already has a report for the export type we want
+        
+        $filename = sugar_cache_retrieve($args['record'] . '-' . $GLOBALS['current_user']->id);
 
-        $method = 'export' . ucwords($args['export_type']);
 
-        $contents = $this->$method($saved_report);
+        if(empty($filename))
+        {
+            $saved_report = $this->loadBean($api, $args, 'view');
 
+            $method = 'export' . ucwords($args['export_type']);
+
+            $filename = $this->$method($saved_report);            
+        }
+
+
+        $dl = new DownloadFile();
+        $contents = $dl->getFileByFilename($filename);
         return array('file_contents' => base64_encode($contents));
     }
 
@@ -71,7 +83,10 @@ class ReportsExportApi extends SugarApi {
      */
     protected function exportPdf(SugarBean $report)
     {
-        $contents = '';
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+        require_once('modules/Reports/templates/templates_pdf.php');
+        $report_filename = false;
         if($report->id != null)
         {
             //Translate pdf to correct language
@@ -80,10 +95,8 @@ class ReportsExportApi extends SugarApi {
             //Generate actual pdf
             // TODO: Add caching here
             $report_filename = template_handle_pdf($report, false);
-
-            $dl = new DownloadFile();
-            $contents = $dl->getFileByFilename($report_filename);
+            sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
         }
-        return $contents;
+        return $report_filename;
     }
 }
