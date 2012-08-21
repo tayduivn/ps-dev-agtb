@@ -40,6 +40,8 @@ class ActivityStream extends SugarBean {
     const ACTIVITY_TYPE_CREATE = 'create';
     const ACTIVITY_TYPE_UPDATE = 'update';   
     const ACTIVITY_TYPE_DELETE = 'delete'; 
+    const ACTIVITY_TYPE_POST = 'post';
+    
 
     // common vars for sugar bean
     var $table_name = 'activity_stream';
@@ -113,20 +115,32 @@ class ActivityStream extends SugarBean {
     
     /**
      * Returns an array of activities for a bean
-     * @param SugarBean $bean gets activities for this bean
+     * @param string $targetModule module name
+     * @param string $targetId bean id
      * @param integer $start offset
      * @param integer $numActivities number of activities should be returned
-     * @para integer $numComments number of comments should be returned for each activity
+     * @para integer $numComments number of comments should be returned for each activity. 0: no comments; -1:all comments
      * @return array
      */
-    public function getActivities($bean, $start = 0, $numActivities = 20, $numComments = 0) {
+    public function getActivities($targetModule = null, $targetId = null, $start = 0, $numActivities = 20, $numComments = -1) {
         global $dictionary;
         $tableName = $dictionary['ActivityStream']['table']; 
         $fieldDefs = $dictionary['ActivityStream']['fields'];        
         
         $activities = array();
               
-        $sql = "SELECT ".implode(",",array_keys($fieldDefs))." FROM ".$tableName." WHERE target_module ='".$bean->module_name."' AND target_id = '".$bean->id."' order by DATE_CREATED DESC LIMIT ".$start.", ".$numActivities;
+        $where = '';
+        if(!empty($targetModule)) {
+            $where .= "target_module = '".$targetModule."'";
+            if(!empty($targetId)) {
+                $where .= " AND tagret_id = '".$targetId."'";
+            }
+        }
+        
+        if(!empty($where)) {
+            $where = ' WHERE '.$where;
+        }
+        $sql = "SELECT ".implode(",",array_keys($fieldDefs))." FROM ".$tableName.$where." ORDER BY DATE_CREATED DESC LIMIT ".$start.", ".$numActivities;
         $result = $GLOBALS['db']->query($sql);
         
         if(!empty($result)) {
@@ -241,6 +255,35 @@ class ActivityStream extends SugarBean {
         }
 
         return false;
+    } 
+
+    /**
+     * Creates new post. 
+     *
+     * @param string $post_body 
+     * @param string $targetModule module name
+     * @param string $targetId bean id
+     * @return bool query result or false
+     *
+     */
+    public function addPost($postBody, $targetModule = '', $targetId = '') {
+        global $current_user, $dictionary;
+        $fieldDefs = $dictionary['ActivityStream']['fields'];   
+        $tableName = $dictionary['ActivityStream']['table'];      
+
+        $values = array();
+        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $values['target_module']= $this->db->massageValue($targetModule, $fieldDefs['target_module']);
+        $values['target_id']= $this->db->massageValue($targetId, $fieldDefs['target_id']);
+        $activityData = json_encode(array('action'=>self::ACTIVITY_TYPE_POST,'value'=>$postBody));
+        $values['activity_data']= $this->db->massageValue($activityData, $fieldDefs['activity_data']);
+        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
+        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']); 
+        
+        $sql = "INSERT INTO ".$tableName;
+        $sql .= "(".implode(",", array_keys($values)).") ";
+        $sql .= "VALUES(".implode(",", $values).")"; 
+        return $this->db->query($sql);  
     }    
 }
 

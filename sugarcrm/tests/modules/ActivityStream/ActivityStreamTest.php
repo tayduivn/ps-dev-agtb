@@ -50,9 +50,6 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
                     )
             );
         } 
-        if(!isset($dictionary['emails_text']))  {
-            $dictionary['emails_text'] = array();
-        }
     }
 
     public function tearDown() {
@@ -81,9 +78,11 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->account->fetched_row = $GLOBALS['db']->fetchByAssoc($result);
         $activity = new ActivityStream();
         $result = $activity->addActivity($this->account, ActivityStream::ACTIVITY_TYPE_UPDATE);
-        $this->assertEquals(true, $result);       
-        $activities = $activity->getActivities($this->account);
-        $this->assertGreaterThanOrEqual(1, count($activities));
+        $this->assertEquals(true, $result);   
+        $result = $activity->addPost('this is a test', 'Accounts', $this->account->id);
+        $this->assertEquals(true, $result);
+        $activities = $activity->getActivities('Accounts', $this->account->id);
+        $this->assertGreaterThanOrEqual(2, count($activities));
         $activity->loadFromRow($activities[0]);
         $result = $activity->addComment('this is a test');
         $this->assertEquals(true, $result);
