@@ -1733,7 +1733,7 @@ class PHPMailer {
    * @access private
    * @return string
    */
-  public function ServerHostname() {
+  private function ServerHostname() {
     if (!empty($this->Hostname)) {
       $result = $this->Hostname;
     } elseif (isset($_SERVER['SERVER_NAME'])) {
