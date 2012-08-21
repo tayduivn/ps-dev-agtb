@@ -1,4 +1,4 @@
-<h4>{{chartTitle}}</h4>
+<h4>{{str_format "LBL_CHART_FORECAST_FOR" "Forecasts" timeperiod_label}}</h4>
 <div class="tcenter">
 
     <div id="chart" class="tcenter">

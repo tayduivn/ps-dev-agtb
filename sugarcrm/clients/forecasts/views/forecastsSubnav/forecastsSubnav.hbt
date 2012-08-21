@@ -1,5 +1,5 @@
 <div class="btn-toolbar pull-left">
-    <h1>Forecast: {{fullName}}}</h1>
+    <h1>{{str_format "LBL_FORECAST_TITLE" "Forecasts" fullName}}</h1>
     <div class="btn-group" id="forecastsTree" style="display: none">
         <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
             <span class="caret"></span>
