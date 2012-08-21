@@ -1,7 +1,7 @@
 /**
  * View that displays a chart
- * @class View.Views.ChartView
- * @alias SUGAR.App.layout.ChartView
+ * @class View.Views.ForecastsChartView
+ * @alias SUGAR.App.layout.ForecastsChartView
  * @extends View.View
  */
 ({

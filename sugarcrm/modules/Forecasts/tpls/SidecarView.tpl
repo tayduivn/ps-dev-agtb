@@ -29,7 +29,7 @@
                 <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
-                            <div class="view-chart"></div>
+                            <div class="view-forecastsChart"></div>
                             <div class="view-chartOptions"></div>
                         </div>
                         <div class="clearfix"></div>
@@ -121,7 +121,7 @@
 <script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
 <script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
 <script src='clients/forecasts/views/progress/progress.js'></script>
-<script src='clients/forecasts/views/chart/chart.js'></script>
+<script src='clients/forecasts/views/forecastsChart/forecastsChart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
 <script src='clients/forecasts/fields/userLink/userLink.js'></script>
 <script src='clients/forecasts/fields/recordLink/recordLink.js'></script>
