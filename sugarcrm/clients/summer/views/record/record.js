@@ -9,6 +9,8 @@
             "click .record-cancel": "handleCancel"
         };
 
+        _.bindAll(this);
+
         app.view.views.DetailView.prototype.initialize.call(this, options);
 
         // Re delegate events adding some of our custom
@@ -65,8 +67,6 @@
 
         $(target).closest('.record-row').toggleClass('edit-mode');
 
-
-        
         function fieldClose(e) {
             self.toggleField(field, target);
 
@@ -81,8 +81,12 @@
         field.render();
 
         if (field.options.viewName == "edit") {
-            field.$el.on("focusout", "input", fieldClose);
-            field.$el.on("change", "input", fieldClose);
+            field.$el.on("focusout", "input", function(e) { this.fieldClose(e, field, target); });
+            field.$el.on("change", "input", function(e) { this.fieldClose(e, field, target); });
         }
+    },
+
+    fieldClose: function(e, field, target) {
+
     }
 })
