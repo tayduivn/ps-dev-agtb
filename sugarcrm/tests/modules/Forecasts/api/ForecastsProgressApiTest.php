@@ -101,6 +101,20 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->save();
         $opportunities[] = $opp;
 
+
+        //create opportunities to be used in tests
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$manager->id;
+        $opp->probability = '100';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
+        $opp->sales_stage = 'Closed Won';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->assigned_user_id = self::$user->id;
         $opp->probability = '80';
@@ -119,6 +133,18 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '30000';
         $opp->likely_case = '27000';
         $opp->worst_case = '23000';
+        $opp->sales_stage = 'Closed Won';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$user->id;
+        $opp->probability = '100';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
         $opp->timeperiod_id = self::$timeperiod->id;
         $opp->save();
@@ -177,89 +203,36 @@ class ForecastsProgressApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testProgress() {
-        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user->id;
+        $url = 'Forecasts/progress/' . self::$user->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 
         $restReply = $restResponse['reply'];
 
         //check quotas section
-        $this->assertEquals(self::$quota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: " . self::$quota->amount);
-
-
-        $likely_to_close_total = 24000;
-        $likely_to_close_percent = 1.8;
-        $best_to_close_total = 30000;
-        $best_to_close_percent = 2.0;
-        $likely_to_quota_total = 4000;
-        $likely_to_quota_percent = 1.08;
-        $best_to_quota_total = 10000;
-        $best_to_quota_percent = 1.20;
-
-        $revenue = 30000;
-        $pipeline = 2.5;
-
-        //check best/likely numbers
-        // to quota
-        $this->assertEquals($likely_to_quota_total, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_quota_percent, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_quota_total, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
-        $this->assertEquals($best_to_quota_percent, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
-
-        // to close
-        $this->assertEquals($likely_to_close_total, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_close_percent, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_close_total, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
-        $this->assertEquals($best_to_close_percent, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
-
-        $this->assertEquals($revenue, $restReply['revenue'], "Revenue didn't match calculated amount. expected: ".$revenue." received: ".$restReply['revenue']);
-        $this->assertEquals($pipeline, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: ".$pipeline." received: ".$restReply['pipeline']);
+        $this->assertEquals(self::$quota->amount, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(0, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['opportunities'], "opportunity count did not match");
     }
 
     /**
      * @group forecastapi
      */
     public function testManagerProgress() {
-        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$manager->id .'&should_rollup=1';
+        $url = 'Forecasts/progress/' . self::$manager->id . '/' . self::$timeperiod->id . '/1/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 
         $restReply = $restResponse['reply'];
 
+        error_log(print_r($restReply,1));
+
+
+        error_log($url);
         //check quotas section
-        $this->assertEquals(self::$managerQuota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
-
-        $likely_to_close_total = 99000;
-        $likely_to_close_percent = 4.3;
-        $best_to_close_total = 114000;
-        $best_to_close_percent = 4.8;
-        $likely_to_quota_total = 73000;
-        $likely_to_quota_percent = 2.30357142857;
-        $best_to_quota_total = 88000;
-        $best_to_quota_percent = 2.57142857143;
-
-        $revenue = 50000;
-        $pipeline = .8;
-
-        //check best/likely numbers
-        // to quota
-        $this->assertEquals($likely_to_quota_total, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_quota_percent, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_quota_total, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
-        $this->assertEquals($best_to_quota_percent, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
-
-        // to close
-        $this->assertEquals($likely_to_close_total, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_close_percent, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_close_total, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
-        $this->assertEquals($best_to_close_percent, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
-
-        $this->assertEquals($revenue, $restReply['revenue'], "Revenue didn't match calculated amount. expected: ".$revenue." received: ".$restReply['revenue']);
-        $this->assertEquals($pipeline, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: ".$pipeline." received: ".$restReply['pipeline']);
+        $this->assertEquals(0, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(30000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(2, $restReply['opportunities'], "opportunity count did not match");
     }
 
     /**
@@ -269,7 +242,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $newUser->reports_to_id = self::$manager->id;
         $newUser->save();
-        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . $newUser->id;
+        $url = 'Forecasts/progress/' . $newUser->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
 
         $restResponse = $this->_restCall($url);
 
@@ -277,21 +250,8 @@ class ForecastsProgressApiTest extends RestTestBase
 
         //check best/likely numbers
         // to quota
-        $this->assertEquals(0, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
-        $this->assertEquals(0, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
-
-        // to close
-        $this->assertEquals(0, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['revenue'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['revenue']);
-        $this->assertEquals(0, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['pipeline']);
+        $this->assertEquals(0, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(0, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(0, $restReply['opportunities'], "opportunity count did not match");
     }
 }

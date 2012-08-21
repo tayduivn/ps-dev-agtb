@@ -44,8 +44,10 @@ class ForecastsProgressApi extends ModuleApi
     protected $likelyAmount;
 	protected $should_rollup;
 	protected $quotaData;
-    protected $opportunity;
-
+	protected $opportunity;
+    protected $committed_probability;
+    protected $sales_stage_lost;
+    protected $sales_stage_won;
 
 	public function __construct()
 	{
@@ -61,26 +63,25 @@ class ForecastsProgressApi extends ModuleApi
 		$parentApi = array(
 			'progress' => array(
 				'reqType'   => 'GET',
-				'path'      => array('Forecasts', 'progress'),
-				'pathVars'  => array('', ''),
+				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?', '?'),
+				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','sales_stage_won', 'sales_stage_lost'),
 				'method'    => 'progress',
 				'shortHelp' => 'Progress data',
 				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
-			),
-            'closed' => array(
-         				'reqType'   => 'GET',
-         				'path'      => array('Forecasts', 'closed'),
-         				'pathVars'  => array('', ''),
-         				'method'    => 'closed',
-         				'shortHelp' => 'Closed data',
-         				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#closed',
-         			),
+			)
         );
 		return $parentApi;
 	}
 
-
-    protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false  )
+    /**
+     * retreives the number of opportunities set to be used in this forecast period
+     *
+     * @param null $user_id
+     * @param null $timeperiod_id
+     * @param bool $should_rollup
+     * @return mixed
+     */
+    protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false, $excluded_sales_stages  )
    	{
    		global $current_user;
 
@@ -99,10 +100,14 @@ class ForecastsProgressApi extends ModuleApi
            $where .= " opportunities.assigned_user_id='$user_id'";
         }
 
-   		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
-   				. " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
-   				. " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-   				. " AND opportunities.deleted = 0";
+   		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
+
+
+        foreach($excluded_sales_stages as $exclusion)
+        {
+            $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+        }
+        $where .= " AND opportunities.deleted = 0";
 
    		$query = $this->opportunity->create_list_query(NULL, $where);
    		$query = $this->opportunity->create_list_count_query($query);
@@ -121,20 +126,25 @@ class ForecastsProgressApi extends ModuleApi
    	 *
    	 * @return int
    	 */
-   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false )
+   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $sales_stage_won )
    	{
    		$amountSum = 0;
-   		$where     = "opportunities.sales_stage='" . Opportunity::STAGE_CLOSED_WON . "'";
+   		$where     = "";
 
         if ($should_rollup and !is_null($user_id)) {
-            $where .= " AND opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
+            $where .= " opportunities.assigned_user_id in (SELECT id from users where reports_to_id = '$user_id')";
         } else if ( !is_null($user_id) ) {
-            $where .= " AND opportunities.assigned_user_id='$user_id'";
+            $where .= " opportunities.assigned_user_id='$user_id'";
    		}
 
    		if ( !is_null($timeperiod_id) ) {
    			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
    		}
+
+       foreach($sales_stage_won as $inclusion)
+       {
+           $where .= " AND opportunities.sales_stage = " . $GLOBALS['db']->quoted($inclusion);
+       }
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
    		$result = $GLOBALS['db']->query($query);
@@ -144,170 +154,6 @@ class ForecastsProgressApi extends ModuleApi
    		}
 
    		return $amountSum;
-   	}
-
-    /**
-     * pulls the best amount and sums it from the worksheet
-     *
-     * @param null $user_id
-     * @param null $timeperiod_id
-     */
-    protected function getManagerBestAmount( $user_id = NULL, $timeperiod_id = NULL)
-    {
-        global $current_user;
-
-        $db = DBManagerFactory::getInstance();
-
-        if ( is_null($user_id) ) {
-      		$user_id = $current_user->id;
-        }
-
-        $worksheet_query = "select sum(" . db_convert("best_case","IFNULL",array(0)).") best_value";
-        $worksheet_query .= " from worksheet wt ";
-        $worksheet_query .= " LEFT JOIN users us ON wt.related_id=us.id";
-        $worksheet_query .= " where wt.related_forecast_type = 'Direct'";
-        $worksheet_query .= " AND wt.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-        $worksheet_query .= " AND wt.user_id = " . $GLOBALS['db']->quoted($user_id);
-        $worksheet_query .= " AND (us.id = " . $db->quoted($user_id);
-        $worksheet_query .= " OR us.reports_to_id = " . $db->quoted($user_id) . " ) ";
-        $worksheet_query .= " and wt.deleted=0";
-
-        $worksheet_result = $db->query($worksheet_query);
-        $worksheet_data =$db->fetchByAssoc($worksheet_result);
-        if (!empty($worksheet_data['best_value'])) {
-            return $worksheet_data['best_value'];
-        }
-
-        return 0;
-    }
-
-    /**
-     * pulls the likely amount and sums it from the worksheet
-     *
-     * @param null $user_id
-     * @param null $timeperiod_id
-     */
-    protected function getManagerLikelyAmount( $user_id = NULL, $timeperiod_id = NULL)
-    {
-        global $current_user;
-
-        $db = DBManagerFactory::getInstance();
-
-        if ( is_null($user_id) ) {
-      		$user_id = $current_user->id;
-        }
-
-        $worksheet_query = "select sum(" . db_convert("likely_case","IFNULL",array(0)).") likely_value";
-        $worksheet_query .= " from worksheet wt ";
-        $worksheet_query .= " LEFT JOIN users us ON wt.related_id=us.id";
-        $worksheet_query .= " where wt.related_forecast_type = 'Direct'";
-        $worksheet_query .= " AND wt.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-        $worksheet_query .= " AND wt.user_id = " . $GLOBALS['db']->quoted($user_id);
-        $worksheet_query .= " AND (us.id = " . $db->quoted($user_id);
-        $worksheet_query .= " OR us.reports_to_id = " . $db->quoted($user_id) . " ) ";
-        $worksheet_query .= " and wt.deleted=0";
-
-        $worksheet_result = $db->query($worksheet_query);
-        $worksheet_data =$db->fetchByAssoc($worksheet_result);
-        if (!empty($worksheet_data['likely_value'])) {
-            return $worksheet_data['likely_value'];
-        }
-
-        return 0;
-    }
-
-       /**
-      	 * Get the total amount of likely_case for the given user and timeperiod.  Defaults to the current user
-      	 * and current timeperiod.
-      	 *
-      	 * @param null $user_id
-      	 * @param null $timeperiod_id
-        *  @param false $should_rollup
-      	 */
-      	protected function getLikelyAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false )
-      	{
-      		global $current_user;
-      		$revenue = 0;
-            $db = DBManagerFactory::getInstance();
-
-            if($should_rollup) {
-                return $this->getManagerLikelyAmount($user_id, $timeperiod_id);
-            }
-
-      		if ( is_null($user_id) ) {
-      			$user_id = $current_user->id;
-      		}
-
-            $where = " (users.id = " . $db->quoted($user_id);
-
-            if($should_rollup && !is_null($user_id)) {
-                $where .= " OR users.reports_to_id = " . $db->quoted($user_id);
-            }
-            $where .= ")";
-
-      		if ( is_null($timeperiod_id) ) {
-      			$timeperiod_id = TimePeriod::getCurrentId();
-      		}
-
-      		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
-                  . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
-      		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-      		       . " AND opportunities.deleted = 0";
-
-      		$query  = $this->opportunity->create_list_query(NULL, $where);
-
-      		$result = $db->query($query);
-
-      		while ( $row = $db->fetchByAssoc($result) ) {
-      			$revenue += $row['likely_case'];
-      		}
-
-      		return $revenue;
-      	}
-
-
-   	/**
-   	 * Get the total revenue for the given user and timeperiod.  Defaults to the current user
-   	 * and current timeperiod.
-   	 *
-   	 * @param null $user_id
-   	 * @param null $timeperiod_id
-     * @param false $should_rollup
-   	 */
-   	protected function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false  )
-   	{
-   		global $current_user;
-   		$revenue = 0;
-        $db = DBManagerFactory::getInstance();
-
-   		if ( is_null($user_id) ) {
-   			$user_id = $current_user->id;
-   		}
-   		if ( is_null($timeperiod_id) ) {
-   			$timeperiod_id = TimePeriod::getCurrentId();
-   		}
-
-       $where = " (users.id = " . $db->quoted($user_id);
-
-       if($should_rollup && !is_null($user_id)) {
-           $where .= " OR users.reports_to_id = " . $db->quoted($user_id);
-       }
-       $where .= ")";
-
-   		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id)
-   		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_WON)
-   		       . " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted(Opportunity::STAGE_CLOSED_LOST)
-   		       . " AND opportunities.deleted = 0";
-
-   		$query  = $this->opportunity->create_list_query(NULL, $where);
-
-   		$result = $db->query($query);
-
-   		while ( $row = $db->fetchByAssoc($result) ) {
-   			$revenue += $row['amount'];
-   		}
-
-   		return $revenue;
    	}
 
 
@@ -320,34 +166,27 @@ class ForecastsProgressApi extends ModuleApi
 	 */
 	protected function loadProgressData( $args )
 	{
-
 		$this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
 
 		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
-		$this->should_rollup = (array_key_exists("shouldRollup", $args) ? $args["shouldRollup"] : User::isManager($this->user_id));
-		if ( !is_bool($this->should_rollup) ) {
+		$this->should_rollup = (array_key_exists("should_rollup", $args) ? $args["should_rollup"] : User::isManager($this->user_id));
+		$this->sales_stage_won = (array_key_exists("sales_stage_won", $args) ? explode(',', $args["sales_stage_won"]) : array());
+        $this->sales_stage_lost = (array_key_exists("sales_stage_lost", $args) ? explode(',', $args["sales_stage_lost"]) : array());
+        if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
 		}
-
-
         if($this->should_rollup) {
-            $this->forecastData = array (
-                'likely_case' => $this->getManagerLikelyAmount($this->user_id, $this->timeperiod_id),
-                'best_case' => $this->getManagerBestAmount($this->user_id, $this->timeperiod_id)
-            );
+            $this->opportunity = new Opportunity();
+            $this->quotaData = array('amount' => 0);
+            $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->sales_stage_won);
+            $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, array_merge($this->sales_stage_won, $this->sales_stage_lost));
         } else {
-            $forecast           = new Forecast();
-            $this->forecastData = $forecast->getForecastForUser($this->user_id, $this->timeperiod_id, $this->should_rollup);
+            $this->opportunitiesInPipeline = 0;
+            $this->closed = 0;
+            $quota = new Quota();
+          	$this->quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id, $this->should_rollup);
+
         }
-
-		$quota           = new Quota();
-		$this->quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id, $this->should_rollup);
-
-		$this->opportunity = new Opportunity();
-		$this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup);
-		$this->revenueInPipeline = $this->getPipelineRevenue($this->user_id, $this->timeperiod_id, $this->should_rollup);
-        $this->likelyAmount = $this->getLikelyAmount($this->user_id, $this->timeperiod_id, $this->should_rollup);
-		$this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup);
 	}
 
 
@@ -387,19 +226,9 @@ class ForecastsProgressApi extends ModuleApi
 		$this->loadProgressData($args);
 
 		$progressData = array(
-			"quota"         => array(
-				"amount"      => $this->getQuota($api, $args),
-				"likely_case" => $this->getLikelyToQuota($api, $args),
-				"best_case"   => $this->getBestToQuota($api, $args),
-			),
-			"closed"        => array(
-				"amount"      => $this->getClosed($api, $args),
-				"likely_case" => $this->getLikelyToClose($api, $args),
-				"best_case"   => $this->getBestToClose($api, $args),
-			),
-			"opportunities" => $this->getOpportunities($api, $args),
-			"revenue"       => $this->getRevenue($api, $args),
-            "pipeline"      => $this->getPipeline($api, $args),
+            "quota_amount"      => $this->getQuota(),
+            "closed_amount"     => $this->closed,
+            "opportunities"     => $this->opportunitiesInPipeline
 		);
 
 
@@ -407,82 +236,21 @@ class ForecastsProgressApi extends ModuleApi
 		return $progressData;
 	}
 
-	public function getQuota( $api, $args )
+	public function getQuota()
 	{
-        return isset($this->quotaData["amount"]) ? $this->quotaData["amount"] :  0;
+		return isset($this->quotaData["amount"]) ? $this->quotaData["amount"] :  0;
 	}
 
-
-	public function getLikelyToQuota( $api, $args )
-	{
-
-		$likely = $this->forecastData["likely_case"];
-		$quota  = $this->getQuota($api, $args);
-
-		return $this->formatCaseToStage($likely, $quota);
-	}
-
-
-	public function getBestToQuota( $api, $args )
-	{
-
-		$best  = $this->forecastData["best_case"];
-		$quota = $this->getQuota($api, $args);
-
-		return $this->formatCaseToStage($best, $quota);
-	}
-
-
-	public function getLikelyToClose( $api, $args )
-	{
-
-		$likely = $this->forecastData["likely_case"];
-		$closed = $this->getClosed($api, $args);
-
-		return $this->formatCaseToStage($likely, $closed);
-	}
-
-
-	public function getBestToClose( $api, $args )
-	{
-
-		$best = $this->forecastData["best_case"];
-		$closed = $this->getClosed($api, $args);
-
-		return $this->formatCaseToStage($best, $closed);
-	}
-
-
-	public function getOpportunities( $api, $args )
+	public function getOpportunities()
 	{
 
 		return $this->opportunitiesInPipeline;
 	}
 
 
-	public function getRevenue( $api, $args )
-	{
-
-		return $this->revenueInPipeline;
-	}
-
-
-	public function getClosed( $api, $args )
+	public function getClosed()
 	{
 		
 		return $this->closed;
 	}
-
-
-    public function getPipeline( $api, $args )
-    {
-
-           $revenue = $this->getRevenue($api, $args) + $this->closed;
-           $likelyToClose = $this->forecastData["likely_case"] - $this->closed;
-
-           if($likelyToClose > 0)
-               return round( ( $revenue / $likelyToClose ), 1);
-           else
-               return 0;
-   	}
 }
