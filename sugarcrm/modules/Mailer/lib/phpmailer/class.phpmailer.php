@@ -77,11 +77,10 @@ r915 - 2004-10-08 15:31:10 -0700 (Fri, 08 Oct 2004) - julian - E-mail notificati
 
 */
 
-
 /*~ class.phpmailer.php
 .---------------------------------------------------------------------------.
 |  Software: PHPMailer - PHP email class                                    |
-|   Version: 2.3                                                          |
+|   Version: 2.3                                                            |
 |   Contact: via sourceforge.net support pages (also www.codeworxtech.com)  |
 |      Info: http://phpmailer.sourceforge.net                               |
 |   Support: http://sourceforge.net/projects/phpmailer/                     |
@@ -109,7 +108,7 @@ r915 - 2004-10-08 15:31:10 -0700 (Fri, 08 Oct 2004) - julian - E-mail notificati
  * @package PHPMailer
  * @author Andy Prevost
  * @copyright 2004 - 2008 Andy Prevost
-*/
+ */
 
 class PHPMailer {
 
@@ -983,7 +982,7 @@ class PHPMailer {
     $result .= $this->AddrAppend('From', $from);
 
     /* sendmail and mail() extract Cc from the header before sending */
-   if(count($this->cc) > 0) {
+    if(count($this->cc) > 0) {
       $result .= $this->AddrAppend('Cc', $this->cc);
     }
 
