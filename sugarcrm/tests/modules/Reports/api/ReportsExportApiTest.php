@@ -257,10 +257,14 @@ class ReportsExportApiTest extends RestTestBase
         $json = getJSONobj();
         $tmp = $json->encode($rep_defs);
         $this->_report = new Report($tmp);
+        $this->_report->report_name = "UNIT TEST REPORT - " . create_guid();
         $this->_report->new_with_id = true;
         $this->_report->run_query();
+        
+        // have to set a request variable for the assigned_user_id so the report will save
         $_REQUEST['assigned_user_id'] = $this->_user->id;
-        $this->_report->save("UNIT TEST REPORT - " . create_guid());
+
+        $this->_report->save($this->_report->report_name);
         $report_id = $this->_report->saved_report->id;
         // call the Rest
         $restReply = $this->_restCall("Reports/{$report_id}/pdf",
