@@ -76,6 +76,8 @@
 
         // toggle the visibility of the group by field for the initial render
         this.toggleGroupByFieldVisibility();
+
+        return this;
     },
 
     /**

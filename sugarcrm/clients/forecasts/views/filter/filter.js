@@ -74,6 +74,8 @@
 
         // toggle the visibility of the group by field for the initial render
         this.toggleCategoryFieldVisibility();
+
+        return this;
     },
 
     /**
