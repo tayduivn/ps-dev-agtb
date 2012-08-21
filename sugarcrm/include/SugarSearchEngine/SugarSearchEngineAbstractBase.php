@@ -83,7 +83,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     protected function disableFTS()
     {
         $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
-        searchEngineDown();
+        self::markSearchEngineStatus(true);
 
         // notification
         $cfg = new Configurator();
@@ -118,5 +118,31 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         $indexer = new SugarSearchEngineSyncIndexer();
         $indexer->removeExistingFTSSyncConsumer();
         $indexer->createJobQueueConsumer();
+    }
+
+    /**
+     * This function checks config to see if search engine is down.
+     *
+     * @return Boolean
+     */
+    static public function isSearchEngineDown()
+    {
+        $admin = new Administration();
+        $settings = $admin->retrieveSettings();
+        if (!empty($settings->settings['info_fts_down'])) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This function marks config to indicate that search engine is up or down.
+     *
+     * @param Boolean $isDown
+     */
+    static public function markSearchEngineStatus($isDown = true)
+    {
+        $admin = new Administration();
+        $admin->saveSetting('info', 'fts_down', $isDown? 1: 0);
     }
 }

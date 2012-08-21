@@ -28,10 +28,11 @@
 chdir(dirname(__FILE__));
 
 require_once('include/entryPoint.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 
-if (isSearchEngineDown())
+if (SugarSearchEngineAbstractBase::isSearchEngineDown())
 {
-    sugar_die('cache/fts/fts_down exists, is full fts server down?'."\n");
+    sugar_die('Is fts server down?'."\n");
 }
 
 $sapi_type = php_sapi_name();

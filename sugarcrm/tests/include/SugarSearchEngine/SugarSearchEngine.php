@@ -51,6 +51,19 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSearchEngineDown()
+    {
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(true);
+        $isDown = SugarSearchEngineAbstractBase::isSearchEngineDown();
+        $this->assertTrue($isDown, 'Incorrect status');
+    }
+
+    public function testSearchEngineUp()
+    {
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
+        $isDown = SugarSearchEngineAbstractBase::isSearchEngineDown();
+        $this->assertFalse($isDown, 'Incorrect status');
+    }
 }
 
 class SugarSearchEngineTestStub extends SugarSearchEngineAbstractBase

@@ -91,7 +91,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return;
 
         if(!$batch) {
-            if (isSearchEngineDown())
+            if (self::isSearchEngineDown())
             {
                 $this->addRecordsToQueue(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean)));
                 return;
@@ -220,7 +220,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function delete(SugarBean $bean)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return;
         }
@@ -247,7 +247,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function bulkInsert(array $docs)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             $recordsToBeQueued = $this->getRecordsFromDocs($docs);
             $this->addRecordsToQueue($recordsToBeQueued);
@@ -615,7 +615,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return null;
         }
@@ -762,7 +762,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return;
         }

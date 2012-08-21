@@ -285,7 +285,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      */
     public function run($module)
     {
-        if (isSearchEngineDown())
+        if (SugarSearchEngineAbstractBase::isSearchEngineDown())
         {
             $GLOBALS['log']->fatal('FTS Server is down, postponing the job for full index.');
             $this->schedulerJob->postponeJob('FTS down', self::POSTPONE_JOB_TIME);

@@ -159,12 +159,12 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         {
             $GLOBALS['log']->debug('FTS Server is OK.');
             // server is ok
-            if (isSearchEngineDown())
+            if (SugarSearchEngineAbstractBase::isSearchEngineDown())
             {
                 $GLOBALS['log']->debug('Restoring FTS Server status.');
 
-                // remove cache/fts/fts_down
-                restoreSearchEngine();
+                // mark fts server as up
+                SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
 
                 // remove notification
                 $cfg = new Configurator();
@@ -178,11 +178,11 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         {
             $GLOBALS['log']->info('FTS Server is down?');
             // server is down
-            if (!isSearchEngineDown())
+            if (!SugarSearchEngineAbstractBase::isSearchEngineDown())
             {
                 $GLOBALS['log']->fatal('Marking FTS Server as down.');
                 // fts is not marked as down, so mark it as down
-                searchEngineDown();
+                SugarSearchEngineAbstractBase::markSearchEngineStatus(true);
                 $this->createJobQueueConsumer();
             }
 

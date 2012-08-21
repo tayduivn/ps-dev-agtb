@@ -664,7 +664,7 @@ class SugarView
                 )
                     $ftsAutocompleteEnable = FALSE;
 
-            if (isSearchEngineDown()) {
+            if (SugarSearchEngineAbstractBase::isSearchEngineDown()) {
                 $ftsAutocompleteEnable = false;
             }
             $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);

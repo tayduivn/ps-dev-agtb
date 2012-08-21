@@ -47,7 +47,8 @@ class SugarSearchEngineFactory
      */
     public static function getInstance($name = '', $config = array(), $useDefaultWhenFTSDown = false)
     {
-        if ($useDefaultWhenFTSDown && isSearchEngineDown())
+        require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+        if ($useDefaultWhenFTSDown && SugarSearchEngineAbstractBase::isSearchEngineDown())
         {
             $name = 'SugarSearchEngine';
         }

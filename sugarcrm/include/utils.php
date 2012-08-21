@@ -5230,51 +5230,6 @@ function generateETagHeader($etag){
 }
 
 /**
- * isSearchEngineDown
- *
- * This function checks the existence of a cache file
- *
- * @return boolean true if file found, false otherwise
- */
-function isSearchEngineDown()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    if (file_exists($cacheDir.'fts/fts_down'))
-    {
-        return true;
-    }
-    return false;
-}
-
-/**
- * searchEngineDown
- *
- * This function creates a cache file to indicate search engine is down
- *
- */
-function searchEngineDown()
-{
-    $cacheDir = create_cache_directory('fts/');
-    sugar_touch($cacheDir.'/fts_down');
-}
-
-/**
- * restoreSearchEngine
- *
- * This function removes the cache file to indicate search engine has been restored
- *
- */
-function restoreSearchEngine()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    $down_file = $cacheDir.'fts/fts_down';
-    if (file_exists($down_file))
-    {
-        unlink($down_file);
-    }
-}
-
-/**
  * getReportNameTranslation
  *
  * Translates the report name if a translation exists,
