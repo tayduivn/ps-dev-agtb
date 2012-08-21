@@ -14,11 +14,11 @@
     timeperiod_label: '',
 
     /**
-     * Override the _render function
+     * Override the _rerderHtml function
      *
-     * @private
+     * @protected
      */
-    _render: function() {
+    _renderHtml: function(ctx, options) {
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
@@ -31,7 +31,7 @@
             category : app.defaultSelections.category
         };
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
         this.handleRenderOptions(values);
     },
 

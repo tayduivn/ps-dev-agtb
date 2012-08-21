@@ -120,12 +120,13 @@
 
     /**
      * Renders view
+     *
+     * @protected
      */
-    _render:function () {
-
+    _renderHtml : function(ctx, options) {
         var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
     },
 
