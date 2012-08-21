@@ -73,7 +73,7 @@ $viewdefs ['Prospects']['base']['view']['detail'] = array(
                 'modified_by_name',
                 'date_modified',
                 //BEGIN SUGARCRM flav=pro ONLY
-//                'team_name',
+                'team_name',
                 //END SUGARCRM flav=pro ONLY
             ),
         ),
