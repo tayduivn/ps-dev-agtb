@@ -15,7 +15,7 @@
 }
 
 #todo-container {
-    width: 208px;
+    width: 252px;
     max-height: 217px;
     overflow: auto;
     padding: 12px;
@@ -26,16 +26,28 @@
     width: 150px;
 }
 
+#todo-date {
+    width: 150px;
+}
+
+#todo-date-container {
+    display: inline-block;
+}
+#todo-add-container {
+    display: inline-block;
+    margin-left: 7px;
+}
+
 .todo-list-container {
-    height: 189px;
-    width: 200px;
+    height: 150px;
+    width: 240px;
     /*overflow: auto;*/
     list-style: none;
     margin: 0;
 }
 
 .todo-list-item {
-    width: 200px;
+    width: 240px;
     display: table-row;
     list-style: none;
 }
@@ -50,7 +62,7 @@
 }
 
 .todo-description-container {
-    width: 160px;
+    width: 200px;
 }
 
 .todo-item-finished {
@@ -66,38 +78,50 @@
     <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
         <i class="icon-list-alt"></i> Todo</button>
     <div id="todo-container" class="dropdown-menu">
-        <div class="input-append todo-header">
-            <input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
-            <button class="btn btn-success" id="todo-add" type="button"><i class="icon-plus-sign"></i></button>
+        <div class="todo-header">
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-edit"></i></span><input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
+            </div>
+            <div id="todo-date-container" class="input-prepend">
+                <span class="add-on"><i class="icon-calendar"></i></span><input class="span2" id="todo-date" type="text" placeholder="By when?">
+            </div>
+            <div id="todo-add-container">
+                <button class="btn btn-primary" id="todo-add" type="button">Add</button>
+            </div>
         </div>
         <ul class="todo-list-container">
+            {{#if this.collection.models}}
+                <li class="divider">
+            {{/if}}
             {{#each this.collection.models}}
-                <li class="todo-list-item">
-                    {{#notEq this.attributes.status "Completed"}}
-                        <div class="todo-checkbox-container">
-                            <label class="checkbox">
-                                <input class="todo-status" type="checkbox"/>
-                            </label>
+                {{#eq this.attributes.date_due ""}}
+                    <h6>{{str "LBL_DATE_DUE_FLAG" "Tasks"}}</h6>
+                {{/eq}}
+                    <li class="todo-list-item">
+                        {{#notEq this.attributes.status "Completed"}}
+                            <div class="todo-checkbox-container">
+                                <label class="checkbox">
+                                    <input class="todo-status" type="checkbox"/>
+                                </label>
+                            </div>
+                            <div class="todo-description-container">
+                                <span>{{this.attributes.name}}</span>
+                            </div>
+                        {{else}}
+                            <div class="todo-checkbox-container">
+                                <label class="checkbox">
+                                    <input class="todo-status" type="checkbox" checked="checked"/>
+                                </label>
+                            </div>
+                            <div class="todo-description-container">
+                                <span class="todo-item-finished">{{this.attributes.name}}</span>
+                            </div>
+                        {{/notEq}}
+                        <div class="todo-remove">
+                            <i class="icon-trash"></i>
                         </div>
-                        <div class="todo-description-container">
-                            <span>{{this.attributes.name}}</span>
-                        </div>
-                    {{else}}
-                        <div class="todo-checkbox-container">
-                            <label class="checkbox">
-                                <input class="todo-status" type="checkbox" checked="checked"/>
-                            </label>
-                        </div>
-                        <div class="todo-description-container">
-                            <span class="todo-item-finished">{{this.attributes.name}}</span>
-                        </div>
-                    {{/notEq}}
-                    <div class="todo-remove">
-                        <i class="icon-trash"></i>
-                    </div>
-                </li>
+                    </li>
             {{/each}}
-            <a href="#Tasks">{{str "LBL_SHOW_MORE"}}</a>
         </ul>
     </div>
 </div>

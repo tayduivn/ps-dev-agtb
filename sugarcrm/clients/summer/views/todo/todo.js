@@ -4,6 +4,7 @@
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
         'keyup #todo-subject':'todoSubmit',
+        'focus #todo-date': 'showDatePicker',
         'click .todo-status': 'changeStatus'
     },
     initialize: function(options) {
@@ -16,8 +17,18 @@
         app.events.on("app:sync:complete", function() {
             console.log("---------");
             console.log("app:sync:complete");
+
             self.collection = app.data.createBeanCollection("Tasks");
-            self.collection.fetch();
+
+            // If admin, grab all the todos
+            if( app.user.get("id") == 1 ) {
+                self.collection.fetch();
+            }
+            else
+            {
+                self.collection.fetch({myItems: true});
+            }
+
             console.log(self);
             console.log(self.collection);
             self.bindDataChange();
@@ -40,46 +51,47 @@
             }
         });
     },
+    showDatePicker: function() {
+        console.log("---------");
+        console.log("showDatePicker");
+    },
     changeStatus: function(e) {
         console.log("---------");
         console.log("changeStatus");
-        //console.log(this);
-        //console.log(e);
+
         var clickedEl = $(e.target).parents(".todo-list-item")[0];
         var modelIndex = $(".todo-list-item").index(clickedEl);
 
-        console.log(this.collection.models[modelIndex]);
-        console.log(app.additionalComponents.todo.collection.models[modelIndex]);
-        if( this.collection.models[modelIndex].attributes.status == "Completed" ) {
-            // todo: localize this
-            app.additionalComponents.todo.collection.models[modelIndex].set({
-                "status": "In Progress"
+        // get the current model
+        this.model = this.collection.models[modelIndex];
+
+        //console.log(app.additionalComponents.todo.collection.models[modelIndex]);
+
+        if( this.model.attributes.status == "Completed" ) {
+            this.model.set({
+                "status": app.metadata.data.appListStrings.task_status_default
             });
         }
         else {
-            // todo: localize this
-            app.additionalComponents.todo.collection.models[modelIndex].set({
-                "status": "Completed"
+            this.model.set({
+                "status": app.metadata.data.appListStrings.task_status_dom["Completed"]
             });
         }
 
-        app.additionalComponents.todo.collection.models[modelIndex].save();
-        console.log(app.additionalComponents.todo.collection.models[modelIndex]);
+        this.model.save();
         this._render();
-        //console.log(this.collection.where({"name": "mang"}));
-        //console.log(this.collection.models[0]);
-        // figure out which model was clicked, set it = this.model
-        // toggle status to completed/not started, save the model
-        // call _render(), since hbt file will change styling
+    },
+    _renderHtml: function() {
+        if (!app.api.isAuthenticated()) return;
+        if (app.config && app.config.logoURL) {
+            this.logoURL=app.config.logoURL;
+        }
+        app.view.View.prototype._renderHtml.call(this);
     },
     _render: function() {
         console.log("---------");
         console.log("render");
         console.log(this);
-        //console.log(app.additionalComponents.todo.collection);
-
-        // try e.stopPropagation() and e.preventDefault() to prevent
-        // closing the dropup menu maybe
 
         app.view.View.prototype._render.call(this);
     },
@@ -91,7 +103,10 @@
             return false;
         }
         else {
-            this.model = app.data.createBean("Tasks", {"name": subject});
+            this.model = app.data.createBean("Tasks", {
+                "name": subject,
+                "assigned_user_id": "seed_" + app.user.get("user_name") + "_id"
+            });
             app.additionalComponents.todo.collection.add(this.model);
             this.model.save();
             $("#todo-subject").val("");

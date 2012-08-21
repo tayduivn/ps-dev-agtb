@@ -131,7 +131,7 @@
                 direction: 'desc'
             },
             'Tasks': {
-                field: 'priority',
+                field: 'date_due',
                 direction: 'asc'
             }
         },
