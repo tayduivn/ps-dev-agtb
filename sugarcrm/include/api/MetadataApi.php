@@ -298,6 +298,18 @@ class MetadataApi extends SugarApi {
                 $data['acl'][$modName]['massupdate'] = 'no';
             }
         }
+        if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
+            // This is a change in the ACL's for users without Accounts
+            $vis = new SupportPortalVisibility($bean);
+            $accounts = $vis->getAccountIds();
+            if (count($accounts)==0) {
+                // This user has no accounts, modify their ACL's so that they match up with enforcement
+                $data['acl']['Accounts']['access'] = 'no';
+                $data['acl']['Cases']['access'] = 'no';
+            }
+        
+        }
+
         // remove the disabled modules from the module list
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
