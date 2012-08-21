@@ -34,7 +34,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="block" id="guages">
-                            <div class="view-progress"></div>
+                            <div class="view-forecastsProgress"></div>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
 <script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
 <script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
 <script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/forecasts/views/progress/progress.js'></script>
+<script src='clients/forecasts/views/forecastsProgress/forecastsProgress.js'></script>
 <script src='clients/forecasts/views/forecastsChart/forecastsChart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
 <script src='clients/forecasts/fields/userLink/userLink.js'></script>
