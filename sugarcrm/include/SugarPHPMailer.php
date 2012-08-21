@@ -150,63 +150,6 @@ class SugarPHPMailer extends PHPMailer
 	}
 
     /**
-     * Attaches all fs, string, and binary attachments to the message.
-     * Returns an empty string on failure.
-     * @access private
-     * @return string
-     */
-    function AttachAll() {
-        // Return text of body
-        $mime = array();
-
-        // Add all attachments
-        for($i = 0; $i < count($this->attachment); $i++) {
-            // Check for string attachment
-            $bString = $this->attachment[$i][5];
-            if ($bString) {
-                $string = $this->attachment[$i][0];
-            } else {
-				$path = $this->attachment[$i][0];
-            }
-
-			// cn: overriding parent class' method to perform encode on the following
-            $filename    = $this->EncodeHeader(trim($this->attachment[$i][1]));
-            $name        = $this->EncodeHeader(trim($this->attachment[$i][2]));
-            $encoding    = $this->attachment[$i][3];
-            $type        = $this->attachment[$i][4];
-            $disposition = $this->attachment[$i][6];
-            $cid         = $this->attachment[$i][7];
-
-            $mime[] = sprintf("--%s%s", $this->boundary[1], $this->LE);
-            $mime[] = sprintf("Content-Type: %s; name=\"%s\"%s", $type, $name, $this->LE);
-            $mime[] = sprintf("Content-Transfer-Encoding: %s%s", $encoding, $this->LE);
-
-            if($disposition == "inline") {
-                $mime[] = sprintf("Content-ID: <%s>%s", $cid, $this->LE);
-            }
-
-            $mime[] = sprintf("Content-Disposition: %s; filename=\"%s\"%s", $disposition, $name, $this->LE.$this->LE);
-
-            // Encode as string attachment
-            if($bString) {
-                $mime[] = $this->EncodeString($string, $encoding);
-                if($this->IsError()) { return ""; }
-                $mime[] = $this->LE.$this->LE;
-            } else {
-                $mime[] = $this->EncodeFile($path, $encoding);
-
-                if($this->IsError()) {
-                	return "";
-                }
-                $mime[] = $this->LE.$this->LE;
-            }
-        }
-        $mime[] = sprintf("--%s--%s", $this->boundary[1], $this->LE);
-
-        return join("", $mime);
-    }
-
-	/**
 	 * handles Charset translation for all visual parts of the email.
 	 * @param string charset Default = ''
 	 */
