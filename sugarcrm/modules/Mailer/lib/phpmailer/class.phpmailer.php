@@ -340,7 +340,7 @@ class PHPMailer {
   public $attachment      = array();
   private $CustomHeader    = array();
   private $message_type    = '';
-  public $boundary        = array();
+  private $boundary        = array();
   private $language        = array();
   private $error_count     = 0;
   private $sign_cert_file  = "";
