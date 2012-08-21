@@ -123,8 +123,6 @@
 <script src='clients/forecasts/views/forecastsProgress/forecastsProgress.js'></script>
 <script src='clients/forecasts/views/forecastsChart/forecastsChart.js'></script>
 <script src='clients/forecasts/views/alert/alert-view.js'></script>
-<script src='clients/forecasts/fields/userLink/userLink.js'></script>
-<script src='clients/forecasts/fields/recordLink/recordLink.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 {literal}
 <script language="javascript">
