@@ -271,6 +271,8 @@ class SugarMockLogger
 	}
 }
 
+require_once('ModuleInstall/ModuleInstaller.php');
+
 /**
  * Own exception for SugarTestHelper class
  *

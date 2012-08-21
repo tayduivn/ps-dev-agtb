@@ -46,7 +46,18 @@ class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testUpgradeDisplayedTabsAndSubpanels() 
 	{
-		$modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+        $modules_to_add = array(
+            //BEGIN SUGARCRM flav!=dce ONLY
+            'Calls',
+            'Meetings',
+            'Tasks',
+            'Notes',
+            //BEGIN SUGARCRM flav!=sales ONLY
+            'Prospects',
+            'ProspectLists',
+            //END SUGARCRM flav!=sales ONLY
+            //END SUGARCRM flav!=dce ONLY
+        );
 
 		upgradeDisplayedTabsAndSubpanels('610');
 		
@@ -55,7 +66,7 @@ class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase
 		
 		foreach($modules_to_add as $module)
 		{
-			$this->assertTrue(isset($tabs[$module]), 'Assert that ' . $module . ' tab is set for system tabs');
+            $this->assertArrayHasKey($module, $tabs, 'Assert that ' . $module . ' tab is set for system tabs');
 		}
 	}
 }

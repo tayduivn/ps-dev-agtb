@@ -113,7 +113,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
         // make sure the relationship exists
 
-        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0;";
+        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0";
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
 
@@ -140,7 +140,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
         // insert a dummy row
         $rel_row_id = create_guid();
-        $sql = "INSERT INTO accounts_contacts (id, account_id, contact_id) VALUES ('" . $rel_row_id . "','" . $macc->id . "','" . $contact->id . "');";
+        $sql = "INSERT INTO accounts_contacts (id, account_id, contact_id) VALUES ('" . $rel_row_id . "','" . $macc->id . "','" . $contact->id . "')";
         $GLOBALS['db']->query($sql);
         $GLOBALS['db']->commit();
 
@@ -153,7 +153,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
         // make sure the relationship exists
 
-        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0;";
+        $sql = "SELECT account_id, contact_id from accounts_contacts where account_id = '" . $macc->id . "' AND contact_id = '" . $contact->id . "' and deleted = 0";
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
 
