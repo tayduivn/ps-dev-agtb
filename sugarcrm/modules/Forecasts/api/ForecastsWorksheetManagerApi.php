@@ -311,7 +311,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 						   "w.forecast, " .
 						   "w.best_case best_adjusted, " .
 						   "w.likely_case likely_adjusted, " .
-						   "w.worst_case worse_adjusted, " .
+						   "w.worst_case worst_adjusted, " .
 						   "w.forecast_type, " .
 						   "w.related_id " .
 						   "from users u " .
