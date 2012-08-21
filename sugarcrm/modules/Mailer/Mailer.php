@@ -57,6 +57,8 @@ class Mailer
 			'protocol' => 'smtp',
 			'host'     => 'localhost',
 			'port'     => 25,
+			'charset'  => 'utf-8',
+			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
 		);
 
 		$this->setConfigs($defaults);
@@ -177,9 +179,11 @@ class Mailer
 	}
 
 	protected function transferConnectionData() {
-		$this->mailer->Mailer = $this->configs['protocol'];
-		$this->mailer->Host = $this->configs['host'];
-		$this->mailer->Port = $this->configs['port'];
+		$this->mailer->Mailer   = $this->configs['protocol'];
+		$this->mailer->Host     = $this->configs['host'];
+		$this->mailer->Port     = $this->configs['port'];
+		$this->mailer->CharSet  = $this->configs['charset'];
+		$this->mailer->Encoding = $this->configs['encoding'];
 	}
 
 	protected function transferHeaders() {

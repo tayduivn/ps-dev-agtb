@@ -127,7 +127,7 @@ class PHPMailer {
    * Sets the CharSet of the message.
    * @var string
    */
-  public $CharSet           = 'utf-8';
+  public $CharSet           = 'iso-8859-1';
 
   /**
    * Sets the Content-type of the message.
@@ -359,10 +359,8 @@ class PHPMailer {
   public function IsHTML($bool) {
     if($bool == true) {
       $this->ContentType = 'text/html';
-      $this->Encoding = 'base64';
     } else {
       $this->ContentType = 'text/plain';
-      $this->Encoding = 'quoted-printable';
     }
   }
 
