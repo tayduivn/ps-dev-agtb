@@ -9,29 +9,30 @@ $app = new Slim();
 $app->config(array('debug' => true));
 error_reporting(E_ALL &~ E_STRICT);
 restore_error_handler();
-define("GOOGLE_API_KEY", '');
+define("GOOGLE_API_KEY", 'AIzaSyDT95_zUPd97kTvd73HDD9TlYY9ds6OCvo');
+$box = BoxOfficeClient::getInstance();
+
 /**
  * function for authenticating users
  */
-$app->get('/rest/users/callback', function() use (&$app, &$box)
+$app->get('/rest/users/callback', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'text/html;charset=utf-8');
     $api = new EasyRpService(GOOGLE_API_KEY);
     $result = $api->verify("http://localhost:8888/sugar66/summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
     // TODO: check if result is OK
     $email = $result['verifiedEmail'];
-    $boc = BoxOfficeClient::getInstance();
     session_destroy();
     session_start();
-    if($boc->getUser($email, false)) {
+    if($box->getUser($email, false)) {
         // existing user
-        $data = $boc->authenticateUser($email, null, $result['identifier']);
+        $data = $box->authenticateUser($email, null, $result['identifier']);
     } else {
         // new user
-        $boc->createRemoteUser($email, array("first_name" => $result['firstName'], "last_name" => $result['lastName'],
+        $box->createRemoteUser($email, array("first_name" => $result['firstName'], "last_name" => $result['lastName'],
             "photo" => $result['photoUrl'], "remote_id" => $result['identifier']
             ));
-        $data = $boc->authenticateUser($email, null, $result['identifier']);
+        $data = $box->authenticateUser($email, null, $result['identifier']);
     }
     if($data['user']['status'] == 'Active') {
         $data = json_encode($data);
@@ -47,7 +48,7 @@ END;
 }
 );
 
-$app->post('/rest/users/authenticate', function() use (&$app, &$box)
+$app->post('/rest/users/authenticate', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
     $password = $app->request()->params('password');
@@ -60,10 +61,9 @@ $app->post('/rest/users/authenticate', function() use (&$app, &$box)
         return;
     }
 
-    $boc = BoxOfficeClient::getInstance();
     session_destroy();
     session_start();
-    if ($data = $boc->authenticateUser($email, $password)) {
+    if ($data = $box->authenticateUser($email, $password)) {
         switch ($data['user']['status']) {
             case 'Pending Confirmation':
                 echo json_encode(array("error" => "Your account needs to be activated. Please check your email for the activation code. <div><a href='#' onclick='login.resendActivation(" . json_encode($email) . ")'>Resend Activation Code</a></div>"));
@@ -83,14 +83,13 @@ $app->post('/rest/users/authenticate', function() use (&$app, &$box)
 /**
  * sends a new authentication email to validate an email address
  */
-$app->post('/rest/users/resendActivation', function() use (&$app, &$box)
+$app->post('/rest/users/resendActivation', function() use ($app, $box)
 {
 
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
     try {
         $email = $app->request()->params('email');
-        if ($boc->resendActivation($email)) {
+        if ($box->resendActivation($email)) {
             echo json_encode(array("info" => "An activation email was sent to " . $email));
         } else {
             echo json_encode(array("info" => "This account is already activated. Please try logging in again"));
@@ -103,15 +102,13 @@ $app->post('/rest/users/resendActivation', function() use (&$app, &$box)
 /**
  * Selects a given instance and bootstraps it into the session
  */
-$app->get('/rest/instances/:id', function($id) use (&$app, &$box)
+$app->get('/rest/instances/:id', function($id) use ($app, $box)
 {
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
     try {
-        $boc->selectInstance($id);
-        $boc->bootstrapInstance();
-        $config = $boc->getConfig();
-        echo json_encode(array('url' => $config['site_url'] . 'summer/index.php'));
+        $sessid = $box->selectInstance($id);
+        $config = $box->getConfig();
+        echo json_encode(array('url' => $config['site_url']."summer/index.php?token=$sessid"));
     } catch (Exception $e) {
 
         echo json_encode(array("error" => "An error occurred please try again." . $e->getMessage()));
@@ -121,10 +118,9 @@ $app->get('/rest/instances/:id', function($id) use (&$app, &$box)
 /**
  * Registers or updates a given user
  */
-$app->post('/rest/users', function() use (&$app, &$box)
+$app->post('/rest/users', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
     $password = $app->request()->params('password');
     $password2 = $app->request()->params('password2');
     $email = $app->request()->params('email');
@@ -147,10 +143,10 @@ $app->post('/rest/users', function() use (&$app, &$box)
     elseif (strlen($password) < 8) {
         echo json_encode(array("error" => "Your password must be at least 8 characters long"));
     }
-    elseif ($boc->getUser($email, false)) {
+    elseif ($box->getUser($email, false)) {
         echo json_encode(array("error" => "This email address already exists. Please try resetting your password"));
     } else {
-        $boc->registerUser($email, $password, array("first_name" => $first_name, "last_name" => $last_name, "company" => $company));
+        $box->registerUser($email, $password, array("first_name" => $first_name, "last_name" => $last_name, "company" => $company));
         echo json_encode(array("success" => "You are almost ready! You just need to activate your account! A welcome message with an activation code was just sent to " . $email));
     }
 
@@ -159,12 +155,11 @@ $app->post('/rest/users', function() use (&$app, &$box)
 /**
  *
  */
-$app->post('/rest/users/resetpassword', function() use (&$app, &$box){
+$app->post('/rest/users/resetpassword', function() use ($app, $box){
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
     $email = $app->request()->params('email');
     try{
-        $boc->requestPasswordReset($email);
+        $box->requestPasswordReset($email);
         echo json_encode(array("info" => "A reset password email was sent to " . $email));
 
     }catch(Exception $e){

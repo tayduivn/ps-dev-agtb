@@ -77,7 +77,7 @@ class BoxOffice
 
 
     /**
-     * Logs the fact that a user switched instances
+     * Logs the fact that a user switched instances and create new session
      * @param $user_id
      * @param $email
      * @param $instance_id
@@ -92,6 +92,80 @@ class BoxOffice
         $sth->bindParam(':status', $status, PDO::PARAM_STR);
         $sth->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $sth->bindParam(':instance_id', $instance_id, PDO::PARAM_INT);
+        $sth->execute();
+
+        $sql = 'INSERT INTO sessions (id, user_id, instance_id) VALUES (:id, :user_id, :instance_id)';
+        $sth = $this->dbh->prepare($sql);
+        $newsession = generate_guid();
+        $sth->bindParam(':id', $newsession, PDO::PARAM_STR);
+        $sth->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $sth->bindParam(':instance_id', $instance_id, PDO::PARAM_INT);
+        $sth->execute();
+        return $newsession;
+    }
+
+    /**
+     * Get session config
+     * @param string $session
+     * @return array|false
+     */
+    public function getConfig($session)
+    {
+        $sql = 'SELECT * FROM sessions WHERE id=:id';
+        $sth = $this->dbh->prepare($sql);
+        $sth->execute(array(":id" => $session));
+        $sess = $sth->fetch(PDO::FETCH_ASSOC);
+        if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+            return false;
+        }
+        $user = $this->getUserById($sess['user_id']);
+        $instance = $this->getInstanceById($sess['instance_id']);
+        return array('user' => $user, 'instance' => $instance);
+    }
+
+    public function deleteSession($user, $instance)
+    {
+        $sth = $this->dbh->prepare("DELETE FROM sessions WHERE user_id=:user AND instance_id=:instance");
+        $sth->execute(array(":user" => $user, ":instance" => $instance));
+    }
+
+    /**
+     * Get user by ID
+     * @param int $id
+     * @return array
+     */
+    public function getUserById($id)
+    {
+        $sql = 'SELECT * FROM users WHERE id = :id AND deleted=0';
+        $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth->execute(array(":id" => $id));
+        $user = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($user)) {
+            return null;
+        }
+        unset($user[0]['hash']);
+        return $user[0];
+    }
+
+    /**
+     * Get instance by ID
+     * @param int $id
+     * @return array
+     */
+    public function getInstanceById($id)
+    {
+        $sql = 'SELECT * FROM instances WHERE id = :id AND deleted=0';
+        $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth->execute(array(":id" => $id));
+        $inst = $sth->fetch(PDO::FETCH_ASSOC);
+        if (empty($inst)) {
+            return null;
+        }
+        if(!empty($inst['config'])) {
+            $inst['config'] = json_decode($inst['config'], true);
+        }
+
+        return $inst;
     }
 
     /**

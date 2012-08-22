@@ -163,10 +163,6 @@ class SugarApplication
 
 	public function ACLFilter() {
         $GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList'], 'access', true);
-        if(class_exists('BoxOfficeClient')){
-            $boc = BoxOfficeClient::getInstance();
-            $GLOBALS['moduleList'] = $boc->filterModules($GLOBALS['moduleList']);
-        }
     }
 
 	/**

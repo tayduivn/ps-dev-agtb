@@ -96,8 +96,7 @@ if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 
 if(file_exists('summer/splash/BoxOfficeClient.php')){
     require_once('summer/splash/BoxOfficeClient.php');
-    $boc = BoxOfficeClient::getInstance();
-    $sugar_config = $boc->getConfig();
+    $sugar_config = BoxOfficeClient::getInstance()->getConfig();
     if(empty($sugar_config)){
         throw new Exception('Instance does not have a config');
     }

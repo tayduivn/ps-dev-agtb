@@ -1,6 +1,16 @@
 <?php
-$session_id = session_id();
 if (empty($session_id)) session_start();
+if(!empty($_REQUEST['token'])) {
+    chdir('..');
+    if(!defined('sugarEntry'))define('sugarEntry', true);
+    include 'include/entryPoint.php';
+    require_once 'summer/splash/BoxOfficeClient.php';
+    $box = BoxOfficeClient::getInstance();
+    $box->createSession();
+    // reload
+    header("Location: index.php");
+    die();
+}
 if (empty($_SESSION['authenticated_user_id'])) {
     header('Location: splash/index.html');
     die();

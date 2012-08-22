@@ -197,8 +197,13 @@ class SugarACL
         if(empty($list)) {
             return $list;
         }
+        if(class_exists('BoxOfficeClient')){
+        	$boc = BoxOfficeClient::getInstance();
+        	$modules = $boc->filterModules();
+        }
         foreach($list as $key => $module) {
-            if(self::checkAccess($use_value?$module:$key, $action)) {
+            $mkey = $use_value?$module:$key;
+            if(self::checkAccess($mkey, $action) && (empty($modules) || !empty($modules[$mkey]))) {
                 $result[$key] = $module;
             }
         }

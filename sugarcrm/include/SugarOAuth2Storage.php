@@ -29,15 +29,15 @@ require_once('modules/Administration/SessionManager.php');
 //END SUGARCRM flav=pro ONLY
 
 /**
- * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to 
+ * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to
  * store and retrieve data.
  * This class should only be used by the OAuth2 library and cannot be relied
- * on as a stable API for any other sources. 
+ * on as a stable API for any other sources.
  */
 class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 
     // When we authenticate these beans, store them here so if the user id's match (which it will), we just use these instead
-    
+
     /**
      * The SugarCRM User record for this user
      * @var User
@@ -65,7 +65,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
      * @param $client_id string The client identifier of the portal account, should be used to identifiy different portal types
      * @return User Returs the user bean of the portal user that it found.
      */
-    protected function findPortalApiUser($client_id) 
+    protected function findPortalApiUser($client_id)
     {
         if (isset($this->portalApiUser)) {
             return $this->portalApiUser;
@@ -76,20 +76,20 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         // Find the Portal API user
         // FIXME: What to do if they have more than one portal user?
         $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1'));
-        
+
         if ($portalApiUser != null) {
             $this->portalApiUser = $portalApiUser;
             return $this->portalApiUser;
         } else {
             return null;
         }
-        
+
     }
 
     // BEGIN METHODS FROM IOAuth2Storage
 	/**
 	 * Make sure that the client credentials is valid.
-	 * 
+	 *
 	 * @param $client_id
 	 * Client identifier to be check with.
 	 * @param $client_secret
@@ -110,8 +110,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         if ($clientInfo === false) {
             return false;
         }
-        
-        if ( ( !empty($clientInfo['client_secret']) && $client_secret == $clientInfo['client_secret'] ) 
+
+        if ( ( !empty($clientInfo['client_secret']) && $client_secret == $clientInfo['client_secret'] )
              || (empty($clientInfo['client_secret']) && empty($client_secret)) ) {
             return true;
         } else {
@@ -162,13 +162,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 $newKey->name = 'OAuth Support Portal Key';
                 $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
             }
-            
+
             if ( !empty($newKey->client_type) ) {
                 $newKey->save();
                 $clientBean = $newKey;
                 $this->oauthKeyRecord = $clientBean;
             }
-            
+
         }
 
         if ( $clientBean != null ) {
@@ -204,18 +204,18 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getAccessToken($oauth_token)
     {
-        if ( session_id() != '' ) {
-            // There is already a session, let's see if it's the same one
-            if ( session_id() != $oauth_token ) {
+        if(empty($oauth_token) || session_id() !=  $oauth_token){
+            if(session_id()) {
                 // Oh, we are in trouble, we have a session and it's the wrong one.
                 // Let's close this session and start a new one with the correct ID.
                 session_write_close();
             }
+            // Disable cookies
+            ini_set("session.use_cookies",false);
+            session_id($oauth_token);
+            session_start();
         }
-        session_id($oauth_token);
-        // Disable cookies
-        ini_set("session.use_cookies",false);
-        session_start();
+
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {
@@ -309,7 +309,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         $_SESSION['type'] = 'user';
         $_SESSION['authenticated_user_id'] = $userBean->id;
         $_SESSION['unique_key'] = $sugar_config['unique_key'];
-        
+
         if ( $userType != 'user' ) {
             $_SESSION['type'] = $userType;
             $_SESSION['contact_id'] = $contactBean->id;
@@ -443,7 +443,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 throw new SugarApiExceptionNeedLogin();
             }
         }
-        
+
     }
     // END METHODS FROM IOAuth2GrantUser
 
@@ -548,16 +548,16 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         }
 
         $token = BeanFactory::newBean('OAuthTokens');
-        
+
         $token->id = $refresh_token;
         $token->new_with_id = true;
         $token->consumer = $keyInfo['record_id'];
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
-        
+
         $token->save();
-        
+
     }
 
 	/**
