@@ -50,13 +50,12 @@ class ActivityStream extends SugarBean {
     var $new_schema = true;
     
     // db fields
-    var $id;
+    var $activity_id;
     var $target_id;
     var $target_module;
     var $activity_data;
     var $created_by;
     var $date_created;
-    var $deleted;
         
     /**
      * Constructor
@@ -67,18 +66,19 @@ class ActivityStream extends SugarBean {
     
     /**
      * Creates a new comment for this activity
-     * @param string $commentBody comment body
+     * @param string $activityId
+     * @param string $value comment body
      * @return bool query result
      */
-    public function addComment($commentBody) {
+    public function addComment($activityId, $value) {
         global $current_user, $dictionary;
         $fieldDefs = $dictionary['ActivityComments']['fields'];   
         $tableName = $dictionary['ActivityComments']['table'];      
 
         $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
-        $values['activity_id']= $this->db->massageValue($this->id, $fieldDefs['activity_id']);
-        $values['comment_body']= $this->db->massageValue($commentBody, $fieldDefs['comment_body']);
+        $values['comment_id'] = $this->db->massageValue(create_guid(), $fieldDefs['comment_id']);
+        $values['activity_id']= $this->db->massageValue($activityId, $fieldDefs['activity_id']);
+        $values['value']= $this->db->massageValue($value, $fieldDefs['value']);
         $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']); 
         
@@ -86,31 +86,6 @@ class ActivityStream extends SugarBean {
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")"; 
         return $this->db->query($sql);         
-    }
-    
-    /**
-     * Returns an array of comments for this activity
-     * @param integer $start offset
-     * @param integer $numComments number of comments should be returned
-     * @return array
-     */
-    public function getComments($start = 0, $numComments = 20) {
-        global $dictionary;
-        $fieldDefs = $dictionary['ActivityComments']['fields'];
-        $tableName = $dictionary['ActivityComments']['table'];        
-        
-        $comments = array();   
-             
-        $sql = "SELECT ".implode(",", array_keys($fieldDefs)). " FROM ".$tableName." WHERE activity_id ='".$this->id."' ORDER BY date_created ASC LIMIT ".$start.", ".$numComments;
-        $result = $this->db->query($sql);
-        
-        if(!empty($result)) {
-            while(($row=$this->db->fetchByAssoc($result)) != null) {
-                $comments[] = $row;
-            }    
-        }
-        
-        return $comments;
     }
     
     /**
@@ -133,22 +108,23 @@ class ActivityStream extends SugarBean {
         if(!empty($targetModule)) {
             $where .= "target_module = '".$targetModule."'";
             if(!empty($targetId)) {
-                $where .= " AND tagret_id = '".$targetId."'";
+                $where .= " AND target_id = '".$targetId."'";
             }
         }
         
         if(!empty($where)) {
-            $where = ' WHERE '.$where;
+            $where = ' AND '.$where;
         }
-        $sql = "SELECT ".implode(",",array_keys($fieldDefs))." FROM ".$tableName.$where." ORDER BY DATE_CREATED DESC LIMIT ".$start.", ".$numActivities;
+        $sql = "SELECT a.activity_id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_data, users.user_name as created_by_name FROM activity_stream a, users where a.created_by = users.id ".$where. " ORDER BY a.date_created DESC LIMIT ".$start.", ".$numActivities;
         $result = $GLOBALS['db']->query($sql);
         
         if(!empty($result)) {
             $activityIds = array();
             
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                $row['activity_data'] = json_decode(html_entity_decode($row['activity_data']), true);
                 $activities[] = $row;
-                $activityIds[] = $row['id'];
+                $activityIds[] = $row['activity_id'];
             }
             
             if(!empty($activityIds)) {
@@ -156,7 +132,7 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];                
-                    $sql = "SELECT ".implode(",", array_keys($fieldDefs)). " FROM ".$tableName." WHERE activity_id in ('".implode("','",$activityIds)."') ORDER BY date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.comment_id, c.activity_id,c.value,c.created_by, c.date_created,users.user_name as created_by_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
                     
                     if(!empty($result)) {
@@ -166,7 +142,7 @@ class ActivityStream extends SugarBean {
                     }
                 }
                 foreach($activities as &$activity) {
-                    $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array(); 
+                    $activity['comments'] = isset($comments[$activity['activity_id']]) ? $comments[$activity['activity_id']] : array(); 
                 }
             }
         }
@@ -189,11 +165,11 @@ class ActivityStream extends SugarBean {
         $fieldDefs = $dictionary['ActivityStream']['fields'];
                 
         $activityValues = array();
-        $activityValues['id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['id']);
+        $activityValues['activity_id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['activity_id']);
         $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
         $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
         $activityData = json_encode(array('action'=>$activityType, 'field_name'=>$fieldName, 'before_value'=>$beforeValue, 'after_value'=>$afterValue));
-        $activityValues['activity_data'] = $GLOBALS['db']->massageValue($activityData, $fieldDefs['activity_data']);
+        $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);  
         $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']); 
 
@@ -266,13 +242,13 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      *
      */
-    public function addPost($postBody, $targetModule = '', $targetId = '') {
+    public function addPost($targetModule, $targetId, $postBody) {
         global $current_user, $dictionary;
         $fieldDefs = $dictionary['ActivityStream']['fields'];   
         $tableName = $dictionary['ActivityStream']['table'];      
 
         $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $values['activity_id'] = $this->db->massageValue(create_guid(), $fieldDefs['activity_id']);
         $values['target_module']= $this->db->massageValue($targetModule, $fieldDefs['target_module']);
         $values['target_id']= $this->db->massageValue($targetId, $fieldDefs['target_id']);
         $activityData = json_encode(array('action'=>self::ACTIVITY_TYPE_POST,'value'=>$postBody));
