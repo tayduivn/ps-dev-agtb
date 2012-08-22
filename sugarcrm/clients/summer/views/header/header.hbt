@@ -38,12 +38,13 @@
                 </ul>
                 <div id="searchForm">
                     <form class="navbar-search pull-right" action="">
-                        <div class="control-group">
-                            <label class="control-label hide" for="appendedInput">{{str "LBL_SEARCH"}}</label>
-                            <div class="controls">
-                                <div class="input-append">
-                                    <input type="text" class="search-query span3" placeholder="{{str "LBL_SEARCH"}}" data-items="10"><span class="add-on"><i class="icon-search"></i></span>
-                                </div>
+                        <label class="control-label hide" for="appendedInput">{{str "LBL_SEARCH"}}</label>
+                        <input type="text" class="search-query span2" placeholder="{{str "LBL_SEARCH"}}" data-items="10">&nbsp;&nbsp;&nbsp;
+                        <div class="advanced">
+                            <div class="btn-toolbar pull-right">
+                              <div class="btn-group">
+                                <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                              </div>
                             </div>
                         </div>
                     </form>
