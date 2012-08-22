@@ -857,10 +857,9 @@
                 module: module,
                 modelId: id,
                 action: action,
-                layout: action
+                layout: "record"
             });
         }
-
 
         app.router.route(":module/:id/:action", "record", recordHandler);
 
@@ -906,11 +905,8 @@
                 module: module,
                 layout: "dash"
             });
-
-
         })
     });
-
 
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
