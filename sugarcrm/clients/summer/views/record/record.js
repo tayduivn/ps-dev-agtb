@@ -74,7 +74,6 @@
 
         switch (field.type) {
             default:
-//                field.focus();
                 this.toggleField(field, target);
         }
     },
@@ -85,7 +84,7 @@
         this.editMode = false;
         this.model.save({}, {
             success: function() {
-                self.toggleField();
+                self.render();
             }
         });
 
