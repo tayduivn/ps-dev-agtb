@@ -2,17 +2,15 @@
    <div class="card2">
        {{#if ../model.isNotEmpty}}
            {{#each fields}}
-               {{#notEq name "name"}}
                <div class="row-fluid record-row">
-                   <div class="span2">{{str  this.label ../../../../this.model.module}}</div>
+                   <div class="span2">{{str  this.label ../../../this.model.module}}</div>
                    <div class="span10" name="{{this.name}}">
-                        {{field ../../../../this}}
+                        {{field ../../../this}}
                         <span class="w">
-                            <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                            <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                         </span>
                    </div>
-                   </div>
-               {{/notEq}}
+               </div>
            {{/each}}
            <span class="extend">
              <div class="row-fluid">
