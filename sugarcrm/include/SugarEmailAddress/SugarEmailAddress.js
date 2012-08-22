@@ -66,7 +66,7 @@
 		prefillEmailAddresses: function(tableId, o){
 			for (i = 0; i < o.length; i++) {
 				o[i].email_address = o[i].email_address.replace('&#039;', "'");
-				this.addEmailAddress(tableId, o[i].email_address, o[i].primary_address, o[i].reply_to_address, o[i].opt_out, o[i].invalid_email);
+				this.addEmailAddress(tableId, o[i].email_address, o[i].primary_address, o[i].reply_to_address, o[i].opt_out, o[i].invalid_email, o[i].email_address_id);
 			}
 		},
 		
@@ -197,7 +197,7 @@
 		    return false;
 		},//freezeEvent
 		
-		addEmailAddress : function (tableId, address, primaryFlag, replyToFlag, optOutFlag, invalidFlag) {
+		addEmailAddress : function (tableId, address, primaryFlag, replyToFlag, optOutFlag, invalidFlag, emailId) {
 			if (this.addInProgress)
 			    return;
 			this.addInProgress = true;
@@ -208,6 +208,7 @@
 		    var newContent = document.createElement("input");
 		    var nav = new String(navigator.appVersion);
 
+		    var newContentRecordId = document.createElement("input");
 		    var newContentPrimaryFlag = document.createElement("input");
 		    var newContentReplyToFlag = document.createElement("input");
 		    var newContentOptOutFlag = document.createElement("input");
@@ -260,6 +261,13 @@
 		    };
             removeButton.appendChild(removeButtonImg);
 		    
+		    // set record id
+		    newContentRecordId.setAttribute("type", "hidden");
+		    newContentRecordId.setAttribute("name", this.id + "emailAddressId" + this.numberEmailAddresses);
+		    newContentRecordId.setAttribute("id", this.id + "emailAddressId" + this.numberEmailAddresses);
+		    newContentRecordId.setAttribute("value", typeof(emailId) != 'undefined' ? emailId : '');
+		    newContentRecordId.setAttribute("enabled", "true");
+
 		    // set primary flag
 		    newContentPrimaryFlag.setAttribute("type", "radio");
 		    newContentPrimaryFlag.setAttribute("name", this.id + "emailAddressPrimaryFlag");
@@ -351,6 +359,7 @@
 		    td6.setAttribute("align", "center");
 
 		    td1.appendChild(newContent);
+		    td1.appendChild(newContentRecordId);
 		    td1.appendChild(document.createTextNode(" "));
 		    spanNode = document.createElement('span');
 		    spanNode.innerHTML = '&nbsp;';
