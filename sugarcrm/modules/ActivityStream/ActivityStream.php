@@ -37,10 +37,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ActivityStream extends SugarBean {
     // activity types
-    const ACTIVITY_TYPE_CREATE = 'create';
-    const ACTIVITY_TYPE_UPDATE = 'update';   
-    const ACTIVITY_TYPE_DELETE = 'delete'; 
-    const ACTIVITY_TYPE_POST = 'post';
+    const ACTIVITY_TYPE_CREATE = 'created';
+    const ACTIVITY_TYPE_UPDATE = 'updated';   
+    const ACTIVITY_TYPE_DELETE = 'deleted'; 
+    const ACTIVITY_TYPE_POST = 'posted';
     
 
     // common vars for sugar bean
@@ -183,7 +183,7 @@ class ActivityStream extends SugarBean {
      *
      */
     public function addActivity($bean, $activityType) {
-        global $dictionary;
+        global $dictionary, $current_language;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
         $tableName = $dictionary['ActivityStream']['table'];
         $values = array();
@@ -196,6 +196,11 @@ class ActivityStream extends SugarBean {
             case ActivityStream::ACTIVITY_TYPE_UPDATE:
                 $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
                 $dataChanges = array_values($dataChanges);
+                $fieldDefs = $bean->getFieldDefinitions();
+                $mod_strings = return_module_language($current_language, $bean->module_dir);                
+                foreach($dataChanges as &$dataChange) {
+                    $dataChange['field_name'] = str_replace(":","",$mod_strings[$fieldDefs[$dataChange['field_name']]['vname']]);
+                }
                 $values[] = $this->getActivityValues($bean, $activityType, $dataChanges);
                 break;
             default:
