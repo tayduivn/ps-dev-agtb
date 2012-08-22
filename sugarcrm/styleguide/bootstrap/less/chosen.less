@@ -24,9 +24,8 @@
 
 /* @group Single Chosen */
 .chzn-container-single .chzn-single {
-  background-color: #ffffff;
   #gradient > .vertical(@white, darken(@grayLighter, 4%));
-  .border-radius(4px);
+  .border-radius(20px);
   -moz-background-clip   : padding;
   -webkit-background-clip: padding-box;
   background-clip        : padding-box;
@@ -127,7 +126,7 @@
 .chzn-container-multi .chzn-choices {
   background-color: #fff;
   border: 1px solid @grayLight;
-  .border-radius(4px);
+  .border-radius(3px);
   @shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   .box-shadow(@shadow);
   margin: 0;
@@ -166,25 +165,14 @@
   color: #999;
 }
 .chzn-container-multi .chzn-choices .search-choice {
-  -webkit-border-radius: 3px;
-  -moz-border-radius   : 3px;
-  border-radius        : 3px;
+  .border-radius(10px);
   -moz-background-clip   : padding;
   -webkit-background-clip: padding-box;
   background-clip        : padding-box;
-  background-color: #e4e4e4;
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#eeeeee', GradientType=0 ); 
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
-  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: -o-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: -ms-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%); 
-  -webkit-box-shadow: 0 0 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05);
-  -moz-box-shadow   : 0 0 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05);
-  box-shadow        : 0 0 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05);
+  background-color: @grayLight;
+  @shadow: inset 0 0 2px #ffffff, 0 1px 0 rgba(0,0,0,0.05);
+  .box-shadow(@shadow);
   color: #333;
-  border: 1px solid #aaaaaa;
   line-height: 13px;
   padding: 3px 20px 3px 5px;
   margin: 3px 0 3px 5px;
@@ -198,11 +186,12 @@
   display: block;
   position: absolute;
   right: 3px;
-  top: 4px;
+  top: 3px;
   width: 12px;
   height: 13px;
   font-size: 1px;
-  background: url('@{baseUrl}/img/chosen-sprite.png') right top no-repeat;
+  background-color: rgba(0,0,0,.3);
+  .border-radius(10px);
 }
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close:hover {
   background-position: right -11px;
@@ -301,7 +290,6 @@
   -moz-box-shadow   : 0 0 5px rgba(0,0,0,.3);
   -o-box-shadow     : 0 0 5px rgba(0,0,0,.3);
   box-shadow        : 0 0 5px rgba(0,0,0,.3);
-  border: 1px solid #5897fb;
 }
 .chzn-container-active .chzn-single-with-drop {
   border: 1px solid #aaa;
@@ -330,7 +318,6 @@
   -moz-box-shadow   : 0 0 5px rgba(0,0,0,.3);
   -o-box-shadow     : 0 0 5px rgba(0,0,0,.3);
   box-shadow        : 0 0 5px rgba(0,0,0,.3);
-  border: 1px solid #5897fb;
 }
 .chzn-container-active .chzn-choices .search-field input {
   color: #111 !important;

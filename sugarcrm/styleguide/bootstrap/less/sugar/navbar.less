@@ -71,7 +71,7 @@
   float: left;
   height: 19px;
   width: 56px;
-  margin-left: -20px;
+  margin-left: -24px;
   z-index: 2000;
   display: block;
   -webkit-transition: all .2s linear;
@@ -532,10 +532,6 @@ article:hover .actions,  tr:hover .actions {
 color: @white;
 }
 
-.search-query {
-  .border-radius(4px);
-}
-
 .block ul.list ul {
   margin: 10px 0 10px 20px;
 }
@@ -562,10 +558,10 @@ color: @white;
 #guages {
   margin-bottom: 10px;
 }
-.topline {
+.topline, .navbar-search {
     position: relative;
-
-    .control-group.filter {
+    .filter {
+        width: 100% !important;
         background-color: @grayLighter;
         margin-right: -20px;
         padding: 5px 5px 0px 5px;
