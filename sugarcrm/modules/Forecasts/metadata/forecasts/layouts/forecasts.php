@@ -3,16 +3,16 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
     'type' => 'forecasts',
     'components' => array(
         0 => array(
-            'view' => 'filter',
+            'view' => 'forecastsFilter',
         ),
         1 => array(
-            'view' => 'chartOptions',
+            'view' => 'forecastsChartOptions',
         ),
         2 => array(
-            'view' => 'tree',
+            'view' => 'forecastsTree',
         ),
         3 => array(
-            'view' => 'chart',
+            'view' => 'forecastsChart',
         ),
         4 => array(
             'view' => 'progress',
@@ -56,7 +56,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
         ),
 
         10 => array(
-            'view' => 'timeframes',
+            'view' => 'forecastsTimeframes',
             'model' => array(
                 'name' => 'Timeframes'
             )

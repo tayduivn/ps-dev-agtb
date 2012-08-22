@@ -15,8 +15,6 @@
      */
     initialize: function (options) {
         _.bindAll(this); // Don't want to worry about keeping track of "this"
-        // CSS className must be changed to avoid conflict with Bootstrap CSS.
-        options.className = "progressBar";
         app.view.View.prototype.initialize.call(this, options);
         this.progressEndpoint = app.api.serverUrl + "/Forecasts/progress/"
 
@@ -131,7 +129,7 @@
             quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
             pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
         });
-        this.render();
+        this._renderHtml();
     },
 
     /**
@@ -192,13 +190,10 @@
         return ps;
     },
 
-    /**
-     * render override
-     * @private
-     */
-    _render: function () {
+
+    _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
     },
 
     /**

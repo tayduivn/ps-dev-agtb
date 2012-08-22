@@ -238,7 +238,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $mgr->getWorksheetGridData('manager', $report);
     }
 
-
     protected function getQuota()
     {
         //getting quotas from quotas table
@@ -268,10 +267,37 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
      * associated with the user_id class variable.  It is a helper function used by the manager worksheet api
      * to return forecast related information.
      *
-     * @return array Array of entries with deltas best_case, likely_case, worst_case, id and forecast_id
+     * @return array Array of entries with deltas best_case, likely_case, worst_case, id, date_modified and forecast_id
      */
     public function getForecastValues()
     {
+    	//Partially optimized.. Don't delete
+    	/*$data = array();
+        	
+        $sql = "select u.user_name, f.id, f.best_case, f.likely_case, f.worst_case, f.forecast_type, f.date_modified " .
+        		"from forecasts f " .
+        		"inner join users u " .
+        			"on f.user_id = u.id " .
+        				"and (u.reports_to_id = '" . $this->user_id . "' " .
+        					 "or u.id = '" . $this->user_id . "') " .
+        		"where f.timeperiod_id = '" . $this->timeperiod_id . "' " .
+        			"and ((f.user_id = '" . $this->user_id . "' and f.forecast_type = 'Direct') " .
+        				 "or (f.user_id <> '" . $this->user_id . "' and f.forecast_type = 'Rollup'))" .
+        			"and f.deleted = 0 " .
+        			"and f.date_modified = (select max(date_modified) from forecasts where user_id = u.id and timeperiod_id = '" . $this->timeperiod_id . "')";
+        $result = $GLOBALS['db']->query($sql);
+
+		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+		{
+            $data[$row['user_name']]['best_case'] = $row['best_case'];
+            $data[$row['user_name']]['likely_case'] = $row['likely_case'];
+            $data[$row['user_name']]['worst_case'] = $row['worst_case'];
+            $data[$row['user_name']]['forecast_id'] = $row['id'];
+            $data[$row['user_name']]['date_modified'] = $row['date_modified'];
+        }
+            
+        return $data;*/
+        
         $query = "SELECT id, user_name FROM users WHERE reports_to_id = '{$this->user_id}' AND deleted = 0";
         $db = DBManagerFactory::getInstance();
         $result = $db->query($query);
@@ -310,6 +336,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         }
 
         return $data;
+        
     }
 
     /**
@@ -320,21 +347,26 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
     public function getWorksheetBestLikelyAdjusted()
     {
         //getting data from worksheet table for reportees
-        $reportees_query = "SELECT u.user_name user_name,
-                            w.id worksheet_id,
-                            w.forecast,
-                            w.best_case best_adjusted,
-                            w.likely_case likely_adjusted,
-                            w.worst_case worst_adjusted
-                            FROM worksheet w, users u
-                            WHERE w.related_id = u.id
-                            AND w.timeperiod_id = '{$this->timeperiod_id}'
-                            AND w.user_id = '{$this->user_id}'
-                            AND ((w.related_id in (SELECT id from users WHERE reports_to_id = '{$this->user_id}') AND w.forecast_type = 'Rollup') OR (w.related_id = '{$this->user_id}' AND w.forecast_type = 'Direct'))
-                            AND w.deleted = 0";
-
+		$reportees_query = "SELECT u2.user_name, " .
+						   "w.id worksheet_id, " .
+						   "w.forecast, " .
+						   "w.best_case best_adjusted, " .
+						   "w.likely_case likely_adjusted, " .
+						   "w.worst_case worst_adjusted, " .
+						   "w.forecast_type, " .
+						   "w.related_id " .
+						   "from users u " .
+						   "inner join users u2 " .
+						   		"on u.id = u2.reports_to_id " .
+						   		"or u.id = u2.id " .
+						   "inner join worksheet w " .
+						   		"on w.user_id = u.id " .
+						   		"and w.timeperiod_id = '" . $this->timeperiod_id . "'" .
+						   		"and ((w.related_id = u.id and u2.id = u.id)" .
+						   			 "or(w.related_id = u2.id)) " .
+						   "where u.id = '" . $this->user_id . "' " .
+						   		"and w.deleted = 0";
         $result = $GLOBALS['db']->query($reportees_query);
-
         $data = array();
 
         while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
@@ -345,7 +377,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
         }             
-
+		
         return $data;
     }
 

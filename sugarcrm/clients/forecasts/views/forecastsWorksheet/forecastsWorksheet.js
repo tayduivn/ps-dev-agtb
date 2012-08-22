@@ -217,7 +217,7 @@
     /**
      * Renders view
      */
-    _render:function () {
+    _renderHtml:function (ctx, options) {
         var self = this;
 
         if(!this.showMe()){
@@ -228,7 +228,7 @@
 
         var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata

@@ -94,6 +94,11 @@
                     this.selectJSTreeNode(nodeId)
                 }
             }
+        } else {
+            // just update the title
+            var hb = Handlebars.compile("{{str_format key module args}}");
+            var text = hb({'key' : "LBL_FORECAST_TITLE", 'module' : 'Forecasts', 'args' : this.fullName});
+            this.$el.find('h1').html(text);
         }
     },
 
@@ -113,9 +118,15 @@
     /**
      * Renders JSTree
      */
-    _render:function () {
 
-        app.view.View.prototype._render.call(this);
+    /**
+     * Renders JSTree
+     * @param ctx
+     * @param options
+     * @protected
+     */
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var self = this;
         var treeData;

@@ -132,7 +132,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->forecast = $opp->probability >= 70 ? 1 : 0;
             $product->date_entered = $timedate->asDb($timedate->getNow());
             $product->date_modified = $prod->date_entered;
-            $product->description = $prod->name;
+            $product->name = $prod->name;
             $product->expert_id = $user['id'];
             $product->save();
         }

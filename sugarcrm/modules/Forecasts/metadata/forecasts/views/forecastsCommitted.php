@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Forecasts']['forecasts']['view']['committed'] = array(
+$viewdefs['Forecasts']['forecasts']['view']['forecastsCommitted'] = array(
     'panels' =>
     array(
         0 =>

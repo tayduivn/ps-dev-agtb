@@ -1,7 +1,7 @@
 /**
  * View that displays a chart
- * @class View.Views.ChartView
- * @alias SUGAR.App.layout.ChartView
+ * @class View.Views.ForecastsChartView
+ * @alias SUGAR.App.layout.ForecastsChartView
  * @extends View.View
  */
 ({
@@ -11,14 +11,16 @@
     chart: null,
 
     chartTitle: '',
+    timeperiod_label: '',
 
     /**
-     * Override the _render function
+     * Override the _rerderHtml function
      *
-     * @private
+     * @protected
      */
-    _render: function() {
-        this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
+    _renderHtml: function(ctx, options) {
+        //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
+        this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
         var values = {
             user_id: app.user.get('id'),
@@ -29,7 +31,7 @@
             category : app.defaultSelections.category
         };
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
         this.handleRenderOptions(values);
     },
 
@@ -42,7 +44,7 @@
             self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
-            self.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + timePeriod.label;
+            self.timeperiod_label = timePeriod.label;
             self.handleRenderOptions({timeperiod_id: timePeriod.id});
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
@@ -145,7 +147,9 @@
         }
 
         // update the chart title
-        this.$el.find('h4').html(this.chartTitle);
+        var hb = Handlebars.compile("{{str_format key module args}}");
+        var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
+        this.$el.find('h4').html(text);
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
         return chart.chartObject;
