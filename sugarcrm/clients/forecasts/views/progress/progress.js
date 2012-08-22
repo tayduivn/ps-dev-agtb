@@ -9,7 +9,10 @@
     likelyTotal: 0,
     bestTotal: 0,
     progressEndpoint:'',
-
+    /**
+     * initialize base models and set the initial user and timeperiod
+     * @param options
+     */
     initialize: function (options) {
         _.bindAll(this); // Don't want to worry about keeping track of "this"
         // CSS className must be changed to avoid conflict with Bootstrap CSS.
@@ -47,12 +50,15 @@
         this.worksheetManagerCollection = this.context.forecasts.worksheetmanager;
     },
 
+    /**
+     * bind to data changes in teh context model.
+     */
     bindDataChange: function () {
 
         var self = this;
 
         if (this.model) {
-            this.model.on('change reset', this.render);
+            //this.model.on('change reset', this.render);
         }
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
@@ -67,65 +73,21 @@
                 this.updateProgress();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                self.recalculate(totals);
+                self.calculateBases(totals);
+                self.recalculateTotals(totals);
             });
             this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                self.recalculate(totals);
-
+                self.calculateBases(totals);
+                self.recalculateTotals(totals);
             });
         }
     },
 
-    recalculate: function (totals) {
-        this.calculateBases(totals);
-
-        debugger;
-
-        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            var closedAmount = this.model.get('closed_amount');
-            this.model.set({
-                closed_likely_amount : this.getAbsDifference(this.likelyTotal, closedAmount),
-                closed_likely_percent : this.getPercent(closedAmount, this.likelyTotal),
-                closed_likely_above : this.checkIsAbove(closedAmount, this.likelyTotal ),
-                closed_best_amount : this.getAbsDifference(this.bestTotal, closedAmount),
-                closed_best_percent : this.getPercent(closedAmount, this.bestTotal),
-                closed_best_above : this.checkIsAbove(closedAmount, this.bestTotal),
-                revenue : totals.amount,
-                quota_amount : totals.quota,
-                quota_likely_amount : this.getAbsDifference(this.likelyTotal, totals.quota),
-                quota_likely_percent : this.getPercent(this.likelyTotal, totals.quota),
-                quota_likely_above : this.checkIsAbove(this.likelyTotal, totals.quota),
-                quota_best_amount : this.getAbsDifference(this.bestTotal, totals.quota),
-                quota_best_percent : this.getPercent(this.bestTotal, totals.quota),
-                quota_best_above : this.checkIsAbove(this.bestTotal, totals.quota),
-                pipeline : this.calculatePipelineSize(this.likelyTotal, totals.amount, closedAmount)
-            });
-        } else {
-            var quotaAmount = this.model.get('quota_amount');
-            this.model.set({
-                closed_amount : totals.won_amount,
-                opportunities : totals.included_opp_count,
-                closed_likely_amount : this.getAbsDifference(this.likelyTotal, totals.won_amount),
-                closed_likely_percent : this.getPercent(totals.won_amount, this.likelyTotal),
-                closed_likely_above : this.checkIsAbove(totals.won_amount, this.likelyTotal ),
-                closed_best_amount : this.getAbsDifference(this.bestTotal, totals.won_amount),
-                closed_best_percent : this.getPercent(totals.won_amount, this.bestTotal),
-                closed_best_above : this.checkIsAbove(totals.won_amount, this.bestTotal),
-                revenue : totals.amount,
-                quota_likely_amount : this.getAbsDifference(this.likelyTotal, quotaAmount),
-                quota_likely_percent : this.getPercent(this.likelyTotal, quotaAmount),
-                quota_likely_above : this.checkIsAbove(this.likelyTotal, quotaAmount),
-                quota_best_amount : this.getAbsDifference(this.bestTotal, quotaAmount),
-                quota_best_percent : this.getPercent(this.bestTotal, quotaAmount),
-                quota_best_above : this.checkIsAbove(this.bestTotal, quotaAmount),
-                pipeline : this.calculatePipelineSize(this.likelyTotal, totals.amount, totals.won_amount)
-            });
-        }
-    },
-
+    /**
+     * update the base numbers used in almost every calculation
+     * @param totals
+     */
     calculateBases: function (totals) {
-        var closed = this.model.get('closed');
-
         if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
             this.likelyTotal = totals.likely_adjusted;
             this.bestTotal = totals.best_adjusted;
@@ -135,6 +97,52 @@
         }
     },
 
+
+    /**
+     * take in the totals when they update for the manager/rep worksheet and make sure the rest of the progress model recalculates according to the changes
+     * @param totals model that was updated
+     */
+    recalculateTotals: function (totals) {
+        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
+            this.model.set({
+                revenue : totals.amount,
+                quota_amount : totals.quota
+        });
+        } else {
+            this.model.set({
+                closed_amount : totals.won_amount,
+                opportunities : totals.included_opp_count,
+                revenue : totals.amount
+            });
+        }
+        this.recalculateModel();
+    },
+
+    recalculateModel: function () {
+        this.model.set({
+            closed_likely_amount : this.getAbsDifference(this.likelyTotal, this.model.get('closed_amount')),
+            closed_likely_percent : this.getPercent(this.model.get('closed_amount'), this.likelyTotal),
+            closed_likely_above : this.checkIsAbove(this.model.get('closed_amount'), this.likelyTotal ),
+            closed_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('closed_amount')),
+            closed_best_percent : this.getPercent(this.model.get('closed_amount'), this.bestTotal),
+            closed_best_above : this.checkIsAbove(this.model.get('closed_amount'), this.bestTotal),
+            quota_likely_amount : this.getAbsDifference(this.likelyTotal, this.model.get('quota_amount')),
+            quota_likely_percent : this.getPercent(this.likelyTotal, this.model.get('quota_amount')),
+            quota_likely_above : this.checkIsAbove(this.likelyTotal, this.model.get('quota_amount')),
+            quota_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('quota_amount')),
+            quota_best_percent : this.getPercent(this.bestTotal, this.model.get('quota_amount')),
+            quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
+            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
+        });
+        this.render();
+    },
+
+    /**
+     * determine if one value is bigger than another, used as a shortcut method to determine likely/best is above quota/closed
+     * @param caseValue
+     * @param stageValue
+     * @return {Boolean}
+     */
     checkIsAbove: function (caseValue, stageValue) {
         if(caseValue > stageValue)
             return true;
@@ -142,10 +150,24 @@
         return false;
     },
 
+    /**
+     * return the difference of two values and make sure it's a positive value
+     *
+     * used as a shortcut function for determine best/likely to closed/quota
+     * @param caseValue
+     * @param stageValue
+     * @return {Number}
+     */
     getAbsDifference: function (caseValue, stageValue) {
         return Math.abs(stageValue - caseValue);
     },
 
+    /**
+     * return value to be used as a percent based on the two inputs, shortcut method for determining percentage to go or above
+     * @param caseValue
+     * @param stageValue
+     * @return {Number}
+     */
     getPercent: function (caseValue, stageValue) {
         if(stageValue > 0) {
             return caseValue / stageValue;
@@ -153,6 +175,13 @@
         return 0;
     },
 
+    /**
+     * calculates the pipeline size to one significant figure.  based on revenue with closed amount divided by the likely amount
+     * @param likelyTotal
+     * @param revenue
+     * @param closed
+     * @return {Number}
+     */
     calculatePipelineSize: function (likelyTotal, revenue, closed) {
         var ps = 0;
         if ( likelyTotal > 0 ) {
@@ -166,27 +195,34 @@
         return ps;
     },
 
-    reduceWorksheetManager: function(attr) {
-      return this.worksheetManagerCollection.reduce(function(memo, model) {
-                          // Only add up values that are "included" in the worksheet.
-                        memo += parseInt(model.get(attr), 10);
-                        return memo;
-                      }, 0);
-    },
-
+    /**
+     * render override
+     * @private
+     */
     _render: function () {
         _.extend(this, this.model.toJSON());
         app.view.View.prototype._render.call(this);
     },
 
+    /**
+     * set the new time period
+     * @param selectedTimePeriod
+     */
     updateProgressForSelectedTimePeriod: function (selectedTimePeriod) {
         this.seletedTimePeriod = selectedTimePeriod;
     },
 
+    /**
+     * set the new selected user
+     * @param selectedUser
+     */
     updateProgressForSelectedUser: function (selectedUser) {
         this.selectedUser = selectedUser;
     },
 
+    /**
+     * something has changed, so we need to update the progress model depending on this change
+     */
     updateProgress: function () {
         var getRollup = false;
         var self = this;
@@ -194,9 +230,6 @@
         var url = this.progressEndpoint;
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        app.config.sales_stage_won = app.config.sales_stage_won || [];
-        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
-        app.config.committed_probability = app.config.committed_probability || 101;
 
 
         if(self.selectedUser != undefined && self.selectedTimePeriod != undefined) {
@@ -206,25 +239,23 @@
             url += self.selectedUser.id + "/";
             url += self.selectedTimePeriod.id + "/";
             url += getRollup ? "1/" : "0/";
-            url += app.config.sales_stage_won + "/";
-            url += app.config.sales_stage_lost + "/";
         }
 
-
-        app.api.call('read', url, null, {
+        app.api.call('read', url, null, null, {
             success: function(data) {
                 if(getRollup) {
                     self.model.set({
                         opportunities : data.opportunities,
                         closed_amount : data.closed_amount
                     });
+                    self.recalculateModel();
                 } else {
                     self.model.set({
                         quota_amount : data.quota_amount
                     });
+                    self.recalculateModel();
                 }
             }
-
         });
     }
 })
