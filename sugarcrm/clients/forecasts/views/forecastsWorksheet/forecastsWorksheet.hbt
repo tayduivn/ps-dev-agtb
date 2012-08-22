@@ -18,7 +18,7 @@
         {{/each}}
         </tbody>
         <tfoot id="summary">
-            <tr id="expected_opportunities" class="view-forecastsSchedule">
+            <tr id="expected_opportunities" class="view-forecastSchedule">
             </tr>
             <tr id="included_totals">
             </tr>

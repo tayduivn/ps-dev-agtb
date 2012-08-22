@@ -29,7 +29,7 @@
  * This file defines the view definitions for the forecastSchedule view.  The forecastSchedule
  * view uses the /ForecastSchedule REST endpoint to retrieve and save data.
  */
-$viewdefs['Forecasts']['forecasts']['view']['forecastsSchedule'] = array(
+$viewdefs['Forecasts']['forecasts']['view']['forecastSchedule'] = array(
     'panels' =>
     array(
         0 =>

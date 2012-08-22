@@ -112,7 +112,7 @@
 <script src='clients/forecasts/lib/BucketGridEnum.js'></script>
 <script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
 <script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/forecasts/views/forecastsSchedule/forecastsSchedule.js'></script>
+<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
 <script src='clients/forecasts/views/forecastsTree/forecastsTree.js'></script>
 <script src='clients/forecasts/views/forecastsFilter/forecastsFilter.js'></script>
 <script src='clients/forecasts/views/forecastsTimeframes/forecastsTimeframes.js'></script>
