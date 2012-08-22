@@ -1,19 +1,17 @@
 {{#each meta.panels}}
    <div class="card2">
        {{#if ../model.isNotEmpty}}
-       {{#each fields}}
-           {{#notEq name "name"}}
-           <div class="row-fluid record-row">
-               <div class="span2">{{str  this.label ../../../../this.model.module}}</div>
-               <div class="span10" name="{{this.name}}">
-                    {{field ../../../../this}}
-                    <span class="w">
-                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
-                    </span>
+           {{#each fields}}
+               <div class="row-fluid record-row">
+                   <div class="span2">{{str  this.label ../../../this.model.module}}</div>
+                   <div class="span10" name="{{this.name}}">
+                        {{field ../../../this}}
+                        <span class="w">
+                            <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
+                        </span>
+                   </div>
                </div>
-               </div>
-           {{/notEq}}
-       {{/each}}
+           {{/each}}
            <span class="extend">
              <div class="row-fluid">
                  <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>

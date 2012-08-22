@@ -26,13 +26,51 @@
         }, this);
     },
 
-    handleEdit: function(e) {
-        var target = this.$(e.target),
-            field;
+    // Overloaded functions
 
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on("change", function() {
+                if (this.context.get('subnavModel')) {
+                    this.context.get('subnavModel').set({
+                        'title': this.model.get('name'),
+                        'meta': this.meta
+                    });
+
+                    if (this.model.isNotEmpty !== true) {
+                        this.model.isNotEmpty = true;
+                        this.render();
+                    }
+                }
+            }, this);
+        }
+    },
+
+    getFieldIndex: function(field) {
+        return _.indexOf(_.pluck(this.options.meta.panels[0].fields, "name"), field.name);
+    },
+
+    getNextField: function(field) {
+        var nextField = this.options.meta.panels[0].fields[this.getFieldIndex(field) + 1];
+        return (nextField) ? this.getField(nextField.name) : false;
+    },
+
+    // Handler functions
+
+    handleEdit: function(e, field) {
+        var target;
+
+        // This would be the default code path unless tabbed.
+        if (!field) {
+            target = this.$(e.target);
+            targetData = target.data();
+            field = this.getField(targetData.name);
+        } else {
+            target = field.$el.parent().find(".record-edit-link");
+        }
+
+        // Set Editing mode to on.
         this.editMode = true;
-        targetData = target.data();
-        field = this.getField(targetData.name);
 
         switch (field.type) {
             default:
@@ -46,11 +84,12 @@
         this.editMode = false;
         this.model.save({}, {
             success: function() {
-                self.toggleField();
+                self.render();
             }
         });
 
         this.$(".record-save-prompt").hide();
+        this.render();
     },
 
     handleCancel: function(e) {
@@ -62,31 +101,48 @@
     },
 
     toggleField: function(field, target) {
-        var target = target,
-            self = this;
+        var self = this;
 
         $(target).closest('.record-row').toggleClass('edit-mode');
 
-        function fieldClose(e) {
-            self.toggleField(field, target);
-
-            field.$el.off("focusout", "input", fieldClose);
-            field.$el.off("change", "input", fieldClose);
-        }
-
-        field.options.viewName = field.options.viewName || null;
         field.options.viewName = (!field.options.viewName || field.options.viewName == "detail")
             ? "edit" : field.options.viewName = "detail";
 
         field.render();
 
         if (field.options.viewName == "edit") {
-            field.$el.on("focusout", "input", function(e) { this.fieldClose(e, field, target); });
-            field.$el.on("change", "input", function(e) { this.fieldClose(e, field, target); });
+            field.$el.on("blur", "input", {field: field, target: target}, this.fieldClose);
+            field.$el.on("change", "input", {field: field, target: target}, this.fieldClose);
+            field.$el.on("keydown", "input", {field: field, target: target}, this.handleKeyDown);
         }
     },
 
-    fieldClose: function(e, field, target) {
+    fieldClose: function(e) {
+        var target = e.data.target,
+            field = e.data.field;
 
+        if (field.options.viewName == "detail") {
+            return;
+        }
+
+        this.toggleField(field, target);
+
+        field.$el.off("blur", "input", this.fieldClose);
+        field.$el.off("change", "input", this.fieldClose);
+        field.$el.off("keydown", "input", this.handleKeyDown);
+    },
+
+    handleKeyDown: function(e) {
+        var next,
+            target = e.data.target,
+            field = e.data.field;
+
+        if (e.which == 9) {
+            next = this.getNextField(field);
+            this.handleEdit(null, next);
+            next.$el.focus();
+        } else if (e.which == 27) {
+            this.fieldClose(e, field, target);
+        }
     }
 })
