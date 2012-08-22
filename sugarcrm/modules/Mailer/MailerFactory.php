@@ -33,11 +33,11 @@ class MailerFactory
 		switch ($class) {
 			case 'SugarMailer':
 				include_once 'SugarMailer.php';
-                break;
+				break;
 			case 'SimpleMailer':
 			default:
 				include_once 'SimpleMailer.php';
-                break;
+				break;
 		}
 
 		$mailer = new $class();

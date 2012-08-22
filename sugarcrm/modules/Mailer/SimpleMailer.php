@@ -101,6 +101,7 @@ class SimpleMailer extends BaseMailer
 	}
 
 	private function transferHeaders() {
+		// transfer the sender
 		$senderEmail = $this->sender->getEmail();
 
 		//@todo should we really validate this email address? can that be done reliably further up in the stack?
@@ -111,6 +112,17 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->From = $senderEmail;
 		$this->mailer->FromName = $this->sender->getName();
 
+		// transfer the reply-to
+		$replyToEmail = $this->replyTo->getEmail();
+
+		//@todo should we really validate this email address? can that be done reliably further up in the stack?
+		if (!is_string($replyToEmail)) {
+			throw new MailerException("Invalid reply-to email address");
+		}
+
+		$this->mailer->AddReplyTo($replyToEmail, $this->replyTo->getName());
+
+		// transfer the subject
 		if (!is_string($this->subject)) {
 			throw new MailerException("Invalid subject");
 		}

@@ -30,6 +30,7 @@ abstract class BaseMailer implements IMailer
 	protected $mailer;
 	protected $configs;
 	protected $sender;
+	protected $replyTo;
 	protected $recipients;
 	protected $subject;
 	protected $htmlBody;
@@ -102,6 +103,13 @@ abstract class BaseMailer implements IMailer
 	 */
 	public function setSender(EmailIdentity $sender) {
 		$this->sender = $sender;
+	}
+
+	/**
+	 * @param EmailIdentity $replyTo
+	 */
+	public function setReplyTo(EmailIdentity $replyTo) {
+		$this->replyTo = $replyTo;
 	}
 
 	/**
