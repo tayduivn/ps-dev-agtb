@@ -5,7 +5,9 @@
         'click #todo-add': 'todoSubmit',
         'keyup #todo-subject':'todoSubmit',
         'focus #todo-date': 'showDatePicker',
-        'click .todo-status': 'changeStatus'
+        'click .todo-status': 'changeStatus',
+        'hover .todo-list-item': 'toggleRemoveTodo',
+        'click .todo-remove': 'removeTodo'
     },
     initialize: function(options) {
         var self = this;
@@ -25,7 +27,7 @@
                 self.collection.fetch();
             }
             else
-            {
+            {   // otherwise, grab user-specific todos
                 self.collection.fetch({myItems: true});
             }
 
@@ -33,6 +35,8 @@
             console.log(self.collection);
             self.bindDataChange();
         });
+        app.events.on("app:login:success", this.render, this);
+        app.events.on("app:logout", this.render, this);
     },
     onClickNotification: function(e) {
         // This will prevent the dropup menu from closing
@@ -51,9 +55,38 @@
             }
         });
     },
-    showDatePicker: function() {
+    showDatePicker: function(e) {
         console.log("---------");
         console.log("showDatePicker");
+    },
+    toggleRemoveTodo: function(e) {
+        var remEl;
+        if( $(e.target).hasClass("todo-list-item") ) {
+            remEl = $(e.target).find(".todo-remove");
+        }
+        else {
+            remEl = $(e.target).parentsUntil(".todo-list-container", ".todo-list-item").find(".todo-remove");
+        }
+
+        if( e.type == "mouseenter" ) {
+            remEl.show();
+        }
+        else if( e.type == "mouseleave" ) {
+            remEl.hide();
+        }
+    },
+    removeTodo: function(e) {
+        console.log("---------");
+        console.log("removeTodo");
+        console.log(e);
+        var self = this;
+        var clickedEl = $(e.target).parents(".todo-list-item")[0];
+        var modelIndex = $(".todo-list-item").index(clickedEl);
+
+        this.model = this.collection.models[modelIndex];
+        this.model.destroy({success: function() {
+            self._render();
+        }});
     },
     changeStatus: function(e) {
         console.log("---------");
@@ -67,14 +100,14 @@
 
         //console.log(app.additionalComponents.todo.collection.models[modelIndex]);
 
-        if( this.model.attributes.status == "Completed" ) {
+        if( this.model.attributes.status == app.lang.getAppListStrings('task_status_dom')['Completed'] ) {
             this.model.set({
-                "status": app.metadata.data.appListStrings.task_status_default
+                "status": app.lang.getAppListStrings('task_status_dom')['Not Started']
             });
         }
         else {
             this.model.set({
-                "status": app.metadata.data.appListStrings.task_status_dom["Completed"]
+                "status": app.lang.getAppListStrings('task_status_dom')['Completed']
             });
         }
 
@@ -82,7 +115,7 @@
         this._render();
     },
     _renderHtml: function() {
-        if (!app.api.isAuthenticated()) return;
+        this.isAuthenticated = app.api.isAuthenticated();
         if (app.config && app.config.logoURL) {
             this.logoURL=app.config.logoURL;
         }
@@ -105,7 +138,7 @@
         else {
             this.model = app.data.createBean("Tasks", {
                 "name": subject,
-                "assigned_user_id": "seed_" + app.user.get("user_name") + "_id"
+                "assigned_user_id": app.user.get("user_name")
             });
             app.additionalComponents.todo.collection.add(this.model);
             this.model.save();
