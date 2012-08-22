@@ -133,14 +133,7 @@ class ActivityStream extends SugarBean {
                     $mod_strings = return_module_language($current_language, $bean->module_dir);
                     $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
                 }
-                $row['created_by_name'] = '';
-                if(!empty($row['first_name'])) {
-                    $row['created_by_name'] = $row['first_name'];
-                }
-                if(!empty($row['last_name'])) {
-                    $row['created_by_name'] .= " ".$row['last_name'];
-                }
-                $row['created_by_name'] = trim($row['created_by_name']);
+                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
                 unset($row['first_name']);
                 unset($row['last_name']);
                 
@@ -153,11 +146,14 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];                
-                    $sql = "SELECT c.comment_id, c.activity_id,c.value,c.created_by, c.date_created,concat(users.first_name, ' ', users.last_name) as created_by_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.comment_id, c.activity_id,c.value,c.created_by, c.date_created,users.first_name, users.last_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
                     
                     if(!empty($result)) {
                         while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                            $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                            unset($row['first_name']);
+                            unset($row['last_name']);
                             $comments[$row['activity_id']][] = $row;
                         }
                     }
