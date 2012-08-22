@@ -28,6 +28,10 @@
 //FILE SUGARCRM flav=ent ONLY
 *}
 <link rel="stylesheet" type="text/css" href="portal2/lib/twitterbootstrap/css/bootstrap.css" />
+<style>
+    h2{literal}{line-height: 100%;}{/literal}
+    body{literal}{padding-top: 0px;}{/literal}
+</style>
 <h1>Customize Theme</h1>
 <div class="themes" style="">
     <div class="content"></div>
