@@ -809,13 +809,15 @@ function upgrade_panel_tab_defs()
     {
         $EditView = false;
         $DetailView = false;
+        $QuickCreate = false;
         $dirs = array(
             'custom/modules/' . $mods . '/metadata/',
             'modules/' . $mods . '/metadata/'
         );
         $files = array(
             'editviewdefs.php' => 'EditView',
-            'detailviewdefs.php' => 'DetailView'
+            'detailviewdefs.php' => 'DetailView',
+            'quickcreatedefs.php' => 'QuickCreate'
         );
         //check custom folder first then default folder
         foreach ($dirs as $dir)
