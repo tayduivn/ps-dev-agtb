@@ -4,7 +4,7 @@
 
     initialize: function(options) {
         var extraEvents = {
-            "click .record-edit-link": "handleEdit",
+            "click .record-edit-link-wrapper": "handleEdit",
             "click .record-save": "handleSave",
             "click .record-cancel": "handleCancel"
         };
