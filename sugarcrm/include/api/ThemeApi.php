@@ -38,7 +38,7 @@ class ThemeApi extends SugarApi
         return array(
             'previewCSS' => array(
                 'reqType' => 'GET',
-                'path' => array('bootstrap.css'),
+                'path' => array('css'),
                 'pathVars' => array(''),
                 'method' => 'previewCSS',
                 'shortHelp' => 'Generate the bootstrap.css file',

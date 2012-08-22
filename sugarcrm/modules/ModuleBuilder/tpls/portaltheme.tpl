@@ -61,7 +61,8 @@
             }
         },
         clientID:"sugar",
-                authStore:"sugarAuthStore"
+                authStore:"sugarAuthStore",
+        loadCss: false
     }, false);
 
 })(SUGAR.App);

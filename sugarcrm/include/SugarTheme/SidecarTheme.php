@@ -78,24 +78,8 @@ class SidecarTheme
             else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
-                $customThemeVars = $clientDefaultTheme->paths['custom'] . 'variables.less';
-                $baseThemeVars = $clientDefaultTheme->paths['base'] . 'variables.less';
-
-                if ( file_exists($customThemeVars) || file_exists($baseThemeVars) ) {
-                    $cacheCSS = $clientDefaultTheme->paths['css'];
-                    if (!file_exists($cacheCSS)) {
-                        $clientDefaultTheme->compileTheme();
-                    }
-                }
-                else {
-                    // Finally we compile the base default theme if we still have nothing
-                    $baseDefaultTheme = new SidecarTheme('base', 'default');
-                    $cacheCSS = $baseDefaultTheme->paths['css'];
-                    if (!file_exists($cacheCSS)) {
-                        $baseDefaultTheme->compileTheme();
-                    }
-                }
-
+                $cacheCSS = $clientDefaultTheme->paths['css'];
+                $clientDefaultTheme->compileTheme();
             }
         }
         return $cacheCSS;
@@ -114,7 +98,7 @@ class SidecarTheme
     private function makePaths($client, $themeName)
     {
         return array(
-            'base'   => 'themes/clients/' . $client . '/' . $themeName . '/',
+            'base'   => 'styleguide/themes/clients/' . $client . '/' . $themeName . '/',
             'custom' => 'custom/themes/clients/' . $client . '/' . $themeName . '/',
             'cache'  =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/'),
             'css'    =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/' . $this->bootstrapCssName),
@@ -180,8 +164,8 @@ class SidecarTheme
      */
     public function compileBootstrapCss($variables, $min = true)
     {
-        if (file_exists('styleguide/' . $this->myClient . '/less/config.less'))
-            $url = 'styleguide/less/clients/' . $this->myClient . '/less/config.less';
+        if (file_exists('styleguide/less/clients/' . $this->myClient . '/config.less'))
+            $url = 'styleguide/less/clients/' . $this->myClient . '/config.less';
         else
             $url = 'styleguide/less/clients/base/config.less';
 
