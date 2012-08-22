@@ -1,23 +1,63 @@
-<h4>Agenda:</h4>
-
-{{#if loaded}}
-     <ul>
-     <li>Today:</li><ul>
-     {{#each collections.today.models}}
-     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
-     {{/each}}
-     </ul>
-     <li>Tomorrow:</li><ul>
-     {{#each collections.tomorrow.models}}
-     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
-     {{/each}}
-     </ul>
-     <li>Upcoming:</li><ul>
-     {{#each collections.upcoming.models}}
-     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
-     {{/each}}
-     </ul>
-     </ul>
-{{else}}
-Loading...
-{{/if}}
+<div class="block">
+     <h4>Agenda:</h4>
+     {{#if loaded}}
+          <div class="accordion" id="accordion2">
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                  Today ({{collections.today.length}})
+                </a>
+              </div>
+              <div id="collapseOne" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                    {{#if collections.today.length}}
+                         {{#each collections.today.models}}
+                              <li><a href="#{{modelRoute this}}">{{this.attributes.name}} {{this.attributes.date_start}}</a>
+                         {{/each}}
+                    {{else}}
+                         <em>No meetings found.</em>
+                    {{/if}}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                  Tomorrow ({{collections.tomorrow.length}})
+                </a>
+              </div>
+              <div id="collapseTwo" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                    {{#if collections.tomorrow.length}}
+                         {{#each collections.tomorrow.models}}
+                              <li><a href="#{{modelRoute this}}">{{this.attributes.name}} {{this.attributes.date_start}}</a>
+                         {{/each}}
+                    {{else}}
+                         <em>No meetings found.</em>
+                    {{/if}}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+                  Upcoming ({{collections.upcoming.length}})
+                </a>
+              </div>
+              <div id="collapseThree" class="accordion-body collapse" style="height: 0px; ">
+                <div class="accordion-inner">
+                    {{#if collections.upcoming.length}}
+                         {{#each collections.upcoming.models}}
+                              <li><a href="#{{modelRoute this}}">{{this.attributes.name}} {{this.attributes.date_start}}</a>
+                         {{/each}}
+                    {{else}}
+                         <em>No meetings found.</em>
+                    {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+     {{else}}
+     Loading...
+     {{/if}}
+</div>
