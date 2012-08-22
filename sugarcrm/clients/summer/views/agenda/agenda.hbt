@@ -1,4 +1,4 @@
-<h3>Agenda:</h3>
+<h4>Agenda:</h4>
 
 {{#if loaded}}
      <ul>
