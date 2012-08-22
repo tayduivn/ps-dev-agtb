@@ -140,7 +140,7 @@ class SidecarTheme
         $myCss = $this->compileBootstrapCss($variables, $min);
 
         // Write bootstrap.css on the file system
-        sugar_mkdir($this->paths['cache']);
+        sugar_mkdir($this->paths['cache'], null, true);
         sugar_file_put_contents($this->paths['cache'] . $this->bootstrapCssName, $myCss);
     }
 
@@ -248,7 +248,7 @@ class SidecarTheme
         $contents = str_replace('\n', '', $contents);
 
         // overwrite the theme
-        sugar_mkdir($this->paths['custom']);
+        sugar_mkdir($this->paths['custom'], null, true);
         sugar_file_put_contents($customTheme, $contents);
     }
 
