@@ -180,11 +180,16 @@ class SidecarTheme
      */
     public function compileBootstrapCss($variables, $min = true)
     {
-        $less = new lessc('styleguide/bootstrap/less/bootstrap.less');
+        if (file_exists('styleguide/' . $this->myClient . '/less/config.less'))
+            $url = 'styleguide/less/clients/' . $this->myClient . '/less/config.less';
+        else
+            $url = 'styleguide/less/clients/base/config.less';
+
+        $less = new lessc($url);
         if ($min === true) {
             $less->setFormatter('compressed');
         }
-        $variables['baseUrl'] = '"../../../../../styleguide/bootstrap"';
+        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
 
         try {
             $css = $less->parse($variables);
