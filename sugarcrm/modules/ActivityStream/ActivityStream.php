@@ -154,13 +154,11 @@ class ActivityStream extends SugarBean {
      * Returns an array of values for a new activity record. Called by self::addActivity
      * @param SugarBean $bean
      * @param string $activityType 
-     * @param string $fieldName
-     * @param string $beforeValue
-     * @param string $afterValue
+     * @param array $activityData
      * @return array
      * @see ActivityStream::addActivity()
      */
-    protected function getActivityValues($bean, $activityType, $fieldName = '', $beforeValue = '', $afterValue = '') {
+    protected function getActivityValues($bean, $activityType, $activityData = array()) {
         global $current_user, $dictionary;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
                 
@@ -168,7 +166,7 @@ class ActivityStream extends SugarBean {
         $activityValues['activity_id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['activity_id']);
         $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
         $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
-        $activityData = json_encode(array('action'=>$activityType, 'field_name'=>$fieldName, 'before_value'=>$beforeValue, 'after_value'=>$afterValue));
+        $activityData = json_encode(array('action'=>$activityType, 'data'=>$activityData));
         $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);  
         $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']); 
@@ -197,11 +195,8 @@ class ActivityStream extends SugarBean {
                 break;
             case ActivityStream::ACTIVITY_TYPE_UPDATE:
                 $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
-                if(!empty($dataChanges)) {
-                    foreach($dataChanges as $dataChange) {
-                        $values[] = $this->getActivityValues($bean, $activityType, $dataChange['field_name'], $dataChange['before'], $dataChange['after']);
-                    }    
-                }
+                $dataChanges = array_values($dataChanges);
+                $values[] = $this->getActivityValues($bean, $activityType, $dataChanges);
                 break;
             default:
                 return false;
