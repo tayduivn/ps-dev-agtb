@@ -10,6 +10,7 @@ class BoxOfficeClient
     protected static $client = null;
     protected $loginUrl;
     protected $session;
+    protected $config = array();
 
     /**
      * returns a singleton of BoxOfficeClient
@@ -34,9 +35,10 @@ class BoxOfficeClient
 
         // FIXME: should be moved to REST API
         include('boxoffice/config.php');
-        $this->box = new BoxOffice($dbconfig);
+        $this->config = $config;
+        $this->box = new BoxOffice($config['dbconfig']);
         // FIXME
-        $this->loginUrl = $loginUrl;
+        $this->loginUrl = $config['top_url']."summer/splash/";
 
         // if we have config in session, use it, otherwise - load if from boxoffice
         // FIXME: should be passed as parameter, not in session
@@ -53,6 +55,16 @@ class BoxOfficeClient
         if (!empty($_SESSION['boxoffice']['instance'])) $this->instance = $_SESSION['boxoffice']['instance'];
         if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
 
+    }
+
+    /**
+     * Get config settings variable
+     * @param string $name
+     * @return string
+     */
+    public function getSetting($name)
+    {
+        return empty($this->config[$name])?'':$this->config[$name];
     }
 
     /**
@@ -231,11 +243,9 @@ class BoxOfficeClient
 
     /**
      * Registers a user into the system creates a confirmation record and sends an activation email out to the user
-     * @param $email
-     * @param $password
-     * @param $first_name
-     * @param $last_name
-     * @param $company
+     * @param string $email
+     * @param string $password
+     * @param array $data
      * @return bool
      */
     public function registerUser($email, $password, $data){
@@ -262,7 +272,8 @@ class BoxOfficeClient
      * @param bool $throwException
      * @return array
      */
-    public function getUser($email, $throwException=true){
+    public function getUser($email, $throwException=true)
+    {
         return $this->box->getUser($email, $throwException);
     }
 
@@ -272,7 +283,8 @@ class BoxOfficeClient
      * @param $guid
      * @return bool
      */
-    public function activateUser($email, $guid){
+    public function activateUser($email, $guid)
+    {
         return $this->box->activateUser($email, $guid, $_SERVER['REMOTE_ADDR']);
     }
 
@@ -281,7 +293,8 @@ class BoxOfficeClient
      * @param $email
      * @return bool
      */
-    public function resendActivation($email){
+    public function resendActivation($email)
+    {
         $user = $this->box->getUser($email, true);
         if($user['status'] == 'Pending Confirmation'){
             $guid = $this->box->generateConfirmation($email);
@@ -291,6 +304,11 @@ class BoxOfficeClient
         return false;
     }
 
+    /**
+     * Reset password for uses
+     * @param string $email
+     * @return boolean
+     */
     public function requestPasswordReset($email){
         $user = $this->box->getUser($email, true);
         $guid = $this->box->generateConfirmation($email, 'Reset Password');
@@ -298,11 +316,18 @@ class BoxOfficeClient
         return true;
     }
 
+    /**
+     * Return current user data
+     * @return array
+     */
     public function getCurrentUser()
     {
         return $this->user;
     }
 
+    /**
+     * Delete current login session from BoxOffice
+     */
     public function deleteSession()
     {
         if(empty($this->user) || empty($this->instance)) {
@@ -311,11 +336,19 @@ class BoxOfficeClient
         $this->box->deleteSession($this->user['id'], $this->instance['id']);
     }
 
+    /**
+     * Get initial login URL
+     * @return string
+     */
     public function loginUrl()
     {
         return $this->loginUrl;
     }
 
+    /**
+     * Error condition: not logged in
+     * @throws Exception
+     */
     public function noLogin()
     {
         throw new Exception("No Login!");
@@ -324,6 +357,9 @@ class BoxOfficeClient
         exit();
     }
 
+    /**
+     * Get current session token
+     */
     public function getToken()
     {
         return $this->session;

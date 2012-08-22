@@ -18,14 +18,16 @@ class BoxOffice
     {
         $now = gmdate('Y-m-d');
         // FIXME: not lookup by password!
-        $sql = 'SELECT * FROM users WHERE email = :email AND hash = :password AND deleted=0';
+        $sql = 'SELECT * FROM users WHERE email = :email AND deleted=0';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
-        $sth->bindParam(':password', $password, PDO::PARAM_STR);
         $sth->execute();
-        $user = $sth->fetchAll(PDO::FETCH_ASSOC);
         $sql = 'INSERT INTO logins (date_created, email, status) VALUES (:date_created, :email, :status)';
         $sth = $this->dbh->prepare($sql);
+        $user = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if(!crypt($password, $user[0]['hash']) === $user[0]['hash']) {
+            $user = false;
+        }
         if (empty($user)) {
             $status = 'Login Failed';
             $sth->bindParam(':date_created', $now, PDO::PARAM_STR);
@@ -262,6 +264,11 @@ class BoxOffice
 
     }
 
+    protected function hashPassword($password)
+    {
+        return crypt($password, '$2y$'.base64_encode(mcrypt_create_iv(22)).'$');
+    }
+
     protected $user_params = array("first_name", "last_name", "company", "remote_id", "photo");
 
     /**
@@ -274,9 +281,7 @@ class BoxOffice
      */
     function registerUser($email, $hash, $data, $status = 'Pending Confirmation')
     {
-
         if (!$this->getUser($email, false)) {
-
             $now = gmdate('Y-m-d H:i:s');
             $params_i = implode(" ,", $this->user_params);
             $params_v = implode(" ,:", $this->user_params);
@@ -287,7 +292,7 @@ class BoxOffice
             $sth->bindParam(':now', $now, PDO::PARAM_STR);
             $sth->bindParam(':status', $status, PDO::PARAM_STR);
             // FIXME: encrypt password
-            $sth->bindParam(':password', $password, PDO::PARAM_STR);
+            $sth->bindParam(':password', $this->hashPassword($password), PDO::PARAM_STR);
 
             foreach($this->user_params as $key) {
                 if(isset($data[$key])) {

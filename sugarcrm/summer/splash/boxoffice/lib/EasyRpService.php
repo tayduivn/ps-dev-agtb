@@ -54,9 +54,6 @@ class EasyRpService
 			return $result['result'];
 		}
 		return NULL;
-
-// 	    $req_data = array(array("method" => "identitytoolkit.relyingparty.createAuthUrl", "id" => "identitytoolkit.relyingparty.createAuthUrl",
-// 	    		"params" => $gitk, "jsonrpc" => "2.0", "key" => "identitytoolkit.relyingparty.createAuthUrl", "apiVersion" => "v1"));
 	}
 
 	public function verify($continueUri, $response)

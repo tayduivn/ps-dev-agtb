@@ -9,7 +9,6 @@ $app = new Slim();
 $app->config(array('debug' => true));
 error_reporting(E_ALL &~ E_STRICT);
 restore_error_handler();
-define("GOOGLE_API_KEY", 'AIzaSyDT95_zUPd97kTvd73HDD9TlYY9ds6OCvo');
 $box = BoxOfficeClient::getInstance();
 
 /**
@@ -18,26 +17,29 @@ $box = BoxOfficeClient::getInstance();
 $app->get('/rest/users/callback', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'text/html;charset=utf-8');
-    $api = new EasyRpService(GOOGLE_API_KEY);
-    $result = $api->verify("http://localhost:8888/sugar66/summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
-    // TODO: check if result is OK
-    $email = $result['verifiedEmail'];
-    session_destroy();
-    session_start();
-    if($box->getUser($email, false)) {
-        // existing user
-        $data = $box->authenticateUser($email, null, $result['identifier']);
+    $api = new EasyRpService($box->getSetting('google_key'));
+    $result = $api->verify($box->getSetting('top_url')."summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
+    if(empty($result['verifiedEmail'])) {
+        $data = json_encode(array("error" => "Failed to authenticate. Please contact support."));
     } else {
-        // new user
-        $box->createRemoteUser($email, array("first_name" => $result['firstName'], "last_name" => $result['lastName'],
-            "photo" => $result['photoUrl'], "remote_id" => $result['identifier']
-            ));
-        $data = $box->authenticateUser($email, null, $result['identifier']);
-    }
-    if($data['user']['status'] == 'Active') {
-        $data = json_encode($data);
-    } else {
-        $data = json_encode(array("error" => "Your account is not active. Please contact support."));
+        $email = $result['verifiedEmail'];
+        session_destroy();
+        session_start();
+        if($box->getUser($email, false)) {
+            // existing user
+            $data = $box->authenticateUser($email, null, $result['identifier']);
+        } else {
+            // new user
+            $box->createRemoteUser($email, array("first_name" => $result['firstName'], "last_name" => $result['lastName'],
+                "photo" => $result['photoUrl'], "remote_id" => $result['identifier']
+                ));
+            $data = $box->authenticateUser($email, null, $result['identifier']);
+        }
+        if($data['user']['status'] == 'Active') {
+            $data = json_encode($data);
+        } else {
+            $data = json_encode(array("error" => "Your account is not active. Please contact support."));
+        }
     }
     echo <<<END
 <script language="javascript">
@@ -54,8 +56,8 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
     $password = $app->request()->params('password');
     $email = $app->request()->params('email');
 
-    $api = new EasyRpService(GOOGLE_API_KEY);
-    $res = $api->getUrl($email, "http://localhost:8888/sugar66/summer/splash/rest/users/callback");
+    $api = new EasyRpService($box->getSetting('google_key'));
+    $res = $api->getUrl($email, $box->getSetting('top_url')."summer/splash/rest/users/callback");
     if($res) {
         echo json_encode(array("popup" => $res['authUri']));
         return;
