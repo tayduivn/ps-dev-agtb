@@ -65,26 +65,18 @@ class MailerApi extends ModuleApi
         require_once("include/ytree/Tree.php");
         require_once("include/ytree/ExtNode.php");
 
-        global $mod_strings;
         global $app_strings;
         global $current_user;
-        global $sugar_config;
-        global $locale;
         global $timedate;
-        global $beanList;
-        global $beanFiles;
 
         $email = new Email();
         $email->email2init();
-        $ie = new InboundEmail();
-        $ie->email = $email;
-
-        $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: sendEmail");
-
-        $sea = new SugarEmailAddress();
 
         $email->type = 'out';
         $email->status = 'sent';
+
+        $ie = new InboundEmail();
+        $ie->email = $email;
 
         if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])) {// && isset($_REQUEST['saveDraft']) && !empty($_REQUEST['saveDraft'])) {
             $email->retrieve($_REQUEST['email_id']); // uid is GUID in draft cases
@@ -96,7 +88,7 @@ class MailerApi extends ModuleApi
 
         /*---------------------------------------------------------------*/
 
-        $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: fillComposeCache");
+        $GLOBALS['log']->error("********** EMAIL 2.0 - Asynchronous - at: fillComposeCache");
         $out = array();
         $email_templates_arr = $email->et->getEmailTemplatesArray();
         natcasesort($email_templates_arr);
@@ -170,6 +162,44 @@ class MailerApi extends ModuleApi
             }
         }
 
+
+        /* Format Recipient Addresses As Comma-Separated strings */
+
+        $s = "";
+        for ($j=0; $j<count($sendto); $j++) {
+            $rec = $sendto[$j];
+            if (!empty($rec['display']))
+                $s .= trim($rec['display'])." ";
+            $s .= '<'.$rec['email'].'>';
+            if ($j+1<count($sendto)) $s .= ',';
+        }
+        $sendto_addresses = htmlspecialchars($s);
+
+        $s = "";
+        for ($j=0; $j<count($sendcc); $j++) {
+            $rec = $sendcc[$j];
+            if (!empty($rec['display']))
+                $s .= trim($rec['display'])." ";
+            $s .= '<'.$rec['email'].'>';
+            if ($j+1<count($sendcc)) $s .= ',';
+        }
+        $sendcc_addresses = htmlspecialchars($s);
+
+        $s = "";
+        for ($j=0; $j<count($sendbcc); $j++) {
+            $rec = $sendbcc[$j];
+            if (!empty($rec['display']))
+                $s .= trim($rec['display'])." ";
+            $s .= '<'.$rec['email'].'>';
+            if ($j+1<count($sendbcc)) $s .= ',';
+        }
+        $sendbcc_addresses= htmlspecialchars($s);
+
+
+
+        /* Add in any other Variables */
+
+
         //------  email2send looks for 'saveDraft' entry to determine if Save Draft operation else SendMail
         // ( isset($request['saveDraft']) );
 
@@ -189,55 +219,45 @@ class MailerApi extends ModuleApi
         // if(!empty($request['templateAttachments'])) {
 
 
+
+
+
         $request = array(
+
             'sendSubject'       => $args['subject'],
             'sendDescription'   => urldecode($args['html_body']),
-            'sendTo'            => $sendto,
-            'sendCc'            => $sendcc,
-            'sendBcc'           => $sendbcc,
+            'sendTo'            => $sendto_addresses,
+            'sendCc'            => $sendcc_addresses,
+            'sendBcc'           => $sendbcc_addresses,
+
+            /*******/
+
+            'setEditor'         => '1',
+            'saveToSugar'       => '1',
+
+            // 'composeType'       => '',   // isset  required/missing in Email module
+
+            'teamIds'           => '1,East,West',
+            'primaryteam'       => '1',
+
+            'saveToSugar'       => '1',
+            'parent_type'       => 'Opportunities',
+            'parent_id'         => '3757f584-19ef-2183-2691-502bf62d02a4',
+
+
+            // 'saveDraft'         => 'true',
+
         );
+
+        // Send From User Account
+        if (count($out['fromAccounts']) > 0) {
+            $request['fromAccount']  = $out['fromAccounts'][0]['value'];
+        }
+
+
 
 
         $_REQUEST = array_merge($_REQUEST, $request);
-
-        $s = "";
-        for ($j=0; $j<count($sendto); $j++) {
-            $rec = $sendto[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendto)) $s .= ',';
-        }
-        $_REQUEST['sendTo'] = htmlspecialchars($s);
-        $request['sendTo'] = htmlspecialchars($s);
-
-        $s = "";
-        for ($j=0; $j<count($sendcc); $j++) {
-            $rec = $sendcc[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendcc)) $s .= ',';
-        }
-        $_REQUEST['sendCc'] = htmlspecialchars($s);
-        $request['sendCc'] = htmlspecialchars($s);
-
-        $s = "";
-        for ($j=0; $j<count($sendbcc); $j++) {
-            $rec = $sendbcc[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendbcc)) $s .= ',';
-        }
-        $_REQUEST['sendBcc'] = htmlspecialchars($s);
-        $request['sendBcc'] = htmlspecialchars($s);
-
-        if (count($out['fromAccounts']) > 0) {
-            $_REQUEST['fromAccount']  = $out['fromAccounts'][0]['value'];
-        }
-
-        $_REQUEST['setEditor'] = '1';
 
         $sendResult = $email->email2Send($request);
 
