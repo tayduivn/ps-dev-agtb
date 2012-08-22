@@ -124,7 +124,7 @@
         }
         var dateString = localHour + ":" + localMinutes + " " + ampm;
 
-        var _title = this.$("h2");
+        var _title = this.$("h4");
 
         _title.html(dateString);
 

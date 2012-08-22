@@ -1,7 +1,7 @@
-<div class="widget">
+<div class="block widget">
 
     <div class="crunchbase-widget">
-        <h2>Overview</h2>
+        <h4>Overview</h4>
         {{#if image}}
             <img src="http://crunchbase.com/{{image}}"/>
         {{/if}}
