@@ -6,7 +6,7 @@
   <ul class="nav nav-tabs results">
     {{#each collection.models}}
     <li style="">
-      <a href="#log1" data-toggle="tab"><span class="label label-log">{{attributes.activity_data.action}}</span></a>
+      <a href="#log1" data-toggle="tab" class="pull-left"><span class="label label-{{attributes.activity_data.action}}">{{attributes.activity_data.action}}</span></a>
       <p>
         <a href="#Contacts/4c3fe072-017d-0aed-d374-503528864823">{{attributes.created_by_name}}</a> {{attributes.activity_data.action}} <em>{{attributes.activity_data.field_name}}</em>
         
