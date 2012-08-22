@@ -1,33 +1,33 @@
-(function (app) {
+(function(app) {
     var base_metadata = {
-        _hash:'',
-        "modules":{
-            "Login":{
-                "fields":{
-                    "username":{
-                        "name":"username",
-                        "type":"varchar",
-                        "required":true
+        _hash: '',
+        "modules": {
+            "Login": {
+                "fields": {
+                    "username": {
+                        "name": "username",
+                        "type": "varchar",
+                        "required": true
                     },
-                    "password":{
-                        "name":"password",
-                        "type":"password",
-                        "required":true
+                    "password": {
+                        "name": "password",
+                        "type": "password",
+                        "required": true
                     }
                 },
-                "views":{
-                    "loginView":{
-                        "meta":{
-                            "buttons":[
+                "views": {
+                    "loginView": {
+                        "meta": {
+                            "buttons": [
                                 {
-                                    name:"login_button",
-                                    type:"button",
-                                    label:"Log In",
-                                    'class':"login-submit",
-                                    value:"login",
-                                    primary:true,
-                                    events:{
-                                        click:"function(){ var self = this; " +
+                                    name: "login_button",
+                                    type: "button",
+                                    label: "Log In",
+                                    'class': "login-submit",
+                                    value: "login",
+                                    primary: true,
+                                    events: {
+                                        click: "function(){ var self = this; " +
                                             "if(this.model.isValid()) {" +
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
@@ -47,30 +47,30 @@
                                     }
                                 },
                                 {
-                                    name:"signup_button",
-                                    type:"button",
-                                    label:"Sign Up",
-                                    value:"signup",
-                                    'class':'pull-left',
-                                    events:{
-                                        click:"function(){ " +
+                                    name: "signup_button",
+                                    type: "button",
+                                    label: "Sign Up",
+                                    value: "signup",
+                                    'class': 'pull-left',
+                                    events: {
+                                        click: "function(){ " +
                                             "app.router.navigate('#signup');" +
                                             "app.router.start();" +
                                             "}"
                                     }
                                 }
                             ],
-                            "panels":[
+                            "panels": [
                                 {
-                                    "label":"Login",
-                                    "fields":[
-                                        {name:"username", label:"Username"},
-                                        {name:"password", label:"Password"}
+                                    "label": "Login",
+                                    "fields": [
+                                        {name: "username", label: "Username"},
+                                        {name: "password", label: "Password"}
                                     ]
                                 }
                             ]
                         },
-                        controller:"{" +
+                        controller: "{" +
                             "render: function(data) { " +
                             "if (app.config && app.config.logoURL) {" +
                             "this.logoURL=app.config.logoURL" +
@@ -82,32 +82,32 @@
                             "}"
                     }
                 },
-                "layouts":{
-                    "login":{
-                        "meta":{
+                "layouts": {
+                    "login": {
+                        "meta": {
                             //Default layout is a single view
-                            "type":"simple",
-                            "components":[
-                                {view:"loginView"}
+                            "type": "simple",
+                            "components": [
+                                {view: "loginView"}
                             ]
                         }
                     },
-                    "signup":{
-                        "meta":{
+                    "signup": {
+                        "meta": {
                             //Default layout is a single view
-                            "type":"simple",
-                            "components":[
-                                {view:"signupView"}
+                            "type": "simple",
+                            "components": [
+                                {view: "signupView"}
                             ]
                         }
                     }
                 }
             },
-            "Error":{
-                "views":{
-                    "errorView":{
-                        "meta":{},
-                        "template":"<div class='container-fluid'>" +
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template": "<div class='container-fluid'>" +
                             "<div class='row-fluid'>" +
                             "<div class='span7'>" +
                             "<div class='card2'>" +
@@ -122,7 +122,7 @@
                             "</div>" +
                             "</div>" +
                             "</div>",
-                        controller:"{" +
+                        controller: "{" +
                             "initialize: function(options) { " +
                             "app.view.View.prototype.initialize.call(this, options);" +
                             "}," +
@@ -160,87 +160,87 @@
                             "}"
                     }
                 },
-                "layouts":{
-                    "error":{
-                        "meta":{
-                            "type":"simple",
-                            "components":[
-                                {view:"errorView"}
+                "layouts": {
+                    "error": {
+                        "meta": {
+                            "type": "simple",
+                            "components": [
+                                {view: "errorView"}
                             ]
                         }
                     }
                 }
             },
-            "Signup":{
-                "fields":{
-                    "first_name":{
-                        "name":"first_name",
-                        "type":"varchar",
-                        "required":true
+            "Signup": {
+                "fields": {
+                    "first_name": {
+                        "name": "first_name",
+                        "type": "varchar",
+                        "required": true
                     },
-                    "last_name":{
-                        "name":"last_name",
-                        "type":"varchar",
-                        "required":true
+                    "last_name": {
+                        "name": "last_name",
+                        "type": "varchar",
+                        "required": true
                     },
-                    "email":{
-                        "name":"email",
-                        "type":"email",
-                        "required":true
+                    "email": {
+                        "name": "email",
+                        "type": "email",
+                        "required": true
                     },
-                    "phone_work":{
-                        "name":"phone_work",
-                        "type":"phone"
+                    "phone_work": {
+                        "name": "phone_work",
+                        "type": "phone"
                     },
-                    "state":{
-                        "name":"state",
-                        "type":"enum",
-                        "options":"state_dom"
+                    "state": {
+                        "name": "state",
+                        "type": "enum",
+                        "options": "state_dom"
                     },
-                    "country":{
-                        "name":"country",
-                        "type":"enum",
-                        "options":"countries_dom",
-                        "required":true
+                    "country": {
+                        "name": "country",
+                        "type": "enum",
+                        "options": "countries_dom",
+                        "required": true
                     },
-                    "company":{
-                        "name":"company",
-                        "type":"varchar",
-                        "required":true
+                    "company": {
+                        "name": "company",
+                        "type": "varchar",
+                        "required": true
                     },
-                    "jobtitle":{
-                        "name":"jobtitle",
-                        "type":"varchar"
+                    "jobtitle": {
+                        "name": "jobtitle",
+                        "type": "varchar"
                     },
-                    "hr1":{
-                        "name":"hr1",
-                        "type":"hr"
+                    "hr1": {
+                        "name": "hr1",
+                        "type": "hr"
                     }
                 },
-                "views":{
-                    "signupView":{
-                        "meta":{
-                            "buttons":[
+                "views": {
+                    "signupView": {
+                        "meta": {
+                            "buttons": [
                                 {
-                                    name:"cancel_button",
-                                    type:"button",
-                                    label:"Cancel",
-                                    value:"signup",
-                                    primary:false,
-                                    events:{
-                                        click:"function(){" +
+                                    name: "cancel_button",
+                                    type: "button",
+                                    label: "Cancel",
+                                    value: "signup",
+                                    primary: false,
+                                    events: {
+                                        click: "function(){" +
                                             "app.router.goBack();" +
                                             "}"
                                     }
                                 },
                                 {
-                                    name:"signup_button",
-                                    type:"button",
-                                    label:"Sign Up",
-                                    value:"signup",
-                                    primary:true,
-                                    events:{
-                                        click:"" +
+                                    name: "signup_button",
+                                    type: "button",
+                                    label: "Sign Up",
+                                    value: "signup",
+                                    primary: true,
+                                    events: {
+                                        click: "" +
                                             "function(){ var self = this; " +
                                             "var oEmail = this.model.get(\"email\");" +
                                             "if (oEmail) {" +
@@ -280,25 +280,25 @@
                                     }
                                 }
                             ],
-                            "panels":[
+                            "panels": [
                                 {
-                                    "label":"Login",
-                                    "fields":[
-                                        {name:"first_name", label:"First name"},
-                                        {name:"last_name", label:"Last name"},
-                                        {name:"hr1", label:""},
-                                        {name:"email", label:"Email"},
-                                        {name:"phone_work", label:"(###) ###-#### (optional)"},
-                                        {name:"country", label:"Country"},
-                                        {name:"state", label:"State"},
-                                        {name:"hr1", label:""},
-                                        {name:"company", label:"Company"},
-                                        {name:"jobtitle", label:"Job title (optional)"}
+                                    "label": "Login",
+                                    "fields": [
+                                        {name: "first_name", label: "First name"},
+                                        {name: "last_name", label: "Last name"},
+                                        {name: "hr1", label: ""},
+                                        {name: "email", label: "Email"},
+                                        {name: "phone_work", label: "(###) ###-#### (optional)"},
+                                        {name: "country", label: "Country"},
+                                        {name: "state", label: "State"},
+                                        {name: "hr1", label: ""},
+                                        {name: "company", label: "Company"},
+                                        {name: "jobtitle", label: "Job title (optional)"}
                                     ]
                                 }
                             ]
                         },
-                        controller:"{" +
+                        controller: "{" +
                             "stateField: function() { return this.$el.find('select[name=state]'); }," +
                             "countryField: function() { return this.$el.find('select[name=country]'); }," +
                             "toggleStateField: function() {" +
@@ -324,35 +324,35 @@
                 },
                 //Layouts map an action to a lyout that defines a set of views and how to display them
                 //Different clients will get different layouts for the same actions
-                "layouts":{
-                    "signup":{
-                        "meta":{
+                "layouts": {
+                    "signup": {
+                        "meta": {
                             //Default layout is a single view
-                            "type":"simple",
-                            "components":[
-                                {view:"signupView"}
+                            "type": "simple",
+                            "components": [
+                                {view: "signupView"}
                             ]
                         }
                     }
                 }
             }
         },
-        'fields':{
-            "text":{
-                "templates":{
-                    "loginView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+        'fields': {
+            "text": {
+                "templates": {
+                    "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
-                    "signupView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 }
             },
-            "password":{
-                "templates":{
-                    "loginView":"<div class=\"control-group\">" +
+            "password": {
+                "templates": {
+                    "loginView": "<div class=\"control-group\">" +
                         "<label class=\"hide\">{{label}}</label>" +
                         "<div class=\"controls\">\n" +
                         "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">\n  <\/div>\n" +
@@ -360,26 +360,26 @@
                         "</div>"
                 }
             },
-            "button":{
-                "templates":{
-                    "default":"<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
+            "button": {
+                "templates": {
+                    "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
                         "{{else}}javascript:void(0){{/if}}\" class=\"btn {{def.class}} {{#if def.primary}}btn-primary{{/if}}\">" +
                         "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
                 }
             },
-            "hr":{
-                "templates":{
-                    "default":"<hr>\n"
+            "hr": {
+                "templates": {
+                    "default": "<hr>\n"
                 }
             },
-            "enum":{
-                "templates":{
-                    "signupView":"<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
+            "enum": {
+                "templates": {
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\" for=\"input01\">{{label}}<\/label> " +
                         "<select data-placeholder=\"{{label}}\" name=\"{{name}}\"><option value=\"\" selected></option>{{#eachOptions def.options}}<option value=\"{{{this.key}}}\" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
-                    "default":""
+                    "default": ""
                 },
-                controller:"{" +
+                controller: "{" +
                     "fieldTag:\"select\",\n" +
                     "render:function(){" +
                     "   this.app.view.Field.prototype.render.call(this);" +
@@ -388,35 +388,35 @@
                     "}\n" +
                     "}"
             },
-            "email":{
-                "templates":{
-                    "loginView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+            "email": {
+                "templates": {
+                    "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
-                    "signupView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center textField\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 }
             },
-            "phone":{
-                "templates":{
-                    "loginView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+            "phone": {
+                "templates": {
+                    "loginView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>",
-                    "signupView":"<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
+                    "signupView": "<div class=\"control-group\"><label class=\"hide\">{{label}}<\/label> " +
                         "<div class=\"controls\">\n" +
                         "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"></div>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 }
             }
         },
-        'views':{
-            "loginView":{
-                templates:{
-                    "loginView":"<form name='{{name}}'>" +
+        'views': {
+            "loginView": {
+                templates: {
+                    "loginView": "<form name='{{name}}'>" +
                         "<div class=\"container welcome\">\n" +
                         "<div class=\"row\">\n" +
                         "<div class=\"span4 offset4 thumbnail\">\n" +
@@ -442,9 +442,9 @@
                         "</form>"
                 }
             },
-            "footer":{
-                templates:{
-                    "footer":"<footer>\n" +
+            "footer": {
+                templates: {
+                    "footer": "<footer>\n" +
                         "    <div class=\"row-fluid\">\n" +
                         "        <div class=\"span3\"><a href=\"\" class=\"logo\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</a></div>\n" +
                         "        <div class=\"span9\">\n" +
@@ -484,9 +484,9 @@
                         "</div>\n"
                 }
             },
-            "signupView":{
-                templates:{
-                    "signupView":"<form name='{{name}}'>" +
+            "signupView": {
+                templates: {
+                    "signupView": "<form name='{{name}}'>" +
                         "<div class=\"container welcome\">\n" +
                         "<div class=\"row\">\n" +
                         "<div class=\"span4 offset4 thumbnail\">\n" +
@@ -511,9 +511,9 @@
                         "</form>"
                 }
             },
-            "subnav":{
-                "templates":{
-                    "subnav":"<div class=\"subnav\">" +
+            "subnav": {
+                "templates": {
+                    "subnav": "<div class=\"subnav\">" +
                         "<div class=\"btn-toolbar pull-left\">" +
                         "<h1>{{fieldWithName this \"name\"}}</h1>" +
                         "</div>" +
@@ -527,9 +527,9 @@
                         "</div>"
                 }
             },
-            "errorView":{
-                "templates":{
-                    "errorView":"<div class='container-fluid'>" +
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
                         "<div class='row-fluid'>" +
                         "<div class='span7'>" +
                         "<div class='card2'>" +
@@ -547,316 +547,316 @@
                 }
             }
         },
-        "appListStrings":{
-            "state_dom":{
-                "AL":"Alabama",
-                "AK":"Alaska",
-                "AZ":"Arizona",
-                "AR":"Arkansas",
-                "CA":"California",
-                "CO":"Colorado",
-                "CT":"Connecticut",
-                "DE":"Delaware",
-                "DC":"District Of Columbia",
-                "FL":"Florida",
-                "GA":"Georgia",
-                "HI":"Hawaii",
-                "ID":"Idaho",
-                "IL":"Illinois",
-                "IN":"Indiana",
-                "IA":"Iowa",
-                "KS":"Kansas",
-                "KY":"Kentucky",
-                "LA":"Louisiana",
-                "ME":"Maine",
-                "MD":"Maryland",
-                "MA":"Massachusetts",
-                "MI":"Michigan",
-                "MN":"Minnesota",
-                "MS":"Mississippi",
-                "MO":"Missouri",
-                "MT":"Montana",
-                "NE":"Nebraska",
-                "NV":"Nevada",
-                "NH":"New Hampshire",
-                "NJ":"New Jersey",
-                "NM":"New Mexico",
-                "NY":"New York",
-                "NC":"North Carolina",
-                "ND":"North Dakota",
-                "OH":"Ohio",
-                "OK":"Oklahoma",
-                "OR":"Oregon",
-                "PA":"Pennsylvania",
-                "RI":"Rhode Island",
-                "SC":"South Carolina",
-                "SD":"South Dakota",
-                "TN":"Tennessee",
-                "TX":"Texas",
-                "UT":"Utah",
-                "VT":"Vermont",
-                "VA":"Virginia ",
-                "WA":"Washington",
-                "WV":"West Virginia",
-                "WI":"Wisconsin",
-                "WY":"Wyoming"
+        "appListStrings": {
+            "state_dom": {
+                "AL": "Alabama",
+                "AK": "Alaska",
+                "AZ": "Arizona",
+                "AR": "Arkansas",
+                "CA": "California",
+                "CO": "Colorado",
+                "CT": "Connecticut",
+                "DE": "Delaware",
+                "DC": "District Of Columbia",
+                "FL": "Florida",
+                "GA": "Georgia",
+                "HI": "Hawaii",
+                "ID": "Idaho",
+                "IL": "Illinois",
+                "IN": "Indiana",
+                "IA": "Iowa",
+                "KS": "Kansas",
+                "KY": "Kentucky",
+                "LA": "Louisiana",
+                "ME": "Maine",
+                "MD": "Maryland",
+                "MA": "Massachusetts",
+                "MI": "Michigan",
+                "MN": "Minnesota",
+                "MS": "Mississippi",
+                "MO": "Missouri",
+                "MT": "Montana",
+                "NE": "Nebraska",
+                "NV": "Nevada",
+                "NH": "New Hampshire",
+                "NJ": "New Jersey",
+                "NM": "New Mexico",
+                "NY": "New York",
+                "NC": "North Carolina",
+                "ND": "North Dakota",
+                "OH": "Ohio",
+                "OK": "Oklahoma",
+                "OR": "Oregon",
+                "PA": "Pennsylvania",
+                "RI": "Rhode Island",
+                "SC": "South Carolina",
+                "SD": "South Dakota",
+                "TN": "Tennessee",
+                "TX": "Texas",
+                "UT": "Utah",
+                "VT": "Vermont",
+                "VA": "Virginia ",
+                "WA": "Washington",
+                "WV": "West Virginia",
+                "WI": "Wisconsin",
+                "WY": "Wyoming"
             },
-            "countries_dom":{
-                ABU_DHABI:"ABU DHABI",
-                ADEN:"ADEN",
-                AFGHANISTAN:"AFGHANISTAN",
-                ALBANIA:"ALBANIA",
-                ALGERIA:"ALGERIA",
-                AMERICAN_SAMOA:"AMERICAN SAMOA",
-                ANDORRA:"ANDORRA",
-                ANGOLA:"ANGOLA",
-                ANTARCTICA:"ANTARCTICA",
-                ANTIGUA:"ANTIGUA",
-                ARGENTINA:"ARGENTINA",
-                ARMENIA:"ARMENIA",
-                ARUBA:"ARUBA",
-                AUSTRALIA:"AUSTRALIA",
-                AUSTRIA:"AUSTRIA",
-                AZERBAIJAN:"AZERBAIJAN",
-                BAHAMAS:"BAHAMAS",
-                BAHRAIN:"BAHRAIN",
-                BANGLADESH:"BANGLADESH",
-                BARBADOS:"BARBADOS",
-                BELARUS:"BELARUS",
-                BELGIUM:"BELGIUM",
-                BELIZE:"BELIZE",
-                BENIN:"BENIN",
-                BERMUDA:"BERMUDA",
-                BHUTAN:"BHUTAN",
-                BOLIVIA:"BOLIVIA",
-                BOSNIA:"BOSNIA",
-                BOTSWANA:"BOTSWANA",
-                BOUVET_ISLAND:"BOUVET ISLAND",
-                BRAZIL:"BRAZIL",
-                BRITISH_ANTARCTICA_TERRITORY:"BRITISH ANTARCTICA TERRITORY",
-                BRITISH_INDIAN_OCEAN_TERRITORY:"BRITISH INDIAN OCEAN TERRITORY",
-                BRITISH_VIRGIN_ISLANDS:"BRITISH VIRGIN ISLANDS",
-                BRITISH_WEST_INDIES:"BRITISH WEST INDIES",
-                BRUNEI:"BRUNEI",
-                BULGARIA:"BULGARIA",
-                BURKINA_FASO:"BURKINA FASO",
-                BURUNDI:"BURUNDI",
-                CAMBODIA:"CAMBODIA",
-                CAMEROON:"CAMEROON",
-                CANADA:"CANADA",
-                CANAL_ZONE:"CANAL ZONE",
-                CANARY_ISLAND:"CANARY ISLAND",
-                CAPE_VERDI_ISLANDS:"CAPE VERDI ISLANDS",
-                CAYMAN_ISLANDS:"CAYMAN ISLANDS",
-                CEVLON:"CEVLON",
-                CHAD:"CHAD",
-                CHANNEL_ISLAND_UK:"CHANNEL ISLAND UK",
-                CHILE:"CHILE",
-                CHINA:"CHINA",
-                CHRISTMAS_ISLAND:"CHRISTMAS ISLAND",
-                COCOS_KEELING_ISLAND:"COCOS (KEELING) ISLAND",
-                COLOMBIA:"COLOMBIA",
-                COMORO_ISLANDS:"COMORO ISLANDS",
-                CONGO:"CONGO",
-                CONGO_KINSHASA:"CONGO KINSHASA",
-                COOK_ISLANDS:"COOK ISLANDS",
-                COSTA_RICA:"COSTA RICA",
-                CROATIA:"CROATIA",
-                CUBA:"CUBA",
-                CURACAO:"CURACAO",
-                CYPRUS:"CYPRUS",
-                CZECH_REPUBLIC:"CZECH REPUBLIC",
-                DAHOMEY:"DAHOMEY",
-                DENMARK:"DENMARK",
-                DJIBOUTI:"DJIBOUTI",
-                DOMINICA:"DOMINICA",
-                DOMINICAN_REPUBLIC:"DOMINICAN REPUBLIC",
-                DUBAI:"DUBAI",
-                ECUADOR:"ECUADOR",
-                EGYPT:"EGYPT",
-                EL_SALVADOR:"EL SALVADOR",
-                EQUATORIAL_GUINEA:"EQUATORIAL GUINEA",
-                ESTONIA:"ESTONIA",
-                ETHIOPIA:"ETHIOPIA",
-                FAEROE_ISLANDS:"FAEROE ISLANDS",
-                FALKLAND_ISLANDS:"FALKLAND ISLANDS",
-                FIJI:"FIJI",
-                FINLAND:"FINLAND",
-                FRANCE:"FRANCE",
-                FRENCH_GUIANA:"FRENCH GUIANA",
-                FRENCH_POLYNESIA:"FRENCH POLYNESIA",
-                GABON:"GABON",
-                GAMBIA:"GAMBIA",
-                GEORGIA:"GEORGIA",
-                GERMANY:"GERMANY",
-                GHANA:"GHANA",
-                GIBRALTAR:"GIBRALTAR",
-                GREECE:"GREECE",
-                GREENLAND:"GREENLAND",
-                GUADELOUPE:"GUADELOUPE",
-                GUAM:"GUAM",
-                GUATEMALA:"GUATEMALA",
-                GUINEA:"GUINEA",
-                GUYANA:"GUYANA",
-                HAITI:"HAITI",
-                HONDURAS:"HONDURAS",
-                HONG_KONG:"HONG KONG",
-                HUNGARY:"HUNGARY",
-                ICELAND:"ICELAND",
-                IFNI:"IFNI",
-                INDIA:"INDIA",
-                INDONESIA:"INDONESIA",
-                IRAN:"IRAN",
-                IRAQ:"IRAQ",
-                IRELAND:"IRELAND",
-                ISRAEL:"ISRAEL",
-                ITALY:"ITALY",
-                IVORY_COAST:"IVORY COAST",
-                JAMAICA:"JAMAICA",
-                JAPAN:"JAPAN",
-                JORDAN:"JORDAN",
-                KAZAKHSTAN:"KAZAKHSTAN",
-                KENYA:"KENYA",
-                KOREA:"KOREA",
-                KOREA_SOUTH:"KOREA, SOUTH",
-                KUWAIT:"KUWAIT",
-                KYRGYZSTAN:"KYRGYZSTAN",
-                LAOS:"LAOS",
-                LATVIA:"LATVIA",
-                LEBANON:"LEBANON",
-                LEEWARD_ISLANDS:"LEEWARD ISLANDS",
-                LESOTHO:"LESOTHO",
-                LIBYA:"LIBYA",
-                LIECHTENSTEIN:"LIECHTENSTEIN",
-                LITHUANIA:"LITHUANIA",
-                LUXEMBOURG:"LUXEMBOURG",
-                MACAO:"MACAO",
-                MACEDONIA:"MACEDONIA",
-                MADAGASCAR:"MADAGASCAR",
-                MALAWI:"MALAWI",
-                MALAYSIA:"MALAYSIA",
-                MALDIVES:"MALDIVES",
-                MALI:"MALI",
-                MALTA:"MALTA",
-                MARTINIQUE:"MARTINIQUE",
-                MAURITANIA:"MAURITANIA",
-                MAURITIUS:"MAURITIUS",
-                MELANESIA:"MELANESIA",
-                MEXICO:"MEXICO",
-                MOLDOVIA:"MOLDOVIA",
-                MONACO:"MONACO",
-                MONGOLIA:"MONGOLIA",
-                MOROCCO:"MOROCCO",
-                MOZAMBIQUE:"MOZAMBIQUE",
-                MYANAMAR:"MYANAMAR",
-                NAMIBIA:"NAMIBIA",
-                NEPAL:"NEPAL",
-                NETHERLANDS:"NETHERLANDS",
-                NETHERLANDS_ANTILLES:"NETHERLANDS ANTILLES",
-                NETHERLANDS_ANTILLES_NEUTRAL_ZONE:"NETHERLANDS ANTILLES NEUTRAL ZONE",
-                NEW_CALADONIA:"NEW CALADONIA",
-                NEW_HEBRIDES:"NEW HEBRIDES",
-                NEW_ZEALAND:"NEW ZEALAND",
-                NICARAGUA:"NICARAGUA",
-                NIGER:"NIGER",
-                NIGERIA:"NIGERIA",
-                NORFOLK_ISLAND:"NORFOLK ISLAND",
-                NORWAY:"NORWAY",
-                OMAN:"OMAN",
-                OTHER:"OTHER",
-                PACIFIC_ISLAND:"PACIFIC ISLAND",
-                PAKISTAN:"PAKISTAN",
-                PANAMA:"PANAMA",
-                PAPUA_NEW_GUINEA:"PAPUA NEW GUINEA",
-                PARAGUAY:"PARAGUAY",
-                PERU:"PERU",
-                PHILIPPINES:"PHILIPPINES",
-                POLAND:"POLAND",
-                PORTUGAL:"PORTUGAL",
-                PORTUGUESE_TIMOR:"PORTUGUESE TIMOR",
-                PUERTO_RICO:"PUERTO RICO",
-                QATAR:"QATAR",
-                REPUBLIC_OF_BELARUS:"REPUBLIC OF BELARUS",
-                REPUBLIC_OF_SOUTH_AFRICA:"REPUBLIC OF SOUTH AFRICA",
-                REUNION:"REUNION",
-                ROMANIA:"ROMANIA",
-                RUSSIA:"RUSSIA",
-                RWANDA:"RWANDA",
-                RYUKYU_ISLANDS:"RYUKYU ISLANDS",
-                SABAH:"SABAH",
-                SAN_MARINO:"SAN MARINO",
-                SAUDI_ARABIA:"SAUDI ARABIA",
-                SENEGAL:"SENEGAL",
-                SERBIA:"SERBIA",
-                SEYCHELLES:"SEYCHELLES",
-                SIERRA_LEONE:"SIERRA LEONE",
-                SINGAPORE:"SINGAPORE",
-                SLOVAKIA:"SLOVAKIA",
-                SLOVENIA:"SLOVENIA",
-                SOMALILIAND:"SOMALILIAND",
-                SOUTH_AFRICA:"SOUTH AFRICA",
-                SOUTH_YEMEN:"SOUTH YEMEN",
-                SPAIN:"SPAIN",
-                SPANISH_SAHARA:"SPANISH SAHARA",
-                SRI_LANKA:"SRI LANKA",
-                ST_KITTS_AND_NEVIS:"ST. KITTS AND NEVIS",
-                ST_LUCIA:"ST. LUCIA",
-                SUDAN:"SUDAN",
-                SURINAM:"SURINAM",
-                SW_AFRICA:"SW AFRICA",
-                SWAZILAND:"SWAZILAND",
-                SWEDEN:"SWEDEN",
-                SWITZERLAND:"SWITZERLAND",
-                SYRIA:"SYRIA",
-                TAIWAN:"TAIWAN",
-                TAJIKISTAN:"TAJIKISTAN",
-                TANZANIA:"TANZANIA",
-                THAILAND:"THAILAND",
-                TONGA:"TONGA",
-                TRINIDAD:"TRINIDAD",
-                TUNISIA:"TUNISIA",
-                TURKEY:"TURKEY",
-                UGANDA:"UGANDA",
-                UKRAINE:"UKRAINE",
-                UNITED_ARAB_EMIRATES:"UNITED ARAB EMIRATES",
-                UNITED_KINGDOM:"UNITED KINGDOM",
-                UPPER_VOLTA:"UPPER VOLTA",
-                URUGUAY:"URUGUAY",
-                US_PACIFIC_ISLAND:"US PACIFIC ISLAND",
-                US_VIRGIN_ISLANDS:"US VIRGIN ISLANDS",
-                USA:"USA",
-                UZBEKISTAN:"UZBEKISTAN",
-                VANUATU:"VANUATU",
-                VATICAN_CITY:"VATICAN CITY",
-                VENEZUELA:"VENEZUELA",
-                VIETNAM:"VIETNAM",
-                WAKE_ISLAND:"WAKE ISLAND",
-                WEST_INDIES:"WEST INDIES",
-                WESTERN_SAHARA:"WESTERN SAHARA",
-                YEMEN:"YEMEN",
-                ZAIRE:"ZAIRE",
-                ZAMBIA:"ZAMBIA",
-                ZIMBABWE:"ZIMBABWE"
+            "countries_dom": {
+                ABU_DHABI: "ABU DHABI",
+                ADEN: "ADEN",
+                AFGHANISTAN: "AFGHANISTAN",
+                ALBANIA: "ALBANIA",
+                ALGERIA: "ALGERIA",
+                AMERICAN_SAMOA: "AMERICAN SAMOA",
+                ANDORRA: "ANDORRA",
+                ANGOLA: "ANGOLA",
+                ANTARCTICA: "ANTARCTICA",
+                ANTIGUA: "ANTIGUA",
+                ARGENTINA: "ARGENTINA",
+                ARMENIA: "ARMENIA",
+                ARUBA: "ARUBA",
+                AUSTRALIA: "AUSTRALIA",
+                AUSTRIA: "AUSTRIA",
+                AZERBAIJAN: "AZERBAIJAN",
+                BAHAMAS: "BAHAMAS",
+                BAHRAIN: "BAHRAIN",
+                BANGLADESH: "BANGLADESH",
+                BARBADOS: "BARBADOS",
+                BELARUS: "BELARUS",
+                BELGIUM: "BELGIUM",
+                BELIZE: "BELIZE",
+                BENIN: "BENIN",
+                BERMUDA: "BERMUDA",
+                BHUTAN: "BHUTAN",
+                BOLIVIA: "BOLIVIA",
+                BOSNIA: "BOSNIA",
+                BOTSWANA: "BOTSWANA",
+                BOUVET_ISLAND: "BOUVET ISLAND",
+                BRAZIL: "BRAZIL",
+                BRITISH_ANTARCTICA_TERRITORY: "BRITISH ANTARCTICA TERRITORY",
+                BRITISH_INDIAN_OCEAN_TERRITORY: "BRITISH INDIAN OCEAN TERRITORY",
+                BRITISH_VIRGIN_ISLANDS: "BRITISH VIRGIN ISLANDS",
+                BRITISH_WEST_INDIES: "BRITISH WEST INDIES",
+                BRUNEI: "BRUNEI",
+                BULGARIA: "BULGARIA",
+                BURKINA_FASO: "BURKINA FASO",
+                BURUNDI: "BURUNDI",
+                CAMBODIA: "CAMBODIA",
+                CAMEROON: "CAMEROON",
+                CANADA: "CANADA",
+                CANAL_ZONE: "CANAL ZONE",
+                CANARY_ISLAND: "CANARY ISLAND",
+                CAPE_VERDI_ISLANDS: "CAPE VERDI ISLANDS",
+                CAYMAN_ISLANDS: "CAYMAN ISLANDS",
+                CEVLON: "CEVLON",
+                CHAD: "CHAD",
+                CHANNEL_ISLAND_UK: "CHANNEL ISLAND UK",
+                CHILE: "CHILE",
+                CHINA: "CHINA",
+                CHRISTMAS_ISLAND: "CHRISTMAS ISLAND",
+                COCOS_KEELING_ISLAND: "COCOS (KEELING) ISLAND",
+                COLOMBIA: "COLOMBIA",
+                COMORO_ISLANDS: "COMORO ISLANDS",
+                CONGO: "CONGO",
+                CONGO_KINSHASA: "CONGO KINSHASA",
+                COOK_ISLANDS: "COOK ISLANDS",
+                COSTA_RICA: "COSTA RICA",
+                CROATIA: "CROATIA",
+                CUBA: "CUBA",
+                CURACAO: "CURACAO",
+                CYPRUS: "CYPRUS",
+                CZECH_REPUBLIC: "CZECH REPUBLIC",
+                DAHOMEY: "DAHOMEY",
+                DENMARK: "DENMARK",
+                DJIBOUTI: "DJIBOUTI",
+                DOMINICA: "DOMINICA",
+                DOMINICAN_REPUBLIC: "DOMINICAN REPUBLIC",
+                DUBAI: "DUBAI",
+                ECUADOR: "ECUADOR",
+                EGYPT: "EGYPT",
+                EL_SALVADOR: "EL SALVADOR",
+                EQUATORIAL_GUINEA: "EQUATORIAL GUINEA",
+                ESTONIA: "ESTONIA",
+                ETHIOPIA: "ETHIOPIA",
+                FAEROE_ISLANDS: "FAEROE ISLANDS",
+                FALKLAND_ISLANDS: "FALKLAND ISLANDS",
+                FIJI: "FIJI",
+                FINLAND: "FINLAND",
+                FRANCE: "FRANCE",
+                FRENCH_GUIANA: "FRENCH GUIANA",
+                FRENCH_POLYNESIA: "FRENCH POLYNESIA",
+                GABON: "GABON",
+                GAMBIA: "GAMBIA",
+                GEORGIA: "GEORGIA",
+                GERMANY: "GERMANY",
+                GHANA: "GHANA",
+                GIBRALTAR: "GIBRALTAR",
+                GREECE: "GREECE",
+                GREENLAND: "GREENLAND",
+                GUADELOUPE: "GUADELOUPE",
+                GUAM: "GUAM",
+                GUATEMALA: "GUATEMALA",
+                GUINEA: "GUINEA",
+                GUYANA: "GUYANA",
+                HAITI: "HAITI",
+                HONDURAS: "HONDURAS",
+                HONG_KONG: "HONG KONG",
+                HUNGARY: "HUNGARY",
+                ICELAND: "ICELAND",
+                IFNI: "IFNI",
+                INDIA: "INDIA",
+                INDONESIA: "INDONESIA",
+                IRAN: "IRAN",
+                IRAQ: "IRAQ",
+                IRELAND: "IRELAND",
+                ISRAEL: "ISRAEL",
+                ITALY: "ITALY",
+                IVORY_COAST: "IVORY COAST",
+                JAMAICA: "JAMAICA",
+                JAPAN: "JAPAN",
+                JORDAN: "JORDAN",
+                KAZAKHSTAN: "KAZAKHSTAN",
+                KENYA: "KENYA",
+                KOREA: "KOREA",
+                KOREA_SOUTH: "KOREA, SOUTH",
+                KUWAIT: "KUWAIT",
+                KYRGYZSTAN: "KYRGYZSTAN",
+                LAOS: "LAOS",
+                LATVIA: "LATVIA",
+                LEBANON: "LEBANON",
+                LEEWARD_ISLANDS: "LEEWARD ISLANDS",
+                LESOTHO: "LESOTHO",
+                LIBYA: "LIBYA",
+                LIECHTENSTEIN: "LIECHTENSTEIN",
+                LITHUANIA: "LITHUANIA",
+                LUXEMBOURG: "LUXEMBOURG",
+                MACAO: "MACAO",
+                MACEDONIA: "MACEDONIA",
+                MADAGASCAR: "MADAGASCAR",
+                MALAWI: "MALAWI",
+                MALAYSIA: "MALAYSIA",
+                MALDIVES: "MALDIVES",
+                MALI: "MALI",
+                MALTA: "MALTA",
+                MARTINIQUE: "MARTINIQUE",
+                MAURITANIA: "MAURITANIA",
+                MAURITIUS: "MAURITIUS",
+                MELANESIA: "MELANESIA",
+                MEXICO: "MEXICO",
+                MOLDOVIA: "MOLDOVIA",
+                MONACO: "MONACO",
+                MONGOLIA: "MONGOLIA",
+                MOROCCO: "MOROCCO",
+                MOZAMBIQUE: "MOZAMBIQUE",
+                MYANAMAR: "MYANAMAR",
+                NAMIBIA: "NAMIBIA",
+                NEPAL: "NEPAL",
+                NETHERLANDS: "NETHERLANDS",
+                NETHERLANDS_ANTILLES: "NETHERLANDS ANTILLES",
+                NETHERLANDS_ANTILLES_NEUTRAL_ZONE: "NETHERLANDS ANTILLES NEUTRAL ZONE",
+                NEW_CALADONIA: "NEW CALADONIA",
+                NEW_HEBRIDES: "NEW HEBRIDES",
+                NEW_ZEALAND: "NEW ZEALAND",
+                NICARAGUA: "NICARAGUA",
+                NIGER: "NIGER",
+                NIGERIA: "NIGERIA",
+                NORFOLK_ISLAND: "NORFOLK ISLAND",
+                NORWAY: "NORWAY",
+                OMAN: "OMAN",
+                OTHER: "OTHER",
+                PACIFIC_ISLAND: "PACIFIC ISLAND",
+                PAKISTAN: "PAKISTAN",
+                PANAMA: "PANAMA",
+                PAPUA_NEW_GUINEA: "PAPUA NEW GUINEA",
+                PARAGUAY: "PARAGUAY",
+                PERU: "PERU",
+                PHILIPPINES: "PHILIPPINES",
+                POLAND: "POLAND",
+                PORTUGAL: "PORTUGAL",
+                PORTUGUESE_TIMOR: "PORTUGUESE TIMOR",
+                PUERTO_RICO: "PUERTO RICO",
+                QATAR: "QATAR",
+                REPUBLIC_OF_BELARUS: "REPUBLIC OF BELARUS",
+                REPUBLIC_OF_SOUTH_AFRICA: "REPUBLIC OF SOUTH AFRICA",
+                REUNION: "REUNION",
+                ROMANIA: "ROMANIA",
+                RUSSIA: "RUSSIA",
+                RWANDA: "RWANDA",
+                RYUKYU_ISLANDS: "RYUKYU ISLANDS",
+                SABAH: "SABAH",
+                SAN_MARINO: "SAN MARINO",
+                SAUDI_ARABIA: "SAUDI ARABIA",
+                SENEGAL: "SENEGAL",
+                SERBIA: "SERBIA",
+                SEYCHELLES: "SEYCHELLES",
+                SIERRA_LEONE: "SIERRA LEONE",
+                SINGAPORE: "SINGAPORE",
+                SLOVAKIA: "SLOVAKIA",
+                SLOVENIA: "SLOVENIA",
+                SOMALILIAND: "SOMALILIAND",
+                SOUTH_AFRICA: "SOUTH AFRICA",
+                SOUTH_YEMEN: "SOUTH YEMEN",
+                SPAIN: "SPAIN",
+                SPANISH_SAHARA: "SPANISH SAHARA",
+                SRI_LANKA: "SRI LANKA",
+                ST_KITTS_AND_NEVIS: "ST. KITTS AND NEVIS",
+                ST_LUCIA: "ST. LUCIA",
+                SUDAN: "SUDAN",
+                SURINAM: "SURINAM",
+                SW_AFRICA: "SW AFRICA",
+                SWAZILAND: "SWAZILAND",
+                SWEDEN: "SWEDEN",
+                SWITZERLAND: "SWITZERLAND",
+                SYRIA: "SYRIA",
+                TAIWAN: "TAIWAN",
+                TAJIKISTAN: "TAJIKISTAN",
+                TANZANIA: "TANZANIA",
+                THAILAND: "THAILAND",
+                TONGA: "TONGA",
+                TRINIDAD: "TRINIDAD",
+                TUNISIA: "TUNISIA",
+                TURKEY: "TURKEY",
+                UGANDA: "UGANDA",
+                UKRAINE: "UKRAINE",
+                UNITED_ARAB_EMIRATES: "UNITED ARAB EMIRATES",
+                UNITED_KINGDOM: "UNITED KINGDOM",
+                UPPER_VOLTA: "UPPER VOLTA",
+                URUGUAY: "URUGUAY",
+                US_PACIFIC_ISLAND: "US PACIFIC ISLAND",
+                US_VIRGIN_ISLANDS: "US VIRGIN ISLANDS",
+                USA: "USA",
+                UZBEKISTAN: "UZBEKISTAN",
+                VANUATU: "VANUATU",
+                VATICAN_CITY: "VATICAN CITY",
+                VENEZUELA: "VENEZUELA",
+                VIETNAM: "VIETNAM",
+                WAKE_ISLAND: "WAKE ISLAND",
+                WEST_INDIES: "WEST INDIES",
+                WESTERN_SAHARA: "WESTERN SAHARA",
+                YEMEN: "YEMEN",
+                ZAIRE: "ZAIRE",
+                ZAMBIA: "ZAMBIA",
+                ZIMBABWE: "ZIMBABWE"
             }
         },
-        "appStrings":{
-            ERROR_FIELD_REQUIRED:"Error. This field is required.",
-            ERROR_EMAIL:"Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
+        "appStrings": {
+            ERROR_FIELD_REQUIRED: "Error. This field is required.",
+            ERROR_EMAIL: "Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}"
         }
     };
 
     // Add custom events here for now
-    app.events.on("app:init", function () {
+    app.events.on("app:init", function() {
         app.metadata.set(base_metadata);
         app.data.declareModels();
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
             app.controller.loadView({
-                module:module,
-                modelId:id,
-                action:action,
-                layout:"record"
+                module: module,
+                modelId: id,
+                action: action,
+                layout: "record"
             });
         }
 
@@ -868,54 +868,42 @@
 
 
         // Load dashboard route.
-        app.router.route("", "dashboard", function () {
+        app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout:"dashboard"
+                layout: "dashboard",
+                module: "ActivityStream"
             });
         });
 
         // Load the search results route.
-        app.router.route("search/:query", "search", function (query) {
+        app.router.route("search/:query", "search", function(query) {
             app.controller.loadView({
-                module:"Search",
-                layout:"search",
-                query:query
+                module: "Search",
+                layout: "search",
+                query: query
             });
         });
 
         // Load the profile
-        app.router.route("profile", "profile", function () {
+        app.router.route("profile", "profile", function() {
             app.controller.loadView({
-                layout:"profile"
+                layout: "profile"
             });
         });
 
         // Loadds profile edit
-        app.router.route("profile/edit", "profileedit", function () {
+        app.router.route("profile/edit", "profileedit", function() {
             app.controller.loadView({
-                layout:"profileedit"
+                layout: "profileedit"
             });
         });
 
-        app.router.route('', 'index', function () {
-            app.logger.debug("Route changed to index");
-            if (app.config.defaultModule) {
-                app.controller.loadView({
-                    module:app.config.defaultModule,
-                    layout:"dash"
-                });
-            }
-            else if (app.acl.hasAccess('read', 'Home')) {
-                this.layout("Home", "home");
-            }
-
-        });
-        app.router.route(':module', 'list', function (module) {
+        app.router.route(':module', 'list', function(module) {
             app.logger.debug("Route changed to index");
 
             app.controller.loadView({
-                module:module,
-                layout:"dash"
+                module: module,
+                layout: "dash"
             });
 
 
@@ -924,7 +912,7 @@
 
 
     var oRoutingBefore = app.routing.before;
-    app.routing.before = function (route, args) {
+    app.routing.before = function(route, args) {
         var dm, nonModuleRoutes;
         nonModuleRoutes = [
             "search",
@@ -942,9 +930,9 @@
             msg = msg || "At minimum, you need to have the 'Home' module enabled to use this application.";
 
             app.alert.show("no-sidecar-access", {
-                level:"error",
-                title:"Error",
-                messages:[msg]
+                level: "error",
+                title: "Error",
+                messages: [msg]
             });
         }
 
@@ -978,14 +966,14 @@
          *
          * @param {Object} errors hash of validation errors
          */
-        handleValidationError:function (errors) {
+        handleValidationError: function(errors) {
             var self = this;
             this.$('.control-group').addClass("error");
             this.$('.help-block').html("");
 
             // For each error add to error help block
             this.$('.controls').addClass('input-append');
-            _.each(errors, function (errorContext, errorName) {
+            _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
             });
 
@@ -996,27 +984,27 @@
     });
 
     app.Controller = app.Controller.extend({
-        loadView:function (params) {
+        loadView: function(params) {
             var self = this;
             // TODO: Will it ever happen: app.config == undefined?
             // app.config should always be present because the logger depends on it
             if (_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) {
-                var callback = function (data) {
+                var callback = function(data) {
                     var params = {
-                        module:"Login",
-                        layout:"login",
-                        create:true
+                        module: "Login",
+                        layout: "login",
+                        create: true
                     };
                     app.Controller.__super__.loadView.call(self, params);
                     app.alert.show('appOffline', {
-                        level:"error",
-                        title:'Error',
-                        messages:'Sorry the application is not available at this time. Please contact the site administrator.',
-                        autoclose:false
+                        level: "error",
+                        title: 'Error',
+                        messages: 'Sorry the application is not available at this time. Please contact the site administrator.',
+                        autoclose: false
                     });
                 };
 
-                app.logout({success:callback, error:callback});
+                app.logout({success: callback, error: callback});
                 return;
             }
             app.Controller.__super__.loadView.call(this, params);
@@ -1031,16 +1019,16 @@
      * optional `fieldsToValidate` parameter.
      */
     var __superBeanSave__ = app.Bean.prototype.save;
-    app.Bean.prototype.save = function (attributes, options) {
+    app.Bean.prototype.save = function(attributes, options) {
         //Here is the list of params that must be set for portal use case.
         var defaultParams = {
-            portal_flag:1,
-            portal_viewable:1
+            portal_flag: 1,
+            portal_viewable: 1
         };
         var moduleFields = app.metadata.getModule(this.module).fields || {};
         for (var field in defaultParams) {
             if (moduleFields[field]) {
-                this.set(field, defaultParams[field], {silent:true});
+                this.set(field, defaultParams[field], {silent: true});
             }
         }
         //Call the prototype
@@ -1051,17 +1039,17 @@
         /**
          * Handles `signup` route.
          */
-        signup:function () {
+        signup: function() {
             app.logger.debug("Route changed to signup!");
             app.controller.loadView({
-                module:"Signup",
-                layout:"signup",
-                create:true
+                module: "Signup",
+                layout: "signup",
+                create: true
             });
         }
     };
 
-    app.events.on("app:init", function () {
+    app.events.on("app:init", function() {
         // Register portal specific routes
         app.router.route("signup", "signup", _rrh.signup);
     });
@@ -1073,12 +1061,12 @@
      * @param {callbacks} callbacks(optional) success and error callbacks
      */
         // TODO: This piece of code may move in the core files
-    app.view.View.prototype.checkFileFieldsAndProcessUpload = function (model, callbacks) {
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
 
         callbacks = callbacks || {};
 
         //check if there are attachments
-        var $files = _.filter($(":file"), function (file) {
+        var $files = _.filter($(":file"), function(file) {
             var $file = $(file);
             return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
         });
@@ -1086,22 +1074,22 @@
 
         //process attachment uploads
         if (filesToUpload > 0) {
-            app.alert.show('upload', {level:'process', title:'Uploading', autoclose:false});
+            app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
 
             //field by field
             for (var file in $files) {
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
                 model.uploadFile(fileField, $file, {
-                    field:fileField,
-                    success:function () {
+                    field: fileField,
+                    success: function() {
                         filesToUpload--;
                         if (filesToUpload == 0) {
                             app.alert.dismiss('upload');
                             if (callbacks.success) callbacks.success();
                         }
                     },
-                    error:function (error) {
+                    error: function(error) {
                         filesToUpload--;
                         if (filesToUpload === 0) {
                             app.alert.dismiss('upload');
