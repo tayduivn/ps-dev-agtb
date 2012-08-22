@@ -57,9 +57,6 @@
 
         var self = this;
 
-        if (this.model) {
-            //this.model.on('change reset', this.render);
-        }
         if (this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser",
             function(context, selectedUser) {
