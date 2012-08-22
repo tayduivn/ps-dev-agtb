@@ -1647,6 +1647,7 @@ class SugarBean
 
         // create activity if enabled
         if ($this->isActivityEnabled() && $isUpdate) {
+            $activity = new ActivityStream();
             $activity->addActivity($this, ActivityStream::ACTIVITY_TYPE_UPDATE);
         }
                 
