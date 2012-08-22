@@ -588,13 +588,6 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		}
 	}
 
-	global $current_user;
-	if(is_admin($current_user)){
-		if (!isset($_POST[$prefix.'portal_active'])) $focus->portal_active = '0';
-		//if no password is set set account to inactive for portal
-		if(empty($_POST[$prefix.'portal_name']))$focus->portal_active = '0';
-
-	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	INBOUND EMAIL HANDLING

@@ -5,9 +5,9 @@
            <div class="row-fluid record-row">
                <div class="span2 tright">{{str  this.label ../../../this.model.module}}</div>
                <div class="span10" name="{{this.name}}">
-                    {{field ../../../../this}}
-                    <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                    {{field ../../../this}}
+                    <span class="record-edit-link-wrapper" data-name="{{name}}">
+                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                     </span>
                </div>
                </div>

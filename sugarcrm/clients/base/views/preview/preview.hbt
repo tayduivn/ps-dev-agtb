@@ -7,7 +7,12 @@
                     <a href="javascript:void(0)" data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
                     <h4>{{str "LBL_MODULE_NAME" ../model.attributes._module}}: {{../model.attributes.name}}</h4>
                     {{#each fields}}
-                    {{field ../../this}}
+                    <div class="row-fluid">
+                        <div class="span2">{{str  this.label ../../this.model.module}}</div>
+                        <div class="span10" name="{{this.name}}">
+                            {{field ../../this}}
+                        </div>
+                    </div>
                     {{/each}}
                 </div>
             </div>
