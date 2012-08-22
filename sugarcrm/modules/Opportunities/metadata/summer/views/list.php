@@ -57,26 +57,12 @@ $viewdefs['Opportunities']['summer']['view']['list'] = array(
                     'currency_format' => true,
                 ),
                 array(
-                    'name' => 'opportunity_type',
-                    'width' => '15',
-                    'label' => 'LBL_TYPE',
-                    'default' => false,
-                ),
-
-                array(
                     'name' => 'date_closed',
                     'width' => '10',
                     'label' => 'LBL_LIST_DATE_CLOSED',
                     'default' => true,
                     'enabled' => true
                 ),
-                array(
-                    'name' => 'date_entered',
-                    'width' => '10',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'default' => false,
-                ),
-
             )
         )
     )
