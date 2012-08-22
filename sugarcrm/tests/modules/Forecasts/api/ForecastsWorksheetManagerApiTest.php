@@ -68,6 +68,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         SugarTestHelper::setUp('app_list_strings');
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
+
         self::$reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
@@ -119,9 +120,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         parent::tearDown();
     }
 
-    public function tearDown()
-    {
-    }
 
     public function testPassedInUserIsManager()
     {
@@ -324,6 +322,31 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         $this->assertEquals($expected, $restReply['reply'][1]);
 
+    }
+
+
+    /**
+     * This test is to see that the data returned for the name field is set correctly when locale name format changes
+     *
+     * @group testGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedName()
+    {
+        global $locale, $current_language;
+        $defaultPreference = $this->_user->getPreference('default_locale_name_format');
+        $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
+
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $current_module_strings = return_module_language($current_language, 'Forecasts');
+        $expectedName = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
+                                      array($locale->getLocaleFormattedName(self::$manager['user']->first_name, self::$manager['user']->last_name))
+                        );
+        $this->assertEquals($expectedName, $restReply['reply'][0]['name']);
+        $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
     }
 }
 

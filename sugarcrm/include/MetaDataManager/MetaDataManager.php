@@ -168,13 +168,25 @@ class MetaDataManager {
 
             foreach ($moduledirs as $dir) {
                 // Templates and controllers can go here
+
+                // if we are trying to get fields, look to see if a folder exist for the type
+                if($viewdefType == "field") {
+                    $dir .= $type;
+                }
+
                 $templates = $this->fetchTemplates(array($dir));
                 $controllers = $this->fetchTemplates(array($dir), ".js");
 
-                //Next add a custom template if it exists
-                if (!empty($templates[$type])) {
-                    $data[$type]['template'] = $templates[$type];
+                // we need to handle fields differently since we want all the templates back in an array
+                if($viewdefType == "field") {
+                    $data[$type]['templates'] = $templates;
+                } else {
+                    //Next add a custom template if it exists
+                    if (!empty($templates[$type])) {
+                        $data[$type]['template'] = $templates[$type];
+                    }
                 }
+
                 //Finally check if a custom controller exists for this view for this module
                 if (!empty($controllers[$type])) {
                     $data[$type]['controller'] = $controllers[$type];
@@ -186,7 +198,7 @@ class MetaDataManager {
     }
     /**
      * For a specific module get any existing Subpanel Definitions it may have
-     * @param string $moduleName 
+     * @param string $moduleName
      * @return array
      */
     public function getSubpanelDefs($moduleName)
@@ -251,6 +263,17 @@ class MetaDataManager {
     }
 
     /**
+     * This method collects all field data for a module
+     *
+     * @param string $moduleName    The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the view data.
+     */
+    public function getModuleFields($moduleName) {
+        return $this->getModuleViewdefs($moduleName, 'field');
+    }
+
+    /**
      * The collector method for modules.  Gets metadata for all of the module specific data
      *
      * @param $moduleName The name of the module to collect metadata about.
@@ -263,6 +286,7 @@ class MetaDataManager {
         $data['fields'] = $vardefs['fields'];
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
+        $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $md5 = serialize($data);
         $md5 = md5($md5);
@@ -724,7 +748,7 @@ class MetaDataManager {
             */
             global $moduleList;
         }
-        
+
         $oldModuleList = $moduleList;
         $moduleList = array();
         foreach ( $oldModuleList as $module ) {
