@@ -51,9 +51,15 @@ $viewdefs['Accounts']['summer']['view']['list'] = array(
                     'default' => false,
                 ),
                 array(
-                    'name' => 'created_by_name',
+                        'name' => 'industry',
+                        'width' => '15',
+                        'label' => 'LBL_INDUSTRY',
+                        'default' => false,
+                ),                
+                array(
+                    'name' => 'assigned_to_name',
                     'width' => '10',
-                    'label' => 'LBL_CREATED',
+                    'label' => 'LBL_ASSIGNED_TO',
                     'default' => false,
                 ),
             )
