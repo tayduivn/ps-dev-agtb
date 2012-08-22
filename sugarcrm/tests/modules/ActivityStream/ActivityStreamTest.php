@@ -42,11 +42,11 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
             $dictionary['ActivityComments'] =
             array ( 'table' => 'activity_comments',
                     'fields' => array (
-                            'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true),
+                            'comment_id'=> array('name' =>'comment_id', 'type' =>'id', 'len'=>'36','required'=>true),
                             'activity_id'=>array('name' =>'activity_id', 'type' =>'id', 'len'=>'36','required'=>true),
                             'date_created'=>array('name' =>'date_created','type' => 'datetime'),
                             'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),
-                            'comment_body'=>array('name' =>'comment_body','type' => 'text'),
+                            'value'=>array('name' =>'value','type' => 'text'),
                     )
             );
         } 
@@ -79,14 +79,12 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
         $activity = new ActivityStream();
         $result = $activity->addActivity($this->account, ActivityStream::ACTIVITY_TYPE_UPDATE);
         $this->assertEquals(true, $result);   
-        $result = $activity->addPost('this is a test', 'Accounts', $this->account->id);
+        $result = $activity->addPost('Accounts', $this->account->id, 'this is a test');
         $this->assertEquals(true, $result);
         $activities = $activity->getActivities('Accounts', $this->account->id);
         $this->assertGreaterThanOrEqual(2, count($activities));
         $activity->loadFromRow($activities[0]);
-        $result = $activity->addComment('this is a test');
-        $this->assertEquals(true, $result);
-        $comments = $activity->getComments();
-        $this->assertGreaterThanOrEqual(1, count($comments));       
+        $result = $activity->addComment($activity->activity_id, 'this is a test');
+        $this->assertEquals(true, $result);      
     } 
 }

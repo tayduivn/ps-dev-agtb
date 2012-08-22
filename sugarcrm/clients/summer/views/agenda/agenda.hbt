@@ -1,0 +1,23 @@
+<h3>Agenda:</h3>
+
+{{#if loaded}}
+     <ul>
+     <li>Today:</li><ul>
+     {{#each collections.today.models}}
+     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
+     {{/each}}
+     </ul>
+     <li>Tomorrow:</li><ul>
+     {{#each collections.tomorrow.models}}
+     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
+     {{/each}}
+     </ul>
+     <li>Upcoming:</li><ul>
+     {{#each collections.upcoming.models}}
+     <li><a href="#{{modelRoute this}}">{{this.attributes.name}}</a>
+     {{/each}}
+     </ul>
+     </ul>
+{{else}}
+Loading...
+{{/if}}
