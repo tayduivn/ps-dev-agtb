@@ -79,7 +79,7 @@
         }
     },
 
-    handleSave: function(e) {
+    handleSave: function() {
         var self = this;
 
         this.editMode = false;

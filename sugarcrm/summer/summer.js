@@ -870,7 +870,8 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard"
+                layout: "dashboard",
+                module: "ActivityStream"
             });
         });
 

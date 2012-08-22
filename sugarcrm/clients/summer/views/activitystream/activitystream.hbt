@@ -1,1 +1,8 @@
-I'm an activity stream
+I'm an activity stream!
+{{#each collection.models}}
+
+    {{log this}}
+    <div>
+    {{attributes.created_by_name}}
+    </div>
+{{/each}}
