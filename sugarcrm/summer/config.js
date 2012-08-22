@@ -90,7 +90,7 @@
          * Default module to load for the home route (index).
          * If not specified, the framework loads `home` layout for the module `Home`.
          */
-        defaultModule: "Contacts",
+        defaultModule: "Home",
 
         /**
          * A list of metadata types to fetch by default.
