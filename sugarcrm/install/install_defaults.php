@@ -71,7 +71,7 @@
             'site_default_theme' => 'Sugar5',
             //END SUGARCRM flav=com ONLY
             //BEGIN SUGARCRM flav!=com ONLY
-            'site_default_theme' => 'RacerX',
+            'site_default_theme' => 'Sugar',
             //END SUGARCRM flav!=com ONLY
             'disable_persistent_connections' => 'false',
             'default_language' => 'en_us',
