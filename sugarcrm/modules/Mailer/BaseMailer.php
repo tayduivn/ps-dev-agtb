@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Mailer.php';
+require_once 'IMailer.php';
 require_once 'MailerException.php';
 require_once 'RecipientsCollection.php';
 
@@ -156,5 +156,4 @@ abstract class BaseMailer implements IMailer
 		$this->htmlBody = $htmlBody;
 	}
 
-	abstract public function send();
 }

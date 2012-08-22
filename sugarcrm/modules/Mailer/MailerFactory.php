@@ -29,13 +29,15 @@ class MailerFactory
 	 *      But for now just spell out the class you want for testing.
 	 * @return mixed
 	 */
-	public function getMailer($class = 'SimpleMailer') {
+	public static function getMailer($class = 'SimpleMailer') {
 		switch ($class) {
 			case 'SugarMailer':
-				require_once 'SugarMailer.php';
+				include_once 'SugarMailer.php';
+                break;
 			case 'SimpleMailer':
 			default:
-				require_once 'SimpleMailer.php';
+				include_once 'SimpleMailer.php';
+                break;
 		}
 
 		$mailer = new $class();
