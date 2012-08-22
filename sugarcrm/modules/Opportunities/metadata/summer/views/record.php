@@ -53,17 +53,14 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
                     'name' => 'name',
                     'displayParams' => array(
                         'required' => true,
-                        'wireless_edit_only' => true,
                     )
                 ),
-                'amount',
                 'account_name',
-                'date_closed',
+                'amount',
                 'sales_stage',
+                'probability',
+                'date_closed',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //BEGIN SUGARCRM flav=pro ONLY
             )
         )
     ),
