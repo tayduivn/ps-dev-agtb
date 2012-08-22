@@ -1,10 +1,9 @@
-<div class="widget">
-
+<div class="block widget">
     <div class="yelp-widget">
-        <h2>Yelp Search</h2>
+        <h4>Yelp Search</h4>
         {{#each yelp.businesses}}
         <div class="news-article">
-            <h4><a href=''>{{this.name}}</a> <img src='{{this.rating_img_url_small}}'/></h4>
+            <h5><a href=''>{{this.name}}</a> <img src='{{this.rating_img_url_small}}'/></h5>
             {{this.snippet_text}}
             <h6>Address</h6>
             <address>
@@ -15,5 +14,4 @@
         </div>
         {{/each}}
     </div>
-
 </div>

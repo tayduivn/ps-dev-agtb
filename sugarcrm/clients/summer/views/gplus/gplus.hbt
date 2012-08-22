@@ -1,7 +1,7 @@
-<div class="widget">
+<div class="block widget">
 
     <div class="gplus-widget">
-        <h2>G+ Activity</h2>
+        <h4>G+ Activity</h4>
         <br>
 
         {{#if gPlusId}}
@@ -36,7 +36,5 @@
         {{else}}
         No Google Plus account found
         {{/if}}
-
     </div>
-
 </div>
