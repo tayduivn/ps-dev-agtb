@@ -55,9 +55,9 @@ interface IMailer
 	public function getConfigs();
 
 	/**
-	 * @param EmailIdentity $sender
+	 * @param EmailIdentity $from
 	 */
-	public function setSender(EmailIdentity $sender);
+	public function setFrom(EmailIdentity $from);
 
 	/**
 	 * @param array $recipients     Array of EmailIdentity objects.

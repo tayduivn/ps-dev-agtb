@@ -264,7 +264,7 @@ class MailerApi extends ModuleApi
         $admin->retrieveSettings();
 
         $mailer = new Mailer();
-        $mailer->setSender(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
+        $mailer->setFrom(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
 
         if (is_array($args["to_addresses"])) {
             foreach ($args["to_addresses"] AS $toAddress) {

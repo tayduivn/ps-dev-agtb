@@ -29,7 +29,7 @@ abstract class BaseMailer implements IMailer
 {
 	protected $mailer;
 	protected $configs;
-	protected $sender;
+	protected $from;
 	protected $replyTo;
 	protected $recipients;
 	protected $subject;
@@ -99,10 +99,10 @@ abstract class BaseMailer implements IMailer
 	}
 
 	/**
-	 * @param EmailIdentity $sender
+	 * @param EmailIdentity $from
 	 */
-	public function setSender(EmailIdentity $sender) {
-		$this->sender = $sender;
+	public function setFrom(EmailIdentity $from) {
+		$this->from = $from;
 	}
 
 	/**
