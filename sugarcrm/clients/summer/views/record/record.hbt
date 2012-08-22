@@ -3,7 +3,7 @@
        {{#if ../model.isNotEmpty}}
        {{#each fields}}
            <div class="row-fluid record-row">
-               <div class="span2">{{str  this.label ../../../this.model.module}}</div>
+               <div class="span2 tright">{{str  this.label ../../../this.model.module}}</div>
                <div class="span10" name="{{this.name}}">
                     {{field ../../../../this}}
                     <span class="record-edit-link-wrapper" data-name="{{../name}}">
