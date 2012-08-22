@@ -77,7 +77,7 @@ class ForecastsFiltersApi extends ModuleApi {
      */
 
     public function getReportees($api, $args) {
-        global $current_user;
+        global $current_user, $locale;
 
         $id = clean_string($args['userId']);
 
@@ -103,7 +103,7 @@ class ForecastsFiltersApi extends ModuleApi {
 
             $openClosed = ($row['_level'] == 1) ? 'open' : 'closed';
 
-            $fullName = $this->getFullName($row['first_name'], $row['last_name']);
+            $fullName = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 
             $user = array(
                 'data' => $fullName,
@@ -161,15 +161,17 @@ class ForecastsFiltersApi extends ModuleApi {
             //grab language defs
             $current_module_strings = return_module_language($current_language, 'Forecasts');
 
+            $fullName = $locale->getLocaleFormattedName($treeData['metadata']['first_name'], $treeData['metadata']['last_name']);
+
             $myOpp = array(
-                'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
-                    array($treeData['metadata']['first_name'] . " " . $treeData['metadata']['last_name'])),
+
+                'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($fullName)),
                 'children' => array(),
                 // Give myOpp the same metadata as the root Manager user
                 'metadata' => array(
                     "id" => $treeData['metadata']['id'],
                     "user_name" => $treeData['metadata']['user_name'],
-                    "full_name" => $treeData['metadata']['full_name'],
+                    "full_name" => $fullName,
                     "first_name" => $treeData['metadata']['first_name'],
                     "last_name" => $treeData['metadata']['last_name'],
                     "reports_to_id" => $treeData['metadata']['reports_to_id'],
@@ -200,7 +202,7 @@ class ForecastsFiltersApi extends ModuleApi {
                         'metadata' => array(
                             "id" => $parentUser->id,
                             "user_name" => $parentUser->user_name,
-                            "full_name" => $parentUser->full_name,
+                            "full_name" => $locale->getLocaleFormattedName($parentUser->first_name, $parentUser->last_name),
                             "first_name" => $parentUser->first_name,
                             "last_name" => $parentUser->last_name,
                             "reports_to_id" => $parentUser->reports_to_id,
@@ -251,17 +253,6 @@ class ForecastsFiltersApi extends ModuleApi {
             }
         }
         return $retChildren;
-    }
-
-    /***
-     * Simple function that returns a full name based on first name and last name
-     *
-     * @param $first
-     * @param $last
-     * @return string
-     */
-    function getFullName($first, $last) {
-        return (empty($last)) ? $first : $first . ' ' . $last;
     }
 
 }

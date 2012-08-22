@@ -32,45 +32,49 @@ require_once('tests/rest/RestTestBase.php');
 class ForecastsFiltersApiTest extends RestTestBase
 {
 
-    private $currentUser;
-    private $employee1;
-    private $employee2;
-    private $employee3;
-    private $employee4;
+    private static $currentUser;
+    private static $employee1;
+    private static $employee2;
+    private static $employee3;
+    private static $employee4;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        parent::setUp();
+        parent::setUpBeforeClass();
 
-        $this->currentUser = SugarTestUserUtilities::createAnonymousUser();
-        $this->currentUser->user_name = 'employee0';
-        $this->currentUser->save();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
 
-        $this->employee1 = SugarTestUserUtilities::createAnonymousUser();
-        $this->employee1->reports_to_id = $this->currentUser->id;
-        $this->employee1->user_name = 'employee1';
-        $this->employee1->save();
+        self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
+        self::$currentUser->user_name = 'employee0';
+        self::$currentUser->save();
 
-        $this->employee2 = SugarTestUserUtilities::createAnonymousUser();
-        $this->employee2->reports_to_id = $this->currentUser->id;
-        $this->employee2->user_name = 'employee2';
-        $this->employee2->save();
+        self::$employee1 = SugarTestUserUtilities::createAnonymousUser();
+        self::$employee1->reports_to_id = self::$currentUser->id;
+        self::$employee1->user_name = 'employee1';
+        self::$employee1->save();
 
-        $this->employee3 = SugarTestUserUtilities::createAnonymousUser();
-        $this->employee3->reports_to_id = $this->employee2->id;
-        $this->employee3->user_name = 'employee3';
-        $this->employee3->save();
+        self::$employee2 = SugarTestUserUtilities::createAnonymousUser();
+        self::$employee2->reports_to_id = self::$currentUser->id;
+        self::$employee2->user_name = 'employee2';
+        self::$employee2->save();
 
-        $this->employee4 = SugarTestUserUtilities::createAnonymousUser();
-        $this->employee4->reports_to_id = $this->employee3->id;
-        $this->employee4->user_name = 'employee4';
-        $this->employee4->save();
+        self::$employee3 = SugarTestUserUtilities::createAnonymousUser();
+        self::$employee3->reports_to_id = self::$employee2->id;
+        self::$employee3->user_name = 'employee3';
+        self::$employee3->save();
+
+        self::$employee4 = SugarTestUserUtilities::createAnonymousUser();
+        self::$employee4->reports_to_id = self::$employee3->id;
+        self::$employee4->user_name = 'employee4';
+        self::$employee4->save();
 
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     /***
@@ -78,8 +82,8 @@ class ForecastsFiltersApiTest extends RestTestBase
      */
     public function testReportees() {
 
-        $restReply = $this->_restCall("Forecasts/reportees/" . $this->currentUser->id);
-        $this->assertEquals($restReply['reply']['metadata']['id'], $this->currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
+        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
+        $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
 
         // get the user ids from first level
         $firstLevel = array();
@@ -88,16 +92,16 @@ class ForecastsFiltersApiTest extends RestTestBase
         }
 
         // assertContains in case the order is ever jumbled
-        $this->assertContains($this->employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
-        $this->assertContains($this->employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
+        $this->assertContains(self::$employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
+        $this->assertContains(self::$employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
     }
 
     public function testDeletedReportees() {
         // delete one user for this test
-        $this->employee2->deleted = 1;
-        $this->employee2->save();
+        self::$employee2->deleted = 1;
+        self::$employee2->save();
 
-        $restReply = $this->_restCall("Forecasts/reportees/" . $this->currentUser->id);
+        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
 
         $fullNames = array();
 
@@ -105,11 +109,11 @@ class ForecastsFiltersApiTest extends RestTestBase
             array_push($fullNames, $children['data']);
         }
 
-        $this->assertNotContains($this->employee2->full_name, $fullNames, "Deleted employee2 was found in the rest reply when it should not have been" );
+        $this->assertNotContains(self::$employee2->full_name, $fullNames, "Deleted employee2 was found in the rest reply when it should not have been" );
 
         // Undelete user if needed for other tests
-        $this->employee2->deleted = 0;
-        $this->employee2->save();
+        self::$employee2->deleted = 0;
+        self::$employee2->save();
     }
 
     public function testTimeperiods()
@@ -130,4 +134,24 @@ class ForecastsFiltersApiTest extends RestTestBase
         }
     }
 
+
+    /**
+     * This test is to see that the data returned for the name field is set correctly when locale name format changes
+     *
+     * @group testGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedName()
+    {
+        global $locale;
+        $defaultPreference = $this->_user->getPreference('default_locale_name_format');
+        $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
+        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
+        $expectedData = $locale->getLocaleFormattedName(self::$currentUser->first_name, self::$currentUser->last_name);
+        $this->assertEquals($expectedData, $restReply['reply']['data']);
+        $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
+    }
 }
