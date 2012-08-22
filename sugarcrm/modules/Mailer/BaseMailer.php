@@ -29,24 +29,38 @@ abstract class BaseMailer implements IMailer
 {
 	protected $mailer;
 	protected $configs;
+	protected $messageId;
+	protected $priority;
+	protected $requestConfirmation;
 	protected $from;
 	protected $replyTo;
+	protected $sender;
 	protected $recipients;
 	protected $subject;
 	protected $htmlBody;
 	protected $textBody;
+	protected $attachments;
+	protected $embeddedImages;
 
 	public function __construct() {
 		$this->reset();
 	}
 
 	public function reset() {
-		$this->mailer = null;
+		$this->mailer         = null;
 		$this->loadDefaultConfigs();
-		$this->recipients = new RecipientsCollection();
-		$this->subject = null;
-		$this->htmlBody = null;
-		$this->textBody = null;
+		$this->messageId      = null;
+		$this->setPriority();
+		$this->setRequestConfirmation();
+		$this->from           = null;
+		$this->replyTo        = null;
+		$this->sender         = null;
+		$this->recipients     = new RecipientsCollection();
+		$this->subject        = null;
+		$this->htmlBody       = null;
+		$this->textBody       = null;
+		$this->attachments    = array();
+		$this->embeddedImages = array();
 	}
 
 	/**
@@ -99,6 +113,27 @@ abstract class BaseMailer implements IMailer
 	}
 
 	/**
+	 * @param $id
+	 */
+	public function setMessageId($id) {
+		$this->messageId = $id;
+	}
+
+	/**
+	 * @param int $priority 1 = High, 3 = Normal, 5 = Low
+	 */
+	public function setPriority($priority = 3) {
+		$this->priority = $priority;
+	}
+
+	/**
+	 * @param bool $request
+	 */
+	public function setRequestConfirmation($request = false) {
+		$this->requestConfirmation = $request;
+	}
+
+	/**
 	 * @param EmailIdentity $from
 	 */
 	public function setFrom(EmailIdentity $from) {
@@ -110,6 +145,13 @@ abstract class BaseMailer implements IMailer
 	 */
 	public function setReplyTo(EmailIdentity $replyTo) {
 		$this->replyTo = $replyTo;
+	}
+
+	/**
+	 * @param EmailIdentity $sender
+	 */
+	public function setSender(EmailIdentity $sender) {
+		$this->sender = $sender;
 	}
 
 	/**
@@ -164,4 +206,22 @@ abstract class BaseMailer implements IMailer
 		$this->htmlBody = $htmlBody;
 	}
 
+	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+		$this->attachments[] = array(
+			'path'     => $path,
+			'name'     => $name,
+			'encoding' => $encoding,
+			'mimetype' => $mimeType,
+		);
+	}
+
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+		$this->embeddedImages[] = array(
+			'path'     => $path,
+			'cid'      => $cid,
+			'name'     => $name,
+			'encoding' => $encoding,
+			'mimetype' => $mimeType,
+		);
+	}
 }

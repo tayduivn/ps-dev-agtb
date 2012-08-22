@@ -30,6 +30,7 @@ class SimpleMailer extends BaseMailer
 	public function reset() {
 		parent::reset();
 		$this->mailer = new PHPMailer();
+		$this->mailer->SetLanguage(); // reset to the English language pack
 	}
 
 	/**
@@ -46,6 +47,7 @@ class SimpleMailer extends BaseMailer
 			$this->transferHeaders();
 			$this->transferRecipients();
 			$this->transferBody();
+			$this->transferAttachments();
 
 			if (!$this->mailer->IsError()) {
 				$this->mailer->Send();
@@ -95,7 +97,7 @@ class SimpleMailer extends BaseMailer
 //				} else {
 //					$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
 //				}
-				throw new MailerException('Failed to connect to the remote server');
+				throw new MailerException("Failed to connect to the remote server");
 			}
 		}
 	}
@@ -115,12 +117,43 @@ class SimpleMailer extends BaseMailer
 		// transfer the reply-to
 		$replyToEmail = $this->replyTo->getEmail();
 
-		//@todo should we really validate this email address? can that be done reliably further up in the stack?
 		if (!is_string($replyToEmail)) {
 			throw new MailerException("Invalid reply-to email address");
 		}
 
 		$this->mailer->AddReplyTo($replyToEmail, $this->replyTo->getName());
+
+		// transfer the sender
+		if (!is_null($this->sender)) {
+			$senderEmail = $this->sender->getEmail();
+
+			if (!is_string($senderEmail)) {
+				throw new MailerException("Invalid sender email address");
+			}
+
+			$this->mailer->Sender = $senderEmail;
+		}
+
+		// transfer the message-id
+		if (!is_null($this->messageId)) {
+			$this->mailer->MessageId = $this->messageId;
+		}
+
+		// transfer the priority
+		if (is_int($this->priority)) {
+			$this->mailer->Priority = $this->priority;
+		}
+
+		// transfer the disposition-notification-to
+		if ($this->requestConfirmation) {
+			$confirmTo = $fromEmail;
+
+			if (!is_null($this->sender)) {
+				$confirmTo = $this->sender->getEmail();
+			}
+
+			$this->mailer->ConfirmReadingTo = $confirmTo;
+		}
 
 		// transfer the subject
 		if (!is_string($this->subject)) {
@@ -157,7 +190,7 @@ class SimpleMailer extends BaseMailer
 	 */
 	private function transferBody() {
 		if ($this->htmlBody && $this->textBody) {
-			$this->mailer->Encoding = 'base64';
+			$this->mailer->Encoding = 'base64'; // this could actually change the encoding from the config, do we want to do this?
 			$this->mailer->IsHTML(true);
 			$this->mailer->Body = $this->htmlBody;
 			$this->mailer->AltBody = $this->textBody;
@@ -169,6 +202,36 @@ class SimpleMailer extends BaseMailer
 			$this->mailer->Body = $this->htmlBody;
 		} else {
 			throw new MailerException("No email body was provided");
+		}
+	}
+
+	/**
+	 * Transfers both file attachments and embedded images to PHPMailer.
+	 *
+	 * @throws MailerException
+	 */
+	private function transferAttachments() {
+		foreach ($this->attachments as $attachment) {
+			if (!$this->mailer->AddAttachment(
+					$attachment['path'],
+					$attachment['name'],
+					$attachment['encoding'],
+					$attachment['mimetype'])
+			) {
+				throw new MailerException("Invalid attachment");
+			}
+		}
+
+		foreach ($this->embeddedImages as $image) {
+			if (!$this->mailer->AddEmbeddedImage(
+				$image['path'],
+				$image['cid'],
+				$image['name'],
+				$image['encoding'],
+				$image['mimetype'])
+			) {
+				throw new MailerException("Invalid file");
+			}
 		}
 	}
 }
