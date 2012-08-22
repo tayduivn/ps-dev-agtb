@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Accounts']['summer']['view']['list'] = array(
+$viewdefs['Contacts']['summer']['view']['sublist'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
@@ -40,28 +40,8 @@ $viewdefs['Accounts']['summer']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
-                array(
-                    'name'=>'phone_office' ,
-                    'label' => 'LBL_PHONE_OFFICE',
-                ),
-                array(
-                    'name' => 'email1',
-                    'width' => '15',
-                    'label' => 'LBL_EMAIL',
-                    'default' => false,
-                ),
-                array(
-                        'name' => 'industry',
-                        'width' => '15',
-                        'label' => 'LBL_INDUSTRY',
-                        'default' => false,
-                ),                
-                array(
-                    'name' => 'assigned_to_name',
-                    'width' => '10',
-                    'label' => 'LBL_ASSIGNED_TO',
-                    'default' => false,
-                ),
+                'email1',
+                'phone_mobile',
             )
         )
     )

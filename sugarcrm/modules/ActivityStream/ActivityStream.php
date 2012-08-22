@@ -37,10 +37,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ActivityStream extends SugarBean {
     // activity types
-    const ACTIVITY_TYPE_CREATE = 'create';
-    const ACTIVITY_TYPE_UPDATE = 'update';   
-    const ACTIVITY_TYPE_DELETE = 'delete'; 
-    const ACTIVITY_TYPE_POST = 'post';
+    const ACTIVITY_TYPE_CREATE = 'created';
+    const ACTIVITY_TYPE_UPDATE = 'updated';   
+    const ACTIVITY_TYPE_DELETE = 'deleted'; 
+    const ACTIVITY_TYPE_POST = 'posted';
     
 
     // common vars for sugar bean
@@ -98,7 +98,7 @@ class ActivityStream extends SugarBean {
      * @return array
      */
     public function getActivities($targetModule = null, $targetId = null, $start = 0, $numActivities = 20, $numComments = -1) {
-        global $dictionary;
+        global $dictionary, $current_language;
         $tableName = $dictionary['ActivityStream']['table']; 
         $fieldDefs = $dictionary['ActivityStream']['fields'];        
         
@@ -115,7 +115,7 @@ class ActivityStream extends SugarBean {
         if(!empty($where)) {
             $where = ' AND '.$where;
         }
-        $sql = "SELECT a.activity_id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_data, users.user_name as created_by_name FROM activity_stream a, users where a.created_by = users.id ".$where. " ORDER BY a.date_created DESC LIMIT ".$start.", ".$numActivities;
+        $sql = "SELECT a.activity_id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_data, users.first_name, users.last_name FROM activity_stream a, users where a.created_by = users.id ".$where. " ORDER BY a.date_created DESC LIMIT ".$start.", ".$numActivities;
         $result = $GLOBALS['db']->query($sql);
         
         if(!empty($result)) {
@@ -123,6 +123,20 @@ class ActivityStream extends SugarBean {
             
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(html_entity_decode($row['activity_data']), true);
+                $row['target_name'] = '';
+                if(!empty($row['target_id'])) {
+                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
+                    $row['target_name'] = $bean->name;
+                }
+                else if(!empty($row['target_module'])) {
+                    $bean = BeanFactory::getBean($row['target_module']);                    
+                    $mod_strings = return_module_language($current_language, $bean->module_dir);
+                    $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
+                }
+                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                unset($row['first_name']);
+                unset($row['last_name']);
+                
                 $activities[] = $row;
                 $activityIds[] = $row['activity_id'];
             }
@@ -132,11 +146,14 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];                
-                    $sql = "SELECT c.comment_id, c.activity_id,c.value,c.created_by, c.date_created,users.user_name as created_by_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.comment_id, c.activity_id,c.value,c.created_by, c.date_created,users.first_name, users.last_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
                     
                     if(!empty($result)) {
                         while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                            $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                            unset($row['first_name']);
+                            unset($row['last_name']);
                             $comments[$row['activity_id']][] = $row;
                         }
                     }
@@ -183,7 +200,7 @@ class ActivityStream extends SugarBean {
      *
      */
     public function addActivity($bean, $activityType) {
-        global $dictionary;
+        global $dictionary, $current_language;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
         $tableName = $dictionary['ActivityStream']['table'];
         $values = array();
@@ -196,6 +213,11 @@ class ActivityStream extends SugarBean {
             case ActivityStream::ACTIVITY_TYPE_UPDATE:
                 $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
                 $dataChanges = array_values($dataChanges);
+                $fieldDefs = $bean->getFieldDefinitions();
+                $mod_strings = return_module_language($current_language, $bean->module_dir);                
+                foreach($dataChanges as &$dataChange) {
+                    $dataChange['field_name'] = str_replace(":","",$mod_strings[$fieldDefs[$dataChange['field_name']]['vname']]);
+                }
                 $values[] = $this->getActivityValues($bean, $activityType, $dataChanges);
                 break;
             default:

@@ -1,5 +1,5 @@
-  <h2>Sales
-  <div style='float:right'>
+<div class="block">
+  <h4>Sales</h4>
     {{#if urls}}
       <select class="chartSelector">
           {{#each urls}}
@@ -7,6 +7,5 @@
           {{/each}}
       </select>
     {{/if}}
-  </div>
-  </h2>
   <div id="{{guid}}"></div>
+</div>

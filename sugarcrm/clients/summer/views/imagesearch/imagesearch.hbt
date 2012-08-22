@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="../clients/summer/views/imagesearch/highlightit.css" xmlns="http://www.w3.org/1999/html">
 
-<div class="widget">
+<div class="block widget">
 
     <div class="imagesearch-widget" style="height:150px; width:150px">
 
@@ -20,7 +20,7 @@
 
         </div>
         
-        <h2></h2>
+        <h4></h4>
         <a data-toggle="modal" href="#imagesearch" class="thumbnail">
             <img src={{profile}} id = "profile" alt=""/>
         </a>
