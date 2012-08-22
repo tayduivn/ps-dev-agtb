@@ -19,8 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once("include/api/ListApi.php");
 
-class ActivityStreamApi extends SugarApi {
+class ActivityStreamApi extends ListApi {
     public function registerApiRest() {
         return array(
             'getBeanActivities' => array(
@@ -36,17 +37,29 @@ class ActivityStreamApi extends SugarApi {
                 'method' => 'getActivities',
             ),
             'getAllActivities' => array(
-                        'reqType' => 'GET',
-                        'path' => array('activitystream'),
-                        'pathVars' => array(''),
-                        'method' => 'getActivities',
+                'reqType' => 'GET',
+                'path' => array('activitystream'),
+                'pathVars' => array(''),
+                'method' => 'getActivities',
                 ),                
-            'addPostOrComment' => array(
+            'postAll' => array(
                 'reqType' => 'POST',
                 'path' => array('activitystream'), 
                 'pathVars' => array(''),
-                'method' => 'addPostOrComment',
-            ),                                                                          
+                'method' => 'handlePost',
+            ), 
+            'postModule' => array(
+                'reqType' => 'POST',
+                'path' => array('activitystream', '<module>'),
+                'pathVars' => array('','target_module'),
+                'method' => 'handlePost',
+            ), 
+            'postBean' => array(
+                'reqType' => 'POST',
+                'path' => array('activitystream', '<module>','?'),
+                'pathVars' => array('','target_module','target_id'),
+                'method' => 'handlePost',
+            ),                                                                                                        
         );
     }
 
@@ -54,26 +67,26 @@ class ActivityStreamApi extends SugarApi {
         $seed = BeanFactory::getBean('ActivityStream');
         $targetModule = !empty($args['module']) ? $args['module'] : '';
         $targetId = !empty($args['id']) ? $args['id'] : '';
-        return $seed->getActivities($targetModule, $targetId);
-    }
-    
-    public function addPostOrComment($api, $args) {
-        $seed = BeanFactory::getBean('ActivityStream');
-        if(empty($args['action'])) {
+        $options = $this->parseArguments($api, $args, $seed);        
+        $activities = $seed->getActivities($targetModule, $targetId, $options['offset'], $options['limit']); // TODO: order by
+        if($activities !== false) {
+            $nextOffset = count($activities) < $options['limit'] ? 'end' : $options['offset'] + count($activities);
+            return array('next_offset'=>$nextOffset,'records'=>$activities);
+        }
+        else {
             return false;
         }
-        switch($args['action']) {
-            case 'add':
-                $targetModule = isset($args['target_module']) ? $args['target_module'] : '';     
-                $targetId = isset($args['target_id']) ? $args['target_id'] : '';
-                return $seed->addPost($targetModule, $targetId, $args['value']);
-            case 'comment':
-                if(empty($args['activity_id'])) {
-                    return false;
-                }
-                return $seed->addComment($args['activity_id'], $args['value']); 
-            default:
-                return false;               
+    }
+    
+    public function handlePost($api, $args) {
+        $seed = BeanFactory::getBean('ActivityStream');
+        $targetModule = isset($args['target_module']) ? $args['target_module'] : '';     
+        $targetId = isset($args['target_id']) ? $args['target_id'] : '';
+        if($targetModule == "ActivityStream") {
+            return $seed->addComment($targetId, $args['value']);
         }
-    }    
+        else {
+            return $seed->addPost($targetModule, $targetId, $args['value']);
+        }
+    } 
 }
