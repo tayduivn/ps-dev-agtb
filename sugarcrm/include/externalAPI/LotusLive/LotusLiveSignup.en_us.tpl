@@ -41,4 +41,4 @@ Connect to your IBM SmartCloud&trade; account to access IBM SmartCloud&trade; we
 <br>&nbsp;<br>
 Not yet an IBM SmartCloud&trade; member? Sign up to get a trial account.
 <br>
-<button onclick="DCMenu.closeOverlay(); window.open('https://collabserv.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage-sugarcrm&campaignCode=sugarcrm');" style="padding:2px; margin:8px;">Free Trial</button>
+<button onclick="DCMenu.closeOverlay(); window.open('https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage-sugarcrm&campaignCode=sugarcrm');" style="padding:2px; margin:8px;">Free Trial</button>
