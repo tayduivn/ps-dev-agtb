@@ -1,7 +1,7 @@
 <?php
 require_once('modules/Trackers/BreadCrumbStack.php');
 require_once('summer/splash/boxoffice/BoxOffice.php');
-require_once('summer/splash/boxoffice/BoxOfficeMail.php');
+require_once('summer/splash/boxoffice/lib/BoxOfficeMail/BoxOfficeMail.php');
 class BoxOfficeClient
 {
     protected $user = null;
@@ -44,9 +44,13 @@ class BoxOfficeClient
      * @param $password
      * @return array|bool
      */
-    function authenticateUser($email, $password)
+    function authenticateUser($email, $password, $remoteID = null)
     {
-        $this->user = $this->box->authenticateUser($email, $password);
+        if(empty($password)) {
+            $this->user = $this->box->authenticateRemoteUser($email, $remoteID);
+        } else {
+            $this->user = $this->box->authenticateUser($email, $password);
+        }
         if ($this->user) {
             $instances = $this->box->getUserInstances();
             $filteredList = array();
@@ -86,7 +90,6 @@ class BoxOfficeClient
      */
     function getConfig()
     {
-
         if (empty($this->instance)) throw new Exception('No Instance Selected');
         $flavor = strtolower($this->instance['flavor']);
         include('summer/splash/configs/' . $flavor . '.config.php');
@@ -192,10 +195,21 @@ class BoxOfficeClient
      * @param $company
      * @return bool
      */
-    public function registerUser($email, $password, $first_name, $last_name, $company){
-        $user = $this->box->registerUser($email, $password, $first_name, $last_name, $company);
+    public function registerUser($email, $password, $data){
+        $user = $this->box->registerUser($email, $password, $data);
         $guid = $this->box->generateConfirmation($email);
         BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid));
+        return true;
+    }
+
+    /**
+     * Create remote user in the system, without confirmation
+     * @param $email
+     * @return bool
+     */
+    public function createRemoteUser($email, $data)
+    {
+        $user = $this->box->registerUser($email, "", $data, 'Active');
         return true;
     }
 

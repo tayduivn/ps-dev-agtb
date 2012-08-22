@@ -72,8 +72,8 @@ if (!empty($_REQUEST['do'])) {
     <div class='well span3'>
         <div id='notices'>
         </div>
+        <h4>Welcome <span class="username"> </span></h4>
         <form class='form' id="login">
-            <h4>Welcome <span class="username"> </span></h4>
             <input type="text" name='email' class="span3" placeholder="Email Address">
             <input type="password" name='password' class="span3" placeholder="Password">
 

@@ -75,8 +75,15 @@ var login = {
     },
 
     response:function (data) {
+    	if(data.popup) {
+    		login.popup = window.open(data.popup, "Login", "width=680,height=600,resizable,scrollbars=yes");
+    		return;
+    	}
+    	if(login.popup) {
+    		login.popup.close();
+    		login.popup = null;
+    	}
         if (!data.error) {
-
             for (i in data.instances) {
                 $('#instancelist').append('<li><a href="#" class="instance" data-id="' + data.instances[i].id + '">' + data.instances[i].name + ' by ' + data.instances[i].owner.name + '</a></li>')
             }

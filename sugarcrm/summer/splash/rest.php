@@ -3,23 +3,66 @@ session_start();
 chdir('../..');
 define('sugarEntry', true);
 require_once('summer/splash/BoxOfficeClient.php');
-require 'summer/splash/lib/Slim/Slim.php';
+require_once 'summer/splash/boxoffice/lib/Slim/Slim.php';
+require_once 'summer/splash/boxoffice/lib/EasyRpService.php';
 $app = new Slim();
 $app->config(array('debug' => true));
-error_reporting(E_ALL);
+error_reporting(E_ALL &~ E_STRICT);
 restore_error_handler();
-
+define("GOOGLE_API_KEY", '');
 /**
  * function for authenticating users
  */
-$app->post('/rest/users/authenticate', function() use (&$app, &$box)
+$app->get('/rest/users/callback', function() use (&$app, &$box)
 {
+    $app->response()->header('Content-Type', 'text/html;charset=utf-8');
+    $api = new EasyRpService(GOOGLE_API_KEY);
+    $result = $api->verify("http://localhost:8888/sugar66/summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
+    // TODO: check if result is OK
+    $email = $result['verifiedEmail'];
+    $boc = BoxOfficeClient::getInstance();
     session_destroy();
     session_start();
+    if($boc->getUser($email, false)) {
+        // existing user
+        $data = $boc->authenticateUser($email, null, $result['identifier']);
+    } else {
+        // new user
+        $boc->createRemoteUser($email, array("first_name" => $result['firstName'], "last_name" => $result['lastName'],
+            "photo" => $result['photoUrl'], "remote_id" => $result['identifier']
+            ));
+        $data = $boc->authenticateUser($email, null, $result['identifier']);
+    }
+    if($data['user']['status'] == 'Active') {
+        $data = json_encode($data);
+    } else {
+        $data = json_encode(array("error" => "Your account is not active. Please contact support."));
+    }
+    echo <<<END
+<script language="javascript">
+window.opener.login.response($data);
+window.close();
+</script>
+END;
+}
+);
+
+$app->post('/rest/users/authenticate', function() use (&$app, &$box)
+{
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
     $password = $app->request()->params('password');
     $email = $app->request()->params('email');
+
+    $api = new EasyRpService(GOOGLE_API_KEY);
+    $res = $api->getUrl($email, "http://localhost:8888/sugar66/summer/splash/rest/users/callback");
+    if($res) {
+        echo json_encode(array("popup" => $res['authUri']));
+        return;
+    }
+
+    $boc = BoxOfficeClient::getInstance();
+    session_destroy();
+    session_start();
     if ($data = $boc->authenticateUser($email, $password)) {
         switch ($data['user']['status']) {
             case 'Pending Confirmation':
@@ -107,7 +150,7 @@ $app->post('/rest/users', function() use (&$app, &$box)
     elseif ($boc->getUser($email, false)) {
         echo json_encode(array("error" => "This email address already exists. Please try resetting your password"));
     } else {
-        $boc->registerUser($email, $password, $first_name, $last_name, $company);
+        $boc->registerUser($email, $password, array("first_name" => $first_name, "last_name" => $last_name, "company" => $company));
         echo json_encode(array("success" => "You are almost ready! You just need to activate your account! A welcome message with an activation code was just sent to " . $email));
     }
 

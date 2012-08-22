@@ -1,5 +1,5 @@
 <?php
-require_once('summer/splash/boxoffice/utils.php');
+require_once('summer/splash/boxoffice/lib/utils.php');
 class BoxOffice
 {
 
@@ -17,6 +17,7 @@ class BoxOffice
     function authenticateUser($email, $password)
     {
         $now = gmdate('Y-m-d');
+        // FIXME: not lookup by password!
         $sql = 'SELECT * FROM users WHERE email = :email AND hash = :password AND deleted=0';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
@@ -41,6 +42,37 @@ class BoxOffice
         $sth->bindParam(':status', $status, PDO::PARAM_STR);
         $sth->execute();
         return $user[0];
+    }
+
+    /**
+     * Returns a user based on email and password
+     * @param $email
+     * @param $password
+     * @return array
+     */
+    function authenticateRemoteUser($email, $remote_id)
+    {
+    	$now = gmdate('Y-m-d');
+    	// FIXME:
+    	$sql = 'SELECT * FROM users WHERE email = :email AND remote_id = :rid AND deleted=0';
+    	$sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    	$sth->bindParam(':email', $email, PDO::PARAM_STR);
+    	$sth->bindParam(':rid', $remote_id, PDO::PARAM_STR);
+    	$sth->execute();
+    	$user = $sth->fetchAll(PDO::FETCH_ASSOC);
+    	if (empty($user)) {
+    		return false;
+    	}
+    	$sql = 'INSERT INTO logins (date_created, email, status) VALUES (:date_created, :email, :status)';
+    	$sth = $this->dbh->prepare($sql);
+    	$status = 'Login Success';
+    	$this->user_id = $user[0]['id'];
+    	unset($user[0]['hash']);
+    	$sth->bindParam(':date_created', $now, PDO::PARAM_STR);
+    	$sth->bindParam(':email', $email, PDO::PARAM_STR);
+    	$sth->bindParam(':status', $status, PDO::PARAM_STR);
+    	$sth->execute();
+    	return $user[0];
     }
 
 
@@ -156,34 +188,43 @@ class BoxOffice
 
     }
 
+    protected $user_params = array("first_name", "last_name", "company", "remote_id", "photo");
+
     /**
      * Registers a new User if the email address already exists it will throw an exception
-     * @param $email
-     * @param $password
-     * @param $first_name
-     * @param $last_name
-     * @param $company
-     * @param $status
+     * @param string $email
+     * @param string $hash
+     * @param array $data
+     * @param string $status
      * @throws Exception
      */
-    function registerUser($email, $password, $first_name, $last_name, $company = null, $status = 'Pending Confirmation')
+    function registerUser($email, $hash, $data, $status = 'Pending Confirmation')
     {
 
         if (!$this->getUser($email, false)) {
 
             $now = gmdate('Y-m-d H:i:s');
-            $sql = "INSERT INTO users (email,hash, first_name, last_name,date_created, date_modified, status, company) VALUES (:email, :password, :first_name, :last_name,:now, :now, :status ,:company)";
+            $params_i = implode(" ,", $this->user_params);
+            $params_v = implode(" ,:", $this->user_params);
+            $sql = "INSERT INTO users (email,hash, date_created, date_modified, status, $params_i)
+                VALUES (:email, :password, :now, :now, :status, :$params_v)";
             $sth = $this->dbh->prepare($sql);
-            $sth->execute(array(':email' => $email,
-                ':password' => $password,
-                ':first_name' => $first_name,
-                ':last_name' => $last_name,
-                ':now' => $now,
-                ':status' => $status,
-                ':company' => $company,
+            $sth->bindParam(':email', $email, PDO::PARAM_STR);
+            $sth->bindParam(':now', $now, PDO::PARAM_STR);
+            $sth->bindParam(':status', $status, PDO::PARAM_STR);
+            // FIXME: encrypt password
+            $sth->bindParam(':password', $password, PDO::PARAM_STR);
 
+            foreach($this->user_params as $key) {
+                if(isset($data[$key])) {
+                    $sth->bindParam(":$key", $data[$key], PDO::PARAM_STR);
+                } else {
+                    $dummy = null;
+                    $sth->bindParam(":$key", $dummy, PDO::PARAM_NULL);
+                }
 
-            ));
+            }
+            $sth->execute();
             return $this->getUser($email);
         } else {
             throw new Exception('User Already Exists');
@@ -205,6 +246,7 @@ class BoxOffice
         $until = gmdate('Y-m-d H:i:s', time() + ($hoursTillExpires * 60 * 60));
         $sql = "UPDATE confirmations SET date_modified=:now, status='Expired' WHERE type=:type AND user_id=:user_id";
         $sth = $this->dbh->prepare($sql);
+
         $sth->execute(array(
             ':now' => $now,
             ':type' => $type,
@@ -257,7 +299,10 @@ class BoxOffice
         return false;
     }
 
-
+    public function createUserInstance($email)
+    {
+        // TODO
+    }
 
 
 
