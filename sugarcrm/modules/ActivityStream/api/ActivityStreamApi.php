@@ -27,13 +27,13 @@ class ActivityStreamApi extends ListApi {
             'getBeanActivities' => array(
                 'reqType' => 'GET',
                 'path' => array('ActivityStream', '<module>','?'),
-                'pathVars' => array('','target_module','target_id'),
+                'pathVars' => array('','module','id'),
                 'method' => 'getActivities',
             ),
             'getModuleActivities' => array(
                 'reqType' => 'GET',
                 'path' => array('ActivityStream', '<module>'),
-                'pathVars' => array('','target_module'),
+                'pathVars' => array('','module'),
                 'method' => 'getActivities',
             ),
             'getAllActivities' => array(
@@ -51,13 +51,13 @@ class ActivityStreamApi extends ListApi {
             'postModule' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>'),
-                'pathVars' => array('','target_module'),
+                'pathVars' => array('','module'),
                 'method' => 'handlePost',
             ), 
             'postBean' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>','?'),
-                'pathVars' => array('','target_module','target_id'),
+                'pathVars' => array('','module','id'),
                 'method' => 'handlePost',
             ),                                                                                                        
         );
@@ -80,8 +80,8 @@ class ActivityStreamApi extends ListApi {
     
     public function handlePost($api, $args) {
         $seed = BeanFactory::getBean('ActivityStream');
-        $targetModule = isset($args['target_module']) ? $args['target_module'] : '';     
-        $targetId = isset($args['target_id']) ? $args['target_id'] : '';
+        $targetModule = isset($args['module']) ? $args['module'] : '';     
+        $targetId = isset($args['id']) ? $args['id'] : '';
         if($targetModule == "ActivityStream") {
             return $seed->addComment($targetId, $args['value']);
         }
