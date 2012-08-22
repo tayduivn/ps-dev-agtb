@@ -1,7 +1,6 @@
-<div class="widget">
-
+<div class="block widget">
     <div class="news-widget">
-        <h2>News</h2>
+        <h4>News</h4>
         {{#each responseData.results}}
         <div class="news-article">
             <h4><a href="{{this.unescapedUrl}}" class="googledoc-fancybox">{{{this.titleNoFormatting}}}</a></h4> ({{{this.publisher}}})
@@ -9,5 +8,4 @@
         </div>
         {{/each}}
     </div>
-
 </div>

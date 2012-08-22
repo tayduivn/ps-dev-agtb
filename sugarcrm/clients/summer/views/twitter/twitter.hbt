@@ -1,9 +1,7 @@
-
-
 <link rel="stylesheet" href="../clients/summer/views/twitter/sprite.css" xmlns="http://www.w3.org/1999/html">
-<div class="widget">
+<div class="block widget">
     <div class="twitter-widget">
-        <h2>Tweets</h2>
+        <h4>Tweets</h4>
         {{#each tweets}}
         {{#if this.source}}
         <ul style="margin-left: 0px">
