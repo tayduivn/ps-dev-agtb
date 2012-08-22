@@ -12,15 +12,18 @@
                </div>
                </div>
        {{/each}}
-           <span class="extend">
-             <div class="row-fluid">
-                 <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-                 <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-             </div>
-           </span>
-           <div class="record-save-prompt" style="display: none">
-               <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
-               <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
+           <div class="">
+             <div class="span2 closure"></div>
+           </div>
+           <div>
+               <div class="extend span2 tright">
+                     <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                     <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+               </div>
+               <div class="record-save-prompt" style="display: none">
+                   <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
+                   <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
+               </div>
            </div>
        {{else}}
        {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
@@ -88,7 +91,7 @@ display:none;
 }
 
 .card2 .row-fluid.record-row .span2:first-child {
-background: #eeeeee;
+background: #f7f7f7;
 padding: 1em;
 margin-top: -1em;
 border-radius:5px;
@@ -117,10 +120,64 @@ display:inline;
 
 .record-row.edit-mode span.record-edit-link-wrapper {
 display:block;
-border-color: #dddddd;
+border-color: #eeeeee;
 -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
+.card2 .record-row > .span2 {
+border-right:1px solid #eeeeee;
+border-left:1px solid #eeeeee;
+border-radius:0px !important;
+-webkit-radius:0px !important;
+-moz-radius:0px !important;
+}
+
+.card2 .record-row:first-child > .span2 {
+border-top:1px solid #eeeeee;
+border-radius:4px 4px 0 0 !important;
+-webkit-radius:4px 4px 0 0 !important;
+-moz-radius:4px 4px 0 0 !important;
+}
+
+.card2 .closure {
+background:#f7f7f7;
+border-radius:0 0 4px 4px !important;
+-webkit-radius:0 0 4px 4px !important;
+-moz-radius:0 0 4px 4px !important;
+border-right:1px solid #eeeeee;
+border-left:1px solid #eeeeee;
+border-bottom:1px solid #eeeeee;
+min-height:3px;
+height:3px;
+}
+
+.card2 .extend {
+clear:both;
+padding-right:1em;
+padding:.5em .5em 0 0;
+}
+
+.card2 .extend .icon-chevron-down {
+text-decoration:none;
+}
+
+
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
