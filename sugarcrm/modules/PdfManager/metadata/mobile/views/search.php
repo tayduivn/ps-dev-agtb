@@ -28,8 +28,7 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$searchdefs[$module_name] = array(
+$searchdefs['PdfManager'] = array(
     'templateMeta' => array(
         'maxColumns' => '1',
         'widths' => array('label' => '10', 'field' => '30'),

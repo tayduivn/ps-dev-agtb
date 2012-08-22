@@ -63,10 +63,10 @@ SUGAR.util.doWhen(function(){
             {{/if}}
         {{/foreach}}
     {{/if}}
-    {* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
+    {* //BEGIN SUGARCRM flav=pro ONLY *}
     {{sugar_button module="$module" id="PDFVIEW" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
     {{sugar_button module="$module" id="PDFEMAIL" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
-    {* //END SUGARCRM flav=pro || flav=sales ONLY *}
+    {* //END SUGARCRM flav=pro ONLY *}
     {{if empty($form.hideAudit) || !$form.hideAudit}}
         {{sugar_button module="$module" id="Audit" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
     {{/if}}

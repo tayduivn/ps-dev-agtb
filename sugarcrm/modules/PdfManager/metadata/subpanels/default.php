@@ -29,11 +29,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name='PdfManager';
 $subpanel_layout = array(
     'top_buttons' => array(
         array('widget_class' => 'SubPanelTopCreateButton'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
+        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'PdfManager'),
     ),
 
     'where' => '',
@@ -50,12 +49,12 @@ $subpanel_layout = array(
         ),
         'edit_button'=>array(
             'widget_class' => 'SubPanelEditButton',
-             'module' => $module_name,
+             'module' => 'PdfManager',
              'width' => '4%',
         ),
         'remove_button'=>array(
             'widget_class' => 'SubPanelRemoveButton',
-             'module' => $module_name,
+             'module' => 'PdfManager',
             'width' => '5%',
         ),
     ),

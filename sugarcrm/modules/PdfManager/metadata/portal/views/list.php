@@ -29,8 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$viewdefs[$module_name]['portal']['view']['list'] = array(
+$viewdefs['PdfManager']['portal']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',

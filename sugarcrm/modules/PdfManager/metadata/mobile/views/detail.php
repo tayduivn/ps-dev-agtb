@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
-$module_name = 'PdfManager';
-$viewdefs[$module_name]['mobile']['view']['detail'] = array(
+
+$viewdefs['PdfManager']['mobile']['view']['detail'] = array(
     'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',)),
                             'maxColumns' => '1',
                             'widths' => array(

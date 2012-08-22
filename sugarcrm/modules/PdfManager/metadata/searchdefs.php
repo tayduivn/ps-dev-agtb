@@ -28,8 +28,7 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$searchdefs[$module_name] =
+$searchdefs['PdfManager'] =
 array (
   'layout' =>
   array (

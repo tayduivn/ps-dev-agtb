@@ -28,8 +28,7 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$dependencies[$module_name]['read_only_base_module_edition'] = array (
+$dependencies['PdfManager']['read_only_base_module_edition'] = array (
     'hooks' => array("edit", "view"),
     'trigger' => 'true',
     'triggerFields' => array(

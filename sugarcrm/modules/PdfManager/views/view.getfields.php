@@ -38,11 +38,12 @@ class ViewGetFields extends SugarView
 
     public function __construct()
     {
+        global $app_strings;
         parent::__construct();
 
         foreach ($this->vars as $var) {
             if (!isset($_REQUEST[$var])) {
-                sugar_die("Required paramter $var not set");
+                sugar_die($app_strings['ERR_MISSING_REQUIRED_FIELDS'] . $var);
             }
             $this->$var = $_REQUEST[$var];
         }

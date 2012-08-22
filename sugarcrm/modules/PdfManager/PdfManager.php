@@ -68,22 +68,12 @@ class PdfManager extends Basic
     public $subject;
     public $keywords;
 
-    public function PdfManager_sugar()
-    {
-        parent::Basic();
-    }
-
     public function bean_implements($interface)
     {
         switch ($interface) {
             case 'ACL': return true;
         }
 
-        return false;
-    }
-
-    public function isFavoritesEnabled()
-    {
         return false;
     }
 

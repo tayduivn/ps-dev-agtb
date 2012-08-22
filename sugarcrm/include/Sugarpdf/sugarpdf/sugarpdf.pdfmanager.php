@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -28,7 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//FILE SUGARCRM flav=pro ONLY
 
 require_once 'include/Sugarpdf/sugarpdf/sugarpdf.smarty.php';
 
@@ -249,9 +249,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
         //Save the email object
         global $timedate;
-        $email_object->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
-        $email_object->save(FALSE);
-        $email_id = $email_object->id;
+        $email_object->date_start = $timedate->to_display_date_time($timedate->now());
         
         $email_object->save(FALSE);
         $email_id = $email_object->id;
@@ -259,7 +257,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         //Handle PDF Attachment
         $note = BeanFactory::newBean("Notes");
         $note->filename = $file_name;
-        $note->file_mime_type = $email_object->email2GetMime($GLOBALS['sugar_config']['upload_dir'].$file_name);
+        $note->file_mime_type = $email_object->email2GetMime('upload://'.$file_name);
         $note->name = translate('LBL_EMAIL_ATTACHMENT', "Quotes").$file_name;
 
         $note->parent_id = $email_object->id;
@@ -274,8 +272,8 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         $note->save();
         $note_id = $note->id;
 
-	    $source = $GLOBALS['sugar_config']['upload_dir'].$file_name;
-	    $destination = $GLOBALS['sugar_config']['upload_dir'].$note_id;
+	    $source = 'upload://'.$file_name;
+	    $destination = 'upload://'.$note_id;
         
         if (!copy($source, $destination)){
             $msg = str_replace('$destination', $destination, translate('LBL_RENAME_ERROR', "Quotes"));
@@ -299,15 +297,15 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
     {
         if (!empty($pdfTemplate)) {
 
-            if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls') ) {
-                mkdir_recursive($GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls');
+            if ( ! file_exists(sugar_cached('modules/PdfManager/tpls')) ) {
+                mkdir_recursive(sugar_cached('modules/PdfManager/tpls'));
             }
-            $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplate->id . '.tpl';
+            $tpl_filename = sugar_cached('modules/PdfManager/tpls/' . $pdfTemplate->id . '.tpl');
 
             $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
 
             if ($previewMode !== FALSE) {
-                $tpl_filename = $GLOBALS['sugar_config']['cache_dir'] . 'modules/PdfManager/tpls/' . $pdfTemplate->id . '_preview.tpl';
+                $tpl_filename = sugar_cached('modules/PdfManager/tpls/' . $pdfTemplate->id . '_preview.tpl');
                 $pdfTemplate->body_html = str_replace(array('{', '}'), array('&#123;', '&#125;'), $pdfTemplate->body_html);
             }
 
@@ -375,7 +373,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             if(strlen($badoutput) > 0) {
                 ob_end_clean();
             }
-            file_put_contents($GLOBALS['sugar_config']['upload_dir'].$name, ltrim($tmp));
+            file_put_contents('upload://'.$name, ltrim($tmp));
 
             $email_id = $this->buildEmail($name, $bean);
 
@@ -387,8 +385,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             } else {
                 SugarApplication::redirect("index.php?module=Emails&action=Compose&record=".$email_id."&replyForward=true&reply=");
             }
-
-            parent::Output($name,'D');
         }
 
         parent::Output($name, 'D');

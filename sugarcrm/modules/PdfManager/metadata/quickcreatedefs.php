@@ -28,8 +28,7 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$viewdefs[$module_name]['QuickCreate'] = array(
+$viewdefs['PdfManager']['QuickCreate'] = array(
     'templateMeta' => array('maxColumns' => '2',
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'),

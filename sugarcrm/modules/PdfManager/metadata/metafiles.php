@@ -28,12 +28,11 @@
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
- $metafiles[$module_name] = array(
-    'detailviewdefs'  => 	'modules/' . $module_name . '/metadata/detailviewdefs.php',
-    'editviewdefs'    => 	'modules/' . $module_name . '/metadata/editviewdefs.php',
-     'listviewdefs'    => 	'modules/' . $module_name . '/metadata/listviewdefs.php',
-     'searchdefs'      =>    'modules/' . $module_name . '/metadata/searchdefs.php',
-     'popupdefs'	      =>    'modules/' . $module_name . '/metadata/popupdefs.php',
-     'searchfields'	  =>    'modules/' . $module_name . '/metadata/SearchFields.php',
+ $metafiles['PdfManager'] = array(
+    'detailviewdefs'  => 	'modules/PdfManager/metadata/detailviewdefs.php',
+    'editviewdefs'    => 	'modules/PdfManager/metadata/editviewdefs.php',
+     'listviewdefs'    => 	'modules/PdfManager/metadata/listviewdefs.php',
+     'searchdefs'      =>    'modules/PdfManager/metadata/searchdefs.php',
+     'popupdefs'	      =>    'modules/PdfManager/metadata/popupdefs.php',
+     'searchfields'	  =>    'modules/PdfManager/metadata/SearchFields.php',
  );

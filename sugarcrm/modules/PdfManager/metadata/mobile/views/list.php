@@ -27,8 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
-$module_name = 'PdfManager';
-$viewdefs[$module_name]['mobile']['view']['list'] = array(
+
+$viewdefs['PdfManager']['mobile']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',

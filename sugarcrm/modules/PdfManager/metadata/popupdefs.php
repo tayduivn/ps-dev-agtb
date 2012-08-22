@@ -29,15 +29,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 
-$module_name = 'PdfManager';
-$object_name = 'PdfManager';
-$_module_name = 'pdfmanager';
-$popupMeta = array('moduleMain' => $module_name,
-                        'varName' => $object_name,
-                        'orderBy' => $_module_name.'.name',
+$popupMeta = array('moduleMain' => 'PdfManager',
+                        'varName' => 'PdfManager',
+                        'orderBy' => 'pdfmanager.name',
                         'whereClauses' =>
-                            array('name' => $_module_name . '.name',
+                            array('name' => 'pdfmanager.name',
                                 ),
-                            'searchInputs'=> array($_module_name. '_number', 'name', 'priority','status'),
+                            'searchInputs'=> array('pdfmanager_number', 'name', 'priority','status'),
 
                         );
