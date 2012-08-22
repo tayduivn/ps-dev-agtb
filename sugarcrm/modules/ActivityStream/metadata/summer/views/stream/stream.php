@@ -1,6 +1,8 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -27,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Meetings']['summer']['view']['record'] = array(
+$viewdefs['ActivityStream']['summer']['view']['stream'] = array(
     'templateMeta' => array(
         'maxColumns' => '1',
         'widths' => array(
@@ -41,22 +43,16 @@ $viewdefs['Meetings']['summer']['view']['record'] = array(
             'type' => 'button',
             'label' => 'Edit',
             'route' => array(
-              'action' => 'edit'
+                'action' => 'edit'
             ),
             'primary' => true,
-       ),
+        ),
     ),
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-                'name',
-                'date_start',
-                'date_end',
-                // 'type',
-                'location',
-                'description',
-                'contacts',
+
             ),
         ),
     ),

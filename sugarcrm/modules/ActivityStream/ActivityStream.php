@@ -44,23 +44,23 @@ class ActivityStream extends SugarBean {
     
 
     // common vars for sugar bean
-    var $table_name = 'activity_stream';
-    var $object_name = 'ActivityStream';
-    var $module_dir = 'ActivityStream';
-    var $new_schema = true;
+    public $table_name = 'activity_stream';
+    public $object_name = 'ActivityStream';
+    public $module_dir = 'ActivityStream';
+    public $new_schema = true;
     
     // db fields
-    var $activity_id;
-    var $target_id;
-    var $target_module;
-    var $activity_data;
-    var $created_by;
-    var $date_created;
+    public $activity_id;
+    public $target_id;
+    public $target_module;
+    public $activity_data;
+    public $created_by;
+    public $date_created;
         
     /**
      * Constructor
      */
-    function ActivityStream() {
+    public function ActivityStream() {
         parent::SugarBean();       
     }
     

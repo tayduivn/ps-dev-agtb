@@ -4,7 +4,7 @@
 
     initialize: function(options) {
         var extraEvents = {
-            "click .record-edit-link": "handleEdit",
+            "click .record-edit-link-wrapper": "handleEdit",
             "click .record-save": "handleSave",
             "click .record-cancel": "handleCancel"
         };
@@ -75,10 +75,11 @@
         switch (field.type) {
             default:
                 this.toggleField(field, target);
+                target.parent().find("input").focus();
         }
     },
 
-    handleSave: function(e) {
+    handleSave: function() {
         var self = this;
 
         this.editMode = false;

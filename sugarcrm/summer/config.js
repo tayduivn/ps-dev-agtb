@@ -169,6 +169,7 @@
             'Accounts',
             'Contacts',
             'Opportunities',
+            'ActivityStream',
             'Notes'
         ],
         /**

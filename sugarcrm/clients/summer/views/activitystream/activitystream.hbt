@@ -1,0 +1,10 @@
+<div class="block">
+  <h4>Activity</h4>
+  {{#each collection.models}}
+
+    {{log this}}
+    <div>
+    {{attributes.created_by_name}}
+    </div>
+  {{/each}}
+</div>
