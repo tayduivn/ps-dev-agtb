@@ -48,9 +48,9 @@ $viewdefs['Contacts']['summer']['view']['list'] = array(
                     'default' => false,
                 ),
                 array(
-                    'name' => 'created_by_name',
+                    'name' => 'assigned_user_name',
                     'width' => '10',
-                    'label' => 'LBL_CREATED',
+                    'label' => 'LBL_ASSIGNED_TO_ID',
                     'default' => false,
                 ),
             )
