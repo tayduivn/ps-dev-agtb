@@ -228,7 +228,7 @@ class SugarEmailAddress extends SugarBean {
         $addresstype
         )
     {
-        $emailCaps = strtoupper(trim($email));
+        $emailCaps = $this->db->quoted(strtoupper(trim($email)));
         if(empty($emailCaps))
             return 0;
 
@@ -237,9 +237,9 @@ class SugarEmailAddress extends SugarBean {
                         ON (ea.id = eabl.email_address_id)
                     JOIN {$bean->table_name} bean
                         ON (eabl.bean_id = bean.id)
-                WHERE ea.email_address_caps = '{$emailCaps}'
-                    and eabl.bean_module = '{$bean->module_dir}'
-                    and eabl.primary_address = '{$addresstype}'
+                WHERE ea.email_address_caps = $emailCaps
+                    and eabl.bean_module = ".$this->db->quoted($bean->module_dir)."
+                    and eabl.primary_address = ".$this->db->quoted($addresstype)."
                     and eabl.deleted=0 ";
 
         $r = $this->db->query($q);
@@ -257,12 +257,12 @@ class SugarEmailAddress extends SugarBean {
      * @param   $table      which table to query
      */
     function getRelatedId($email, $module) {
-        $email = trim(strtoupper($email));
-        $module = ucfirst($module);
+        $email = $this->db->quoted(trim(strtoupper($email)));
+        $module = $this->db->quoted(ucfirst($module));
 
         $q = "SELECT bean_id FROM email_addr_bean_rel eabr
                 JOIN email_addresses ea ON (eabr.email_address_id = ea.id)
-                WHERE bean_module = '{$module}' AND ea.email_address_caps = '{$email}' AND eabr.deleted=0";
+                WHERE bean_module = $module AND ea.email_address_caps = $email AND eabr.deleted=0";
 
         $r = $this->db->query($q, true);
 
@@ -294,9 +294,9 @@ class SugarEmailAddress extends SugarBean {
             return array();
         }
 
-        $emailCaps = strtoupper($email);
+        $emailCaps = $this->db->quoted(strtoupper($email));
         $q = "SELECT * FROM email_addr_bean_rel eabl JOIN email_addresses ea ON (ea.id = eabl.email_address_id)
-                WHERE ea.email_address_caps = '{$emailCaps}' and eabl.deleted=0 ";
+                WHERE ea.email_address_caps = $emailCaps and eabl.deleted=0 ";
         $r = $this->db->query($q);
 
         while($a = $this->db->fetchByAssoc($r)) {
