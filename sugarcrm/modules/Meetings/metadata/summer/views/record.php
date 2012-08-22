@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['summer']['view']['record'] = array(
+$viewdefs['Meetings']['summer']['view']['record'] = array(
     'templateMeta' => array(
         'maxColumns' => '1',
         'widths' => array(
@@ -50,34 +50,13 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
         array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),
-                'phone_office',
-                array(
-                    'name' => 'website',
-                    'displayParams' => array(
-                        'type' => 'url',
-                    ),
-                ),
-                'email1',
-                'billing_address_street',
-                'billing_address_city',
-                'billing_address_state',
-                'billing_address_postalcode',
-                'billing_address_country',
-                'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
-                'linkedin',
-                'facebook',
-                'twitter',
-                'googleplus',
+                'name',
+                // 'date_start',
+                // 'date_end',
+                // 'type',
+                'location',
+                'description',
+                'contacts',
             ),
         ),
     ),

@@ -585,7 +585,54 @@ class SugarBean
     {
         return $this->getTableName().'_audit';
     }
-
+    /**
+     * Return true if activity is enabled for this object
+     * You would set the activity flag in the implemting module's vardef file.
+     *
+     * @return boolean
+     *
+     * Internal function, do not override.
+     */
+    function isActivityEnabled()
+    {
+        global $dictionary;
+        if (isset($dictionary[$this->getObjectName()]['activity_enabled']))
+        {
+            return $dictionary[$this->getObjectName()]['activity_enabled'];
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns a list of fields with their definitions that have the activity_enabled property set to true.
+     * Before calling this function, check whether activity has been enabled for the table/module or not.
+     * You would set the activity flag in the implemting module's vardef file.
+     *
+     * @return an array of
+     * @see isActivityEnabled
+     *
+     * Internal function, do not override.
+     */
+    function getActivityEnabledFieldDefinitions()
+    {
+        if (!isset($this->activity_enabled_fields))
+        {
+            $this->activity_enabled_fields=array();
+            foreach ($this->field_defs as $field => $properties)
+            {
+                if (!empty($properties['activity_enabled']))
+                {
+                    $this->activity_enabled_fields[$field]=$properties;
+                }
+            }
+    
+        }
+        return $this->activity_enabled_fields;
+    }
+    
     /**
      * Returns the name of the custom table.
      * Custom table's name is based on implementing class' table name.
@@ -1598,6 +1645,12 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
+        // create activity if enabled
+        if ($this->isActivityEnabled() && $isUpdate) {
+            $activity = new ActivityStream();
+            $activity->addActivity($this, ActivityStream::ACTIVITY_TYPE_UPDATE);
+        }
+                
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
         if ($this->is_AuditEnabled()) {
