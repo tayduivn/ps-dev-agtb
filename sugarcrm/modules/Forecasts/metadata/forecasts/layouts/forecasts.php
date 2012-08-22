@@ -15,7 +15,7 @@ $viewdefs['Forecasts']['forecasts']['layout']['forecasts'] = array(
             'view' => 'forecastsChart',
         ),
         4 => array(
-            'view' => 'progress',
+            'view' => 'forecastsProgress',
         ),
         5 => array(
             'view' => 'forecastsCommitted',

@@ -129,7 +129,7 @@
             quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
             pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
         });
-        this._renderHtml();
+        this.render();
     },
 
     /**
