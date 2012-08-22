@@ -51,8 +51,8 @@ $viewdefs['Meetings']['summer']['view']['record'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 'name',
-                // 'date_start',
-                // 'date_end',
+                'date_start',
+                'date_end',
                 // 'type',
                 'location',
                 'description',
