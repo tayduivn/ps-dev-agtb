@@ -28,24 +28,16 @@ require_once('modules/Forecasts/ForecastOpportunities.php');
 
 class ForecastsProgressApi extends ModuleApi
 {
-    const STAGE_CLOSED_WON  = 'Closed Won';
-   	const STAGE_CLOSED_LOST = 'Closed Lost';
-
 	protected $api;
 	protected $args;
 	
 	protected $closed;
-	protected $forecastData;
 	protected $opportunitiesInPipeline;
 	protected $user_id;
-	protected $user;
 	protected $timeperiod_id;
-	protected $revenueInPipeline;
-    protected $likelyAmount;
 	protected $should_rollup;
 	protected $quotaData;
 	protected $opportunity;
-    protected $committed_probability;
     protected $sales_stage_lost;
     protected $sales_stage_won;
 
@@ -63,8 +55,8 @@ class ForecastsProgressApi extends ModuleApi
 		$parentApi = array(
 			'progress' => array(
 				'reqType'   => 'GET',
-				'path'      => array('Forecasts', 'progress', '?', '?', '?', '?', '?'),
-				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup','sales_stage_won', 'sales_stage_lost'),
+				'path'      => array('Forecasts', 'progress', '?', '?', '?'),
+				'pathVars'  => array('', '','user_id','timeperiod_id','should_rollup'),
 				'method'    => 'progress',
 				'shortHelp' => 'Progress data',
 				'longHelp'  => 'include/api/html/modules/Forecasts/ForecastProgressApi.html#progress',
@@ -81,7 +73,7 @@ class ForecastsProgressApi extends ModuleApi
      * @param bool $should_rollup
      * @return mixed
      */
-    protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false, $excluded_sales_stages  )
+    protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup=false, $excluded_sales_stages_won, $excluded_sales_stages_lost  )
    	{
    		global $current_user;
 
@@ -103,10 +95,18 @@ class ForecastsProgressApi extends ModuleApi
    		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
 
 
-        foreach($excluded_sales_stages as $exclusion)
-        {
-            $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
-        }
+       if(count($excluded_sales_stages_won)) {
+           foreach($excluded_sales_stages_won as $exclusion)
+           {
+               $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+           }
+       }
+      if(count($excluded_sales_stages_lost)) {
+           foreach($excluded_sales_stages_lost as $exclusion)
+           {
+               $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+           }
+       }
         $where .= " AND opportunities.deleted = 0";
 
    		$query = $this->opportunity->create_list_query(NULL, $where);
@@ -126,7 +126,7 @@ class ForecastsProgressApi extends ModuleApi
    	 *
    	 * @return int
    	 */
-   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $sales_stage_won )
+   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $should_rollup = false, $sales_stage_won=array() )
    	{
    		$amountSum = 0;
    		$where     = "";
@@ -138,12 +138,11 @@ class ForecastsProgressApi extends ModuleApi
    		}
 
    		if ( !is_null($timeperiod_id) ) {
-   			$where .= " AND opportunities.timeperiod_id='$timeperiod_id'";
+   			$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
    		}
-
-       foreach($sales_stage_won as $inclusion)
-       {
-           $where .= " AND opportunities.sales_stage = " . $GLOBALS['db']->quoted($inclusion);
+       if(count($sales_stage_won)) {
+           $where .= " AND opportunities.sales_stage in ( '";
+           $where .= join("','", $sales_stage_won) . "')";
        }
 
    		$query  = $this->opportunity->create_list_query(NULL, $where);
@@ -166,12 +165,15 @@ class ForecastsProgressApi extends ModuleApi
 	 */
 	protected function loadProgressData( $args )
 	{
-		$this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
+        $admin = new Administration();
+        $admin->retrieveSettings();
+        $this->user_id = (array_key_exists("user_id", $args) ? $args["user_id"] : $GLOBALS["current_user"]->id);
 
 		$this->timeperiod_id = (array_key_exists("timeperiod_id", $args) ? $args["timeperiod_id"] : TimePeriod::getCurrentId());
 		$this->should_rollup = (array_key_exists("should_rollup", $args) ? $args["should_rollup"] : User::isManager($this->user_id));
-		$this->sales_stage_won = (array_key_exists("sales_stage_won", $args) ? explode(',', $args["sales_stage_won"]) : array());
-        $this->sales_stage_lost = (array_key_exists("sales_stage_lost", $args) ? explode(',', $args["sales_stage_lost"]) : array());
+		$this->sales_stage_won = json_decode(html_entity_decode($admin->settings["base_sales_stage_won"]));
+        $this->sales_stage_lost = json_decode(html_entity_decode($admin->settings["base_sales_stage_lost"]));
+
         if ( !is_bool($this->should_rollup) ) {
 			$this->should_rollup = $this->should_rollup == 1 ? TRUE : FALSE;
 		}
@@ -179,7 +181,7 @@ class ForecastsProgressApi extends ModuleApi
             $this->opportunity = new Opportunity();
             $this->quotaData = array('amount' => 0);
             $this->closed      = $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->sales_stage_won);
-            $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, array_merge($this->sales_stage_won, $this->sales_stage_lost));
+            $this->opportunitiesInPipeline = $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->should_rollup, $this->sales_stage_won, $this->sales_stage_lost);
         } else {
             $this->opportunitiesInPipeline = 0;
             $this->closed = 0;
@@ -226,31 +228,11 @@ class ForecastsProgressApi extends ModuleApi
 		$this->loadProgressData($args);
 
 		$progressData = array(
-            "quota_amount"      => $this->getQuota(),
+            "quota_amount"      => $this->quotaData["amount"],
             "closed_amount"     => $this->closed,
             "opportunities"     => $this->opportunitiesInPipeline
 		);
 
-
-
 		return $progressData;
-	}
-
-	public function getQuota()
-	{
-		return isset($this->quotaData["amount"]) ? $this->quotaData["amount"] :  0;
-	}
-
-	public function getOpportunities()
-	{
-
-		return $this->opportunitiesInPipeline;
-	}
-
-
-	public function getClosed()
-	{
-		
-		return $this->closed;
 	}
 }
