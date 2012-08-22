@@ -53,16 +53,17 @@
      * @param {String} key Key of the label.
      * @param {String} module(optional) Module name.
      * @param Mixed args String or Array of arguments to substitute into string
-     * @return {String} The string for the given label key.
+     * @return {Handlebars.SafeString} The string for the given label key.
      */
     Handlebars.registerHelper("str_format", function(key, module, args) {
         module = _.isString(module) ? module : null;
         var label = app.lang.get(key, module);
 
-        if ((typeof args == 'String') || args.length == 1)
+        if (_.isString(args) || args.length == 1)
         {
-            args = (typeof args == 'String') ? args : args[0];
-            return label.replace('{0}', args);
+            args = (_.isString(args)) ? args : args[0];
+            label = label.replace('{0}', args);
+            return new Handlebars.SafeString(label);
         }
 
         var len = args.length;

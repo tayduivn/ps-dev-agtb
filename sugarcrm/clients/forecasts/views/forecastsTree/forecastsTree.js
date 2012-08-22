@@ -1,54 +1,40 @@
 /**
  * View that displays a list of models pulled from the context's collection.
- * @class View.Views.ForecastsSubnavView
- * @alias SUGAR.App.layout.ForecastsSubnavView
+ * @class View.Views.TreeView
+ * @alias SUGAR.App.layout.TreeView
  * @extends View.View
  */
 ({
-    /**
-     * Stores the full name of the user to display in subnav template
-     */
-    fullName:'',
+
     jsTree:{},
     reporteesEndpoint:'',
     currentTreeUrl:'',
     currentRootId:'',
 
-    // Target id of the modal in SidecarView.tpl to pull up when settings cog icon is clicked
-    modalTargetId: 'forecastSubnavSettingsModal',
-
-    events: {
-        "click #forecastSettings" : "handleForecastSettingsClick"
-    },
-
-    initialize : function(options) {
+    /**
+     * Initialize the View
+     *
+     * @constructor
+     * @param {Object} options
+     */
+    initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        // grab current app user model locally
-        var currentUser = app.user.getUser();
-
-        this.fullName = currentUser.get('full_name');
-
-        // Tree init
         this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
-        this.currentTreeUrl = this.reporteesEndpoint + currentUser.get('id');
-        this.currentRootId = currentUser.get('id');
+        this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
+        this.currentRootId = app.user.get('id');
     },
 
-    bindDataChange: function() {
-        var self = this;
-        app.view.View.prototype.bindDataChange.call(this);
-
-        this.context.forecasts.on('change:selectedUser', this.checkRender, this);
-    },
-
-    /**
-     * Handler function when user clicks the settings button in forecasts
-     * @param e Event object
+    /***
+     * Handles if data changes on the context.forecasts.tree model (and when tree first initializes)
+     * Tree is not handled like other components on Forecasts as it uses a 3rdParty lib (jstree)
+     * to handle it's data model. The event handler is added here only because bindDataChange is
+     * where other event handlers are added in other models and it fires once during initialization
      */
-    handleForecastSettingsClick: function(e) {
-        e.preventDefault();
-        $('#' + this.modalTargetId).modal();
+    bindDataChange: function() {
+        if(this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", this.checkRender, this);
+        }
     },
 
     /***
@@ -60,15 +46,11 @@
      * @param selectedUser {Object} the current selectedUser on the context
      */
     checkRender: function(context, selectedUser) {
-
-        this.fullName = selectedUser.full_name;
-
         // handle the case for user clicking MyOpportunities first
         if(selectedUser.showOpps) {
             var nodeId = 'jstree_node_myopps_' + selectedUser.id;
             this.selectJSTreeNode(nodeId)
 
-            this.render();
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
             // also make sure we're not re-rendering tree for a rep
@@ -94,11 +76,6 @@
                     this.selectJSTreeNode(nodeId)
                 }
             }
-        } else {
-            // just update the title
-            var hb = Handlebars.compile("{{str_format key module args}}");
-            var text = hb({'key' : "LBL_FORECAST_TITLE", 'module' : 'Forecasts', 'args' : this.fullName});
-            this.$el.find('h1').html(text);
         }
     },
 
@@ -118,14 +95,8 @@
     /**
      * Renders JSTree
      */
+    _renderHtml:function (ctx, options) {
 
-    /**
-     * Renders JSTree
-     * @param ctx
-     * @param options
-     * @protected
-     */
-    _renderHtml : function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var self = this;
@@ -163,31 +134,31 @@
                         }
                     }
                 }).on("select_node.jstree", function (event, data) {
-                        var jsData = data.inst.get_json();
-                        var nodeType = jsData[0].attr.rel;
-                        var userData = jsData[0].metadata;
-                        var contextUser = self.context.forecasts.get("selectedUser");
+                    var jsData = data.inst.get_json();
+                    var nodeType = jsData[0].attr.rel;
+                    var userData = jsData[0].metadata;
+                    var contextUser = self.context.forecasts.get("selectedUser");
 
-                        var showOpps = false;
+                    var showOpps = false;
 
-                        // if user clicked on a "My Opportunities" node
-                        // set this flag true
-                        if (nodeType == "my_opportunities" || nodeType == "rep") {
-                            showOpps = true
-                        }
+                    // if user clicked on a "My Opportunities" node
+                    // set this flag true
+                    if (nodeType == "my_opportunities" || nodeType == "rep") {
+                        showOpps = true
+                    }
 
-                        var selectedUser = {
-                            'id':userData.id,
-                            'full_name':userData.full_name,
-                            'first_name':userData.first_name,
-                            'last_name':userData.last_name,
-                            'isManager':(nodeType == 'rep') ? false : true,
-                            'showOpps':showOpps
-                        };
+                    var selectedUser = {
+                        'id':userData.id,
+                        'full_name':userData.full_name,
+                        'first_name':userData.first_name,
+                        'last_name':userData.last_name,
+                        'isManager':(nodeType == 'rep') ? false : true,
+                        'showOpps':showOpps
+                    };
 
-                        // update context with selected user which will trigger checkRender
-                        self.context.forecasts.set("selectedUser", selectedUser);
-                    });
+                    // update context with selected user which will trigger checkRender
+                    self.context.forecasts.set("selectedUser", selectedUser);
+                });
 
                 if (treeData) {
                     var showTree = false;
@@ -224,5 +195,4 @@
             }
         });
     }
-
 })

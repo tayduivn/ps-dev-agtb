@@ -64,15 +64,25 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
         $forecast1->likely_case = 4321;
         $forecast1->save();
 
-        //This is the most recently modified entry
+        //This is a second entry
         $this->forecast2 = SugarTestForecastUtilities::createForecast($this->timeperiod, $this->reportee);
-        $this->forecast2->best_case = 1234;
-        $this->forecast2->likely_case = 1234;
+        $this->forecast2->best_case = 3241;
+        $this->forecast2->likely_case = 3241;
         $this->forecast2->save();
+        //Manually alter the date_modified value so that we get a value that is more recent to show up in our test
+        $timedate = TimeDate::getInstance();
+        $GLOBALS['db']->query("UPDATE forecasts SET date_modified = '" . $timedate->asDbDate($timedate->getNow()->modify("+3 months")) . "' WHERE id = '{$this->forecast2->id}'");
+        $GLOBALS['db']->commit();
+
+        //This is the most recently modified entry
+        $this->forecast3 = SugarTestForecastUtilities::createForecast($this->timeperiod, $this->reportee);
+        $this->forecast3->best_case = 1234;
+        $this->forecast3->likely_case = 1234;
+        $this->forecast3->save();
 
         //Manually alter the date_modified value so that we get a value that is more recent to show up in our test
         $timedate = TimeDate::getInstance();
-        $GLOBALS['db']->query("UPDATE forecasts SET date_modified = '" . $timedate->asDbDate($timedate->getNow()->modify("+6 months")) . "' WHERE id = '{$this->forecast2->id}'");
+        $GLOBALS['db']->query("UPDATE forecasts SET date_modified = '" . $timedate->asDbDate($timedate->getNow()->modify("+6 months")) . "' WHERE id = '{$this->forecast3->id}'");
         $GLOBALS['db']->commit();
     }
 
@@ -99,10 +109,10 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
         foreach($data as $user_name=>$entry)
         {
-            if($entry['forecast_id'] == $this->forecast2->id)
+            if($entry['forecast_id'] == $this->forecast3->id)
             {
-                $this->assertEquals(1234, $entry['best_case'], 'Failed asserting best_case = 1234');
-                $this->assertEquals(1234, $entry['likely_case'], 'Failed asserting likely_case = 1234');
+                $this->assertEquals(1234, $entry['best_case'], 'Failed asserting best_case is 1234');
+                $this->assertEquals(1234, $entry['likely_case'], 'Failed asserting likely_case is 1234');
                 $found = true;
                 break;
             }

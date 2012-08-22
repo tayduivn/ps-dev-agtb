@@ -217,7 +217,7 @@
     /**
      * Renders view
      */
-    _render:function () {
+    _render: function() {
         var self = this;
 
         if(!this.showMe()){
@@ -226,9 +226,9 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
 
-        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
-
         app.view.View.prototype._render.call(this);
+
+        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
@@ -245,7 +245,6 @@
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
         });
-        
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "aoColumnDefs": columnDefs,
@@ -275,12 +274,14 @@
         $("#summary").prepend(view.$el);
 
         // fix the style on the rows that contain a checkbox
-        this.$el.find('td:has(input[type=checkbox])').addClass('center');
+        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
 
         this.calculateTotals();
         this.createSubViews();
         this.includedView.render();
         this.overallView.render();
+
+        return this;
     },
 
 

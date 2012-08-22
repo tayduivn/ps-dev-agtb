@@ -25,7 +25,12 @@
         var self = this;
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
+                var oldShowButtons = self.showCommitButton;
                 self.showCommitButton = self.checkShowCommitButton(user.id);
+                // if show buttons has changed, need to re-render
+                if(self.showCommitButton != oldShowButtons) {
+                    self._render();
+                }
             });
             this.context.forecasts.on("change:commitButtonEnabled", this.commitButtonStateChangeHandler, self);
         }
@@ -33,10 +38,9 @@
 
     /**
      * Renders the component
-     * @private
      */
-    _render: function() {
-        app.view.View.prototype._render.call(this);
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {
