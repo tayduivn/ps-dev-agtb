@@ -9,7 +9,7 @@ class BoxOfficeMail
         foreach($vars as $k=>$v){
             $$k = $v;
         }
-        require('summer/splash/boxoffice/emails/email.' . $template . '.php' );
+        require(dirname(__FILE__).'templates/email.' . $template . '.php' );
         self::sendMail($to, $subject, $txt, $message);
 
 

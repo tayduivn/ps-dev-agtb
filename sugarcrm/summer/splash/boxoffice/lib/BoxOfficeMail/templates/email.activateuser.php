@@ -23,7 +23,7 @@ $message = <<<EOQ
 
      </p>
 
-     Click to activate your account @ <a style="font-weight: bold; color: #2288B5; text-decoration: none;" onmouseover="this.style.color='#ff9900'" onmouseout="this.style.color='#2288B5'" href="http://sugarcrm.com/summer/splash/activate?email={$user['email']}&hash={$guid}">http://sugarcrm.com/summer/splash/?do=activate&email={$user['email']}&guid={$guid}</a>
+     Click to activate your account @ <a style="font-weight: bold; color: #2288B5; text-decoration: none;" onmouseover="this.style.color='#ff9900'" onmouseout="this.style.color='#2288B5'" href="{$config['top_url']}summer/splash/activate?email={$user['email']}&hash={$guid}">http://sugarcrm.com/summer/splash/?do=activate&email={$user['email']}&guid={$guid}</a>
    </div>
  </td>
 </table>
@@ -42,6 +42,6 @@ You are almost ready to start using Sugar. Please follow the link below to activ
 
 Thank you for joining the Sugar community!
 
-Click to activate your account @ http://sugarcrm.com/summer/splash/?do=activate&email={$user['email']}&guid={$guid}
+Click to activate your account @ {$config['top_url']}summer/splash/?do=activate&email={$user['email']}&guid={$guid}
 
 EOQ;

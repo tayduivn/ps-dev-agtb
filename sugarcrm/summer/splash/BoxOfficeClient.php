@@ -159,17 +159,21 @@ class BoxOfficeClient
 
     public function createSession()
     {
-        if(empty($this->session) || empty($this->user)) {
+        if(empty($this->session) || empty($this->user) || empty($this->instance)) {
             return;
         }
         $usr_id = $this->setupUser();
 
         if(!empty($usr_id)) {
+            // reset the session since we're changing security context
+            session_regenerate_id();
             $_SESSION['authenticated_user_id'] = $usr_id;
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
             $ac = AuthenticationController::getInstance();
             $ac->authController->postLoginAuthenticate();
+            // after we're done, we don't need session token anymore, delete it
+            $this->box->deleteSession($this->user['id'], $this->instance['id']);
         }
     }
 
@@ -251,7 +255,7 @@ class BoxOfficeClient
     public function registerUser($email, $password, $data){
         $user = $this->box->registerUser($email, $password, $data);
         $guid = $this->box->generateConfirmation($email);
-        BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid));
+        BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid, 'config' => $this->config));
         return true;
     }
 
@@ -351,7 +355,7 @@ class BoxOfficeClient
      */
     public function noLogin()
     {
-        throw new Exception("No Login!");
+        //throw new Exception("No Login!");
         ob_end_clean();
         header('Location: '.$this->loginUrl());
         exit();

@@ -8,6 +8,9 @@ if(!empty($_REQUEST['token'])) {
     $box = BoxOfficeClient::getInstance();
     $box->createSession();
     // reload
+    if(empty($_SESSION['authenticated_user_id'])) {
+        $box->noLogin();
+    }
     header("Location: index.php");
     die();
 }

@@ -22,10 +22,10 @@ class BoxOffice
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
         $sth->execute();
+        $user = $sth->fetch(PDO::FETCH_ASSOC);
         $sql = 'INSERT INTO logins (date_created, email, status) VALUES (:date_created, :email, :status)';
         $sth = $this->dbh->prepare($sql);
-        $user = $sth->fetchAll(PDO::FETCH_ASSOC);
-        if(!crypt($password, $user[0]['hash']) === $user[0]['hash']) {
+        if(!crypt($password, $user['hash']) === $user['hash']) {
             $user = false;
         }
         if (empty($user)) {
@@ -37,13 +37,13 @@ class BoxOffice
             return false;
         }
         $status = 'Login Success';
-        $this->user_id = $user[0]['id'];
-        unset($user[0]['hash']);
+        $this->user_id = $user['id'];
+        unset($user['hash']);
         $sth->bindParam(':date_created', $now, PDO::PARAM_STR);
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
         $sth->bindParam(':status', $status, PDO::PARAM_STR);
         $sth->execute();
-        return $user[0];
+        return $user;
     }
 
     /**
@@ -125,6 +125,11 @@ class BoxOffice
         return array('user' => $user, 'instance' => $instance);
     }
 
+    /**
+     * Delete session
+     * @param string $user
+     * @param string $instance
+     */
     public function deleteSession($user, $instance)
     {
         $sth = $this->dbh->prepare("DELETE FROM sessions WHERE user_id=:user AND instance_id=:instance");
@@ -200,6 +205,8 @@ class BoxOffice
     function getUserInstances($user_id = null, $instance_id = null)
     {
         if (empty($user_id)) $user_id = $this->user_id;
+        $this->addInvites($user_id);
+
         $today = gmdate('Y-m-d');
         $sql = 'SELECT instances.*, owner.first_name, owner.last_name, owner.email FROM instances INNER JOIN users owner on owner.id = instances.owner_id AND owner.deleted = 0 INNER JOIN users_instances ui ON ui.user_id = :user_id AND ui.instance_id = instances.id  AND ui.deleted = 0 WHERE instances.date_start <= :date AND instances.date_end >= :date AND instances.deleted=0';
         if (!empty ($instance_id)) {
@@ -264,9 +271,14 @@ class BoxOffice
 
     }
 
+    /**
+     * Hash password
+     * @param string $password
+     * @return string
+     */
     protected function hashPassword($password)
     {
-        return crypt($password, '$2y$'.base64_encode(mcrypt_create_iv(22)).'$');
+        return crypt($password, '$2y$09$'.base_convert(md5(mcrypt_create_iv(32)), 16, 36));
     }
 
     protected $user_params = array("first_name", "last_name", "company", "remote_id", "photo");
@@ -279,7 +291,7 @@ class BoxOffice
      * @param string $status
      * @throws Exception
      */
-    function registerUser($email, $hash, $data, $status = 'Pending Confirmation')
+    function registerUser($email, $password, $data, $status = 'Pending Confirmation')
     {
         if (!$this->getUser($email, false)) {
             $now = gmdate('Y-m-d H:i:s');
@@ -378,9 +390,32 @@ class BoxOffice
         return false;
     }
 
+    /**
+     * Add invited user to instances where he is invited
+     * @param string $email
+     */
+    protected function addInvites($user_id)
+    {
+        $sth = $this->dbh->prepare("SELECT invites.* FROM invites INNER JOIN users on users.email=invites.email WHERE users.id=:id");
+        $sth->execute(array(":id" => $user_id));
+        $invh = $this->dbh->prepare("INSERT INTO users_instances(date_created, date_modified, user_id, instance_id) VALUES(:now, :now, :userid, :instanceid)");
+        $delh = $this->dbh->prepare("DELETE FROM invites WHERE id=:id");
+        foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $invite) {
+            $invh->execute(array(
+                ':now' => gmdate('Y-m-d H:i:s'),
+                ':userid' => $user_id,
+                ':instanceid' => $invite['instance_id']
+            ));
+            $delh->execute(array(":id" => $invite['id']));
+        }
+    }
+
     public function createUserInstance($email)
     {
         // TODO
+//     	$user = $this->getUser($email);
+//     	// create database
+//         $sth = $this->dbh->prepare();
     }
 
 
