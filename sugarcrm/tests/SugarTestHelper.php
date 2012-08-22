@@ -540,8 +540,8 @@ class SugarTestHelper
     protected static function setUp_moduleList()
     {
         self::$registeredVars['moduleList'] = true;
-        self::setUp_app_list_strings();
-        $GLOBALS['moduleList'] = $GLOBALS['app_list_strings']['moduleList'];
+        global $moduleList;
+        require('include/modules.php');
         return true;
     }
 
