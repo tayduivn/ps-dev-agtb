@@ -546,6 +546,17 @@ class SugarTestHelper
     }
 
     /**
+     * Reinitialization of $moduleList in global scope because we can't unset that variable
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected static function tearDown_moduleList()
+    {
+        return self::setUp_moduleList();
+    }
+
+    /**
      * Registration of $modListHeader in global scope
      *
      * @static

@@ -55,6 +55,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
     protected function clearFTSIndexQueue()
     {
         $GLOBALS['log']->debug("Clearing FTS Index Queue");
+        $GLOBALS['db']->commit();
         $truncateQuery = $GLOBALS['db']->truncateTableSQL('fts_queue');
         $GLOBALS['db']->query($truncateQuery);
     }

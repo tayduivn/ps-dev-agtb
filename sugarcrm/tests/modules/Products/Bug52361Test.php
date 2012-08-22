@@ -75,6 +75,7 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
     public function setUp()
     {
         SugarTestHelper::setUp('dictionary');
+        SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
