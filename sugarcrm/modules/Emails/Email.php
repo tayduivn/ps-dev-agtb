@@ -826,7 +826,7 @@ class Email extends SugarBean {
 			$this->reply_to_status = 0;
 		} // if
 
-		if ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase') {
+        if (isset($_REQUEST['composeType']) && ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase')) {
 			if (isset($_REQUEST['ieId']) && isset($_REQUEST['mbox'])) {
 				$emailFromIe = new InboundEmail();
 				$emailFromIe->retrieve($_REQUEST['ieId']);
