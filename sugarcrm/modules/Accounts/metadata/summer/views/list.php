@@ -51,13 +51,13 @@ $viewdefs['Accounts']['summer']['view']['list'] = array(
                     'default' => false,
                 ),
                 array(
-                        'name' => 'industry',
-                        'width' => '15',
-                        'label' => 'LBL_INDUSTRY',
-                        'default' => false,
+                    'name' => 'industry',
+                    'width' => '15',
+                    'label' => 'LBL_INDUSTRY',
+                    'default' => false,
                 ),                
                 array(
-                    'name' => 'assigned_to_name',
+                    'name' => 'assigned_user_name',
                     'width' => '10',
                     'label' => 'LBL_ASSIGNED_TO',
                     'default' => false,
