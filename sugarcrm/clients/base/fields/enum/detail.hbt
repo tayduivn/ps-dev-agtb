@@ -1,3 +1,1 @@
-{{#eachOptions def.options}}
-{{#has this.key ../value}}{{value}}{{/has}}
-{{/eachOptions}}
+{{this.value}}
