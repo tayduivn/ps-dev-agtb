@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-require_once('modules/Mailer/Mailer.php');
+require_once('modules/Mailer/SimpleMailer.php');
 
 class MailerApi extends ModuleApi
 {
@@ -70,7 +70,7 @@ class MailerApi extends ModuleApi
 		$admin = new Administration();
 		$admin->retrieveSettings();
 
-		$mailer = new Mailer();
+		$mailer = new SimpleMailer();
 		$mailer->setSender(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
 
 		if (is_array($args["to_addresses"])) {

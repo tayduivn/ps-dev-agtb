@@ -19,12 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Mailer/Mailer.php');
+require_once('modules/Mailer/SimpleMailer.php');
 
-class MailerTest extends Sugar_PHPUnit_Framework_TestCase
+class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function testReset_LoadDefaultConfigsReplacesTheExistingConfigsWithTheDefaults_SubjectIsNull() {
-		$mailer = new Mailer();
+		$mailer = new SimpleMailer();
 
 		$initialConfigs = array(
 			'protocol' => 'asdf', // some asinine value that could never possibly exist
@@ -52,7 +52,7 @@ class MailerTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	public function testMergeConfigs_NewConfigAddedToDefaultConfigs() {
-		$mailer = new Mailer();
+		$mailer = new SimpleMailer();
 
 		$additionalConfigs = array(
 			'foo' => 'bar',

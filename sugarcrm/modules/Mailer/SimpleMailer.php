@@ -23,143 +23,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'lib/phpmailer/class.phpmailer.php';
 require_once 'lib/phpmailer/class.smtp.php';
-require_once 'MailerException.php';
-require_once 'EmailIdentity.php';
-require_once 'RecipientsCollection.php';
+require_once 'BaseMailer.php';
 
-class Mailer
+class SimpleMailer extends BaseMailer
 {
-	protected $mailer;
-	protected $configs;
-	protected $sender;
-	protected $recipients;
-	protected $subject;
-	protected $htmlBody;
-	protected $textBody;
-
-	public function __construct() {
-		$this->reset();
-	}
-
 	public function reset() {
+		parent::reset();
 		$this->mailer = new PHPMailer();
-		$this->loadDefaultConfigs();
-		$this->recipients = new RecipientsCollection();
-		$this->subject = null;
-		$this->htmlBody = null;
-		$this->textBody = null;
 	}
 
 	/**
-	 * Initialize or replace the configurations with the defaults for this sending strategy.
-	 */
-	public function loadDefaultConfigs() {
-		$defaults = array(
-			'protocol' => 'smtp',
-			'charset'  => 'utf-8',
-			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
-			'smtp'     => array(
-				'host'         => 'localhost',
-				'port'         => 25,
-				'secure'       => '',
-				'authenticate' => false,
-				'username'     => '',
-				'password'     => '',
-				'timeout'      => 10,
-				'persist'      => false,
-			),
-		);
-
-		$this->setConfigs($defaults);
-	}
-
-	/**
-	 * Use this method to replace the default configurations. This will replace the previous configurations;
-	 * it will not merge the configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function setConfigs($configs) {
-		$this->configs = $configs;
-	}
-
-	/**
-	 * Merge the passed in configurations with the existing configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function mergeConfigs($configs) {
-		$this->configs = array_merge($this->configs, $configs);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getConfigs() {
-		return $this->configs;
-	}
-
-	/**
-	 * @param EmailIdentity $sender
-	 */
-	public function setSender(EmailIdentity $sender) {
-		$this->sender = $sender;
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsTo($recipients = array()) {
-		return $this->recipients->addRecipients($recipients);
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsCc($recipients = array()) {
-		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsBcc($recipients = array()) {
-		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
-	}
-
-	/**
-	 * @param string $subject
-	 */
-	public function setSubject($subject) {
-		$this->subject = $subject;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSubject() {
-		return $this->subject;
-	}
-
-	/**
-	 * @param string $textBody
-	 */
-	public function setTextBody($textBody) {
-		$this->textBody = $textBody;
-	}
-
-	/**
-	 * @param string $htmlBody
-	 */
-	public function setHtmlBody($htmlBody) {
-		$this->htmlBody = $htmlBody;
-	}
-
-	/**
-     * @return boolean  true=success
+	 * @return boolean  true=success
 	 */
 	public function send() {
 		try {
@@ -192,7 +66,7 @@ class Mailer
 		return true;
 	}
 
-	protected function transferConfigurations() {
+	private function transferConfigurations() {
 		$this->mailer->Mailer   = $this->configs['protocol'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
@@ -209,7 +83,7 @@ class Mailer
 		}
 	}
 
-	protected function connectToHost() {
+	private function connectToHost() {
 		if ($this->configs['protocol'] == 'smtp') {
 			$this->mailer->smtp = new SMTP();
 
@@ -226,7 +100,7 @@ class Mailer
 		}
 	}
 
-	protected function transferHeaders() {
+	private function transferHeaders() {
 		$senderEmail = $this->sender->getEmail();
 
 		//@todo should we really validate this email address? can that be done reliably further up in the stack?
@@ -244,7 +118,7 @@ class Mailer
 		$this->mailer->Subject = $this->subject;
 	}
 
-	protected function transferRecipients() {
+	private function transferRecipients() {
 		$to = $this->recipients->getTo();
 		$cc = $this->recipients->getCc();
 		$bcc = $this->recipients->getBcc();
@@ -269,7 +143,7 @@ class Mailer
 	/**
 	 * @throws MailerException
 	 */
-	protected function transferBody() {
+	private function transferBody() {
 		if ($this->htmlBody && $this->textBody) {
 			$this->mailer->Encoding = 'base64';
 			$this->mailer->IsHTML(true);
