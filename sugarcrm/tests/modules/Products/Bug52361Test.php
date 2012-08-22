@@ -74,10 +74,11 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user', array(true, 1));
         parent::setUp();
 
         // Adding products to visible modules
@@ -110,24 +111,10 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->relationships->add($this->relationship);
         $this->relationships->save();
         $this->relationships->build();
-        LanguageManager::clearLanguageCache('Products');
-        LanguageManager::clearLanguageCache('Users');
-
-        // Updating $dictionary by created relation
-        global $dictionary;
-        $dictionary = array();
-        $moduleInstaller = new ModuleInstaller();
-        $moduleInstaller->silent = true;
-        $moduleInstaller->rebuild_tabledictionary();
-        require 'modules/TableDictionary.php';
-
-        // Updating vardefs of Products and Users
-        VardefManager::$linkFields = array();
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs('Products', BeanFactory::getObjectName('Products'));
-        VardefManager::refreshVardefs('Users', BeanFactory::getObjectName('Users'));
-
-        SugarRelationshipFactory::rebuildCache();
+        SugarTestHelper::setUp('relation', array(
+            'Products',
+            'Users'
+        ));
 
         // Creating local user for relations
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -138,23 +125,6 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
         // Removing relation between products and users
         $this->relationships->delete($this->relationship->getName());
         $this->relationships->save();
-        SugarRelationshipFactory::deleteCache();
-        LanguageManager::clearLanguageCache('Products');
-        LanguageManager::clearLanguageCache('Users');
-        global $dictionary;
-        $dictionary = array();
-        $moduleInstaller = new ModuleInstaller();
-        $moduleInstaller->silent = true;
-        $moduleInstaller->rebuild_tabledictionary();
-        require 'modules/TableDictionary.php';
-
-
-        // Updating vardefs of Products and Users
-        VardefManager::$linkFields = array();
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs('Products', BeanFactory::getObjectName('Products'));
-        VardefManager::refreshVardefs('Users', BeanFactory::getObjectName('Users'));
-        SugarRelationshipFactory::rebuildCache();
 
         // Hiding products from subpanels
         if ($this->isSubPanelUpdated == true)
