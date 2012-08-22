@@ -75,6 +75,7 @@
         switch (field.type) {
             default:
                 this.toggleField(field, target);
+                target.parent().find("input").focus();
         }
     },
 
