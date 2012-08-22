@@ -21,9 +21,81 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class MailerException extends Exception
+require_once 'EmailIdentity.php';
+
+interface IMailer
 {
-	public function log($level) {
-		$GLOBALS['log']->$level($this->message);
-	}
+	public function __construct();
+
+	public function reset();
+
+	/**
+	 * Initialize or replace the configurations with the defaults for this sending strategy.
+	 */
+	public function loadDefaultConfigs();
+
+	/**
+	 * Use this method to replace the default configurations. This will replace the previous configurations;
+	 * it will not merge the configurations.
+	 *
+	 * @param array $configs
+	 */
+	public function setConfigs($configs);
+
+	/**
+	 * Merge the passed in configurations with the existing configurations.
+	 *
+	 * @param array $configs
+	 */
+	public function mergeConfigs($configs);
+
+	/**
+	 * @return array
+	 */
+	public function getConfigs();
+
+	/**
+	 * @param EmailIdentity $sender
+	 */
+	public function setSender(EmailIdentity $sender);
+
+	/**
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
+	 */
+	public function addRecipientsTo($recipients = array());
+
+	/**
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
+	 */
+	public function addRecipientsCc($recipients = array());
+
+	/**
+	 * @param array $recipients     Array of EmailIdentity objects.
+	 * @return array    Array of invalid recipients
+	 */
+	public function addRecipientsBcc($recipients = array());
+
+	/**
+	 * @param string $subject
+	 */
+	public function setSubject($subject);
+
+	/**
+	 * @return string
+	 */
+	public function getSubject();
+
+	/**
+	 * @param string $textBody
+	 */
+	public function setTextBody($textBody);
+
+	/**
+	 * @param string $htmlBody
+	 */
+	public function setHtmlBody($htmlBody);
+
+	public function send();
 }

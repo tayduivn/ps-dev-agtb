@@ -2000,6 +2000,7 @@ class Email extends SugarBean {
 		} else {
 			// plain text only
 			$this->description_html = '';
+			$mail->Encoding = 'quoted-printable';
 			$mail->IsHTML(false);
 			$plainText = from_html($this->description);
 			$plainText = str_replace("&nbsp;", " ", $plainText);
@@ -2034,6 +2035,7 @@ class Email extends SugarBean {
 		global $sugar_config;
 		// wp: if body is html, then insert new lines at 996 characters. no effect on client side
 		// due to RFC 2822 which limits email lines to 998
+		$mail->Encoding = 'base64';
 		$mail->IsHTML(true);
 		$body = from_html(wordwrap($this->description_html, 996));
 		$mail->Body = $body;

@@ -22,134 +22,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'lib/phpmailer/class.phpmailer.php';
-require_once 'MailerException.php';
-require_once 'EmailIdentity.php';
-require_once 'RecipientsCollection.php';
+require_once 'lib/phpmailer/class.smtp.php';
+require_once 'BaseMailer.php';
 
-class Mailer
+class SimpleMailer extends BaseMailer
 {
-	protected $mailer;
-	protected $configs;
-	protected $sender;
-	protected $recipients;
-	protected $subject;
-	protected $htmlBody;
-	protected $textBody;
-
-	public function __construct() {
-		$this->reset();
-	}
-
 	public function reset() {
+		parent::reset();
 		$this->mailer = new PHPMailer();
-		$this->loadDefaultConfigs();
-		$this->recipients = new RecipientsCollection();
-		$this->subject = null;
-		$this->htmlBody = null;
-		$this->textBody = null;
 	}
 
 	/**
-	 * Initialize or replace the configurations with the defaults for this sending strategy.
-	 */
-	public function loadDefaultConfigs() {
-		//@todo for now use the PHPMailer defaults, but eventually use this as a way to default to SMTP
-		$defaults = array(
-			'protocol' => 'mail', // smtp or other send mail program
-			'host'     => 'localhost', // smtp host
-			'port'     => 25 // smtp port
-		);
-
-		$this->setConfigs($defaults);
-	}
-
-	/**
-	 * Use this method to replace the default configurations. This will replace the previous configurations;
-	 * it will not merge the configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function setConfigs($configs) {
-		$this->configs = $configs;
-	}
-
-	/**
-	 * Merge the passed in configurations with the existing configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function mergeConfigs($configs) {
-		$this->configs = array_merge($this->configs, $configs);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getConfigs() {
-		return $this->configs;
-	}
-
-	/**
-	 * @param EmailIdentity $sender
-	 */
-	public function setSender(EmailIdentity $sender) {
-		$this->sender = $sender;
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsTo($recipients = array()) {
-		return $this->recipients->addRecipients($recipients);
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsCc($recipients = array()) {
-		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
-	}
-
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsBcc($recipients = array()) {
-		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
-	}
-
-	/**
-	 * @param string $subject
-	 */
-	public function setSubject($subject) {
-		$this->subject = $subject;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSubject() {
-		return $this->subject;
-	}
-
-	/**
-	 * @param string $textBody
-	 */
-	public function setTextBody($textBody) {
-		$this->textBody = $textBody;
-	}
-
-	/**
-	 * @param string $htmlBody
-	 */
-	public function setHtmlBody($htmlBody) {
-		$this->htmlBody = $htmlBody;
-	}
-
-	/**
-     * @return boolean  true=success
+	 * @return boolean  true=success
 	 */
 	public function send() {
 		try {
@@ -157,7 +41,8 @@ class Mailer
 				throw new MailerException("Invalid mailer");
 			}
 
-			$this->transferConnectionData();
+			$this->transferConfigurations();
+			$this->connectToHost();
 			$this->transferHeaders();
 			$this->transferRecipients();
 			$this->transferBody();
@@ -170,20 +55,52 @@ class Mailer
 				throw new MailerException($this->mailer->ErrorInfo);
 			}
 		} catch (MailerException $me) {
-			$GLOBALS['log']->error($me->getMessage());
+			//@todo consider using status codes and grouping them based on the error level that should be used
+			// so that different error levels can be logged
+			// could also catch different Exception classes that extend MailerException and log at the level
+			// particular to that exception type
+			$me->log('error');
 			return false;
 		}
 
 		return true;
 	}
 
-	protected function transferConnectionData() {
-		$this->mailer->Mailer = $this->configs->getProtocol();
-		$this->mailer->Host = $this->configs->getHost();
-		$this->mailer->Port = $this->configs->getPort();
+	private function transferConfigurations() {
+		$this->mailer->Mailer   = $this->configs['protocol'];
+		$this->mailer->CharSet  = $this->configs['charset'];
+		$this->mailer->Encoding = $this->configs['encoding'];
+
+		if ($this->configs['protocol'] == 'smtp') {
+			$this->mailer->Host          = $this->configs['smtp']['host'];
+			$this->mailer->Port          = $this->configs['smtp']['port'];
+			$this->mailer->SMTPSecure    = $this->configs['smtp']['secure'];
+			$this->mailer->SMTPAuth      = $this->configs['smtp']['authenticate'];
+			$this->mailer->Username      = $this->configs['smtp']['username'];
+			$this->mailer->Password      = from_html($this->configs['smtp']['password']);
+			$this->mailer->Timeout       = $this->configs['smtp']['timeout'];
+			$this->mailer->SMTPKeepAlive = $this->configs['smtp']['persist'];
+		}
 	}
 
-	protected function transferHeaders() {
+	private function connectToHost() {
+		if ($this->configs['protocol'] == 'smtp') {
+			$this->mailer->smtp = new SMTP();
+
+			if (!$this->mailer->SmtpConnect()) {
+				//@todo need to tell the class what error messages to use, so the following is for reference only
+//				global $app_strings;
+//				if(isset($this->oe) && $this->oe->type == "system") {
+//					$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+//				} else {
+//					$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+//				}
+				throw new MailerException('Failed to connect to the remote server');
+			}
+		}
+	}
+
+	private function transferHeaders() {
 		$senderEmail = $this->sender->getEmail();
 
 		//@todo should we really validate this email address? can that be done reliably further up in the stack?
@@ -201,21 +118,24 @@ class Mailer
 		$this->mailer->Subject = $this->subject;
 	}
 
-	protected function transferRecipients() {
+	private function transferRecipients() {
 		$to = $this->recipients->getTo();
 		$cc = $this->recipients->getCc();
 		$bcc = $this->recipients->getBcc();
 
 		//@todo should you be able to initiate a send without any To recipients?
 		foreach ($to as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($cc as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddCC($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($bcc as $recipient) {
+			$recipient->decode();
 			$this->mailer->AddBCC($recipient->getEmail(), $recipient->getName());
 		}
 	}
@@ -223,8 +143,9 @@ class Mailer
 	/**
 	 * @throws MailerException
 	 */
-	protected function transferBody() {
+	private function transferBody() {
 		if ($this->htmlBody && $this->textBody) {
+			$this->mailer->Encoding = 'base64';
 			$this->mailer->IsHTML(true);
 			$this->mailer->Body = $this->htmlBody;
 			$this->mailer->AltBody = $this->textBody;
@@ -232,6 +153,7 @@ class Mailer
 			$this->mailer->Body = $this->textBody;
 		} elseif ($this->htmlBody) {
 			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
+			//$this->mailer->Encoding = 'base64'; //@todo do we need this?
 			$this->mailer->Body = $this->htmlBody;
 		} else {
 			throw new MailerException("No email body was provided");

@@ -46,4 +46,10 @@ class EmailIdentity
 	public function getName() {
 		return $this->name;
 	}
+
+	public function decode() {
+		// add back in html characters (apostrophe ' and ampersand &) to email addresses
+		// this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
+		$this->email = htmlspecialchars_decode($this->email, ENT_QUOTES);
+	}
 }

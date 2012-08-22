@@ -21,9 +21,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class MailerException extends Exception
+class MailerFactory
 {
-	public function log($level) {
-		$GLOBALS['log']->$level($this->message);
+	/**
+	 * @param string $class
+	 *      This could become a different object that can be used to determine which class to instantiate.
+	 *      But for now just spell out the class you want for testing.
+	 * @return mixed
+	 */
+	public function getMailer($class = 'SimpleMailer') {
+		switch ($class) {
+			case 'SugarMailer':
+				require_once 'SugarMailer.php';
+			case 'SimpleMailer':
+			default:
+				require_once 'SimpleMailer.php';
+		}
+
+		$mailer = new $class();
+
+		return $mailer;
 	}
 }

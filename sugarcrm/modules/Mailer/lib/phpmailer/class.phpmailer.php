@@ -77,11 +77,10 @@ r915 - 2004-10-08 15:31:10 -0700 (Fri, 08 Oct 2004) - julian - E-mail notificati
 
 */
 
-
 /*~ class.phpmailer.php
 .---------------------------------------------------------------------------.
 |  Software: PHPMailer - PHP email class                                    |
-|   Version: 2.3                                                          |
+|   Version: 2.3                                                            |
 |   Contact: via sourceforge.net support pages (also www.codeworxtech.com)  |
 |      Info: http://phpmailer.sourceforge.net                               |
 |   Support: http://sourceforge.net/projects/phpmailer/                     |
@@ -109,7 +108,7 @@ r915 - 2004-10-08 15:31:10 -0700 (Fri, 08 Oct 2004) - julian - E-mail notificati
  * @package PHPMailer
  * @author Andy Prevost
  * @copyright 2004 - 2008 Andy Prevost
-*/
+ */
 
 class PHPMailer {
 
@@ -127,7 +126,7 @@ class PHPMailer {
    * Sets the CharSet of the message.
    * @var string
    */
-  public $CharSet           = 'utf-8';
+  public $CharSet           = 'iso-8859-1';
 
   /**
    * Sets the Content-type of the message.
@@ -332,15 +331,15 @@ class PHPMailer {
   // PROPERTIES, PRIVATE
   /////////////////////////////////////////////////
 
-  public $smtp            = NULL;
+  public  $smtp            = NULL;
   private $to              = array();
   private $cc              = array();
   private $bcc             = array();
   private $ReplyTo         = array();
-  public $attachment      = array();
+  private $attachment      = array();
   private $CustomHeader    = array();
   private $message_type    = '';
-  public $boundary        = array();
+  private $boundary        = array();
   private $language        = array();
   private $error_count     = 0;
   private $sign_cert_file  = "";
@@ -359,10 +358,8 @@ class PHPMailer {
   public function IsHTML($bool) {
     if($bool == true) {
       $this->ContentType = 'text/html';
-      $this->Encoding = 'base64';
     } else {
       $this->ContentType = 'text/plain';
-      $this->Encoding = 'quoted-printable';
     }
   }
 
@@ -473,18 +470,6 @@ class PHPMailer {
     if((count($this->to) + count($this->cc) + count($this->bcc)) < 1) {
       $this->SetError($this->Lang('provide_address'));
       return false;
-    }
-
-    //iterate through recipients and add back in html characters (apostrophe ' and ampersand &) to email addresses
-    //this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
-    foreach($this->to as $k=>$addr){
-        $this->to[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
-    }
-    foreach($this->cc as $k=>$addr){
-        $this->cc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
-    }
-    foreach($this->bcc as $k=>$addr){
-        $this->bcc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
     }
 
     /* Set whether the message is multipart/alternative */
@@ -997,7 +982,7 @@ class PHPMailer {
     $result .= $this->AddrAppend('From', $from);
 
     /* sendmail and mail() extract Cc from the header before sending */
-   if(count($this->cc) > 0) {
+    if(count($this->cc) > 0) {
       $result .= $this->AddrAppend('Cc', $this->cc);
     }
 
@@ -1722,7 +1707,7 @@ class PHPMailer {
    * @access private
    * @return void
    */
-  public function SetError($msg) {
+  private function SetError($msg) {
     $this->error_count++;
     $this->ErrorInfo = $msg;
   }
@@ -1747,7 +1732,7 @@ class PHPMailer {
    * @access private
    * @return string
    */
-  public function ServerHostname() {
+  private function ServerHostname() {
     if (!empty($this->Hostname)) {
       $result = $this->Hostname;
     } elseif (isset($_SERVER['SERVER_NAME'])) {
@@ -1764,7 +1749,7 @@ class PHPMailer {
    * @access private
    * @return string
    */
-  public function Lang($key) {
+  private function Lang($key) {
     if(count($this->language) < 1) {
       $this->SetLanguage('en'); // set the default language
     }

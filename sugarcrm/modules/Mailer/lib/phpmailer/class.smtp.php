@@ -262,7 +262,6 @@ class SMTP {
       return false;
     }
     
-    $password = from_html($password);
     // Send encoded password
     fputs($this->smtp_conn, base64_encode($password) . $this->CRLF);
 
@@ -1101,5 +1100,4 @@ class SMTP {
 
 }
 
-
- ?>
+?>
