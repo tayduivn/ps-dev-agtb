@@ -1,2 +1,19 @@
-I'm yelp.<br>
-<h2>Yelp! Yelp! I'm drowning!</h2>
+<div class="widget">
+
+    <div class="yelp-widget">
+        <h2>Yelp Search</h2>
+        {{#each yelp.businesses}}
+        <div class="news-article">
+            <h4><a href=''>{{this.name}}</a> <img src='{{this.rating_img_url_small}}'/></h4>
+            {{this.snippet_text}}
+            <h6>Address</h6>
+            <address>
+            {{#each this.location.display_address}}
+                {{this}}<br/>
+            {{/each}}
+            </address>
+        </div>
+        {{/each}}
+    </div>
+
+</div>

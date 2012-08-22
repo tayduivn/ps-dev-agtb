@@ -176,8 +176,8 @@
             'Accounts',
             'Contacts',
             'Opportunities',
-            'Notes',
-            'Tasks'
+            'ActivityStream',
+            'Notes'
         ],
         /**
          * Client ID for oAuth

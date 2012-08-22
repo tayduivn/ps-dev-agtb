@@ -75,10 +75,11 @@
         switch (field.type) {
             default:
                 this.toggleField(field, target);
+                target.parent().find("input").focus();
         }
     },
 
-    handleSave: function(e) {
+    handleSave: function() {
         var self = this;
 
         this.editMode = false;

@@ -40,19 +40,10 @@ $viewdefs['Contacts']['summer']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
+                'account_name',
                 'email1',
-                array(
-                    'name' => 'phone_mobile',
-                    'width' => '15',
-                    'label' => 'LBL_PHONE_MOBILE',
-                    'default' => false,
-                ),
-                array(
-                    'name' => 'created_by_name',
-                    'width' => '10',
-                    'label' => 'LBL_CREATED',
-                    'default' => false,
-                ),
+                'phone_mobile',
+                'assigned_user_name',
             )
         )
     )

@@ -257,6 +257,7 @@ $mod_strings = array (
     'LBL_EXPORT_PHONE_MOBILE' => 'Mobile Phone',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
-    'LBL_USER_SYNC' => 'User Sync'
+    'LBL_USER_SYNC' => 'User Sync',
+    'LBL_FILENAME' => 'Attachment',
 )
 ?>

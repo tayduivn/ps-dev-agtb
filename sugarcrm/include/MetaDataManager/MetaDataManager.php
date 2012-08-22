@@ -744,6 +744,7 @@ class MetaDataManager {
             require_once("modules/MySettings/TabController.php");
             $controller = new TabController();
             $moduleList = array_keys($controller->get_user_tabs($this->user));
+            $moduleList[] = 'ActivityStream';
         }
 
         $oldModuleList = $moduleList;

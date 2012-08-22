@@ -32,7 +32,7 @@
                                             "$('#content').hide(); " +
                                             "app.alert.show('login', {level:'process', title:'Loading', autoclose:false}); " +
                                             "var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                            "this.app.login(args, null, {error:"+
+                                            "this.app.login(args, null, {error:" +
                                             "function(){ app.alert.dismiss('login'); $('#content').show();" +
                                             "console.log(\"login failed!\");},  success:" +
                                             "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show();" +
@@ -107,58 +107,57 @@
                 "views": {
                     "errorView": {
                         "meta": {},
-                        "template":
-                            "<div class='container-fluid'>" +
-                                    "<div class='row-fluid'>" +
-                                        "<div class='span7'>" +
-                                            "<div class='card2'>" +
-                                                "<div class='row-fluid'>" +
-                                                    "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
-                                                    "<div class='span8'>" +
-                                                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
-                                                        "{{ this.model.attributes.message }}</p>" +
-                                                    "</div>" +
-                                                "</div>" +
-                                            "</div>" +
-                                        "</div>" +
-                                    "</div>" +
-                                "</div>",
+                        "template": "<div class='container-fluid'>" +
+                            "<div class='row-fluid'>" +
+                            "<div class='span7'>" +
+                            "<div class='card2'>" +
+                            "<div class='row-fluid'>" +
+                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                            "<div class='span8'>" +
+                            "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                            "{{ this.model.attributes.message }}</p>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>",
                         controller: "{" +
                             "initialize: function(options) { " +
-                                "app.view.View.prototype.initialize.call(this, options);" +
+                            "app.view.View.prototype.initialize.call(this, options);" +
                             "}," +
                             "render: function(data) { " +
-                                "var self = this, attributes = {};" +
-                                "if(this.context.get('errorType')) {" +
-                                    "attributes = this.getErrorAttributes(); " +
-                                    "this.model.set(attributes); " +
-                                "}" +
-                                "app.view.View.prototype.render.call(this);" +
+                            "var self = this, attributes = {};" +
+                            "if(this.context.get('errorType')) {" +
+                            "attributes = this.getErrorAttributes(); " +
+                            "this.model.set(attributes); " +
+                            "}" +
+                            "app.view.View.prototype.render.call(this);" +
                             "}," +
                             "getErrorAttributes: function() {" +
-                                "var attributes = {}; "+
-                                "if(this.context.get('errorType') ==='404') {" +
-                                    "attributes = {" +
-                                        "title: 'HTTP: 404 Not Found'," +
-                                        "type: '404'," +
-                                        "message: \"We're sorry but the resource you asked for cannot be found.\"" +
-                                    "};" +
-                                "} else if(this.context.get('errorType') ==='500') { " +
-                                    "attributes = {" +
-                                        "title: 'HTTP: 500 Internal Server Error'," +
-                                        "type: '500'," +
-                                        "message: 'There was an error on the server. Please contact technical support.'" +
-                                    "};" +
-                                "} else {" +
-                                    "attributes = { " +
-                                        "title: 'Unknown Error', " +
-                                        "type: 'Unknown'," +
-                                        "message: 'Unknown error.'" +
-                                    "};" +
-                                "} " +
-                                "return attributes;" +
+                            "var attributes = {}; " +
+                            "if(this.context.get('errorType') ==='404') {" +
+                            "attributes = {" +
+                            "title: 'HTTP: 404 Not Found'," +
+                            "type: '404'," +
+                            "message: \"We're sorry but the resource you asked for cannot be found.\"" +
+                            "};" +
+                            "} else if(this.context.get('errorType') ==='500') { " +
+                            "attributes = {" +
+                            "title: 'HTTP: 500 Internal Server Error'," +
+                            "type: '500'," +
+                            "message: 'There was an error on the server. Please contact technical support.'" +
+                            "};" +
+                            "} else {" +
+                            "attributes = { " +
+                            "title: 'Unknown Error', " +
+                            "type: 'Unknown'," +
+                            "message: 'Unknown error.'" +
+                            "};" +
+                            "} " +
+                            "return attributes;" +
                             "}" +
-                        "}"
+                            "}"
                     }
                 },
                 "layouts": {
@@ -446,43 +445,43 @@
             "footer": {
                 templates: {
                     "footer": "<footer>\n" +
-                    "    <div class=\"row-fluid\">\n" +
-                    "        <div class=\"span3\"><a href=\"\" class=\"logo\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</a></div>\n" +
-                    "        <div class=\"span9\">\n" +
-                    "            <div class=\"btn-toolbar pull-right\">\n" +
-                    "                <div class=\"btn-group\">\n" +
-                    "                    <a title=\"Activity View Tour\" class=\"btn\" id=\"tour\"><i class=\"icon-road\"></i>\n" +
-                    "                        Tour</a>\n" +
-                    "                </div>\n" +
-                    "                <div class=\"btn-group\">\n" +
-                    "                    <a id=\"print\" class=\"btn\"><i class=\"icon-print\"></i> Print</a>\n" +
-                    "                    <a id=\"top\" class=\"btn\"><i class=\"icon-arrow-up\"></i> Top</a>\n" +
-                    "                </div>\n" +
-                    "            </div>\n" +
-                    "        </div>\n" +
-                    "    </div>\n" +
-                    "</footer>\n" +
-                    "\n" +
-                    "<!-- Tour Guide -->\n" +
-                    "<div class=\"modal hide\" id=\"systemTour\">\n" +
-                    "  <div class=\"modal-header\">\n" +
-                    "    <a class=\"close\" data-dismiss=\"modal\">?</a>\n" +
-                    "    <h3>Tour the Portal</h3>\n" +
-                    "  </div>\n" +
-                    "  <div class=\"modal-body\">\n" +
-                    "    <p>The primary actions to get things done in the portal.</p>\n" +
-                    "  </div>\n" +
-                    "  <div class='pointsolight'>\n" +
-                    "  <div id=\"tourCube\" class=\"tourSee\"><span>Dashboard</span></div>\n" +
-                    "  <div id=\"tourCreate\" class=\"tourSee\"><span>Quick create</span></div>\n" +
-                    "  <div id=\"tourUser\" class=\"tourSee\"><span>User admin</span></div>\n" +
-                    "  <div id=\"tourModules\" class=\"tourSee\"><span>Modules</span></div>\n" +
-                    "  <div id=\"tourUSearch\" class=\"tourSee\"><span>Universal search</span></div>\n" +
-                    "  <div id=\"tourSort\" class=\"tourSee\"><span>Sort columns</span></div>\n" +
-                    "  <div id=\"tourRefine\" class=\"tourSee\"><span>Filter<br>items</span></div>\n" +
-                    "  <div id=\"tourAdd\" class=\"tourSee\"><span>Add<br>item</span></div>\n" +
-                    "  </div>\n" +
-                    "</div>\n"
+                        "    <div class=\"row-fluid\">\n" +
+                        "        <div class=\"span3\"><a href=\"\" class=\"logo\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</a></div>\n" +
+                        "        <div class=\"span9\">\n" +
+                        "            <div class=\"btn-toolbar pull-right\">\n" +
+                        "                <div class=\"btn-group\">\n" +
+                        "                    <a title=\"Activity View Tour\" class=\"btn\" id=\"tour\"><i class=\"icon-road\"></i>\n" +
+                        "                        Tour</a>\n" +
+                        "                </div>\n" +
+                        "                <div class=\"btn-group\">\n" +
+                        "                    <a id=\"print\" class=\"btn\"><i class=\"icon-print\"></i> Print</a>\n" +
+                        "                    <a id=\"top\" class=\"btn\"><i class=\"icon-arrow-up\"></i> Top</a>\n" +
+                        "                </div>\n" +
+                        "            </div>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</footer>\n" +
+                        "\n" +
+                        "<!-- Tour Guide -->\n" +
+                        "<div class=\"modal hide\" id=\"systemTour\">\n" +
+                        "  <div class=\"modal-header\">\n" +
+                        "    <a class=\"close\" data-dismiss=\"modal\">?</a>\n" +
+                        "    <h3>Tour the Portal</h3>\n" +
+                        "  </div>\n" +
+                        "  <div class=\"modal-body\">\n" +
+                        "    <p>The primary actions to get things done in the portal.</p>\n" +
+                        "  </div>\n" +
+                        "  <div class='pointsolight'>\n" +
+                        "  <div id=\"tourCube\" class=\"tourSee\"><span>Dashboard</span></div>\n" +
+                        "  <div id=\"tourCreate\" class=\"tourSee\"><span>Quick create</span></div>\n" +
+                        "  <div id=\"tourUser\" class=\"tourSee\"><span>User admin</span></div>\n" +
+                        "  <div id=\"tourModules\" class=\"tourSee\"><span>Modules</span></div>\n" +
+                        "  <div id=\"tourUSearch\" class=\"tourSee\"><span>Universal search</span></div>\n" +
+                        "  <div id=\"tourSort\" class=\"tourSee\"><span>Sort columns</span></div>\n" +
+                        "  <div id=\"tourRefine\" class=\"tourSee\"><span>Filter<br>items</span></div>\n" +
+                        "  <div id=\"tourAdd\" class=\"tourSee\"><span>Add<br>item</span></div>\n" +
+                        "  </div>\n" +
+                        "</div>\n"
                 }
             },
             "signupView": {
@@ -531,19 +530,19 @@
             "errorView": {
                 "templates": {
                     "errorView": "<div class='container-fluid'>" +
-                            "<div class='row-fluid'>" +
-                                "<div class='span7'>" +
-                                    "<div class='card2'>" +
-                                        "<div class='row-fluid'>" +
-                                            "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
-                                            "<div class='span8'>" +
-                                                "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
-                                                "{{ this.model.attributes.message }}</p>" +
-                                            "</div>" +
-                                        "</div>" +
-                                    "</div>" +
-                                "</div>" +
-                            "</div>" +
+                        "<div class='row-fluid'>" +
+                        "<div class='span7'>" +
+                        "<div class='card2'>" +
+                        "<div class='row-fluid'>" +
+                        "<div class='span4'><h1>{{ this.model.attributes.type}}</h1></div>" +
+                        "<div class='span8'>" +
+                        "<p><strong>{{ this.model.attributes.title }}</strong><br>" +
+                        "{{ this.model.attributes.message }}</p>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
                         "</div>"
                 }
             }
@@ -853,6 +852,7 @@
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
+            action = action || "detail";
             app.controller.loadView({
                 module: module,
                 modelId: id,
@@ -870,7 +870,8 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
-                layout: "dashboard"
+                layout: "dashboard",
+                module: "ActivityStream"
             });
         });
 
@@ -896,6 +897,15 @@
                 layout: "profileedit"
             });
         });
+
+        app.router.route(':module', 'list', function(module) {
+            app.logger.debug("Route changed to index");
+
+            app.controller.loadView({
+                module: module,
+                layout: "dash"
+            });
+        })
     });
 
     var oRoutingBefore = app.routing.before;
@@ -908,9 +918,9 @@
             "profileedit"
         ];
 
-        app.logger.debug("Loading route. " + (route?route:'No route or undefined!'));
+        app.logger.debug("Loading route. " + (route ? route : 'No route or undefined!'));
 
-        if(!oRoutingBefore.call(this, route, args)) return false;
+        if (!oRoutingBefore.call(this, route, args)) return false;
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
@@ -1015,7 +1025,7 @@
         var moduleFields = app.metadata.getModule(this.module).fields || {};
         for (var field in defaultParams) {
             if (moduleFields[field]) {
-                this.set(field, defaultParams[field], {silent:true});
+                this.set(field, defaultParams[field], {silent: true});
             }
         }
         //Call the prototype
@@ -1047,7 +1057,7 @@
      * @param {Object} model Model
      * @param {callbacks} callbacks(optional) success and error callbacks
      */
-    // TODO: This piece of code may move in the core files
+        // TODO: This piece of code may move in the core files
     app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
 
         callbacks = callbacks || {};
@@ -1071,14 +1081,14 @@
                     field: fileField,
                     success: function() {
                         filesToUpload--;
-                        if (filesToUpload==0) {
+                        if (filesToUpload == 0) {
                             app.alert.dismiss('upload');
                             if (callbacks.success) callbacks.success();
                         }
                     },
                     error: function(error) {
                         filesToUpload--;
-                        if (filesToUpload===0) {
+                        if (filesToUpload === 0) {
                             app.alert.dismiss('upload');
                         }
                         var errors = {};

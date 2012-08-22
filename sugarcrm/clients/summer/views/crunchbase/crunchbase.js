@@ -1,17 +1,6 @@
-/**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.ListView
- * @alias SUGAR.App.layout.ListView
- * @extends View.View
- */
 ({
-    events: {
-    },
-
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this,options);
-        var lid = this.options.lid || ""; // Layout Id
     },
 
     reset: function(context) {
@@ -37,14 +26,11 @@
         }
     },
 
-
-
     // If edit mode is turned on, set to show and then fade it
     toggle: function(editOn) {
         this.$el.toggle(editOn);
         this.$el.fadeToggle("fast");
     },
-
 
     getData: function() {
         var url;
