@@ -9,7 +9,7 @@ class SideBarLayout
     }
 
     protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array());
-    protected $spans = array('main' => 8, 'side' => 4);
+    protected $spans = array('main' => 7, 'side' => 5);
     protected $layout = array(
         'type' => 'simple',
         'components' =>
