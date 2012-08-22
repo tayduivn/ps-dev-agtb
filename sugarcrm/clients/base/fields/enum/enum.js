@@ -16,6 +16,8 @@
                 newval += el + ', ';
             });
             newval = newval.slice(0, newval.length - 2); // strips extra ', '
+        } else {
+            newval = this.model.get(this.name);
         }
         return newval;
     }
