@@ -26,37 +26,37 @@ class ActivityStreamApi extends ListApi {
         return array(
             'getBeanActivities' => array(
                 'reqType' => 'GET',
-                'path' => array('activitystream', '<module>','?'),
+                'path' => array('ActivityStream', '<module>','?'),
                 'pathVars' => array('','target_module','target_id'),
                 'method' => 'getActivities',
             ),
             'getModuleActivities' => array(
                 'reqType' => 'GET',
-                'path' => array('activitystream', '<module>'),
+                'path' => array('ActivityStream', '<module>'),
                 'pathVars' => array('','target_module'),
                 'method' => 'getActivities',
             ),
             'getAllActivities' => array(
                 'reqType' => 'GET',
-                'path' => array('activitystream'),
+                'path' => array('ActivityStream'),
                 'pathVars' => array(''),
                 'method' => 'getActivities',
                 ),                
             'postAll' => array(
                 'reqType' => 'POST',
-                'path' => array('activitystream'), 
+                'path' => array('ActivityStream'), 
                 'pathVars' => array(''),
                 'method' => 'handlePost',
             ), 
             'postModule' => array(
                 'reqType' => 'POST',
-                'path' => array('activitystream', '<module>'),
+                'path' => array('ActivityStream', '<module>'),
                 'pathVars' => array('','target_module'),
                 'method' => 'handlePost',
             ), 
             'postBean' => array(
                 'reqType' => 'POST',
-                'path' => array('activitystream', '<module>','?'),
+                'path' => array('ActivityStream', '<module>','?'),
                 'pathVars' => array('','target_module','target_id'),
                 'method' => 'handlePost',
             ),                                                                                                        
