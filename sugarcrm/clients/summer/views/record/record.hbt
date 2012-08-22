@@ -1,17 +1,17 @@
 {{#each meta.panels}}
    <div class="card2">
        {{#if ../model.isNotEmpty}}
-           {{#each fields}}
-               <div class="row-fluid record-row">
-                   <div class="span2">{{str  this.label ../../../this.model.module}}</div>
-                   <div class="span10" name="{{this.name}}">
-                        {{field ../../../this}}
-                        <span class="w">
-                            <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
-                        </span>
-                   </div>
+       {{#each fields}}
+           <div class="row-fluid record-row">
+               <div class="span2">{{str  this.label ../../../this.model.module}}</div>
+               <div class="span10" name="{{this.name}}">
+                    {{field ../../../../this}}
+                    <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                    </span>
                </div>
-           {{/each}}
+               </div>
+       {{/each}}
            <span class="extend">
              <div class="row-fluid">
                  <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
@@ -43,7 +43,7 @@ display:inline;
 float:none;
 }
 
-.record-row span.w {
+.record-row span.record-edit-link-wrapper {
 display:none;
 position: absolute;
 left: -7px;
@@ -64,7 +64,7 @@ position:relative;
 z-index:100;
 }
 
-.record-row span.w .record-edit-link {
+.record-row span.record-edit-link-wrapper .record-edit-link {
 background:#cccccc;
 line-height: 20px;
 display: inline-block;
@@ -90,7 +90,7 @@ border-radius:5px;
 -webkit-border-radius:5px;
 }
 
-.record-row:hover .w {
+.record-row:hover .record-edit-link-wrapper {
 display:inline-block;
 }
 
@@ -105,7 +105,7 @@ box-shadow:none;
 padding:0 0 0 2px;
 }
 
-.record-row.edit-mode span.w {
+.record-row.edit-mode span.record-edit-link-wrapper {
 display:block;
 border-color: #dddddd;
 }
