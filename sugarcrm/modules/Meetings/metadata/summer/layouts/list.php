@@ -1,0 +1,8 @@
+<?php
+
+require_once('clients/summer/SideBarLayout.php');
+$layout = new SideBarLayout();
+//$layout->push('top', array('view'=>'subnav'));
+$layout->push('main',array('view'=>'list'));
+$layout->push('side',array('view'=>'agenda'));
+$viewdefs['Meetings']['summer']['layout']['list'] = $layout->getLayout();
