@@ -1,13 +1,9 @@
-
 ({
     initialize: function(options) {
-        console.log('init');
         app.view.View.prototype.initialize.call(this, options);
     },
 
-
-    injectLinkedin: function () {
-        console.log('renderHTML');
+    injectLinkedin: function() {
         var self = this;
         app.view.View.prototype._renderHtml.call(self);
 
@@ -36,11 +32,10 @@
         }
     },
 
-
     bindDataChange: function() {
         var self = this;
-        this.model.on('change', function () { self.injectLinkedin(); }, this);
+        this.model.on('change', function() {
+            self.injectLinkedin();
+        }, this);
     }
-
-
 })

@@ -157,7 +157,7 @@ height:3px;
 .card2 .extend {
 clear:both;
 padding-right:1em;
-padding:.5em .5em 0 0;
+padding:.5em .5em 2em 0;
 }
 
 .card2 .extend .icon-chevron-down {
@@ -167,6 +167,10 @@ text-decoration:none;
 .record-save-prompt.span2.tright {
 clear:both;
 margin:0;
+}
+
+.clearfix {
+clear:both;
 }
 
 
