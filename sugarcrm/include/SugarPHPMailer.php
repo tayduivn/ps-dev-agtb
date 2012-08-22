@@ -62,9 +62,10 @@ class SugarPHPMailer extends PHPMailer
 		$this->oe = new OutboundEmail();
 		$this->oe->getUserMailerSettings($current_user);
 
-		$this->SetLanguage('en', 'include/phpmailer/language/');
-		$this->PluginDir	= 'include/phpmailer/';
+		$this->SetLanguage('en', 'modules/Mailer/lib/phpmailer/language/');
+		$this->PluginDir	= 'modules/Mailer/lib/phpmailer/';
 		$this->Mailer	 	= 'smtp';
+
         // cn: i18n
         $this->CharSet		= $locale->getPrecedentPreference('default_email_charset');
 		$this->Encoding		= 'quoted-printable';
