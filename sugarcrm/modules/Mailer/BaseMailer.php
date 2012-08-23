@@ -64,21 +64,10 @@ abstract class BaseMailer implements IMailer
 
 	public function loadDefaultConfigs() {
 		$defaults = array(
-			'protocol' => 'smtp',
-			'hostname' => '',
-			'charset'  => 'utf-8',
-			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
-			'wordwrap' => 996,
-			'smtp'     => array(
-				'host'         => 'localhost',
-				'port'         => 25,
-				'secure'       => '',
-				'authenticate' => false,
-				'username'     => '',
-				'password'     => '',
-				'timeout'      => 10,
-				'persist'      => false,
-			),
+			'hostname'          => '',
+			'charset'           => 'utf-8',
+			'encoding'          => self::EncodingQP, // default to quoted-printable for plain/text
+			'wordwrap'          => 996,
 		);
 
 		$this->setConfigs($defaults);
@@ -178,7 +167,7 @@ abstract class BaseMailer implements IMailer
 		$this->htmlBody = $htmlBody;
 	}
 
-	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+	public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
 		$this->attachments[] = array(
 			'path'     => $path,
 			'name'     => $name,
@@ -187,7 +176,7 @@ abstract class BaseMailer implements IMailer
 		);
 	}
 
-	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
 		$this->embeddedImages[] = array(
 			'path'     => $path,
 			'cid'      => $cid,

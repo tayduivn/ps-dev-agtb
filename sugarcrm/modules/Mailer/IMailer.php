@@ -25,6 +25,12 @@ require_once 'EmailIdentity.php';
 
 interface IMailer
 {
+	const Encoding8Bit   = '8bit';
+	const Encoding7Bit   = '7bit';
+	const EncodingBinary = 'binary';
+	const EncodingBase64 = 'base64';
+	const EncodingQP     = 'quoted-printable';
+
 	public function __construct();
 
 	public function reset();
@@ -50,7 +56,7 @@ interface IMailer
 	public function mergeConfigs($configs);
 
 	/**
-	 * Replace a specific configuration. Doesn't allow for overwriting smtp configs, for now.
+	 * Replace a specific configuration.
 	 *
 	 * @param string $config
 	 * @param mixed  $value
@@ -145,9 +151,9 @@ interface IMailer
 	 */
 	public function setHtmlBody($htmlBody);
 
-	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream');
+	public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
 
-	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream');
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
 
 	public function clearAttachments();
 
