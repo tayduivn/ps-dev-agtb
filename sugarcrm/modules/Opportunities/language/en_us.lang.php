@@ -103,6 +103,7 @@ $mod_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
   'LNK_OPPORTUNITY_REPORTS' => 'View Opportunity Reports',
 //END SUGARCRM flav=pro ONLY
+    'LNK_CREATE' => 'Create Deal',
   'LNK_OPPORTUNITY_LIST' => 'View Opportunities',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the opportunity.',
   'LBL_TOP_OPPORTUNITIES' => 'My Top Open Opportunities',
