@@ -89,7 +89,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     protected $oauthParams = array(
         'signatureMethod' => 'PLAINTEXT',
     );
-    protected $url = 'https://apps.lotuslive.com'; // 'https://collabserv.com/';
+    protected $url = 'https://apps.lotuslive.com/'; // 'https://collabserv.com/';
 
     public $canInvite = false;
     public $sendsInvites = false;
