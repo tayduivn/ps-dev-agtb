@@ -896,6 +896,7 @@ function handlePortalConfig()
         'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
         'siteUrl' => $sugar_config['site_url'],
         'unsecureRoutes' => array('signup', 'error'),
+        'loadCss' => 'url',
         'clientID' => 'support_portal'
     );
     $configString = json_encode($portalConfig);
