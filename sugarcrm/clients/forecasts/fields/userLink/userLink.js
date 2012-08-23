@@ -22,10 +22,10 @@
     _render:function() {
         var self = this;
         if(this.name == 'name') {
-            var commitDateStr = this.context.forecasts.committed.models[0].get('date_entered');
+            var commitDateStr = this.context.forecasts.committed.models[0].get('date_modified');
             var commitDate = app.forecasts.utils.parseDBDate(commitDateStr);
 
-            var fieldDateStr = this.model.get('date_entered');
+            var fieldDateStr = this.model.get('date_modified');
             var fieldDate = app.forecasts.utils.parseDBDate(fieldDateStr)
 
             // if fieldDate is newer than the forecast commitDate, then we want to show the field
@@ -124,7 +124,7 @@
                             continue;
                         }
 
-                        var entryDate = app.forecasts.utils.parseDBDate(entry.date_entered);
+                        var entryDate = app.forecasts.utils.parseDBDate(entry.date_modified);
 
                         // check for the first model equal to or past the forecast commit date
                         // we want the last commit just before the whole forecast was committed
