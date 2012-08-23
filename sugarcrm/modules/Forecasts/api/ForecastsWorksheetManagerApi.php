@@ -319,7 +319,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $this->user_id) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case
+            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified
                                 FROM forecasts
                                 WHERE timeperiod_id = '{$this->timeperiod_id}'
                                     AND forecast_type = '" . $forecast_type . "'
@@ -332,6 +332,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                 $data[$user_name]['likely_case'] = $row['likely_case'];
                 $data[$user_name]['worst_case'] = $row['worst_case'];
                 $data[$user_name]['forecast_id'] = $row['id'];
+                $data[$user_name]['date_modified'] = $row['date_modified'];
             }
         }
 

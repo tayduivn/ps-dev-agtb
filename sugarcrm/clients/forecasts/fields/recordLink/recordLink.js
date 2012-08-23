@@ -27,7 +27,7 @@
             this.action = route.action;
             this.linkText = this.model.get(this.name);
             // setting the viewName allows us to explicitly set the template to use
-            this.options.viewName = 'link';
+            this.options.viewName = 'recordLink';
         }
         app.view.Field.prototype._render.call(this);
         return this;
