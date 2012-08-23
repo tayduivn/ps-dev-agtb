@@ -1,5 +1,14 @@
 <?php
 require_once('summer/splash/boxoffice/lib/utils.php');
+/**
+ * BoxOffice server class
+ * FIXME: should be rewritten as set of REST API
+ * There are two kinds of functions here:
+ * - Trusted API (should be only accesses by Splash)
+ * - Client API (can be accessed by Summer)
+ *
+ * Client API functions should be marked as such and should verify the client has valid session.
+ */
 class BoxOffice
 {
 
@@ -57,8 +66,7 @@ class BoxOffice
      */
     function authenticateRemoteUser($email, $remote_id)
     {
-    	$now = gmdate('Y-m-d');
-    	// FIXME:
+    	$now = gmdate('Y-m-d H:i:s');
     	$sql = 'SELECT * FROM users WHERE email = :email AND remote_id = :rid AND deleted=0';
     	$sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     	$sth->bindParam(':email', $email, PDO::PARAM_STR);
@@ -114,25 +122,66 @@ class BoxOffice
 
     /**
      * Get session config
+     * CLIENT API
      * @param string $session
      * @return array|false
      */
     public function getConfig($session)
     {
-        $sql = 'SELECT * FROM sessions WHERE id=:id';
-        $sth = $this->dbh->prepare($sql);
+        $sth = $this->dbh->prepare('SELECT * FROM sessions WHERE id=:id AND login_time IS NULL');
         $sth->execute(array(":id" => $session));
         $sess = $sth->fetch(PDO::FETCH_ASSOC);
         if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
             return false;
         }
+        $sth = $this->dbh->prepare('UPDATE sessions SET login_time=:now WHERE id=:id');
+        $sth->execute(array(":id" => $session, ':now' => gmdate('Y-m-d H:i:s')));
+
         $user = $this->getUserById($sess['user_id']);
         $instance = $this->getInstanceById($sess['instance_id']);
-        return array('user' => $user, 'instance' => $instance);
+        return array('user' => $user, 'instance' => $instance, "token" => $session);
     }
 
     /**
-     * Delete session
+     * Get all users on the same instance as my session and all my instances
+     * CLIENT API
+     * @param string $session
+     */
+    public function getUsersInstances($session)
+    {
+        $sth = $this->dbh->prepare('SELECT * FROM sessions WHERE id=:id');
+        $sth->execute(array(":id" => $session));
+        $sess = $sth->fetch(PDO::FETCH_ASSOC);
+        if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+        	return false;
+        }
+
+        $sth = $this->dbh->prepare('SELECT users.*, sessions.login_time FROM sessions
+            INNER JOIN users_instances ui ON ui.instance_id=sessions.instance_id AND ui.deleted=0
+            INNER JOIN users ON users.id = ui.user_id AND users.deleted=0
+          WHERE sessions.id=:id');
+        $sth->execute(array(":id" => $session));
+        $users = $sth->fetchAll(PDO::FETCH_ASSOC);
+        foreach($users as $k => $data) {
+            // drop hashes
+            unset($users[$k]['hash']);
+            unset($users[$k]['oauth_token']);
+            unset($users[$k]['refresh_token']);
+            unset($users[$k]['token_expires']);
+        }
+
+        $instances = $this->getUserInstances($sess['user_id']);
+        foreach($instances as $k => $inst) {
+            // drop configs and licenses, no need to send it out
+            unset($instances[$k]['config']);
+            unset($instances[$k]['license']);
+        }
+
+        return array("users" => $users, "instances" => $instances);
+    }
+
+    /**
+     * Delete session by user/instance
      * @param string $user
      * @param string $instance
      */
@@ -140,6 +189,17 @@ class BoxOffice
     {
         $sth = $this->dbh->prepare("DELETE FROM sessions WHERE user_id=:user AND instance_id=:instance");
         $sth->execute(array(":user" => $user, ":instance" => $instance));
+    }
+
+    /**
+     * Delete session by ID
+     * CLIENT API
+     * @param string $session
+     */
+    public function deleteSessionById($session)
+    {
+        $sth = $this->dbh->prepare("DELETE FROM sessions WHERE id=:id");
+        $sth->execute(array(":id" => $session));
     }
 
     /**
@@ -167,9 +227,9 @@ class BoxOffice
      */
     public function getInstanceById($id)
     {
-        $sql = 'SELECT * FROM instances WHERE id = :id AND deleted=0';
+        $sql = 'SELECT * FROM instances WHERE id = :id AND deleted=0 AND date_start <= :date AND date_end >= :date';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute(array(":id" => $id));
+        $sth->execute(array(":id" => $id, ":date" => gmdate('Y-m-d H:i:s')));
         $inst = $sth->fetch(PDO::FETCH_ASSOC);
         if (empty($inst)) {
             return null;

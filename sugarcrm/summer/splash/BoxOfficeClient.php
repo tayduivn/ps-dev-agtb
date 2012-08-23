@@ -41,20 +41,34 @@ class BoxOfficeClient
         $this->loginUrl = $config['top_url']."summer/splash/";
 
         // if we have config in session, use it, otherwise - load if from boxoffice
-        // FIXME: should be passed as parameter, not in session
         if(isset($_REQUEST['login_token'])) {
             $this->session = $_REQUEST['login_token'];
         } else if(isset($_REQUEST['token'])) {
             $this->session = $_REQUEST['token'];
         }
-        if(empty($_SESSION['boxoffice']) && !empty($this->session)) {
-            $_SESSION['boxoffice'] = $this->box->getConfig($this->session);
-        }
-        if (!empty($_SESSION['boxoffice']['user'])) $this->user = $_SESSION['boxoffice']['user'];
-        if (!empty($_SESSION['boxoffice']['instances'])) $this->instances = $_SESSION['boxoffice']['instances'];
-        if (!empty($_SESSION['boxoffice']['instance'])) $this->instance = $_SESSION['boxoffice']['instance'];
-        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
 
+        $this->getSessionData();
+        if(!empty($this->session_data['token'])) {
+            $this->session = $this->session_data['token'];
+        }
+
+        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
+    }
+
+    /**
+     * Retrieve user's session data
+     */
+    protected function getSessionData()
+    {
+        if(empty($_SESSION['boxoffice']) && !empty($this->session)) {
+        	$_SESSION['boxoffice'] = $this->box->getConfig($this->session);
+        }
+        if(!empty($_SESSION['boxoffice'])) {
+            $this->session_data = $_SESSION['boxoffice'];
+        }
+        if (!empty($this->session_data['user'])) $this->user = $this->session_data['user'];
+//        if (!empty($this->session_data['instances'])) $this->instances = $_SESSION['boxoffice']['instances'];
+        if (!empty($this->session_data['instance'])) $this->instance = $this->session_data['instance'];
     }
 
     /**
@@ -201,8 +215,6 @@ class BoxOfficeClient
             $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
             $ac = AuthenticationController::getInstance();
             $ac->authController->postLoginAuthenticate();
-            // after we're done, we don't need session token anymore, delete it
-            $this->box->deleteSession($this->user['id'], $this->instance['id']);
         }
     }
 
@@ -363,10 +375,10 @@ class BoxOfficeClient
      */
     public function deleteSession()
     {
-        if(empty($this->user) || empty($this->instance)) {
+        if(empty($this->user) || empty($this->instance) || empty($this->session)) {
             return;
         }
-        $this->box->deleteSession($this->user['id'], $this->instance['id']);
+        $this->box->deleteSessionById($this->getToken());
     }
 
     /**
@@ -396,5 +408,10 @@ class BoxOfficeClient
     public function getToken()
     {
         return $this->session;
+    }
+
+    public function getUsersInstances()
+    {
+        return $this->box->getUsersInstances($this->getToken());
     }
 }
