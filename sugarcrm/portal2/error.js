@@ -97,9 +97,6 @@
      * 500 Internal server error handler. 
      */
     app.error.handleServerError = function(error) {
-        if(!Backbone.History.started) {
-            app.router.start();
-        } 
         app.controller.loadView({
             layout: "error",
             errorType: "500",
