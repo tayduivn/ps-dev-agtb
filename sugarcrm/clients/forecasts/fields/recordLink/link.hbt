@@ -1,1 +1,0 @@
-<a href="index.php?module={{module}}&action={{action}}&record={{record_id}}">{{{linkText}}}</a>
