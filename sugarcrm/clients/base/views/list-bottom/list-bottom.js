@@ -9,13 +9,9 @@
     filterOpened: false,
 
     events: {
-        'click [name=show_more_button]': 'showMoreRecords',
-        'click .search': 'showSearch'
+        'click [name=show_more_button]': 'showMoreRecords'
     },
     _renderHtml: function() {
-        if (app.acl.hasAccess('create', this.module)) {
-            this.context.set('isCreateEnabled', true);
-        }
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -30,7 +26,7 @@
         this.layout.on("list:filter:toggled", this.filterToggled, this);
     },        
     filterToggled: function(isOpened) {
-        this.filterOpened = isOpened;
+        this.context.set('filterOpened') = isOpened;
     },
     showMoreRecords: function(evt) {
         var self = this, options;
@@ -38,7 +34,7 @@
         
 
         // If in "search mode" (the search filter is toggled open) set q:term param
-        options = self.filterOpened ? self.getSearchOptions() : {};
+        options = this.context.get('filterOpened') ? self.getSearchOptions() : {};
 
         // Indicates records will be added to those already loaded in to view
         options.add = true;
@@ -51,11 +47,6 @@
         };
         options.limit = this.limit;
         this.collection.paginate(options);
-    },
-    showSearch: function() {
-        // Toggle on search filter and off the pagination buttons
-        this.$('.search').toggleClass('active');
-        this.layout.trigger("list:search:toggle");
     },
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';

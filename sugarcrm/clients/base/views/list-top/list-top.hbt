@@ -1,1 +1,11 @@
-                <h1><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
+<h1><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
+<ul class="nav nav-pills actions">
+    {{#if context.attributes.isCreateEnabled}}
+    <li>
+        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}"><i class="icon-plus"></i></a>
+    </li>
+    {{/if}}
+    <li>
+        <a href="javascript:void(0)" rel="tooltip" title="{{str "LBL_BASIC_SEARCH"}}" class="search"><i class="icon-search"></i></a>
+    </li>
+</ul>
