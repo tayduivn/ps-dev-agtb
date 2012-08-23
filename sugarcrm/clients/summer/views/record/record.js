@@ -75,7 +75,7 @@
         switch (field.type) {
             default:
                 this.toggleField(field, target);
-                target.parent().find("input").focus();
+                target.parent().find("input").focus().val(target.parent().find("input").val());
         }
     },
 
@@ -141,7 +141,7 @@
         if (e.which == 9) {
             next = this.getNextField(field);
             this.handleEdit(null, next);
-            next.$el.focus();
+            //next.$el.focus();
         } else if (e.which == 27) {
             this.fieldClose(e, field, target);
         }

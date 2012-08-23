@@ -9,11 +9,11 @@
       <li style="">
         <a href="#log1" data-toggle="tab" class="pull-left"><span class="label label-{{attributes.activity_data.action}}">{{attributes.activity_data.action}}</span></a>
         <p>
-          <a href="#Contacts/4c3fe072-017d-0aed-d374-503528864823">{{attributes.created_by_name}}</a> {{attributes.activity_data.action}} <em>{{attributes.activity_data.field_name}}</em>
+          <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_data.action}} <em>{{attributes.activity_data.field_name}}</em>
           
           {{#each attributes.activity_data.data}}
-            {{this.field_name}},
-          {{/each}} on <a href="#Accounts/9acade74-e608-5d0d-468f-5035392c94c0">9acade74-e608-5d0d-468f-5035392c94c0</a>
+            <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
+          {{/each}} on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
           <br>
           <date class="date">Posted {{attributes.date_created}}</date>
         </p>

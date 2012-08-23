@@ -166,7 +166,7 @@ text-decoration:none;
 
 .record-save-prompt.span2.tright {
 clear:both;
-margin:0;
+margin:0 0 1em 0;
 }
 
 .clearfix {
