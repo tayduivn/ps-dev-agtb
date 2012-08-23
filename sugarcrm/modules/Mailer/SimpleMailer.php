@@ -70,6 +70,7 @@ class SimpleMailer extends BaseMailer
 
 	private function transferConfigurations() {
 		$this->mailer->Mailer   = $this->configs['protocol'];
+		$this->mailer->Mailer   = $this->configs['hostname'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
 		$this->mailer->WordWrap = $this->configs['wordwrap'];

@@ -66,6 +66,7 @@ abstract class BaseMailer implements IMailer
 	public function loadDefaultConfigs() {
 		$defaults = array(
 			'protocol' => 'smtp',
+			'hostname' => '',
 			'charset'  => 'utf-8',
 			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
 			'wordwrap' => 996,
