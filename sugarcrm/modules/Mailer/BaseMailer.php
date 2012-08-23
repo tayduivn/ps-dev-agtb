@@ -63,9 +63,6 @@ abstract class BaseMailer implements IMailer
 		$this->embeddedImages = array();
 	}
 
-	/**
-	 * Initialize or replace the configurations with the defaults for this sending strategy.
-	 */
 	public function loadDefaultConfigs() {
 		$defaults = array(
 			'protocol' => 'smtp',
@@ -87,132 +84,70 @@ abstract class BaseMailer implements IMailer
 		$this->setConfigs($defaults);
 	}
 
-	/**
-	 * Use this method to replace the default configurations. This will replace the previous configurations;
-	 * it will not merge the configurations.
-	 *
-	 * @param array $configs
-	 */
 	public function setConfigs($configs) {
 		$this->configs = $configs;
 	}
 
-	/**
-	 * Merge the passed in configurations with the existing configurations.
-	 *
-	 * @param array $configs
-	 */
 	public function mergeConfigs($configs) {
 		$this->configs = array_merge($this->configs, $configs);
 	}
 
-	/**
-	 * Replace a specific configuration. Doesn't allow for overwriting smtp configs, for now.
-	 *
-	 * @param string $config
-	 * @param mixed  $value
-	 */
 	public function setConfig($config, $value) {
 		$this->configs[$config] = $value;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getConfigs() {
 		return $this->configs;
 	}
 
-	/**
-	 * @param $id
-	 */
 	public function setMessageId($id) {
 		$this->messageId = $id;
 	}
 
-	/**
-	 * @param int $priority 1 = High, 3 = Normal, 5 = Low
-	 */
 	public function setPriority($priority = 3) {
 		$this->priority = $priority;
 	}
 
-	/**
-	 * @param bool $request
-	 */
 	public function setRequestConfirmation($request = false) {
 		$this->requestConfirmation = $request;
 	}
 
-	/**
-	 * @param EmailIdentity $from
-	 */
 	public function setFrom(EmailIdentity $from) {
 		$this->from = $from;
 	}
 
-	/**
-	 * @param EmailIdentity $replyTo
-	 */
 	public function setReplyTo(EmailIdentity $replyTo) {
 		$this->replyTo = $replyTo;
 	}
 
-	/**
-	 * @param EmailIdentity $sender
-	 */
 	public function setSender(EmailIdentity $sender) {
 		$this->sender = $sender;
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
 	public function addRecipientsTo($recipients = array()) {
 		return $this->recipients->addRecipients($recipients);
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
 	public function addRecipientsCc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
 	public function addRecipientsBcc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
 	}
 
-	/**
-	 * @param string $subject
-	 */
 	public function setSubject($subject) {
 		$this->subject = $subject;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getSubject() {
 		return $this->subject;
 	}
 
-	/**
-	 * @param string $textBody
-	 */
 	public function setTextBody($textBody) {
 		$this->textBody = $textBody;
 	}
 
-	/**
-	 * @param string $htmlBody
-	 */
 	public function setHtmlBody($htmlBody) {
 		$this->htmlBody = $htmlBody;
 	}
