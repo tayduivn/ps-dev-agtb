@@ -6,7 +6,14 @@
 
         // Check to see if we need to make a related activity stream.
         if (this.module !== "ActivityStream") {
-            this.collection = app.data.createBeanCollection("ActivityStream", []);
+            console.log("Not an activity stream");
+            this.collection = app.data.createBeanCollection("ActivityStream");
+            this.collection.fetch({
+                params: {
+                    module: this.module,
+                    id: this.model.id
+                }
+            });
         }
     },
 
