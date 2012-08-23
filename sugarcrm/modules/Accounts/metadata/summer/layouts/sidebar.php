@@ -2,8 +2,9 @@
 require_once('clients/summer/SideBarLayout.php');
 $layout = new SideBarLayout();
 
-$layout->push('main', array('view'=>'crunchbase'));
 $layout->push('main', array('view'=>'maps'));
+$layout->push('main', array('view'=>'crunchbase'));
+$layout->push('main', array('view'=>'yelp'));
 $layout->push('main', array('view'=>'news'));
 $layout->push('main', array('view'=>'twitter'));
 $layout->push('main', array('view'=>'facebook'));

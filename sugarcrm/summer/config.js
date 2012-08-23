@@ -90,7 +90,7 @@
          * Default module to load for the home route (index).
          * If not specified, the framework loads `home` layout for the module `Home`.
          */
-        defaultModule: "Contacts",
+        defaultModule: "Home",
 
         /**
          * A list of metadata types to fetch by default.
@@ -152,6 +152,9 @@
             },
             footer: {
                 target: '#footer'
+            },
+            todo: {
+                target: '#todo-widget-container'
             }
         },
 
@@ -168,22 +171,20 @@
         displayModules : [
             'Accounts',
             'Contacts',
-            'Opportunities',
-            'Notes'
+            'Opportunities'
         ],
         /**
          * Client ID for oAuth
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar",
+        clientID: "sugar"
         /**
          * Syncs config from server on app start
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-        syncConfig: true,
-        authStore:"sugarAuthStore"
+        //syncConfig: true
     }, false);
 
 })(SUGAR.App);

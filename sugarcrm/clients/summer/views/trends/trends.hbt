@@ -1,6 +1,6 @@
-<div class="widget">
+<div class="block widget">
     <div class="trends-widget">
-        <h2>Trends</h2>
-         <div class='trendsprofile'>
+        <h4>Trends</h4>
+         <div class='trendsprofile'></div>
     </div>
 </div>

@@ -171,6 +171,7 @@ $mod_strings = array (
     'LBL_TEAM_ID' => 'Team ID:',
     //END SUGARCRM flav=pro ONLY
     'LBL_TITLE' => 'Title:',
+    'LNK_CREATE' => 'Create Person',
     'LNK_CONTACT_LIST' => 'View Contacts',
     'LNK_IMPORT_VCARD' => 'Create Contact From vCard',
     'LNK_NEW_ACCOUNT' => 'Create Account',
@@ -225,7 +226,8 @@ $mod_strings = array (
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_PORTAL_PASSWORD' => 'Portal Password',
 	'LBL_CONFIRM_PORTAL_PASSWORD' => 'Confirm Portal Password',
-	//END SUGARCRM flav=pro ONLY
+    'LBL_LANG_PREF_TOOLTIP' => 'The Support Portal user interface is rendered in the language selected here',
+    //END SUGARCRM flav=pro ONLY
 	'LBL_CHECKOUT_DATE'=>'Checkout Date',
     //BEGIN SUGARCRM flav=dce ONLY
     'LBL_CONTACT_DCEINST_FORM_TITLE' => 'Contact-Instance:',
@@ -256,6 +258,7 @@ $mod_strings = array (
     'LBL_EXPORT_PHONE_MOBILE' => 'Mobile Phone',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
-    'LBL_USER_SYNC' => 'User Sync'
+    'LBL_USER_SYNC' => 'User Sync',
+    'LBL_FILENAME' => 'Attachment',
 )
 ?>

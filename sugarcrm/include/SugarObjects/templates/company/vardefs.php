@@ -198,7 +198,7 @@ $vardefs= array (
     'type' => 'phone',
     'dbType' => 'varchar',
     'len' => 100,
-    'audited'=>true,
+    'audited'=>true,         
     'unified_search' => true,  
     'full_text_search' => array('boost' => 1),
     'comment' => 'The office phone number',

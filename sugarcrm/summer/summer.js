@@ -103,11 +103,11 @@
                     }
                 }
             },
-            "Error":{
-                "views":{
-                    "errorView":{
-                        "meta":{},
-                        "template":"<div class='container-fluid'>" +
+            "Error": {
+                "views": {
+                    "errorView": {
+                        "meta": {},
+                        "template": "<div class='container-fluid'>" +
                             "<div class='row-fluid'>" +
                             "<div class='span7'>" +
                             "<div class='card2'>" +
@@ -122,7 +122,7 @@
                             "</div>" +
                             "</div>" +
                             "</div>",
-                        controller:"{" +
+                        controller: "{" +
                             "initialize: function(options) { " +
                             "app.view.View.prototype.initialize.call(this, options);" +
                             "}," +
@@ -442,9 +442,9 @@
                         "</form>"
                 }
             },
-            "footer":{
-                templates:{
-                    "footer":"<footer>\n" +
+            "footer": {
+                templates: {
+                    "footer": "<footer>\n" +
                         "    <div class=\"row-fluid\">\n" +
                         "        <div class=\"span3\"><a href=\"\" class=\"logo\" {{#if logoURL}} style=\"background: url({{logoURL}}) 50% 50% no-repeat;\"{{/if}}>SugarCRM</a></div>\n" +
                         "        <div class=\"span9\">\n" +
@@ -527,9 +527,9 @@
                         "</div>"
                 }
             },
-            "errorView":{
-                "templates":{
-                    "errorView":"<div class='container-fluid'>" +
+            "errorView": {
+                "templates": {
+                    "errorView": "<div class='container-fluid'>" +
                         "<div class='row-fluid'>" +
                         "<div class='span7'>" +
                         "<div class='card2'>" +
@@ -852,6 +852,7 @@
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
+            action = action || "detail";
             app.controller.loadView({
                 module:module,
                 modelId:id,
@@ -869,7 +870,8 @@
         // Load dashboard route.
         app.router.route("", "dashboard", function () {
             app.controller.loadView({
-                layout:"dashboard"
+                layout: "dashboard",
+                module: "ActivityStream"
             });
         });
 
@@ -905,6 +907,15 @@
                 layout:"profileedit"
             });
         });
+
+        app.router.route(':module', 'list', function(module) {
+            app.logger.debug("Route changed to index");
+
+            app.controller.loadView({
+                module: module,
+                layout: "dash"
+            });
+        })
     });
 
     var oRoutingBefore = app.routing.before;
@@ -1024,7 +1035,7 @@
         var moduleFields = app.metadata.getModule(this.module).fields || {};
         for (var field in defaultParams) {
             if (moduleFields[field]) {
-                this.set(field, defaultParams[field], {silent:true});
+                this.set(field, defaultParams[field], {silent: true});
             }
         }
         //Call the prototype
@@ -1057,7 +1068,7 @@
      * @param {callbacks} callbacks(optional) success and error callbacks
      */
         // TODO: This piece of code may move in the core files
-    app.view.View.prototype.checkFileFieldsAndProcessUpload = function (model, callbacks) {
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
 
         callbacks = callbacks || {};
 

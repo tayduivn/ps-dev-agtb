@@ -3392,6 +3392,12 @@ $app_strings = array (
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_TOUR' => 'Activity View Tour',
+    'LNK_TOUR' => 'Tour',
+    'LBL_TOP' => 'Top',
+    'LBL_LANGUAGE' => 'Language',
+    'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
+    'LBL_LOADING_LANGUAGE' => 'Loading language pack',
 
     //for portal
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',

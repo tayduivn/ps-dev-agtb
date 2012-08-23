@@ -3,19 +3,13 @@
     .canvas { height:300px; }
 </style>
 
-
-
-
 <div class="widget">
-
     <div class="maps-widget">
-        <div id='map_time'><h2 align=left></h2></div>
+        <div id='map_time'><h4></h4></div>
         <div id='map_panel' class='thumbnail'>
-            <h4 class="title">Location</h4>
+            <p class="title">Location</p>
             <div id="map_canvas" class="canvas">
         </div>
-
     </div>
-
 </div>
 </div>

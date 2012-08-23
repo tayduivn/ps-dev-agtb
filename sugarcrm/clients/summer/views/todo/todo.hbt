@@ -1,0 +1,163 @@
+<style>
+
+.todo-header {
+padding:0 12px;
+}
+
+.todo-date-info {
+    clear: both;
+}
+.todo-due-date {
+    color: #D60F0F;
+    line-height:.9em;
+}
+.todo-finished {
+    color: #2ED400;
+}
+
+#todo-add {
+    float: none;
+    margin-left: -4px;
+}
+
+#todo-container {
+    width: 252px;
+    max-height: 217px;
+    overflow: auto;
+    padding: 12px 0;
+}
+
+#todo-subject {
+    width: 140px;
+}
+
+#todo-date {
+    width: 150px;
+}
+
+#todo-date-container {
+    display: none;
+}
+#todo-add-container {
+    display: inline-block;
+    margin-left: 7px;
+}
+
+.todo-list-container {
+    height: 150px;
+    width: 100%;
+    /*overflow: auto;*/
+    list-style: none;
+    margin: 0;
+}
+
+.todo-list-item {
+    display: inline-block;
+    list-style: none;
+    padding: 0 12px;
+}
+
+.todo-list-item div {
+    float: left;
+}
+
+.todo-checkbox-container {
+    width: 20px;
+}
+
+.todo-description-container {
+    width: 200px;
+}
+
+.todo-item-finished {
+    text-decoration: line-through;
+}
+
+.todo-remove {
+    width:20px;
+    height:20px;
+    text-align:center;
+    cursor: pointer;
+    position:absolute;
+    right:12px;
+}
+
+.todo-list-item .todo-remove {
+    display:none;
+}
+
+.todo-list-item:hover .todo-remove {
+    display:inline-block;
+}
+
+.todo-remove .icon-trash {
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+}
+
+.todo-remove:hover .icon-trash {
+    background:#888888;
+    color:#ffffff;
+}
+
+</style>
+
+{{#if isAuthenticated}}
+    <div class="btn-group dropup" id="todo-list-widget">
+        <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
+            <i class="icon-list-alt"></i> Todo</button>
+        <div id="todo-container" class="dropdown-menu">
+            <div class="todo-header">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-edit"></i></span><input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
+                    <div id="todo-add-container">
+                        <button class="btn btn-primary" id="todo-add" type="button">Add</button>
+                    </div>
+                </div>
+                <div id="todo-date-container" class="input-prepend">
+                    <span class="add-on"><i class="icon-calendar"></i></span><input class="span2" id="todo-date" type="text" placeholder="By when?">
+                </div>
+            </div>
+            <ul class="todo-list-container">
+                {{#if this.collection.models}}
+                    <li class="divider"></li>
+                {{/if}}
+                {{#each this.collection.models}}
+                    <li class="todo-list-item">
+                        {{#notEq this.attributes.status "Completed"}}
+                            <div class="todo-checkbox-container">
+                                <label class="checkbox">
+                                    <input class="todo-status" type="checkbox"/>
+                                </label>
+                            </div>
+                            <div class="todo-description-container">
+                                <span>{{this.attributes.name}}</span>
+                            </div>
+                        {{else}}
+                            <div class="todo-checkbox-container">
+                                <label class="checkbox">
+                                    <input class="todo-status" type="checkbox" checked="checked"/>
+                                </label>
+                            </div>
+                            <div class="todo-description-container">
+                                <span class="todo-item-finished">{{this.attributes.name}}</span>
+                            </div>
+                        {{/notEq}}
+                        <div class="todo-remove">
+                            <i class="icon-trash"></i>
+                        </div>
+                        <div class="todo-date-info">
+                            {{#notEq this.attributes.status "Completed"}}
+                                <h6 class="todo-due-date">Due: {{this.attributes.date_due}}</h6>
+                            {{else}}
+                                <h6 class="todo-finished">Finished!</h6>
+                            {{/notEq}}
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+{{/if}}

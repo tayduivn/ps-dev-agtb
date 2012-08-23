@@ -1,6 +1,8 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -41,10 +43,10 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'type' => 'button',
             'label' => 'Edit',
             'route' => array(
-              'action' => 'edit'
+                'action' => 'edit'
             ),
             'primary' => true,
-       ),
+        ),
     ),
     'panels' => array(
         array(
@@ -57,23 +59,21 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
                         'wireless_edit_only' => true,
                     ),
                 ),
-                'phone_office',
+                array('name' => 'phone_office', 'label' => 'LBL_LIST_PHONE'),
+                'email1',
                 array(
                     'name' => 'website',
                     'displayParams' => array(
-                        'type' => 'link',
+                        'type' => 'url',
                     ),
                 ),
-                'email1',
+//                array(
+//                    'name' => 'billing_address_street',
+//                    'displayParams' => array('type' => 'address')
+//                ),
+
                 'billing_address_street',
-                'billing_address_city',
-                'billing_address_state',
-                'billing_address_postalcode',
-                'billing_address_country',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
                 'linkedin',
                 'facebook',
                 'twitter',

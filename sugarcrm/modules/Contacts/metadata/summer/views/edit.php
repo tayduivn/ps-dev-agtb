@@ -85,9 +85,6 @@ $viewdefs['Contacts']['summer']['view']['edit'] = array(
                 'primary_address_postalcode',
                 'primary_address_country',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
                 'linkedin',
                 'facebook',
                 'twitter',

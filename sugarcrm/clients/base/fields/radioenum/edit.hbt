@@ -1,4 +1,4 @@
-        {{#eachOptions options}}
-        <input type="radio" name="{{../name}}" value="{{this}}" {{#eq this ../value}}SELECTED{{/eq}}>{{this}}</label>
+        {{#eachOptions def.options}}
+        <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}>{{value}}
         {{/eachOptions}}
         <p class="help-block"></p>

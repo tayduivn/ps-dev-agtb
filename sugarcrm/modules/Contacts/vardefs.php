@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
-$dictionary['Contact'] = array('table' => 'contacts', 'audited'=>true,
+$dictionary['Contact'] = array('table' => 'contacts', 'audited'=>true,'activity_enabled'=>true,
 
 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
 array (
@@ -226,6 +226,7 @@ array (
             'default' => 'en_us',
             'vname' => 'LBL_PREFERRED_LANGUAGE',
             'options' => 'available_language_dom',
+            'popupHelp' => 'LBL_LANG_PREF_TOOLTIP',
         ),
 	//END SUGARCRM flav=ent ONLY
 	'accounts' =>

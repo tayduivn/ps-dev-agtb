@@ -1,0 +1,53 @@
+<div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
+  <h4>Activity</h4>
+  <form class="form-search hide" action="">
+    <input value="" class="span4" placeholder="Refine activity ...">
+  </form> 
+  <ul class="nav nav-tabs results">
+    {{#if collection.models.length}}
+      {{#each collection.models}}
+      <li style="" data-id="{{attributes.activity_id}}">
+        <a href="#log1" data-toggle="tab" class="pull-left"><span class="label label-{{attributes.activity_data.action}}">{{attributes.activity_data.action}}</span></a>
+        <p>
+          <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_data.action}} <em>{{attributes.activity_data.field_name}}</em>
+          
+          {{#each attributes.activity_data.data}}
+            <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
+          {{/each}} on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+          <br>
+          <date class="date">Posted {{timeago attributes.date_created}}</date>
+        </p>
+        <div class="actions hide">
+          <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
+          <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
+        </div>
+        {{#if attributes.comments.length}}
+        <ul class="commented">
+            {{#each attributes.comments}}
+                <li style="">
+                  <p>
+                    <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a> commented "{{this.value}}"<br>
+                    <date class="date">{{timeago this.date_created}}</date>
+                  </p>
+                </li>
+            {{/each}}
+         </ul>
+         {{/if}}
+         <div style="display:none;" class="activitystream-comment">
+           <span class="omnibar clearfix active" action="">
+           <input type="text" value="" class="span10 sayit" placeholder="Type your reply">
+         <div class="inputactions span10">
+           <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
+           <input type="submit" data-id="{{attributes.activity_id}}" class="pull-right btn btn-primary postReply"><span class="pull-right">Send to <a href="">Everyone</a> &nbsp;</span>
+         </div>
+         </spam> 
+         </div>
+      </li>
+      {{/each}}
+    {{else}}
+      <em>No recent activity found.</em>
+    {{/if}}
+  </ul>
+</div>
+
+
