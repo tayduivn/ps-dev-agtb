@@ -1,4 +1,3 @@
-{{#if revenue}}
 <table class="table">
 	<thead>
 		<th>{{str "LBL_PROJECTED" "Forecasts"}}</th>
@@ -75,6 +74,3 @@
 		</td>
 	</tfoot>
 </table>
-{{else}}
-	<strong>{{str "LBL_LOADING" "Forecasts"}}&hellip;</strong>
-{{/if}}
