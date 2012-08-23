@@ -259,7 +259,7 @@ class RestService extends ServiceBase {
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
-                $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $exception->errorCode)));
+                $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $httpError)));
                 $crazyEncoding = true;
             }
         }
