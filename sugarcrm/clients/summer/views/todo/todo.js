@@ -7,7 +7,6 @@
         'keyup #todo-date':'todoSubmit',
         'focus #todo-date': 'showDatePicker',
         'click .todo-status': 'changeStatus',
-        'hover .todo-list-item': 'toggleRemoveTodo',
         'click .todo-remove': 'removeTodo'
     },
     initialize: function(options) {
@@ -63,22 +62,6 @@
             dateFormat: "yy-mm-dd"
         });
         $("#ui-datepicker-div").css("z-index", 1032);
-    },
-    toggleRemoveTodo: function(e) {
-        var remEl;
-        if( $(e.target).hasClass("todo-list-item") ) {
-            remEl = $(e.target).find(".todo-remove");
-        }
-        else {
-            remEl = $(e.target).parentsUntil(".todo-list-container", ".todo-list-item").find(".todo-remove");
-        }
-
-        if( e.type == "mouseenter" ) {
-            remEl.show();
-        }
-        else if( e.type == "mouseleave" ) {
-            remEl.hide();
-        }
     },
     removeTodo: function(e) {
         console.log("---------");
