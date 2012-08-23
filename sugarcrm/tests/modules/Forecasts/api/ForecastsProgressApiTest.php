@@ -42,6 +42,24 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $quota;
     protected static $managerQuota;
 
+    public static function setupBeforeClass()
+    {
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language('en_us');
+        SugarTestHelper::setup('app_list_strings');
+        $forecastConfig = array (
+            'show_buckets' => false,
+            'committed_probability' => 70,
+            'sales_stage_won' => array('Closed Won'),
+            'sales_stage_lost' => array('Closed Lost')
+        );
+        $admin = BeanFactory::getBean('Administration');
+        foreach ($forecastConfig as $name => $value)
+        {
+            $admin->saveSetting('base', $name, json_encode($value));
+        }
+    }
+
     public function setUp()
     {
         global $app_list_strings;
@@ -203,7 +221,7 @@ class ForecastsProgressApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testProgress() {
-        $url = 'Forecasts/progress/' . self::$user->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
+        $url = 'Forecasts/progressRep?user_id=' . self::$user->id . '&timeperiod_id=' . self::$timeperiod->id;
 
         $restResponse = $this->_restCall($url);
 
@@ -211,27 +229,20 @@ class ForecastsProgressApiTest extends RestTestBase
 
         //check quotas section
         $this->assertEquals(self::$quota->amount, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
-        $this->assertEquals(0, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['opportunities'], "opportunity count did not match");
     }
 
     /**
      * @group forecastapi
      */
     public function testManagerProgress() {
-        $url = 'Forecasts/progress/' . self::$manager->id . '/' . self::$timeperiod->id . '/1/Closed%20Won'/'Closed%20Lost';
+        $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
 
         $restResponse = $this->_restCall($url);
 
         $restReply = $restResponse['reply'];
 
-        error_log(print_r($restReply,1));
-
-
-        error_log($url);
         //check quotas section
-        $this->assertEquals(0, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
-        $this->assertEquals(30000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(50000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
         $this->assertEquals(2, $restReply['opportunities'], "opportunity count did not match");
     }
 
@@ -242,7 +253,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $newUser->reports_to_id = self::$manager->id;
         $newUser->save();
-        $url = 'Forecasts/progress/' . $newUser->id . '/' . self::$timeperiod->id . '/0/Closed%20Won'/'Closed%20Lost';
+        $url = 'Forecasts/progressRep?user_id=' . $newUser->id . '&timeperiod_id=' . self::$timeperiod->id;
 
         $restResponse = $this->_restCall($url);
 
@@ -251,7 +262,5 @@ class ForecastsProgressApiTest extends RestTestBase
         //check best/likely numbers
         // to quota
         $this->assertEquals(0, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
-        $this->assertEquals(0, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['opportunities'], "opportunity count did not match");
     }
 }
