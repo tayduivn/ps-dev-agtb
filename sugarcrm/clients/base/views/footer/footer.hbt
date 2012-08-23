@@ -28,7 +28,8 @@
                     <ul id="usersList">
                     	Loading users...
                     </ul>
-                    <div class="btn-group"><input type="text" id="inviteemail"><a title="Invite" class="btn" id="invite">Invite</a></div>
+                    <div class="btn-group"><input type="text" id="inviteemail" placeholder="Enter invitee email...">
+                    <button title="Invite" class="btn btn-primary" id="invite">Invite</button></div>
                     </div>
                 </div>
                 <div class="btn-group">
