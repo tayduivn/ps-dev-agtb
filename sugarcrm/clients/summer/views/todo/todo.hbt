@@ -40,7 +40,8 @@ padding:0 12px;
 }
 #todo-add-container {
     display: inline-block;
-    margin-left: 7px;
+/*    margin-left: 7px;*/
+    position:absolute;
 }
 
 .todo-list-container {
@@ -104,7 +105,7 @@ padding:0 12px;
 </style>
 
 {{#if isAuthenticated}}
-    <div class="btn-group dropup" id="todo-list-widget">
+    <div class="btn-group dropup {{#if open}}open{{/if}}" id="todo-list-widget">
         <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
             <i class="icon-list-alt"></i> Todo</button>
         <div id="todo-container" class="dropdown-menu">
