@@ -1,14 +1,14 @@
 /**
  * View that displays a list of models pulled from the context's collection.
- * @class View.Views.FilterView
- * @alias SUGAR.App.layout.FilterView
+ * @class View.Views.ProgressView
+ * @alias SUGAR.App.layout.ProgressView
  * @extends View.View
  */
 ({
 
     likelyTotal: 0,
     bestTotal: 0,
-    progressEndpoint:'',
+    shouldRollup: 0,
     /**
      * initialize base models and set the initial user and timeperiod
      * @param options
@@ -16,7 +16,6 @@
     initialize: function (options) {
         _.bindAll(this); // Don't want to worry about keeping track of "this"
         app.view.View.prototype.initialize.call(this, options);
-        this.progressEndpoint = app.api.serverUrl + "/Forecasts/progress/"
 
         this.model = new Backbone.Model({
                     amount : 0,
@@ -39,13 +38,12 @@
                     pipeline : 0
                 });
 
-        //this.progressModel = this.context.forecasts.progress;
         this.selectedUser = this.context.forecasts.get("selectedUser");
+        this.shouldRollup = this.isManagerView();
         this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
-        this.updateProgress();
         this.likelyTotal = 0;
         this.bestTotal = 0;
-        this.worksheetManagerCollection = this.context.forecasts.worksheetmanager;
+        this.updateProgress();
     },
 
     /**
@@ -55,40 +53,30 @@
 
         var self = this;
 
+        //render when model changes
+        if(this.model) {
+            this.model.on("change reset", this.render, this);
+        }
+
         if (this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser",
+            //update uer
+            this.context.forecasts.on("change:selectedUser reset:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
             }, this);
 
-            this.context.forecasts.on("change:selectedTimePeriod",
+            //update timeperiod
+            this.context.forecasts.on("change:selectedTimePeriod reset:selectedTimePeriod",
             function(context, selectedTimePeriod) {
                 this.updateProgressForSelectedTimePeriod(selectedTimePeriod);
                 this.updateProgress();
             }, this);
-            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                self.calculateBases(totals);
-                self.recalculateTotals(totals);
-            });
-            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
-                self.calculateBases(totals);
-                self.recalculateTotals(totals);
-            });
-        }
-    },
 
-    /**
-     * update the base numbers used in almost every calculation
-     * @param totals
-     */
-    calculateBases: function (totals) {
-        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
-            this.likelyTotal = totals.likely_adjusted;
-            this.bestTotal = totals.best_adjusted;
-        } else {
-            this.likelyTotal = totals.likely_case;
-            this.bestTotal = totals.best_case;
+            // totals models have changed changed
+            this.context.forecasts.on("change:updatedTotals change:updatedManagerTotals", function(context, totals) {
+                self.recalculateTotals(totals);
+            });
         }
     },
 
@@ -98,15 +86,17 @@
      * @param totals model that was updated
      */
     recalculateTotals: function (totals) {
-        if(this.selectedUser.isManager === true && this.selectedUser.showOpps === false) {
+        this.likelyTotal = this.shouldRollup ? totals.likely_adjusted : totals.likely_case;
+        this.bestTotal = this.shouldRollup ? totals.best_adjusted : totals.best_case;
+        if(this.shouldRollup) {
             this.model.set({
                 revenue : totals.amount,
                 quota_amount : totals.quota
-        });
+            });
         } else {
             this.model.set({
                 closed_amount : totals.won_amount,
-                opportunities : totals.included_opp_count,
+                opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
                 revenue : totals.amount
             });
         }
@@ -129,7 +119,6 @@
             quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
             pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
         });
-        this.render();
     },
 
     /**
@@ -139,10 +128,7 @@
      * @return {Boolean}
      */
     checkIsAbove: function (caseValue, stageValue) {
-        if(caseValue > stageValue)
-            return true;
-
-        return false;
+        return caseValue > stageValue;
     },
 
     /**
@@ -164,10 +150,7 @@
      * @return {Number}
      */
     getPercent: function (caseValue, stageValue) {
-        if(stageValue > 0) {
-            return caseValue / stageValue;
-        }
-        return 0;
+        return stageValue > 0 ? caseValue / stageValue : 0;
     },
 
     /**
@@ -190,6 +173,14 @@
         return ps;
     },
 
+    /**
+     * checks the selectedUser to make sure it's a manager and if we should show the manager view
+     * @return {Boolean}
+     */
+    isManagerView: function () {
+        return this.selectedUser.isManager === true && this.selectedUser.showOpps === false;
+    },
+
 
     _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
@@ -201,7 +192,7 @@
      * @param selectedTimePeriod
      */
     updateProgressForSelectedTimePeriod: function (selectedTimePeriod) {
-        this.seletedTimePeriod = selectedTimePeriod;
+        this.selectedTimePeriod = selectedTimePeriod;
     },
 
     /**
@@ -210,43 +201,37 @@
      */
     updateProgressForSelectedUser: function (selectedUser) {
         this.selectedUser = selectedUser;
+        this.shouldRollup = this.isManagerView();
     },
 
     /**
      * something has changed, so we need to update the progress model depending on this change
      */
     updateProgress: function () {
-        var getRollup = false;
         var self = this;
-        var urlParams = {};
-        var url = this.progressEndpoint;
 
-        //Get the excluded_sales_stage property.  Default to empty array if not set
+        var method = self.shouldRollup ? "progressManager" : "progressRep";
 
+       var urlParams = {
+            user_id: self.selectedUser.id,
+            timeperiod_id : self.selectedTimePeriod.id
+        };
+       var url = app.api.buildURL('Forecasts', method, '', urlParams);
 
-        if(self.selectedUser != undefined && self.selectedTimePeriod != undefined) {
-            if(self.selectedUser.isManager === true && self.selectedUser.showOpps === false)
-                getRollup = true;
-
-            url += self.selectedUser.id + "/";
-            url += self.selectedTimePeriod.id + "/";
-            url += getRollup ? "1/" : "0/";
-        }
 
         app.api.call('read', url, null, null, {
             success: function(data) {
-                if(getRollup) {
+                if(self.shouldRollup) {
                     self.model.set({
                         opportunities : data.opportunities,
                         closed_amount : data.closed_amount
                     });
-                    self.recalculateModel();
                 } else {
                     self.model.set({
                         quota_amount : data.quota_amount
                     });
-                    self.recalculateModel();
                 }
+                self.recalculateModel();
             }
         });
     }
