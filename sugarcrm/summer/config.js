@@ -152,6 +152,9 @@
             },
             footer: {
                 target: '#footer'
+            },
+            todo: {
+                target: '#todo-widget-container'
             }
         },
 
