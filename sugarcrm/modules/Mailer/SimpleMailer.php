@@ -72,6 +72,7 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->Mailer   = $this->configs['protocol'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
+		$this->mailer->WordWrap = $this->configs['wordwrap'];
 
 		if ($this->configs['protocol'] == 'smtp') {
 			$this->mailer->Host          = $this->configs['smtp']['host'];

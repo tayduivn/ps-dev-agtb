@@ -71,6 +71,7 @@ abstract class BaseMailer implements IMailer
 			'protocol' => 'smtp',
 			'charset'  => 'utf-8',
 			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
+			'wordwrap' => 996,
 			'smtp'     => array(
 				'host'         => 'localhost',
 				'port'         => 25,
@@ -103,6 +104,16 @@ abstract class BaseMailer implements IMailer
 	 */
 	public function mergeConfigs($configs) {
 		$this->configs = array_merge($this->configs, $configs);
+	}
+
+	/**
+	 * Replace a specific configuration. Doesn't allow for overwriting smtp configs, for now.
+	 *
+	 * @param string $config
+	 * @param mixed  $value
+	 */
+	public function setConfig($config, $value) {
+		$this->configs[$config] = $value;
 	}
 
 	/**
