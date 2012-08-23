@@ -33,7 +33,7 @@ CREATE TABLE `confirmations` (
   `type` varchar(255) DEFAULT NULL,
   `ip_address` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,7 +51,7 @@ CREATE TABLE `dbs` (
   `count` int(11) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,10 +74,20 @@ CREATE TABLE `instances` (
   `config` text,
   `license` varchar(36) NOT NULL DEFAULT '',
   `deleted` tinyint(4) DEFAULT '0',
+  `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `invites`;
+CREATE TABLE `invites` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL DEFAULT '',
+  `instance_id` int(11) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`,`instance_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 --
 -- Table structure for table `logins`
 --
@@ -94,7 +104,7 @@ CREATE TABLE `logins` (
   `email` varchar(255) DEFAULT NULL,
   `token` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,6 +211,13 @@ CREATE TABLE `oauth_refresh_tokens` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `id` varchar(36) NOT NULL DEFAULT '',
+  `user_id` int(11) DEFAULT NULL,
+  `instance_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Table structure for table `users`
 --
@@ -220,8 +237,13 @@ CREATE TABLE `users` (
   `last_name` varchar(50) DEFAULT NULL,
   `company` varchar(255) DEFAULT NULL,
   `deleted` tinyint(4) DEFAULT '0',
+  `remote_id` varchar(255) DEFAULT NULL,
+  `photo` varchar(255) DEFAULT NULL,
+  `oauth_token` varchar(255) DEFAULT NULL,
+  `refresh_token` varchar(255) DEFAULT NULL,
+  `token_expires` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
