@@ -1,7 +1,4 @@
 ({
-        events: {
-           // 'click [name=save_button]': 'saveModel'
-        },
         /**
          * Holds the metadata for each of the components used in forecasts
          */
@@ -15,14 +12,17 @@
         initDataModel: {},
 
         initialize: function(options) {
-
+            var leadId;
             //load metadata for convert
             //traverse and add to metadata prior to initialize.
 
-            this.componentsMeta = this.app.metadata.getLayout("Leads").convert.meta.components;
 
             options.context = _.extend(options.context, this.initializeAllModels());
             this.app.view.Layout.prototype.initialize.call(this, options);
+            debugger;
+            leadId = this.context.attributes.modelId;
+            this.convertModel = this.createConvertModel(leadId);
+            this.componentsMeta = this.app.metadata.getLayout("Leads").convert.meta.components;
 
             this.context.off("lead:convert", null, this);
             this.context.on("lead:convert", this.convert, this);
@@ -30,17 +30,32 @@
         },
 
         convert: function () {
-            var models;
+            var self = this;
             debugger;
-            models = array[]; //this.context.getModels();
-
-
-            _.each(models, function(model) {
-               model.save();
+            _.each( this.context.getModels(), function(model) {
+                self.convertModel.addSubModel(model.cid, model);
             }, this);
-
+            this.convertModel.save();
         },
+    /**
+     * creates a convert model that will hold all module models for syncing
+     * @return {*} instance of a backbone model.
+     */
+    createConvertModel:function (id) {
+        debugger;
+        var convertModel = Backbone.Model.extend({
+            sync:function (method, model, options) {
+                myURL = app.api.buildURL('Leads', 'convert', {id:id});
+                return app.api.call(method, myURL, model, options);
+            },
 
+            addSubModel:function (name, model) {
+                this.set(name, model);
+            }
+        });
+
+        return new convertModel();
+    },
         /**
          * Fetches data for layout's model or collection.
          *
@@ -83,7 +98,6 @@
          * as defined in metadata.
          */
         initializeAllModels: function () {
-            debugger;
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 models = {};
@@ -123,64 +137,9 @@
             });
 
             return models;
-        },
+        }
 
-        /**
-         * creates a Backbone model for a given metadata definition
-         * @param modelMetadata metadata definiton of the model.
-         * @param module
-         * @return {*} instance of a backbone model.
-         */
-        createModel: function(modelMetadata, module) {
-
-            var Model = Backbone.Model.extend({
-                sync: function(method, model, options) {
-                    myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
-                    return app.api.call(method, myURL, null, options);
-                }
-            });
-
-            return new Model();
-        },
-
-        /**
-         * creates a Backbone collection for a given metadata definition
-         * @param collectionMetadata metadata definition of the collection.
-         * @param module
-         * @return {*} instance of a backbone collection.
-         */
-        createCollection: function() {
-            var Collection = Backbone.Collection.extend({
-                model : Backbone.Model.extend({
-                    sync : function(method, model, options) {
-                        var url = _.isFunction(model.url) ? model.url() : model.url;
-                        return app.api.call(method, url, model, options);
-                    }
-                }),
-                /**
-                 * Custom sync to use the app api to call the url (o-auth headers are inserted here)
-                 *
-                 * @param method
-                 * @param model
-                 * @param options
-                 * @return {*}
-                 */
-                sync: function(method, model, options) {
-                    var url = _.isFunction(model.url) ? model.url() : model.url;
-                    return app.api.call(method, url, null, options);
-                }
-
-            });
-            return new Collection();
-        },
-
-        namespace: function(target, namespace) {
-            if (!target[namespace]) {
-                target[namespace] = {};
-            }
-        },
-
-        /**
+         /**
          * Add a view (or layout) to this layout.
          * @param {View.Layout/View.View} comp Component to add
          */

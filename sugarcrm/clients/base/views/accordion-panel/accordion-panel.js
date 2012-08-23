@@ -1,13 +1,7 @@
 ({
     initialize: function(options) {
-        debugger;
-        // Get the corresponding detail view meta for said module
-
-
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";
-
-
     },
 
     _renderHtml: function() {
