@@ -89,6 +89,8 @@ class SimpleMailer extends BaseMailer
 
 	private function connectToHost() {
 		if ($this->configs['protocol'] == 'smtp') {
+			//@todo may need to reuse the SMTP object in the event that there is a valid use case for
+			// keeping the SMTP connection alive
 			$this->mailer->smtp = new SMTP();
 
 			if (!$this->mailer->SmtpConnect()) {
@@ -117,6 +119,7 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->FromName = $this->from->getName();
 
 		// transfer the reply-to
+		$this->mailer->ClearReplyTos();
 		$replyToEmail = $this->replyTo->getEmail();
 
 		if (!is_string($replyToEmail)) {
@@ -166,6 +169,7 @@ class SimpleMailer extends BaseMailer
 	}
 
 	private function transferRecipients() {
+		$this->mailer->ClearAllRecipients();
 		$to = $this->recipients->getTo();
 		$cc = $this->recipients->getCc();
 		$bcc = $this->recipients->getBcc();
@@ -191,17 +195,22 @@ class SimpleMailer extends BaseMailer
 	 * @throws MailerException
 	 */
 	private function transferBody() {
-		if ($this->htmlBody && $this->textBody) {
+		// to allow for manipulating the message parts without affecting the original document, in case it
+		// needs to be reused
+		$htmlBody = $this->htmlBody;
+		$textBody = $this->textBody;
+
+		if ($htmlBody && $textBody) {
 			$this->mailer->Encoding = 'base64'; // this could actually change the encoding from the config, do we want to do this?
 			$this->mailer->IsHTML(true);
-			$this->mailer->Body = $this->htmlBody;
-			$this->mailer->AltBody = $this->textBody;
-		} elseif ($this->textBody) {
-			$this->mailer->Body = $this->textBody;
-		} elseif ($this->htmlBody) {
+			$this->mailer->Body = $htmlBody;
+			$this->mailer->AltBody = $textBody;
+		} elseif ($textBody) {
+			$this->mailer->Body = $textBody;
+		} elseif ($htmlBody) {
 			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
 			//$this->mailer->Encoding = 'base64'; //@todo do we need this?
-			$this->mailer->Body = $this->htmlBody;
+			$this->mailer->Body = $htmlBody;
 		} else {
 			throw new MailerException("No email body was provided");
 		}
@@ -213,6 +222,8 @@ class SimpleMailer extends BaseMailer
 	 * @throws MailerException
 	 */
 	private function transferAttachments() {
+		$this->mailer->ClearAttachments();
+
 		foreach ($this->attachments as $attachment) {
 			if (!$this->mailer->AddAttachment(
 					$attachment['path'],
