@@ -11,6 +11,7 @@
     },
     initialize: function(options) {
         var self = this;
+        this.open = false;
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", function() {
 
@@ -41,7 +42,7 @@
             if( $("#todo-list-widget").hasClass("btn-group dropup open") ) {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    $("#todo-container").parent().attr("class", "btn-group dropup");
+                    $("#todo-list-widget").attr("class", "btn-group dropup");
                 }
             }
         });
@@ -81,6 +82,7 @@
         }
 
         this.model.save();
+        this.open = true;
         this._render();
     },
     _renderHtml: function() {
@@ -110,6 +112,7 @@
             this.model.save();
             $("#todo-subject").val("");
             $("#todo-date").val("");
+            this.open = true;
             this._render();
         }
     },
