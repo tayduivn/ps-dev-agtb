@@ -11,7 +11,7 @@
         <p>
        <input type="text" value="" class="span10 sayit" placeholder="Type your post">
        <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
-       <input type="submit" data-id="{{collection.id}}" data-module="{{collection.module}}" class="btn btn-primary addPost">
+       <input type="submit" class="btn btn-primary addPost">
        </p>
      </div>  
     {{#if collection.models.length}}
