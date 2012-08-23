@@ -1,15 +1,16 @@
 ({
 
-/**
- * View that displays header for current app
- * @class View.Views.HeaderView
- * @alias SUGAR.App.layout.HeaderView
- * @extends View.View
- */
+    /**
+     * View that displays header for current app
+     * @class View.Views.HeaderView
+     * @alias SUGAR.App.layout.HeaderView
+     * @extends View.View
+     */
     events: {
         'click #moduleList li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
+        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage',
         'click .promo li': 'onPromoClicked'
     },
 
@@ -23,7 +24,7 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
-        if (!app.api.isAuthenticated()) return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
@@ -35,22 +36,32 @@
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
-            buttonElement: '.navbar-search span.add-on'
+            onEnterFn: function(hrefOrTerm, isHref) {
+                // if full href treat as user clicking link
+                if(isHref) {
+                    window.location = hrefOrTerm;
+                } else {
+                    // It's the term only (user didn't select from drop down
+                    // so this is essentially the term typed
+                    app.router.navigate('#search/'+hrefOrTerm, {trigger: true});
+                }
+            }
         });
     },
-    onPromoClicked: function(){
-            
+    onPromoClicked: function() {
 
 
     },
-    /** 
+
+    /**
      * Callback for the searchahead plugin .. note that
      * 'this' points to the plugin (not the header view!)
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
-        mlist = app.metadata.getDelimitedModuleList(',', true);
+        mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
+
         app.api.search(params, {
             success:function(data) {
                 plugin.provide(data);
@@ -60,6 +71,22 @@
                 app.logger.error("Failed to fetch search results in search ahead. " + error);
             }
         });
+    },
+    /**
+     * Takes user to full search results page
+     */
+    gotoFullSearchResultsPage: function(evt) {
+        var term;
+        // Don't let plugin kick in. Navigating directly to search results page
+        // when clicking on adjacent button is, to my mind, special case portal
+        // application requirements so I'd rather do here than change plugin.
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        term = this.$('.search-query').val();
+        if(term && term.length) {
+            app.router.navigate('#search/'+term, {trigger: true});
+        }
     },
 
     /**
@@ -78,7 +105,7 @@
         moduleHref = evt.currentTarget.hash;
         hashModule = moduleHref.split('/')[0];
         this.$('#moduleList li').removeClass('active');
-        this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+        this.$('#moduleList li a[href="' + hashModule + '"]').parent().addClass('active');
     },
     hide: function() {
         this.$el.hide();
@@ -90,7 +117,7 @@
         this.fullName = app.user.get('full_name');
     },
     /**
-     * Creates the task create drop down list 
+     * Creates the task create drop down list
      */
     setCreateTasksList: function() {
         var self = this, singularModules;
@@ -98,21 +125,21 @@
 
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
-            if(singularModules) {
+            if (singularModules) {
                 _.each(self.moduleList, function(loadedModule) {
 
                     // Continue on Leads, Notes, or KBDocuments, but for all others:
                     // check access to create and push to list
-                    if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
-                        app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
+                    if (loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
+                        app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: " + loadedModule);
                     } else {
-                        if(app.acl.hasAccess('create', loadedModule)) {
+                        if (app.acl.hasAccess('create', loadedModule)) {
                             self.createListLabels.push(loadedModule);
                         }
                     }
                 });
             }
-        } catch(e) {
+        } catch (e) {
             return;
         }
     },
@@ -121,7 +148,9 @@
         this.createListLabels = [];
         this.currentModule = this.module;
         this.moduleList = app.metadata.getModuleNames(true);
-        this.promoList = [{name:'Reports', url:'http://cnn.com'}];
+        this.promoList = [
+            {name: 'Reports', url: 'http://cnn.com'}
+        ];
     },
 
     /**

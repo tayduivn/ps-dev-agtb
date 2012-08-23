@@ -171,9 +171,7 @@
         displayModules : [
             'Accounts',
             'Contacts',
-            'Opportunities',
-            'ActivityStream',
-            'Notes'
+            'Opportunities'
         ],
         /**
          * Client ID for oAuth
