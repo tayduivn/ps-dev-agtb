@@ -226,9 +226,9 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
 
-        app.view.View.prototype._render.call(this);
-
         var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+
+        app.view.View.prototype._render.call(this);
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
