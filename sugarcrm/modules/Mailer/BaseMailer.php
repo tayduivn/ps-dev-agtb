@@ -201,4 +201,12 @@ abstract class BaseMailer implements IMailer
 		$this->attachments = array();
 		$this->embeddedImages = array();
 	}
+
+	protected function hasMessagePart($part) {
+		if (is_string($part) && $part != '') {
+			return true;
+		}
+
+		return false;
+	}
 }

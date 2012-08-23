@@ -151,5 +151,8 @@ interface IMailer
 
 	public function clearAttachments();
 
+	/**
+	 * @return boolean  true=success
+	 */
 	public function send();
 }

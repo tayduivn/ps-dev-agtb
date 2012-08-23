@@ -33,9 +33,6 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->SetLanguage(); // reset to the English language pack
 	}
 
-	/**
-	 * @return boolean  true=success
-	 */
 	public function send() {
 		try {
 			if (!($this->mailer instanceof PHPMailer)) {
@@ -194,25 +191,27 @@ class SimpleMailer extends BaseMailer
 	/**
 	 * @throws MailerException
 	 */
-	private function transferBody() {
-		// to allow for manipulating the message parts without affecting the original document, in case it
-		// needs to be reused
-		$htmlBody = $this->htmlBody;
-		$textBody = $this->textBody;
+	protected function transferBody() {
+		$hasText = $this->hasMessagePart($this->textBody);
+		$hasHtml = $this->hasMessagePart($this->htmlBody);
 
-		if ($htmlBody && $textBody) {
-			$this->mailer->Encoding = 'base64'; // this could actually change the encoding from the config, do we want to do this?
-			$this->mailer->IsHTML(true);
-			$this->mailer->Body = $htmlBody;
-			$this->mailer->AltBody = $textBody;
-		} elseif ($textBody) {
-			$this->mailer->Body = $textBody;
-		} elseif ($htmlBody) {
-			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
-			//$this->mailer->Encoding = 'base64'; //@todo do we need this?
-			$this->mailer->Body = $htmlBody;
-		} else {
+		if (!$hasText && !$hasHtml) {
 			throw new MailerException("No email body was provided");
+		}
+
+		if ($hasHtml) {
+			$this->mailer->IsHTML(true);
+			$this->mailer->Encoding = 'base64'; // so that embedded images are encoding properly
+			$this->mailer->Body = $this->htmlBody;
+		}
+
+		if ($hasText && $hasHtml) {
+			$this->mailer->AltBody = $this->textBody;
+		} elseif ($hasText) {
+			$this->mailer->Body = $this->textBody;
+		} else {
+			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
+			//throw new MailerException("No text body was provided");
 		}
 	}
 
