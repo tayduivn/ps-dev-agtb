@@ -91,11 +91,14 @@ padding:0 12px;
 }
 
 .todo-remove .icon-trash {
-    background:#888888;
-    color:#ffffff;
     border-radius:10px;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
+}
+
+.todo-remove:hover .icon-trash {
+    background:#888888;
+    color:#ffffff;
 }
 
 </style>
