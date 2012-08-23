@@ -300,4 +300,6 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
 
+    'LBL_TIMEFRAMES' => 'Timeframes',
+
 );
