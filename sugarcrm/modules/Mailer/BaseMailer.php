@@ -64,10 +64,10 @@ abstract class BaseMailer implements IMailer
 
 	public function loadDefaultConfigs() {
 		$defaults = array(
-			'hostname'          => '',
-			'charset'           => 'utf-8',
-			'encoding'          => self::EncodingQP, // default to quoted-printable for plain/text
-			'wordwrap'          => 996,
+			'hostname' => '',
+			'charset'  => 'utf-8',
+			'encoding' => self::EncodingQP, // default to quoted-printable for plain/text
+			'wordwrap' => 996,
 		);
 
 		$this->setConfigs($defaults);
