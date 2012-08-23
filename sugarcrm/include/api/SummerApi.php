@@ -19,7 +19,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Summer invite API
+ */
 class SummerApi extends SugarApi {
+
+    public function __construct()
+    {
+        $this->box = BoxOfficeClient::getInstance();
+    }
+
     public function registerApiRest() {
         return array(
             'office' => array(
@@ -28,16 +37,27 @@ class SummerApi extends SugarApi {
                 'pathVars' => array('',''),
                 'method' => 'office',
                 'shortHelp' => 'Office Surroundings',
-                //'longHelp' => 'include/api/help/oauth2_token.html',
-                'rawReply' => false,
-                'noLoginRequired' => false,
+            ),
+            'invite' => array(
+                'reqType' => 'POST',
+                'path' => array('summer','invite'),
+                'pathVars' => array('',''),
+                'method' => 'invite',
+                'shortHelp' => 'Invite People',
             ),
         );
     }
 
-    public function office()
+    public function office($api, $args)
     {
-        $box = BoxOfficeClient::getInstance();
-        return $box->getUsersInstances();
+        return $this->box->getUsersInstances();
+    }
+
+    public function invite($api, $args)
+    {
+        if(!isset($args['email'])) {
+            throw new SugarApiExceptionMissingParameter('Email is missing.');
+        }
+        return $this->box->invite($args['email']);
     }
 }
