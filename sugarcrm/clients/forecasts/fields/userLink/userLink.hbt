@@ -1,0 +1,4 @@
+<a href="javascript:void(0)" class="worksheetManagerLink" data-uid="{{uid}}">{{value}}</a>
+<div class="pull-right" {{{popupVisibilityStyle}}}>
+        <a href="javascript:void(0)" rel="clickoverBottom" data-title="{{str "LBL_CHANGES_BY" "Forecasts"}} {{popupTitleName}}" data-content=" "><i class="icon-exclamation-sign label label-warn"></i></a>
+</div>

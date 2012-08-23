@@ -1,10 +1,10 @@
 describe("The forecasts log", function(){
 
-    var app, view, hbt_helper;
+    var app, hbt_helper;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../clients/forecasts/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../clients/forecasts/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         hbt_heleper = SugarTest.loadFile("../clients/forecasts/helper","hbt-helpers", "js", function(d) { return eval(d); });
     });
 
@@ -30,7 +30,7 @@ describe("The forecasts log", function(){
                 previousModel.set('likely_case', 800);
                 previousModel.set('date_entered', '2012-07-12 18:37:36');
 
-                result = view.createHistoryLog(currentModel, previousModel);
+                result = app.forecasts.utils.createHistoryLog(previousModel,currentModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_BOTH_CHANGED').toBeTruthy();
             });
         });
@@ -45,7 +45,7 @@ describe("The forecasts log", function(){
                 previousModel.set('likely_case', 900);
                 previousModel.set('date_entered', '2012-07-12 18:37:36');
 
-                result = view.createHistoryLog(currentModel, previousModel);
+                result = app.forecasts.utils.createHistoryLog(previousModel,currentModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_CHANGED').toBeTruthy();
             });
         });
@@ -60,7 +60,7 @@ describe("The forecasts log", function(){
                 previousModel.set('likely_case', 800);
                 previousModel.set('date_entered', '2012-07-12 18:37:36');
 
-                result = view.createHistoryLog(currentModel, previousModel);
+                result = app.forecasts.utils.createHistoryLog(previousModel,currentModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED').toBeTruthy();
             });
         });
@@ -75,7 +75,7 @@ describe("The forecasts log", function(){
                 previousModel.set('likely_case', 900);
                 previousModel.set('date_entered', '2012-07-12 18:37:36');
 
-                result = view.createHistoryLog(currentModel, previousModel);
+                result = app.forecasts.utils.createHistoryLog(previousModel,currentModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_NONE_CHANGED').toBeTruthy();
             });
         });
