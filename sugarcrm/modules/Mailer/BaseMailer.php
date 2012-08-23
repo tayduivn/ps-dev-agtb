@@ -125,16 +125,42 @@ abstract class BaseMailer implements IMailer
 		$this->sender = $sender;
 	}
 
+	public function clearRecipients($to = true, $cc = true, $bcc = true) {
+		if ($to) {
+			$this->clearRecipientsTo();
+		}
+
+		if ($cc) {
+			$this->clearRecipientsCc();
+		}
+
+		if ($bcc) {
+			$this->clearRecipientsBcc();
+		}
+	}
+
 	public function addRecipientsTo($recipients = array()) {
 		return $this->recipients->addRecipients($recipients);
+	}
+
+	public function clearRecipientsTo() {
+		$this->recipients->clearTo();
 	}
 
 	public function addRecipientsCc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
 	}
 
+	public function clearRecipientsCc() {
+		$this->recipients->clearCc();
+	}
+
 	public function addRecipientsBcc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
+	}
+
+	public function clearRecipientsBcc() {
+		$this->recipients->clearBcc();
 	}
 
 	public function setSubject($subject) {

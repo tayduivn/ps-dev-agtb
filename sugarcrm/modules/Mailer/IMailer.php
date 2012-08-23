@@ -93,10 +93,21 @@ interface IMailer
 	public function setSender(EmailIdentity $sender);
 
 	/**
+	 * Clear the recipient lists for each parameter that is true. By default, clear all recipients.
+	 *
+	 * @param bool $to
+	 * @param bool $cc
+	 * @param bool $bcc
+	 */
+	public function clearRecipients($to = true, $cc = true, $bcc = true);
+
+	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
 	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsTo($recipients = array());
+
+	public function clearRecipientsTo();
 
 	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
@@ -104,11 +115,15 @@ interface IMailer
 	 */
 	public function addRecipientsCc($recipients = array());
 
+	public function clearRecipientsCc();
+
 	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
 	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsBcc($recipients = array());
+
+	public function clearRecipientsBcc();
 
 	/**
 	 * @param string $subject
