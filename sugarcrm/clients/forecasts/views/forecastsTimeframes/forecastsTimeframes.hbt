@@ -1,2 +1,7 @@
-<h4>{{str "LBL_FILTERS" "Forecasts"}}</h4>
-<div class="timeframeOptions"></div>
+<div class="timeframes">
+    {{#each meta.panels}}
+        {{#each fields}}
+            {{field ../../this ../../model}}
+        {{/each}}
+    {{/each}}
+</div>

@@ -1,62 +1,61 @@
 /**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.FilterView
- * @alias SUGAR.App.layout.FilterView
+ * View that displays the timeframe options for forecasts module
+ * @class View.Views.ForecastsTimeframesView
+ * @alias SUGAR.App.layout.ForecastsTimeframesView
  * @extends View.View
  */
 ({
 
-    viewSelector: '.timeframeOptions',
-
-    bindDataChange: function() {
-        var self = this,
-            model = this.context.forecasts.timeframes;
-
-        model.on('change', function() {
-            self.buildDropdowns(this);
-        });
+    /**
+     * Overriding _renderField because we need to set up the events to set the proper value depending on which field is
+     * being changed.
+     * binary for forecasts and adjusts the category filter accordingly
+     * @param field
+     * @protected
+     */
+    _renderField: function(field) {
+        if (field.name == "timeframes") {
+            field = this._setUpTimeframeField(field);
+        }
+        app.view.View.prototype._renderField.call(this, field);
     },
 
-    buildDropdowns: function(model) {
-        var self = this,
-            default_values = {};
-        self.$el.find(self.viewSelector).empty();
-        _.each(model.attributes, function(data, key) {
-            var modelData = model.get(key),
-                chosen = app.view.createField({
-                    def: {
-                        name: key,
-                        type: 'enum',
-                        options: modelData.options
-                    },
-                    view: self
-                }),
-                $chosenPlaceholder = $(chosen.getPlaceholder().toString());
+    /**
+     * Sets up the save event and handler for the dropdown fields in the timeframe view.
+     * @param field the commit_stage field
+     * @return {*}
+     * @private
+     */
+    _setUpTimeframeField: function (field) {
+        var timeframes;
 
-            self.$el.find(self.viewSelector).append($chosenPlaceholder);
+        field.events = _.extend({"change select": "_updateSelections"}, field.events);
+        field.bindDomChange = function() {};
 
-            chosen.options.viewName = 'drawer';
-            chosen.label = modelData.label;
-            default_values[key] = '';
-            if (modelData.default) {
-                chosen.model.set(key, modelData.default);
-            }
-            chosen.def.options = modelData.options;
-            chosen.setElement($chosenPlaceholder);
-            chosen.render();
+        /**
+         * updates the selection when a change event is triggered from a dropdown
+         * @param event the event that was triggered
+         * @param input the (de)selection
+         * @private
+         */
+        field._updateSelections = function(event, input) {
 
-            self.handleTimePeriodEvents($chosenPlaceholder);
+            var label = this.$el.find('option:[value='+input.selected+']').text();
+            var id = this.$el.find('option:[value='+input.selected+']').val();
+            this.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});
 
-        });
-    },
+//            this.view.context.forecasts.set("selectedTimePeriod", input.selected);
+        };
 
-    handleTimePeriodEvents: function(dropdown) {
-        var self = this;
-        dropdown.on('change', 'select', function(event, data) {
-            var label = $(this).find('option:[value='+data.selected+']').text();
-            var id = $(this).find('option:[value='+data.selected+']').val();
-            self.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});
-        });
+        // INVESTIGATE: Should this be retrieved from the model, instead of directly?
+        app.api.call("read", this.context.forecasts.timeframes.url, '', {success: function(results) {
+            this.field.def.options = results;
+            this.field.render();
+        }}, {field: field, view: this});
+
+        field.def.value = app.defaultSelections.timeperiod_id.id;
+
+        return field;
     }
 
 })
