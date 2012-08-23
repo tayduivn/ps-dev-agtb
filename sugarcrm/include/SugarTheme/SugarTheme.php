@@ -535,6 +535,16 @@ class SugarTheme
     }
 
     /**
+     * Returns the fonts path of the theme defaults
+     *
+     * @return string
+     */
+    public final function getDefaultFontPath()
+    {
+        return $this->getDefaultFilePath().'/font';
+    }
+
+    /**
      * Returns CSS for the current theme.
      *
      * @param  $color string optional, specifies the css color file to use if the theme supports it; defaults to cookie value or theme default
@@ -944,6 +954,18 @@ EOHTML;
 
         // now write the css to cache
         sugar_file_put_contents($cssFilePath,$cssFileContents);
+
+        // make sure that there is the font folder in the cache for the given theme
+        $path = sugar_cached($this->getFilePath() . '/font');
+        if(!sugar_is_dir($path)) {
+            sugar_mkdir($path, null, true);
+            $defaultPath = $this->getDefaultFontPath();
+            foreach(glob($defaultPath ."/*") as $filename) {
+                $name = substr($filename, strrpos($filename, '/'));
+                sugar_file_put_contents($path . $name, sugar_file_get_contents($filename));
+            }
+        }
+
 
         $this->_cssCache[$cssFileName] = $fullFileName;
 
