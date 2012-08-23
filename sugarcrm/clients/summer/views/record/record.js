@@ -24,6 +24,10 @@
 
             this.previousModelState = this.model.previousAttributes();
         }, this);
+
+        if (this.context.get("create") === true) {
+            this.model.isNotEmpty = true;
+        }
     },
 
     // Overloaded functions
@@ -84,8 +88,12 @@
 
         this.editMode = false;
         this.model.save({}, {
-            success: function() {
-                self.render();
+            success: function(model) {
+                if (self.context.get("create") === true) {
+                    app.navigate(self.context, self.model);
+                } else {
+                    self.render();
+                }
             }
         });
 

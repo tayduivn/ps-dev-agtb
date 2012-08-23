@@ -2,24 +2,29 @@
 
     // Add custom events here for now
     app.events.on("app:init", function() {
-      // app.data.declareModels();
+        // app.data.declareModels();
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
-            action = action || "detail";
-            app.controller.loadView({
-                module:module,
-                modelId:id,
-                action:action,
-                layout:"record"
-            });
+            console.log("Routing recordhandler");
+
+            var opts = {
+                module: module,
+                layout: "record",
+                action: (action || "detail")
+            };
+
+            if (id !== "create") {
+                _.extend(opts, {modelId: id});
+            } else {
+                _.extend(opts, {create: true});
+            }
+
+            app.controller.loadView(opts);
         }
 
         app.router.route(":module/:id/:action", "record", recordHandler);
-
-        // TEMP ORVVER
         app.router.route(":module/:id", "record", recordHandler);
-
 
         // Load dashboard route.
         app.router.route("", "dashboard", function () {

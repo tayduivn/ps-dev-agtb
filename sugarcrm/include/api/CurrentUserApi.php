@@ -68,7 +68,7 @@ class CurrentUserApi extends SugarApi {
             $user_data['user_id'] = $current_user->id;
             $user_data['user_name'] = $current_user->user_name;
             $user_data['id'] = $_SESSION['contact_id'];
-            if(isset($_SESSION['account_ids']) && !empty($_SESSION['account_ids'])) 
+            if(isset($_SESSION['account_ids']) && !empty($_SESSION['account_ids']))
             {
                 $user_data['account_ids'] = $_SESSION['account_ids'];
             }
@@ -87,6 +87,11 @@ class CurrentUserApi extends SugarApi {
             {
                 $user_data['preferred_language'] = $current_user->preferred_language;
             }
+        }
+        if(class_exists('BoxOfficeClient')) {
+            $box = BoxOfficeClient::getInstance();
+            $inst = $box->getCurrentInstance();
+            $user_data['instance_name'] = $inst['name'];
         }
 
         return $data = array('current_user'=>$user_data);

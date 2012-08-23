@@ -260,7 +260,8 @@ CREATE TABLE `users` (
   `oauth_token` varchar(255) DEFAULT NULL,
   `refresh_token` varchar(255) DEFAULT NULL,
   `token_expires` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`,`deleted`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -278,7 +279,8 @@ CREATE TABLE `users_instances` (
   `user_id` int(11) DEFAULT NULL,
   `instance_id` int(11) DEFAULT NULL,
   `deleted` tinyint(11) DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `instuser` (`user_id`,`instance_id`,`deleted`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
