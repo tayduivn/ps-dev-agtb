@@ -1,7 +1,9 @@
 ({
     events:{
         'click .reply': 'showAddComment',
-        'click .postReply': 'addComment'
+        'click .postReply': 'addComment',
+        'click .post': 'showAddPost',
+        'click .addPost': 'addPost'        
     },
 
     initialize: function(options) {
@@ -35,7 +37,23 @@
         var myPost = $(event.currentTarget).closest('li');
         var myPostContents = myPost.find('input.sayit')[0].value;
         var myPostId = $(event.currentTarget).data('id');
-
+        
         this.app.api.call('create',this.app.api.buildURL('ActivityStream/ActivityStream/'+myPostId),{'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
-    }
+    },
+    
+    showAddPost: function(event) {
+        $(".activitystream-post").show();
+    },
+
+    addPost: function(event) {
+        var self = this;
+        var myPost = $(".activitystream-post");
+        var myPostContents = myPost.find('input.sayit')[0].value;
+        var myPostId = this.context.get("modelId");
+        var myPostModule = this.module;
+        if(myPostModule == "ActivityStream") {
+        	myPostModule = '';	
+        }
+        this.app.api.call('create',this.app.api.buildURL('ActivityStream'),{'module':myPostModule,'id':myPostId,'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
+    }    
 })
