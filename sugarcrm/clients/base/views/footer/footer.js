@@ -3,7 +3,10 @@
         'click #tour': 'systemTour',
         'click #print': 'print',
         'click #top': 'top',
-        'click #languageList .dropdown-menu a' : 'setLanguage'
+        'click #languageList .dropdown-menu a' : 'setLanguage',
+        'click #instance': 'instanceMenu',
+        'click #invite': 'invite',
+        'click #instancesContainer': 'ignore',
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -29,6 +32,7 @@
         if (app.config && app.config.logoURL) {
             this.logoURL=app.config.logoURL;
         }
+        this.instance_name = app.user.get('instance_name');
         app.view.View.prototype._renderHtml.call(this);
     },
     systemTour: function() {
@@ -46,5 +50,38 @@
             langKey = $li.data("lang-key");
         app.alert.show('language', {level: 'warning', title: 'LBL_LOADING_LANGUAGE', autoclose: false});
         app.lang.setLanguage(langKey, function() { app.alert.dismiss('language'); });
-    }
+    },
+    instanceMenu: function(e) {
+    	App.api.call('GET', '../rest/v10/summer/office', null, {
+    		success: function(o) {
+    			//console.log(o);
+    			$("#instanceList").html("");
+    			$("#instanceList")
+    			for(i=0; i<o.instances.length; i++) {
+    				$("#instanceList").append("<li>"+o.instances[i].name+"</li>");
+    			}
+    			$("#usersList").html("");
+    			$("#usersList")
+    			for(i=0; i<o.users.length; i++) {
+    				$("#usersList").append("<li>"+o.users[i].first_name+" "+o.users[i].last_name+", last login: " + o.users[i].login_time+"</li>");
+    			}
+    		}
+    	});
+    },
+    invite: function(e) {
+    	email = $("#inviteemail").val();
+    	if(!email) {
+    		return;
+    	}
+    	var self = this;
+    	App.api.call('create', '../rest/v10/summer/invite', {email: email}, {
+    		success: function(o) {
+    			$("#inviteemail").val('');
+    			//self.showMessage('Invited', 3000);
+    		}
+    	});
+    },
+    ignore: function(e) {
+    	e.stopPropagation();
+    },
 })

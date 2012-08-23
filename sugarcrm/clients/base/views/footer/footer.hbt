@@ -17,6 +17,20 @@
                         </ul>
                 </div>
                 {{#if isAuthenticated}}
+                <div class="btn-group dropup">
+                    <a title="{{ instance_name }}" class="btn" id="instance" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> {{ instance_name }}</a>
+                    <div class="dropdown-menu bottom-up" id="instancesContainer">
+                    Your instances:<br>
+                    <ul id="instanceList">
+                    	Loading instances...
+                    </ul>
+                    Instance users:<br>
+                    <ul id="usersList">
+                    	Loading users...
+                    </ul>
+                    <div class="btn-group"><input type="text" id="inviteemail"><a title="Invite" class="btn" id="invite">Invite</a></div>
+                    </div>
+                </div>
                 <div class="btn-group">
                     <a title="{{str "LBL_TOUR"}}" class="btn" id="tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
                 </div>
