@@ -389,12 +389,12 @@
         } else if (!best_changed && likely_changed) {
             args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
             args[1] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
-            args[2] = "$" + App.utils.formatNumber(current.get('likely_case'), 0, 0, ',', '.');
+            args[2] = "$" + App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
             text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
         } else if (best_changed && !likely_changed) {
             args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
             args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
-            args[2] = "$" + App.utils.formatNumber(current.get('best_case'), 0, 0, ',', '.');
+            args[2] = "$" + App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
             text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
         }
 
