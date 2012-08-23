@@ -38,8 +38,8 @@ class CustomQueryApi extends SugarApi {
     }
 
     public function customReport($api, $args) {
-        if(file_exists('modules/Reports/custom/'. $args['reportname'] .'.php')){
-            include('modules/Reports/custom/'. $args['reportname']. '.php');
+        if(file_exists('modules/Reports/custom/'. basename($args['reportname']) .'.php')){
+            include('modules/Reports/custom/'. basename($args['reportname']). '.php');
             return $data;
         }
 

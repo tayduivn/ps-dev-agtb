@@ -1,0 +1,4 @@
+<div class="block">
+  <h4>Leaderboard</h4>
+  <div id="{{guid}}"></div>
+</div>
