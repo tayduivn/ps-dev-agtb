@@ -903,7 +903,7 @@
 
             app.controller.loadView({
                 module: module,
-                layout: "dash"
+                layout: "list"
             });
         })
     });
