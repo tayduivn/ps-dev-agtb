@@ -29,34 +29,46 @@ abstract class BaseMailer implements IMailer
 {
 	protected $mailer;
 	protected $configs;
+	protected $messageId;
+	protected $priority;
+	protected $requestConfirmation;
 	protected $from;
 	protected $replyTo;
+	protected $sender;
 	protected $recipients;
 	protected $subject;
 	protected $htmlBody;
 	protected $textBody;
+	protected $attachments;
+	protected $embeddedImages;
 
 	public function __construct() {
 		$this->reset();
 	}
 
 	public function reset() {
-		$this->mailer = null;
+		$this->mailer         = null;
 		$this->loadDefaultConfigs();
-		$this->recipients = new RecipientsCollection();
-		$this->subject = null;
-		$this->htmlBody = null;
-		$this->textBody = null;
+		$this->messageId      = null;
+		$this->setPriority();
+		$this->setRequestConfirmation();
+		$this->from           = null;
+		$this->replyTo        = null;
+		$this->sender         = null;
+		$this->recipients     = new RecipientsCollection();
+		$this->subject        = null;
+		$this->htmlBody       = null;
+		$this->textBody       = null;
+		$this->clearAttachments();
 	}
 
-	/**
-	 * Initialize or replace the configurations with the defaults for this sending strategy.
-	 */
 	public function loadDefaultConfigs() {
 		$defaults = array(
 			'protocol' => 'smtp',
+			'hostname' => '',
 			'charset'  => 'utf-8',
 			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
+			'wordwrap' => 996,
 			'smtp'     => array(
 				'host'         => 'localhost',
 				'port'         => 25,
@@ -72,96 +84,129 @@ abstract class BaseMailer implements IMailer
 		$this->setConfigs($defaults);
 	}
 
-	/**
-	 * Use this method to replace the default configurations. This will replace the previous configurations;
-	 * it will not merge the configurations.
-	 *
-	 * @param array $configs
-	 */
 	public function setConfigs($configs) {
 		$this->configs = $configs;
 	}
 
-	/**
-	 * Merge the passed in configurations with the existing configurations.
-	 *
-	 * @param array $configs
-	 */
 	public function mergeConfigs($configs) {
 		$this->configs = array_merge($this->configs, $configs);
 	}
 
-	/**
-	 * @return array
-	 */
+	public function setConfig($config, $value) {
+		$this->configs[$config] = $value;
+	}
+
 	public function getConfigs() {
 		return $this->configs;
 	}
 
-	/**
-	 * @param EmailIdentity $from
-	 */
+	public function setMessageId($id) {
+		$this->messageId = $id;
+	}
+
+	public function setPriority($priority = 3) {
+		$this->priority = $priority;
+	}
+
+	public function setRequestConfirmation($request = false) {
+		$this->requestConfirmation = $request;
+	}
+
 	public function setFrom(EmailIdentity $from) {
 		$this->from = $from;
 	}
 
-	/**
-	 * @param EmailIdentity $replyTo
-	 */
 	public function setReplyTo(EmailIdentity $replyTo) {
 		$this->replyTo = $replyTo;
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
+	public function setSender(EmailIdentity $sender) {
+		$this->sender = $sender;
+	}
+
+	public function clearRecipients($to = true, $cc = true, $bcc = true) {
+		if ($to) {
+			$this->clearRecipientsTo();
+		}
+
+		if ($cc) {
+			$this->clearRecipientsCc();
+		}
+
+		if ($bcc) {
+			$this->clearRecipientsBcc();
+		}
+	}
+
 	public function addRecipientsTo($recipients = array()) {
 		return $this->recipients->addRecipients($recipients);
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
+	public function clearRecipientsTo() {
+		$this->recipients->clearTo();
+	}
+
 	public function addRecipientsCc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
 	}
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
+	public function clearRecipientsCc() {
+		$this->recipients->clearCc();
+	}
+
 	public function addRecipientsBcc($recipients = array()) {
 		return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
 	}
 
-	/**
-	 * @param string $subject
-	 */
+	public function clearRecipientsBcc() {
+		$this->recipients->clearBcc();
+	}
+
 	public function setSubject($subject) {
 		$this->subject = $subject;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getSubject() {
 		return $this->subject;
 	}
 
-	/**
-	 * @param string $textBody
-	 */
 	public function setTextBody($textBody) {
 		$this->textBody = $textBody;
 	}
 
-	/**
-	 * @param string $htmlBody
-	 */
 	public function setHtmlBody($htmlBody) {
 		$this->htmlBody = $htmlBody;
 	}
 
+	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+		$this->attachments[] = array(
+			'path'     => $path,
+			'name'     => $name,
+			'encoding' => $encoding,
+			'mimetype' => $mimeType,
+		);
+	}
+
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
+		$this->embeddedImages[] = array(
+			'path'     => $path,
+			'cid'      => $cid,
+			'name'     => $name,
+			'encoding' => $encoding,
+			'mimetype' => $mimeType,
+		);
+	}
+
+	public function clearAttachments() {
+		$this->attachments = array();
+		$this->embeddedImages = array();
+	}
+
+	protected function hasMessagePart($part) {
+		if (is_string($part) && $part != '') {
+			return true;
+		}
+
+		return false;
+	}
 }

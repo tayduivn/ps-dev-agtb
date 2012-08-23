@@ -50,9 +50,32 @@ interface IMailer
 	public function mergeConfigs($configs);
 
 	/**
+	 * Replace a specific configuration. Doesn't allow for overwriting smtp configs, for now.
+	 *
+	 * @param string $config
+	 * @param mixed  $value
+	 */
+	public function setConfig($config, $value);
+
+	/**
 	 * @return array
 	 */
 	public function getConfigs();
+
+	/**
+	 * @param $id
+	 */
+	public function setMessageId($id);
+
+	/**
+	 * @param int $priority 1 = High, 3 = Normal, 5 = Low
+	 */
+	public function setPriority($priority = 3);
+
+	/**
+	 * @param bool $request
+	 */
+	public function setRequestConfirmation($request = false);
 
 	/**
 	 * @param EmailIdentity $from
@@ -60,10 +83,31 @@ interface IMailer
 	public function setFrom(EmailIdentity $from);
 
 	/**
+	 * @param EmailIdentity $replyTo
+	 */
+	public function setReplyTo(EmailIdentity $replyTo);
+
+	/**
+	 * @param EmailIdentity $sender
+	 */
+	public function setSender(EmailIdentity $sender);
+
+	/**
+	 * Clear the recipient lists for each parameter that is true. By default, clear all recipients.
+	 *
+	 * @param bool $to
+	 * @param bool $cc
+	 * @param bool $bcc
+	 */
+	public function clearRecipients($to = true, $cc = true, $bcc = true);
+
+	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
 	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsTo($recipients = array());
+
+	public function clearRecipientsTo();
 
 	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
@@ -71,11 +115,15 @@ interface IMailer
 	 */
 	public function addRecipientsCc($recipients = array());
 
+	public function clearRecipientsCc();
+
 	/**
 	 * @param array $recipients     Array of EmailIdentity objects.
 	 * @return array    Array of invalid recipients
 	 */
 	public function addRecipientsBcc($recipients = array());
+
+	public function clearRecipientsBcc();
 
 	/**
 	 * @param string $subject
@@ -97,5 +145,14 @@ interface IMailer
 	 */
 	public function setHtmlBody($htmlBody);
 
+	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream');
+
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream');
+
+	public function clearAttachments();
+
+	/**
+	 * @return boolean  true=success
+	 */
 	public function send();
 }
