@@ -1,2 +1,2 @@
 <?php
-    $flavors['free']['modules'] = array('Notes', 'Tasks', 'Contacts', 'Users');
+    $flavors['free']['modules'] = array('Notes', 'Tasks', 'Contacts', 'Users', 'Meetings', 'Accounts', 'Opportunities');
