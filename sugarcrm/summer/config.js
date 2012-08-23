@@ -64,7 +64,7 @@
 
         /**
          * Max search query result set size (for global search)
-         * @cfg {Number}        
+         * @cfg {Number}
          */
         maxSearchQueryResult: 3,
 
@@ -97,11 +97,11 @@
          * @cfg {Array}
          */
         metadataTypes: [],
-        
+
         /**
          * The field and direction to order by.
          *
-         * For list views, the default ordering. 
+         * For list views, the default ordering.
          * <pre><code>
          *         orderByDefaults: {
          *            moduleName: {
@@ -110,7 +110,7 @@
          *            }
          *        }
          * </pre></code>
-         * 
+         *
          * @cfg {Object}
          */
         orderByDefaults: {
@@ -131,7 +131,7 @@
                 direction: 'desc'
             }
         },
- 
+
         /**
          * Hash of addtional views of the format below to init and render on app start
          ** <pre><code>
@@ -178,13 +178,14 @@
          * Defaults to sugar other values are support_portal
          * @cfg {Array}
          */
-        clientID: "sugar"
+        clientID: "sugar",
         /**
          * Syncs config from server on app start
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-        //syncConfig: true
+            syncConfig: true,
+            authStore:"sugarAuthStore"
     }, false);
 
 })(SUGAR.App);
