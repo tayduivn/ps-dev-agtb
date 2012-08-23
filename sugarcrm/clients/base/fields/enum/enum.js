@@ -12,8 +12,8 @@
     format:function(value) {
         var newval = '';
         if(this.def.isMultiSelect && this.view.name === 'detail') {
-            _.each(value, function(el) {
-                newval += el + ', ';
+            _.each(value, function(element) {
+                newval += element + ', ';
             });
             newval = newval.slice(0, newval.length - 2); // strips extra ', '
         } else {
