@@ -26,7 +26,10 @@ $message = <<<EOQ
        <li style="font-weight: bold; padding: 3px 0; margin: 0;">Seamless Collaboration</li>
      </ul>
 
-     Come check it out @ <a style="font-weight: bold; color: #2288B5; text-decoration: none;" onmouseover="this.style.color='#ff9900'" onmouseout="this.style.color='#2288B5'" href="http://sugarcrm.com">http://sugarcrm.com</a>
+     Come check it out @ <a style="font-weight: bold; color: #2288B5; text-decoration: none;" onmouseover="this.style.color='#ff9900'" onmouseout="this.style.color='#2288B5'" href="{$url}">{$url}</a>.
+     <br>
+     Please register and login with this email address and choose instance <strong style="color: #ff9900;">{$instance['name']}</strong>.
+
    </div>
  </td>
 </table>
@@ -42,7 +45,9 @@ SugarCRM is the modern productivity application that helps you manage your custo
 
 In short, it makes getting your job done easier.
 
-Come check it out at http://sugar.sugarcrm.com
+Come check it out at {$url}.
+
+Please register and login with this email address and choose instance {$instance['name']}.
 
 
 

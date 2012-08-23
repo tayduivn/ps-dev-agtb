@@ -181,6 +181,31 @@ class BoxOffice
     }
 
     /**
+     * Invite the user into the instance
+     * CLIENT API
+     * @param string $session
+     * @param string $email
+     * @return boolean
+     */
+    public function inviteUser($session, $email)
+    {
+        $sth = $this->dbh->prepare('SELECT * FROM sessions WHERE id=:id');
+        $sth->execute(array(":id" => $session));
+        $sess = $sth->fetch(PDO::FETCH_ASSOC);
+        if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+        	return false;
+        }
+
+        $sth = $this->dbh->prepare('INSERT INTO invites(email, instance_id, date_created) VALUES(:email, :instance_id, :now)');
+        $sth->execute(array(
+            ":email" => $email,
+            ":instance_id" => $sess['instance_id'],
+            ":now" => gmdate('Y-m-d H:i:s')
+        ));
+        return true;
+    }
+
+    /**
      * Delete session by user/instance
      * @param string $user
      * @param string $instance
@@ -284,7 +309,6 @@ class BoxOffice
         }
         $sth->execute();
         $instances = $sth->fetchAll(PDO::FETCH_ASSOC);
-
 
         foreach ($instances as $k => &$v) {
             if (!empty($v['config'])) $v['config'] = json_decode($v['config'], true);

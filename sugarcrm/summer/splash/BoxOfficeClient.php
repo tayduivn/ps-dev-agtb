@@ -410,8 +410,27 @@ class BoxOfficeClient
         return $this->session;
     }
 
+    /**
+     * Get user instances
+     */
     public function getUsersInstances()
     {
         return $this->box->getUsersInstances($this->getToken());
+    }
+
+    /**
+     * Invite user by email
+     * @param unknown_type $email
+     */
+    public function invite($email)
+    {
+        if($this->box->inviteUser($this->getToken(), $email)) {
+            BoxOfficeMail::sendTemplate($email, 'inviteuser', array(
+                'user' => $this->user,
+                'instance' => $this->instance,
+                'url' => $this->loginUrl()));
+            return true;
+        }
+        return false;
     }
 }
