@@ -131,6 +131,9 @@ if (empty($_SESSION['authenticated_user_id'])) {
         <div id="footer">
 
         </div>
+        <div id="todo-widget-container" class="btn-toolbar pull-right" style="float: right;z-index: 1031;position: fixed;right: 310px;bottom: -6px;">
+
+        </div>
     </div>
 </div>
 
