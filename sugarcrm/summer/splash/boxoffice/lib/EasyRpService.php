@@ -41,9 +41,11 @@ class EasyRpService
 	    $gitk['openidRealm'] = 'Summer';
 	    $gitk['continueUrl'] = $continueUri;
 	    $gitk['oauthConsumerKey'] = $this->key;
-	    $gitk['uiMode'] = "popup";
+	    $gitk['uiMode'] = "redirect";
 	    $gitk['oauthScope'] = "https://www.google.com/m8/feeds/ https://mail.google.com/mail/feed/atom https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 	    $gitk['context'] = array("rp_target" => "callback", "rp_purpose" => "signin","rp_input_email" => "email");
+	    $gitk['access_type'] = 'offline';
+	    $gitk['approval_prompt'] = 'force';
 
 		$request['method'] = 'identitytoolkit.relyingparty.createAuthUrl';
 		$request['apiVersion'] = 'v1';
@@ -65,6 +67,7 @@ class EasyRpService
 		$request['params']['requestUri'] = $continueUri;
 		$request['params']['postBody'] = $response;
 		$request['params']['returnOauthToken'] = true;
+		$request['params']['access_type'] = 'offline';
 
 		$result = $this->post($request);
 		if (!empty($result['result'])) {

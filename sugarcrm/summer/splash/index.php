@@ -75,6 +75,7 @@ if (!empty($_REQUEST['do'])) {
         <h4>Welcome <span class="username"> </span></h4>
         <form class='form' id="login">
             <input type="text" name='email' class="span3" placeholder="Email Address">
+            <div class='span3'>Login with Google or:</div>
             <input type="password" name='password' class="span3" placeholder="Password">
 
             <div class="pull-right">
@@ -116,8 +117,8 @@ if (!empty($_REQUEST['do'])) {
         <div class='form' id="instances" style='display:none'>
             <h4>Select your desired CRM</h4>
             <ul id="instancelist" class="nav nav-tabs nav-stacked">
-
             </ul>
+            <div class='span3' style="text-align: center"><a id='instances_refresh' href="#">Refresh</a></div>
         </div>
         <form class='form' id="reset" style='display:none'>
             <h4>Reset Your Password</h4>
@@ -138,8 +139,8 @@ if (!empty($_REQUEST['do'])) {
             <input type="text" name='password' class="span3" placeholder="Password">
             <label>Repeat Password</label>
             <input type="text" name='password2' class="span3" placeholder="Password">
-            <input type="hidden" name='email' class="span3" value='<?php echo $_REQUEST['email'] ?>'>
-            <input type="hidden" name='guid' class="span3" value='<?php echo $_REQUEST['guid'] ?>'>
+            <input type="hidden" name='email' class="span3" value='<?php echo @$_REQUEST['email'] ?>'>
+            <input type="hidden" name='guid' class="span3" value='<?php echo @$_REQUEST['guid'] ?>'>
 
             <div class="pull-right">
                 <button type="submit" name='reset' class="span3 btn btn-success" style='margin-bottom: 5px'>

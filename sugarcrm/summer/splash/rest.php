@@ -36,6 +36,10 @@ $app->get('/rest/users/callback', function() use ($app, $box)
             $data = $box->authenticateUser($email, null, $result['identifier']);
         }
         if($data['user']['status'] == 'Active') {
+            if(!empty($result['oauthAccessToken'])) {
+                $box->setUserTokens($result['oauthAccessToken'],
+                    empty($result['oauthRefreshToken'])?'':$result['oauthRefreshToken'], $result['oauthExpireIn']);
+            }
             $data = json_encode($data);
         } else {
             $data = json_encode(array("error" => "Your account is not active. Please contact support."));
@@ -50,6 +54,46 @@ END;
 }
 );
 
+// $app->get('/rest/dump', function() use ($app, $box)
+// {
+//     echo "<pre>";
+//    var_dump($_REQUEST);
+// });
+
+// $app->post('/rest/dump', function() use ($app, $box)
+// {
+// 	echo "<pre>";
+// 	var_dump($_REQUEST);
+// });
+
+// $app->get('/rest/users/authuri', function() use ($app, $box)
+// {
+//     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
+
+//     $api = new EasyRpService($box->getSetting('google_key'));
+//     $res = $api->getUrl("smalyshev@gmail.com", $box->getSetting('top_url')."summer/splash/rest/dump");
+//     if($res) {
+//     	echo $res['authUri']."&access_type=offline";
+//     }
+// });
+
+// $app->get("/rest/users/authkey", function() use ($app, $box)
+// {
+//     $req['code'] = $app->request()->params("key");
+//     $req['redirect_uri'] = $box->getSetting('top_url')."summer/splash/rest/dump";
+//     $req['client_id'] = '';
+//     $req['client_secret'] = '';
+//     $req['grant_type'] =  'authorization_code';
+//     $ch = curl_init();
+// 	curl_setopt_array($ch, array(
+// 		CURLOPT_URL => "https://accounts.google.com/o/oauth2/token",
+// 		CURLOPT_RETURNTRANSFER => 1,
+// 		CURLOPT_POSTFIELDS => $req));
+//     $response = curl_exec($ch);
+// 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//     var_dump($http_code, $response);
+// });
+
 $app->post('/rest/users/authenticate', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
@@ -59,7 +103,13 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
     $api = new EasyRpService($box->getSetting('google_key'));
     $res = $api->getUrl($email, $box->getSetting('top_url')."summer/splash/rest/users/callback");
     if($res) {
-        echo json_encode(array("popup" => $res['authUri']));
+        $add = "&access_type=offline";
+        $user = $box->getUser($email, false);
+        if(empty($user) || empty($user['refresh_token'])) {
+            // if we need refresh token, we'd need to request approval
+            $add .= "&approval_prompt=force";
+        }
+        echo json_encode(array("popup" => $res['authUri'].$add));
         return;
     }
 
@@ -109,12 +159,31 @@ $app->get('/rest/instances/:id', function($id) use ($app, $box)
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
     try {
         $sessid = $box->selectInstance($id);
+        if(empty($sessid)) {
+            echo json_encode(array("error" => "This instance is not ready yet. Please try again a bit later"));
+            return;
+        }
         $config = $box->getConfig();
         echo json_encode(array('url' => $config['site_url']."summer/index.php?token=$sessid"));
     } catch (Exception $e) {
 
         echo json_encode(array("error" => "An error occurred please try again." . $e->getMessage()));
     }
+});
+
+/**
+ * Returns list of instances for current user
+ */
+$app->get('/rest/instances', function() use ($app, $box)
+{
+	$app->response()->header('Content-Type', 'application/json;charset=utf-8');
+	try {
+        $inst = $box->getUserInstances();
+	    echo json_encode($inst);
+	} catch (Exception $e) {
+
+		echo json_encode(array("error" => "An error occurred please try again." . $e->getMessage()));
+	}
 });
 
 /**

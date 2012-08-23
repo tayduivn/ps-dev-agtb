@@ -82,17 +82,43 @@ class BoxOfficeClient
         }
         if ($this->user) {
             $_SESSION['logged_in_user'] = $this->user;
-            $instances = $this->box->getUserInstances();
-            $filteredList = array();
-            foreach ($instances as $instance) {
-                $filteredList[$instance['id']] = array('id' => $instance['id'], 'name' => $instance['name'], 'owner' => array('name' => $instance['first_name'] . ' ' . $instance['last_name'], 'email' => $instance['email']));
-            }
-            $this->instances = $filteredList;
-            return array('user' => $this->user, 'instances' => $filteredList);
+            return $this->getUserInstances();
         } else {
             return false;
         }
 
+    }
+
+    /**
+     * Get list of current user's instances
+     * @return array
+     */
+    public function getUserInstances()
+    {
+        if(empty($this->user['id'])) {
+            $this->noLogin();
+        }
+        $instances = $this->box->getUserInstances($this->user['id']);
+        $filteredList = array();
+        foreach ($instances as $instance) {
+        	$filteredList[$instance['id']] = array('id' => $instance['id'], 'name' => $instance['name'], 'owner' => array('name' => $instance['first_name'] . ' ' . $instance['last_name'], 'email' => $instance['email']));
+        }
+        $this->instances = $filteredList;
+        return array('user' => $this->user, 'instances' => $filteredList);
+    }
+
+    /**
+     * Set user's oauth tokens
+     * @param string $token
+     * @param string $refreshToken
+     * @param int $expires
+     */
+    public function setUserTokens($token, $refreshToken, $expires)
+    {
+        if(empty($this->user['id'])) {
+            return;
+        }
+        $this->box->setUserTokens($this->user['id'], $token, $refreshToken, $expires);
     }
 
     /**
@@ -109,6 +135,9 @@ class BoxOfficeClient
         $instances = $this->box->getUserInstances($this->user['id'], $instance_id);
         if (empty($instances)) throw new Exception('User Does Not Have Access To This Instance');
         $this->instance = $instances[0];
+        if($this->instance['status'] == 'Pending') {
+            return false;
+        }
         $this->session = $this->box->selectInstance($this->user['id'], $this->user['email'], $this->instance['id']);
         return $this->session;
     }

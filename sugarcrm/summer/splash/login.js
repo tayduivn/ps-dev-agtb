@@ -83,15 +83,30 @@ var login = {
     		login.popup.close();
     		login.popup = null;
     	}
+    	login.refreshInstances(data)
+    },
+
+    refreshInstances:function (data) {
         if (!data.error) {
+    		$('#instancelist').html("");
+        	if(data.instances.length == 0) {
+        		if(!data.info) {
+        			data.info = []
+        		}
+            	data.info[data.info.lastIndexOf()+1] = "We were unable to detect any instances accessible to you. Please ask somebody to invite you to their instance or contact support.";
+            }
             for (i in data.instances) {
                 $('#instancelist').append('<li><a href="#" class="instance" data-id="' + data.instances[i].id + '">' + data.instances[i].name + ' by ' + data.instances[i].owner.name + '</a></li>')
             }
             $('.instance').click(login.selectInstance);
+            $('#instances_refresh').click(
+            		function () { $.get("rest/instances", null, login.refreshInstances); }
+            	);
             login.showInstances();
             $('.username').html(data.user.first_name + ' ' + data.user.last_name);
         }
         login.displayMessages(data);
+
     },
 
     displayMessages:function (data) {

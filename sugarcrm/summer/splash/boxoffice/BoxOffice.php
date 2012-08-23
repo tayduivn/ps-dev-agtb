@@ -3,6 +3,8 @@ require_once('summer/splash/boxoffice/lib/utils.php');
 class BoxOffice
 {
 
+    const FREE_LIFETIME = 7776000; // 90 days
+
     function __construct($dbconfig)
     {
         $this->dbh = new PDO('mysql:host=' . $dbconfig['host'] . ';dbname=' . $dbconfig['name'], $dbconfig['user'], $dbconfig['password']);
@@ -16,8 +18,10 @@ class BoxOffice
      */
     function authenticateUser($email, $password)
     {
+        if(empty($password)) {
+            return false;
+        }
         $now = gmdate('Y-m-d');
-        // FIXME: not lookup by password!
         $sql = 'SELECT * FROM users WHERE email = :email AND deleted=0';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
@@ -37,7 +41,6 @@ class BoxOffice
             return false;
         }
         $status = 'Login Success';
-        $this->user_id = $user['id'];
         unset($user['hash']);
         $sth->bindParam(':date_created', $now, PDO::PARAM_STR);
         $sth->bindParam(':email', $email, PDO::PARAM_STR);
@@ -68,7 +71,6 @@ class BoxOffice
     	$sql = 'INSERT INTO logins (date_created, email, status) VALUES (:date_created, :email, :status)';
     	$sth = $this->dbh->prepare($sql);
     	$status = 'Login Success';
-    	$this->user_id = $user[0]['id'];
     	unset($user[0]['hash']);
     	$sth->bindParam(':date_created', $now, PDO::PARAM_STR);
     	$sth->bindParam(':email', $email, PDO::PARAM_STR);
@@ -86,6 +88,10 @@ class BoxOffice
      */
     function selectInstance($user_id, $email, $instance_id)
     {
+        $inst = $this->getInstanceById($instance_id);
+        if(empty($inst) || $inst['status'] == 'Pending' || empty($inst['config']['dbconfig'])) {
+            return null;
+        }
         $sql = 'INSERT INTO logins (date_created, email, status, user_id, instance_id) VALUES (:date_created, :email, :status, :user_id, :instance_id)';
         $sth = $this->dbh->prepare($sql);
         $status = 'Switched Instance';
@@ -192,7 +198,6 @@ class BoxOffice
             if ($throwException) throw new Exception('User does not exist');
             else return null;
         }
-        $this->user_id = $user[0]['id'];
         unset($user[0]['hash']);
         return $user[0];
     }
@@ -202,12 +207,11 @@ class BoxOffice
      * @param null $user_id
      * @return array
      */
-    function getUserInstances($user_id = null, $instance_id = null)
+    function getUserInstances($user_id, $instance_id = null)
     {
-        if (empty($user_id)) $user_id = $this->user_id;
         $this->addInvites($user_id);
 
-        $today = gmdate('Y-m-d');
+        $today = gmdate('Y-m-d H:i:s');
         $sql = 'SELECT instances.*, owner.first_name, owner.last_name, owner.email FROM instances INNER JOIN users owner on owner.id = instances.owner_id AND owner.deleted = 0 INNER JOIN users_instances ui ON ui.user_id = :user_id AND ui.instance_id = instances.id  AND ui.deleted = 0 WHERE instances.date_start <= :date AND instances.date_end >= :date AND instances.deleted=0';
         if (!empty ($instance_id)) {
             $sql .= ' AND instances.id = :instance_id';
@@ -236,10 +240,9 @@ class BoxOffice
      * @param null $user_id
      * @return array
      */
-    function getUserModules($instance_id, $user_id = null)
+    function getUserModules($instance_id, $user_id)
     {
-        if (empty($user_id)) $user_id = $this->user_id;
-        $today = gmdate('Y-m-d');
+        $today = gmdate('Y-m-d H:i:s');
         $modules = array();
         $instances = $this->getUserInstances($user_id, $instance_id);
         if (empty($instances)) return array();
@@ -303,8 +306,7 @@ class BoxOffice
             $sth->bindParam(':email', $email, PDO::PARAM_STR);
             $sth->bindParam(':now', $now, PDO::PARAM_STR);
             $sth->bindParam(':status', $status, PDO::PARAM_STR);
-            // FIXME: encrypt password
-            $sth->bindParam(':password', $this->hashPassword($password), PDO::PARAM_STR);
+            $sth->bindParam(':password', empty($password)?'':$this->hashPassword($password), PDO::PARAM_STR);
 
             foreach($this->user_params as $key) {
                 if(isset($data[$key])) {
@@ -316,7 +318,10 @@ class BoxOffice
 
             }
             $sth->execute();
-            return $this->getUser($email);
+            $user = $this->getUser($email);
+            if($user['status'] == 'Active') {
+                $this->createUserInstance($user);
+            }
         } else {
             throw new Exception('User Already Exists');
         }
@@ -385,6 +390,11 @@ class BoxOffice
             $sth->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
             $sth->bindParam(':id', $confirmation[0]['id'], PDO::PARAM_INT);
             $sth->execute();
+            $user = $this->getUser($email);
+            if($user['status'] == 'Active') {
+            	$this->createUserInstance($user);
+            }
+
             return true;
         }
         return false;
@@ -410,12 +420,63 @@ class BoxOffice
         }
     }
 
-    public function createUserInstance($email)
+    /**
+     * Set oauth tokens
+     * @param int $user_id
+     * @param string $token
+     * @param string $refresh
+     * @param int $expires
+     */
+    public function setUserTokens($user_id, $token, $refresh, $expires)
     {
-        // TODO
-//     	$user = $this->getUser($email);
-//     	// create database
-//         $sth = $this->dbh->prepare();
+        if(!empty($refresh)) {
+            $sth = $this->dbh->prepare("UPDATE users SET oauth_token=:token, refresh_token=:refresh, token_expires=:expires WHERE id=:id");
+            $sth->execute(array(
+            ":token" => $token,
+            ":refresh" => $refresh,
+            ":expires" => gmdate('Y-m-d H:i:s', time()+$expires),
+            ":id" => $user_id
+            ));
+        } else {
+            $sth = $this->dbh->prepare("UPDATE users SET oauth_token=:token, token_expires=:expires WHERE id=:id");
+            $sth->execute(array(
+            ":token" => $token,
+            ":expires" => gmdate('Y-m-d H:i:s', time()+$expires),
+            ":id" => $user_id
+            ));
+        }
+    }
+
+    /**
+     * Create personal instance for given user
+     * @param array $user
+     */
+    public function createUserInstance($user)
+    {
+        $sth = $this->dbh->prepare("SELECT * FROM instances WHERE owner_id = :id");
+        $sth->execute(array(":id" => $user['id']));
+        if($sth->fetch(PDO::FETCH_ASSOC)) {
+            return; // already have one
+        }
+        $sth = $this->dbh->prepare("INSERT INTO
+            instances(owner_id, date_created, date_modified, name, company, date_start, date_end, flavor, status)
+        VALUES (:owner, :now, :now, :name, :company, :now, :end, 'free', 'Pending')
+        ");
+        $sth->execute(array(
+            ":owner" => $user['id'],
+            ":name" => "{$user['first_name']} {$user['last_name']}'s instance",
+            ":now" => gmdate('Y-m-d H:i:s'),
+            ":end" => gmdate('Y-m-d H:i:s', time()+self::FREE_LIFETIME),
+            ":company" => $user['company'],
+        ));
+        $newinst = $this->dbh->lastInsertId();
+        $sth = $this->dbh->prepare("INSERT INTO users_instances(user_id, instance_id, date_created, date_modified)
+        VALUES (:owner, :instance, :now, :now)");
+        $sth->execute(array(
+            ":owner" => $user['id'],
+            ":instance" => $newinst,
+            ":now" => gmdate('Y-m-d H:i:s')
+        ));
     }
 
 
