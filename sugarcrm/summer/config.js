@@ -129,10 +129,6 @@
             'Notes': {
                 field: 'name',
                 direction: 'desc'
-            },
-            'Tasks': {
-                field: 'date_due',
-                direction: 'asc'
             }
         },
  

@@ -4,6 +4,7 @@
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
         'keyup #todo-subject':'todoSubmit',
+        'keyup #todo-date':'todoSubmit',
         'focus #todo-date': 'showDatePicker',
         'click .todo-status': 'changeStatus',
         'hover .todo-list-item': 'toggleRemoveTodo',
@@ -58,6 +59,10 @@
     showDatePicker: function(e) {
         console.log("---------");
         console.log("showDatePicker");
+        $("#todo-date").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+        $("#ui-datepicker-div").css("z-index", 1032);
     },
     toggleRemoveTodo: function(e) {
         var remEl;
@@ -130,24 +135,32 @@
     },
     validateTodo: function(e) {
         var subject = $("#todo-subject").val();
-        if( subject == "" ) {
-            // change the input field styling to error class
+        var date = $("#todo-date").val();
+        if( subject == "" || !(app.date.parse(date, app.date.guessFormat(date))) ) {
             console.log("invalid input data");
             return false;
         }
         else {
             this.model = app.data.createBean("Tasks", {
                 "name": subject,
-                "assigned_user_id": app.user.get("user_name")
+                "assigned_user_id": "seed_" + app.user.get("user_name") + "_id",
+                "date_due": date + " 00:00:00"
             });
-            app.additionalComponents.todo.collection.add(this.model);
+            this.collection.add(this.model);
             this.model.save();
             $("#todo-subject").val("");
+            $("#todo-date").val("");
             this._render();
         }
     },
     todoSubmit: function(e) {
-        if( e.target.id == "todo-subject" ) {
+        if( e.target.id == "todo-subject" || e.target.id == "todo-date" ) {
+
+            // show the date-picker input field
+            if( $("#todo-date-container").css("display") == "none" ) {
+                $("#todo-date-container").css("display", "inline-block");
+            }
+
             // if enter was pressed
             if( e.keyCode == 13 ) {
                 // validate
@@ -155,7 +168,7 @@
             }
         }
         else {
-            // validate
+            // Add button was clicked
             this.validateTodo(e);
         }
     },
