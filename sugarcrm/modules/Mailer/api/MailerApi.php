@@ -196,71 +196,120 @@ class MailerApi extends ModuleApi
         $sendbcc_addresses= htmlspecialchars($s);
 
 
+        $attachments=null;
+        if (is_array($args["attachments"]) && ($numAttachments = count($args["attachments"])) > 0) {
+            $attachments="";
+            for ($i=0; $i<$numAttachments; $i++) {
+                $attachment = $args["attachments"][$i];
+                if ($i>0) {
+                    $attachments .= "::";
+                }
+                $attachments .= $attachment["id"].$attachment["name"];
+            }
+        }
 
-        /* Add in any other Variables */
-
-
-        //------  email2send looks for 'saveDraft' entry to determine if Save Draft operation else SendMail
-        // ( isset($request['saveDraft']) );
-
-
-
-        //------  email2send looks for an accountId in entry to 'fromAccount' - if Found, use User InboundEmail settings
-        //  if(!empty($request['fromAccount']))
-        //	    $ie = new InboundEmail();
-        //      $ie->retrieve($request['fromAccount']);
-
-
-        //  if(!empty($request['attachments']))   (guid from upload || filename)
-        //      e.g.     "aaaa-bbbb-cccc-ddddd-eeeeepackers.tiff"
-
-        // if(!empty($request['documents'])) {
-
-        // if(!empty($request['templateAttachments'])) {
-
-
-
-
+        $documents=null;
+        if (is_array($args["documents"]) && ($numDocuments = count($args["documents"])) > 0) {
+            $documents="";
+            for ($i=0; $i<$numDocuments; $i++) {
+                $document = $args["documents"][$i];
+                if ($i>0) {
+                    $documents .= "::";
+                }
+                $documents .= $document["id"].$document["name"];
+            }
+        }
 
         $request = array(
 
             'sendSubject'       => $args['subject'],
-            'sendDescription'   => urldecode($args['html_body']),
             'sendTo'            => $sendto_addresses,
             'sendCc'            => $sendcc_addresses,
             'sendBcc'           => $sendbcc_addresses,
 
             /*******/
 
-            'setEditor'         => '1',
             'saveToSugar'       => '1',
-
-            // 'composeType'       => '',   // isset  required/missing in Email module
-
-            'teamIds'           => '1,East,West',
-            'primaryteam'       => '1',
-
-            'saveToSugar'       => '1',
-            'parent_type'       => 'Opportunities',
-            'parent_id'         => '3757f584-19ef-2183-2691-502bf62d02a4',
-
-
-            // 'saveDraft'         => 'true',
 
         );
+
+        if (!empty($args['html_body'])) {
+            $request['sendDescription']  = urldecode($args['html_body']);
+            $request['setEditor'] = '1';
+
+        }
+        else if (!empty($args['text_body'])) {
+            $request['sendDescription']  = urldecode($args['text_body']);
+        }
+        else {
+            $request['sendDescription']  = '';
+        }
 
         // Send From User Account
         if (count($out['fromAccounts']) > 0) {
             $request['fromAccount']  = $out['fromAccounts'][0]['value'];
         }
 
+        if (!empty($attachments)) {
+            $request['attachments']  = $attachments;
+        }
+
+        if (!empty($documents)) {
+            $request['documents']  = $documents;
+        }
 
 
+        if (is_array($args["relate_to"])) {
+            $relate_to = $args["relate_to"];
+            if (!empty($relate_to["type"]) && !empty($relate_to["id"])) {
+                $request['parent_type'] = $relate_to["type"];
+                $request['parent_id'] = $relate_to["id"];
+            }
+        }
+
+
+        if (is_array($args["teams"])) {
+            $teams = $args["teams"];
+            if (!empty($teams["primary"])) {
+                $request['primaryteam'] = $teams["primary"];
+                $request['teamIds'] = $teams["primary"];
+                if (isset($teams["other"]) && is_array(($teams["other"]))) {
+                    foreach ($teams["other"] AS $team_id) {
+                        $request['teamIds'] .= ',' . $team_id;
+                    }
+                }
+            }
+        }
+
+        if ($args['status'] == 'draft') {
+            $request['saveDraft'] = 'true';    // Send is the default behavior
+        }
 
         $_REQUEST = array_merge($_REQUEST, $request);
+        $edata=null;
+        try {
+                $sendResult = $email->email2Send($request);
+                $edata = ob_get_contents();
+                ob_end_clean();
+                if (strlen($edata) > 0) {
+                    throw new MailerException("Internal Error");
+                }
+        } catch (Exception $e) {
+           if ($edata == null) {
+                $edata = ob_get_contents();
+                ob_end_clean();
+           }
+           $result = array(
+               "FUNCTION"   => "sendMail",
+               "ARGS"       => $args,
+               "REQUEST"    => $request,
+               "ERROR_MESSAGE" => $e->getMessage(),
+               "ERROR_DATA" => $edata,
+           );
+           return $result;
+        }
 
-        $sendResult = $email->email2Send($request);
-
+        // ob_end_clean();
 
         $result = array(
             "FUNCTION"   => "sendMail",

@@ -686,7 +686,7 @@ class Email extends SugarBean {
             			$note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
 						//END SUGARCRM flav=pro ONLY
                         $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
+						if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
 							$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
 						}
 
@@ -708,32 +708,34 @@ class Email extends SugarBean {
 					$doc->retrieve($docId);
 					$docRev->retrieve($doc->document_revision_id);
 
-					$filename = $docRev->filename;
-					$fileLocation = "upload://{$docRev->id}";
-					$mime_type = $docRev->file_mime_type;
-					$mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
+                    if ($docRev->id == $docId) {  // document found
+                        $filename = $docRev->filename;
+                        $fileLocation = "upload://{$docRev->id}";
+                        $mime_type = $docRev->file_mime_type;
+                        $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 
-					// only save attachments if we're archiving or drafting
-					if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
-						$note = new Note();
-						$note->id = create_guid();
-						$note->new_with_id = true; // duplicating the note with files
-						$note->parent_id = $this->id;
-						$note->parent_type = $this->module_dir;
-						$note->name = $filename;
-						$note->filename = $filename;
-						$note->file_mime_type = $mime_type;
-						//BEGIN SUGARCRM flav=pro ONLY
-						$note->team_id = $this->team_id;
-						$note->team_set_id = $this->team_set_id;
-						//END SUGARCRM flav=pro ONLY
-                        $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
-							$GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
-						}
+                        // only save attachments if we're archiving or drafting
+                        if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+                            $note = new Note();
+                            $note->id = create_guid();
+                            $note->new_with_id = true; // duplicating the note with files
+                            $note->parent_id = $this->id;
+                            $note->parent_type = $this->module_dir;
+                            $note->name = $filename;
+                            $note->filename = $filename;
+                            $note->file_mime_type = $mime_type;
+                            //BEGIN SUGARCRM flav=pro ONLY
+                            $note->team_id = $this->team_id;
+                            $note->team_set_id = $this->team_set_id;
+                            //END SUGARCRM flav=pro ONLY
+                            $dest = "upload://{$note->id}";
+                            if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
+                                $GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
+                            }
 
-						$note->save();
-					}
+                            $note->save();
+                        }
+                    }
 				}
 			}
 		}
@@ -1102,7 +1104,7 @@ class Email extends SugarBean {
 	    $tmpNote->team_set_id = $this->team_set_id;
 	    //END SUGARCRM flav=pro ONLY
 	    $noteFile = "upload://{$tmpNote->id}";
-	    if(!copy($fileLocation, $noteFile)) {
+        if(!file_exists($fileLocation) || (!copy($fileLocation, $noteFile))) {
     	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
 	    }
 	    $tmpNote->save();
