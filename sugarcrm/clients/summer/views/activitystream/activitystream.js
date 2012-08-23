@@ -1,19 +1,19 @@
 ({
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        var options;
 
-        console.log("This", this);
+        app.view.View.prototype.initialize.call(this, options);
 
         // Check to see if we need to make a related activity stream.
         if (this.module !== "ActivityStream") {
-            console.log("Not an activity stream");
+            if (this.context.modelId) {
+                options = { module: this.module, id: this.context.modelID };
+            } else {
+                options = { module: this.module };
+            }
+
             this.collection = app.data.createBeanCollection("ActivityStream");
-            this.collection.fetch({
-                params: {
-                    module: this.module,
-                    id: this.model.id
-                }
-            });
+            this.collection.fetch(options);
         }
     },
 
