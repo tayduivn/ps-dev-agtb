@@ -198,7 +198,7 @@ class UnifiedSearchApi extends SugarApi {
 
         $options = $this->parseSearchOptions($api,$args);
 
-    
+        $GLOBALS['log']->fatal("\r\nTHE SEARCH ENGINE IS: " . $this->determineSugarSearchEngine($api, $args, $options) . "\r\n\r\n");
         // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
         $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
 
@@ -232,11 +232,12 @@ class UnifiedSearchApi extends SugarApi {
             4 - not favorites
         */
         // my items
+        /*
         if($options['my_items'] !== false)
         {
             return 'SugarSearchEngine';
         }
-
+         */
         // favorites
         if($options['favorites'] !== false)
         {
@@ -249,6 +250,7 @@ class UnifiedSearchApi extends SugarApi {
             return 'SugarSearchEngine';
         }
 
+/*
         if(!empty($options['moduleList']))
         {
             foreach($options['moduleList'] AS $module)
@@ -259,7 +261,7 @@ class UnifiedSearchApi extends SugarApi {
                 }
             }
         }
-
+ */
         //everything is groovy for FTS, get the FTS Engine Name from the conig
         return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
     }

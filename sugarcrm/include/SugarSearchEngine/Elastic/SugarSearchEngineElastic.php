@@ -509,16 +509,34 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $moduleFilter;
     }
 
-    protected function constructMainFilter($finalTypes)
+    protected function constructMainFilter($finalTypes, $options)
     {
         $mainFilter = new Elastica_Filter_Or();
         foreach ($finalTypes as $module)
         {
             $moduleFilter = $this->constructModuleLevelFilter($module);
+            if($options['my_items'] !== false)
+            {
+                $moduleFilter = $this->myItemsSearch($moduleFilter);
+            }
             $mainFilter->addFilter($moduleFilter);
+
         }
 
         return $mainFilter;
+    }
+
+    /**
+     * Add a Owner Filter For MyItems to the current module
+     * @param object $moduleFilter
+     * @return object
+     */
+    public function myItemsSearch($moduleFilter)
+    {
+        // need to be document owner to view, owner term filter
+        $ownerTermFilter = $this->getOwnerTermFilter();
+        $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
     }
 
     /**
@@ -597,7 +615,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !is_admin($GLOBALS['current_user']) )
             {
                 // main filter
-                $mainFilter = $this->constructMainFilter($finalTypes);
+                $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
                 $query = new Elastica_Query($queryObj);
                 $query->setFilter($mainFilter);
@@ -625,8 +643,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
+            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($query, true) . "\r\n\r\n");
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
+            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($results, true) . "\r\n\r\n");
 
         }
         catch(Exception $e)
