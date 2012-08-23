@@ -86,7 +86,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     public function hasLeaves() {
         $this->load_relationship('related_timeperiods');
 
-        if(length($this->related_timeperiods))
+        if(count($this->related_timeperiods))
             return true;
 
         return false;

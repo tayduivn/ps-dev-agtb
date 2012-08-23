@@ -47,5 +47,7 @@
         public function hasLeaves();
 
         public function getLeaves();
+
+        public function buildLeaves($timePeriodType);
     }
 ?>

@@ -64,6 +64,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      */
     public function createNextTimePeriod() {
         $nextPeriod = new AnnualTimePeriod();
+        $timedate = TimeDate::getInstance();
 
         $nextPeriod->start_date = $this->end_date->modify('+1 day');
         $nextPeriod->end_date = $this->start_date->modify('+1 year');
@@ -79,7 +80,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     public function hasLeaves() {
         $this->load_relationship('related_timeperiods');
 
-        if(length($this->related_timeperiods))
+        if(count($this->related_timeperiods))
             return true;
 
         return false;
@@ -95,5 +96,22 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $this->load_relationship('related_timeperiods');
 
         return $this->related_timeperiods;
+    }
+
+    /**
+     * build leaves for the timeperiod by creating the specified types of timeperiods
+     *
+     * @param string $timePeriodType
+     * @return mixed
+     */
+    public function buildLeaves($timePeriodType="Quarterly") {
+        if($this->hasLeaves()) {
+            return;
+        }
+
+        switch($timePeriodType) {
+
+        }
+
     }
 }
