@@ -35,7 +35,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/lessphp/lessc.inc.php');
-require_once("include/SugarTheme/SugarTheme.php");
 
 /**
  * Class that provides tools for working with a theme.
@@ -173,6 +172,8 @@ class SidecarTheme
         if ($min === true) {
             $less->setFormatter('compressed');
         }
+        //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
+        //              to   /styleguide/assets/
         $variables['baseUrl'] = '"../../../../../styleguide/assets"';
 
         try {

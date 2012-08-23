@@ -92,7 +92,7 @@ class ThemeApi extends SugarApi
         } else {
             // Otherwise we just return the CSS Url so the application can load the CSS file.
             // getCSSURL method takes of generating bootstrap.css if it doesn't exist in cache.
-            return $theme->getCSSURL();
+            return array("url" => $theme->getCSSURL());
         }
 
     }
