@@ -1,0 +1,21 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span2">
+            <!--Sidebar content-->
+        </div>
+        <div class="span10">
+              <div class="card2">
+                  {{#each meta.panels}}
+                  {{#each fields}}
+                  <div class="row-fluid control-group">
+                      <div class="span2">{{str  this.label ../../this.model.module}}</div>
+                      <div class="span10 controls">
+                      {{field ../../this}}
+                      </div>
+                  </div>
+                  {{/each}}
+                  {{/each}}
+              </div>
+        </div>
+    </div>
+</div>

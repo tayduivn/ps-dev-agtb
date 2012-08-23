@@ -1,0 +1,3 @@
+ <div class="actions">
+ <a name='save_button' class="save btn addNote" rel="tooltip" data-title="{{str "LBL_NEW_FORM_TITLE" module}}"><i class="icon-plus"></i> {{str "LBL_NEW_FORM_BTN" module}}</a>
+</div>
