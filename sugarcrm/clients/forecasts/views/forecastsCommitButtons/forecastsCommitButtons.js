@@ -65,16 +65,21 @@
 
     /**
      * Sets the flag on the context so forecastsCommitted.js will call commitForecast
+     * as long as commit button is not disabled
      */
     triggerCommit: function() {
-        this.context.forecasts.set({commitForecastFlag: true});
+        if(!this.$el.find('#commit_forecast').hasClass('disabled')) {
+            this.context.forecasts.set({commitForecastFlag: true});
+        }
     },
 
     /**
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
+        if(!this.$el.find('#save_draft').hasClass('disabled')) {
+            //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
+        }
     },
 
     /**
