@@ -78,14 +78,14 @@ class ActivityStream extends SugarBean {
         $values = array();
         $values['comment_id'] = $this->db->massageValue(create_guid(), $fieldDefs['comment_id']);
         $values['activity_id']= $this->db->massageValue($activityId, $fieldDefs['activity_id']);
-        $values['value']= $this->db->massageValue($value, $fieldDefs['value']);
+        $values['value']= "'".$this->db->quote($value)."'";
         $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']); 
         
         $sql = "INSERT INTO ".$tableName;
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")"; 
-        return $this->db->query($sql);         
+        return $this->db->query($sql,true);         
     }
     
     /**
@@ -243,7 +243,7 @@ class ActivityStream extends SugarBean {
             
             if(!empty($valueString)) {
                 $sql = "INSERT INTO ".$tableName." (".implode(",", $fieldNames).") VALUES ".$valueString;
-                return $GLOBALS['db']->query($sql);
+                return $GLOBALS['db']->query($sql,true);
             }
         }
 

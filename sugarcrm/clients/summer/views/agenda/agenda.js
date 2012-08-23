@@ -33,7 +33,6 @@
 
         var requestUrl = this.app.api.buildURL('Meetings/Agenda');
         this.app.view.View.prototype.initialize.call(this,options);
-        ikea = this;
     },
     
     loadData: function() {
