@@ -390,7 +390,8 @@ class BoxOffice
             $sth->bindParam(':email', $email, PDO::PARAM_STR);
             $sth->bindParam(':now', $now, PDO::PARAM_STR);
             $sth->bindParam(':status', $status, PDO::PARAM_STR);
-            $sth->bindParam(':password', empty($password)?'':$this->hashPassword($password), PDO::PARAM_STR);
+            $password = empty($password)?'':$this->hashPassword($password);
+            $sth->bindParam(':password', $password, PDO::PARAM_STR);
 
             foreach($this->user_params as $key) {
                 if(isset($data[$key])) {
