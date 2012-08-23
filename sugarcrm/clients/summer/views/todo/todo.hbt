@@ -121,10 +121,8 @@ padding:0 12px;
                 </div>
             </div>
             <ul class="todo-list-container">
-                {{#if this.collection.models}}
-                    <li class="divider"></li>
-                {{/if}}
                 {{#each this.collection.models}}
+                    <li class="divider"></li>
                     <li class="todo-list-item">
                         {{#notEq this.attributes.status "Completed"}}
                             <div class="todo-checkbox-container">
@@ -156,7 +154,6 @@ padding:0 12px;
                             {{/notEq}}
                         </div>
                     </li>
-                    <li class="divider"></li>
                 {{/each}}
             </ul>
         </div>
