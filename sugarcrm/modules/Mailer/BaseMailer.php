@@ -59,8 +59,7 @@ abstract class BaseMailer implements IMailer
 		$this->subject        = null;
 		$this->htmlBody       = null;
 		$this->textBody       = null;
-		$this->attachments    = array();
-		$this->embeddedImages = array();
+		$this->clearAttachments();
 	}
 
 	public function loadDefaultConfigs() {
@@ -196,5 +195,10 @@ abstract class BaseMailer implements IMailer
 			'encoding' => $encoding,
 			'mimetype' => $mimeType,
 		);
+	}
+
+	public function clearAttachments() {
+		$this->attachments = array();
+		$this->embeddedImages = array();
 	}
 }

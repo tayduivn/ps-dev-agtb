@@ -149,5 +149,7 @@ interface IMailer
 
 	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream');
 
+	public function clearAttachments();
+
 	public function send();
 }
