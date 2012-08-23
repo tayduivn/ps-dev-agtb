@@ -7,19 +7,12 @@
         'keyup #todo-date':'todoSubmit',
         'focus #todo-date': 'showDatePicker',
         'click .todo-status': 'changeStatus',
-        'hover .todo-list-item': 'toggleRemoveTodo',
         'click .todo-remove': 'removeTodo'
     },
     initialize: function(options) {
         var self = this;
-        console.log("---------");
-        console.log("initializing todo view");
-        console.log(this);
-        console.log(options);
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", function() {
-            console.log("---------");
-            console.log("app:sync:complete");
 
             self.collection = app.data.createBeanCollection("Tasks");
 
@@ -32,8 +25,6 @@
                 self.collection.fetch({myItems: true});
             }
 
-            console.log(self);
-            console.log(self.collection);
             self.bindDataChange();
         });
         app.events.on("app:login:success", this.render, this);
@@ -50,40 +41,18 @@
             if( $("#todo-list-widget").hasClass("btn-group dropup open") ) {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    console.log("escaped");
                     $("#todo-container").parent().attr("class", "btn-group dropup");
                 }
             }
         });
     },
     showDatePicker: function(e) {
-        console.log("---------");
-        console.log("showDatePicker");
         $("#todo-date").datepicker({
             dateFormat: "yy-mm-dd"
         });
         $("#ui-datepicker-div").css("z-index", 1032);
     },
-    toggleRemoveTodo: function(e) {
-        var remEl;
-        if( $(e.target).hasClass("todo-list-item") ) {
-            remEl = $(e.target).find(".todo-remove");
-        }
-        else {
-            remEl = $(e.target).parentsUntil(".todo-list-container", ".todo-list-item").find(".todo-remove");
-        }
-
-        if( e.type == "mouseenter" ) {
-            remEl.show();
-        }
-        else if( e.type == "mouseleave" ) {
-            remEl.hide();
-        }
-    },
     removeTodo: function(e) {
-        console.log("---------");
-        console.log("removeTodo");
-        console.log(e);
         var self = this;
         var clickedEl = $(e.target).parents(".todo-list-item")[0];
         var modelIndex = $(".todo-list-item").index(clickedEl);
@@ -94,16 +63,11 @@
         }});
     },
     changeStatus: function(e) {
-        console.log("---------");
-        console.log("changeStatus");
-
         var clickedEl = $(e.target).parents(".todo-list-item")[0];
         var modelIndex = $(".todo-list-item").index(clickedEl);
 
         // get the current model
         this.model = this.collection.models[modelIndex];
-
-        //console.log(app.additionalComponents.todo.collection.models[modelIndex]);
 
         if( this.model.attributes.status == app.lang.getAppListStrings('task_status_dom')['Completed'] ) {
             this.model.set({
@@ -127,10 +91,6 @@
         app.view.View.prototype._renderHtml.call(this);
     },
     _render: function() {
-        console.log("---------");
-        console.log("render");
-        console.log(this);
-
         app.view.View.prototype._render.call(this);
     },
     validateTodo: function(e) {
@@ -174,11 +134,8 @@
     },
     bindDataChange: function() {
         var self = this;
-        console.log("---------");
-        console.log("inside bindDataChange");
         if (this.collection) {
             this.collection.on("reset", function() {
-                console.log(self.collection);
                 self._render();
             }, this);
         }
