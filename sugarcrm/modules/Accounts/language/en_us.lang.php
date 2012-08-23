@@ -160,6 +160,7 @@ $mod_strings = array (
 	//BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_CAMPAIGNS' =>'Campaigns',
 	//END SUGARCRM flav!=sales ONLY
+    'LNK_CREATE' => 'Create Company',
 	'LNK_ACCOUNT_LIST' => 'View Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
 	'LNK_IMPORT_ACCOUNTS' => 'Import Accounts',

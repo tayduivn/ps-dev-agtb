@@ -1,10 +1,15 @@
 <style>
 
+.todo-header {
+padding:0 12px;
+}
+
 .todo-date-info {
     clear: both;
 }
 .todo-due-date {
     color: #D60F0F;
+    line-height:.9em;
 }
 .todo-finished {
     color: #2ED400;
@@ -19,12 +24,11 @@
     width: 252px;
     max-height: 217px;
     overflow: auto;
-    padding: 12px;
+    padding: 12px 0;
 }
 
 #todo-subject {
-    /*float: left;*/
-    width: 150px;
+    width: 140px;
 }
 
 #todo-date {
@@ -41,21 +45,20 @@
 
 .todo-list-container {
     height: 150px;
-    width: 240px;
+    width: 100%;
     /*overflow: auto;*/
     list-style: none;
     margin: 0;
 }
 
 .todo-list-item {
-    width: 240px;
-    display: table-row;
+    display: inline-block;
     list-style: none;
+    padding: 0 12px;
 }
 
 .todo-list-item div {
     float: left;
-    display: table-cell;
 }
 
 .todo-checkbox-container {
@@ -71,8 +74,33 @@
 }
 
 .todo-remove {
-    width: 20px;
+    width:20px;
+    height:20px;
+    text-align:center;
+    cursor: pointer;
+    position:absolute;
+    right:12px;
 }
+
+.todo-list-item .todo-remove {
+    display:none;
+}
+
+.todo-list-item:hover .todo-remove {
+    display:inline-block;
+}
+
+.todo-remove .icon-trash {
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+}
+
+.todo-remove:hover .icon-trash {
+    background:#888888;
+    color:#ffffff;
+}
+
 </style>
 
 {{#if isAuthenticated}}
@@ -116,7 +144,7 @@
                                 <span class="todo-item-finished">{{this.attributes.name}}</span>
                             </div>
                         {{/notEq}}
-                        <div class="todo-remove" style="display:none">
+                        <div class="todo-remove">
                             <i class="icon-trash"></i>
                         </div>
                         <div class="todo-date-info">
