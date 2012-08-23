@@ -51,6 +51,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <!-- App Scripts -->
     <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script src='../sidecar/src/app.js'></script>
+    <script src='../sidecar/src/utils/date.js'></script>
     <script src='../sidecar/src/utils/utils.js'></script>
     <script src='../sidecar/src/core/cache.js'></script>
     <script src="../sidecar/src/core/events.js"></script>
