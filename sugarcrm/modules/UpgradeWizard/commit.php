@@ -301,6 +301,7 @@ eoq;
             if (version_compare($sugar_version, '6.6.0') == -1 && version_compare($manifest['version'], '6.6.0', '>=')) {
                 if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
                     set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
+                    logThis('Preparing to upgrade metadata to 6.6.0 compatibility...');
                     require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
                     
                     // Get the sidecar metadata upgrader
@@ -308,6 +309,13 @@ eoq;
                     
                     // Run the upgrader
                     $smdUpgrader->upgrade();
+                    
+                    // Log failures if any
+                    $failures = $smdUpgrader->getFailures();
+                    if (!empty($failures)) {
+                        logThis(count($failures) . ' metadata files failed to upgrade:');
+                        logThis(print_r($failures, true));
+                    }
                     
                     // Reset the progress
                     set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','done');
