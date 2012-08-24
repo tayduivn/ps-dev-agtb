@@ -80,5 +80,41 @@ $mod_strings = array (
   'LBL_LINK_LIST' => 'Links',
   'LBL_PREVIEW' => 'Preview',
   'LBL_ALERT_SWITCH_BASE_MODULE' => 'WARNING: If you change the primary module, all fields already added to template will need to be removed.',  
-  'LBL_EMAIL_PDF_DEFAULT_DESCRIPTION' => 'Here is the file you requested (You can change this text)'
+  'LBL_EMAIL_PDF_DEFAULT_DESCRIPTION' => 'Here is the file you requested (You can change this text)',
+  
+
+  'LBL_TPL_QUOTE_NAME' => 'Quote',
+  'LBL_TPL_QUOTE_DESCRIPTION' => 'This template is used to print Quote in PDF.',
+  'LBL_TPL_QUOTE_TEMPLATE_NAME' => 'quote',
+
+  'LBL_TPL_INVOICE_NAME' => 'Invoice',
+  'LBL_TPL_INVOICE_DESCRIPTION' => 'This template is used to print Invoice in PDF.',
+  'LBL_TPL_INVOICE_TEMPLATE_NAME' => 'invoice',
+  
+  'LBL_TPL_QUOTE_NUMBER' => 'Quote number:',
+  'LBL_TPL_SALES_PERSON' => 'Sales Person:',
+  'LBL_TPL_VALID_UNTIL' => 'Valid until:',
+  'LBL_TPL_BILL_TO' => 'Bill To',
+  'LBL_TPL_SHIP_TO' => 'Ship To',
+  'LBL_TPL_QUANTITY' => 'Quantity',
+  'LBL_TPL_PART_NUMBER' => 'Part Number',
+  'LBL_TPL_PRODUCT' => 'Product',
+  'LBL_TPL_LIST_PRICE' => 'List Price',
+  'LBL_TPL_UNIT_PRICE' => 'Unit Price',
+  'LBL_TPL_EXT_PRICE' => 'Ext. Price',
+  'LBL_TPL_DISCOUNT' => 'Discount',
+  'LBL_TPL_SUBTOTAL' => 'Subtotal:',
+  'LBL_TPL_DISCOUNT' => 'Discount:',
+  'LBL_TPL_DISCOUNTED_SUBTOTAL' => 'Discounted Subtotal:',
+  'LBL_TPL_TAX' => 'Tax:',
+  'LBL_TPL_SHIPPING' => 'Shipping:',
+  'LBL_TPL_TOTAL' => 'Total',
+  'LBL_TPL_GRAND_TOTAL' => 'Grand Total',
+  'LBL_TPL_CURRENCY' => 'Currency:',
+  'LBL_TPL_TAX_RATE' => 'Tax Rate:',
+  'LBL_TPL_SHIPPING_PROVIDER' => 'Shipping Provider:',
+  'LBL_TPL_INVOICE_NUMBER' => 'Invoice number:',
+  'LBL_TPL_QUOTE' => 'Quote',
+  'LBL_TPL_INVOICE' => 'Invoice',
+
 );
