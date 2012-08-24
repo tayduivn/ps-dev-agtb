@@ -38,6 +38,13 @@ class SummerApi extends SugarApi {
                 'method' => 'office',
                 'shortHelp' => 'Office Surroundings',
             ),
+            'recommend' => array(
+                'reqType' => 'GET',
+                'path' => array('summer','recommend'),
+                'pathVars' => array('',''),
+                'method' => 'recommend',
+                'shortHelp' => 'Recommended invites',
+            ),
             'invite' => array(
                 'reqType' => 'POST',
                 'path' => array('summer','invite'),
@@ -73,5 +80,50 @@ class SummerApi extends SugarApi {
         $this->box->deleteSession();
         unset($_SESSION['authenticated_user_id']);
         return true;
+    }
+
+    protected function emailMatch($email, $domain)
+    {
+        list($efirst, $edomain) = explode('@', $email);
+        if($domain == $edomain) {
+            return true;
+        }
+        return false;
+    }
+
+    public function recommend($api, $args)
+    {
+        $data = array();
+        $me = $this->box->getCurrentUser();
+        list($myfirst, $mydomain) = explode('@', $me['email']);
+        if($mydomain == 'gmail.com') {
+            return array("invites" => array());
+        }
+        // FIXME: use memcache/local storage?
+        if(!empty($_SESSION['recommended_invites'])) {
+            return array("invites" => $_SESSION['recommended_invites']);
+        }
+        $res = $this->box->oauthGet("https://www.google.com/m8/feeds/contacts/default/full/");
+        if(!empty($res)) {
+            $xml = simplexml_load_string($res);
+            $xml->registerXPathNamespace("gd", "http://schemas.google.com/g/2005");
+            $xml->registerXPathNamespace("a", "http://www.w3.org/2005/Atom");
+            foreach($xml->xpath("a:entry") as $entry) {
+                $fname = $entry->xpath('gd:name/gd:givenName');
+                $lname = $entry->xpath('gd:name/gd:familyName');
+                $email = $entry->xpath('gd:email[@primary=\'true\']/@address');
+                if(empty($email) || !$this->emailMatch((string)$email[0], $mydomain)) continue;
+                $inv = array("email" => (string)$email[0], 'first_name' => '', 'last_name' => '');
+                if(!empty($fname)) {
+                    $inv['first_name'] = (string)$fname[0];
+                }
+                if(!empty($lname)) {
+                    $inv['last_name'] = (string)$lname[0];
+                }
+                $data[] = $inv;
+            }
+        }
+        $_SESSION['recommended_invites'] = $data;
+        return array("invites" => $data);
     }
 }

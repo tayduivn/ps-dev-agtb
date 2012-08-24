@@ -2,6 +2,8 @@
 require_once('modules/Trackers/BreadCrumbStack.php');
 require_once('summer/splash/boxoffice/BoxOffice.php');
 require_once('summer/splash/boxoffice/lib/BoxOfficeMail/BoxOfficeMail.php');
+require_once 'Zend/Http/Client.php';
+
 class BoxOfficeClient
 {
     protected $user = null;
@@ -133,6 +135,9 @@ class BoxOfficeClient
             return;
         }
         $this->box->setUserTokens($this->user['id'], $token, $refreshToken, $expires);
+        // refresh data
+        unset($_SESSION['boxoffice']);
+        $this->getSessionData();
     }
 
     /**
@@ -433,6 +438,24 @@ class BoxOfficeClient
                 'instance' => $this->instance,
                 'url' => $this->loginUrl()));
             return true;
+        }
+        return false;
+    }
+
+    public function oauthGet($url)
+    {
+        if(empty($this->user) || empty($this->user['oauth_token'])) {
+            return false;
+        }
+        $req = new Zend_Http_Client($url);
+        $req->setMethod("GET");
+        $req->setHeaders('Authorization', "OAuth {$this->user['oauth_token']}");
+        $req->setHeaders('Gdata-Version', '3.0');
+        $res = $req->request();
+        if($res->isSuccessful()) {
+            return $res->getBody();
+        } else {
+
         }
         return false;
     }

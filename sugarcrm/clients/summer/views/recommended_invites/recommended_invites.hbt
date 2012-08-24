@@ -1,2 +1,6 @@
+<h4>Invite recommendations</h4>
 These are the recommended invites:
-<a href="http://www.google.com/?peter deng">Peter Deng</a>
+<div>
+<ul id="invitesList">
+</ul>
+</div>
