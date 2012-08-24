@@ -453,7 +453,7 @@ function shouldCheckSugar(){
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
 
-
+//Adding a comment for 6.5.4
 
 function authenticateDownloadKey(){
 	$data = array();
