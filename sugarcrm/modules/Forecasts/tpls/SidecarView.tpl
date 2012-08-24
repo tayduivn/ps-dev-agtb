@@ -107,22 +107,10 @@
 
 <div class="content"></div>
 <script src='{$configFile}'></script>
-<script src='clients/forecasts/helper/hbt-helpers.js'></script>
-<script src='clients/forecasts/lib/ClickToEdit.js'></script>
-<script src='clients/forecasts/lib/BucketGridEnum.js'></script>
-<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
-<script src='clients/forecasts/views/forecastsTree/forecastsTree.js'></script>
-<script src='clients/forecasts/views/forecastsFilter/forecastsFilter.js'></script>
-<script src='clients/forecasts/views/forecastsTimeframes/forecastsTimeframes.js'></script>
-<script src='clients/forecasts/views/forecastsChartOptions/forecastsChartOptions.js'></script>
-<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
-<script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
-<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/forecasts/views/forecastsProgress/forecastsProgress.js'></script>
-<script src='clients/forecasts/views/forecastsChart/forecastsChart.js'></script>
-<script src='clients/forecasts/views/alert/alert-view.js'></script>
+<script src='modules/Forecasts/metadata/base/helper/hbt-helpers.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/ClickToEdit.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/BucketGridEnum.js'></script>
+<script src='modules/Forecasts/metadata/base/views/alert-view.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 {literal}
 <script language="javascript">

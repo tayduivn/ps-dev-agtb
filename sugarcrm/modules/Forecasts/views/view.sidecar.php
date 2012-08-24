@@ -117,7 +117,7 @@ class ForecastsViewSidecar extends SidecarView
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'dev',
-            'platform' => 'forecasts',
+            'platform' => 'base',
             'additionalComponents' => array(
                 'alert' => array(
                     'target' => '#alert'
