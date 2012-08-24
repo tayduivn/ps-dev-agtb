@@ -153,15 +153,17 @@ nv.models.multiBar = function() {
 
       bars.exit().remove();
 
+      var barScalar = .7;
 
       var barsEnter = bars.enter().append('rect')
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('x', function(d,i,j) {
-              return stacked ? 0 : (j * x.rangeBand() / data.length )
+              return stacked ? x.rangeBand() * (1-barScalar)/2 : ( j * x.rangeBand() * barScalar / data.length )
           })
-          .attr('y', function(d) { return y0(stacked ? d.y0 : 0) })
+          .attr('y', function(d) { return y0(stacked ? d.y0 : 0) } )
           .attr('height', 0)
-          .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
+          .attr('width', x.rangeBand() * barScalar / (stacked ? 1 : data.length) );
+
       bars
           .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
             d3.select(this).classed('hover', true);
@@ -191,7 +193,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + ( x.rangeBand() * barScalar * (stacked ? data.length / 2 : d.series + .5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -203,17 +205,20 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + (x.rangeBand() * barScalar * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
             });
             d3.event.stopPropagation();
           });
+
       bars
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
-          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; });
+
       if (stacked)
+      {
         d3.transition(bars)
             .delay(function(d,i) { return i * delay / data[0].values.length })
             .attr('y', function(d,i) {
@@ -225,17 +230,19 @@ nv.models.multiBar = function() {
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('x', function(d,i) {
-                  return stacked ? 0 : (d.series * x.rangeBand() / data.length )
+                  return stacked ? x.rangeBand()* (1-barScalar)/2 : (d.series * x.rangeBand() * barScalar / data.length )
                 })
-                .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
+                .attr('width', x.rangeBand() * barScalar / (stacked ? 1 : data.length) );
             })
+      }
       else
+      {
         d3.transition(bars)
           .delay(function(d,i) { return i * delay/ data[0].values.length })
             .attr('x', function(d,i) {
               return d.series * x.rangeBand() / data.length
             })
-            .attr('width', x.rangeBand() / data.length)
+            .attr('width', x.rangeBand() * barScalar / data.length)
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('y', function(d,i) {
@@ -247,7 +254,7 @@ nv.models.multiBar = function() {
                   return Math.abs(y(getY(d,i)) - y(0))
                 });
             })
-
+      }
 
       //store old scales for use in transitions on update
       x0 = x.copy();
