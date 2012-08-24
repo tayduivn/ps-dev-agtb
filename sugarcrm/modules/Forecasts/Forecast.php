@@ -112,17 +112,17 @@ class Forecast extends SugarBean
 	function fill_in_additional_list_fields()
 	{
 		if ( isset($this->best_case) && !empty($this->best_case) ) {
-            $this->best_case = SugarCurrency::convertAmountFromBase($this->best_case);
+            $this->best_case = SugarCurrency::convertAmountFromBase($this->best_case, $this->currency_id);
 		}
 		if ( isset($this->worst_case) && !empty($this->worst_case) ) {
-            $this->worst_case = SugarCurrency::convertAmountFromBase($this->worst_case);
+            $this->worst_case = SugarCurrency::convertAmountFromBase($this->worst_case, $this->currency_id);
         }
 		if ( isset($this->likely_case) && !empty($this->likely_case) ) {
-            $this->likely_case = SugarCurrency::convertAmountFromBase($this->likely_case);
+            $this->likely_case = SugarCurrency::convertAmountFromBase($this->likely_case, $this->currency_id);
         }
 		$this->weigh_value = ' ';
 		if ( isset($this->weigh_value) && !empty($this->weigh_value) ) {
-            $this->weigh_value = SugarCurrency::convertAmountFromBase($this->weigh_value);
+            $this->weigh_value = SugarCurrency::convertAmountFromBase($this->weigh_value, $this->currency_id);
         }
 	}
 
