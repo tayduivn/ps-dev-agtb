@@ -105,7 +105,7 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->SMTPSecure    = $this->configs['smtp.secure'];
 		$this->mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
 		$this->mailer->Username      = $this->configs['smtp.username'];
-		$this->mailer->Password      = from_html($this->configs['smtp.password']);
+		$this->mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
 		$this->mailer->Timeout       = $this->configs['smtp.timeout'];
 		$this->mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
 	}
