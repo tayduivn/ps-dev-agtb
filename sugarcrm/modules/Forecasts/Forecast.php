@@ -29,6 +29,8 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+require_once('include/SugarCurrency.php');
+
 // User is used to store Forecast information.
 class Forecast extends SugarBean
 {
@@ -51,6 +53,7 @@ class Forecast extends SugarBean
 	var $currency;
 	var $currencysymbol;
 	var $currency_id;
+    var $currency_rate;
 
 	var $table_name = "forecasts";
 
@@ -82,6 +85,7 @@ class Forecast extends SugarBean
 			$this->currency->retrieve('-99');
 		}
 		$this->currencysymbol = $this->currency->symbol;
+        $this->currency_rate = $this->currency->conversion_rate;
 	}
 
 
@@ -108,18 +112,18 @@ class Forecast extends SugarBean
 	function fill_in_additional_list_fields()
 	{
 		if ( isset($this->best_case) && !empty($this->best_case) ) {
-			$this->best_case = $this->currency->convertFromDollar($this->best_case);
+            $this->best_case = SugarCurrency::convertAmountFromBase($this->best_case);
 		}
 		if ( isset($this->worst_case) && !empty($this->worst_case) ) {
-			$this->worst_case = $this->currency->convertFromDollar($this->worst_case);
-		}
+            $this->worst_case = SugarCurrency::convertAmountFromBase($this->worst_case);
+        }
 		if ( isset($this->likely_case) && !empty($this->likely_case) ) {
-			$this->likely_case = $this->currency->convertFromDollar($this->likely_case);
-		}
+            $this->likely_case = SugarCurrency::convertAmountFromBase($this->likely_case);
+        }
 		$this->weigh_value = ' ';
 		if ( isset($this->weigh_value) && !empty($this->weigh_value) ) {
-			$this->weigh_value = $this->currency->convertFromDollar($this->weigh_value);
-		}
+            $this->weigh_value = SugarCurrency::convertAmountFromBase($this->weigh_value);
+        }
 	}
 
 
@@ -168,7 +172,8 @@ class Forecast extends SugarBean
 
 
 	/**
-	 * Return the list query used by the list views and export button. Next generation of create_new_list_query function.
+	 * Return the list query used by the list views and export button.
+     * Next generation of create_new_list_query function.
 	 *
 	 * Override this function to return a custom query.
 	 *
@@ -270,6 +275,18 @@ class Forecast extends SugarBean
 		}
 		return false;
 	}
+
+    /*
+     * save forecast to database
+     */
+    function save()
+    {
+        require_once 'include/SugarCurrency.php';
+        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        $this->currency_rate = $currency->conversion_rate;
+
+        parent::save();
+    }
 }
 function getTimePeriodsDropDownForForecasts(){
     return TimePeriod::get_timeperiods_dom();

@@ -41,6 +41,8 @@ class ForecastSchedule extends SugarBean {
 	var $created_by;
 	var $date_entered;
 	var $date_modified;
+    var $currency_id;
+    var $currency_rate;
     var $expected_best_case;
     var $expected_likely_case;
     var $expected_worst_case;
@@ -66,7 +68,10 @@ class ForecastSchedule extends SugarBean {
 	}
 
 	function save($check_notify = false){
-		parent::save($check_notify);		
+        require_once 'include/SugarCurrency.php';
+        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        $this->currency_rate = $currency->conversion_rate;
+        parent::save($check_notify);
 	}
 
 

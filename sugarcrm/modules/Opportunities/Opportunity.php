@@ -49,6 +49,7 @@ class Opportunity extends SugarBean
 	var $amount;
 	var $amount_usdollar;
 	var $currency_id;
+    var $currency_rate;
 	var $date_closed;
 	var $next_step;
 	var $sales_stage;
@@ -422,7 +423,6 @@ class Opportunity extends SugarBean
 		return $the_where;
 	}
 
-
 	function save( $check_notify = FALSE )
 	{
 		// Bug 32581 - Make sure the currency_id is set to something
@@ -435,7 +435,11 @@ class Opportunity extends SugarBean
 			$this->currency_id = -99;
 		}
 
-		//if probablity isn't set, set it based on the sales stage
+        require_once 'include/SugarCurrency.php';
+        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        $this->currency_rate = $currency->conversion_rate;
+
+        //if probablity isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {
 			$prob_arr = $app_list_strings['sales_probability_dom'];
 			if ( isset($prob_arr[$this->sales_stage]) ) {

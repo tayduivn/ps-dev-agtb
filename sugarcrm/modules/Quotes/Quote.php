@@ -97,6 +97,7 @@ class Quote extends SugarBean {
 	var $shipper_id;
 	var $shipper_name;
 	var $currency_id;
+    var $currency_rate;
 	var $currency_name;
 	var $billing_account_name;
 	var $billing_account_id;
@@ -457,7 +458,8 @@ class Quote extends SugarBean {
 
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
-		//US DOLLAR
+        $this->currency_rate = $currency->conversion_rate;
+        //US DOLLAR
 		if(!empty($this->shipping)){
 			$this->shipping_usdollar = $currency->convertToDollar($this->shipping);
 		}
@@ -477,7 +479,7 @@ class Quote extends SugarBean {
             $this->deal_tot_usdollar = $currency->convertToDollar($this->deal_tot);
         }
 
-		//BEGIN SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id)) {
 
 			$admin = new Administration();

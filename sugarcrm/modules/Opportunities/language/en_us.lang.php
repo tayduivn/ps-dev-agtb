@@ -45,6 +45,7 @@ $mod_strings = array (
   'LBL_LIST_DATE_CLOSED' => 'Close',
   'LBL_LIST_SALES_STAGE' => 'Sales Stage',
   'LBL_ACCOUNT_ID'=>'Account ID',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
   'LBL_CURRENCY_ID'=>'Currency ID',
   'LBL_CURRENCY_NAME'=>'Currency Name',
   'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
