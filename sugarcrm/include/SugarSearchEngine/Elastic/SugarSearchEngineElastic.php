@@ -515,8 +515,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach ($finalTypes as $module)
         {
             $moduleFilter = $this->constructModuleLevelFilter($module);
-            if($options['my_items'] !== false)
+            if(isset($options['my_items']) && $options['my_items'] !== false)
             {
+                $GLOBALS['log']->fatal("\r\n\r\n " . var_export($options, true) ." \r\n\r\n\r\n");
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
             $mainFilter->addFilter($moduleFilter);
@@ -533,7 +534,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function myItemsSearch($moduleFilter)
     {
-        // need to be document owner to view, owner term filter
         $ownerTermFilter = $this->getOwnerTermFilter();
         $moduleFilter->addFilter($ownerTermFilter);
         return $moduleFilter;
@@ -643,11 +643,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
-            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($query, true) . "\r\n\r\n");
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
-            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($results, true) . "\r\n\r\n");
-
         }
         catch(Exception $e)
         {
