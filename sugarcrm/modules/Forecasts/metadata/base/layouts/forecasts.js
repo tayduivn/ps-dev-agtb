@@ -236,4 +236,4 @@
         }
     });
     
-})(SUGAR.App);
+})(SUGAR.App)
