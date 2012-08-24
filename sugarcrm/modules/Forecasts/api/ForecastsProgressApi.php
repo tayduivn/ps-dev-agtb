@@ -169,7 +169,8 @@ class ForecastsProgressApi extends ModuleApi
     protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $excluded_sales_stages_won, $excluded_sales_stages_lost  )
    	{
         //set user ids and timeperiods
-        $where = " users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $where = "( users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $where .= " OR opportunities.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
    		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
 
 
@@ -217,7 +218,8 @@ class ForecastsProgressApi extends ModuleApi
    		$amountSum = 0;
 
         //set user ids and timeperiods
-        $where = " users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $where = "( users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $where .= " OR opportunities.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
         $where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
 
         // no deleted opportunities
