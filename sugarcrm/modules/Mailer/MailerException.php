@@ -1,4 +1,6 @@
 <?php
+namespace Mailer;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -21,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class MailerException extends Exception
+class MailerException extends \Exception
 {
 	public function log($level) {
 		$GLOBALS['log']->$level($this->message);

@@ -292,7 +292,7 @@ class MailerApi extends ModuleApi
                 $edata = ob_get_contents();
                 ob_end_clean();
                 if (strlen($edata) > 0) {
-                    throw new MailerException("Internal Error");
+                    throw new Mailer\MailerException("Internal Error");
                 }
         } catch (Exception $e) {
            if ($edata == null) {
@@ -332,8 +332,8 @@ class MailerApi extends ModuleApi
         $admin = new Administration();
         $admin->retrieveSettings();
 
-        $mailer = new Mailer();
-        $mailer->setFrom(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
+        $mailer = new Mailer\SimpleMailer();
+        $mailer->setFrom(new Mailer\EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
 
         if (is_array($args["to_addresses"])) {
             foreach ($args["to_addresses"] AS $toAddress) {
@@ -418,16 +418,18 @@ class MailerApi extends ModuleApi
 
 	/**
 	 * @param $data
-	 * @return EmailIdentity
+	 * @return Mailer\EmailIdentity
 	 */
 	protected function generateEmailIdentity($data) {
+		$recipient = null;
+
 		if (is_array($data) && !empty($data['email'])) {
 			$email = $data['email'];
 			$name = null;
 			if (isset($data['name'])) {
 				$name = $data['name'];
 			}
-			$recipient = new EmailIdentity($email, $name);
+			$recipient = new Mailer\EmailIdentity($email, $name);
 		}
 		return $recipient;
 	}
