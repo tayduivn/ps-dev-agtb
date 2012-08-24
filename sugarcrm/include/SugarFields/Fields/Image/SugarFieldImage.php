@@ -69,8 +69,7 @@ class SugarFieldImage extends SugarFieldBase {
 		if (isset($_FILES[$field]))
 		{
 			//confirm only image file type can be uploaded
-			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-			if (in_array($_FILES[$field]["type"], $imgType))
+			if (verify_image_file($_FILES[$field]['tmp_name']))
 			{
 				if ($upload_file->confirm_upload())
 				{
