@@ -186,7 +186,6 @@ class SugarChart {
 
 		// grab the property and value from the chart_properties variable
 		foreach ($this->chart_properties as $key => $value){
-		    if(is_array($value)) continue;
 			$properties .= $this->tab("<$key>$value</$key>",2);
 		}
 
@@ -808,7 +807,7 @@ class SugarChart {
 		return $templateFile;
 	}
 
-
+ 	        
 	function getDashletScript($id,$xmlFile="") {
 
 	$xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;

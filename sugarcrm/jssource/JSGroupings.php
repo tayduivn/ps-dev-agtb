@@ -55,6 +55,7 @@
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
+               'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			//jquery libraries
 			$sugar_grp_jquery = array(
@@ -213,6 +214,6 @@
     /**
      * Check for custom additions to this code
      */
-    if(file_exists("custom/jssource/JSGroupings.php")) {
-        require("custom/jssource/JSGroupings.php");
+    if(file_exists("custom/application/Ext/JSGroupings/jsgroups.ext.php")) {
+        require("custom/application/Ext/JSGroupings/jsgroups.ext.php");
     }
