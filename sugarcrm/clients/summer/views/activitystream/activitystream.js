@@ -42,15 +42,16 @@
     },
     
     showAddPost: function(event) {
-        $(".activitystream-post").show();
+        this.$(".activitystream-post").show();
     },
 
     addPost: function(event) {
         var self = this;
-        var myPost = $(".activitystream-post");
+        var myPost = this.$(".activitystream-post");
         var myPostContents = myPost.find('input.sayit')[0].value;
         var myPostId = this.context.get("modelId");
         var myPostModule = this.module;
+
         if(myPostModule == "ActivityStream") {
         	myPostModule = '';	
         }

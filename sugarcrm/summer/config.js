@@ -185,7 +185,8 @@
          * @cfg {Boolean}
          */
             syncConfig: true,
-            authStore:"sugarAuthStore"
+            authStore:"sugarAuthStore",
+        loadCss: false
     }, false);
 
 })(SUGAR.App);

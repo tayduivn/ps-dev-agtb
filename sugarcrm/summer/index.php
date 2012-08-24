@@ -80,7 +80,6 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src='../sidecar/src/view/field.js'></script>
     <script src='../sidecar/src/view/layout.js'></script>
     <script src='views/alert-view.js'></script>
-    <script src='views/footer-view.js'></script>
     <script src='../sidecar/src/view/alert.js'></script>
     <script src='summer.js'></script>
 

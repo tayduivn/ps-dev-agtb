@@ -1,27 +1,17 @@
 ({
-
-    /**
-     * View that displays a list of models pulled from the context's collection.
-     * @class View.Views.ListView
-     * @alias SUGAR.App.layout.ListView
-     * @extends View.View
-     */
     events: {
         'click [class*="orderBy"]': 'setOrderBy'
     },
 
-
-    /**
-     * Initializes view
-     * @param options
-     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
         this.collection = new Backbone.Collection();
         this.collection.link = {
             bean: this.model,
             name: 'attachments'
         };
+
         this.collection.sync = app.BeanCollection.prototype.sync;
 
         this.collection.fetch({relate:true})
@@ -39,15 +29,10 @@
             var self = this;
 
             this.quitFlag = false;
-
             this.file = event.originalEvent.dataTransfer.files[0] || event.dataTransfer.files[0];
-
             this.filename = this.file.name || this.file.fileName;
-
             this.filesize = this.file.size || this.file.fileSize;
-
             this.newNoteId = '';
-
 
             /**
              * Alert views definitions
@@ -98,8 +83,6 @@
                     });
                 }
             };
-
-
         };
 
         /**
@@ -224,19 +207,18 @@
      * Render template and bind drag and drop features
      * @private
      */
-    _renderHtml: function() {
-        var that = this;
-        app.view.View.prototype._renderHtml.call(this);
-//        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+    render: function() {
+        var self = this;
+        app.view.View.prototype.render.call(this);
+        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
         this.makeDraggableElements();
         this.styleDropbox();
 
         // make elements dropbox for file drop
-        this.$('.dropbox').on('dragover', that.dragOverDropbox);
-        this.$('.dropbox').on('dragleave', that.dragLeaveDropbox);
-        this.$('.dropbox').on('drop', that.dropOnDropbox);
+        this.$('.dropbox').on('dragover', self.dragOverDropbox);
+        this.$('.dropbox').on('dragleave', self.dragLeaveDropbox);
+        this.$('.dropbox').on('drop', self.dropOnDropbox);
     },
-
 
     /**
      * make the rows of attachment table draggable
