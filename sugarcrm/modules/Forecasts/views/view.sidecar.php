@@ -82,9 +82,8 @@ class ForecastsViewSidecar extends SidecarView
         $defaultSelections["selectedUser"] = $selectedUser;
 
         $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
-        // grab the first key of the timeframe dom as the default
-        // TODO: should come from a config/admin setting instead.
-        $id = array_pop(array_keys($forecasts_timeframes_dom));
+        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+        $id = TimePeriod::getCurrentId();
         $defaultSelections["timeperiod_id"]["id"] = $id;
         $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
 
