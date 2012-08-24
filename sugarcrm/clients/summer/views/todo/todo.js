@@ -60,6 +60,7 @@
 
         this.model = this.collection.models[modelIndex];
         this.model.destroy({success: function() {
+            self.open = true;
             self._render();
         }});
     },
@@ -105,7 +106,7 @@
         else {
             this.model = app.data.createBean("Tasks", {
                 "name": subject,
-                "assigned_user_id": "seed_" + app.user.get("user_name") + "_id",
+                "assigned_user_id": app.user.get("id"),
                 "date_due": date + " 00:00:00"
             });
             this.collection.add(this.model);
