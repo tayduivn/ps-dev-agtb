@@ -12,15 +12,17 @@
                </div>
                </div>
        {{/each}}
-           <div class="">
-             <div class="span2 closure"></div>
+           <div class="row-fluid closure">
+             <div class="span2"></div>
            </div>
-           <div>
-               <div class="extend span2 tright">
+           <div class="row-fluid">
+               <div class="span12">
                      <a href="javascript:void(0)" class="more hide">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
                      <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
                </div>
-               <div class="record-save-prompt span2 tright" style="display: none">
+            </div>
+            <div class="row-fluid">
+               <div class="span12 record-save-prompt" style="display:none;">
                    <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
                    <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
                </div>
@@ -143,6 +145,10 @@ border-radius:4px 4px 0 0 !important;
 }
 
 .card2 .closure {
+padding-top:0;
+}
+
+.card2 .closure > .span2 {
 background:#f7f7f7;
 border-radius:0 0 4px 4px !important;
 -webkit-radius:0 0 4px 4px !important;
@@ -152,16 +158,6 @@ border-left:1px solid #eeeeee;
 border-bottom:1px solid #eeeeee;
 min-height:3px;
 height:3px;
-}
-
-.card2 .extend {
-clear:both;
-padding-right:1em;
-padding:.5em .5em 2em 0;
-}
-
-.card2 .extend .icon-chevron-down {
-text-decoration:none;
 }
 
 .record-save-prompt.span2.tright {
