@@ -242,8 +242,8 @@ class ForecastsProgressApiTest extends RestTestBase
         $restReply = $restResponse['reply'];
 
         //check quotas section
-        $this->assertEquals(50000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
-        $this->assertEquals(2, $restReply['opportunities'], "opportunity count did not match");
+        $this->assertEquals(70000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(3, $restReply['opportunities'], "opportunity count did not match");
     }
 
     /**

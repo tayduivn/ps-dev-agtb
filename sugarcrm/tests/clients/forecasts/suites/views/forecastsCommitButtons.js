@@ -4,7 +4,7 @@ describe("Forecasts Commit Buttons Component", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../clients/forecasts/views/forecastsCommitButtons", "forecastsCommitButtons", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/forecasts/metadata/base/views", "forecastsCommitButtons", "js", function(d) { return eval(d); });
     });
 
     describe("test showCommitButton", function() {

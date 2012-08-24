@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Forecasts']['forecasts']['view']['forecastsFilter'] = array(
+$viewdefs['Forecasts']['base']['view']['forecastsFilter'] = array(
     'panels' => array(
         0 => array(
             'label' => 'LBL_PANEL_1',

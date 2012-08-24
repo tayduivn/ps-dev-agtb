@@ -4,7 +4,7 @@ describe("ClickToEdit", function(){
     beforeEach(function() {
         app = SugarTest.app;
         editable = SugarTest.loadFile("../include/javascript/twitterbootstrap/js", "jquery.jeditable", "js", function(d) { return eval(d); });
-        clickToEdit = SugarTest.loadFile("../clients/forecasts/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        clickToEdit = SugarTest.loadFile("../modules/forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
 
         view = {
             $el: $('<div class="testview"></div>'),
