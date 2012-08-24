@@ -18,7 +18,7 @@
         this.context.on("subnav:save", this.saveModel, this);
     },
     render: function() {
-        var self = this, currentUserAttributes, passwordLbl;
+        var self = this, currentUserAttributes;
 
         if(app.user.isSupportPortalUser()) {
             currentUserAttributes = {id: app.user.get('id')}; 
