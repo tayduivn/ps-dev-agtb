@@ -122,9 +122,15 @@
 
     // editable example
     $('.dblclick').hover(
-      function () {$(this).before('<span class="span2" style="border-right: none; position: absolute; top: -2px; left: -16px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');},
-      function () {$('span.span2').remove();}
-  	)
+      function () {
+        $(this).before('<span class="span2" style="border-right: none; position: absolute; top: -2px; left: -16px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+      },
+      function () { 
+        $('span.span2').remove(); 
+      }
+    )
+    
+})
 
     $('.comment').toggle( 
       function (e) {

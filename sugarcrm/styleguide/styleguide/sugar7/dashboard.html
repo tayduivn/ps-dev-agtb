@@ -6,12 +6,21 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+  <style type="text/css">  
+  .navbar-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .navbar-search {
+    width: 100%;
+  }
+</style>
 </head>
 <body>
   <div class="navbar navbar-fixed-top">
@@ -68,14 +77,14 @@
                   <li><a href="#">Schedule Meeting</a></li>
                   <li><a href="#">Email</a></li>
                 </ul>
-              </li>              
+              </li>
             </ul>
           </div><!-- /.nav-collapse -->
         </div>
       </div>
     </div><!-- /navbar-inner -->
   </div>
-  <div class="container-fluid" id="dashboard">     
+  <div class="container-fluid" id="dashboard">
     <div class="row-fluid">
       <div class="span7">
           <div class="block filtered tabbable tabs-left" id="moduleActivity">
@@ -829,9 +838,7 @@
           <button class="btn cancel" data-dismiss="modal">Cancel</button>
         </div>
       </div>
-      <script>
-        $(".chzn-choices span:contains('Activity')").addClass('purple');
-      </script>
+
       <script src="../js/jquery-1.7.2.min.js"></script>
       <script src="../../bootstrap/js/bootstrap-transition.js"></script>
       <script src="../../bootstrap/js/bootstrap-alert.js"></script>
@@ -844,11 +851,13 @@
       <script src="../../bootstrap/js/bootstrap-popover.js"></script>
       <script src="../../bootstrap/js/bootstrap-button.js"></script>
       <script src="../../bootstrap/js/bootstrap-typeahead.js"></script>
-      <script src="../js/jquery.datatables.js"></script>  
-      <script src="../js/wicked.js"></script>        
-      <script src="../js/jquery.jeditable.js"></script>        
+
+      <script src="../js/jquery.datatables.js"></script>
+      <script src="../js/wicked.js"></script>
+      <script src="../js/jquery.jeditable.js"></script>
       <script src="../js/editable.js"></script>
       <script src="../js/chosen.jquery.min.js"></script>
+
       <script src="../js/application.js"></script>
     </body>
     </html>
