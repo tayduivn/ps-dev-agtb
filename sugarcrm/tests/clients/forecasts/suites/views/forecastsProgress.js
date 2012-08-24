@@ -39,7 +39,7 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_likely_percent: 0,
                                             revenue: 0});
 
-            view.recalculateTotals(totals);
+            view.recalculateRepTotals(totals);
             var expectedModel = new Backbone.Model({amount: 0,
                                             closed_amount: 95000,
                                             closed_best_above: false,
@@ -151,7 +151,7 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_likely_percent: 0,
                                             revenue: 0});
 
-            view.recalculateTotals(totals);
+            view.recalculateManagerTotals(totals);
             var expectedModel = new Backbone.Model({amount: 0,
                                             closed_amount: 89000,
                                             closed_best_above: false,
