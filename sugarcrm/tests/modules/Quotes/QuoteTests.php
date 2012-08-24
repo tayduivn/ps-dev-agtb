@@ -22,51 +22,35 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class OpportunityCaseTests extends Sugar_PHPUnit_Framework_TestCase
+class QuoteTests extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+    }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestQuoteUtilities::removeAllCreatedQuotes();
     }
 
     /*
-     * Test that base currency exchange rates from EUR are working properly.
-     * If Euro does not exist, it will use system default currency and tests still work.
+     * Test that the currency_rate field is populated with rate
+     * of currency_id
+     *
      */
-    public function testCaseBaseCurrencyAmounts()
-    {
-        require_once("modules/Currencies/Currency.php");
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
-        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('EUR');
-        // if Euro does not exist, will use default currency
-        $opportunity->currency_id = $currency->id;
-        $opportunity->name = "Test Opportunity Delete Me";
-        $opportunity->amount = "5000.00";
-        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
-        $opportunity->best_case = "1000.00";
-        $opportunity->likely_case = "750.00";
-        $opportunity->worst_case = "600.00";
-        $opportunity_id = $opportunity->save();
-
+    public function testQuotaRate() {
+        $quote = SugarTestQuoteUtilities::createQuote();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        $quote->currency_id = $currency->id;
+        $quote->save();
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->best_case_base_currency),
-            sprintf('%.6f',$opportunity->best_case / $currency->conversion_rate)
+            sprintf('%.6f',$quote->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
         );
-        $this->assertEquals(
-            sprintf('%.6f',$opportunity->likely_case_base_currency),
-            sprintf('%.6f',$opportunity->likely_case / $currency->conversion_rate)
-        );
-        $this->assertEquals(
-            sprintf('%.6f',$opportunity->worst_case_base_currency),
-            sprintf('%.6f',$opportunity->worst_case / $currency->conversion_rate)
-        );
-
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
     }
 }
