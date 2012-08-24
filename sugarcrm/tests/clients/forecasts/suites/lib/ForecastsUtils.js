@@ -104,6 +104,12 @@ describe("Forecasts Utils", function(){
                 result = app.forecasts.utils.parseDBDate(dbDateStr);
                 expect(result).toBeNull();
             });
+
+            it("should be null on undefined date string", function() {
+                var dbDateStr = undefined;
+                result = app.forecasts.utils.parseDBDate(dbDateStr);
+                expect(result).toBeNull();
+            });
         });
     });
 });

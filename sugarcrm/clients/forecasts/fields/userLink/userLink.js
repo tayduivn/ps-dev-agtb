@@ -29,7 +29,10 @@
             var fieldDate = app.forecasts.utils.parseDBDate(fieldDateStr)
 
             // if fieldDate is newer than the forecast commitDate, then we want to show the field
-            var showFieldAlert = (fieldDate.getTime() > commitDate.getTime());
+            var showFieldAlert = false;
+            if(_.isDate(fieldDate) && _.isDate(commitDate)) {
+                showFieldAlert = (fieldDate.getTime() > commitDate.getTime());
+            }
 
             // if this is not an Opps link, blank the style string to allow the popover icon to be visible
             if((this.model.get('user_id') != this.context.forecasts.get('selectedUser').id) && showFieldAlert) {
@@ -50,7 +53,7 @@
             placement: 'bottom',
             timePeriod : this.model.get('timeperiod_id'), //need timeperiod in the manager model,
             userId : this.uid,
-            dateEntered : commitDate,
+            dateModified : commitDate,
             template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content" id="popover-content-' + this.uid + '"><p></p></div></div></div>'
         });
         return this;
@@ -108,7 +111,7 @@
             {
                 success : function(data) {
                     var userId = '',
-                        commitDate = new Date(this.options.dateEntered),
+                        commitDate = new Date(this.options.dateModified),
                         newestModel = {},
                         oldestModel = {},
                         len = data.length;

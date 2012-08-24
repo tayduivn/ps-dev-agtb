@@ -92,20 +92,22 @@
          */
         parseDBDate: function(dateStr) {
             var retDate = null;
-            var dateTime = dateStr.split(' ');
-            // if there is only one element, we didn't receive a properly formatted date
-            if(dateTime.length > 1) {
-                var dateArr = dateTime[0].split('-');
-                var timeArr = dateTime[1].split(':');
+            if(!_.isUndefined(dateStr)) {
+                var dateTime = dateStr.split(' ');
+                // if there is only one element, we didn't receive a properly formatted date
+                if(dateTime.length > 1) {
+                    var dateArr = dateTime[0].split('-');
+                    var timeArr = dateTime[1].split(':');
 
-                retDate =  new Date(
-                    dateArr[0],
-                    dateArr[1],
-                    dateArr[2],
-                    timeArr[0],
-                    timeArr[1],
-                    timeArr[2]
-                );
+                    retDate =  new Date(
+                        dateArr[0],
+                        dateArr[1],
+                        dateArr[2],
+                        timeArr[0],
+                        timeArr[1],
+                        timeArr[2]
+                    );
+                }
             }
             return retDate;
         }
