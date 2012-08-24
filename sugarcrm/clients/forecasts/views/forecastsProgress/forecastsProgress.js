@@ -73,33 +73,48 @@
                 this.updateProgress();
             }, this);
 
-            // totals models have changed changed
-            this.context.forecasts.on("change:updatedTotals change:updatedManagerTotals", function(context, totals) {
-                self.recalculateTotals(totals);
+            //Manager totals model has changed
+            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+                if(self.shouldRollup) {
+                    self.recalculateManagerTotals(totals);
+                }
+            });
+            //Rep totals model has changed
+            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                if(!self.shouldRollup) {
+                    self.recalculateRepTotals(totals);
+                }
             });
         }
     },
 
 
     /**
-     * take in the totals when they update for the manager/rep worksheet and make sure the rest of the progress model recalculates according to the changes
+     * take in the totals when they update for the rep worksheet and make sure the rest of the progress model recalculates according to the changes
      * @param totals model that was updated
      */
-    recalculateTotals: function (totals) {
-        this.likelyTotal = this.shouldRollup ? totals.likely_adjusted : totals.likely_case;
-        this.bestTotal = this.shouldRollup ? totals.best_adjusted : totals.best_case;
-        if(this.shouldRollup) {
-            this.model.set({
-                revenue : totals.amount,
-                quota_amount : totals.quota
-            });
-        } else {
-            this.model.set({
-                closed_amount : totals.won_amount,
-                opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
-                revenue : totals.amount
-            });
-        }
+    recalculateRepTotals: function (totals) {
+        this.likelyTotal = totals.likely_case;
+        this.bestTotal = totals.best_case;
+        this.model.set({
+            closed_amount : totals.won_amount,
+            opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
+            revenue : totals.amount
+        });
+        this.recalculateModel();
+    },
+
+    /**
+     * take in the totals when they update for the manager worksheet and make sure the rest of the progress model recalculates according to the changes
+     * @param totals model that was updated
+     */
+    recalculateManagerTotals: function (totals) {
+        this.likelyTotal = totals.likely_adjusted;
+        this.bestTotal = totals.best_adjusted;
+        this.model.set({
+            revenue : totals.amount,
+            quota_amount : totals.quota
+        });
         this.recalculateModel();
     },
 
