@@ -248,24 +248,26 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->ClearAttachments();
 
 		foreach ($this->attachments as $attachment) {
-			if (!$this->mailer->AddAttachment(
-					$attachment['path'],
-					$attachment['name'],
-					$attachment['encoding'],
-					$attachment['mimetype'])
-			) {
-				throw new MailerException("Invalid attachment");
-			}
-		}
-
-		foreach ($this->embeddedImages as $image) {
-			if (!$this->mailer->AddEmbeddedImage(
-				$image['path'],
-				$image['cid'],
-				$image['name'],
-				$image['encoding'],
-				$image['mimetype'])
-			) {
+			if ($attachment instanceof Attachment) {
+				if (!$this->mailer->AddAttachment(
+					$attachment->getPath(),
+					$attachment->getName(),
+					$attachment->getEncoding(),
+					$attachment->getMimeType())
+				) {
+					throw new MailerException("Invalid attachment");
+				}
+			} elseif ($attachment instanceof EmbeddedImage) {
+				if (!$this->mailer->AddEmbeddedImage(
+					$attachment->getPath(),
+					$attachment->getCid(),
+					$attachment->getName(),
+					$attachment->getEncoding(),
+					$attachment->getMimeType())
+				) {
+					throw new MailerException("Invalid image");
+				}
+			} else {
 				throw new MailerException("Invalid file");
 			}
 		}

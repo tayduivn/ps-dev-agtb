@@ -42,7 +42,6 @@ abstract class BaseMailer implements IMailer
 	protected $htmlBody;
 	protected $textBody;
 	protected $attachments;
-	protected $embeddedImages;
 
 	public function __construct() {
 		$this->reset();
@@ -170,27 +169,15 @@ abstract class BaseMailer implements IMailer
 	}
 
 	public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
-		$this->attachments[] = array(
-			'path'     => $path,
-			'name'     => $name,
-			'encoding' => $encoding,
-			'mimetype' => $mimeType,
-		);
+		$this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
 	}
 
 	public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
-		$this->embeddedImages[] = array(
-			'path'     => $path,
-			'cid'      => $cid,
-			'name'     => $name,
-			'encoding' => $encoding,
-			'mimetype' => $mimeType,
-		);
+		$this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
 	}
 
 	public function clearAttachments() {
 		$this->attachments = array();
-		$this->embeddedImages = array();
 	}
 
 	protected function hasMessagePart($part) {
