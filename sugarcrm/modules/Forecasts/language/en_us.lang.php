@@ -300,4 +300,5 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
+    'LBL_TIMEFRAMES' => 'Timeframes',
 );
