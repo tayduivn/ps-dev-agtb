@@ -423,22 +423,15 @@
 	
           $("#date_filter").chosen().change(function(formData){
               var q = quarter(formData.target.value);
-              //console.log(q)
-              //oTable.fnDraw();
 
-              var datafile = ( q === 'q1') ? forecast_data_Q2 : forecast_data_Q1;
-              //chartFile =  'forecast-json-'+q+'-month.js';
-              //forecast = swapChart(chartId,chartFile,css,chartConfig);
+              var datafile = ( q === 'q1') ? forecast_data_Q1 : forecast_data_Q2;
 
-              console.log(q)
               d3.select('#chart1 svg')
                 .datum(datafile)
                 .transition().duration(500).call(chart);
 
           }).ready(function(){
                var q = quarter($("#date_filter")[0].value);
-              //chartFile =  'forecast-json-'+q+'-month.js';
-              //forecast = swapChart(chartId,chartFile,css,chartConfig);
           });
 
 	        return chart;
