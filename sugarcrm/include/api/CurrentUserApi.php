@@ -92,6 +92,7 @@ class CurrentUserApi extends SugarApi {
             $box = BoxOfficeClient::getInstance();
             $inst = $box->getCurrentInstance();
             $user_data['instance_name'] = $inst['name'];
+            $user_data['instance_id'] = $inst['id'];
         }
 
         return $data = array('current_user'=>$user_data);

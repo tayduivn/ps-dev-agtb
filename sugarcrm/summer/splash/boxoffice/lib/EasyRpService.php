@@ -42,7 +42,8 @@ class EasyRpService
 	    $gitk['continueUrl'] = $continueUri;
 	    $gitk['oauthConsumerKey'] = $this->key;
 	    $gitk['uiMode'] = "redirect";
-	    $gitk['oauthScope'] = "https://www.google.com/m8/feeds/ https://mail.google.com/mail/feed/atom https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+	    // removed https://mail.google.com/mail/feed/atom  for now, not used
+	    $gitk['oauthScope'] = "https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 	    $gitk['context'] = array("rp_target" => "callback", "rp_purpose" => "signin","rp_input_email" => "email");
 	    $gitk['access_type'] = 'offline';
 	    $gitk['approval_prompt'] = 'force';

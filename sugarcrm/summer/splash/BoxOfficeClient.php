@@ -153,6 +153,9 @@ class BoxOfficeClient
             return false;
         }
         $this->session = $this->box->selectInstance($this->user['id'], $this->user['email'], $this->instance['id']);
+        if($this->session) {
+            $_SESSION['boxoffice'] = $this->box->getConfig($this->session);
+        }
         return $this->session;
     }
 

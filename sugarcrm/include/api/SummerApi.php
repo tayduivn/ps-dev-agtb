@@ -45,6 +45,13 @@ class SummerApi extends SugarApi {
                 'method' => 'invite',
                 'shortHelp' => 'Invite People',
             ),
+            'logout' => array(
+                'reqType' => 'POST',
+                'path' => array('summer','logout'),
+                'pathVars' => array('',''),
+                'method' => 'logout',
+                'shortHelp' => 'Log out of the instance',
+            )
         );
     }
 
@@ -59,5 +66,12 @@ class SummerApi extends SugarApi {
             throw new SugarApiExceptionMissingParameter('Email is missing.');
         }
         return $this->box->invite($args['email']);
+    }
+
+    public function logout($api, $args)
+    {
+        $this->box->deleteSession();
+        unset($_SESSION['authenticated_user_id']);
+        return true;
     }
 }

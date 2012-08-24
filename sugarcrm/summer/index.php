@@ -15,7 +15,7 @@ if(!empty($_REQUEST['token'])) {
     die();
 }
 if (empty($_SESSION['authenticated_user_id'])) {
-    header('Location: splash/index.html');
+    header('Location: splash/');
     die();
 }
 
