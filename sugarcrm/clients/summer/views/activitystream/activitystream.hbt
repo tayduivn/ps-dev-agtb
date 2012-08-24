@@ -40,10 +40,6 @@
           <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
         </div>
         <ul>
-        <div class="control-group form-horizontal activitystream-comment hide">
-          <input type="text" value="" class="sayit" placeholder="Add your comment">
-          <input type="submit" data-id="{{attributes.activity_id}}" class="btn btn-primary postReply" value="Reply">
-        </div>
         </ul>
         {{#if attributes.comments.length}}
         <ul>
@@ -60,6 +56,12 @@
             {{/each}}
          </ul>
          {{/if}}
+         <ul>
+          <div class="control-group form-horizontal activitystream-comment hide">
+            <input type="text" value="" class="sayit" placeholder="Add your comment">
+            <input type="submit" data-id="{{attributes.activity_id}}" class="btn btn-primary postReply" value="Reply">
+          </div>
+         </ul>
       </li>
       {{/each}}
     {{else}}
