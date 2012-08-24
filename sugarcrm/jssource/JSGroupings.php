@@ -195,16 +195,16 @@
             ),
             $sugar_grp_portal2 = array(
                 'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-button.js'  => 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-tooltip.js' => 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-dropdown.js'=> 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-popover.js' => 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-modal.js'   => 'portal2/portal.min.js',
-                'portal2/lib/twitterbootstrap/js/bootstrap-alert.js'   => 'portal2/portal.min.js',
+
+                'styleguide/assets/js/bootstrap-button.js'  => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-tooltip.js' => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-dropdown.js'=> 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-popover.js' => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-modal.js'   => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-alert.js'   => 'portal2/portal.min.js',
                 'portal2/error.js'               => 'portal2/portal.min.js',
                 'portal2/user.js'                => 'portal2/portal.min.js',
                 'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
-                'portal2/views/footer-view.js'   => 'portal2/portal.min.js',
                 'portal2/portal.js'              => 'portal2/portal.min.js',
                 'portal2/portal-ui.js'           => 'portal2/portal.min.js',
 
