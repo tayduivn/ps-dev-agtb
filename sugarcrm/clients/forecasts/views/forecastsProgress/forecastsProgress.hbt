@@ -1,4 +1,3 @@
-{{#if quota}}
 <table class="table">
 	<thead>
 		<th>{{str "LBL_PROJECTED" "Forecasts"}}</th>
@@ -7,57 +6,57 @@
 		<tr>
 			<td>{{str "LBL_QUOTA" "Forecasts"}}</td>
 			<td></td>
-			<td>{{formatNumber quota.amount}}</td>
+			<td>{{formatNumber quota_amount}}</td>
 		</tr>
 		<tr>
 			<td>
-				{{#if quota.likely_case.above}}
+				{{#if quota_likely_above}}
 					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA" "Forecasts"}}
 				{{else}}
 					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA" "Forecasts"}}
 				{{/if}}
 			</td>
-			<td>{{formatPercentage quota.likely_case.percent}}</td>
-			<td>{{formatNumber quota.likely_case.amount}}</td>
+			<td>{{formatPercentage quota_likely_percent}}</td>
+			<td>{{formatNumber quota_likely_amount}}</td>
 		</tr>
 		<tr>
 			<td>
-				{{#if quota.best_case.above}}
+				{{#if quota_best_above}}
 					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA" "Forecasts"}}
 				{{else}}
 					{{str "LBL_DISTANCE_LEFT_BEST_TO_QUOTA" "Forecasts"}}
 				{{/if}}
 			</td>
-			<td>{{formatPercentage quota.best_case.percent}}</td>
-			<td>{{formatNumber quota.best_case.amount}}</td>
+			<td>{{formatPercentage quota_best_percent}}</td>
+			<td>{{formatNumber quota_best_amount}}</td>
 		</tr>
 
 		<tr>
 			<th>{{str "LBL_CLOSED" "Forecasts"}}</th>
 			<th></th>
-			<th>{{formatNumber closed.amount}}</th>
+			<th>{{formatNumber closed_amount}}</th>
 		</tr>
 		<tr>
 			<td>
-				{{#if closed.likely_case.above}}
+				{{#if closed_likely_above}}
 					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED" "Forecasts"}}
 				{{else}}
 					{{str "LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED" "Forecasts"}}
 				{{/if}}
 			</td>
-			<td>{{formatPercentage closed.likely_case.percent}}</td>
-			<td>{{formatNumber closed.likely_case.amount}}</td>
+			<td>{{formatPercentage closed_likely_percent}}</td>
+			<td>{{formatNumber closed_likely_amount}}</td>
 		</tr>
 		<tr>
 			<td>
-				{{#if closed.best_case.above}}
+				{{#if closed_best_above}}
 					{{str "LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED" "Forecasts"}}
 				{{else}}
 					{{str "LBL_DISTANCE_LEFT_BEST_TO_CLOSED" "Forecasts"}}
 				{{/if}}
 			</td>
-			<td>{{formatPercentage closed.best_case.percent}}</td>
-			<td>{{formatNumber closed.best_case.amount}}</td>
+			<td>{{formatPercentage closed_best_percent}}</td>
+			<td>{{formatNumber closed_best_amount}}</td>
 		</tr>
 	</tbody>
 	<tfoot>
@@ -75,6 +74,3 @@
 		</td>
 	</tfoot>
 </table>
-{{else}}
-	<strong>{{str "LBL_LOADING" "Forecasts"}}&hellip;</strong>
-{{/if}}
