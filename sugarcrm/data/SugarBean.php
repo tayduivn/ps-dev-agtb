@@ -286,7 +286,12 @@ class SugarBean
      * @var array
      */
     protected $loaded_relationships = array();
-
+	
+	/**
+     * set to true if dependent fields updated
+     */
+    protected $is_updated_dependent_fields = false;
+	
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -1753,7 +1758,7 @@ class SugarBean
     {
         // This is ignored when coming via a webservice as it's only needed for display and not just raw data.
         // It results in a huge performance gain when pulling multiple records via webservices.
-        if(!isset($GLOBALS['service_object'])) {
+        if(!isset($GLOBALS['service_object']) && !$this->is_updated_dependent_fields) {
             require_once("include/Expressions/DependencyManager.php");
             $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
             foreach($deps as $dep)
@@ -2627,7 +2632,8 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $this->custom_fields->fill_relationships();
         }
-
+		
+		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
         //make a copy of fields in the relationship_fields array. These field values will be used to
@@ -3204,7 +3210,11 @@ function save_relationship_changes($is_update, $exclude=array())
                 $query_array = $subquery['query_array'];
                 $select_position=strpos($query_array['select'],"SELECT");
                 $distinct_position=strpos($query_array['select'],"DISTINCT");
-                if ($select_position !== false && $distinct_position!= false)
+                if (!empty($subquery['params']['distinct']) && !empty($subpanel_def->table_name))
+                {
+                    $query_rows = "( SELECT count(DISTINCT ". $subpanel_def->table_name . ".id)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+                }
+                elseif ($select_position !== false && $distinct_position!= false)
                 {
                     $query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
@@ -5040,7 +5050,46 @@ function save_relationship_changes($is_update, $exclude=array())
     function list_view_parse_additional_sections(&$list_form)
     {
     }
-
+	//BEGIN SUGARCRM flav=pro ONLY
+	/*
+     * fix bug #54042: ListView calculates all field dependencies
+     *
+     * return listDef for bean
+     */
+    function updateDependentFieldForListView($listview_def_main = '')
+    {
+        static $listview_def = '';
+        static $module_name = '';
+        // for subpanels
+        if (!empty($listview_def_main))
+        {
+            $listview_def = $listview_def_main;
+        } elseif (empty($listview_def) || $module_name != $this->module_name)
+        {
+            $view = new SugarView();
+            $view->type = 'list';
+            $view->module = $this->module_name;
+            $listview_meta_file = $view->getMetaDataFile();
+            if (!empty($listview_meta_file))
+            {
+                require $listview_meta_file;
+                $listview_def = $listViewDefs[$this->module_name];
+            }
+            $module_name = $this->module_name;
+        }
+        
+        if (!empty($listview_def))
+        {
+            $temp_field_defs = $this->field_defs;
+            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
+            $this->updateDependentField();
+            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
+        } else {
+            $this->updateDependentField();
+        }
+		$this->is_updated_dependent_fields = true;
+    }
+	//END SUGARCRM flav=pro ONLY
     /**
      * Assigns all of the values into the template for the list view
      */
@@ -5189,6 +5238,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $row = $this->convertRow($row);
         $this->fetched_row = $row;
         $this->fromArray($row);
+		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         return $this;
     }

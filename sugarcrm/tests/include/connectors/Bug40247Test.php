@@ -147,6 +147,12 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
 	        foreach($viewdefs["{$mod}"]['DetailView']['panels'] as $panels) {
 	        	foreach($panels as $panel) {
 	        		foreach($panel as $row=>$col) {
+
+                        if(empty($col))
+                        {
+                           continue;
+                        }
+
 	        		    if(is_array($col) && $col['name'] == 'full_name') {
 	        		       if(isset($col['displayParams']) && isset($col['displayParams']['connectors'])) {
 	                       	  foreach($col['displayParams']['connectors'] as $entry)

@@ -27,7 +27,7 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY
 *}
-<link rel="stylesheet" type="text/css" href="portal2/lib/twitterbootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="{$css_url}" />
 <h1>Customize Theme</h1>
 <div class="themes" style="">
     <div class="content"></div>
@@ -61,7 +61,8 @@
             }
         },
         clientID:"sugar",
-                authStore:"sugarAuthStore"
+                authStore:"sugarAuthStore",
+        loadCss: false
     }, false);
 
 })(SUGAR.App);
