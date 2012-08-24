@@ -21,8 +21,8 @@
       }
     }
 
-      // do this if greater than 768px page width
-      if ( $(window).width() > 768) {		
+    // do this if greater than 768px page width
+    if ( $(window).width() > 768) {		
       // tooltip demo
       $('body').tooltip({
         selector: "[rel=tooltip]"
@@ -38,76 +38,75 @@
         selector: "[rel=tooltip]",
   			placement: "bottom"
       })  
-      }
+    }
 
-      $("th:contains('Subject')").css("width","50%")
-      $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%")
-      $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
-      $("#folded th:contains('Opportunity'),th:contains('Name')").css("width","70%")
-    
-      // keybinding
-      $(document).keyup(function(e){
-          if(e.keyCode === 27) 
-            $(".alert-top").remove();
+    $("th:contains('Subject')").css("width","50%")
+    $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%")
+    $("th:contains('Opportunity'),th:contains('Name')").css("width","30%")
+    $("#folded th:contains('Opportunity'),th:contains('Name')").css("width","70%")
+  
+    // keybinding
+    $(document).keyup(function(e){
+        if(e.keyCode === 27) 
+          $(".alert-top").remove();
+    })
+
+    // add tipsies to grid for scaffolding (styleguide only)
+    if ($('#grid-system').length) {
+      $('#grid-system').tooltip({
+          selector: '.show-grid > div'
+        , title: function () { return $(this).width() + 'px' }
       })
+    }
 
-      // add tipsies to grid for scaffolding (styleguide only)
-      if ($('#grid-system').length) {
-        $('#grid-system').tooltip({
-            selector: '.show-grid > div'
-          , title: function () { return $(this).width() + 'px' }
-        })
-      }
+    // toggle all stars
+    $('.toggle-all-stars').on('click', function (e) {
+    		$(this).closest('table').toggleClass('active'); 
+    		return false;
+    })
 
-      // toggle all stars
-      $('.toggle-all-stars').on('click', function (e) {
-      		$(this).closest('table').toggleClass('active'); 
-      		return false;
-      })
+    // toggle all checkboxes
+    $('.toggle-all').on('click', function (e) {
+    		$('table').find(':checkbox').attr('checked', this.checked);      
+    })
 
-      // toggle all checkboxes
-      $('.toggle-all').on('click', function (e) {
-      		$('table').find(':checkbox').attr('checked', this.checked);      
-      })
+    // timeout the alerts
+    setTimeout(function(){$('.timeten').fadeOut().remove();},9000)
 
-      // timeout the alerts
-      setTimeout(function(){$('.timeten').fadeOut().remove();},9000)
+    // toggle star
+    $('.icon-star').on('click', function (e) {
+    		$(this).parent().toggleClass('active');
+    		return false;  
+    })
 
-      // toggle star
-      $('.icon-star').on('click', function (e) {
-      		$(this).parent().toggleClass('active');
+    // toggle more hide
+    $('.more').toggle(
+      function (e) {
+    		$(this).parent().prev('.extend').removeClass('hide');
+    		$(this).html('Less &nbsp;<i class="icon-chevron-up"></i>');
+    		return false;  
+      },
+      function (e) {
+      		$(this).parent().prev('.extend').addClass('hide');
+      		$(this).html('More &nbsp;<i class="icon-chevron-down"></i>');
       		return false;  
-      })
+    })
 
-      // toggle more hide
-      $('.more').toggle(
-        function (e) {
-      		$(this).parent().prev('.extend').removeClass('hide');
-      		$(this).html('Less &nbsp;<i class="icon-chevron-up"></i>');
+    // toggle drawer hide
+    $('.drawer').toggle(
+      function (e) {
+    		$(this).next('.extend').removeClass('hide');
+    		$(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
+    		return false;  
+      },
+      function (e) {
+      		$(this).next('.extend').addClass('hide');
+      		$(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
       		return false;  
-        },
-        function (e) {
-        		$(this).parent().prev('.extend').addClass('hide');
-        		$(this).html('More &nbsp;<i class="icon-chevron-down"></i>');
-        		return false;  
-      })
+    })
 
-      // toggle drawer hide
-      $('.drawer').toggle(
-        function (e) {
-      		$(this).next('.extend').removeClass('hide');
-      		$(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
-      		return false;  
-        },
-        function (e) {
-        		$(this).next('.extend').addClass('hide');
-        		$(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
-        		return false;  
-      })
-
-
-      // column collapse
-      $('.drawerTrig').on('click',
+    // column collapse
+    $('.drawerTrig').on('click',
       function () {
        // $(this).toggleClass('pull-right').toggleClass('pull-left');
         $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
@@ -117,20 +116,15 @@
         //$('.bordered').toggleClass('hide');
        // $('#charts').toggleClass('span10').toggleClass('span12');
         return false;
-      })
-      
-      // column collapse
-
-
-      $('.btngroup .btn').button()
-
-
-      // editable example
-      $('.dblclick').hover(
-        function () {$(this).before('<span class="span2" style="border-right: none; position: absolute; top: -2px; left: -16px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');},
-        function () {$('span.span2').remove();}
-    	)
     })
+
+    $('.btngroup .btn').button()
+
+    // editable example
+    $('.dblclick').hover(
+      function () {$(this).before('<span class="span2" style="border-right: none; position: absolute; top: -2px; left: -16px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');},
+      function () {$('span.span2').remove();}
+  	)
 
     $('.comment').toggle( 
       function (e) {
@@ -157,17 +151,15 @@
       		return false;  
     })
 
-
     $('.actions').find('a[data-toggle=tab]').on('click', function (e) {
       $('.nav-tabs').find('li').removeClass('on');
   		$(this).parent().parent().addClass('on');
     })
 
-      // remove a close item
-      $('#folded').find('[data-toggle=tab]').on('click', function (e) {
-  			$('.nav-tabs').find('li').removeClass('on');
-      })
-      
+    // remove a close item
+    $('#folded').find('[data-toggle=tab]').on('click', function (e) {
+			$('.nav-tabs').find('li').removeClass('on');
+    })
 
     // toggle module search (needs tap logic for mobile)
   	$('.addit').on('click', function () {
@@ -175,6 +167,7 @@
   	    $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
   	    return false;
   	})
+
   	$('.search').on('click', function () {
   	    $(this).toggleClass('active');
   	    $(this).parent().parent().parent().find('.dataTables_filter').toggle(
@@ -188,14 +181,13 @@
   	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
   	    return false;
   	})
-            
-  	        
+    
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
       "bInfo": false,
       "bAutoWidth": false
-    })  
+    })
 
     // Select widget
     $(".chzn-select").chosen()
@@ -206,9 +198,8 @@
     $("[rel=popoverTop]").popover({placement: "top"})
     $("[rel=popoverBottom]").popover({placement: "bottom"})
 
+    $('#moduleActivity .form-search select').chosen()
 
-$('#moduleActivity .form-search select').chosen()
-
-$('#moduleActivity .form-search input').quicksearch('ul.results li')
+    $('#moduleActivity .form-search input').quicksearch('ul.results li')
 
 }(window.jQuery)

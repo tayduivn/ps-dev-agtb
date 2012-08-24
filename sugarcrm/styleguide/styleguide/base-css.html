@@ -1,76 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Base CSS - SugarCRM Patterns and Styleguide</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+  <meta charset="utf-8">
+  <title>Base CSS - SugarCRM Patterns and Styleguide</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <link href="css/ltie9.css" rel="stylesheet">
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+    <link href="css/ltie9.css" rel="stylesheet">
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/styleguide.css" rel="stylesheet">
-    <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
-  </head>
-  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/styleguide.css" rel="stylesheet">
+  <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="50">
 
-  <!-- Navbar
-    ================================================== -->
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
-              <li>
-                <a href="index.html">Overview</a>
-              </li>
-              <li>
-                <a href="scaffolding.html">Scaffolding</a>
-              </li>
-              <li class="active">
-                <a href="base-css.html">Base CSS</a>
-              </li>
-              <li>
-                <a href="components.html">Components</a>
-              </li>
-              <li>
-                <a href="widgets.html">Widgets</a>
-              </li>
-              <li>
-                <a href="less.html">Quick Styles</a>
-              </li>
-            </ul>
-          </div>
+<!-- Navbar
+  ================================================== -->
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
+            <li>
+              <a href="index.html">Overview</a>
+            </li>
+            <li>
+              <a href="scaffolding.html">Scaffolding</a>
+            </li>
+            <li class="active">
+              <a href="base-css.html">Base CSS</a>
+            </li>
+            <li>
+              <a href="components.html">Components</a>
+            </li>
+            <li>
+              <a href="widgets.html">Widgets</a>
+            </li>
+            <li>
+              <a href="less.html">Quick Styles</a>
+            </li>
+            <li>
+              <a href="theming.html">Theming</a>
+            </li>
+            <li>
+              <a href="charting.html">Charting</a>
+            </li>
+            <li>
+              <a href="sugar7">Prototypes</a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-
-    <div class="container">
-
-<!-- Masthead
-================================================== -->
-<header class="jumbotron subhead" id="overview">
-  <h1>Base CSS</h1>
-  <p class="lead">On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel.</p>
-  <div class="subnav">
-    <ul class="nav nav-pills">
-      <li><a href="#typography">Typography</a></li>
-      <li><a href="#code">Code</a></li>
-      <li><a href="#tables">Tables</a></li>
-      <li><a href="#forms">Forms</a></li>
-      <li><a href="#buttons">Buttons</a></li>
-      <li><a href="#icons">Icons</a></li>
-    </ul>
   </div>
-</header>
+
+  <div class="container">
+
+    <!-- Masthead
+    ================================================== -->
+    <header class="jumbotron subhead" id="overview">
+      <h1>Base CSS</h1>
+      <p class="lead">On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel.</p>
+      <div class="subnav">
+        <ul class="nav nav-pills">
+          <li><a href="#typography">Typography</a></li>
+          <li><a href="#code">Code</a></li>
+          <li><a href="#tables">Tables</a></li>
+          <li><a href="#forms">Forms</a></li>
+          <li><a href="#buttons">Buttons</a></li>
+          <li><a href="#icons">Icons</a></li>
+        </ul>
+      </div>
+    </header>
 
 
 <!-- Typography
@@ -1827,18 +1836,10 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
 
     <script src="js/jquery-1.7.2.min.js"></script>
     <script src="js/google-code-prettify/prettify.js"></script>
-    <script src="../bootstrap/js/bootstrap-transition.js"></script>
-    <script src="../bootstrap/js/bootstrap-alert.js"></script>
-    <script src="../bootstrap/js/bootstrap-modal.js"></script>
-    <script src="../bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="../bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="../bootstrap/js/bootstrap-tab.js"></script>
-    <script src="../bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="../bootstrap/js/bootstrap-popover.js"></script>
-    <script src="../bootstrap/js/bootstrap-button.js"></script>
-    <script src="../bootstrap/js/bootstrap-collapse.js"></script>
-    <script src="../bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="../bootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../bootstrap/js/bootstrap-datepicker.js"></script>
+    <script src="../bootstrap/js/bootstrap-colorpicker.js"></script>
+    <script src="../bootstrap/js/bootstrapx-clickover.js"></script>
     <script src="js/styleguide.js"></script>
     <script src="js/application.js"></script>
 

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Charting - SugarCRM Patterns and Styleguide</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+    <link href="css/ltie9.css" rel="stylesheet">
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/styleguide.css" rel="stylesheet">
+  <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
+  <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+  #horiz1, #horiz2, #vert1, #vert2, #circ1, #circ2, #funnel1, #funnel2 {
+    height: 300px;
+    min-width: 100px;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+  /*
+    Minimum height and width is a good idea to prevent negative SVG dimensions...
+    For example width should be =< margin.left + margin.right + 1,
+    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+  */
+  }
+  .nvd3 .nv-x.nv-axis text {
+    font-size: 10px;
+  }
+  .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+    fill-opacity: 1;
+    stroke-opacity: 1;
+    stroke-width: 2;
+  }
+  .nv-quotaWrap line {
+    opacity: .8;
+    stroke: #444;
+    stroke-width: 3;
+    //stroke-dasharray: '20, 5';
+  }
+</style>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="50">
+
+<!-- Navbar
+  ================================================== -->
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
+            <li>
+              <a href="index.html">Overview</a>
+            </li>
+            <li>
+              <a href="scaffolding.html">Scaffolding</a>
+            </li>
+            <li>
+              <a href="base-css.html">Base CSS</a>
+            </li>
+            <li>
+              <a href="components.html">Components</a>
+            </li>
+            <li>
+              <a href="widgets.html">Widgets</a>
+            </li>
+            <li>
+              <a href="less.html">Quick Styles</a>
+            </li>
+            <li>
+              <a href="theming.html">Theming</a>
+            </li>
+            <li class="active">
+              <a href="charting.html">Charting</a>
+            </li>
+            <li>
+              <a href="sugar7">Prototypes</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Masthead
+    ================================================== -->
+    <header class="jumbotron subhead" id="overview">
+      <h1>Sugar7 Charting</h1>
+      <p class="lead">Implementing standard and custom SVG charts for Sugar7 release using the <a href="http://d3js.org/">D3 library</a> and the <a href="http://nvd3.com/">NVD3 framework</a>.</p>
+      <div class="subnav">
+        <ul class="nav nav-pills">
+          <li><a href="#horiz-bar">Horizontal Bar</a></li>
+          <li><a href="#vert-bar">Vertical Bar</a></li>
+          <li><a href="#circular">Circular</a></li>
+          <li><a href="#custom">Funnel</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section id="implementation">
+      <div class="page-header">
+        <h2>Chart Implementation <small>Patterns for inserting and configuring charts.</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+
+          <h3>Simple Chart Instance</h3>
+          <p>using default parameters.</p>
+<pre class="prettyprint linenums">
+&lt;script type="text/javascript"&gt;
+  var chart = nv.models.multiBarChart();
+&lt;/script&gt;
+</pre>
+
+          <h3>Overriding Base Event Handlers</h3>
+          <p>Default chart handlers can be overridden by passing a function on instantiation.</p>
+<pre class="prettyprint linenums">
+&lt;script type="text/javascript"&gt;
+  var chart = nv.models.multiBarChart()
+                .barClick( function(data,e,selection) {
+                    d3.select('#chart1 svg')
+                      .datum(forecast_data_Q2)
+                      .transition().duration(500).call(chart);
+                  } 
+                );
+&lt;/script&gt;
+</pre>
+
+          <h3>Setting Parameters</h3>
+          <p>Chart parameters can be set by calling public functions.</p>
+
+<pre class="prettyprint linenums">
+&lt;script type="text/javascript"&gt;
+  var chart = nv.models.multiBarHorizontalChart()
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .margin({top: 0, right: 0, bottom: 15, left: 90})
+                .showValues(true)
+                .tooltips(true)
+                .showControls(false);
+&lt;/script&gt;
+</pre>
+
+          <h3>Instantiating Chart </h3>
+          <p>A chart can be instantiated with generate and callback functions.</p>
+<pre class="prettyprint linenums">
+&lt;script type="text/javascript"&gt;
+    nv.addGraph({
+      generate: function() {
+          var chart = nv.models.multiBarChart();
+          
+          d3.select('#chart1 svg')
+            .datum(forecast_data_Q1)
+            .transition().duration(500).call(chart);
+  
+          nv.utils.windowResize(chart.update);
+  
+          return chart;
+      },
+      callback: function(graph) {
+        $('#log').text('Chart is loaded');
+      }
+    });
+&lt;/script&gt;
+</pre>
+
+
+        </div>
+
+        <div class="span6">
+        
+          <h3>Standard Parameters</h3>
+          <p>This is a set of common chart parameters.</p>
+          <div>
+<table class="table table-bordered table-striped">
+  <thead>
+   <tr>
+     <th style="width: 100px;">Name</th>
+     <th style="width: 50px;">type</th>
+     <th style="width: 50px;">default</th>
+     <th>description</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+     <td>margin</td>
+     <td>map</td>
+     <td>varies</td>
+     <td><code>{top: 20, right: 10, bottom: 40, left: 40}</code></td>
+   </tr>
+   <tr>
+     <td>width | height</td>
+     <td>numeric</td>
+     <td>null</td>
+     <td>set fixed width; null sets chart to expand to containing div</td>
+   </tr>
+   <tr>
+     <td>getX | getY</td>
+     <td>function</td>
+     <td><code>function(d) { return d.x }</code></td>
+     <td>how to get to the x,y property in the datum</td>
+   </tr>
+   <tr>
+     <td>color</td>
+     <td>function</td>
+     <td><code>nv.utils.defaultColor()</code></td>
+     <td>call to function to return color map</td>
+   </tr>
+   <tr>
+     <td>showControls</td>
+     <td>boolean</td>
+     <td>false</td>
+     <td>show chart controls if any</td>
+   </tr>
+   <tr>
+     <td>showLegend</td>
+     <td>boolean</td>
+     <td>true</td>
+     <td>show chart legend</td>
+   </tr>
+   <tr>
+     <td>reduceXTicks | reduceYTicks</td>
+     <td>boolean</td>
+     <td>true</td>
+     <td>if false a tick will show for every data point</td>
+   </tr>
+   <tr>
+     <td>rotateLabels</td>
+     <td>boolean</td>
+     <td>false</td>
+     <td>angle to rotate axis labels</td>
+   </tr>
+   <tr>
+     <td>tooltips</td>
+     <td>boolean</td>
+     <td>true</td>
+     <td>show tooltips over charting elements</td>
+   </tr>
+   <tr>
+     <td>tooltip</td>
+     <td>function</td>
+     <td><code>function(key, x, y, e, graph) { return '&lt;h3&gt;' + key + ' - ' + x + '&lt;/h3&gt;' + '&lt;p&gt;' +  y + '&lt;/p&gt;'}</code></td>
+     <td>function that returns an html formated string</td>
+   </tr>
+   <tr>
+     <td>noData</td>
+     <td>string</td>
+     <td>"No Data Available."</td>
+     <td>message to display when no data is available</td>
+   </tr>
+  </tbody>
+</table>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+
+    <section id="horiz-bar">
+      <div class="page-header">
+        <h2>Horizontal Bar <small>used for comparing many values in a single series</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>All Opportunities By Lead Source By Outcome </h3>
+          <p>Long description.</p>
+          <div>
+<div id="horiz1">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Modules Used By Team Members</h3>
+          <p>Long description.</p>
+          <div>
+<div id="horiz2">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vert-bar">
+      <div class="page-header">
+        <h2>Vertical Bar <small>used for comparing multiple series with a few values</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Campaign ROI</h3>
+          <p>Long description.</p>
+          <div>
+<div id="vert1">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>My Forecasting</h3>
+          <p>This chart type is a new chart type created for SugarCRM. An example of usage in the Sugar7 prototype is on <a href="../styleguide/sugar7/forecast_nvd3.html">forecasting page</a>.</p>
+          <div>
+<div id="vert2">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="circular">
+      <div class="page-header">
+        <h2>Circular Charts <small>used for comparing parts to a whole</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>All Opportunities by Lead Source</h3>
+          <p>Example pie chart.</p>
+          <div>
+<div id="circ1">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>My Closed Won Opportunities</h3>
+          <p>Example guage chart.</p>
+          <div>
+<div id="circ2">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funnel">
+      <div class="page-header">
+        <h2>Funnel Charts <small>used for comparing values in a process</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>My Pipeline By Sales Stage</h3>
+          <p>Example pie chart.</p>
+          <div>
+<div id="funnel1">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Pipeline By Sales Stage</h3>
+          <p>Example guage chart.</p>
+          <div>
+<div id="funnel2">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/google-code-prettify/prettify.js"></script>
+  <script src="../bootstrap/js/bootstrap.min.js"></script>
+  <script src="../bootstrap/js/bootstrap-datepicker.js"></script>
+  <script src="../bootstrap/js/bootstrap-colorpicker.js"></script>
+  <script src="../bootstrap/js/bootstrapx-clickover.js"></script>
+  <script src="js/styleguide.js"></script>
+  <script src="js/application.js"></script>
+
+  <!-- new D3 charting library files -->
+  <script src="js/nvd3/lib/d3.v2.min.js"></script>
+  <script src="js/nvd3/nv.d3.min.js"></script>
+  <script src="js/nvd3/src/models/multiBarChart_sugar.js"></script>
+  <script src="js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
+  <script src="js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
+
+  <script src="js/nvd3/data/forecasting_q1.js"></script>
+  <script src="js/nvd3/data/forecasting_q2.js"></script>
+  <script src="js/nvd3/data/opportunities.js"></script>
+
+
+
+  <script>
+      //instantiate D3 chart using NVD3
+    nv.addGraph({
+      generate: function() {
+          //var chart = nv.models.multiBarChart();
+          //override default barClick function
+          var chart = nv.models.multiBarChart()
+                        .barClick( function(data,e,selection) {
+                            //if only one bar series is disabled
+                            // console.log(data);
+                            // console.log(e);
+                            // console.log(selection);
+                            d3.select('#vert2 svg')
+                              .datum(forecast_data_Q2)
+                              .transition().duration(500).call(chart);
+                          } 
+                        );
+          //end override
+          
+          d3.select('#vert2 svg')
+            .datum(forecast_data_Q1)
+            .transition().duration(500).call(chart);
+  
+          nv.utils.windowResize(chart.update);
+  
+          return chart;
+      },
+      callback: function(graph) {
+        $('#log').text('Chart is loaded');
+      }
+    });
+
+    nv.addGraph({
+      generate: function() {
+        nv.addGraph(function() {
+          var chart = nv.models.multiBarHorizontalChart()
+              .x(function(d) { return d.label })
+              .y(function(d) { return d.value })
+              .margin({top: 0, right: 0, bottom: 15, left: 90})
+              .showValues(true)
+              .tooltips(true)
+              .showControls(false);
+
+          chart.yAxis
+              .tickFormat(d3.format(',.2f'));
+
+          d3.select('#horiz1 svg')
+              .datum(opportunities_data)
+            .transition().duration(500)
+              .call(chart);
+
+          nv.utils.windowResize(chart.update);
+
+          return chart;
+        });
+      },
+      callback: function(graph) {
+        $('#log').text('Chart is loaded');
+      }
+    });
+    </script>
+</body>
+</html>
