@@ -190,7 +190,13 @@ class Quota extends SugarBean
 	function save( $check_notify = FALSE )
 	{
         require_once 'include/SugarCurrency.php';
-        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
         $this->currency_rate = $currency->conversion_rate;
 
         return parent::save($check_notify);

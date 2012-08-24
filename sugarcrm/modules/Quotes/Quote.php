@@ -456,27 +456,35 @@ class Quote extends SugarBean {
 	function save($check_notify = FALSE) {
 
 
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
+        require_once 'include/SugarCurrency.php';
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
         $this->currency_rate = $currency->conversion_rate;
-        //US DOLLAR
+
+        // These amounts are the converted amounts to the base currency,
+        // which will be deprecated once currency_rate is used for calculations
 		if(!empty($this->shipping)){
-			$this->shipping_usdollar = $currency->convertToDollar($this->shipping);
+			$this->shipping_usdollar = SugarCurrency::convertAmountToBase($this->shipping, $this->currency_id);
 		}
 		if(!empty($this->tax)){
-			$this->tax_usdollar = $currency->convertToDollar($this->tax);
+			$this->tax_usdollar = SugarCurrency::convertAmountToBase($this->tax, $this->currency_id);
 		}
 		if(!empty($this->total)){
-			$this->total_usdollar = $currency->convertToDollar($this->total);
+			$this->total_usdollar = SugarCurrency::convertAmountToBase($this->total, $this->currency_id);
 		}
 		if(!empty($this->subtotal)){
-			$this->subtotal_usdollar = $currency->convertToDollar($this->subtotal);
+			$this->subtotal_usdollar = SugarCurrency::convertAmountToBase($this->subtotal, $this->currency_id);
 		}
 	      if(!empty($this->new_sub)){
-            $this->new_sub_usdollar = $currency->convertToDollar($this->new_sub);
+            $this->new_sub_usdollar = SugarCurrency::convertAmountToBase($this->new_sub, $this->currency_id);
         }
 	        if(!empty($this->deal_tot)){
-            $this->deal_tot_usdollar = $currency->convertToDollar($this->deal_tot);
+            $this->deal_tot_usdollar = SugarCurrency::convertAmountToBase($this->deal_tot, $this->currency_id);
         }
 
         //BEGIN SUGARCRM flav=pro ONLY

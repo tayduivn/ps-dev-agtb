@@ -65,7 +65,13 @@ class Worksheet extends SugarBean {
 
     function save($check_notify = false){
         require_once 'include/SugarCurrency.php';
-        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
         $this->currency_rate = $currency->conversion_rate;
         //If related_forecast_type is empty it is an opportunity override so we update the best_case_worksheet and likely_case_worksheet values
         if (empty($this->related_forecast_type) && !empty($this->related_id))
@@ -77,6 +83,8 @@ class Worksheet extends SugarBean {
                 $opp->best_case = $this->best_case;
                 $opp->likely_case = $this->likely_case;
                 $opp->worst_case = $this->worst_case;
+                $opp->currency_id = $this->currency_id;
+                $opp->currency_rate = $this->currency_rate;
                 $opp->save();
             }
         }

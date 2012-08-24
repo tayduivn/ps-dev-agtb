@@ -84,8 +84,7 @@ class Currency extends SugarBean
      * convertToDollar
      *
      * This method accepts a currency amount and converts it to the US Dollar amount
-     * This method is deprecated and has been moved to the SugarCurrency utility class
-     * as convertAmountToBase()
+     * This method is deprecated and has been moved to SugarCurrency::convertAmountToBase()
      *
      * @deprecated
      * @param  $amount    amount to convert to US Dollars
@@ -101,8 +100,7 @@ class Currency extends SugarBean
      *
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
-     * This method is deprecated and has been moved to the SugarCurrency utility class
-     * as convertAmountFromBase()
+     * This method is deprecated and has been moved to SugarCurrency::convertAmountFromBase()
      *
      * @deprecated
      * @param  $amount    currency amount in US Dollars

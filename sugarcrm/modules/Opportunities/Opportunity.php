@@ -26,6 +26,8 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Description:
  ********************************************************************************/
 
+require_once('include/SugarCurrency.php');
+
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
@@ -355,15 +357,11 @@ class Opportunity extends SugarBean
                 */
                 $query = sprintf("update opportunities set currency_id='%s',
                     amount_usdollar='%s',
-                    best_case_base_currency='%s',
-                    likely_case_base_currency='%s',
-                    worst_case_base_currency='%s'
+                    currency_rate='%s'
                     where id='%s';",
                     $currency->id,
-                    $currency->convertToDollar($row['amount']),
-                    $currency->convertToDollar($row['best_case']),
-                    $currency->convertToDollar($row['likely_case']),
-                    $currency->convertToDollar($row['worst_case']),
+                    SugarCurrency::convertAmountToBase($row['amount']),
+                    $currency->conversion_rate,
                     $row['id']
                 );
                 $this->db->query($query);
@@ -428,15 +426,14 @@ class Opportunity extends SugarBean
 		// Bug 32581 - Make sure the currency_id is set to something
 		global $current_user, $app_list_strings;
 
-		if ( empty($this->currency_id) ) {
-			$this->currency_id = $current_user->getPreference('currency');
-		}
-		if ( empty($this->currency_id) ) {
-			$this->currency_id = -99;
-		}
-
         require_once 'include/SugarCurrency.php';
-        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
         $this->currency_rate = $currency->conversion_rate;
 
         //if probablity isn't set, set it based on the sales stage

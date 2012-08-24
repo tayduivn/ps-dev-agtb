@@ -282,7 +282,13 @@ class Forecast extends SugarBean
     function save()
     {
         require_once 'include/SugarCurrency.php';
-        $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
         $this->currency_rate = $currency->conversion_rate;
 
         parent::save();
