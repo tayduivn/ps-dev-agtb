@@ -1,7 +1,13 @@
 <div class="topline thumbnail">
     <div class="title">
-        {{fullName}}<br>
-        <h2>{{str "LBL_FORECAST" "Forecasts"}}</h2>
+        <div class="control-group datefilter">
+            <label for="date_filter" class="control-label">{{str "LBL_TIMEFRAMES" "Forecasts"}}</label>
+            <div class="controls">
+                {{#with timeframes}}
+                    {{field ../this ../model}}
+                {{/with}}
+            </div>
+        </div>
     </div>
     <div class="datapoint1">
         {{str "LBL_BEST_CASE" "Forecasts"}}<br>

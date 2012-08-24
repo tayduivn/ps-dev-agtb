@@ -16,9 +16,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
         4 => array(
             'view' => 'forecastsProgress',
-			'model' => array(
-				'name' => 'Progress',
-			)
         ),
         5 => array(
             'view' => 'forecastsCommitted',
@@ -59,12 +56,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
 
         10 => array(
-            'view' => 'forecastsTimeframes',
-            'model' => array(
-                'name' => 'Timeframes'
-            )
-        ),
-        11 => array(
             'view' => 'forecastsCommitButtons',
         ),
     )

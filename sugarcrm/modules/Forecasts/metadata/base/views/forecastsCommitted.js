@@ -91,6 +91,11 @@
      */
     showMoreLog : false,
 
+    /**
+     * the timeframes field metadata that gets used at render time
+     */
+    timeframes: {},
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog',
         'click div[id=more]' : 'showHideMoreLog'
@@ -111,6 +116,12 @@
         this.bestCase = 0;
         this.likelyCase = 0;
         this.showHistoryLog = false;
+
+        _.each(this.meta.panels, function(panel) {
+            this.timeframes = _.find(panel.fields, function (item){
+                return _.isEqual(item.name, 'timeframes');
+            });
+        }, this);
     },
 
     /**
@@ -128,6 +139,60 @@
         this.showMoreLog = this.showMoreLog ? false : true;
         this._render();
     },
+
+
+    /**
+     * Overriding _renderField because we need to set up the events to set the proper value depending on which field is
+     * being changed.
+     * binary for forecasts and adjusts the category filter accordingly
+     * @param field
+     * @protected
+     */
+    _renderField: function(field) {
+        if (field.name == "timeframes") {
+            field = this._setUpTimeframeField(field);
+        }
+        app.view.View.prototype._renderField.call(this, field);
+    },
+
+    /**
+     * Sets up the save event and handler for the dropdown fields in the timeframe view.
+     * @param field the commit_stage field
+     * @return {*}
+     * @private
+     */
+    _setUpTimeframeField: function (field) {
+        var timeframes;
+
+        field.events = _.extend({"change select": "_updateSelections"}, field.events);
+        field.bindDomChange = function() {};
+
+        /**
+         * updates the selection when a change event is triggered from a dropdown
+         * @param event the event that was triggered
+         * @param input the (de)selection
+         * @private
+         */
+        field._updateSelections = function(event, input) {
+            var label = this.$el.find('option:[value='+input.selected+']').text();
+            var id = this.$el.find('option:[value='+input.selected+']').val();
+            this.def.value = id;
+            this.view.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});
+        };
+
+        // INVESTIGATE: Should this be retrieved from the model, instead of directly?
+        app.api.call("read", app.api.buildURL("Forecasts", "timeframes"), '', {success: function(results) {
+            this.field.def.options = results;
+            this.field.render();
+        }}, {field: field, view: this});
+
+        field.def.value = app.defaultSelections.timeperiod_id.id;
+
+        return field;
+    },
+
+
+
 
     /**
      * Renders the component
@@ -325,17 +390,17 @@
                 self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
                 self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
             } else {
-              if(count == 1)
-              {
-                  self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                  self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
-                  self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
-                  var dateEntered = App.date.parse(model.get('date_entered'));
-                  // TODO: user preferences are not working for formatting dates, hard code for now
-                  self.previousDateEntered = App.date.format(dateEntered, 'Y-m-d \\at g:i a');
-              }
-              self.historyLog.push(self.createHistoryLog(model, previousModel));
-              previousModel = model;
+                if(count == 1)
+                {
+                    self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
+                    self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
+                    self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
+                    var dateEntered = App.date.parse(model.get('date_entered'));
+                    // TODO: user preferences are not working for formatting dates, hard code for now
+                    self.previousDateEntered = App.date.format(dateEntered, 'Y-m-d \\at g:i a');
+                }
+                self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
+                previousModel = model;
             }
             count++;
         });
@@ -343,7 +408,7 @@
         //Slice everything after the second element and store in historyLog variable
         if(self.historyLog.length > 2)
         {
-           self.moreLog = self.historyLog.splice(2, self.historyLog.length);
+            self.moreLog = self.historyLog.splice(2, self.historyLog.length);
         }
 
         self.render();
@@ -351,80 +416,6 @@
         if(!_.isEmpty(self.savedTotal)) {
             self.updateTotals(self.savedTotal);
         }
-    },
-
-    createHistoryLog: function(current, previousModel) {
-        var best_difference = previousModel.get('best_case') - current.get('best_case');
-        var best_changed = best_difference != 0;
-        var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
-        var likely_difference = previousModel.get('likely_case') - current.get('likely_case');
-        var likely_changed = likely_difference != 0;
-        var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
-        var args = Array();
-        var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
-
-        var best_arrow = '';
-        if(best_direction == "LBL_UP") {
-            best_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
-        } else if(best_direction == "LBL_DOWN") {
-            best_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
-        }
-
-        var likely_arrow = '';
-        if(likely_direction == "LBL_UP") {
-            likely_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
-        } else if(likely_direction == "LBL_DOWN") {
-            likely_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
-        }
-
-        if(best_changed && likely_changed)
-        {
-            args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-            args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
-            args[2] = "$" + App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
-            args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-            args[4] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
-            args[5] = "$" + App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
-            text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
-        } else if (!best_changed && likely_changed) {
-            args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-            args[1] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
-            args[2] = "$" + App.utils.formatNumber(current.get('likely_case'), 0, 0, ',', '.');
-            text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
-        } else if (best_changed && !likely_changed) {
-            args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-            args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
-            args[2] = "$" + App.utils.formatNumber(current.get('best_case'), 0, 0, ',', '.');
-            text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
-        }
-
-        //Compile the language string for the log
-        var hb = Handlebars.compile("{{str_format key module args}}");
-        var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
-
-        var current_date = App.date.parse(current.get('date_entered'));
-        var previous_date = App.date.parse(previousModel.get('date_entered'));
-
-        var yearDiff = current_date.getYear() - previous_date.getYear();
-        var monthsDiff = current_date.getMonth() - previous_date.getMonth();
-
-        var text2 = '';
-
-        if(yearDiff == 0 && monthsDiff < 2)
-        {
-          hb = Handlebars.compile("{{str_format key module args}}");
-          args = [previous_date.toString()];
-          text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
-        } else {
-          hb = Handlebars.compile("{{str_format key module args}}");
-          args = [monthsDiff, previous_date.toString()];
-          text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
-        }
-
-        // need to tell Handelbars not to escape the string when it renders it, since there might be
-        // html in the string
-        return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
-
     },
 
     /**
@@ -444,7 +435,7 @@
         //If the totals have not been set, don't save
         if(!self.totals)
         {
-           return;
+            return;
         }
 
         var forecast = new this._collection.model();

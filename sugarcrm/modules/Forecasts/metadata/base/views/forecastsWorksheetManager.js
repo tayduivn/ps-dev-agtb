@@ -171,17 +171,35 @@
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
+        // define vars for use in loop, created outside loop
+        var def = {};
+        var name = '';
+        var colWidth = '';
 
         for( var i = 0; i < fields.length; i++ )  {
-            var name = fields[i].name;
-            columnDefs.push( { "sName": name, "aTargets": [ i ] } );
+            name = fields[i].name;
+            // explicitly looking for column "name" instead of the first column
+            // in case we add column rearranging
+            if(name == "name") {
+                colWidth = '40%';
+            } else {
+                colWidth = '10%';
+            }
+            def = {
+                "sName": name,
+                "aTargets": [ i ],
+                "sWidth" : colWidth
+            };
+            columnDefs.push( def );
         }
 
         this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
             {
+                "bAutoWidth": false,
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
+
             }
         );
 
@@ -324,33 +342,6 @@
 
         url = app.api.buildURL('ForecastManagerWorksheets', '', '', args);
         return url;
-    },
-
-    /**
-     * Formats the additional details div when a user clicks a row in the grid
-     *
-     * @param dRow the row from the datagrid that user has clicked on
-     * @return {String} html output to be shown to the user
-     */
-    formatAdditionalDetails:function (dRow) {
-        // grab reference to the datatable
-        var dTable = this.gTable;
-        // get row data from datatable
-        var data = dTable.fnGetData(dRow);
-        // grab column headings array
-        var colHeadings = this.getColumnHeadings(dTable);
-
-        // TEMPORARY PLACEHOLDER OUTPUT - inline CSS, no class
-        // this will all be changed once we have a more firm requirement for what should display here
-        var output = '<table cellpadding="5" cellspacing="0" border="0" style="margin: 10px 0px 10px 50px">';
-        output += '<tr><td>' + colHeadings[0] + '</td><td>' + data[0] + '</td></tr>';
-        output += '<tr><td>' + colHeadings[1] + '</td><td>' + data[1] + '</td></tr>';
-        output += '<tr><td>' + colHeadings[2] + '</td><td>' + data[2] + '</td></tr>';
-        output += '<tr><td>' + colHeadings[3] + '</td><td>' + data[3] + '</td></tr>';
-        output += '<tr><td>' + colHeadings[4] + '</td><td>' + data[4] + '</td></tr>';
-        output += '</table>';
-
-        return output;
     },
 
     /**

@@ -110,8 +110,12 @@
 <script src='modules/Forecasts/metadata/base/helper/hbt-helpers.js'></script>
 <script src='modules/Forecasts/metadata/base/lib/ClickToEdit.js'></script>
 <script src='modules/Forecasts/metadata/base/lib/BucketGridEnum.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/ForecastsUtils.js'></script>
 <script src='modules/Forecasts/metadata/base/views/alert-view.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrap-popover.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'></script>
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;
@@ -120,15 +124,18 @@
     SUGAR.App.sugarAuthStore.set('AuthRefreshToken', {/literal}'{$token}'{literal});
 
     (function(app) {
-         app.augment("forecasts", {
+        if(!_.has(app, 'forecasts')) {
+            app.forecasts = {}
+        }
+        app.augment("forecasts", _.extend(app.forecasts, {
             initForecast: function(authAccessToken) {
 
-                var forecastData = {/literal} {$initData} {literal};
+            var forecastData = {/literal} {$initData} {literal};
 
                 // get default selections for filter and category
                 app.defaultSelections = forecastData.defaultSelections;
                 app.initData = forecastData.initData;
-                app.viewModule = {/literal}'{$module}';{literal}
+                    app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 //app.config.show_buckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
@@ -143,7 +150,7 @@
                 });
                 return app;
             }
-         });
+            }));
      })(SUGAR.App);
 
     //Call initForecast with the session id as token
