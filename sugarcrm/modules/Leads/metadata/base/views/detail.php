@@ -29,55 +29,60 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['Leads']['base']['view']['detail'] = array(
-	'buttons' => array(
-		array(
-			'name'    => 'edit_button',
-			'type'    => 'button',
-			'label'   => 'Edit',
-			'value'   => 'edit',
-			'class'   => 'edit-profile',
-			'primary' => true,
-			'events'  => array(
-				'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
-			),
-		),
-	),
-	'panels'  => array(
-		array(
-			'fields' => array(
-				'name',
-				'title',
-				'department',
-				'account_name',
-				'primary_address_street',
-				'primary_address_city',
-				'primary_address_state',
-				'primary_address_postalcode',
-				'primary_address_country',
-				'email1',
-				'description',
-				'phone_work',
-				'phone_mobile',
-				'phone_fax',
-				'website',
-				'alt_address_street',
-				'alt_address_city',
-				'alt_address_state',
-				'alt_address_postalcode',
-				'alt_address_country',
-				'status',
-				'status_description',
-				'opportunity_amount',
-				'campaign_name',
-				'lead_source',
-				'lead_source_description',
-				'refered_by',
-				'do_not_call',
-				'assigned_user_name',
-				'team_name',
-				'date_modified',
-				'date_entered',
-			),
-		),
-	),
+    'buttons' => array(
+        array(
+            'name'    => 'edit_button',
+            'type'    => 'button',
+            'label'   => 'Edit',
+            'value'   => 'edit',
+            'class'   => 'edit-profile',
+            'primary' => true,
+            'events'  => array(
+                'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
+            ),
+        ),
+    ),
+    'panels' => array(
+        array(
+            'fields' => array(
+                'name',
+                'title',
+                'department',
+                'account_name',
+                'primary_address_street',
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_EMAIL_ADDRESSES',
+                ),
+                'description',
+                'phone_work',
+                'phone_mobile',
+                'phone_fax',
+                'website',
+                'alt_address_street',
+                'alt_address_city',
+                'alt_address_state',
+                'alt_address_postalcode',
+                'alt_address_country',
+                'status',
+                'status_description',
+                'opportunity_amount',
+                'campaign_name',
+                'lead_source',
+                'lead_source_description',
+                'refered_by',
+                'do_not_call',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+                'date_modified',
+                'date_entered',
+            ),
+        ),
+    ),
 );
