@@ -421,22 +421,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     */
     protected function constructTeamFilter()
     {
-        $teamFilter = new Elastica_Filter_Or();
-
         $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
 
         //TODO: Determine why term filters aren't working with the hyphen present.
         //Term filters dont' work for terms with '-' present so we need to clean
         $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
 
-        foreach ($teamIDS as $teamID)
-        {
-            $termFilter = new Elastica_Filter_Term();
-            $termFilter->setTerm('team_set_id',$teamID);
-            $teamFilter->addFilter($termFilter);
-        }
+        $termFilter = new Elastica_Filter_Terms('team_set_id', $teamIDS);
 
-        return $teamFilter;
+        return $termFilter;
     }
 
     protected function getTypeTermFilter($module)
@@ -515,9 +508,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach ($finalTypes as $module)
         {
             $moduleFilter = $this->constructModuleLevelFilter($module);
+            
+            // if we want myitems add more to the module filter
             if(isset($options['my_items']) && $options['my_items'] !== false)
             {
-                $GLOBALS['log']->fatal("\r\n\r\n " . var_export($options, true) ." \r\n\r\n\r\n");
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
             $mainFilter->addFilter($moduleFilter);
