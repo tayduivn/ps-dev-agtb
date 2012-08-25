@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
+require_once('modules/Mailer/SimpleMailer.php');
 
 class EmailsApi extends ModuleApi
 {
@@ -377,8 +378,13 @@ class EmailsApi extends ModuleApi
             $mailer->setHtmlBody($args["html_body"]);
         }
 
-        $success = $mailer->send();
-        if (!$success) {
+        try {
+            $success = $mailer->send();
+
+            if (!$success) {
+
+            }
+        } catch(Exception $e) {
 
         }
 
