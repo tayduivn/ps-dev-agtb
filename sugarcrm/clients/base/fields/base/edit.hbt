@@ -1,2 +1,2 @@
-        <input type="text" name="{{name}}" value="{{value}}" class="input-large">
+        <input type="text" name="{{name}}" value="{{value}}" {{#if def.placeholder}}placeholder='{{str def.placeholder this.model.module}}'{{/if}}class="input-large">
         <p class="help-block"></p>

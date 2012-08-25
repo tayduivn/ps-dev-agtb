@@ -1,16 +1,20 @@
 {{#each meta.panels}}
    <div class="card2">
        {{#if ../model.isNotEmpty}}
-       {{#each fields}}
-           <div class="row-fluid record-row">
-               <div class="span2 tright">{{str  this.label ../../../this.model.module}}</div>
+       {{#each grid}}
+            <div class="row-fluid record-row">
+                {{#each this}}
+               <div class="span2 tright">{{str  this.label ../../../../this.model.module}}</div>
                <div class="span10" name="{{this.name}}">
-                    {{field ../../../this}}
+                    {{field ../../../../this}}
                     <span class="record-edit-link-wrapper" data-name="{{name}}">
                         <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                     </span>
                </div>
-               </div>
+               {{/each}}
+
+             </div>
+
        {{/each}}
            <div class="row-fluid closure">
              <div class="span2"></div>

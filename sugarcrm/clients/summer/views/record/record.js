@@ -9,6 +9,7 @@
             "click .record-cancel": "handleCancel"
         };
 
+
         _.bindAll(this);
 
         app.view.views.DetailView.prototype.initialize.call(this, options);
@@ -28,6 +29,36 @@
         if (this.context.get("create") === true) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    render: function(){
+        var panels = this.meta.panels;
+        var index = 0;
+
+        for(var i in panels){
+            var columns = (panels[i].columns)?panels[i].columns: 1;
+            var count = 0;
+            var rows = [];
+            var row = []
+            for(var j in panels[i].fields){
+                if(panels[i].placeholders)panels[i].fields[j].placeholder = panels[i].fields[j].label;
+                row.push(panels[i].fields[j]);
+                if(count % columns == columns - 1){
+                    rows.push(row);
+                    row = [];
+                }
+                count++;
+            }
+            rows.push(row);
+            row = [];
+            panels[i].grid = rows;
+        }
+
+        this.meta.panels = panels;
+
+        console.log(this.meta);
+        app.view.views.DetailView.prototype.render.call(this);
+
     },
 
     // Overloaded functions
@@ -50,13 +81,13 @@
         }
     },
 
-    getFieldIndex: function(field) {
-        return _.indexOf(_.pluck(this.options.meta.panels[0].fields, "name"), field.name);
-    },
 
-    getNextField: function(field) {
-        var nextField = this.options.meta.panels[0].fields[this.getFieldIndex(field) + 1];
-        return (nextField) ? this.getField(nextField.name) : false;
+    getNextField: function(index) {
+
+       var nextIndex = parseInt(index) + 1;
+       console.log(index, nextIndex);
+       var target = this.$(".index" + nextIndex);
+       return (target)?this.getField(target.attr('name')):false;
     },
 
     // Handler functions
@@ -70,7 +101,7 @@
             targetData = target.data();
             field = this.getField(targetData.name);
         } else {
-            target = field.$el.parent().find(".record-edit-link");
+            target = field.$el.parent().find(".record-edit-link-wrapper  ");
         }
 
         // Set Editing mode to on.
@@ -79,7 +110,7 @@
         switch (field.type) {
             default:
                 this.toggleField(field, target);
-                target.parent().find("input").focus().val(target.parent().find("input").val());
+                target.parent().find("input").focus();
         }
     },
 
@@ -147,9 +178,10 @@
             field = e.data.field;
 
         if (e.which == 9) {
-            next = this.getNextField(field);
+            console.log('*******', target, field);
+            next = this.getNextField(target.data('index'));
             this.handleEdit(null, next);
-            //next.$el.focus();
+            next.$el.focus();
         } else if (e.which == 27) {
             this.fieldClose(e, field, target);
         }

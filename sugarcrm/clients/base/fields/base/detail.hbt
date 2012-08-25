@@ -1,1 +1,2 @@
+{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}
 {{value}}
