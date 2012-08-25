@@ -320,6 +320,14 @@ class RestService extends ServiceBase {
             $this->sessionId = $_GET['oauth_token'];
         }
 
+        /**----- Override User Authentication -----**/
+        if ( isset($_SERVER['HTTP_AUTHENTICATED_USER_ID']) ) {
+            $_SESSION['authenticated_user_id'] = $_SERVER['HTTP_AUTHENTICATED_USER_ID'];
+            $valid = true;
+            $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
+        }
+        /**----- Override User Authentication -----**/
+
         if ( !empty($this->sessionId) ) {
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;

@@ -21,44 +21,45 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-require_once('modules/Mailer/SimpleMailer.php');
 
-class MailerApi extends ModuleApi
+class EmailsApi extends ModuleApi
 {
-	public function __construct() {}
+    public function __construct() {}
 
-	public function registerApiRest() {
-		$api = array(
-			'listMail'     => array(
-				'reqType'   => 'GET',
-				'path'      => array('Mail'),
-				'pathVars'  => array(''),
-				'method'    => 'listMail',
-				'shortHelp' => 'List Mail Records',
-				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#listMail',
-			),
+    public function registerApiRest() {
+        $api = array(
+            /**
+            'listMail'     => array(
+                'reqType'   => 'GET',
+                'path'      => array('Emails'),
+                'pathVars'  => array(''),
+                'method'    => 'listMail',
+                'shortHelp' => 'List Email Records',
+                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#listMail',
+            ),
+            **/
 
-			'retrieveMail' => array(
-				'reqType'   => 'GET',
-				'path'      => array('Mail', '?'),
-				'pathVars'  => array('', 'email_id'),
-				'method'    => 'retrieveMail',
-				'shortHelp' => 'Retrieve Mail Record',
-				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#retrieveMail',
-			),
+            'retrieveMail' => array(
+                'reqType'   => 'GET',
+                'path'      => array('Emails', '?'),
+                'pathVars'  => array('', 'email_id'),
+                'method'    => 'retrieveMail',
+                'shortHelp' => 'Retrieve Email Record',
+                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#retrieveMail',
+            ),
 
-			'sendMail'     => array(
-				'reqType'   => 'POST',
-				'path'      => array('Mail'),
-				'pathVars'  => array(''),
-				'method'    => 'bridgeMail',
-				'shortHelp' => 'Create Mail Item',
-				'longHelp'  => 'include/api/html/modules/Mailer/MailApi.html#createMail',
-			),
-		);
+            'sendMail'     => array(
+                'reqType'   => 'POST',
+                'path'      => array('Emails'),
+                'pathVars'  => array(''),
+                'method'    => 'bridgeMail',
+                'shortHelp' => 'Create Mail Item',
+                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#createMail',
+            ),
+        );
 
-		return $api;
-	}
+        return $api;
+    }
 
     public function bridgeMail($api, $args) {
         require_once("include/OutboundEmail/OutboundEmail.php");
@@ -288,25 +289,25 @@ class MailerApi extends ModuleApi
         $_REQUEST = array_merge($_REQUEST, $request);
         $edata=null;
         try {
-                $sendResult = $email->email2Send($request);
-                $edata = ob_get_contents();
-                ob_end_clean();
-                if (strlen($edata) > 0) {
-                    throw new MailerException("Internal Error");
-                }
+            $sendResult = $email->email2Send($request);
+            $edata = ob_get_contents();
+            ob_end_clean();
+            if (strlen($edata) > 0) {
+                throw new MailerException("Internal Error");
+            }
         } catch (Exception $e) {
-           if ($edata == null) {
+            if ($edata == null) {
                 $edata = ob_get_contents();
                 ob_end_clean();
-           }
-           $result = array(
-               "FUNCTION"   => "sendMail",
-               "ARGS"       => $args,
-               "REQUEST"    => $request,
-               "ERROR_MESSAGE" => $e->getMessage(),
-               "ERROR_DATA" => $edata,
-           );
-           return $result;
+            }
+            $result = array(
+                "FUNCTION"   => "sendMail",
+                "ARGS"       => $args,
+                "REQUEST"    => $request,
+                "ERROR_MESSAGE" => $e->getMessage(),
+                "ERROR_DATA" => $edata,
+            );
+            return $result;
         }
 
         // ob_end_clean();
@@ -390,45 +391,55 @@ class MailerApi extends ModuleApi
     }
 
 
-	/**
-	 * @param $api
-	 * @param $args
-	 * @return array
-	 */
-	public function listMail($api, $args) {
-		$result = array();
-		return $result;
-	}
+    /**
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function listMail($api, $args) {
+        $success=true;
+        $result = array(
+            "FUNCTION"   => "listMail",
+            "ARGS"       => $args,
+            "SUCCESS"    => $success
+        );
+        return $result;
+    }
 
 
-	/**
-	 * @param $api
-	 * @param $args
-	 * @return array
-	 */
-	public function retrieveMail($api, $args) {
-		$result = array();
-		return $result;
-	}
+    /**
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function retrieveMail($api, $args) {
+        $success=true;
+        $result = array(
+            "FUNCTION"   => "retrieveMail",
+            "ARGS"       => $args,
+            "SUCCESS"    => $success
+        );
+        return $result;
+    }
 
 
-	/**
-	 *  Local Functions
-	 */
+    /**
+     *  Local Functions
+     */
 
-	/**
-	 * @param $data
-	 * @return EmailIdentity
-	 */
-	protected function generateEmailIdentity($data) {
-		if (is_array($data) && !empty($data['email'])) {
-			$email = $data['email'];
-			$name = null;
-			if (isset($data['name'])) {
-				$name = $data['name'];
-			}
-			$recipient = new EmailIdentity($email, $name);
-		}
-		return $recipient;
-	}
+    /**
+     * @param $data
+     * @return EmailIdentity
+     */
+    protected function generateEmailIdentity($data) {
+        if (is_array($data) && !empty($data['email'])) {
+            $email = $data['email'];
+            $name = null;
+            if (isset($data['name'])) {
+                $name = $data['name'];
+            }
+            $recipient = new EmailIdentity($email, $name);
+        }
+        return $recipient;
+    }
 }
