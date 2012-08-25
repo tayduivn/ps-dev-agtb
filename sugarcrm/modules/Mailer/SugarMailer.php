@@ -1,4 +1,6 @@
 <?php
+namespace Mailer;
+
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -26,7 +28,7 @@ require_once('../../include/OutboundEmail/OutboundEmail.php');
 
 class SugarMailer extends SimpleMailer
 {
-	var $protocol = "tcp://";
+	var $protocol = "tcp://"; // it's not clear how this variable is used, looks like it's just set and never used
 	var $mailer = "smtp";
 	var $host = "localhost";
 	var $port = "25";

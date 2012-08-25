@@ -3,7 +3,7 @@ namespace Mailer;
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -23,9 +23,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class MailerException extends \Exception
+class EmbeddedImage extends Attachment
 {
-	public function log($level) {
-		$GLOBALS['log']->$level($this->message);
+	private $cid;
+
+	public function __construct($path, $cid, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
+		$this->setCid($cid);
+		parent::__construct($path, $name, $encoding, $mimeType);
+	}
+
+	public function setCid($cid) {
+		$this->cid = $cid;
+	}
+
+	public function getCid() {
+		return $this->cid;
+	}
+
+	public function getAsArray() {
+		return array_merge(
+			parent::getAsArray(),
+			array(
+				'cid' => $this->getCid()
+			)
+		);
 	}
 }

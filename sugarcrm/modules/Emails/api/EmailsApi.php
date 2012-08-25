@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -333,7 +334,7 @@ class EmailsApi extends ModuleApi
         $admin = new Administration();
         $admin->retrieveSettings();
 
-        $mailer = new Mailer();
+        $mailer = new SimpleMailer();
         $mailer->setFrom(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
 
         if (is_array($args["to_addresses"])) {

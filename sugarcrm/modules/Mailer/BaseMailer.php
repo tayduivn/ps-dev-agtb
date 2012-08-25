@@ -1,4 +1,6 @@
 <?php
+namespace Mailer;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -40,7 +42,6 @@ abstract class BaseMailer implements IMailer
 	protected $htmlBody;
 	protected $textBody;
 	protected $attachments;
-	protected $embeddedImages;
 
 	public function __construct() {
 		$this->reset();
@@ -64,21 +65,10 @@ abstract class BaseMailer implements IMailer
 
 	public function loadDefaultConfigs() {
 		$defaults = array(
-			'protocol' => 'smtp',
 			'hostname' => '',
 			'charset'  => 'utf-8',
-			'encoding' => 'quoted-printable', // default to quoted-printable for plain/text
+			'encoding' => self::EncodingQP, // default to quoted-printable for plain/text
 			'wordwrap' => 996,
-			'smtp'     => array(
-				'host'         => 'localhost',
-				'port'         => 25,
-				'secure'       => '',
-				'authenticate' => false,
-				'username'     => '',
-				'password'     => '',
-				'timeout'      => 10,
-				'persist'      => false,
-			),
 		);
 
 		$this->setConfigs($defaults);
@@ -178,28 +168,16 @@ abstract class BaseMailer implements IMailer
 		$this->htmlBody = $htmlBody;
 	}
 
-	public function addAttachment($path, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
-		$this->attachments[] = array(
-			'path'     => $path,
-			'name'     => $name,
-			'encoding' => $encoding,
-			'mimetype' => $mimeType,
-		);
+	public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+		$this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
 	}
 
-	public function addEmbeddedImage($path, $cid, $name = null, $encoding = 'base64', $mimeType = 'application/octet-stream') {
-		$this->embeddedImages[] = array(
-			'path'     => $path,
-			'cid'      => $cid,
-			'name'     => $name,
-			'encoding' => $encoding,
-			'mimetype' => $mimeType,
-		);
+	public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+		$this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
 	}
 
 	public function clearAttachments() {
 		$this->attachments = array();
-		$this->embeddedImages = array();
 	}
 
 	protected function hasMessagePart($part) {

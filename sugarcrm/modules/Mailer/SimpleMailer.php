@@ -1,4 +1,8 @@
 <?php
+namespace Mailer;
+use \PHPMailer;
+use \SMTP;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -27,10 +31,32 @@ require_once 'BaseMailer.php';
 
 class SimpleMailer extends BaseMailer
 {
+	const Protocol   = 'smtp';
+	const SecureNone = '';
+	const SecureSsl  = 'ssl';
+	const SecureTls  = 'tls';
+
 	public function reset() {
 		parent::reset();
 		$this->mailer = new PHPMailer();
 		$this->mailer->SetLanguage(); // reset to the English language pack
+	}
+
+	public function loadDefaultConfigs() {
+		parent::loadDefaultConfigs();
+
+		$defaults = array(
+			'smtp.host'         => 'localhost',
+			'smtp.port'         => 25,
+			'smtp.secure'       => self::SecureNone,
+			'smtp.authenticate' => false,
+			'smtp.username'     => '',
+			'smtp.password'     => '',
+			'smtp.timeout'      => 10,
+			'smtp.persist'      => false,
+		);
+
+		$this->mergeConfigs($defaults);
 	}
 
 	public function send() {
@@ -66,40 +92,38 @@ class SimpleMailer extends BaseMailer
 	}
 
 	private function transferConfigurations() {
-		$this->mailer->Mailer   = $this->configs['protocol'];
-		$this->mailer->Mailer   = $this->configs['hostname'];
+		// transfer the basic configurations
+		$this->mailer->Mailer   = self::Protocol;
+		$this->mailer->Hostname = $this->configs['hostname'];
 		$this->mailer->CharSet  = $this->configs['charset'];
 		$this->mailer->Encoding = $this->configs['encoding'];
 		$this->mailer->WordWrap = $this->configs['wordwrap'];
 
-		if ($this->configs['protocol'] == 'smtp') {
-			$this->mailer->Host          = $this->configs['smtp']['host'];
-			$this->mailer->Port          = $this->configs['smtp']['port'];
-			$this->mailer->SMTPSecure    = $this->configs['smtp']['secure'];
-			$this->mailer->SMTPAuth      = $this->configs['smtp']['authenticate'];
-			$this->mailer->Username      = $this->configs['smtp']['username'];
-			$this->mailer->Password      = from_html($this->configs['smtp']['password']);
-			$this->mailer->Timeout       = $this->configs['smtp']['timeout'];
-			$this->mailer->SMTPKeepAlive = $this->configs['smtp']['persist'];
-		}
+		// transfer the smtp configurations
+		$this->mailer->Host          = $this->configs['smtp.host'];
+		$this->mailer->Port          = $this->configs['smtp.port'];
+		$this->mailer->SMTPSecure    = $this->configs['smtp.secure'];
+		$this->mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
+		$this->mailer->Username      = $this->configs['smtp.username'];
+		$this->mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
+		$this->mailer->Timeout       = $this->configs['smtp.timeout'];
+		$this->mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
 	}
 
 	private function connectToHost() {
-		if ($this->configs['protocol'] == 'smtp') {
-			//@todo may need to reuse the SMTP object in the event that there is a valid use case for
-			// keeping the SMTP connection alive
-			$this->mailer->smtp = new SMTP();
+		//@todo may need to reuse the SMTP object in the event that there is a valid use case for
+		// keeping the SMTP connection alive
+		$this->mailer->smtp = new SMTP();
 
-			if (!$this->mailer->SmtpConnect()) {
-				//@todo need to tell the class what error messages to use, so the following is for reference only
-//				global $app_strings;
-//				if(isset($this->oe) && $this->oe->type == "system") {
-//					$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-//				} else {
-//					$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-//				}
-				throw new MailerException("Failed to connect to the remote server");
-			}
+		if (!$this->mailer->SmtpConnect()) {
+			//@todo need to tell the class what error messages to use, so the following is for reference only
+//			global $app_strings;
+//			if(isset($this->oe) && $this->oe->type == "system") {
+//				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+//			} else {
+//				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+//			}
+			throw new MailerException("Failed to connect to the remote server");
 		}
 	}
 
@@ -201,7 +225,7 @@ class SimpleMailer extends BaseMailer
 
 		if ($hasHtml) {
 			$this->mailer->IsHTML(true);
-			$this->mailer->Encoding = 'base64'; // so that embedded images are encoding properly
+			$this->mailer->Encoding = self::EncodingBase64; // so that embedded images are encoding properly
 			$this->mailer->Body = $this->htmlBody;
 		}
 
@@ -224,24 +248,26 @@ class SimpleMailer extends BaseMailer
 		$this->mailer->ClearAttachments();
 
 		foreach ($this->attachments as $attachment) {
-			if (!$this->mailer->AddAttachment(
-					$attachment['path'],
-					$attachment['name'],
-					$attachment['encoding'],
-					$attachment['mimetype'])
-			) {
-				throw new MailerException("Invalid attachment");
-			}
-		}
-
-		foreach ($this->embeddedImages as $image) {
-			if (!$this->mailer->AddEmbeddedImage(
-				$image['path'],
-				$image['cid'],
-				$image['name'],
-				$image['encoding'],
-				$image['mimetype'])
-			) {
+			if ($attachment instanceof Attachment) {
+				if (!$this->mailer->AddAttachment(
+					$attachment->getPath(),
+					$attachment->getName(),
+					$attachment->getEncoding(),
+					$attachment->getMimeType())
+				) {
+					throw new MailerException("Invalid attachment");
+				}
+			} elseif ($attachment instanceof EmbeddedImage) {
+				if (!$this->mailer->AddEmbeddedImage(
+					$attachment->getPath(),
+					$attachment->getCid(),
+					$attachment->getName(),
+					$attachment->getEncoding(),
+					$attachment->getMimeType())
+				) {
+					throw new MailerException("Invalid image");
+				}
+			} else {
 				throw new MailerException("Invalid file");
 			}
 		}

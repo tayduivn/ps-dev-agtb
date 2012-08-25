@@ -3,7 +3,7 @@ namespace Mailer;
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -23,9 +23,62 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class MailerException extends \Exception
+class Attachment
 {
-	public function log($level) {
-		$GLOBALS['log']->$level($this->message);
+	protected $path;
+	protected $name;
+	protected $encoding;
+	protected $mimeType;
+
+	public function __construct($path, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
+		$this->setPath($path);
+		$this->setName($name);
+		$this->setEncoding($encoding);
+		$this->setMimeType($mimeType);
+	}
+
+	public function setPath($path) {
+		$this->path = $path;
+	}
+
+	public function getPath() {
+		return $this->path;
+	}
+
+	public function setName($name) {
+		if (!is_string($name) || $name == '') {
+			$name = basename($this->path);
+		}
+
+		$this->name = trim($name);
+	}
+
+	public function getName() {
+		return $this->name;
+	}
+
+	public function setEncoding($encoding = IMailer::EncodingBase64) {
+		$this->encoding = $encoding;
+	}
+
+	public function getEncoding() {
+		return $this->encoding;
+	}
+
+	public function setMimeType($mimeType = 'application/octet-stream') {
+		$this->mimeType = $mimeType;
+	}
+
+	public function getMimeType() {
+		return $this->getMimeType();
+	}
+
+	public function getAsArray() {
+		return array(
+			'path'     => $this->getPath(),
+			'name'     => $this->getName(),
+			'encoding' => $this->getEncoding(),
+			'mimetype' => $this->getMimeType(),
+		);
 	}
 }
