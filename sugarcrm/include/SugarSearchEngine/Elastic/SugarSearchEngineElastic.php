@@ -583,7 +583,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $fields = $this->getSearchFields($options);
                 $queryObj->setFields($fields);
             }
-
             $s = new Elastica_Search($this->_client);
             //Only search across our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -666,7 +665,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function cleanTeamSetID($teamSetID)
     {
-        return str_replace("-", "", $teamSetID);
+        return str_replace("-", "", strtolower($teamSetID));
     }
 
     protected function loader($className)
