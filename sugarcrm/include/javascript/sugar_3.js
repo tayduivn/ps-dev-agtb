@@ -65,6 +65,7 @@ if (typeof(SUGAR) == "undefined") {
 
 // Namespaces
 SUGAR.namespace("themes");
+SUGAR.namespace("tour");
 
 /**
  * Namespace for Homepage

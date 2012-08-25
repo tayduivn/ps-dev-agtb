@@ -40,9 +40,9 @@ $mod_strings = return_module_language($current_language,'Reports');
 $currentModule = 'Reports';
 
 $global_json = getJSONobj();
-global $ACLAllowedModules;
+global $ACLAllowedModules; 
 $ACLAllowedModules = getACLAllowedModules();
-echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules)) .";\n";
+echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules)) .";\n"; 
 
 ?>
 var module_defs = new Object();
@@ -57,7 +57,7 @@ global $currentModule;
 
 $relationships = array();
 foreach($report_modules as $module_name=>$bean_name)
-{
+{	
 	if($module_name=='Reports')
 	{
 		continue;
@@ -89,12 +89,12 @@ var link_defs_<?php echo $module_name; ?> = new Object();
 	           $linked_field['reportable'] == false))
 	    {
 	       continue;
-	    }
+	    }	
 		if(empty($relationships[$linked_field['relationship']]))
 		{
 			$relationships[$linked_field['relationship']] = $module->$field->relationship;
 		}
-
+	
 		if(! empty($linked_field['vname']))
 		{
 			$linked_field['label'] =translate($linked_field['vname']);
@@ -127,15 +127,19 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 
 			//END SUGARCRM flav!=sales ONLY
 			ksort($module->field_defs);
-
+		    
 			//BEGIN SUGARCRM flav!=sales ONLY
 		    if(isset($module->field_defs['team_set_id'])) {
-		       $module->field_defs['team_set_id']['type'] = 'team_set_id';
+		       $module->field_defs['team_set_id']['type'] = 'team_set_id';	
 		    }
 		    //END SUGARCRM flav!=sales ONLY
-
+		    
 			foreach($module->field_defs as $field_def)
 			{
+
+				//if (ACLField::hasAccess($field_def, $module, $GLOBALS['current_user']->id,))
+				//$field, $category,$user_id, $is_owner
+		
 
 			    if(isset($field_def['reportable']) &&
 			           $field_def['reportable'] == false)
@@ -143,32 +147,36 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			       continue;
 			    }
 
+                //Allowed fields array with non-db-source
+                $allowed_fields_array = array('full_name', 'default_primary_team');
+
 			    if(isset($field_def['source']) &&
 			           ($field_def['source'] == 'non-db' && empty($field_def['ext2'])) && $field_def['name'] != 'full_name')
 			    {
 			       continue;
 			    }
-
+			
 			    if($field_def['type'] == 'relate' && ! empty($field_def['custom_type']))
 					{
 						$field_def['type'] = $field_def['custom_type'];
 					}
-
+			
 			    if(($field_def['type'] == 'relate' && empty($field_def['ext2'])) || $field_def['type'] == 'assigned_user_name' || $field_def['type'] == 'foreign_key')
 			    {
 			       continue;
 			    }
 
+			    
 			    if ($field_def['type'] == 'encrypt')
 			    {
 			    	continue;
 			    }
-
+    
 ?>
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <?php
 
 				$js_defs_array = array();
-
+		
 				foreach($field_def as $field_name=>$field_value)
 				{
 					if(empty($field_name) || empty($field_value) || $field_name  == 'comment'
@@ -181,27 +189,31 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 						if($field_name == "vname")
 						{
 							$field_value = translate($field_value);
-							if(substr($field_value, -1) == ':')
-                            {
+							if(preg_match('/:$/',$field_value))
+			                                {
 								$field_value = substr($field_value,0,-1);
 							}
+							$field_value = addslashes($field_value);
 						}
-
+						else if ($field_name == 'comments' || $field_name == 'help') {
+							$field_value = addslashes($field_value);
+						}
+						
 						if ($field_name != 'default' && $field_name != 'default_value') {
 						    array_push($js_defs_array,
-								"\"$field_name\":".json_encode($field_value));
+								"\"$field_name\":\"$field_value\"");
 						}
 					}
 				}
 
-
+		
 			    if($field_def['name'] == 'team_set_id' && $module_name != 'Teams')
 		    	{
 		      	    array_push($js_defs_array, "invisible:true");
-		   	 	}
-
+		   	 	}		
+				
 				echo "{".implode(",",$js_defs_array)."};";
-
+		
 				if(isset($field_def['options']))
 				{
 ?>
@@ -210,12 +222,12 @@ var option_arr_<?php echo $module_name; ?> = new Array();
 <?php
 					$options_array = array();
 			      	$trans_options = translate($field_def['options']);
-
+			
 					if(! is_array($trans_options))
 				    {
 				        $trans_options = array();
 				    }
-
+			
 					foreach($trans_options as $option_value=>$option_text)
 					{
 						$option_text = translate($option_text);
@@ -233,7 +245,7 @@ var option_arr_<?php echo $module_name; ?> = new Array();
 ?>
 option_arr_<?php echo $module_name; ?>[option_arr_<?php echo $module_name; ?>.length] = { "value":"<?php echo $option_value; ?>", "text":"<?php echo $option_text; ?>"};
 <?php
-// END HALF-FIX
+// END HALF-FIX			            
 					}
 ?>
 
@@ -244,12 +256,12 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 				{
 ?>
 					var option_arr_<?php echo $module_name; ?> = new Array();
-
+	
 <?php
 			        $options_array = array();
-			        $options_array = $field_def['function']();
-
-			        foreach($options_array as $option_value=>$option_text)
+			        $options_array = $field_def['function']();	    
+	
+			        foreach($options_array as $option_value=>$option_text)          
 			        {
 			            $option_text = html_entity_decode($option_text,ENT_QUOTES);
 			            $option_text = addslashes($option_text);
@@ -269,16 +281,16 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 	    	<?php
 	    	    	$options_array = array();
 				  	$trans_options = translate($module->field_defs[$field_def['group']]['options']);
-
+			
 			        if(! is_array($trans_options))
 			      	{
 			        	$trans_options = array();
 			      	}
-
+			
 		            foreach($trans_options as $option_value=>$option_text)
 		            {
 		                $option_text = translate($option_text);
-
+					
 				        if(is_array($option_text))
 				        {
 				          $option_text = 'Array';
@@ -287,13 +299,13 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 				        $option_text = addslashes($option_text);
 				        $option_value = html_entity_decode($option_value,ENT_QUOTES);
 				        $option_value = addslashes($option_value);
-
+			
 				?>
 option_arr_<?php echo $module_name; ?>[option_arr_<?php echo $module_name; ?>.length] = { "value":"<?php echo $option_value; ?>", "text":"<?php echo $option_text; ?>"};
 				<?php
 		            }
 				?>
-
+				
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].options=option_arr_<?php echo $module_name; ?>;
            <?php
 				}
@@ -322,7 +334,7 @@ module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes(
 	foreach($relationships as $relationship_name=>$relationship)
 	{
 		$rel_defs_array = array();
-
+	
 		if(empty($beanList[$relationship->lhs_module]) || empty($beanList[$relationship->rhs_module]))
 		{
 			continue;
@@ -331,14 +343,14 @@ module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes(
 		$rhs_bean_name = $beanList[$relationship->rhs_module];
 		array_push($rel_defs_array, "\"lhs_bean_name\":\"".$lhs_bean_name."\"");
 		array_push($rel_defs_array, "\"rhs_bean_name\":\"".$rhs_bean_name."\"");
-
+        
 		foreach($relationship->def as $rel_field => $value)
 		{
 		    if (!is_array($value) && !is_object($value))
                 array_push($rel_defs_array, '"' . $rel_field . '":"' . $value . '"');
 		}
 		$rel_defs = "{".implode(',',$rel_defs_array)."}";
-
+	
 		print "rel_defs['". $relationship_name."'] = $rel_defs;\n";
 	}
 
@@ -387,7 +399,7 @@ for(module_name in module_defs)
         if(field_type != 'text' && (field_source != 'non-db' || typeof(field_def.ext2) != 'undefined') && field_def.name != 'full_name') {
 		      module_defs[module_name].group_by_field_defs[ field_def.name] = field_def;
         }
-
+        
 		if(field_type == 'int' || field_type == 'float' || field_type=='currency' || field_type=='decimal')
 		{
 			// create a new "column" for each summary type
@@ -436,6 +448,13 @@ var filter_defs = new Object();
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
+qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
+filter_defs['encrypt'] = qualifiers;
+
+var qualifiers =  new Array();
+qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
 qualifiers[qualifiers.length] = {name:'does_not_contain',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
 qualifiers[qualifiers.length] = {name:'starts_with',value:'<?php echo $mod_strings['LBL_STARTS_WITH']; ?>'};
@@ -450,6 +469,7 @@ filter_defs['yim'] = qualifiers;
 filter_defs['time'] = qualifiers;
 filter_defs['phone'] = qualifiers;
 filter_defs['url'] = qualifiers;
+
 
 var qualifiers_name = new Array();
 var is_def = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

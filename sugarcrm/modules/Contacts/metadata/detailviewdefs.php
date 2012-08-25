@@ -239,7 +239,6 @@ $viewdefs['Contacts']['DetailView'] = array(
             array('name' => 'preferred_language',
                   'label' => 'LBL_PREFERRED_LANGUAGE',
             ),
-            array(),
         ),
 	    //END SUGARCRM flav=ent ONLY
 

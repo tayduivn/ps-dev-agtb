@@ -36,22 +36,26 @@
 	{foreach from=$DETAILS item=DETAIL name="recordlist"}
     {if !$fields[$DETAIL.field].hidden}
 	<tr>
-		<td class="detail_label {if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">{$DETAIL.label|strip_semicolon}: {if $DETAIL.required}<span class="required">*</span>{/if}</td>
-		<td class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
-		{if $DETAIL.detail_only}
-            {if !empty($DETAIL.customCode)}
-				{eval var=$DETAIL.customCode}
-            {else}
-			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessDetailView' displayParams='' typeOverride=$DETAIL.type}
+        <td class="detail_label {if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">{$DETAIL.label|strip_semicolon}: {if $DETAIL.required}<span class="required">*</span>{/if}</td>
+      		<td class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
+      		{if
+      		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
+      			$fields[$DETAIL.field].acl > 1 &&
+      		{{* //END SUGARCRM flav=pro ONLY*}}
+      			!$DETAIL.detail_only}
+                  {if !empty($DETAIL.customCode)}
+      				{eval var=$DETAIL.customCode}
+                  {else}
+      			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams=$DETAIL.displayParams typeOverride=$DETAIL.type formName=$form_name}
+                  {/if}
+      		{else}
+                  {if !empty($DETAIL.customCodeReadOnly)}
+      				{eval var=$DETAIL.customCodeReadOnly}
+                  {else}
+      			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessDetailView' displayParams='' typeOverride=$DETAIL.type}
+                  {/if}
             {/if}
-		{else}
-			{if !empty($DETAIL.customCode)}
-				{eval var=$DETAIL.customCode}
-            {else}
-			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams=$DETAIL.displayParams typeOverride=$DETAIL.type formName=$form_name}
-            {/if}
-        {/if}
-		</td>
+      		</td>
 	</tr>
     {/if}
 	{/foreach}

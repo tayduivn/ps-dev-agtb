@@ -35,7 +35,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/lessphp/lessc.inc.php');
-require_once("include/SugarTheme/SugarTheme.php");
 
 /**
  * Class that provides tools for working with a theme.
@@ -64,12 +63,25 @@ class SidecarTheme
      */
     public function getCSSURL()
     {
-        $cacheCSS = $this->paths['cache'] . $this->bootstrapCssName;
+        $cacheCSS = $this->paths['css'];
 
         // Check if file exists on the system
         // otherwise we have to generate the corresponding bootstrap.css with custom theme, default theme and base theme
         if (!file_exists($cacheCSS)) {
-            $this->compileTheme();
+            // We compile it if a we have the custom theme in the file system in /custom/themes or /themes
+            $customThemeVars = $this->paths['custom'] . 'variables.less';
+            $baseThemeVars = $this->paths['base'] . 'variables.less';
+            if ( file_exists($customThemeVars) || file_exists($baseThemeVars) ) {
+                $this->compileTheme();
+            }
+            else {
+                // Otherwise we compile the default theme if it exists
+                $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
+                $cacheCSS = $clientDefaultTheme->paths['css'];
+                if (!file_exists($cacheCSS)) {
+                    $clientDefaultTheme->compileTheme();
+                }
+            }
         }
         return $cacheCSS;
     }
@@ -87,9 +99,10 @@ class SidecarTheme
     private function makePaths($client, $themeName)
     {
         return array(
-            'base' => 'themes/clients/' . $client . '/' . $themeName . '/',
+            'base'   => 'styleguide/themes/clients/' . $client . '/' . $themeName . '/',
             'custom' => 'custom/themes/clients/' . $client . '/' . $themeName . '/',
-            'cache' => sugar_cached('themes/clients/' . $client . '/' . $themeName . '/')
+            'cache'  =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/'),
+            'css'    =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/' . $this->bootstrapCssName),
         );
     }
 
@@ -141,7 +154,7 @@ class SidecarTheme
 
         // Write bootstrap.css on the file system
         sugar_mkdir($this->paths['cache'], null, true);
-        sugar_file_put_contents($this->paths['cache'] . $this->bootstrapCssName, $myCss);
+        sugar_file_put_contents($this->paths['css'], $myCss);
     }
 
     /**
@@ -152,11 +165,18 @@ class SidecarTheme
      */
     public function compileBootstrapCss($variables, $min = true)
     {
-        $less = new lessc('styleguide/bootstrap/less/bootstrap.less');
+        if (file_exists('styleguide/less/clients/' . $this->myClient . '/config.less'))
+            $url = 'styleguide/less/clients/' . $this->myClient . '/config.less';
+        else
+            $url = 'styleguide/less/clients/base/config.less';
+
+        $less = new lessc($url);
         if ($min === true) {
             $less->setFormatter('compressed');
         }
-        $variables['baseUrl'] = '"' . $GLOBALS['sugar_config']['site_url'] . '/styleguide/bootstrap"';
+        //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
+        //              to   /styleguide/assets/
+        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
 
         try {
             $css = $less->parse($variables);
