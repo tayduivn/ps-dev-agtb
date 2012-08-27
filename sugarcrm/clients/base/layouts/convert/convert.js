@@ -13,29 +13,125 @@
 
         initialize: function(options) {
             var leadId;
+
+            debugger;
             //load metadata for convert
             //traverse and add to metadata prior to initialize.
-
-
-            options.context = _.extend(options.context, this.initializeAllModels());
+           // options.context = _.extend(options.context, this.initializeAllModels());
             this.app.view.Layout.prototype.initialize.call(this, options);
-            debugger;
+
+
             leadId = this.context.attributes.modelId;
             this.convertModel = this.createConvertModel(leadId);
+
             this.componentsMeta = this.app.metadata.getLayout("Leads").convert.meta.components;
+/*
+            <?php
+            $viewdefs['Leads']['base']['layout']['convert'] = array(
+    'type' => 'convert',
+    'components' => array(
+        0 => array(
+            'view' => 'convertheader',
+        ),
+        1 => array(
+            'layout' => 'accordion',
+        ),
+        2 => array(
+            'view' => 'convertbottom',
+        ),
+
+    )
+);
+
+           */
+            debugger;
+            var createHeaderDef = {'view' : 'convertheader'};
+            this.addComponent(app.view.createView({
+                context: this.context,
+                name: createHeaderDef.view,
+                module: this.context.get("module"),
+                layout: this,
+                id: this.model.id
+            }), createHeaderDef);
+
+
+           debugger;
+            //    var component = this.getComponent('"convertheader"');
+            var def = {
+                'view' : 'accordion-panel',
+                'context' : {'module' : 'Prospects'}
+            };
+            // Switch context if necessary
+            if (def.context) {
+                context = this.context.getChildContext(def.context);
+                context.prepare();
+                module = context.get("module");
+            }
+
+            if (def.view) {
+                view = app.view.createView({
+                    context: context,
+                    name: 'accordion-panel',
+                    module: module,
+                    layout: this,
+                    id: def.id
+                });
+                this.addComponent(view, def);
+            }
+
+            var def = {
+                'view' : 'accordion-panel',
+                'context' : {'module' : 'ProspectLists'}
+            };
+            // Switch context if necessary
+            if (def.context) {
+                context = this.context.getChildContext(def.context);
+                context.prepare();
+                module = context.get("module");
+            }
+
+            if (def.view) {
+                view = app.view.createView({
+                    context: context,
+                    name: 'accordion-panel',
+                    module: module,
+                    layout: this,
+                    id: def.id
+                });
+                this.addComponent(view, def);
+            }
+
+
+
+            var createfooterDef = {'view' : 'convertbottom'};
+            this.addComponent(app.view.createView({
+                context: this.context,
+                name: createfooterDef.view,
+                module: this.context.get("module"),
+                layout: this,
+                id: createfooterDef.id
+            }), createfooterDef);
+
+
+
 
             this.context.off("lead:convert", null, this);
             this.context.on("lead:convert", this.convert, this);
 
+
+
+
+
         },
 
-        convert: function () {
+
+         convert: function () {
             var self = this;
             debugger;
             _.each( this.context.getModels(), function(model) {
                 self.convertModel.addSubModel(model.cid, model);
             }, this);
-            this.convertModel.save();
+            self.convertModel.save();
         },
     /**
      * creates a convert model that will hold all module models for syncing
