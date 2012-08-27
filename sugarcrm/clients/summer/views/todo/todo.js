@@ -16,15 +16,19 @@
         app.events.on("app:sync:complete", function() {
 
             self.collection = app.data.createBeanCollection("Tasks");
+            self.collection.fetch({myItems: true, success: function(collection) {
 
-            // If admin, grab all the todos
-            if( app.user.get("id") == 1 ) {
-                self.collection.fetch();
-            }
-            else
-            {   // otherwise, grab user-specific todos
-                self.collection.fetch({myItems: true});
-            }
+                collection.modelList = {};
+                collection.modelList['today'] = [];
+                collection.modelList['overdue'] = [];
+                collection.modelList['upcoming'] = [];
+
+                for( var modelIndex in collection.models ) {
+                    var result = self.getTaskType(collection.models[modelIndex].attributes.date_due);
+                    collection.models[modelIndex].attributes.task_type = result;
+                    collection.modelList[result].push(collection.models[modelIndex]);
+                }
+            }});
 
             self.bindDataChange();
         });
@@ -54,32 +58,42 @@
         $("#ui-datepicker-div").css("z-index", 1032);
     },
     removeTodo: function(e) {
-        var self = this;
-        var clickedEl = $(e.target).parents(".todo-list-item")[0];
-        var modelIndex = $(".todo-list-item").index(clickedEl);
+        var self = this,
+            clickedEl = $(e.target).parents(".todo-list-item")[0],
+            modelIndex = $(".todo-list-item").index(clickedEl);
 
         this.model = this.collection.models[modelIndex];
-        this.model.destroy({success: function() {
+        this.model.destroy({ success: function(model) {
+            var record = self.collection.modelList[self.getTaskType(model.attributes.date_due)],
+                modelIDs = _.pluck(record, 'id');
+
+            record.splice(_.indexOf(modelIDs, model.id), 1);
+
             self.open = true;
             self._render();
         }});
     },
     changeStatus: function(e) {
-        var clickedEl = $(e.target).parents(".todo-list-item")[0];
-        var modelIndex = $(".todo-list-item").index(clickedEl);
+        var clickedEl = $(e.target).parents(".todo-list-item")[0],
+            modelIndex = $(".todo-list-item").index(clickedEl),
+            taskStatusListStrings = app.lang.getAppListStrings('task_status_dom');
 
         // get the current model
         this.model = this.collection.models[modelIndex];
+        var record = this.collection.modelList[this.getTaskType(this.model.attributes.date_due)],
+            recordIndex = ( _.indexOf(_.pluck(record, 'id'), this.model.id) );
 
-        if( this.model.attributes.status == app.lang.getAppListStrings('task_status_dom')['Completed'] ) {
+        if( this.model.attributes.status == taskStatusListStrings['Completed'] ) {
             this.model.set({
-                "status": app.lang.getAppListStrings('task_status_dom')['Not Started']
+                "status": taskStatusListStrings['Not Started']
             });
+            record[recordIndex].attributes.status = taskStatusListStrings['Not Started'];
         }
         else {
             this.model.set({
-                "status": app.lang.getAppListStrings('task_status_dom')['Completed']
+                "status": taskStatusListStrings['Completed']
             });
+            record[recordIndex].attributes.status = taskStatusListStrings['Completed'];
         }
 
         this.model.save();
@@ -96,21 +110,45 @@
     _render: function() {
         app.view.View.prototype._render.call(this);
     },
+    getTaskType: function(todoDate) {
+        var todayBegin = new Date(),
+            todayEnd   = new Date(),
+            todoStamp = app.date.parse(todoDate).getTime();
+
+        todayBegin = todayBegin.setHours(0,0,0,0);
+        todayEnd = todayEnd.setHours(23,59,59,999);
+
+        // If the task falls in today's range
+        if( todoStamp >= todayBegin && todoStamp <= todayEnd ) {
+            return "today";
+        }
+        else if( todoStamp < todayBegin ) {
+            return "overdue";
+        }
+        else {
+            return "upcoming";
+        }
+    },
     validateTodo: function(e) {
-        var subject = $("#todo-subject").val();
-        var date = $("#todo-date").val();
+        var subject = $("#todo-subject").val(),
+            date = $("#todo-date").val();
+
         if( subject == "" || !(app.date.parse(date, app.date.guessFormat(date))) ) {
             console.log("invalid input data");
             return false;
         }
         else {
+            var datetime = date + " 00:00:00";
+
             this.model = app.data.createBean("Tasks", {
                 "name": subject,
                 "assigned_user_id": app.user.get("id"),
-                "date_due": date + " 00:00:00"
+                "date_due": datetime
             });
             this.collection.add(this.model);
             this.model.save();
+            this.collection.modelList[this.getTaskType(datetime)].push(this.model);
+
             $("#todo-subject").val("");
             $("#todo-date").val("");
             this.open = true;
