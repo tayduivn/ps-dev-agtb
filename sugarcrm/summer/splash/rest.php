@@ -95,7 +95,9 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
 {
     $app->response()->header('Content-Type', 'application/json;charset=utf-8');
     $password = $app->request()->params('password');
-    $email = $app->request()->params('email');
+    if (!$email = $app->request()->params('email')) {
+        $email = "gmail.com";
+    };
 
     $api = new EasyRpService($box->getSetting('google_key'));
     $res = $api->getUrl($email, $box->getSetting('top_url')."summer/splash/rest/users/callback");

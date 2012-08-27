@@ -10,28 +10,33 @@ var login = {
             {url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'}
         ];
         var selected = images[Math.floor(Math.random() * images.length)];
+
         $('body').css({
             background:'url(' + selected.url + ') no-repeat center center fixed ',
             'background-size':'cover'
 
         });
+
         $('#catchphrase').html(selected.text);
+
         login.setupLoginForm($('#login'));
         login.setupRegisterForm($('#register'));
         login.setupResetForm($('#reset'));
-        $('#register_btn').click(login.showRegisterForm)
-        $('#cancel_register_btn').click(login.showLoginForm)
-        $('#cancel_reset_btn').click(login.showLoginForm)
-        $('#reset_lnk').click(login.showReset)
+
+        $('#register_btn').click(login.showRegisterForm);
+        $('#cancel_register_btn').click(login.showLoginForm);
+        $('#cancel_reset_btn').click(login.showLoginForm);
+        $('#reset_lnk').click(login.showReset);
+        $('#google_login').click(login.showLoginForm);
+
         login.displayMessages(status);
-        console.log(status);
+        console.log("Current Status", status);
         if(status && status.display){
+          console.log("In the IF");
             login.showForm(status.display);
         }
         if(status.login_response)login.response(status.login_response);
-
     },
-
 
     setupLoginForm:function (form) {
         form.submit(function (event) {
@@ -44,6 +49,9 @@ var login = {
             $.post('rest/users/authenticate', {email:email, password:password}, login.response);
         });
 
+        $("#google_login").click(function(e) {
+          $.post('rest/users/authenticate', {}, login.response);
+        });
     },
 
     setupRegisterForm:function (form) {
@@ -143,10 +151,7 @@ var login = {
         }
         console.log(notices);
         $('#notices').html(notices);
-
-
     },
-
 
     registerResponse:function (data) {
 
@@ -175,6 +180,7 @@ var login = {
             $('form').toggle(false);
             $('#' + id).toggle(true);
     },
+
     showRegisterForm:function (event) {
         login.showForm('register');
     },
@@ -183,24 +189,20 @@ var login = {
         login.showForm('login');
 
     },
+
     showInstances:function (event) {
         login.showForm('instances');
 
     },
+
     showReset:function (event) {
         login.showForm('reset');
-
     },
-
 
     showResetPass:function (event) {
         login.showForm('resetpass');
 
      }
-
-
-
-
 };
 
 
