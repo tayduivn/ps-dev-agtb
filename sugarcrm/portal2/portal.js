@@ -52,11 +52,11 @@
 
         function alertUser(msg) {
             // TODO: Error messages should later be put in lang agnostic app strings. e.g. also in layout.js alert.
-            msg = msg || "At minimum, you need to have the 'Home' module enabled to use this application.";
+            msg = msg || "LBL_PORTAL_MIN_MODULES";
 
             app.alert.show("no-sidecar-access", {
                 level: "error",
-                title: "Error",
+                title: "LBL_PORTAL_ERROR",
                 messages: [msg]
             });
         }
@@ -75,7 +75,7 @@
             // If route is NOT index, and NOT in non module routes, check if module (args[0]) is loaded and user has access to it.
         } else if (!_.include(nonModuleRoutes, route) && args[0] && !app.metadata.getModule(args[0]) || !app.acl.hasAccess('read', args[0])) {
             app.logger.error("Module not loaded or user does not have access. ", route);
-            alertUser("Issue loading " + args[0] + " module. Please try again later or contact support.");
+            alertUser("LBL_PORTAL_ROUTE_ERROR");
             return false;
         }
         return true;
@@ -123,8 +123,8 @@
                     app.Controller.__super__.loadView.call(self, params);
                     app.alert.show('appOffline', {
                         level: "error",
-                        title: 'Error',
-                        messages: 'Sorry the application is not available at this time. Please contact the site administrator.',
+                        title: 'LBL_PORTAL_ERROR',
+                        messages: 'LBL_PORTAL_OFFLINE',
                         autoclose: false
                     });
                 };
@@ -202,7 +202,7 @@
 
         //process attachment uploads
         if (filesToUpload > 0) {
-            app.alert.show('upload', {level: 'process', title: 'Uploading', autoclose: false});
+            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
 
             //field by field
             for (var file in $files) {
