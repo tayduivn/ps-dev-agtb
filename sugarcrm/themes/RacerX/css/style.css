@@ -2655,6 +2655,9 @@ embed
 		top:0;
 		right:0;
 		position:absolute;
+		-moz-border-radius-topright: 6px;
+		-webkit-border-top-right-radius: 6px;
+		border-radius-topright: 6px;
 		border-width: 1px 1px 0px 0px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -2667,6 +2670,9 @@ embed
 		top:0;
 		left:0;
 		position:absolute;
+		-moz-border-radius-topleft: 6px;
+		-webkit-border-top-left-radius: 6px;
+		border-radius-topleft: 6px;
 		border-width: 1px 0px 0px 1px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -4496,11 +4502,15 @@ ul.subpanelTablist li a.activeSubTab:hover
 }
 
 .list.view  tr:last-child td:first-child ,.list.view  tr:last-child th:first-child{
-
+	-moz-border-radius-bottomleft: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	border-border-radius-bottomleft: 6px;
 }
 
 .list.view  tr:last-child td:last-child,.list.view  tr:last-child th:last-child  {
-
+	-moz-border-radius-bottomright: 6px;
+	-webkit-border-bottom-right-radius: 6px;
+	border-border-radius-bottomright: 6px;
 }
 
 .list.view  tr:last-child th,.list.view  tr:last-child td {
@@ -6443,39 +6453,33 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 
 ul.clickMenu {
 	list-style: none;
-    display: inline-block;
-    padding: 0px;
-    margin: 0px;
-    font-size: 13px;
-    line-height: 18px;
-    color: #262627;
-    font-weight: 500;
-    font-family: 'Helvetica Neue';
-    text-align: center;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
-    vertical-align: middle;
-    background-color: #ebebea;
-    background-image: -moz-linear-gradient(top, #ffffff, #cdcccb);
-    background-image: -ms-linear-gradient(top, #ffffff, #cdcccb);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#cdcccb));
-    background-image: -webkit-linear-gradient(top, #ffffff, #cdcccb);
-    background-image: -o-linear-gradient(top, #ffffff, #cdcccb);
-    background-image: linear-gradient(top, #ffffff, #cdcccb);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#cdcccb', GradientType=0);
-    border-color: #cdcccb #cdcccb #a8a6a4;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-    cursor: pointer;
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-    *margin-left: .3em;
+	padding: 0px;	
+	margin: 0 !important;
+	vertical-align: bottom;
+	-webkit-border-radius: 1px; 
+	-moz-border-radius: 1px; 
+	border-radius: 1px; 
+		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#f1f1f1 10%,
+		#efefef 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.10, #f1f1f1),
+	    color-stop(1, #efefef)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
+	   border: 1px solid #aaaaaa;
+	   display: inline-block;
+	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+    /*hack for IE7*/
+    *display:inline;
+    *zoom:1;
 }
 ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
 
@@ -6510,7 +6514,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	font-weight: normal !important;
 	padding: 3px 10px 3px 10px !important;
 	color: #000;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
@@ -6526,7 +6530,7 @@ text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 20px;
-	height: 24px;
+	height: 21px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 5px -25px;
 	cursor: pointer;
@@ -6690,7 +6694,7 @@ td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
 
 ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-background-color: #E6E6E6;
+background-color: #343433;
 color: #fff !important;
 font-weight: normal !important;
 cursor: pointer;
@@ -6736,7 +6740,6 @@ ul#globalLinks.clickMenu li > span a {
     font-size: 14px;
     margin-top: 13px;
 	padding: 0px 10px !important;
-    text-shadow: none;
 }
 
 
