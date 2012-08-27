@@ -17,7 +17,7 @@
         if (fieldsArray.length > this.fieldsToDisplay) {
             _.each(fieldsArray, function(field, i) {
                 if (i > this.fieldsToDisplay - 1) {
-                    $(field).parent().parent().hide();
+                    $(field).parent().parent().parent().hide();
                 }
             }, this);
             this.$(".more").removeClass("hide");
@@ -28,7 +28,8 @@
         var that = this;
         _.each(fieldsArray, function(field, i) {
             if (i > that.fieldsToDisplay - 1) {
-                $(field).parent().parent().toggle();
+                $(field).parent().parent().parent().toggle();
+                console.log($(field).parent().parent().parent());
             }
         });
         this.$(".less").toggleClass("hide");

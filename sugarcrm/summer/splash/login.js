@@ -7,7 +7,8 @@ var login = {
             {url:'static/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},
             {url:'static/flamingos.jpg', text:'It\'s like a flock of flamingos.'},
             {url:'static/houses.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'}
+            {url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'},
+            {url:'static/darkclouds.jpg', text:'It\'s like a dark stormy night.'}
         ];
         var selected = images[Math.floor(Math.random() * images.length)];
 
@@ -30,9 +31,7 @@ var login = {
         $('#google_login').click(login.showLoginForm);
 
         login.displayMessages(status);
-        console.log("Current Status", status);
         if(status && status.display){
-          console.log("In the IF");
             login.showForm(status.display);
         }
         if(status.login_response)login.response(status.login_response);

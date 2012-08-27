@@ -1,21 +1,28 @@
-{{#each meta.panels}}
-   <div class="card2">
-                    <div class="row-fluid">
-                       <div class="span12 record-save-prompt" style="display:none;">
+                    <div class="row-fluid pull-right">
+
+                       <div class="span8 record-save-prompt" style="display:none;">
                            <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
                            <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
                        </div>
+                       <div class="span4 record-edit-prompt" style="display:;">
+                            <a style="cursor: pointer" class="btn btn-primary record-edit">Edit</a>
+                        </div>
                    </div>
+{{#each meta.panels}}
+   <div class="card2">
+
        {{#if ../model.isNotEmpty}}
 
        {{#each grid}}
             <div class="row-fluid">
+
                 {{#each this}}
+                <span class='record-row'>
                 {{#if ../../this.labels}}
 
                <div class="span{{this.labelSpan}} tright">{{str  this.label ../../../../../this.model.module}}</div>
                {{/if}}
-               <span class='record-row'>
+
                <div class="span{{this.span}}" name="{{this.name}}">
                     {{field ../../../../this}}
                     <span class="record-edit-link-wrapper" data-name="{{name}}">
@@ -28,9 +35,6 @@
              </div>
 
        {{/each}}
-           <div class="row-fluid closure">
-             <div class="span2"></div>
-           </div>
        {{else}}
        {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
        {{/if}}
