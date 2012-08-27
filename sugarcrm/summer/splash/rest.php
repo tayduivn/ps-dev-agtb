@@ -16,7 +16,7 @@ $box = BoxOfficeClient::getInstance();
  */
 $app->get('/rest/users/callback', function() use ($app, $box)
 {
-    $app->response()->header('Content-Type', 'text/html;charset=utf-8');
+    //$app->response()->header('Content-Type', 'text/html;charset=utf-8');
     $api = new EasyRpService($box->getSetting('google_key'));
     $result = $api->verify($box->getSetting('top_url')."summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
     if(empty($result['verifiedEmail'])) {
@@ -45,11 +45,8 @@ $app->get('/rest/users/callback', function() use ($app, $box)
             $data = json_encode(array("error" => "Your account is not active. Please contact support."));
         }
     }
-    echo <<<END
-<script language="javascript">
-window.opener.login.response($data);
-window.close();
-</script>
+    $_SESSION['gauth_data'] = $data;
+    $app->response()->header('Location', '../../index.php');
 END;
 }
 );

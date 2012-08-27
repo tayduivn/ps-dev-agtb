@@ -28,6 +28,7 @@ var login = {
         if(status && status.display){
             login.showForm(status.display);
         }
+        if(status.login_response)login.response(status.login_response);
 
     },
 
@@ -76,7 +77,7 @@ var login = {
 
     response:function (data) {
     	if(data.popup) {
-    		login.popup = window.open(data.popup, "Login", "width=680,height=600,resizable,scrollbars=yes");
+    		document.location.href = data.popup;
     		return;
     	}
     	if(login.popup) {

@@ -16,12 +16,18 @@ if (!empty($_REQUEST['do'])) {
         case 'resetpass':
             $settings['display'] = 'resetpass';
             break;
-
-
     }
-
-
 }
+
+$id = session_id();
+if(empty($id)){
+    session_start();
+}
+if(!empty($_SESSION['gauth_data'])){
+    $settings['login_response']  = json_decode($_SESSION['gauth_data']);
+    unset($_SESSION['gauth_data']);
+}
+
 
 ?>
 

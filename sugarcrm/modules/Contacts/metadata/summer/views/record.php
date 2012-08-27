@@ -51,7 +51,7 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
         array(
             'label' => 'LBL_PANEL_2',
             'columns'=>2,
-            'noLabels'=>false,
+            'labels'=>false,
             'placeholders'=>true,
             'fields' => array(
                 array(
@@ -62,12 +62,12 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
                     ),
                 ),
                 'primary_address_street',
-                array('name' => 'last_name',
+                /*array('name' => 'last_name',
                     'displayParams' => array(
                         'required' => true,
                         'wireless_edit_only' => true,
                     ),
-                ),
+                ),*/
                 'title',
                 'primary_address_city',
                 'account_name',
