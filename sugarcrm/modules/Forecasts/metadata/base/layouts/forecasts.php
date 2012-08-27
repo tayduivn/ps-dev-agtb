@@ -58,6 +58,9 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
         array(
             'view' => 'forecastsConfigCategories',
-        )
+        ),
+        array(
+            'view' => 'forecastsConfigRange',
+        ),
     )
 );
