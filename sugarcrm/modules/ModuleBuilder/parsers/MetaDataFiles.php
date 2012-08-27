@@ -444,17 +444,14 @@ class MetaDataFiles
      * @param string $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
-    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
+    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION) {
         // Simple validation of path
         if (!isset(self::$paths[$path])) {
             return null;
         }
 
         // Now get to building
-        $dirname = self::$paths[$path] . 'modules/' . $module . '/metadata/';
-        if (!empty($client)) {
-            $dirname .= $client . '/' . $component . 's/';
-        }
+        $dirname = self::$paths[$path] . 'modules/' . $module . '/';
         return $dirname;
     }
 
@@ -471,7 +468,7 @@ class MetaDataFiles
         require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
         $sm = new StudioModule($module);
 
-        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/metadata/';
+        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/';
         if (!empty($client)) {
             $dirname .= $client . '/' . $component . 's/';
         }
