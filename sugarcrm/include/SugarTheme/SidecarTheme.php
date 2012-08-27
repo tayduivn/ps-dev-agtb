@@ -78,7 +78,9 @@ class SidecarTheme
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
                 $cacheCSS = $clientDefaultTheme->paths['css'];
-                $clientDefaultTheme->compileTheme();
+                if (!file_exists($cacheCSS)) {
+                    $clientDefaultTheme->compileTheme();
+                }
             }
         }
         return $cacheCSS;
