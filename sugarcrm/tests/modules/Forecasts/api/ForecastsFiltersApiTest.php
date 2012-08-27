@@ -133,7 +133,6 @@ class ForecastsFiltersApiTest extends RestTestBase
     /**
      * Test the timeperiods and that we don't return any fiscal year timeperiods
      *
-     * @outputBuffering disabled
      */
     public function testTimeperiods()
     {
