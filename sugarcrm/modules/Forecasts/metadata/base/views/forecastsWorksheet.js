@@ -14,6 +14,7 @@
     aaSorting:[],
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
+    isEditableWorksheet:false,
     _collection:{},
 
 
@@ -133,17 +134,17 @@
      */
     _renderField: function(field) {
 
-        if (this.isMyWorksheet() && field.name == "commit_stage") {
+        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             field = this._setUpCommitStage(field);
         }
 
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isMyWorksheet() && field.viewName !="edit" && field.def.clickToEdit === true) {
+        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
             new app.view.ClickToEditField(field, this);
         }
 
-        if( this.isMyWorksheet() && field.name == "commit_stage") {
+        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this);
         }
     },
@@ -196,7 +197,6 @@
     _setForecastColumn: function(fields) {
         var self = this;
         var forecastField, commitStageField;
-        var isOwner = self.isMyWorksheet();
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
@@ -204,10 +204,7 @@
                 forecastField = field;
             } else if (field.name == "commit_stage") {
                 field.enabled = app.config.show_buckets;
-                if(!isOwner)
-                {
-                   field.view = 'default';
-                }
+                field.view = self.isEditableWorksheet ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
@@ -226,6 +223,7 @@
         $("#view-sales-rep").show();
         $("#view-manager").hide();
 
+        this.isEditableWorksheet = this.isMyWorksheet();
         var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
 
         app.view.View.prototype._render.call(this);

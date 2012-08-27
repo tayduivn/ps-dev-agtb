@@ -41,13 +41,12 @@ class ForecastsChartApiTest extends RestTestBase
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
         self::$user = SugarTestUserUtilities::createAnonymousUser();
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
-        self::$timeperiod->name = "Test";
-        self::$timeperiod->save();
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
 
         // create an opp
         $opp1 = SugarTestOpportunityUtilities::createOpportunity();
@@ -78,7 +77,7 @@ class ForecastsChartApiTest extends RestTestBase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id ="' . self::$timeperiod->id . '";');
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         parent::tearDownAfterClass();
         // this strange as we only want to call this when the class expires;
         parent::tearDown();

@@ -54,18 +54,9 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
+        require_once('modules/Forecasts/ForecastsSeedData.php');
         SugarTestHelper::setup('app_list_strings');
-        $forecastConfig = array (
-            'show_buckets' => false,
-            'committed_probability' => 70,
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        );
-        $admin = BeanFactory::getBean('Administration');
-        foreach ($forecastConfig as $name => $value)
-        {
-            $admin->saveSetting('base', $name, json_encode($value));
-        }
+        ForecastsSeedData::setupForecastSettings();
     }
 
     public static function tearDownAfterClass()

@@ -11,6 +11,7 @@ describe("ClickToEdit", function(){
         field = {
             $el: $('<div class="testfield"></div>'),
             viewName:'testView',
+            def: { type : 'bool', options : 'commit_stage_dom'},
             delegateEvents: function() { return true; }
         };
         view.$el.append(field.$el);
