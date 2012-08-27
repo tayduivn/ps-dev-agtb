@@ -1201,7 +1201,7 @@ class Email extends SugarBean {
                 continue;
             }
             if(!empty($parts["name"])) {
-                $res[] = "{$parts["name"]} <{$parts["email"]}>";
+                $res[] = "{$parts['name']} <{$parts['email']}>";
             } else {
                 $res[] .= $parts["email"];
             }
