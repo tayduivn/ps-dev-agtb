@@ -656,6 +656,8 @@ div.actionsContainer
 
 .edit h4
 {
+    font-weight: bold;
+    background-color: #eee;
     text-align: left;
     margin-top: 0;
     padding-top:0;
@@ -4607,6 +4609,10 @@ table.detail
     color: #444444;
 }
 
+.edit h4 {
+    color: #444444;
+}
+
 #EditView hr{
     border-color:#abc3d7; 
 }
@@ -5887,12 +5893,15 @@ span.dcmenuitem:hover{
 }
 
 
-#dcmenuSugarCube{
+#dcmenuSugarCube, #dcmenuSugarCubeEmpty{
 float: right;
 padding: 0px 0px 0 2px;
 height: 43px;
 }
 
+#dcmenuSugarCubeEmpty {
+    padding: 0px;
+}
 #dcmenuUserIcon {
 float: left;
 padding: 0px 0px 0 2px;
@@ -6098,7 +6107,7 @@ color: #0B578F;
 #dcmenuSearchDiv {
 	float:right;
 	margin-top: 8px;
-	height: 26px;
+	height: 35px;
     width: 275px;
     position:relative;
 }
@@ -6998,7 +7007,10 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 
 .edit508 tr td[scope="col"]
 {
+    color: #444;
     background-color: #eee;
+    border-color: #ccc;
+    white-space: nowrap;
 }
 
 .listViewEmpty{

@@ -522,7 +522,7 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=close_
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd.png");
 }
 
-.detail h4,.detail tr td[scope="row"],.edit tr td[scope="row"],.edit tr th {
+.detail h4,.edit tr th,.edit h4 {
 background-color:#ECFFEE;
 }
 

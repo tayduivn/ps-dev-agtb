@@ -52,9 +52,11 @@
      */
     setModelAndContext: function(data) {
         this.model = app.data.createBean("Contacts", data);
+        this.model.isNotEmpty = true;
         this.context.set({
             'model': this.model,
-            'module': 'Contacts'
+            'module': 'Contacts',
+            _dataFetched: true
         });
     },
     renderSubnav: function(data) {
