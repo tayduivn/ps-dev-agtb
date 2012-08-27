@@ -114,6 +114,22 @@ class SugarFavorites extends Basic
 	    return $response['list'];
 	}
 
+	public static function getFavoritesByModuleByRecord($module, $id)
+	{
+        if ( !empty($module) )
+            if ( is_array($module) )
+                $where .= " sugarfavorites.module IN ('" . implode("','",$module) . "')";
+            else
+                $where .= " sugarfavorites.module = '$module' ";
+        
+        $where .= " AND sugarfavorites.record_id = '{$id}'";
+
+        $focus = new SugarFavorites;
+		$response = $focus->get_list($orderBy,$where,0,$limit);
+
+	    return $response['list'];		
+	}
+
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
     {
         $focus = new SugarFavorites();

@@ -136,7 +136,22 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
+        $module_favorites_user = array();
+        
+        foreach($favorites AS $fav)
+        {
+            $module_favorites_user[] = strval($fav->assigned_user_id);
+        }
 
+        $keyValues['user_favorites'] = implode(',', $module_favorites_user);
+
+        $GLOBALS['log']->fatal("\r\n\r\n::::MY FAVORITES::::\r\n\r\n" . print_r($keyValues['user_favorites'], true) . "\r\n\r\n");
+        // get the favs
+        /*$keyValues['favorites'] 
+        if(!empty($keyValues['favorites']))
+            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($keyValues['favorites'], true) . "\r\n\r\n");
+         */
         // to index owner
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
@@ -521,6 +536,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $mainFilter;
     }
 
+    protected function constructMyFavoritesFilter($moduleFilter)
+    {
+        $ownerTermFilter = new Elastica_Filter_Term();
+        $ownerTermFilter->setTerm('user_favorites', $GLOBALS['current_user']->id);
+
+        $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
+    }
+
     /**
      * @param $queryString
      * @param int $offset
@@ -597,7 +621,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !is_admin($GLOBALS['current_user']) )
             {
                 // main filter
-                $mainFilter = $this->constructMainFilter($finalTypes);
+                $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
                 $query = new Elastica_Query($queryObj);
                 $query->setFilter($mainFilter);
