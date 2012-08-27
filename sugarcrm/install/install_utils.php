@@ -880,6 +880,7 @@ function handlePortalConfig()
 
     $portalConfig = array(
         'appId' => 'SupportPortal',
+        'appStatus' => 'offline',
         'env' => 'dev',
         'platform' => 'portal',
         'additionalComponents' => array(
