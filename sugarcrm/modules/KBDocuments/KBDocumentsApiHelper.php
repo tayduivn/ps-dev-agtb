@@ -35,15 +35,15 @@ class KBDocumentsApiHelper extends SugarBeanApiHelper
         if ( empty($fieldList) || in_array('attachment_list',$fieldList) ) {
             $db = DBManagerFactory::getInstance();
 
-            $query = "SELECT rev.id rev_id, rev.filename filename, kbrev.id docrev_id FROM kbdocument_revisions kbrev LEFT JOIN document_revisions rev ON (kbrev.document_revision_id = rev.id) WHERE kbrev.kbdocument_id = '".$bean->id."' AND kbrev.deleted = 0 AND rev.deleted = 0";
+            $query = "SELECT rev.id rev_id, rev.filename filename, kbrev.id docrev_id FROM kbdocument_revisions kbrev LEFT JOIN document_revisions rev ON (kbrev.document_revision_id = rev.id) WHERE kbrev.kbdocument_id = '".$bean->id."' AND kbrev.deleted = 0 AND rev.deleted = 0 AND kbrev.kbcontent_id is NULL";
             $ret = $db->query($query,true);
             $files = array();
             while ( $row = $db->fetchByAssoc($ret) ) {
                 $thisFile = array();
                 $thisFile['document_revision_id'] = $row['rev_id'];
-                $thisFile['document_revision_filename'] = $row['filename'];
+                $thisFile['name'] = $row['filename'];
                 $thisFile['kbdocument_revision_id'] = $row['docrev_id'];
-                $thisFile['file_uri'] = $this->api->getResourceURI(array('DocumentRevisions',$row['rev_id'],'file','filename'));
+                $thisFile['uri'] = $this->api->getResourceURI(array('DocumentRevisions',$row['rev_id'],'file','filename'));
                 $files[] = $thisFile;
             }
             $data['attachment_list'] = $files;

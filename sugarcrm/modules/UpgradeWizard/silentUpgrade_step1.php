@@ -719,6 +719,37 @@ if(!didThisStepRunBefore('commit')){
 	 		$skippedFiles = $split['skippedFiles'];
 			set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
 	 }
+    
+    // 6.6 metadata enhancements for portal and wireless, should only be 
+    // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
+    // handled AFTER inclusion of the upgrade package files
+    if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
+        if (version_compare($sugar_version, '6.6.0') == -1 && version_compare($manifest['version'], '6.6.0', '>=')) {
+            if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
+                set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
+                logThis('Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');
+                require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+                
+                // Get the sidecar metadata upgrader
+                $smdUpgrader = new SidecarMetaDataUpgrader();
+                
+                // Run the upgrader
+                $smdUpgrader->upgrade();
+                
+                // Log failures if any
+                $failures = $smdUpgrader->getFailures();
+                if (!empty($failures)) {
+                    logThis(count($failures) . ' metadata files failed to upgrade through the silent upgrader:');
+                    logThis(print_r($failures, true));
+                }
+                    
+                // Reset the progress
+                set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','done');
+            }
+        }
+    }
+    // END sidecar metadata updates
+    
 	require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
 	$new_sugar_version = getUpgradeVersion();
     $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);

@@ -42,6 +42,13 @@ global $current_user;
 
 
 if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+
+    if (isset($GLOBALS['sugar_config']['hide_admin_licensing']) && $GLOBALS['sugar_config']['hide_admin_licensing']) {
+        sugar_die(translate('LBL_LICENSE_UNAUTHORIZED_ACCESS', 'Administration'));
+
+    }
+
+
 if(isset($_REQUEST['validate'])){
 	checkDownloadKey();
 }

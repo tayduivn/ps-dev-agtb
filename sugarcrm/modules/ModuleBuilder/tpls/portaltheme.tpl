@@ -27,10 +27,23 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY
 *}
-<link rel="stylesheet" type="text/css" href="portal2/lib/twitterbootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="{$css_url}" />
+<style>
+    h2{literal}{line-height: 100%;}{/literal}
+    body{literal}{padding-top: 0px;}{/literal}
+</style>
 <h1>Customize Theme</h1>
 <div class="themes" style="">
-    <div class="content"></div>
+    <div class="content">
+        <br>
+        <div class="alert alert-process">
+            <strong>Loading</strong>
+
+            <div class="loading">
+                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -48,7 +61,7 @@
         logLevel:'FATAL',
         logWriter:'ConsoleWriter',
         logFormatter:'SimpleFormatter',
-        serverUrl:'{/literal}{$siteURL}{literal}/rest/v10',
+        serverUrl:'./rest/v10',
         serverTimeout:30,
         maxQueryResult:20,
         maxSearchQueryResult:3,
@@ -61,7 +74,9 @@
             }
         },
         clientID:"sugar",
-                authStore:"sugarAuthStore"
+        authStore:"sugarAuthStore",
+        loadCss: false,
+        syncConfig: false
     }, false);
 
 })(SUGAR.App);

@@ -51,11 +51,10 @@ function getDurationMinutesOptions($focus, $field, $value, $view) {
 		$focus->duration_hours = "0";
 	if (is_null($focus->duration_minutes))
 		$focus->duration_minutes = "1";
-		
-   
+	
     if($view == 'EditView' || $view == 'MassUpdate' || $view == "QuickCreate"
     //BEGIN SUGARCRM flav=pro ONLY
-    || $view == 'wirelessedit'
+    || ($view == 'wirelessedit' && ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id)) > 1)
     //END SUGARCRM flav=pro ONLY
     ) {
        $html = '<select id="duration_minutes" ';

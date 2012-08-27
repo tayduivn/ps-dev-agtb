@@ -1,20 +1,9 @@
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span6">
-            <a class="btn btn-primary" name="save_button">Save & Deploy</a>
-        </div>
-        <div class="span6">
-            <a class="btn btn-danger pull-right" name="reset_button">Restore Default Theme</a>
-        </div>
-    </div>
-</div>
-
 <header class="subhead">
-    <h1>Colors
-        <small>LESS variables</small>
+    <button href="javascript:void(0)" class="button pull-right" name="refresh_button" style="margin-left: 10px">
+        <i class="icon-refresh"></i> Reset</button>
+    <h1><small>Colors</small>
     </h1>
 </header>
-
 <table class="table table-bordered table-striped">
     <tbody>
     {{#each lessVars.hex}}
@@ -46,7 +35,6 @@
         <small>LESS variables</small>
     </h1>
 </header>
-
 <table class="table table-bordered table-striped">
     <tbody>
     {{#each lessVars.rel}}
@@ -67,7 +55,6 @@
         <small>LESS variables</small>
     </h1>
 </header>
-
 <table class="table table-bordered table-striped">
     <tbody>
     {{#each lessVars.bg}}
@@ -80,4 +67,27 @@
     {{/each}}
     </tbody>
 </table>
-        {{/if}}
+{{/if}}
+<div class="row-fluid">
+    <div class="btn-toolbar pull-right">
+        <a href="javascript:void(0)" name="reset_button">Restore Default Theme</a>
+        <button href="javascript:void(0)" class="button btn-primary" name="save_button" style="margin-left: 10px">
+                <i class="icon-upload"></i> Save & Deploy</button>
+
+    </div>
+</div>
+
+<div id="modal-confirm-reset" class="modal hide">
+    <div class="modal-header">
+      <a href="javascript:void(0)" class="close">x</a>
+      <h3>Reset default theme</h3>
+    </div>
+    <div class="modal-body">
+      <p>You are about to erase your custom theme with the default theme.</p>
+      <p>Do you want to proceed?</p>
+    </div>
+    <div class="modal-footer">
+      <button href="javascript:void(0)" id="buttonYes" class="button btn-danger">Yes</button>
+      <button href="javascript:void(0)" id="buttonNo" class="button">No</button>
+    </div>
+</div>

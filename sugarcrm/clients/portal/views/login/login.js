@@ -1,7 +1,8 @@
 ({
     events: {
         "click .login-submit": "login",
-        "click [name=signup_button]": "signup"
+        "click [name=signup_button]": "signup",
+        "keypress form" : "submitOnEnter"
     },
     initialize: function(options) {
         // Adds the metadata for the Login module
@@ -25,7 +26,6 @@
         app.view.View.prototype.render.call(this);
         if (!SUGAR.App.api.isAuthenticated()) {
             $(".navbar").hide();
-            $("footer").hide();
         }
         return this;
     },
@@ -51,6 +51,12 @@
                 }
             });
         }
+    },
+    submitOnEnter: function(e) {
+        if (event.which == 13 || event.keyCode == 13) {
+            this.$('input,select').blur();
+            this.login();
+         }
     },
     signup : function() {
         app.router.navigate('#signup');

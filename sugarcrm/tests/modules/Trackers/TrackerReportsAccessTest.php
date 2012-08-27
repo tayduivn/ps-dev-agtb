@@ -30,22 +30,19 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase {
 
     function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
         global $sugar_version, $sugar_flavor, $beanFiles, $beanList, $moduleList, $modListHeader, $sugar_config;
         require('config.php');
         require('include/modules.php');
         $modListHeader = $moduleList;
         require_once('modules/Reports/config.php');
         $GLOBALS['report_modules'] = getAllowedReportModules($modListHeader);
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->current_user = $GLOBALS['current_user'];
         $this->non_admin_user = SugarTestUserUtilities::createAnonymousUser();
-
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     function tearDown()
@@ -53,11 +50,8 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->non_admin_user = null;
         $GLOBALS['current_user'] = $this->current_user;
-        unset($GLOBALS['app_strings']);
-        unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['mod_strings']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        SugarTestHelper::tearDown();
     }
 
     /**

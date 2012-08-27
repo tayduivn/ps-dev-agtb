@@ -1,0 +1,29 @@
+<div class="longHelpTitle">Update the customizable variables of a custom theme</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    <p>It updates variables.less (less file containing customizable vars in the theme folder) with the set of variables passed as arguments</p>
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+    <table>
+        <tr><th>Param</th><th>Description</th><th>Optional</th></tr>
+        <tr><td>platform</td><td>/themes/clients/***PLATFORM***/themeName/</td><td>true</td></tr>
+        <tr><td>themeName</td><td>/themes/clients/platform/***THEMENAME***/</td><td>true</td></tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    platform: 'portal',
+    themeName: 'default',
+    primary: 'default',
+    secondary: '#aaaaaa',
+    primaryBtn: '#bbbbbb',
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <p>http://path/to/bootstrap.css (json encoded)</p>
+</div>
