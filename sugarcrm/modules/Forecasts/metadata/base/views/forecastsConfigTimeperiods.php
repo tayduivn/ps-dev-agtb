@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
             'fields' => array(
                 array(
                     'name' => 'fiscalStartDate',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'label' => 'LBL_FORECASTS_FISCAL_START_DATE',
                     'default' => false,
                     'enabled' => true,
