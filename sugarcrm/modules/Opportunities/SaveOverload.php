@@ -72,6 +72,17 @@ function perform_save(&$focus){
         }
     }
 
+    // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
+    if(is_null($focus->best_case) || strval($focus->best_case) === "") {
+        $focus->best_case = $focus->amount;
+    }
+    if(is_null($focus->likely_case) || strval($focus->likely_case) === "") {
+        $focus->likely_case = $focus->amount;
+    }
+    if(is_null($focus->worst_case) || strval($focus->worst_case) === "") {
+        $focus->worst_case = $focus->amount;
+    }
+
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
     //END SUGARCRM flav=pro ONLY
