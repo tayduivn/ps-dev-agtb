@@ -194,7 +194,7 @@
          */
             syncConfig: true,
             authStore:"sugarAuthStore",
-        loadCss: false
+        loadCss: "url"
     }, false);
 
 })(SUGAR.App);
