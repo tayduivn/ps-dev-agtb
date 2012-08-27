@@ -87,29 +87,29 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="../sidecar/lib/sugarapi/demoServerData.js"></script>
     <script src="../sidecar/lib/sugarapi/demoRestServer.js"></script>
     <script src="../sidecar/lib/sinon/sinon.js"></script>
-    <link rel="stylesheet" href="lib/twitterbootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
 
+
     <!-- Styleguide scripts that are not useful yet -->
-    <script src="lib/twitterbootstrap/js/bootstrap-transition.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-collapse.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-tab.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-transition.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-collapse.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-tab.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-typeahead.js"></script>
     <script src="lib/twitterbootstrap/js/jquery.dataTables.js"></script>
     <script src="lib/twitterbootstrap/js/wicked.js"></script>
-    <script src="lib/twitterbootstrap/js/jquery.jeditable.js"></script>
+    <script src="../styleguide/styleguide/js/jquery.jeditable.js"></script>
     <script src="lib/twitterbootstrap/js/editable.js"></script>
 
     <!-- Styleguide scripts that need to be included -->
 
-    <script src="lib/twitterbootstrap/js/bootstrap-button.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-popover.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-modal.js"></script>
-    <script src="lib/twitterbootstrap/js/bootstrap-alert.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-button.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-tooltip.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-popover.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-modal.js"></script>
+    <script src="../styleguide/assets/js/bootstrap-alert.js"></script>
     <script src="summer-ui.js"></script>
 
 </head>
