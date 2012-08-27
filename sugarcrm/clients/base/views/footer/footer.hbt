@@ -20,12 +20,12 @@
                 <div class="btn-group dropup">
                     <a title="{{ instance_name }}" class="btn" id="instance" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> {{ instance_name }}</a>
                     <div class="dropdown-menu bottom-up" id="instancesContainer">
-                    Your instances:<br>
-                    <ul id="instanceList">
+                    <h5>Your instances:</h5>
+                    <ul id="instanceList" class="unstyled">
                     	Loading instances...
                     </ul>
-                    Instance users:<br>
-                    <ul id="usersList">
+                    <h5>Instance users:</h5>
+                    <ul id="usersList" class="unstyled">
                     	Loading users...
                     </ul>
                     <div class="btn-group"><input type="text" id="inviteemail" placeholder="Enter invitee email...">
