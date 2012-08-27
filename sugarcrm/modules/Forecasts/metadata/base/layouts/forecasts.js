@@ -220,8 +220,12 @@
                 this.$el.addClass("complex-layout");
             }
 
-            //add the layout to the div
-            $(".view-"+comp.name).append(comp.$el);
+            //add the components to the div
+            if (comp.name) {
+                $(".view-"+comp.name).append(comp.$el);
+            } else {
+                this.$el.append(comp.$el);
+            }
         }
     });
 

@@ -54,16 +54,7 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsCommitButtons',
         ),
         array(
-            'view' => 'forecastsConfigTimeperiods',
-        ),
-        array(
-            'view' => 'forecastsConfigCategories',
-        ),
-        array(
-            'view' => 'forecastsConfigRange',
-        ),
-        array(
-            'view' => 'forecastsConfigVariables',
-        ),
+            'layout' => 'forecastsConfig',
+        )
     )
 );
