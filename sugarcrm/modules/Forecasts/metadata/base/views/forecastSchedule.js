@@ -12,6 +12,7 @@
     selectedUser: {},
     selectedUserId: null,
     timePeriodId: null,
+    editableWorksheet: false,
     _collection:{},
 
     /**
@@ -58,7 +59,7 @@
 
         app.view.View.prototype._renderField.call(this, field);
 
-        if(this.isMyWorksheet())
+        if(this.editableWorksheet === true)
         {
             if (field.def.clickToEdit === true) {
                 new app.view.ClickToEditField(field, this);
@@ -100,7 +101,6 @@
     _setForecastColumn: function(fields) {
         var self = this;
         var forecastField, commitStageField;
-        var isOwner = self.isMyWorksheet();
 
         _.each(fields, function(field) {
             if (field.name == "include_expected") {
@@ -108,14 +108,12 @@
                 forecastField = field;
             } else if (field.name == "expected_commit_stage") {
                 field.enabled = app.config.show_buckets;
-                if(!isOwner)
-                {
-                   field.view = 'default';
-                }
+                field.options = app.config.buckets_dom || 'commit_stage_dom';
+                field.view = (self.editableWorksheet === true) ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
-        return app.config.show_buckets?forecastField:commitStageField;
+        return app.config.show_buckets ? forecastField : commitStageField;
     },
 
     /**
@@ -124,10 +122,8 @@
      * @protected
      */
     _renderHtml : function(ctx, options) {
-        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
-
+        this._setForecastColumn(this.meta.panels[0].fields);
         app.view.View.prototype._renderHtml.call(this, ctx, options);
-
     },
 
     /**

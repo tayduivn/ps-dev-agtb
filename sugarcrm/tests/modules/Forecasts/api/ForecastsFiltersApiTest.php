@@ -77,8 +77,15 @@ class ForecastsFiltersApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    //Override tearDown so we don't lose current user settings
+    public function tearDown()
+    {
+
+    }
+
     /***
-     * @group forecastapi
+     * Test that we get the reportees assigned to the currentUser id
+     *
      */
     public function testReportees() {
 
@@ -96,10 +103,15 @@ class ForecastsFiltersApiTest extends RestTestBase
         $this->assertContains(self::$employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
     }
 
+    /**
+     * Test that a deleted user does not show up from the filter call
+     *
+     */
     public function testDeletedReportees() {
         // delete one user for this test
         self::$employee2->deleted = 1;
         self::$employee2->save();
+        $GLOBALS['db']->commit();
 
         $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
 
@@ -114,12 +126,18 @@ class ForecastsFiltersApiTest extends RestTestBase
         // Undelete user if needed for other tests
         self::$employee2->deleted = 0;
         self::$employee2->save();
+        $GLOBALS['db']->commit();
     }
 
+
+    /**
+     * Test the timeperiods and that we don't return any fiscal year timeperiods
+     *
+     * @outputBuffering disabled
+     */
     public function testTimeperiods()
     {
         $restReply = $this->_restCall("Forecasts/timeframes/");
-
         $db = DBManagerFactory::getInstance();
 
         $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 1 AND deleted=0');
@@ -128,9 +146,9 @@ class ForecastsFiltersApiTest extends RestTestBase
             $fiscal_timeperiods[$row['id']]=$row['name'];
         }
 
-        foreach($fiscal_timeperiods as $ftp)
+        foreach($fiscal_timeperiods as $id=>$ftp)
         {
-            $this->assertNotContains($ftp, $restReply['reply']['timeperiod_id']['options'], "filter contains ". $ftp['name'] . " fiscal timeperiod");
+            $this->assertArrayNotHasKey($id, $restReply['reply'], "filter contains ". $ftp['name'] . " fiscal timeperiod");
         }
     }
 

@@ -74,7 +74,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $account = $accounts[$key];
 
         //Create new opportunities
-        $opp = new Opportunity();
+        $opp = BeanFactory::getBean('Opportunities');
         //BEGIN SUGARCRM flav=pro ONLY
         $opp->team_id = $account->team_id;
         $opp->team_set_id = $account->team_set_id;

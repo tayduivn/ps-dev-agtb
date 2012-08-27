@@ -168,6 +168,7 @@ class SugarCurrency
      * @access public
      * @param  object $user Optional the user object
      * @return object  currency object
+     * @outputBuffering disabled
      */
     public static function getUserLocaleCurrency( $user = null ) {
         $currency = BeanFactory::getBean('Currencies');

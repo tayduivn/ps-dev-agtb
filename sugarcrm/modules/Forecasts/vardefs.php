@@ -639,10 +639,8 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'vname' => 'LBL_PROBABILITY',
     'type' => 'int',
     'dbType' => 'double',
-    'audited'=>true,
     'comment' => 'Worksheet Placeholder for the probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-    'merge_filter' => 'enabled',
   ),
   'quota' =>
 	array (

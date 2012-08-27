@@ -120,13 +120,22 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    //Override tearDown so we don't lose the current user
+    public function tearDown()
+    {
 
+    }
+
+
+    /**
+     * This test asserts that we get back two entries.  The first for the manager and the second for the reportee.
+     * 
+     */
     public function testPassedInUserIsManager()
     {
         $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
-
-        $data = array(self::$managerData, self::$repData);
-        $this->assertEquals($data, $restReply['reply']);
+        $this->assertEquals(self::$manager['user']->id, $restReply['reply'][0]['user_id']);
+        $this->assertEquals(self::$reportee['user']->id, $restReply['reply'][1]['user_id']);
     }
 
     public function testPassedInUserIsNotManagerReturnsEmpty()
@@ -154,27 +163,33 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
     /**
      * @bug 54619
+     * @group 54619
      */
     public function testAdjustedNumbersShouldBeSameAsNonAdjustedColumns()
     {
         $rep_worksheet = BeanFactory::getBean('Worksheet', self::$repData['worksheet_id']);
         $rep_worksheet->deleted = 1;
         $rep_worksheet->save();
+        $GLOBALS['db']->commit();
 
         $localRepData = self::$repData;
 
-        $localRepData['best_adjusted'] = $localRepData['best_case'];
-        $localRepData['likely_adjusted'] = $localRepData['likely_case'];
-        $localRepData['worst_adjusted'] = $localRepData['worst_case'];
-        $localRepData['forecast'] = 0;
+        $localRepData['best_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['best_case']);
+        $localRepData['likely_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['likely_case']);
+        $localRepData['worst_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['worst_case']);
+        $localRepData['forecast'] = SugarTestForecastUtilities::formatTestNumber(0);
         $localRepData['worksheet_id'] = '';
 
         $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
-        $this->assertEquals($localRepData, $restReply['reply'][1], "Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers");
+        $this->assertEquals($localRepData['best_adjusted'], $restReply['reply'][1]['best_adjusted'], "best_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['likely_adjusted'], $restReply['reply'][1]['likely_adjusted'], "likely_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['worst_adjusted'], $restReply['reply'][1]['worst_adjusted'], "worst_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['forecast'], $restReply['reply'][1]['forecast'], "forecast numbers should be the same");
 
         $rep_worksheet->deleted = 0;
         $rep_worksheet->save();
+        $GLOBALS['db']->commit();
     }
 
     /**
@@ -271,7 +286,23 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             ),
         );
 
-        $this->assertEquals($expected, $restReply['reply']);
+        $this->assertEquals($expected[0]['amount'], $restReply['reply'][0]['amount']);
+        $this->assertEquals($expected[0]['quota'], $restReply['reply'][0]['quota']);
+        $this->assertEquals($expected[0]['best_case'], $restReply['reply'][0]['best_case']);
+        $this->assertEquals($expected[0]['likely_case'], $restReply['reply'][0]['likely_case']);
+        $this->assertEquals($expected[0]['worst_case'], $restReply['reply'][0]['worst_case']);
+        $this->assertEquals($expected[0]['best_adjusted'], $restReply['reply'][0]['best_adjusted']);
+        $this->assertEquals($expected[0]['likely_adjusted'], $restReply['reply'][0]['likely_adjusted']);
+        $this->assertEquals($expected[0]['worst_adjusted'], $restReply['reply'][0]['worst_adjusted']);
+
+        $this->assertEquals($expected[1]['amount'], $restReply['reply'][1]['amount']);
+        $this->assertEquals($expected[1]['quota'], $restReply['reply'][1]['quota']);
+        $this->assertEquals($expected[1]['best_case'], $restReply['reply'][1]['best_case']);
+        $this->assertEquals($expected[1]['likely_case'], $restReply['reply'][1]['likely_case']);
+        $this->assertEquals($expected[1]['worst_case'], $restReply['reply'][1]['worst_case']);
+        $this->assertEquals($expected[1]['best_adjusted'], $restReply['reply'][1]['best_adjusted']);
+        $this->assertEquals($expected[1]['likely_adjusted'], $restReply['reply'][1]['likely_adjusted']);
+        $this->assertEquals($expected[1]['worst_adjusted'], $restReply['reply'][1]['worst_adjusted']);
 
         $current_user = $_current_user;
     }
@@ -302,26 +333,41 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         $expected = array(
             "amount" => self::$reportee['opportunities_total'] + $rep1['opportunities_total'] + $rep2['opportunities_total'],
-            "best_adjusted" => $tmpWorksheet->best_case,
-            "best_case" => $tmpForecast->best_case,
+            "best_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->best_case),
+            "best_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->best_case),
             "forecast" => intval($tmpWorksheet->forecast),
             "forecast_id" => $tmpForecast->id,
             "id" => self::$reportee["user"]->id,
-            "likely_adjusted" => $tmpWorksheet->likely_case,
-            "likely_case" => $tmpForecast->likely_case,
+            "likely_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->likely_case),
+            "likely_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->likely_case),
             "name" => self::$reportee["user"]->first_name . " " . self::$reportee["user"]->last_name,
-            "quota" => self::$reportee['quota']->amount,
+            "quota" => SugarTestForecastUtilities::formatTestNumber(self::$reportee['quota']->amount),
             "quota_id" => self::$reportee['quota']->id,
             "show_opps" => false,
             "user_id" => self::$reportee["user"]->id,
             "worksheet_id" => $tmpWorksheet->id,
-            "worst_adjusted" => $tmpWorksheet->worst_case,
-            "worst_case" => $tmpForecast->worst_case,
+            "worst_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->worst_case),
+            "worst_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->worst_case),
             "timeperiod_id" => self::$timeperiod->id
         );
 
-        $this->assertEquals($expected, $restReply['reply'][1]);
-
+        $this->assertEquals($expected["amount"], $restReply['reply'][1]["amount"]);
+        $this->assertEquals($expected["best_adjusted"], $restReply['reply'][1]["best_adjusted"]);
+        $this->assertEquals($expected["best_case"], $restReply['reply'][1]["best_case"]);
+        $this->assertEquals($expected["forecast"], $restReply['reply'][1]["forecast"]);
+        $this->assertEquals($expected["forecast_id"], $restReply['reply'][1]["forecast_id"]);
+        $this->assertEquals($expected["id"], $restReply['reply'][1]["id"]);
+        $this->assertEquals($expected["likely_adjusted"], $restReply['reply'][1]["likely_adjusted"]);
+        $this->assertEquals($expected["likely_case"], $restReply['reply'][1]["likely_case"]);
+        $this->assertEquals($expected["name"], $restReply['reply'][1]["name"]);
+        $this->assertEquals($expected["quota"], $restReply['reply'][1]["quota"]);
+        $this->assertEquals($expected["quota_id"], $restReply['reply'][1]["quota_id"]);
+        $this->assertEquals($expected["show_opps"], $restReply['reply'][1]["show_opps"]);
+        $this->assertEquals($expected["user_id"], $restReply['reply'][1]["user_id"]);
+        $this->assertEquals($expected["worksheet_id"], $restReply['reply'][1]["worksheet_id"]);
+        $this->assertEquals($expected["worst_adjusted"], $restReply['reply'][1]["worst_adjusted"]);
+        $this->assertEquals($expected["worst_case"], $restReply['reply'][1]["worst_case"]);
+        $this->assertEquals($expected["timeperiod_id"], $restReply['reply'][1]["timeperiod_id"]);
     }
 
 

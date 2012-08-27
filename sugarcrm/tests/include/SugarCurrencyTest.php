@@ -48,6 +48,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         // setup test user
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 

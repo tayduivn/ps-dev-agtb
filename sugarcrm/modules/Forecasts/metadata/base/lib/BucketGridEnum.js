@@ -2,6 +2,7 @@
 
     app.view.BucketGridEnum = function (field, view) {
         this.field = field;
+        this.field.def.options = app.config.buckets_dom || [];
         this.view = view;
         return this.render();
     };
