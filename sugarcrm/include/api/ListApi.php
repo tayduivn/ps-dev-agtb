@@ -77,7 +77,8 @@ class ListApi extends SugarApi {
             if ( $args['offset'] === 'end' ) {
                 $offset = 'end';
             } else {
-                $offset = (int)$args['offset'];
+                //Do not allow negative offsets
+                $offset = max(0, (int)$args['offset']);
             }
         }
         
@@ -134,6 +135,7 @@ class ListApi extends SugarApi {
         $whereParts = array();
         // TODO: Upgrade this to use the full-text search for basic searches
         if ( isset($args['q']) ) {
+            $args['q'] = trim($args['q']);
             $tableName = $seed->table_name;
             $basicSearch = $GLOBALS['db']->quote($args['q']);
             if ( is_a($seed,'Person') ) {
