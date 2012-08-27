@@ -105,9 +105,24 @@ class SugarBeanApiHelper
                 $data['email'] = $emails;
         }
 
+        // get favorites
+                // mark if its a favorite
+        $data['favorite'] = $this->getFavorite($bean->module_dir, $bean->id);
+
         return $data;
     } 
 
+    /**
+     * Get a Favorite by Module, Id, and User ID
+     * @param type $module 
+     * @param type $id 
+     * @return bool
+     */
+    protected function getFavorite($module, $id)
+    {
+        return SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
+    }
+    
     /**
      * This function 
      *

@@ -144,9 +144,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $module_favorites_user[] = strval($fav->assigned_user_id);
         }
 
-        $keyValues['user_favorites'] = implode(',', $module_favorites_user);
+        //$keyValues['user_favorites'] = implode(',', $module_favorites_user);
+        
+        $keyValues['user_favorites'] = $module_favorites_user;
 
-        $GLOBALS['log']->fatal("\r\n\r\n::::MY FAVORITES::::\r\n\r\n" . print_r($keyValues['user_favorites'], true) . "\r\n\r\n");
         // get the favs
         /*$keyValues['favorites'] 
         if(!empty($keyValues['favorites']))
@@ -164,6 +165,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         else
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
+
 
     protected function indexSingleBean($bean)
     {
@@ -529,6 +531,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
+
+            if(isset($options['my_favorites']) && $options['my_favorites'] !== false)
+            {
+                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
+            }
+
             $mainFilter->addFilter($moduleFilter);
 
         }

@@ -138,12 +138,46 @@ abstract class SugarApi {
 
         $bean->retrieve($id);
 
+        if(isset($args['favorite']))
+            $this->toggleFavorites($bean->module_dir, $id, $args['_favorite']);
+
         /*
          * Even though the bean is refreshed above, return only the id
          * This allows loadBean to be run to handle formatting and ACL
          */
         return $id;
     }
+
+    /**
+     * Toggle Favorites
+     * @param type $module 
+     * @param type $id 
+     * @param type $favorite 
+     * @return bool
+     */
+
+    protected function toggleFavorites($module, $id, $favorite=true)
+    {
+        // is currently favorite?
+        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
+        // already the same skip it
+        if($current == $favorite)
+            return true;
+
+        if($favorite === true)
+        {
+            $sf = new SugarFavorites();
+            $sf->record_id = $id;
+            $sf->module = $module;
+            $sf->assigned_user_id = $GLOBALS['current_user']->id;
+            $sf->save();
+            return true;
+        }
+
+        SugarFavorites::markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
+        return true;
+    }
+
 
     /**
      * Verifies field level access for a bean and field for the logged in user

@@ -130,6 +130,12 @@ class SugarFavorites extends Basic
 	    return $response['list'];		
 	}
 
+	public static function markRecordDeletedInFavoritesByUser($record_id, $module, $assigned_user_id)
+	{
+		$query = "UPDATE {$this->table_name} set deleted=1 , module = '{$module}' date_modified = '$date_modified', modified_user_id = NOW() where record_id='$record_id' AND assigned_user_id = '{$assigned_user_id}'";
+        $this->db->query($query, true, "Error marking favorites deleted: ");
+	}
+
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
     {
         $focus = new SugarFavorites();
