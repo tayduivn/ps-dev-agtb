@@ -2945,23 +2945,29 @@ embed
   -webkit-border-bottom-right-radius: 6px;
   -webkit-border-bottom-top-radius: 6px;
 	margin-bottom: 0px;
+	border: 1px solid #305678;
 	}
 	
 	.dashletPanel.dc .hd {
 		height: 38px;
 		padding: 0 15px;
-        border-radius: 3px 3px 0px 0px;
-        -moz-border-radius: 3px 3px 0px 0px;
-        -webkit-border-top-right-radius: 3px;
-        -webkit-border-top-left-radius: 3px;
-        background-color: #303030;
-        background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
-        background-image: -ms-linear-gradient(top, #404040, #1a1a1a);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), to(#1a1a1a));
-        background-image: -webkit-linear-gradient(top, #404040, #1a1a1a);
-        background-image: -o-linear-gradient(top, #404040, #1a1a1a);
-        background-image: linear-gradient(top, #404040, #1a1a1a);
-        background-repeat: repeat-x;
+		
+	background-image: -moz-linear-gradient(center top, 
+		rgba(111,137,161,.9) 0%,
+		rgba(71,105,135,1) 50%,
+		rgba(48,86,120,1) 50%,  
+		rgba(48,86,120,.8) 100%
+		);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, rgba(111,137,161,.9)),
+	    color-stop(.50, rgba(71,105,135,1)),
+	    color-stop(.50, rgba(48,86,120,1)),
+	    color-stop(1, rgba(48,86,120,.8))
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6f89a1', endColorstr='#305678');
     cursor: move;
 	}
 
@@ -2998,11 +3004,13 @@ embed
 	}	
 	
 	.dashletPanel.dc .bd {
-	background-color: #fff;
-		border-radius: 0px 0px 3px 3px;
-	-moz-border-radius: 0px 0px 3px 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -webkit-border-bottom-left-radius: 3px;
+		padding: 15px;
+	background-color: #fafdff;
+	background-color: rgba(13,58,98,.3);
+		border-radius: 0px 0px 6px 6px;
+	-moz-border-radius: 0px 0px 6px 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -webkit-border-bottom-top-radius: 6px;
   position: inherit;
 	}
 	
@@ -4084,7 +4092,7 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus, 
 #moduleList .sf-menu ul a:hover, 
 #moduleList .sf-menu ul a:active {
-	background:		#343433;
+	background:		#355B7E;
 	color: #fff;
 	outline:		0;
 }
@@ -5756,6 +5764,7 @@ width:100%;
 .dcmenu .inner {
     height: 44px;
     min-width: 950px;
+    padding-right: 20px;
     background-color: #303030;
     background-image: -moz-linear-gradient(top, #404040, #1a1a1a);
     background-image: -ms-linear-gradient(top, #404040, #1a1a1a);
@@ -6335,9 +6344,12 @@ cursor: pointer;
  	}
  	
 .dashletPanel .dccontent {
-
+	border: 1px solid #aaa;
 	padding: 10px;
 	background-color: #fff;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
 	max-height: 500px;
 	overflow: auto;
 }
@@ -6366,7 +6378,7 @@ padding: 2px;
 
 .dashletPanel.dc .hd img{
 border: 0px;
-margin-top: 3px;
+margin-top: 7px;
 }
 .dashletPanel.dc .hd button {
     vertical-align: top;
@@ -6694,7 +6706,7 @@ td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
 
 ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-background-color: #343433;
+background-color: #355b7e;
 color: #fff !important;
 font-weight: normal !important;
 cursor: pointer;
