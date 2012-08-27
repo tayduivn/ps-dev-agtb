@@ -1,0 +1,260 @@
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+body 
+{ 
+	padding-top: 50px;
+	line-height: 11px;
+}
+
+form {
+	margin: 0px;	
+}
+li {
+	line-height: 15px;	
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+.close:hover {
+    font-size: 20px;
+}
+
+
+#dcmenutop {
+	height: 0px;	
+}
+
+.list tr.pagination,
+.list tr.pagination td,
+.list tr.pagination td table
+{
+    height: auto;
+}
+
+#footer img.logo {
+    height: auto;
+    width: auto;
+    background-image: none;
+}
+
+.pagination button {
+	height: 30px;
+	width: 30px;
+	
+}
+
+#zenbox_tab {
+padding-top: 9px;
+}
+
+.modal.whatsnew {
+    margin-top: -75px;
+
+}
+
+.modal a, 
+.popover a {
+	text-decoration: none;
+}
+
+.modal-footer .btn-invisible {
+    float: left;
+    margin-left: 0px;
+}
+.modal-body   {
+    font-size: 16px;
+    padding-bottom: 30px;
+}
+
+.modal-footer .btn.btn-primary, 
+.popover-footer .btn.btn-primary {
+	color: #fff;
+}
+
+.modal-footer {
+    padding-left: 0px;
+}
+
+.modal ul li {
+	line-height: 18px;	
+}
+
+.modal p {
+	margin: 0 0 9px;	
+}
+
+h3.popover-title {
+	margin-bottom: 0px;	
+}
+#tour {
+    width: auto;
+    margin: 0;
+    left: 0px;
+}
+
+#tourEnd .modal-body p, 
+#tourEnd .modal-body a {
+	font-size: 18px;
+    line-height: 26px;
+}
+#tourEnd .modal-body p
+{
+	margin-top: 84px;
+}
+
+li.icon-ok:before,i.icon-ok:before {
+	color: #3FB300;	
+}
+
+i.icon-arrow-up:before {
+    font-size: 40px;
+
+}
+.caption {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.pointer,.pointer.up{
+    background-image:  url('../../include/images/tour/arrow.png');
+    background-repeat: no-repeat;
+    width: 42px;
+    height: 109px;
+}
+
+.pointer.down {
+    background-position: 0px 109px;
+    background-position: 0px -109px\9;
+}
+
+
+
+.pointer.up.left {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+    width: 93px\0/;
+    height: 95px\0/;
+    background:transparent url('../../include/images/tour/arrow_ie.png') no-repeat 0px 100px\0/;
+    height: 110px \0/IE9;
+
+}
+
+
+.pointer.up.right {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+    background-image:  url('../../include/images/tour/arrow_ie.png')\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px -280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
+}
+
+
+.pointer.down.right {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+    background-image:  url(../../include/images/tour/arrow_ie.png)\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px -280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
+}
+
+.pointer.down.left {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+    background-image:  url(../../include/images/tour/arrow_ie.png)\0/;
+    background-repeat: no-repeat\0/;
+    background-position: 0px 280px\0/;
+    width: 93px\0/;
+    height: 95px\0/;
+    height: 110px \0/IE9;
+}
+
+
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+.rtl .modal {
+    direction: rtl;
+}
+
+.rtl .modal-footer .btn {
+    float: left;
+}
+
+.rtl .modal ul {
+    margin: 0 25px 9px 0px;
+}
+
+.rtl .modal .close {
+    float: left;
+}
+
+.rtl .pointer.up.right {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+}
+
+.rtl .pointer.up.left {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+}
+
+.rtl .pointer.down.right {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg); /* IE 9 */
+    -moz-transform:rotate(45deg); /* Firefox */
+    -webkit-transform:rotate(45deg); /* Safari and Chrome */
+    -o-transform:rotate(45deg); /* Opera */
+}
+
+.rtl .pointer.down.left {
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg); /* IE 9 */
+    -moz-transform:rotate(-45deg); /* Firefox */
+    -webkit-transform:rotate(-45deg); /* Safari and Chrome */
+    -o-transform:rotate(-45deg); /* Opera */
+}

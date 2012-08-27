@@ -306,6 +306,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             // Call the Meeting module's save function to handle saving other fields besides
             // the users and contacts relationships
             $focus->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
+            
+            $focus->users_arr = $userInvitees;
+            $focus->contacts_arr = $contactInvitees;
+            $focus->leads_arr = $leadInvitees;
+            
             $focus->save(true);
             $return_id = $focus->id;
             if (empty($return_id)) {

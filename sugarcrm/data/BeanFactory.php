@@ -78,7 +78,7 @@ class BeanFactory {
                 //BEGIN SUGARCRM flav=pro ONLY
                 // Pro+ versions, to disable team check if we have rights
                 // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
-                if (isset($params['disable_row_level_security']) && $params['disable_row_level_security'] === true) {
+                if (!empty($params['disable_row_level_security'])) {
                     $bean->disable_row_level_security = true;	
                 }
                 //END SUGARCRM flav=pro ONLY

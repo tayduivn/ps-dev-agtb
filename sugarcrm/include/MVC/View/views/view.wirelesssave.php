@@ -137,17 +137,18 @@ class ViewWirelesssave extends SugarWirelessView{
             if($sf != null){
                 $sf->save($this->bean, $_POST, $field, $properties);
             }
-            if(isset($_POST[$field])) {
-				if(is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
-					if(empty($_POST[$field][0])) {
-						unset($_POST[$field][0]);
-					}
-					$_POST[$field] = encodeMultienumValue($_POST[$field]);
-				}
-				$this->bean->$field = $_POST[$field];
-			}else if(!empty($properties['type']) && $properties['type'] == 'link'){
-				//remove this relationship since we did not find it in the $_POST
-			}
+            elseif (isset($_POST[$field]))
+            {
+                if (is_array($_POST[$field]) && !empty($properties['isMultiSelect']))
+                {
+                    $_POST[$field] = encodeMultienumValue($_POST[$field]);
+                }
+                $this->bean->$field = $_POST[$field];
+            }
+            elseif (!empty($properties['type']) && $properties['type'] == 'link')
+            {
+                //remove this relationship since we did not find it in the $_POST
+            }
 		}
 		foreach($this->bean->relationship_fields as $field=>$link){
 			if(!empty($_POST[$field])){
@@ -161,7 +162,7 @@ class ViewWirelesssave extends SugarWirelessView{
 		
         $errors = array();
         foreach ( $this->wl_required_edit_fields() as $field => $displayname ) {
-            if ( strlen($_POST[$field]) <= 0 ) {
+            if ( !isset($_POST[$field]) || strlen($_POST[$field]) <= 0 ) {
                 $errors[] = "{$GLOBALS['app_strings']['ERR_MISSING_REQUIRED_FIELDS']} '$displayname'";
             }
         }
