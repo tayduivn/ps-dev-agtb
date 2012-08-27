@@ -32,7 +32,6 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    
 		global $sugar_demodata;
 		$sugar_demodata['company_name_array'] = array();
 		$query = 'SELECT * FROM accounts';

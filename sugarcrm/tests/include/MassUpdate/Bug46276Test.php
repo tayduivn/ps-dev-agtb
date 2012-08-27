@@ -33,11 +33,12 @@ class Bug46276Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 
-		global $current_user, $timedate, $app_strings, $app_list_strings, $current_language;
-        $app_strings = return_application_language($current_language);
-        $app_list_strings = return_app_list_strings_language($current_language);
-        SugarTestHelper::setUp('beanList');
+		global $current_user;
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+
 		// Create Anon User setted on GMT+1 TimeZone
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
 		$current_user->setPreference('datef', "Y-m-d");

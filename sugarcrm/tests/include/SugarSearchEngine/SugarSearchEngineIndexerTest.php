@@ -55,7 +55,11 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         if(empty($GLOBALS['db']) || !($GLOBALS['db'] instanceOf DBManager))
+        {
             $GLOBALS['db'] = DBManagerFactory::getInstance();
+        }
+
+        //This is a bit extreme to do here so we may need to revisit and just index test accounts/contacts
         $GLOBALS['db']->query("DELETE FROM accounts");
         $GLOBALS['db']->query("DELETE FROM contacts");
 

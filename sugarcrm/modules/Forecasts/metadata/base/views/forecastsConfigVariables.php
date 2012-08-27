@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,43 +22,26 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-require_once('include/SugarSQLValidate.php');
-
-class OpacusTest extends Sugar_PHPUnit_Framework_TestCase
-{
-
-
-/**
- * getEntryListQueries
- *
- * These are some of the queries that may come in to the get_entry_list method from the Thunderbird plugin
- */
-public function getEntryListThunderbirdPluginQueries()
-{
-    return array(
-        array("(project_task.project_id IN (SELECT project_id FROM projects_contacts pc INNER JOIN email_addr_bean_relÊ
-        eabr ON eabr.bean_id = pc.contact_id AND eabr.bean_module='Contacts' inner join email_addresses ea5 ON
-        eabr.email_address_id = ea5.id WHERE ea5.email_address LIKE 'test%' AND eabr.deleted = '0' AND ea5.deleted = '0'
-        AND pc.deleted = '0'))"),
-    );
-}
-
-/**
- * testGetEntryListThunderbirdPlugin
- *
- * This method tests the SugarSQLValidate.php's validateQuery method.
- *
- * @param $sql String of the test SQL to simulate the Word plugin
- *
- *
- * @dataProvider getEntryListThunderbirdPluginQueries
- */
-public function testGetEntryListThunderbirdPlugin($sql)
-{
-    $this->markTestIncomplete('Need to resolve the above query or investigate a workaround for Opacus');
-    $valid = new SugarSQLValidate();
-    $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
-}
-
-}
+$viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
+    'panels' => array(
+        array(
+            'label' => 'LBL_FORECASTS_CONFIG_VARIABLES',
+            'fields' => array(
+                array(
+                    'name' => 'closed_lost_stage',
+                    'label' => 'LBL_FORECASTS_CLOSED_LOST_STAGE',
+                    'type' => 'radioenum',
+                    'options' => array(
+                        'a' => 'sales stage a',
+                        'b' => 'sales stage b',
+                        'c' => 'sales stage c',
+                        'd' => 'sales stage d',
+                    ),
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit',
+                ),
+            ),
+        ),
+    ),
+);

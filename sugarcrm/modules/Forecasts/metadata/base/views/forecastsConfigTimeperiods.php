@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,70 +22,72 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-/**
- * forecastSchedule.php
- *
- * This file defines the view definitions for the forecastSchedule view.  The forecastSchedule
- * view uses the /ForecastSchedule REST endpoint to retrieve and save data.
- */
-$viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
-    'panels' =>
-    array(
-        0 =>
+$viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
+    'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
-            'fields' =>
-            array(
+            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS',
+            'fields' => array(
                 array(
-                    'name' => 'include_expected',
-                    'type' => 'bool',
-                    'label' => 'LBL_INCLUDE_EXPECTED',
-                    'default' => true,
-                    'enabled' => true
+                    'name' => 'fiscalStartDate',
+                    'type' => 'datetime',
+                    'label' => 'LBL_FORECASTS_FISCAL_START_DATE',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit'
                 ),
                 array(
-                    'name' => 'expected_commit_stage',
+                    'name' => 'timeperiod',
                     'type' => 'enum',
-                    'view' => 'edit',
-                    'options' => 'commit_stage_dom',
-                    'label' => 'LBL_FORECAST',
-                    'default' => true,
+                    'options' => array(
+                        'annual' => 'Annual',
+                        'quarter' => 'Quarter',
+                    ),
+                    'label' => 'LBL_TIMEPERIOD',
+                    'default' => false,
                     'enabled' => true,
+                    'view' => 'edit'
                 ),
                 array(
-                    'name' => 'expected_amount',
-                    'label' => 'LBL_EXPECTED_AMOUNT',
-                    'type' => 'currency',
-                    'default' => true,
+                    'name' => 'leafperiod',
+                    'type' => 'enum',
+                    'options' => array(
+                        'weekly' => 'Weekly',
+                        'monthly' => 'Monthly',
+                    ),
+                    'label' => 'LBL_LEAFPERIOD',
+                    'default' => false,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'view' => 'edit'
                 ),
                 array(
-                    'name' => 'expected_best_case',
-                    'label' => 'LBL_EXPECTED_BEST_CASE',
-                    'type' => 'currency',
-                    'default' => true,
+                    'name' => 'timeperiodsForward',
+                    'type' => 'enum',
+                    'options' => array(
+                        '1' => '1',
+                        '2' => '2',
+                        '3' => '3',
+                        '4' => '4',
+                    ),
+                    'label' => 'LBL_TIMEPERIODS_FORWARD',
+                    'default' => false,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'view' => 'edit'
                 ),
                 array(
-                    'name' => 'expected_likely_case',
-                    'label' => 'LBL_EXPECTED_LIKELY_CASE',
-                    'type' => 'currency',
-                    'default' => true,
+                    'name' => 'timeperiodsBack',
+                    'type' => 'enum',
+                    'options' => array(
+                        '1' => '1',
+                        '2' => '2',
+                        '3' => '3',
+                        '4' => '4',
+                    ),
+                    'label' => 'LBL_TIMEPERIODS_BACK',
+                    'default' => false,
                     'enabled' => true,
-                    'clickToEdit' => true
-                ),
-                array(
-                    'name' => 'expected_worst_case',
-                    'label' => 'LBL_EXPECTED_WORST_CASE',
-                    'type' => 'currency',
-                    'default' => true,
-                    'enabled' => false,
-                    'clickToEdit' => true
+                    'view' => 'edit'
                 ),
             ),
         ),
-    ),
+    )
 );

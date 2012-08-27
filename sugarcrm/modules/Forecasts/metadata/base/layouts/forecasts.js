@@ -220,20 +220,13 @@
                 this.$el.addClass("complex-layout");
             }
 
-            //add the layout to the div
-            $(".view-"+comp.name).append(comp.$el);
-        }
-    });
-
-
-    app.view.Field = app.view.Field.extend({
-        _render: function() {
-            if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
-                this.options = this.options || {};
-                this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'detail';
+            //add the components to the div
+            if (comp.name) {
+                $(".view-"+comp.name).append(comp.$el);
+            } else {
+                this.$el.append(comp.$el);
             }
-            app.view.Field.__super__._render.call(this);
         }
     });
-    
+
 })(SUGAR.App)
