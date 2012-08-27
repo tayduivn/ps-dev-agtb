@@ -24,6 +24,8 @@
                             <div class="view-forecastsWorksheetManager"></div>
                         </div>
                     </div>
+                    {*temporarily adding config panes down here until we get a function modal layout system going.*}
+                    <div class="view-forecastsConfigTimeperiods"></div>
                 </div>
 
                 <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}

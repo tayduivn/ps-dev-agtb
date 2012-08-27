@@ -1,0 +1,7 @@
+<h1>Timeperiods Configuration</h1>
+{{#each meta.panels}}
+    {{#each fields}}
+        <label for {{name}}>{{str label "Forecasts"}}<label>
+        {{field ../../this ../../model}}
+    {{/each}}
+{{/each}}
