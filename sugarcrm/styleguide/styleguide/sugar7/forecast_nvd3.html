@@ -12,39 +12,39 @@
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <style type="text/css">
-  #chart1 {
-    height: 300px;
-    min-width: 100px;
-    min-height: 100px;
-  /*
-    Minimum height and width is a good idea to prevent negative SVG dimensions...
-    For example width should be =< margin.left + margin.right + 1,
-    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-  */
-  }
-  .nvd3 .nv-x.nv-axis text {
-    font-size: 10px;
-  }
-  .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
-    fill-opacity: 1;
-    stroke-opacity: 1;
-    stroke-width: 2;
-  }
-  .nv-quotaWrap line {
-    opacity: .8;
-    stroke: #444;
-    stroke-width: 3;
-    //stroke-dasharray: '20, 5';
-  }
-  .navbar-controls {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-  .navbar-search {
-    width: 100%;
-  }
-</style>
+    #chart1 {
+      height: 300px;
+      min-width: 100px;
+      min-height: 100px;
+    /*
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+    }
+    .nvd3 .nv-x.nv-axis text {
+      font-size: 10px;
+    }
+    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+      fill-opacity: 1;
+      stroke-opacity: 1;
+      stroke-width: 2;
+    }
+    .nv-quotaWrap line {
+      opacity: .8;
+      stroke: #444;
+      stroke-width: 3;
+      //stroke-dasharray: '20, 5';
+    }
+    .navbar-controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .navbar-search {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 
@@ -369,6 +369,10 @@
   </footer>
 
   <script src="../js/jquery-1.7.2.min.js"></script>
+
+  <script src="http://documentcloud.github.com/underscore/underscore.js"></script>
+  <script src="http://documentcloud.github.com/backbone/backbone.js"></script>
+
   <script src="../../bootstrap/js/bootstrap.min.js"></script>
   <script src="../../bootstrap/js/bootstrapx-clickover.js"></script>
   <script src="../bootstrap/js/bootstrap-datepicker.js"></script>
@@ -397,56 +401,74 @@
   <script src="../js/application.js"></script>
 
 
-    <script>
-      //instantiate D3 chart using NVD3
-	  nv.addGraph({
-	    generate: function() {
-	        var chart = nv.models.multiBarChart();
-	        //override default barClick function
-	        // var chart = nv.models.multiBarChart().barClick( function(data,e,selection) {
-	        //               //if only one bar series is disabled
-	        //               // console.log(data);
-	        //               // console.log(e);
-	        //               // console.log(selection);
-	        //               d3.select('#chart1 svg')
-	        //                 .datum(forecast_data_Q2)
-	        //                 .transition().duration(500).call(chart);
-	        //             } 
-	        //           );
-	        //end override
-	        
-	        d3.select('#chart1 svg')
-	          .datum(forecast_data_Q1)
-	          .transition().duration(500).call(chart);
-	
-	        nv.utils.windowResize(chart.update);
-	
-          $("#date_filter").chosen().change(function(formData){
-              var q = quarter(formData.target.value);
+  <script>
+    //instantiate D3 chart using NVD3
+    // nv.addGraph({
+    //   generate: function() {
+    //     var chart = nv.models.multiBarChart();
+    //     d3.select('#chart1 svg')
+    //       .datum(forecast_data_Q1)
+    //       .transition().duration(500).call(chart);
+    //     nv.utils.windowResize(chart.update);
+    //     return chart;
+    //   },
+    //   callback: function(graph) {
+    //     $('#log').text('Chart is loaded');
+    //   }
+    // });
+    var Chart = Backbone.Model.extend({});
+    var Charts = Backbone.Collection.extend({ model: Chart });
+    charts = new Charts();
+    charts.reset(forecast_data_Q1);
 
-              var datafile = ( q === 'q1') ? forecast_data_Q1 : forecast_data_Q2;
+    // The chart view controls the single svg element on the screen
+    var ChartsView = Backbone.View.extend({
 
-              d3.select('#chart1 svg')
-                .datum(datafile)
-                .transition().duration(500).call(chart);
+      initialize: function() {
+        // bind to model change events and use enter() to modify the appropriate circle
+        var self = this;
 
-          }).ready(function(){
-               var q = quarter($("#date_filter")[0].value);
-          });
+        self.collection.bind(
+          'reset', 
+          function(model) {
+            d3.select(self.el)
+              .datum( model.models.map( function(d,i){return d.attributes} ) )
+              .transition().duration(500).call(self.chart);
+          }
+        );
+      },
 
-	        return chart;
-	    },
-	    callback: function(graph) {
-	      $('#log').text('Chart is loaded');
-	    }
-	  });
+      render: function() {
+        this.$el.empty();
 
-    function updateNVD3Chart(q){
-      d3.select('#chart1 svg')
-            .datum(forecast_data_Q1)
-            .transition().duration(500).call(chart);
-    }
-    </script>
+        this.chart = nv.models.multiBarChart();
+
+        d3.select(this.el)
+          .datum( this.collection.models.map( function(d,i){return d.attributes} ) )
+          .transition().duration(500).call(this.chart);
+
+        nv.utils.windowResize(this.chart.update);
+
+        return this;
+      }
+
+    });
+
+    var chartsView = new ChartsView({ el: $('#chart1 svg'), collection: charts });
+    chartsView.render();
+
+    $("#date_filter").chosen().change( 
+        function(formData){
+           var q = quarter(formData.target.value);
+           var datafile = ( q === 'q1') ? forecast_data_Q1 : forecast_data_Q2;
+           charts.reset( datafile );
+        } 
+    ).ready( 
+        function(){
+            var q = quarter($("#date_filter")[0].value);
+        }
+    );
+  </script>
 
 
     <script type="text/javascript" charset="utf-8">
