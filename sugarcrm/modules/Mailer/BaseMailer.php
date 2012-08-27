@@ -26,19 +26,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'IMailer.php';
 require_once 'MailerException.php';
 require_once 'RecipientsCollection.php';
+require_once 'Headers.php';
 
 abstract class BaseMailer implements IMailer
 {
 	protected $mailer;
 	protected $configs;
-	protected $messageId;
-	protected $priority;
-	protected $requestConfirmation;
-	protected $from;
-	protected $replyTo;
-	protected $sender;
+	protected $headers;
 	protected $recipients;
-	protected $subject;
 	protected $htmlBody;
 	protected $textBody;
 	protected $attachments;
@@ -48,19 +43,14 @@ abstract class BaseMailer implements IMailer
 	}
 
 	public function reset() {
-		$this->mailer         = null;
 		$this->loadDefaultConfigs();
-		$this->messageId      = null;
-		$this->setPriority();
-		$this->setRequestConfirmation();
-		$this->from           = null;
-		$this->replyTo        = null;
-		$this->sender         = null;
-		$this->recipients     = new RecipientsCollection();
-		$this->subject        = null;
-		$this->htmlBody       = null;
-		$this->textBody       = null;
 		$this->clearAttachments();
+		$this->clearHeaders();
+
+		$this->mailer     = null;
+		$this->recipients = new RecipientsCollection();
+		$this->htmlBody   = null;
+		$this->textBody   = null;
 	}
 
 	public function loadDefaultConfigs() {
@@ -86,32 +76,16 @@ abstract class BaseMailer implements IMailer
 		$this->configs[$config] = $value;
 	}
 
-	public function getConfigs() {
-		return $this->configs;
+	public function setHeaders(Headers $headers) {
+		$this->headers = $headers;
 	}
 
-	public function setMessageId($id) {
-		$this->messageId = $id;
+	public function constructHeaders($headers = array()) {
+		$this->headers->buildFromArray($headers);
 	}
 
-	public function setPriority($priority = 3) {
-		$this->priority = $priority;
-	}
-
-	public function setRequestConfirmation($request = false) {
-		$this->requestConfirmation = $request;
-	}
-
-	public function setFrom(EmailIdentity $from) {
-		$this->from = $from;
-	}
-
-	public function setReplyTo(EmailIdentity $replyTo) {
-		$this->replyTo = $replyTo;
-	}
-
-	public function setSender(EmailIdentity $sender) {
-		$this->sender = $sender;
+	public function clearHeaders() {
+		$this->headers = new Headers();
 	}
 
 	public function clearRecipients($to = true, $cc = true, $bcc = true) {
@@ -150,14 +124,6 @@ abstract class BaseMailer implements IMailer
 
 	public function clearRecipientsBcc() {
 		$this->recipients->clearBcc();
-	}
-
-	public function setSubject($subject) {
-		$this->subject = $subject;
-	}
-
-	public function getSubject() {
-		return $this->subject;
 	}
 
 	public function setTextBody($textBody) {

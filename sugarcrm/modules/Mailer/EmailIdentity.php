@@ -34,6 +34,11 @@ class EmailIdentity
 	}
 
 	public function setEmail($email) {
+		//@todo validate this email address
+		if (!is_string($email)) {
+			throw new MailerException("Invalid email address");
+		}
+
 		$this->email = trim($email);
 	}
 

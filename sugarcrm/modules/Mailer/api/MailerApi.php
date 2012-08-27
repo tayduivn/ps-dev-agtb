@@ -2,6 +2,7 @@
 use Mailer\MailerException;
 use Mailer\EmailIdentity;
 use Mailer\SimpleMailer;
+use Mailer\Headers;
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
@@ -337,8 +338,15 @@ class MailerApi extends ModuleApi
         $admin = new Administration();
         $admin->retrieveSettings();
 
+	    $headers = array();
+	    $headers[Headers::From] = new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']);
+
+	    if (isset($args["subject"])) {
+		    $headers[Headers::Subject] = $args["subject"];
+	    }
+
         $mailer = new SimpleMailer();
-        $mailer->setFrom(new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']));
+	    $mailer->constructHeaders($headers);
 
         if (is_array($args["to_addresses"])) {
             foreach ($args["to_addresses"] AS $toAddress) {
@@ -365,10 +373,6 @@ class MailerApi extends ModuleApi
                     $mailer->addRecipientsBcc($recipient);
                 }
             }
-        }
-
-        if (isset($args["subject"])) {
-            $mailer->setSubject($args["subject"]);
         }
 
         if (isset($args["text_body"])) {

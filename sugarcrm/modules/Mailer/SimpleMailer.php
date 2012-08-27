@@ -128,65 +128,39 @@ class SimpleMailer extends BaseMailer
 	}
 
 	private function transferHeaders() {
-		// transfer the from
-		$fromEmail = $this->from->getEmail();
+		// packageHeaders() will throw an exception if errors occur and that exception will be caught by send()
+		$headers = $this->headers->packageHeaders();
 
-		//@todo should we really validate this email address? can that be done reliably further up in the stack?
-		if (!is_string($fromEmail)) {
-			throw new MailerException("Invalid from email address");
-		}
-
-		$this->mailer->From = $fromEmail;
-		$this->mailer->FromName = $this->from->getName();
-
-		// transfer the reply-to
-		$this->mailer->ClearReplyTos();
-		$replyToEmail = $this->replyTo->getEmail();
-
-		if (!is_string($replyToEmail)) {
-			throw new MailerException("Invalid reply-to email address");
-		}
-
-		$this->mailer->AddReplyTo($replyToEmail, $this->replyTo->getName());
-
-		// transfer the sender
-		if (!is_null($this->sender)) {
-			$senderEmail = $this->sender->getEmail();
-
-			if (!is_string($senderEmail)) {
-				throw new MailerException("Invalid sender email address");
+		foreach ($headers as $key => $value) {
+			switch ($key) {
+				case Headers::From:
+					$this->mailer->From = $value[0];
+					$this->mailer->FromName = $value[1]; //@todo might not want to require this value
+					break;
+				case Headers::ReplyTo:
+					$this->mailer->ClearReplyTos();
+					$this->mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
+					break;
+				case Headers::Sender:
+					$this->mailer->Sender = $value;
+					break;
+				case Headers::MessageId:
+					$this->mailer->MessageId = $value;
+					break;
+				case Headers::Priority:
+					$this->mailer->Priority = $value;
+					break;
+				case Headers::DispositionNotificationTo:
+					$this->mailer->ConfirmReadingTo = $value;
+					break;
+				case Headers::Subject:
+					$this->mailer->Subject = $value;
+					break;
+				default:
+					// throw it away if it's not a valid header
+					break;
 			}
-
-			$this->mailer->Sender = $senderEmail;
 		}
-
-		// transfer the message-id
-		if (!is_null($this->messageId)) {
-			$this->mailer->MessageId = $this->messageId;
-		}
-
-		// transfer the priority
-		if (is_int($this->priority)) {
-			$this->mailer->Priority = $this->priority;
-		}
-
-		// transfer the disposition-notification-to
-		if ($this->requestConfirmation) {
-			$confirmTo = $fromEmail;
-
-			if (!is_null($this->sender)) {
-				$confirmTo = $this->sender->getEmail();
-			}
-
-			$this->mailer->ConfirmReadingTo = $confirmTo;
-		}
-
-		// transfer the subject
-		if (!is_string($this->subject)) {
-			throw new MailerException("Invalid subject");
-		}
-
-		$this->mailer->Subject = $this->subject;
 	}
 
 	private function transferRecipients() {

@@ -66,39 +66,11 @@ interface IMailer
 	public function setConfig($config, $value);
 
 	/**
-	 * @return array
+	 * @param Headers $headers
 	 */
-	public function getConfigs();
+	public function setHeaders(Headers $headers);
 
-	/**
-	 * @param $id
-	 */
-	public function setMessageId($id);
-
-	/**
-	 * @param int $priority 1 = High, 3 = Normal, 5 = Low
-	 */
-	public function setPriority($priority = 3);
-
-	/**
-	 * @param bool $request
-	 */
-	public function setRequestConfirmation($request = false);
-
-	/**
-	 * @param EmailIdentity $from
-	 */
-	public function setFrom(EmailIdentity $from);
-
-	/**
-	 * @param EmailIdentity $replyTo
-	 */
-	public function setReplyTo(EmailIdentity $replyTo);
-
-	/**
-	 * @param EmailIdentity $sender
-	 */
-	public function setSender(EmailIdentity $sender);
+	public function clearHeaders();
 
 	/**
 	 * Clear the recipient lists for each parameter that is true. By default, clear all recipients.
@@ -132,16 +104,6 @@ interface IMailer
 	public function addRecipientsBcc($recipients = array());
 
 	public function clearRecipientsBcc();
-
-	/**
-	 * @param string $subject
-	 */
-	public function setSubject($subject);
-
-	/**
-	 * @return string
-	 */
-	public function getSubject();
 
 	/**
 	 * @param string $textBody
