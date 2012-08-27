@@ -1292,7 +1292,7 @@ class SugarThemeRegistry
         $availableThemes = self::availableThemes();
         foreach($availableThemes as $key=>$theme)
         {
-            if(strtolower($key) == 'racerx')
+            if(strtolower($key) == 'sugar')
             {
                 return $key;
             }
