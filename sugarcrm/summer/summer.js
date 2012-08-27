@@ -66,15 +66,6 @@
                 layout:"profileedit"
             });
         });
-
-        app.router.route(':module', 'list', function(module) {
-            app.logger.debug("Route changed to index");
-
-            app.controller.loadView({
-                module: module,
-                layout: "list"
-            });
-        });
     });
 
     var oRoutingBefore = app.routing.before;
