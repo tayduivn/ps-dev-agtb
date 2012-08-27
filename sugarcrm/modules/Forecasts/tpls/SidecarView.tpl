@@ -28,6 +28,7 @@
                     <div class="view-forecastsConfigTimeperiods"></div>
                     <div class="view-forecastsConfigCategories"></div>
                     <div class="view-forecastsConfigRange"></div>
+                    <div class="view-forecastsConfigVariables"></div>
                 </div>
 
                 <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
