@@ -91,6 +91,7 @@ if(!empty($_SESSION['gauth_data'])){
                         style='margin-bottom: 5px'>Register
                 </button>
                 <div class='span3' style="text-align: center"><a id='reset_lnk' href="#">Can't Login?</a></div>
+                <button type="button" id="google_login" name="google" class="span3 btn btn-success" style="margin-bottom: 5px">Login with Google</button>
             </div>
         </form>
         <form class='form' id="register" style='display:none'>
