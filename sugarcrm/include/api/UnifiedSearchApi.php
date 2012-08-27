@@ -183,7 +183,13 @@ class UnifiedSearchApi extends SugarApi {
 
         return $options;
     }
-
+    
+    /**
+     * This function is the global search
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @return array result set
+     */
     public function globalSearch(ServiceBase $api, array $args) {
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
@@ -192,8 +198,9 @@ class UnifiedSearchApi extends SugarApi {
 
         $options = $this->parseSearchOptions($api,$args);
 
-        // Start with just the sugar search engine
-        $searchEngine = SugarSearchEngineFactory::getInstance('SugarSearchEngine');
+        $GLOBALS['log']->fatal("\r\nTHE SEARCH ENGINE IS: " . $this->determineSugarSearchEngine($api, $args, $options) . "\r\n\r\n");
+        // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
+        $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
 
         if ( $searchEngine instanceOf SugarSearchEngine) {
             $options['resortResults'] = true;
@@ -206,8 +213,117 @@ class UnifiedSearchApi extends SugarApi {
 
         return $recordSet;
 
+    }
+    /**
+     * This function is used to determine the search engine to use
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
+     * @return string name of the Search Engine
+     */
+    protected function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
+    {
+        require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+        /*
+            How to determine which Elastic Search
+            1 - Not Portal
+            2 - All Modules are full_text_search = true
+            3 - not my items
+            4 - not favorites
+        */
+        // my items
+        /*
+        if($options['my_items'] !== false)
+        {
+            return 'SugarSearchEngine';
+        }
+         */
+        // favorites
+        if($options['favorites'] !== false)
+        {
+            return 'SugarSearchEngine';
+        }
+
+        // portal
+        if(isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal')
+        {
+            return 'SugarSearchEngine';
+        }
+
+/*
+        if(!empty($options['moduleList']))
+        {
+            foreach($options['moduleList'] AS $module)
+            {
+                if(!SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module))
+                {
+                    return 'SugarSearchEngine';
+                }
+            }
+        }
+ */
+        //everything is groovy for FTS, get the FTS Engine Name from the conig
+        return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+    }
+    /**
+     * This function is used to hand off the global search to the FTS Searcj Emgine
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller
+     * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
+     * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
+     */
+    protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineElastic $searchEngine, array $options)
+    {
+        $options['append_wildcard'] = 1;
+        if(empty($options['moduleList']))
+        {
+            $options['moduleList'] = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+        }
+        $options['moduleFilter'] = $options['moduleList'];
+
+        $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
+        $returnedRecords = array();
+        foreach ( $results as $result ) {
+            $record = BeanFactory::getBean($result->getModule(), $result->getId());
+
+            // if we cant' get the bean skip it
+            if($record === false)
+            {
+                continue;
+            }
+            $module = $record->module_dir;
+            // Need to override the filter arg so that it looks like something formatBean expects
+            if ( !empty($options['fieldFilters'][$module]) ) {
+                $moduleFields = $options['fieldFilters'][$module];
+            } else if ( !empty($options['fieldFilters']['_default']) ) {
+                $moduleFields = $options['fieldFilters']['_default'];
+            } else {
+                $moduleFields = array();
+            }
+            $moduleArgs['fields'] = implode(',',$moduleFields);
+            $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
+            $formattedRecord['_module'] = $module;
+            // The SQL based search engine doesn't know how to score records, so set it to 1
+            $formattedRecord['_score'] = $result->getScore();
+            $returnedRecords[] = $formattedRecord;
+        }
 
 
+        $total = $results->getTotalHits();
+
+        if ( $total > ($options['limit'] + $options['offset']))
+        {
+            $nextOffset = $options['offset']+$options['limit'];
+        }
+        else
+        {
+            $nextOffset = -1;
+        }
+        
+
+ 
+        return array('next_offset'=>$nextOffset,'records'=>$returnedRecords);        
     }
 
     /**
@@ -215,7 +331,7 @@ class UnifiedSearchApi extends SugarApi {
      * @param $api ServiceBase The API class of the request
      * @param $args array The arguments array passed in from the API
      * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller
-     * @parma $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
+     * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
     protected function globalSearchSpot(ServiceBase $api, array $args, SugarSearchEngine $searchEngine, array $options) {
