@@ -72,17 +72,26 @@ function perform_save(&$focus){
         }
     }
 
+    // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
+    if(is_null($focus->best_case) || strval($focus->best_case) === "") {
+        $focus->best_case = $focus->amount;
+    }
+    if(is_null($focus->likely_case) || strval($focus->likely_case) === "") {
+        $focus->likely_case = $focus->amount;
+    }
+    if(is_null($focus->worst_case) || strval($focus->worst_case) === "") {
+        $focus->worst_case = $focus->amount;
+    }
+
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
     //END SUGARCRM flav=pro ONLY
 	//US DOLLAR
 	if(isset($focus->amount) && !number_empty($focus->amount)){
-		$currency = new Currency();
+        require_once 'include/SugarCurrency.php';
+        $currency = new Currency();
 		$currency->retrieve($focus->currency_id);
-		$focus->amount_usdollar = $currency->convertToDollar($focus->amount);
-        $focus->best_case_base_currency = $currency->convertToDollar($focus->best_case);
-        $focus->likely_case_base_currency = $currency->convertToDollar($focus->likely_case);
-        $focus->worst_case_base_currency = $currency->convertToDollar($focus->worst_case);
+		$focus->amount_usdollar = SugarCurrency::convertAmountToBase($focus->amount,$currency->id);
     }
 }
 ?>

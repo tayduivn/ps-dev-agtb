@@ -151,6 +151,15 @@
                 return app;
             }
             }));
+        app.view.Field = app.view.Field.extend({
+            _render: function() {
+                if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
+                    this.options = this.options || {};
+                    this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'detail';
+                }
+                app.view.Field.__super__._render.call(this);
+            }
+        });
      })(SUGAR.App);
 
     //Call initForecast with the session id as token
