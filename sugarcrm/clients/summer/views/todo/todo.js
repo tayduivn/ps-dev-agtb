@@ -1,6 +1,6 @@
 ({
     events: {
-        'click #todo-container': 'onClickNotification',
+        'click #todo-container': 'persistMenu',
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
         'keyup #todo-subject':'todoSubmit',
@@ -35,7 +35,7 @@
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
     },
-    onClickNotification: function(e) {
+    persistMenu: function(e) {
         // This will prevent the dropup menu from closing
         // when clicking anywhere on it
         e.stopPropagation();
@@ -56,6 +56,9 @@
             dateFormat: "yy-mm-dd"
         });
         $("#ui-datepicker-div").css("z-index", 1032);
+        $("#ui-datepicker-div").on("click", function(e) {
+            e.stopPropagation();
+        });
     },
     removeTodo: function(e) {
         var self = this,
