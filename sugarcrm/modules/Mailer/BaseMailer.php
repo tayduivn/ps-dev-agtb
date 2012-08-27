@@ -28,7 +28,6 @@ require_once 'Headers.php';
 
 abstract class BaseMailer implements IMailer
 {
-	protected $mailer;
 	protected $configs;
 	protected $headers;
 	protected $recipients;
@@ -45,7 +44,6 @@ abstract class BaseMailer implements IMailer
 		$this->clearAttachments();
 		$this->clearHeaders();
 
-		$this->mailer     = null;
 		$this->recipients = new RecipientsCollection();
 		$this->htmlBody   = null;
 		$this->textBody   = null;

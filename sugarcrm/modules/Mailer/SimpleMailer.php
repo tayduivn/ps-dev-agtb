@@ -32,12 +32,6 @@ class SimpleMailer extends BaseMailer
 	const SecureSsl  = 'ssl';
 	const SecureTls  = 'tls';
 
-	public function reset() {
-		parent::reset();
-		$this->mailer = new PHPMailer();
-		$this->mailer->SetLanguage(); // reset to the English language pack
-	}
-
 	public function loadDefaultConfigs() {
 		parent::loadDefaultConfigs();
 
@@ -57,23 +51,20 @@ class SimpleMailer extends BaseMailer
 
 	public function send() {
 		try {
-			if (!($this->mailer instanceof PHPMailer)) {
-				throw new MailerException("Invalid mailer");
+			$mailer = new PHPMailer();
+			$this->transferConfigurations($mailer);
+			$this->connectToHost($mailer);
+			$this->transferHeaders($mailer);
+			$this->transferRecipients($mailer);
+			$this->transferBody($mailer);
+			$this->transferAttachments($mailer);
+
+			if (!$mailer->IsError()) {
+				$mailer->Send();
 			}
 
-			$this->transferConfigurations();
-			$this->connectToHost();
-			$this->transferHeaders();
-			$this->transferRecipients();
-			$this->transferBody();
-			$this->transferAttachments();
-
-			if (!$this->mailer->IsError()) {
-				$this->mailer->Send();
-			}
-
-			if ($this->mailer->IsError()) {
-				throw new MailerException($this->mailer->ErrorInfo);
+			if ($mailer->IsError()) {
+				throw new MailerException($mailer->ErrorInfo);
 			}
 		} catch (MailerException $me) {
 			//@todo consider using status codes and grouping them based on the error level that should be used
@@ -87,31 +78,32 @@ class SimpleMailer extends BaseMailer
 		return true;
 	}
 
-	private function transferConfigurations() {
+	private function transferConfigurations(PHPMailer &$mailer) {
 		// transfer the basic configurations
-		$this->mailer->Mailer   = self::Protocol;
-		$this->mailer->Hostname = $this->configs['hostname'];
-		$this->mailer->CharSet  = $this->configs['charset'];
-		$this->mailer->Encoding = $this->configs['encoding'];
-		$this->mailer->WordWrap = $this->configs['wordwrap'];
+		$mailer->SetLanguage(); // explicitly set the language even though PHPMailer will do it on its own
+		$mailer->Mailer   = self::Protocol;
+		$mailer->Hostname = $this->configs['hostname'];
+		$mailer->CharSet  = $this->configs['charset'];
+		$mailer->Encoding = $this->configs['encoding'];
+		$mailer->WordWrap = $this->configs['wordwrap'];
 
 		// transfer the smtp configurations
-		$this->mailer->Host          = $this->configs['smtp.host'];
-		$this->mailer->Port          = $this->configs['smtp.port'];
-		$this->mailer->SMTPSecure    = $this->configs['smtp.secure'];
-		$this->mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
-		$this->mailer->Username      = $this->configs['smtp.username'];
-		$this->mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
-		$this->mailer->Timeout       = $this->configs['smtp.timeout'];
-		$this->mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
+		$mailer->Host          = $this->configs['smtp.host'];
+		$mailer->Port          = $this->configs['smtp.port'];
+		$mailer->SMTPSecure    = $this->configs['smtp.secure'];
+		$mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
+		$mailer->Username      = $this->configs['smtp.username'];
+		$mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
+		$mailer->Timeout       = $this->configs['smtp.timeout'];
+		$mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
 	}
 
-	private function connectToHost() {
+	private function connectToHost(PHPMailer &$mailer) {
 		//@todo may need to reuse the SMTP object in the event that there is a valid use case for
 		// keeping the SMTP connection alive
-		$this->mailer->smtp = new SMTP();
+		$mailer->smtp = new SMTP();
 
-		if (!$this->mailer->SmtpConnect()) {
+		if (!$mailer->SmtpConnect()) {
 			//@todo need to tell the class what error messages to use, so the following is for reference only
 //			global $app_strings;
 //			if(isset($this->oe) && $this->oe->type == "system") {
@@ -123,34 +115,34 @@ class SimpleMailer extends BaseMailer
 		}
 	}
 
-	private function transferHeaders() {
+	private function transferHeaders(PHPMailer &$mailer) {
 		// packageHeaders() will throw an exception if errors occur and that exception will be caught by send()
 		$headers = $this->headers->packageHeaders();
 
 		foreach ($headers as $key => $value) {
 			switch ($key) {
 				case Headers::From:
-					$this->mailer->From = $value[0];
-					$this->mailer->FromName = $value[1]; //@todo might not want to require this value
+					$mailer->From = $value[0];
+					$mailer->FromName = $value[1]; //@todo might not want to require this value
 					break;
 				case Headers::ReplyTo:
-					$this->mailer->ClearReplyTos();
-					$this->mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
+					//$mailer->ClearReplyTos(); // only necessary if the PHPMailer object can be re-used
+					$mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
 					break;
 				case Headers::Sender:
-					$this->mailer->Sender = $value;
+					$mailer->Sender = $value;
 					break;
 				case Headers::MessageId:
-					$this->mailer->MessageId = $value;
+					$mailer->MessageID = $value;
 					break;
 				case Headers::Priority:
-					$this->mailer->Priority = $value;
+					$mailer->Priority = $value;
 					break;
 				case Headers::DispositionNotificationTo:
-					$this->mailer->ConfirmReadingTo = $value;
+					$mailer->ConfirmReadingTo = $value;
 					break;
 				case Headers::Subject:
-					$this->mailer->Subject = $value;
+					$mailer->Subject = $value;
 					break;
 				default:
 					// throw it away if it's not a valid header
@@ -159,8 +151,8 @@ class SimpleMailer extends BaseMailer
 		}
 	}
 
-	private function transferRecipients() {
-		$this->mailer->ClearAllRecipients();
+	private function transferRecipients(PHPMailer &$mailer) {
+		//$mailer->ClearAllRecipients(); // only necessary if the PHPMailer object can be re-used
 		$to = $this->recipients->getTo();
 		$cc = $this->recipients->getCc();
 		$bcc = $this->recipients->getBcc();
@@ -168,24 +160,24 @@ class SimpleMailer extends BaseMailer
 		//@todo should you be able to initiate a send without any To recipients?
 		foreach ($to as $recipient) {
 			$recipient->decode();
-			$this->mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+			$mailer->AddAddress($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($cc as $recipient) {
 			$recipient->decode();
-			$this->mailer->AddCC($recipient->getEmail(), $recipient->getName());
+			$mailer->AddCC($recipient->getEmail(), $recipient->getName());
 		}
 
 		foreach ($bcc as $recipient) {
 			$recipient->decode();
-			$this->mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+			$mailer->AddBCC($recipient->getEmail(), $recipient->getName());
 		}
 	}
 
 	/**
 	 * @throws MailerException
 	 */
-	protected function transferBody() {
+	protected function transferBody(PHPMailer &$mailer) {
 		$hasText = $this->hasMessagePart($this->textBody);
 		$hasHtml = $this->hasMessagePart($this->htmlBody);
 
@@ -194,15 +186,15 @@ class SimpleMailer extends BaseMailer
 		}
 
 		if ($hasHtml) {
-			$this->mailer->IsHTML(true);
-			$this->mailer->Encoding = self::EncodingBase64; // so that embedded images are encoding properly
-			$this->mailer->Body = $this->htmlBody;
+			$mailer->IsHTML(true);
+			$mailer->Encoding = self::EncodingBase64; // so that embedded images are encoding properly
+			$mailer->Body = $this->htmlBody;
 		}
 
 		if ($hasText && $hasHtml) {
-			$this->mailer->AltBody = $this->textBody;
+			$mailer->AltBody = $this->textBody;
 		} elseif ($hasText) {
-			$this->mailer->Body = $this->textBody;
+			$mailer->Body = $this->textBody;
 		} else {
 			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
 			//throw new MailerException("No text body was provided");
@@ -214,12 +206,12 @@ class SimpleMailer extends BaseMailer
 	 *
 	 * @throws MailerException
 	 */
-	private function transferAttachments() {
-		$this->mailer->ClearAttachments();
+	private function transferAttachments(PHPMailer &$mailer) {
+		//$mailer->ClearAttachments(); // only necessary if the PHPMailer object can be re-used
 
 		foreach ($this->attachments as $attachment) {
 			if ($attachment instanceof Attachment) {
-				if (!$this->mailer->AddAttachment(
+				if (!$mailer->AddAttachment(
 					$attachment->getPath(),
 					$attachment->getName(),
 					$attachment->getEncoding(),
@@ -228,7 +220,7 @@ class SimpleMailer extends BaseMailer
 					throw new MailerException("Invalid attachment");
 				}
 			} elseif ($attachment instanceof EmbeddedImage) {
-				if (!$this->mailer->AddEmbeddedImage(
+				if (!$mailer->AddEmbeddedImage(
 					$attachment->getPath(),
 					$attachment->getCid(),
 					$attachment->getName(),
