@@ -342,14 +342,21 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'type' => 'int',
     'comment' => 'Weighted amount of all opportunities represented by this forecast',
   ),
-       'currency_id' =>
-       array (
-           'name' => 'currency_id',
-           'vname' => 'LBL_CURRENCY',
-           'type' => 'id',
-           'required' => true,
-       ),
-       'best_case' =>
+   'currency_id' =>
+   array (
+       'name' => 'currency_id',
+       'vname' => 'LBL_CURRENCY',
+       'type' => 'id',
+       'required' => true,
+   ),
+   'currency_rate' =>
+   array (
+       'name' => 'currency_rate',
+       'vname' => 'LBL_CURRENCY_RATE',
+       'type' => 'double',
+       'required' => true,
+   ),
+   'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LBL_FORECAST_OPP_BEST_CASE',
@@ -557,6 +564,13 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
         'type' => 'id',
         'required' => true,
     ),
+    'currency_rate' =>
+    array (
+        'name' => 'currency_rate',
+        'vname' => 'LBL_CURRENCY_RATE',
+        'type' => 'double',
+        'required' => true,
+    ),
     'best_case' =>
   array (
     'name' => 'best_case',
@@ -625,10 +639,8 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'vname' => 'LBL_PROBABILITY',
     'type' => 'int',
     'dbType' => 'double',
-    'audited'=>true,
     'comment' => 'Worksheet Placeholder for the probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-    'merge_filter' => 'enabled',
   ),
   'quota' =>
 	array (

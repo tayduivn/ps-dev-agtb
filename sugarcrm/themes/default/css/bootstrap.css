@@ -6908,7 +6908,6 @@ table th {
 }
 table.datatable tbody td {
   white-space: nowrap;
-  max-width: 100px;
   overflow-x: hidden;
 }
 table th,
@@ -8451,4 +8450,32 @@ color: @red;
 
 a#save_draft {
     margin-right: 8px;
+}
+
+.label, .badge {
+    font-size:10.152px;
+    line-height:12px;
+    color:#000;
+    vertical-align:baseline;
+    white-space:nowrap;
+    background-color:#cdcccb;
+    height:12px;
+    display:inline-block;
+}
+.label {
+    padding:1px 4px 2px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.badge {
+    padding:1px 9px 2px;
+    -webkit-border-radius:9px;
+    -moz-border-radius:9px;
+    border-radius:9px;
+}
+a.label:hover, a.badge:hover {
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
 }

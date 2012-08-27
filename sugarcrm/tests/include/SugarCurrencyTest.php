@@ -48,6 +48,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         // setup test user
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
@@ -133,6 +135,18 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('PHP',$currency->iso4217);
         $this->assertEquals(41.82982,$currency->conversion_rate);
     }
+
+    /**
+     * test currency retrieval by user preferences
+     *
+     * @access public
+     */
+    public function testCurrencyUserLocale()
+    {
+        $currency = SugarCurrency::getUserLocaleCurrency();
+        $this->assertInstanceOf('Currency',$currency);
+    }
+
 
     /**
      * test dollar amount conversions between currencies

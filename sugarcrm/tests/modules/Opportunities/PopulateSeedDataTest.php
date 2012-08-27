@@ -38,9 +38,9 @@ private $createdOpportunities;
 
 function setUp()
 {
-    global $beanFiles, $beanList, $current_user, $app_list_strings;
-    require('include/modules.php');
-    $app_list_strings = return_app_list_strings_language('en_us');
+    SugarTestHelper::setUp('beanFiles');
+    SugarTestHelper::setUp('beanList');
+    SugarTestHelper::setUp('app_list_strings');
     $current_user = SugarTestUserUtilities::createAnonymousUser();
     $current_user->is_admin = 1;
     $current_user->save();
@@ -50,10 +50,12 @@ function setUp()
 function tearDown()
 {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    SugarTestAccountUtilities::removeAllCreatedAccounts();
+    SugarTestProductUtilities::removeAllCreatedProducts();
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
-    //$ids = "('" . implode("','", $this->createdOpportunities) . "')";
-    //$GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
-    //$GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
+    $ids = "('" . implode("','", $this->createdOpportunities) . "')";
+    $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
+    $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
 }
 
 /**
@@ -63,16 +65,36 @@ function testPopulateSeedData()
 {
     global $app_list_strings, $current_user;
     $total = 200;
-    $account = new Account();
-    $product = new Product();
+    $account = BeanFactory::getBean('Accounts');
+    $product = BeanFactory::getBean('Products');
     $user = new User();
     $account->disable_row_level_security = true;
     $product->disable_row_level_security = true;
     $user->disable_row_level_security = true;
 
     $accounts = $account->build_related_list("SELECT id FROM accounts WHERE deleted = 0", $account, 0, $total);
+
+    //Accounts may have been deleted by some other tests
+    if(count($accounts) < $total)
+    {
+       $count_accounts = count($accounts);
+       while($count_accounts++ < $total) {
+             $accounts[] = SugarTestAccountUtilities::createAccount();
+       }
+    }
+
     $products = $account->build_related_list("SELECT id FROM products WHERE deleted = 0", $product, 0, $total);
-    $result = $GLOBALS['db']->query("SELECT id FROM users WHERE deleted = 0 AND status = 'Active'");
+
+    if(count($products) < $total)
+    {
+       $count_products = count($products);
+       while($count_accounts++ < $total) {
+             $products[] = SugarTestProductUtilities::createProduct();
+       }
+    }
+
+    //echo count($products);
+    $result = $GLOBALS['db']->limitQuery("SELECT id FROM users WHERE deleted = 0 AND status = 'Active'", 0, $total);
     $users = array();
     while(($row = $GLOBALS['db']->fetchByAssoc($result)))
     {

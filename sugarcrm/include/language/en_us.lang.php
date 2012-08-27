@@ -355,14 +355,19 @@ $app_list_strings = array (
       'Monthly' => 'Monthly',
       'Weekly' => 'Weekly',
     ),
-  //BEGIN SUGARCRM flav=pro ONLY
   'commit_stage_dom' =>
   array (
     '100' => 'Include',
     '70' => 'Likely',
     '50' => 'Omit',
   ),
-  //END SUGARCRM flav=pro ONLY
+  'commit_stage_expanded_dom' =>
+  array (
+    '100' => 'Commit',
+    '80' => 'Stretch',
+    '60' => 'Risk',
+    '50' => 'Omit'
+  ),
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
