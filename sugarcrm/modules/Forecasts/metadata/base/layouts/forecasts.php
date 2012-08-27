@@ -2,29 +2,28 @@
 $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
     'type' => 'forecasts',
     'components' => array(
-        0 => array(
+        array(
             'view' => 'forecastsFilter',
         ),
-        1 => array(
+        array(
             'view' => 'forecastsChartOptions',
         ),
-        2 => array(
+        array(
             'view' => 'forecastsTree',
         ),
-        3 => array(
+        array(
             'view' => 'forecastsChart',
         ),
-        4 => array(
+        array(
             'view' => 'forecastsProgress',
         ),
-        5 => array(
+        array(
             'view' => 'forecastsCommitted',
             'collection' => array(
                 'name' => 'Committed'
             ),
         ),
-
-        6 => array(
+        array(
             'view' => 'forecastsWorksheet',
 
             'contextCollection' => array(
@@ -32,16 +31,14 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
                 'name' => 'Worksheet'
             ),
         ),
-
-        7 => array(
+        array(
             'view' => 'forecastSchedule',
             'contextCollection' => array(
                 'module' => 'ForecastSchedule',
                 'name' => 'ForecastSchedule',
             )
         ),
-
-        8 => array(
+        array(
             'view' => 'forecastsWorksheetManager',
 
             'contextCollection' => array(
@@ -50,13 +47,14 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             ),
 
         ),
-        
-        9 => array(
+        array(
             'view' => 'forecastsSubnav',
         ),
-
-        10 => array(
+        array(
             'view' => 'forecastsCommitButtons',
         ),
+        array(
+            'layout' => 'forecastsConfig',
+        )
     )
 );
