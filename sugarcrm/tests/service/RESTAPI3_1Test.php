@@ -37,8 +37,6 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
         //Reload langauge strings
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
