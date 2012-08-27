@@ -38,10 +38,12 @@ class Headers
 	protected $replyTo;
 	protected $sender;
 	protected $subject;
+	protected $custom;
 
 	public function __construct() {
 		$this->setPriority();
 		$this->setRequestConfirmation();
+		$this->clearCustomHeaders();
 	}
 
 	public function buildFromArray($headers = array()) {
@@ -70,7 +72,8 @@ class Headers
 					$this->setSubject($value);
 					break;
 				default:
-					// throw it away if it's not a valid header
+					// it's not known, so it must be a custom header
+					$this->addCustomHeader($key, $value);
 					break;
 			}
 		}
@@ -168,6 +171,23 @@ class Headers
 		return $this->subject;
 	}
 
+	public function clearCustomHeaders() {
+		$this->custom = array();
+	}
+
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @todo throw an exception if the custom header is invalid?
+	 * @todo do we need to prevent overwriting a non-custom header?
+	 */
+	public function addCustomHeader($key, $value) {
+		if (is_string($key) && is_string($value)) {
+			$this->custom[$key] = $value;
+		}
+	}
+
 	/**
 	 * @return array
 	 * @throws MailerException
@@ -182,6 +202,7 @@ class Headers
 		$this->packagePriority($headers);
 		$this->packageRequestConfirmation($headers);
 		$this->packageSubject($headers);
+		$this->packageCustomHeaders($headers);
 
 		return $headers;
 	}
@@ -252,5 +273,11 @@ class Headers
 		}
 
 		$headers[self::Subject] = $subject;
+	}
+
+	private function packageCustomHeaders(&$headers) {
+		foreach ($this->custom as $key => $value) {
+			$headers[$key] = $value;
+		}
 	}
 }

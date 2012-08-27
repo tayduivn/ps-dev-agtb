@@ -145,7 +145,8 @@ class SimpleMailer extends BaseMailer
 					$mailer->Subject = $value;
 					break;
 				default:
-					// throw it away if it's not a valid header
+					// it's not known, so it must be a custom header
+					$mailer->AddCustomHeader("{$key}:{$value}");
 					break;
 			}
 		}
