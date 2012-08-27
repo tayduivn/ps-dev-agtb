@@ -1,6 +1,4 @@
 <?php
-namespace Mailer;
-
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /********************************************************************************
@@ -25,7 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class Headers
 {
-	// @todo make constants out of the header labels
 	const MessageId                 = 'Message-ID';
 	const Priority                  = 'Priority';
 	const DispositionNotificationTo = 'Disposition-Notification-To';

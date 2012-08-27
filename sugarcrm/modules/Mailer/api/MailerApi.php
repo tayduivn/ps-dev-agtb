@@ -1,9 +1,4 @@
 <?php
-use Mailer\MailerException;
-use Mailer\EmailIdentity;
-use Mailer\SimpleMailer;
-use Mailer\Headers;
-
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /********************************************************************************
