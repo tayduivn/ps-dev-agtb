@@ -82,21 +82,21 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<div id="popup_window"></div>
 
 <script type="text/javascript">
-var EditView_tabs = new YAHOO.widget.TabView("EditView_tabs");
+var EditView_tabs_top = new YAHOO.widget.TabView("EditView_tabs_top");
 
 {literal}
 //Override so we do not force submit, just simulate the 'save button' click
 SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { document.getElementById('Save').click();}
 
-EditView_tabs.on('contentReady', function(e){
+EditView_tabs_top.on('contentReady', function(e){
 {/literal}
 {if $ID}
 {literal}
     var eapmTabIndex = 4;
     {/literal}{if !$SHOW_THEMES}{literal}eapmTabIndex = 3;{/literal}{/if}{literal}
-    EditView_tabs.getTab(eapmTabIndex).set('dataSrc','index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true');
-    EditView_tabs.getTab(eapmTabIndex).set('cacheData',true);
-    EditView_tabs.getTab(eapmTabIndex).on('dataLoadedChange',function(){
+    EditView_tabs_top.getTab(eapmTabIndex).set('dataSrc','index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true');
+    EditView_tabs_top.getTab(eapmTabIndex).set('cacheData',true);
+    EditView_tabs_top.getTab(eapmTabIndex).on('dataLoadedChange',function(){
         //reinit action menus
         $("ul.clickMenu").each(function(index, node){
             $(node).sugarActionMenu();
@@ -104,20 +104,20 @@ EditView_tabs.on('contentReady', function(e){
     });
 
     if ( document.location.hash == '#tab5' ) {
-        EditView_tabs.selectTab(eapmTabIndex);
+        EditView_tabs_top.selectTab(eapmTabIndex);
     }
 {/literal}
 {/if}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
-    EditView_tabs.addTab( new YAHOO.widget.Tab({
+    EditView_tabs_top.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',
         dataSrc: 'index.php?to_pdf=1&module=Home&action=pluginList',
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
+    EditView_tabs_top.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
@@ -135,7 +135,7 @@ EditView_tabs.on('contentReady', function(e){
     </tr>
 </table>
 
-<div id="EditView_tabs" class="yui-navset">
+<div id="EditView_tabs_top" class="yui-navset">
     <ul class="yui-nav">
         <li class="selected"><a id="tab1" href="#tab1"><em>{$MOD.LBL_USER_INFORMATION}</em></a></li>
         <li {if $CHANGE_PWD == 0}style='display:none'{/if}><a id="tab2" href="#tab2"><em>{$MOD.LBL_CHANGE_PASSWORD_TITLE}</em></a></li>

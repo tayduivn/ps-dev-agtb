@@ -14,9 +14,10 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="./lib/twitterbootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        
+        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
 
     </head>
     <body>
@@ -32,8 +33,10 @@
                 <div id="content">
                     <div class="alert-top">
                         <div class="alert alert-process">
-                            <strong>Loading</strong>&#8230;
-                            <img style="float:right" src="lib/twitterbootstrap/img/throbber.gif">
+                            <strong>Loading</strong>
+                            <div class="loading">
+                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

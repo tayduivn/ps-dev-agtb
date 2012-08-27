@@ -1867,6 +1867,11 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_TOUR_NEXT' => 'Next',
+  'LBL_TOUR_SKIP' => 'Skip',
+  'LBL_TOUR_BACK' => 'Back',
+  'LBL_TOUR_CLOSE' => 'Close',
+  'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
@@ -3398,6 +3403,7 @@ $app_strings = array (
     'LBL_LANGUAGE' => 'Language',
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
+    'LBL_UPLOADING' => 'Uploading',
 
     //for portal
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
@@ -3421,6 +3427,32 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+
+    //for portal errors
+    'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
+    'LBL_PORTAL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
+    'LBL_PORTAL_INVALID_GRANT' => 'Your token is invalid or has expired. Please login again.',
+    'LBL_PORTAL_INVALID_GRANT_TITLE' => 'Token Expired',
+    'LBL_PORTAL_AUTH_FAILED' => 'Client authentication failed.',
+    'LBL_PORTAL_AUTH_FAILED_TITLE' => 'Invalid Client',
+    'LBL_PORTAL_INVALID_REQUEST' => 'The request made is invalid or malformed. Please contact technical support.',
+    'LBL_PORTAL_INVALID_REQUEST_TITLE' => 'Invalid Request',
+    'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
+    'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
+    'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: 401 Unauthorized',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: 403 Forbidden',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: 405 Method Not Allowed',
+    'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: 412',
+    'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
+    'LBL_PORTAL_ERROR' => 'Error',
+    'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
+    'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
+
+
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -4285,4 +4317,12 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
+$app_strings ['documentation'] = array (
+    'LBL_DOCS' => 'Documentation',
+    'ULT' => '02_Sugar_Ultimate',
+	'ENT' => '02_Sugar_Enterprise',
+	'CORP' => '03_Sugar_Corporate',
+	'PRO' => '04_Sugar_Professional',
+	'COM' => '05_Sugar_Community_Edition'
+);
 ?>
