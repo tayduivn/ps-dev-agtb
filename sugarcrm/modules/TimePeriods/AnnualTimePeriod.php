@@ -64,10 +64,10 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      */
     public function createNextTimePeriod() {
         $nextPeriod = new AnnualTimePeriod();
-        $timedate = TimeDate::getInstance();
 
         $nextPeriod->start_date = $this->end_date->modify('+1 day');
         $nextPeriod->end_date = $this->start_date->modify('+1 year');
+        $nextPeriod->end_date = $this->start_date->modify('-1 day');
 
         return $nextPeriod;
     }
@@ -110,6 +110,16 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         }
 
         switch($timePeriodType) {
+            case "Quarterly":
+                break;
+            case "Quarterly544":
+                break;
+            case "Quarterly445":
+                break;
+            case "Monthly":
+                break;
+            case "Weekly":
+                break;
 
         }
 
