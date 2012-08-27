@@ -52,6 +52,14 @@
         serverUrl: '../rest/v10',
 
         /**
+         * Sugar instance URL.
+         *
+         * The URL can relative or absolute.
+         * @cfg {String}
+         */
+        siteUrl: '../',
+
+        /**
          * Server request timeout (in seconds).
          */
         serverTimeout: 30,
