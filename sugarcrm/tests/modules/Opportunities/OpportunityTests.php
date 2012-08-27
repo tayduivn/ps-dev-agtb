@@ -78,16 +78,8 @@ class OpportunityTests extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->save();
 
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->best_case_base_currency),
-            sprintf('%.6f',$opportunity->best_case / $currency->conversion_rate)
-        );
-        $this->assertEquals(
-            sprintf('%.6f',$opportunity->likely_case_base_currency),
-            sprintf('%.6f',$opportunity->likely_case / $currency->conversion_rate)
-        );
-        $this->assertEquals(
-            sprintf('%.6f',$opportunity->worst_case_base_currency),
-            sprintf('%.6f',$opportunity->worst_case / $currency->conversion_rate)
+            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
         );
 
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
