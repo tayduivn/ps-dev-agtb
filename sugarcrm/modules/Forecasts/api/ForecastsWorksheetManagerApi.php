@@ -90,7 +90,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         require_once('modules/Reports/Report.php');
         require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
 
-        global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language;
+        global $current_user, $mod_strings, $app_list_strings, $app_strings, $current_language, $locale;
 		$current_module_strings = return_module_language($current_language, 'Forecasts');
 
         if(isset($args['user_id']) && User::isManager($args['user_id'])) {
@@ -125,14 +125,14 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                               "timeperiod_id" => $this->timeperiod_id,
                               "id" => ""
                             );
-		
+
+
+
 		if($current_user->id == $user->id || (isset($args["user_id"]) && ($args["user_id"] == $user->id))){
-        	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($user->first_name . " " . $user->last_name));
+        	$default_data["name"] = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($locale->getLocaleFormattedName($user->first_name, $user->last_name)));
             $default_data["show_opps"] = true;
-        }
-		else
-		{
-			$default_data["name"] = $user->first_name . " " . $user->last_name;
+        } else {
+			$default_data["name"] = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 		}
 		
         $default_data["user_id"] = $user->id;
@@ -147,7 +147,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             /** @var $reportee User */
             $reportee = BeanFactory::getBean('Users', $reportee_id);
             $default_data['id'] = $reportee_id;
-            $default_data['name'] = $reportee->first_name . " " . $reportee->last_name;
+            $default_data['name'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
             $default_data['user_id'] = $reportee_id;
             $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
             $data[$reportee->user_name] = $default_data;
@@ -319,7 +319,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $this->user_id) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case
+            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified
                                 FROM forecasts
                                 WHERE timeperiod_id = '{$this->timeperiod_id}'
                                     AND forecast_type = '" . $forecast_type . "'
@@ -332,6 +332,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
                 $data[$user_name]['likely_case'] = $row['likely_case'];
                 $data[$user_name]['worst_case'] = $row['worst_case'];
                 $data[$user_name]['forecast_id'] = $row['id'];
+                $data[$user_name]['date_modified'] = $row['date_modified'];
             }
         }
 

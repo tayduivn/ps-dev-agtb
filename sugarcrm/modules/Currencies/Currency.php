@@ -84,8 +84,7 @@ class Currency extends SugarBean
      * convertToDollar
      *
      * This method accepts a currency amount and converts it to the US Dollar amount
-     * This method is deprecated and has been moved to the SugarCurrency utility class
-     * as convertAmountToBase()
+     * This method is deprecated and has been moved to SugarCurrency::convertAmountToBase()
      *
      * @deprecated
      * @param  $amount    amount to convert to US Dollars
@@ -101,8 +100,7 @@ class Currency extends SugarBean
      *
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
-     * This method is deprecated and has been moved to the SugarCurrency utility class
-     * as convertAmountFromBase()
+     * This method is deprecated and has been moved to SugarCurrency::convertAmountFromBase()
      *
      * @deprecated
      * @param  $amount    currency amount in US Dollars
@@ -161,7 +159,7 @@ class Currency extends SugarBean
      */
 	function retrieveIDBySymbol($symbol) {
 	 	$query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0;",
-             mysql_real_escape_string($symbol)
+             $this->db->quote($symbol)
          );
 	 	$result = $this->db->query($query);
 	 	if($result){
@@ -186,7 +184,7 @@ class Currency extends SugarBean
      */
     function retrieveIDByISO($ISO) {
         $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0;",
-            mysql_real_escape_string($ISO)
+            $this->db->quote($ISO)
         );
         $result = $this->db->query($query);
         if($result){
@@ -226,7 +224,7 @@ class Currency extends SugarBean
      */
     function retrieveIDByName($name) {
 	 	$query = sprintf("select id from currencies where name='%s' and deleted=0;",
-             mysql_real_escape_string($name)
+             $this->db->quote($name)
          );
 	 	$result = $this->db->query($query);
 	 	if($result){

@@ -3,8 +3,7 @@
         <div class="span3"><a href="" class="logo"{{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat; "{{/if}}>SugarCRM</a></div>
         <div class="span9">
             <div class="btn-toolbar pull-right">
-                <div class="btn-group">
-                    <div class="dropdown" id="languageList">
+                <div class="btn-group dropdown" id="languageList">
                         <a href="javascript:void(0)" title="{{str "LBL_LANGUAGE"}}" class="btn" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>
                             {{str "LBL_LANGUAGE"}}</a>
                         <ul class="dropdown-menu bottom-up">
@@ -16,7 +15,6 @@
                             <li><a data-lang-key="{{key}}" href="javascript:void(0)">{{#eq ../currentLang key}}<strong>{{value}}</strong>{{else}}{{value}}{{/eq}}</a></li>
                             {{/each}}
                         </ul>
-                    </div>
                 </div>
                 {{#if isAuthenticated}}
                 <div class="btn-group">

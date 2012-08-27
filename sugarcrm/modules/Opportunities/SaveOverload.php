@@ -24,6 +24,7 @@ function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     //if forecast value equals -1, set it to 0 or 1 based on probability
     global $sugar_config, $app_list_strings, $timedate;
+
     if ($focus->forecast == -1)
     {
         $admin = BeanFactory::getBean('Administration');
@@ -35,7 +36,10 @@ function perform_save(&$focus){
     //if commit_stage isn't set, set it based on the probability
     if (empty($focus->commit_stage) && isset($focus->probability))
     {
-        $commit_stage_arr = $app_list_strings['commit_stage_dom'];
+        $admin = BeanFactory::getBean('Administration');
+        $admin->retrieveSettings('base');
+        $commit_stage_dom = isset($admin->settings['base_buckets_dom']) ? $admin->settings['base_buckets_dom'] : 'commit_stage_dom';
+        $commit_stage_arr = $app_list_strings[$commit_stage_dom];
         ksort($commit_stage_arr);
         //the keys of this array are upper limit of probability for each stage
         foreach($commit_stage_arr as $key => $value)
@@ -49,23 +53,30 @@ function perform_save(&$focus){
     }
 
     //Set the timeperiod_id value
-    if ($timedate->check_matching_format($focus->date_closed, $timedate::DB_DATE_FORMAT))
-    {
+    if ($timedate->check_matching_format($focus->date_closed, $timedate::DB_DATE_FORMAT)) {
         $date_close_db = $focus->date_closed;
-    }
-    else
-    {
+    } else {
         $date_close_db = $timedate->to_db_date($focus->date_closed);
     }
+    // only do this if the date_closed changes
 
-    //If there is no timeperiod_id value set, calculate one for the opportunity
-    if(empty($focus->timeperiod_id))
-    {
-        $timeperiod = $focus->db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$date_close_db}' AND end_date >= '{$date_close_db}' AND is_fiscal_year = 0 AND deleted = 0");
-        if (!empty($timeperiod))
-        {
-            $focus->timeperiod_id = $timeperiod;
+    if($focus->fetched_row['date_closed'] != $date_close_db) {
+        $timeperiod = TimePeriod::retrieveFromDate($date_close_db);
+
+        if($timeperiod instanceof TimePeriod && !empty($timeperiod->id)) {
+            $focus->timeperiod_id = $timeperiod->id;
         }
+    }
+
+    // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
+    if(is_null($focus->best_case) || strval($focus->best_case) === "") {
+        $focus->best_case = $focus->amount;
+    }
+    if(is_null($focus->likely_case) || strval($focus->likely_case) === "") {
+        $focus->likely_case = $focus->amount;
+    }
+    if(is_null($focus->worst_case) || strval($focus->worst_case) === "") {
+        $focus->worst_case = $focus->amount;
     }
 
     // Bug49495: amount may be a calculated field
@@ -73,12 +84,10 @@ function perform_save(&$focus){
     //END SUGARCRM flav=pro ONLY
 	//US DOLLAR
 	if(isset($focus->amount) && !number_empty($focus->amount)){
-		$currency = new Currency();
+        require_once 'include/SugarCurrency.php';
+        $currency = new Currency();
 		$currency->retrieve($focus->currency_id);
-		$focus->amount_usdollar = $currency->convertToDollar($focus->amount);
-        $focus->best_case_base_currency = $currency->convertToDollar($focus->best_case);
-        $focus->likely_case_base_currency = $currency->convertToDollar($focus->likely_case);
-        $focus->worst_case_base_currency = $currency->convertToDollar($focus->worst_case);
+		$focus->amount_usdollar = SugarCurrency::convertAmountToBase($focus->amount,$currency->id);
     }
 }
 ?>

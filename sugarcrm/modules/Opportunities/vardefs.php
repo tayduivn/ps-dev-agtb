@@ -142,6 +142,13 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     //'calculated' => true,
     //'formula' => 'rollupSum($products, "list_price")',
   ),
+  'currency_rate' =>
+  array (
+    'name' => 'currency_rate',
+    'vname' => 'LBL_CURRENCY_RATE',
+    'type' => 'double',
+    'required' => true,
+  ),
   'amount_usdollar' =>
   array (
     'name' => 'amount_usdollar',

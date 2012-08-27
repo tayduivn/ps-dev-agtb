@@ -189,6 +189,8 @@ $mod_strings = array (
     'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
+    'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
     'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
     'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
@@ -300,4 +302,6 @@ $mod_strings = array (
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
+    'LBL_CHANGES_BY' => 'Changes by {0}',
+    'LBL_TIMEFRAMES' => 'Timeframes',
 );

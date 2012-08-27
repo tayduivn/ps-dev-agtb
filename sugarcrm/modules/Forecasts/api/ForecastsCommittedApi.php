@@ -95,7 +95,7 @@ class ForecastsCommittedApi extends ModuleApi {
 
         //$where =  "forecasts.forecast_type='{$forecast_type}' AND forecasts.timeperiod_id = '{$timeperiod_id}'";
 
-        $order_by = 'forecasts.date_entered DESC';
+        $order_by = 'forecasts.date_modified DESC';
         if(isset($args['order_by']))
         {
             $order_by = clean_string($args['order_by']);

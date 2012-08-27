@@ -162,4 +162,24 @@ class SugarCurrency
         return $currency;
     }
 
+    /**
+     * get a currency object by user preferences
+     *
+     * @access public
+     * @param  object $user Optional the user object
+     * @return object  currency object
+     */
+    public static function getUserLocaleCurrency( $user = null ) {
+        $currency = BeanFactory::getBean('Currencies');
+        if(empty($user))
+        {
+            global $current_user;
+            $user = $current_user;
+        }
+        $currency_id = $user->getPreference('currency');
+        $currency->retrieve($currency_id);
+        return $currency;
+    }
+
+
 }
