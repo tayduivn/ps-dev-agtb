@@ -34,6 +34,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
     /**
@@ -61,5 +62,16 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opp->save();
 
         $this->assertEquals(0, $opp->$case);
+    }
+
+    public function testOpportunitySaveSelectProperTimePeriod()
+    {
+        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = "2009-02-15";
+        $opp->save();
+
+        $this->assertEquals($tp->id, $opp->timeperiod_id);
     }
 }
