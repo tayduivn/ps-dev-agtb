@@ -190,6 +190,15 @@
             this.context.forecasts.forecastschedule.on("change", function() {
                 this.calculateTotals();
             }, this);
+            this.context.forecasts.on("change:reloadWorksheetFlag", function(){
+            	
+            	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
+            		this.context.forecasts.worksheet.url = this.createURL();
+            		this.context.forecasts.worksheetr.fetch();
+            		this.context.forecasts.set({reloadWorksheetFlag: false});
+            	}
+            	
+            }, this);
         }
     },
 
@@ -225,7 +234,8 @@
         }
         $("#view-sales-rep").show();
         $("#view-manager").hide();
-
+        this.context.forecasts.set({currentWorksheet: "worksheet"});
+        
         var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);

@@ -48,7 +48,7 @@ class Worksheet extends SugarBean {
 
     function save($check_notify = false){
         //If related_forecast_type is empty it is an opportunity override so we update the best_case_worksheet and likely_case_worksheet values
-        if (empty($this->related_forecast_type) && !empty($this->related_id))
+        /*if (empty($this->related_forecast_type) && !empty($this->related_id))
         {
             $opp = new Opportunity();
             $opp->retrieve($this->related_id);
@@ -59,7 +59,7 @@ class Worksheet extends SugarBean {
                 $opp->worst_case = $this->worst_case;
                 $opp->save();
             }
-        }
+        }*/
         parent::save($check_notify);
     }
 

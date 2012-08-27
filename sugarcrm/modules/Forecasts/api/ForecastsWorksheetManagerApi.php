@@ -346,6 +346,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
      */
     public function getWorksheetBestLikelyAdjusted()
     {
+    	global $current_user;
         //getting data from worksheet table for reportees
 		$reportees_query = "SELECT u2.user_name, " .
 						   "w.id worksheet_id, " .
@@ -354,7 +355,9 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 						   "w.likely_case likely_adjusted, " .
 						   "w.worst_case worst_adjusted, " .
 						   "w.forecast_type, " .
-						   "w.related_id " .
+						   "w.related_id, " .
+						   "w.version, " .
+						   "w.quota " .
 						   "from users u " .
 						   "inner join users u2 " .
 						   		"on u.id = u2.reports_to_id " .
@@ -365,7 +368,20 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 						   		"and ((w.related_id = u.id and u2.id = u.id)" .
 						   			 "or(w.related_id = u2.id)) " .
 						   "where u.id = '" . $this->user_id . "' " .
-						   		"and w.deleted = 0";
+						   		"and w.deleted = 0 ";
+						   		
+						   		
+		if($this->user_id == $current_user->id)
+		{
+			$reportees_query .=	"and w.date_modified = (select max(date_modified) from worksheet " .
+						   								"where user_id = u.id and related_id = u2.id " .
+						   										"and timeperiod_id = '" . $this->timeperiod_id . "')";
+		}
+		else
+		{
+			$reportees_query .= "and w.version = 1";
+		}
+		
         $result = $GLOBALS['db']->query($reportees_query);
         $data = array();
 
@@ -376,6 +392,12 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
             $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
+            $data[$row['user_name']]['version'] = $row['version'];
+            if($row['version'] == 0)
+            {
+            	$data[$row['user_name']]['quota'] = $row['quota'];	
+            }
+            
         }             
 		
         return $data;
