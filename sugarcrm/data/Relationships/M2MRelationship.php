@@ -375,7 +375,6 @@ class M2MRelationship extends SugarRelationship
                 $offset = isset($params['offset']) ? $params['offset'] : 0;
                 $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);
             }
-            _ppl($query);
             return $query;
         }
         else
