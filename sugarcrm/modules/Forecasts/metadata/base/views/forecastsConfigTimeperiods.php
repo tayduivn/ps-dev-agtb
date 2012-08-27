@@ -24,7 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
     'panels' => array(
-        0 => array(
+        array(
             'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS',
             'fields' => array(
                 array(
