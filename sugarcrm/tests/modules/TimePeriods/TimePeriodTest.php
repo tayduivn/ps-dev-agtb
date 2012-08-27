@@ -27,68 +27,63 @@ require_once('modules/TimePeriods/TimePeriod.php');
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-static function setUpBeforeClass()
-{
-    global $app_strings;
-    $app_strings = return_application_language('en_us');
-}
-
-static function tearDownAfterClass()
-{
-
-}
-
-/**
- *
- */
-function testGetLastCurrentNextIds()
-{
-    global $app_strings;
-
-    $timeperiods = array();
-    $timedate = TimeDate::getInstance();
-    //get current timeperiod
-    $db = DBManagerFactory::getInstance();
-    $queryDate = $timedate->getNow();
-    $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
-    if(!empty($timeperiod))
+    public function setUp()
     {
-        $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        SugarTestHelper::setUp('app_strings');
     }
 
-    //previous timeperiod (3 months ago)
-    $queryDate = $queryDate->modify('-3 month');
-    $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
-    if(!empty($timeperiod))
+    public function tearDown()
     {
-        $timeperiods[$timeperiod] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
+        SugarTestHelper::tearDown();
     }
 
-    //next timeperiod (3 months from today)
-    $queryDate = $queryDate->modify('+6 month');
-    $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-    $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
-    if(!empty($timeperiod))
+    /**
+     *
+     */
+    function testGetLastCurrentNextIds()
     {
-        $timeperiods[$timeperiod] = $app_strings['LBL_NEXT_TIMEPERIOD'];
+        global $app_strings;
+
+        $timeperiods = array();
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if (!empty($timeperiod)) {
+            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        }
+
+        //previous timeperiod (3 months ago)
+        $queryDate = $queryDate->modify('-3 month');
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if (!empty($timeperiod)) {
+            $timeperiods[$timeperiod] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
+        }
+
+        //next timeperiod (3 months from today)
+        $queryDate = $queryDate->modify('+6 month');
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+
+        if (!empty($timeperiod)) {
+            $timeperiods[$timeperiod] = $app_strings['LBL_NEXT_TIMEPERIOD'];
+        }
+
+        if (count($timeperiods) != 3) {
+            $this->markTestSkipped('Incomplete default timeperiods data');
+        }
+
+        $result = TimePeriod::getLastCurrentNextIds();
+        $this->assertSame($timeperiods, $result);
+
+        $result = TimePeriod::getLastCurrentNextIds(TimeDate::getInstance());
+        $this->assertSame($timeperiods, $result);
     }
-
-    if(count($timeperiods) != 3)
-    {
-        $this->markTestSkipped('Incomplete default timeperiods data');
-    }
-
-    $result = TimePeriod::getLastCurrentNextIds();
-    $this->assertSame($timeperiods, $result);
-
-    $result = TimePeriod::getLastCurrentNextIds(TimeDate::getInstance());
-    $this->assertSame($timeperiods, $result);
-}
 
 
 }
