@@ -18,6 +18,7 @@
                 _.extend(opts, {modelId: id});
             } else {
                 _.extend(opts, {create: true});
+                opts.layout = "newrecord";
             }
 
             app.controller.loadView(opts);
