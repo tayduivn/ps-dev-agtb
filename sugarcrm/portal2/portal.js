@@ -26,6 +26,7 @@
             }catch(err){
                 // If not a validly encoded URI, decodeURIComponent will throw an exception
                 // If URI is not valid, don't navigate.
+                app.logger.error("Search term not a valid URI component.  Will not route search/"+query);
             }
 
         });
