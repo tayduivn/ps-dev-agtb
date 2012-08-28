@@ -40,9 +40,33 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $timeperiod;
     protected static $manager;
     protected static $quota;
+    protected static $managerQuota;
+
+    public static function setupBeforeClass()
+    {
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language('en_us');
+        SugarTestHelper::setup('app_list_strings');
+        $forecastConfig = array (
+            'show_buckets' => false,
+            'committed_probability' => 70,
+            'sales_stage_won' => array('Closed Won'),
+            'sales_stage_lost' => array('Closed Lost')
+        );
+        $admin = BeanFactory::getBean('Administration');
+        foreach ($forecastConfig as $name => $value)
+        {
+            $admin->saveSetting('base', $name, json_encode($value));
+        }
+    }
 
     public function setUp()
     {
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language('en_us');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+
         //create manager and a sales rep to report to the manager
         self::$manager = SugarTestUserUtilities::createAnonymousUser();
         self::$manager->save();
@@ -51,17 +75,21 @@ class ForecastsProgressApiTest extends RestTestBase
         self::$user->reports_to_id = self::$manager->id;
         self::$user->save();
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
-        self::$timeperiod->name = "Test";
-        self::$timeperiod->save();
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
         $GLOBALS['current_user'] = self::$user;
         //give the rep a Quota
         self::$quota = SugarTestQuotaUtilities::createQuota(50000);
         self::$quota->user_id = self::$user->id;
+        self::$quota->quota_type = "Direct";
         self::$quota->timeperiod_id = self::$timeperiod->id;
         self::$quota->save();
+        //give the manager a Quota
+        self::$managerQuota = SugarTestQuotaUtilities::createQuota(56000);
+        self::$managerQuota->user_id = self::$manager->id;
+        self::$managerQuota->quota_type = "Rollup";
+        self::$managerQuota->timeperiod_id = self::$timeperiod->id;
+        self::$managerQuota->save();
+
 
         $opportunities = array();
 
@@ -74,6 +102,33 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Negotiation/Review';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
+        //create opportunities to be used in tests
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$manager->id;
+        $opp->probability = '80';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
+        $opp->sales_stage = 'Negotiation/Review';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
+
+        //create opportunities to be used in tests
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$manager->id;
+        $opp->probability = '100';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
+        $opp->sales_stage = 'Closed Won';
         $opp->timeperiod_id = self::$timeperiod->id;
         $opp->save();
         $opportunities[] = $opp;
@@ -101,6 +156,18 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->save();
         $opportunities[] = $opp;
 
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = self::$user->id;
+        $opp->probability = '100';
+        $opp->amount = '20000';
+        $opp->best_case = '20000';
+        $opp->likely_case = '18000';
+        $opp->worst_case = '15000';
+        $opp->sales_stage = 'Closed Won';
+        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->save();
+        $opportunities[] = $opp;
+
         $forecast = new Forecast();
         $forecast->user_id = self::$user->id;
         $forecast->timeperiod_id = self::$timeperiod->id;
@@ -111,17 +178,42 @@ class ForecastsProgressApiTest extends RestTestBase
         $forecast->opp_weigh_value = 60000 / 3;
         $forecast->save();
 
+        //setup worksheets
+        $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $managerWorksheet->user_id = self::$manager->id;
+        $managerWorksheet->related_id = self::$manager->id;
+        $managerWorksheet->related_forecast_type = "Direct";
+        $managerWorksheet->forecast_type = "Direct";
+        $managerWorksheet->timeperiod_id = self::$timeperiod->id;
+        $managerWorksheet->best_case = 62000;
+        $managerWorksheet->likely_case = 55000;
+        $managerWorksheet->worst_case = 50000;
+        $managerWorksheet->forecast = 1;
+        $managerWorksheet->save();
+
+        $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $repWorksheet->user_id = self::$manager->id;
+        $repWorksheet->related_id = self::$user->id;
+        $repWorksheet->related_forecast_type = "Direct";
+        $managerWorksheet->forecast_type = "Direct";
+        $repWorksheet->timeperiod_id = self::$timeperiod->id;;
+        $repWorksheet->best_case = 82000;
+        $repWorksheet->likely_case = 74000;
+        $repWorksheet->worst_case = 65000;
+        $repWorksheet->forecast = 1;
+        $repWorksheet->save();
+
         parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         parent::tearDown();
     }
 
@@ -129,45 +221,29 @@ class ForecastsProgressApiTest extends RestTestBase
      * @group forecastapi
      */
     public function testProgress() {
-        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user->id;
+        $url = 'Forecasts/progressRep?user_id=' . self::$user->id . '&timeperiod_id=' . self::$timeperiod->id;
 
         $restResponse = $this->_restCall($url);
 
         $restReply = $restResponse['reply'];
 
         //check quotas section
-        $this->assertEquals(self::$quota->amount, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
+        $this->assertEquals(self::$quota->amount, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
+    }
 
+    /**
+     * @group forecastapi
+     */
+    public function testManagerProgress() {
+        $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
 
-        $likely_to_close_total = 24000;
-        $likely_to_close_percent = 1.8;
-        $best_to_close_total = 30000;
-        $best_to_close_percent = 2.0;
-        $likely_to_quota_total = 4000;
-        $likely_to_quota_percent = 1.08;
-        $best_to_quota_total = 10000;
-        $best_to_quota_percent = 1.20;
+        $restResponse = $this->_restCall($url);
 
-        $revenue = 30000;
-        $pipeline = 1.3;
+        $restReply = $restResponse['reply'];
 
-        //check best/likely numbers
-        // to quota
-        $this->assertEquals($likely_to_quota_total, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_quota_percent, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_quota_total, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
-        $this->assertEquals($best_to_quota_percent, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
-
-        // to close
-        $this->assertEquals($likely_to_close_total, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
-        $this->assertEquals($likely_to_close_percent, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
-
-        $this->assertEquals($best_to_close_total, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
-        $this->assertEquals($best_to_close_percent, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
-
-        $this->assertEquals($revenue, $restReply['revenue'], "Revenue didn't match calculated amount. expected: ".$revenue." received: ".$restReply['revenue']);
-        $this->assertEquals($pipeline, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: ".$pipeline." received: ".$restReply['pipeline']);
+        //check quotas section
+        $this->assertEquals(70000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
+        $this->assertEquals(3, $restReply['opportunities'], "opportunity count did not match");
     }
 
     /**
@@ -177,7 +253,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $newUser->reports_to_id = self::$manager->id;
         $newUser->save();
-        $url = 'Forecasts/progress?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . $newUser->id;
+        $url = 'Forecasts/progressRep?user_id=' . $newUser->id . '&timeperiod_id=' . self::$timeperiod->id;
 
         $restResponse = $this->_restCall($url);
 
@@ -185,21 +261,6 @@ class ForecastsProgressApiTest extends RestTestBase
 
         //check best/likely numbers
         // to quota
-        $this->assertEquals(0, $restReply['quota']['amount'], "Quota amount was not correct.  Expected: ");
-        $this->assertEquals(0, $restReply['quota']['likely_case']['amount'], "Likely to quota amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['quota']['likely_case']['percent'], "Likely to quota percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['quota']['best_case']['amount'], "Best to quota amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['quota']['best_case']['percent'], "Best to quota percent didn't match calculated amount");
-
-        // to close
-        $this->assertEquals(0, $restReply['closed']['likely_case']['amount'], "Likely to close amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['closed']['likely_case']['percent'], "Likely to close percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['closed']['best_case']['amount'], "Best to close amount didn't match calculated amount.");
-        $this->assertEquals(0, $restReply['closed']['best_case']['percent'], "Best to close percent didn't match calculated amount.");
-
-        $this->assertEquals(0, $restReply['revenue'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['revenue']);
-        $this->assertEquals(0, $restReply['pipeline'], "Revenue didn't match calculated amount. expected: 0 received: ".$restReply['pipeline']);
+        $this->assertEquals(0, $restReply['quota_amount'], "Quota amount was not correct.  Expected: ");
     }
 }

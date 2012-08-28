@@ -4,9 +4,9 @@ describe("The forecasts worksheet", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../clients/forecasts/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
-        var cte = SugarTest.loadFile("../clients/forecasts/lib", "ClickToEdit", "js", function(d) { return eval(d); });
-        var bge = SugarTest.loadFile("../clients/forecasts/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/metadata/base/views", "forecastsWorksheet", "js", function(d) { return eval(d); });
+        var cte = SugarTest.loadFile("../modules/Forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        var bge = SugarTest.loadFile("../modules/Forecasts/metadata/base/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
     });
 
     describe("clickToEdit field", function() {
@@ -30,6 +30,7 @@ describe("The forecasts worksheet", function(){
 
         describe("should render", function() {
             beforeEach(function() {
+                view.isEditableWorksheet = true;
                 testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
                     return true;
                 });
@@ -187,9 +188,9 @@ describe("The forecasts worksheet", function(){
     describe("commit_stage fields", function() {
 
         beforeEach(function() {
+            view.isEditableWorksheet = true;
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
-
             field = {
                 viewName:'worksheet',
                 name:'commit_stage',
@@ -202,6 +203,7 @@ describe("The forecasts worksheet", function(){
         });
 
         afterEach(function(){
+            view.isEditableWorksheet = true;
             _renderClickToEditStub.restore();
             _renderFieldStub.restore();
         });
@@ -230,6 +232,7 @@ describe("The forecasts worksheet", function(){
         });
 
         it("should not be rendered when a user is viewing a worksheet that is not their own", function() {
+            view.isEditableWorksheet = false;
             testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
                 return false;
             });

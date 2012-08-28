@@ -26,6 +26,8 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Description:
  ********************************************************************************/
 
+require_once('include/SugarCurrency.php');
+
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
@@ -49,6 +51,7 @@ class Opportunity extends SugarBean
 	var $amount;
 	var $amount_usdollar;
 	var $currency_id;
+    var $currency_rate;
 	var $date_closed;
 	var $next_step;
 	var $sales_stage;
@@ -82,7 +85,10 @@ class Opportunity extends SugarBean
 	var $best_case;
 	var $worst_case;
 	var $likely_case;
-	var $timeperiod_id;
+    var $best_case_base_currency;
+    var $worst_case_base_currency;
+    var $likely_case_base_currency;
+    var $timeperiod_id;
 	var $commit_stage;
 	var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
@@ -274,6 +280,9 @@ class Opportunity extends SugarBean
 			$currency->retrieve($this->currency_id);
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
+                $this->best_case = $this->best_case_base_currency;
+                $this->likely_case = $this->likely_case_base_currency;
+                $this->worst_case = $this->worst_case_base_currency;
 				$this->currency_id = $currency->id;
 			}
 		}
@@ -338,8 +347,24 @@ class Opportunity extends SugarBean
 			$result = $this->db->query($query);
 			
 			while ( $row = $this->db->fetchByAssoc($result) ) {
-				$query = "update opportunities set currency_id='" . $currency->id . "', amount_usdollar='" . $currency->convertToDollar($row['amount']) . "' where id='" . $row['id'] . "';";
-				$this->db->query($query);
+                /*
+				$query = "update opportunities set currency_id='"
+                    . $currency->id . "', amount_usdollar='"
+                    . $currency->convertToDollar($row['amount'])
+                    . "' where id='"
+                    . $row['id']
+                    . "';";
+                */
+                $query = sprintf("update opportunities set currency_id='%s',
+                    amount_usdollar='%s',
+                    currency_rate='%s'
+                    where id='%s';",
+                    $currency->id,
+                    SugarCurrency::convertAmountToBase($row['amount']),
+                    $currency->conversion_rate,
+                    $row['id']
+                );
+                $this->db->query($query);
 			}
 		}
 	}
@@ -396,20 +421,22 @@ class Opportunity extends SugarBean
 		return $the_where;
 	}
 
-
 	function save( $check_notify = FALSE )
 	{
 		// Bug 32581 - Make sure the currency_id is set to something
 		global $current_user, $app_list_strings;
 
-		if ( empty($this->currency_id) ) {
-			$this->currency_id = $current_user->getPreference('currency');
-		}
-		if ( empty($this->currency_id) ) {
-			$this->currency_id = -99;
-		}
+        require_once 'include/SugarCurrency.php';
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
+        $this->currency_rate = $currency->conversion_rate;
 
-		//if probablity isn't set, set it based on the sales stage
+        //if probablity isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {
 			$prob_arr = $app_list_strings['sales_probability_dom'];
 			if ( isset($prob_arr[$this->sales_stage]) ) {

@@ -913,6 +913,11 @@ $dictionary['User'] = array(
                 'id'
             )
         ) ,
+        array(
+			'name' => 'idx_users_reports_to_id',
+			'type' => 'index',
+			'fields' => array('reports_to_id', 'id')
+		),
      //BEGIN SUGARCRM flav=pro ONLY
 		array(
 			'name' => 'idx_users_tmst_id',

@@ -75,8 +75,9 @@ $mod_strings = array (
   'LBL_QC_LAST_DATE_COMMITTED' => 'Last Commit Date:',
   'LBL_QC_LAST_COMMIT_VALUE' => 'Last Commit Amount:',
   'LBL_QC_HEADER_DELIM'=> 'To',
-  
-  //opportunity worksheet list view labels
+  'LBL_CURRENCY' => 'Currency',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
+    //opportunity worksheet list view labels
   'LBL_OW_OPPORTUNITIES' => "Opportunity",
   'LBL_OW_ACCOUNTNAME' => "Account",
   'LBL_OW_REVENUE' => "Amount",

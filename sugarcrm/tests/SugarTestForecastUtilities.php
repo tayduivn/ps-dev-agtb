@@ -280,4 +280,27 @@ class SugarTestForecastUtilities
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
 
+
+    /**
+     * This is a helper function for tests so that we convert values to the expected amount returned from the API
+     *
+     * @static
+     * @param $amount The amount to format to the test format
+     * @param null $user The user to use for currency id and formatting; defaults to using system locale settings
+     */
+    public static function formatTestNumber($amount, $user=null)
+    {
+         if(is_null($user))
+         {
+             return number_format($amount, 6, '.', '');
+         }
+
+         require_once('include/SugarCurrency.php');
+         return SugarCurrency::formatAmount($amount,
+                                            $user->getPreference('currency'),
+                                            $user->getPreference('default_currency_significant_digits'),
+                                            $user->getPreference('default_number_grouping_seperator')
+         );
+    }
+
 }

@@ -1071,7 +1071,6 @@ require_once('include/EditView/EditView2.php');
                                          //when a search is done with a space, we concatenate and search against the full name.
                                          if(count($string)>1){
                                              //add where clause against concatenated fields
-                                             //add where clause against concatenated field
                                              $first_field = $parms['db_field'][0];
                                              $second_field = $parms['db_field'][1];
                                              $first_db_fields = explode('.', $first_field);
@@ -1274,4 +1273,4 @@ require_once('include/EditView/EditView2.php');
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
      }
-    }
+ }

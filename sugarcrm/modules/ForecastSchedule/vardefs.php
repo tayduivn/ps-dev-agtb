@@ -110,9 +110,24 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     'comment' => 'Record deletion indicator',
   ),
 
-  /*
-   * expected_base_case is used to store the value of the user's expected best case
-   */
+    'currency_id' =>
+    array (
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY',
+        'type' => 'id',
+        'required' => true,
+    ),
+    'currency_rate' =>
+    array (
+        'name' => 'currency_rate',
+        'vname' => 'LBL_CURRENCY_RATE',
+        'type' => 'double',
+        'required' => true,
+    ),
+
+        /*
+        * expected_base_case is used to store the value of the user's expected best case
+        */
   'expected_best_case' =>
    array (
        'name' => 'expected_best_case',

@@ -13,9 +13,9 @@
             <div class="row-fluid">
                 <div class="span8">
                     <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-timeframes"></div>
+                    <div class="view-forecastsTimeframes"></div>
                     <div class="view-forecastsCommitted"></div>
-                    <div class="view-filter"></div>
+                    <div class="view-forecastsFilter"></div>
                     <div>
                         <div id="view-sales-rep" style="display:none">
                             <div class="view-forecastsWorksheet"></div>
@@ -29,12 +29,12 @@
                 <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
-                            <div class="view-chart"></div>
-                            <div class="view-chartOptions"></div>
+                            <div class="view-forecastsChart"></div>
+                            <div class="view-forecastsChartOptions"></div>
                         </div>
                         <div class="clearfix"></div>
                         <div class="block" id="guages">
-                            <div class="view-progress"></div>
+                            <div class="view-forecastsProgress"></div>
                         </div>
                     </div>
                 </div>
@@ -107,25 +107,15 @@
 
 <div class="content"></div>
 <script src='{$configFile}'></script>
-<script src='clients/forecasts/helper/hbt-helpers.js'></script>
-<script src='clients/forecasts/lib/ClickToEdit.js'></script>
-<script src='clients/forecasts/lib/BucketGridEnum.js'></script>
-<script src='clients/forecasts/layouts/forecasts/forecasts-layout.js'></script>
-<script src='clients/forecasts/views/forecastsWorksheet/forecastsWorksheet.js'></script>
-<script src='clients/forecasts/views/forecastSchedule/forecastSchedule.js'></script>
-<script src='clients/forecasts/views/tree/tree.js'></script>
-<script src='clients/forecasts/views/filter/filter.js'></script>
-<script src='clients/forecasts/views/timeframes/timeframes.js'></script>
-<script src='clients/forecasts/views/chartOptions/chartOptions.js'></script>
-<script src='clients/forecasts/views/forecastsCommitted/forecastsCommitted.js'></script>
-<script src='clients/forecasts/views/forecastsCommitButtons/forecastsCommitButtons.js'></script>
-<script src='clients/forecasts/views/forecastsSubnav/forecastsSubnav.js'></script>
-<script src='clients/forecasts/views/progress/progress.js'></script>
-<script src='clients/forecasts/views/chart/chart.js'></script>
-<script src='clients/forecasts/views/alert/alert-view.js'></script>
-<script src='clients/forecasts/fields/userLink/userLink.js'></script>
-<script src='clients/forecasts/fields/recordLink/recordLink.js'></script>
+<script src='modules/Forecasts/metadata/base/helper/hbt-helpers.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/ClickToEdit.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/BucketGridEnum.js'></script>
+<script src='modules/Forecasts/metadata/base/lib/ForecastsUtils.js'></script>
+<script src='modules/Forecasts/metadata/base/views/alert-view.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrap-popover.js'></script>
+<script src='include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'></script>
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;
@@ -134,15 +124,18 @@
     SUGAR.App.sugarAuthStore.set('AuthRefreshToken', {/literal}'{$token}'{literal});
 
     (function(app) {
-         app.augment("forecasts", {
+        if(!_.has(app, 'forecasts')) {
+            app.forecasts = {}
+        }
+        app.augment("forecasts", _.extend(app.forecasts, {
             initForecast: function(authAccessToken) {
 
-                var forecastData = {/literal} {$initData} {literal};
+            var forecastData = {/literal} {$initData} {literal};
 
                 // get default selections for filter and category
                 app.defaultSelections = forecastData.defaultSelections;
                 app.initData = forecastData.initData;
-                app.viewModule = {/literal}'{$module}';{literal}
+                    app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 //app.config.show_buckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
@@ -157,7 +150,16 @@
                 });
                 return app;
             }
-         });
+            }));
+        app.view.Field = app.view.Field.extend({
+            _render: function() {
+                if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
+                    this.options = this.options || {};
+                    this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'detail';
+                }
+                app.view.Field.__super__._render.call(this);
+            }
+        });
      })(SUGAR.App);
 
     //Call initForecast with the session id as token
