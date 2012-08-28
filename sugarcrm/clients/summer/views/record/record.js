@@ -39,26 +39,34 @@
         for(var i in panels){
             var columns = (panels[i].columns)?panels[i].columns: 1;
             var count = 0;
+            var panelFieldCount  = 0;
             var rows = [];
             var row = [];
             for(var j in panels[i].fields){
-                if(panels[i].placeholders)panels[i].fields[j].placeholder = panels[i].fields[j].label;
                 if(_.isUndefined(panels[i].labels))panels[i].labels = true;
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 maxSpan = (panels[i].labels)?8:12;
                 if(_.isUndefined(panels[i].fields[j].span))panels[i].fields[j].span = Math.floor(maxSpan/columns);
                  //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
                 if(_.isUndefined(panels[i].fields[j].labelSpan))panels[i].fields[j].labelSpan = Math.floor(4/columns);
-                row.push(panels[i].fields[j]);
+                var fields = {};
+                fields.fields = (panels[i].fields[j].fields)?panels[i].fields[j].fields: [panels[i].fields[j]];
+                _.each(fields.fields, function(field, index){
+                    if(panels[i].placeholders)fields.fields[index].placeholder = field.label
+                });
+                fields.label = fields.fields[0].label;
+                fields.span = panels[i].fields[j].span;
+                fields.labelSpan = panels[i].fields[j].labelSpan
+                row.push(fields);
                 if(count % columns == columns - 1){
                     rows.push(row);
                     row = [];
                 }
                 count++;
+                panelFieldCount += fields.fields.length;
             }
             if(i == 0){
-                this.fieldsToDisplay = count;
-                console.log('fieldsToDsiplay', count);
+                this.fieldsToDisplay = panelFieldCount;
             }
             rows.push(row);
             row = [];

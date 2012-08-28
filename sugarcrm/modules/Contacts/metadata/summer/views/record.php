@@ -54,31 +54,16 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'labels'=>false,
             'placeholders'=>true,
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
-                    'displayParams' => array(
-                        'wireless_edit_only' => true,
-                    ),
-                ),
+                array('fields'=>array('first_name', 'last_name')),
                 'primary_address_street',
-                /*array('name' => 'last_name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),*/
                 'title',
-                'primary_address_city',
+                array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
                 'account_name',
-                'primary_address_state',
+                'primary_address_country',
                 'email1',
                 'phone_work',
-                'phone_mobile',
-                'primary_address_postalcode',
                 'assigned_user_name',
-                'primary_address_country',
-
+                'phone_mobile',
             ),
         ),
     array(
