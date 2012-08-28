@@ -1376,8 +1376,7 @@ function QuotesEditManager(Y){
             var table = doc.getElementById(cur_table_id);
             if(table != null && typeof(table) != 'undefined'){
                 var bundle_stage = doc.getElementById("bundle_stage_" + cur_table_id).value;
-                var is_custom_group_stage = this.isCustomGroupStage(bundle_stage);
-                if(!is_custom_group_stage) {
+                    // Bug 54931. Calculate for custom groups too.
                     var retval = this.calculate_table(doc, cur_table_id);
                     gt['tax'] += retval['tax'];
                     gt['subtotal'] += retval['subtotal'];
@@ -1385,7 +1384,6 @@ function QuotesEditManager(Y){
                     gt['total'] += retval['total'];
                     gt['new_sub'] += retval['new_sub'];
                     if(retval['shipping'] != '') gt['shipping'] += parseFloat(retval['shipping']);
-                }	
             }
         }
 
@@ -1676,3 +1674,4 @@ function QuotesEditManager(Y){
         return inputEl._node;
     }
 }
+
