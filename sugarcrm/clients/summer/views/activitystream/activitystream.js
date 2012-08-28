@@ -76,7 +76,7 @@
         var self = this;
         if (self.model) {
             self.model.on("change", function() {
-                self.render();
+                self.collection.fetch(self.opts);
             }, self);
         }
 
