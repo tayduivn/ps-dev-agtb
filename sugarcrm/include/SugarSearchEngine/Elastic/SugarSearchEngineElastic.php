@@ -149,11 +149,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         
         $keyValues['user_favorites'] = $module_favorites_user;
 
-        // get the favs
-        /*$keyValues['favorites'] 
-        if(!empty($keyValues['favorites']))
-            $GLOBALS['log']->fatal("\r\n\r\n" . print_r($keyValues['favorites'], true) . "\r\n\r\n");
-         */
+ 
         // to index owner
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
