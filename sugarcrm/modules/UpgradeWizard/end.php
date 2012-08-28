@@ -161,9 +161,11 @@ if($ce_to_pro_ent)
     if(check_FTS()) {
     	$GLOBALS['db']->full_text_indexing_setup();
     }
+    
+    logThis("Starting to add pdf template", $path);
+    addPdfManagerTemplate();
+    logThis("Finished adding pdf template", $path);
 }
-
-addPdfManagerTemplate();
 //END SUGARCRM flav=pro ONLY
 
 logThis(" Start Rebuilding the config file again", $path);
