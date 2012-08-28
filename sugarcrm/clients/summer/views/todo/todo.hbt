@@ -1,7 +1,54 @@
+<style>
+
+#todo-list-widget .tabbable {
+    display:none;
+    position: absolute;
+    top: -247px;
+    left: -187px;
+}
+
+#todo-list-widget.open .tabbable {
+    display:inline-block;
+}
+
+#todo-list-widget .tabbable {
+    background:rgba(255,255,255,.75);
+}
+
+</style>
+
+
 {{#if isAuthenticated}}
     <div class="btn-group dropup {{#if open}}open{{/if}}" id="todo-list-widget">
         <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
             <i class="icon-list-alt"></i> Todo</button>
+     <div class="x">
+
+
+
+
+
+
+
+
+        <div class="tabbable">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#a1" data-toggle="tab">Due</a></li>
+            <li><a href="#a2" data-toggle="tab">Overdue</a></li>
+          </ul>
+        <!--
+          <div class="tab-content">
+            <div class="tab-pane active" id="a1">
+              <p>I'm in Section 1.</p>
+            </div>
+            <div class="tab-pane" id="a2">
+              <p>Howdy, I'm in Section 2.</p>
+            </div>
+          </div>
+        -->
+        
+        </div>
+
         <div id="todo-container" class="dropdown-menu">
             <div class="todo-header">
                 <div class="input-prepend">
@@ -51,5 +98,6 @@
                 {{/each}}
             </ul>
         </div>
+     </div><!--closure for div.x-->
     </div>
 {{/if}}
