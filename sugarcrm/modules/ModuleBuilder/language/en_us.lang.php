@@ -478,7 +478,7 @@ $mod_strings = array(
 'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
 'LBL_ROLLUP' => 'Rollup',
 'LBL_RELATED_FIELD' => 'Related Field',
-
+'LBL_CONFIG_PORTAL_URL'=>'URL to custom logo image. The recommended logo dimensions are 163 × 18 pixels.',
 
 //END SUGARCRM flav=pro ONLY
 
