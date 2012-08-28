@@ -5,30 +5,31 @@ if (!isset($_GET["variables"])) die('You must specify a theme folder');
 
 // Start generating bootstrap.css
 try {
+    $client = $_GET["client"];
     $root = $_GET["variables"];
     $variablesLess = file_get_contents( $root . 'variables.less' );
     $variables = getCustomThemeVars($variablesLess);
-    $variables['baseUrl'] = '"../../bootstrap"';
+    $variables['baseUrl'] = '"../../assets"';
 
     //build bootstrap.css
-    $less = new lessc('../bootstrap/less/bootstrap.less');
+    $less = new lessc('../less/clients/' . $client . '/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
     
     //build bootstrap-mobile.css
-    $less = new lessc('../bootstrap/less/bootstrap-mobile.less');
+    $less = new lessc('../less/clients/mobile/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
     //build module-specific.css
-    $modulesRoot = '../bootstrap/less/modules';
-    $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
+    // $modulesRoot = '../bootstrap/less/modules';
+    // $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
 
-    foreach ($modulesFile as $module) {
-        $less = new lessc($modulesRoot . '/' . $module);
-        if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
-        file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
-    }
+    // foreach ($modulesFile as $module) {
+    //     $less = new lessc($modulesRoot . '/' . $module);
+    //     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+    //     file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
+    // }
 
     // echo '<h2>bootstrap.css successfully generated.</h2>';
     // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';

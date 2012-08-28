@@ -1,13 +1,19 @@
 <?php
 $themesRoot = '../themes';
-$clientsDir = array_diff(scandir($themesRoot . '/clients'), array(".", "..", ".DS_Store"));
-
-$themes = array();
+$lessRoot = '../less';
+$themesClientsDir = array_diff(scandir($themesRoot . '/clients'), array(".", "..", ".DS_Store"));
 
 /**
  * Loop the themes/clients dir to list all platforms
  */
-foreach ($clientsDir as $platform) {
+
+$lessClientsDir = array_diff(scandir($lessRoot . '/clients'), array(".", "..", ".DS_Store"));
+
+$themes = array();
+/**
+ * Loop the themes/clients dir to list all platforms
+ */
+foreach ($themesClientsDir as $platform) {
 
     $themes[$platform] = array();
     $root = $themesRoot . '/clients/' . $platform;
@@ -64,6 +70,19 @@ foreach ($clientsDir as $platform) {
                     <input id="min-true" type="radio" name="min" value="true">
                     <label style="display: inline;" for="min-true">Compressed</label>
                 </div>
+                <div>
+                <?php
+                /**
+                 * Display themes list as a ordered list.
+                 */
+                foreach ($lessClientsDir as $client) {
+                    $checked = '';
+                    if ($client == 'base') $checked = ' checked';
+                    echo '<input type="radio" name="client" value="' . $client . '"' . $checked . '>';
+                    echo '<label style="display: inline;" for="client">' . $client . '</label><br>';
+                }
+                ?>
+                </div>
             </div>
             <div class="btn-toolbar pull-right">
               <div class="btn-group">
@@ -108,7 +127,7 @@ foreach ($clientsDir as $platform) {
 </div>
 </form>
 <script src="../styleguide/js/jquery-1.7.2.min.js"></script>
-<script src="../bootstrap/js/bootstrap-modal.js"></script>
+<script src="../assets/js/bootstrap-modal.js"></script>
 <script>
     $('.btn-submit').click(function() {
         var attrs = $('form').serialize();
