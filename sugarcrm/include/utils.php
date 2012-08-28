@@ -4805,7 +4805,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 			}
 		}
 	}
-	$ret_array = array('where'=>$where, 'join'=>$join['join']);
+	$ret_array = array('where'=>$where, 'join'=> isset($join['join']) ? $join['join'] : array());
 	return $ret_array;
 }
 
