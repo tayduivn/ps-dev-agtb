@@ -16,14 +16,14 @@
      </div>  
     {{#if collection.models.length}}
       {{#each collection.models}}
-      <li style="" data-id="{{attributes.activity_id}}">
+      <li style="" data-id="{{attributes.id}}">
         <a href="" class="pull-left avatar avatar42">
           <img src="img.jpg" class="avatar" alt="{{this.created_by_name}}">
         </a>
         <p>
-          <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_data.action}} <em>{{attributes.activity_data.field_name}}</em>
-          {{#if attributes.activity_data.data}}          
-            {{#each attributes.activity_data.data}}
+          <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
+          {{#if attributes.activity_data.length}}          
+            {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
             {{/each}}
           {{/if}} 
@@ -68,7 +68,7 @@
          <ul>
           <div class="control-group form-horizontal activitystream-comment hide">
             <input type="text" value="" class="sayit" placeholder="Add your comment">
-            <input type="submit" data-id="{{attributes.activity_id}}" class="btn btn-primary postReply" value="Reply">
+            <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
           </div>
          </ul>
       </li>

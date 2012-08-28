@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['ActivityComments'] = 
 array ( 'table' => 'activity_comments',
           'fields' => array (
-              'comment_id'=> array('name' =>'comment_id', 'type' =>'id', 'len'=>'36','required'=>true), 
+              'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true), 
               'activity_id'=>array('name' =>'activity_id', 'type' =>'id', 'len'=>'36','required'=>true),               	                   	
               'date_created'=>array('name' =>'date_created','type' => 'datetime'),
               'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),				
@@ -39,7 +39,7 @@ array ( 'table' => 'activity_comments',
             ),
             'indices' => array (
                   //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'
-                  array ('name' => 'pk', 'type' => 'primary', 'fields' => array('comment_id')),
+                  array ('name' => 'pk', 'type' => 'primary', 'fields' => array('id')),
                   array ('name' => 'activity_id', 'type' => 'index', 'fields' => array('activity_id'))
             )
 )
