@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('data/BeanFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 /*
@@ -74,10 +73,12 @@ class ServerInfoApi extends SugarApi {
                                     'enabled'   =>  'FALSE',
                                 );
         }
+        /*
+         * Always return dates in ISO-8601
+         */
+        $data['gmt_time'] = gmdate('c', strtotime(TimeDate::getInstance()->nowDb()));
 
-        $data['gmt_time'] = TimeDate::getInstance()->nowDb();
-
-        $data['server_time'] = date('Y-m-d H:i:s');
+        $data['server_time'] = date('c');
 
         return $data;
     }
