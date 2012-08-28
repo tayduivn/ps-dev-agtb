@@ -4,7 +4,7 @@
         <div class="span9">
             <div class="btn-toolbar pull-right">
                 {{#if isAuthenticated}}
-                <div class="btn-group dropup">
+                <div id="instance-picker" class="btn-group dropup">
                     <a title="{{ instance_name }}" class="btn" id="instance" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> {{ instance_name }}</a>
                     <div class="dropdown-menu bottom-up" id="instancesContainer">
                     <h5>Your instances:</h5>
