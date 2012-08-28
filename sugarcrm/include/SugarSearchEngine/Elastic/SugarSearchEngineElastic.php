@@ -142,10 +142,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         
         foreach($favorites AS $fav)
         {
+            // need to replace -'s for elastic search, same as team_set_ids
             $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
         }
 
-        //$keyValues['user_favorites'] = implode(',', $module_favorites_user);
         
         $keyValues['user_favorites'] = $module_favorites_user;
 
