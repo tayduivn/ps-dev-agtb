@@ -116,7 +116,7 @@ class UnifiedSearchApi extends SugarApi {
                 $orderByData[$column] = ($direction=='ASC'?true:false);
                 $orderByArray[] = $column.' '.$direction;
             }
-            
+            $options['orderBySetByApi'] = true;
             $orderBy = implode(',',$orderByArray);
         } else {
             /*
@@ -126,6 +126,7 @@ class UnifiedSearchApi extends SugarApi {
             $orderBy = 'date_modified DESC, id DESC';
             $orderByData['date_modified'] = false;
             $orderByData['id'] = false;
+            $options['orderBySetByApi'] = false;
         }
         $options['orderByArray'] = $orderByData;
         $options['orderBy'] = $orderBy;
@@ -263,7 +264,7 @@ class UnifiedSearchApi extends SugarApi {
         /*
          * Currently we cannot do an order by in FTS.  Thus any ordering must be done using the Spot Search
          */
-        if(isset($options['orderBy']) && !empty($options['orderBy']))
+        if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true)
         {
             return 'SugarSearchEngine';
         }
