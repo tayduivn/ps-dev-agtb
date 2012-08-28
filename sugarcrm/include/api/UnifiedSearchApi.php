@@ -198,7 +198,6 @@ class UnifiedSearchApi extends SugarApi {
 
         $options = $this->parseSearchOptions($api,$args);
 
-        $GLOBALS['log']->fatal("\r\nTHE SEARCH ENGINE IS: " . $this->determineSugarSearchEngine($api, $args, $options) . "\r\n\r\n");
         // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
         $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
 
@@ -228,29 +227,28 @@ class UnifiedSearchApi extends SugarApi {
             How to determine which Elastic Search
             1 - Not Portal
             2 - All Modules are full_text_search = true
-            3 - not my items
-            4 - not favorites
+            3 - not my favorites
+            4 - not order by
         */
-        // my items
-        /*
-        if($options['my_items'] !== false)
-        {
-            return 'SugarSearchEngine';
-        }
-         */
+
         // favorites
+        
         if($options['favorites'] !== false)
         {
             return 'SugarSearchEngine';
         }
 
         // portal
+        
         if(isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal')
         {
             return 'SugarSearchEngine';
         }
 
-/*
+        /*
+         * If a module isn't FTS switch to spot search.  Global Search should be done with either the enabled modules
+         * Using the new ServerInfo endpoint OR passing in a blank module list.
+         */
         if(!empty($options['moduleList']))
         {
             foreach($options['moduleList'] AS $module)
@@ -261,12 +259,22 @@ class UnifiedSearchApi extends SugarApi {
                 }
             }
         }
- */
+
+        /*
+         * Currently we cannot do an order by in FTS.  Thus any ordering must be done using the Spot Search
+         */
+        if(isset($options['orderBy']) && !empty($options['orderBy']))
+        {
+            return 'SugarSearchEngine';
+        }
+
+
+
         //everything is groovy for FTS, get the FTS Engine Name from the conig
         return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
     }
     /**
-     * This function is used to hand off the global search to the FTS Searcj Emgine
+     * This function is used to hand off the global search to the FTS Search Emgine
      * @param $api ServiceBase The API class of the request
      * @param $args array The arguments array passed in from the API
      * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller

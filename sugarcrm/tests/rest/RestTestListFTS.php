@@ -107,36 +107,6 @@ class RestTestListFTS extends RestTestBase {
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->accounts[17]->name,$firstRecord['name'],"The search failed for record: ".$this->accounts[17]->name);
 
-        /*
-        // Sorting descending
-        $restReply4 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
-        
-        $tmp = array_keys($restReply4['reply']['records']);
-        $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
-                              $restReply4['reply']['records'][$tmp[1]]['id'],
-                              'Second record is not lower than the first, decending order failed.');
-
-        
-        // Sorting ascending
-        $restReply5 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
-        
-        $tmp = array_keys($restReply5['reply']['records']);
-        $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
-                                 $restReply5['reply']['records'][$tmp[1]]['id'],
-                                 'Second record is not lower than the first, ascending order failed.');
-
-        // Get a list, no searching
-        $restReply = $this->_restCall("Accounts?max_num=10");
-        $this->assertEquals(10,count($restReply['reply']['records']));
-        // Get 2 pages, verify the data is different [check guids]
-        $restReply_page1 = $this->_restCall("Accounts?offset=0&max_num=5");
-        $restReply_page2 = $this->_restCall("Accounts?offset=5&max_num=5");
-        foreach($restReply_page1['reply']['records'] AS $page1_record) {
-            foreach($restReply_page2['reply']['records'] AS $page2_record) {
-                $this->assertNotEquals($page2_record['id'], $page1_record['id'], "ID's match, pagination may be broke");
-            }
-        }
-        */
     }
 
     public function testGlobalSearch() {
@@ -186,23 +156,6 @@ class RestTestListFTS extends RestTestBase {
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->opps[17]->name,$firstRecord['name'],"The search failed for record: ".$this->opps[17]->name);
-/*
-        // Sorting descending
-        $restReply4 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
-        
-        $tmp = array_keys($restReply4['reply']['records']);
-        $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
-                              $restReply4['reply']['records'][$tmp[1]]['id'],
-                              'Second record is not lower than the first, decending order failed.');
-
-        // Sorting ascending
-        $restReply5 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
-        
-        $tmp = array_keys($restReply5['reply']['records']);
-        $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
-                                 $restReply5['reply']['records'][$tmp[1]]['id'],
-                                 'Second record is not lower than the first, ascending order failed.');
-*/
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
