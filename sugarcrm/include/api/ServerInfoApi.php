@@ -62,7 +62,7 @@ class ServerInfoApi extends SugarApi {
         if(!isSearchEngineDown())
         {
             $data['fts'] = array(
-                                    'enabled'       =>  true;
+                                    'enabled'       =>  true,
                                     'type'          =>  SugarSearchEngineFactory::getFTSEngineNameFromConfig(),
                                 );
         }
