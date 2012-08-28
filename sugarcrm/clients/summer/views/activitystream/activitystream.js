@@ -3,7 +3,8 @@
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
         'click .post': 'showAddPost',
-        'click .addPost': 'addPost'        
+        'click .addPost': 'addPost',
+        'click .more': 'showAllComments'
     },
 
     initialize: function(options) {
@@ -22,14 +23,16 @@
         }
     },
 
-    bindDataChange: function() {
-        if (this.collection) {
-            this.collection.on("reset", this.render, this);
-        }
+    showAllComments: function(event) {
+        event.preventDefault();
+        $(event.currentTarget).closest('li').hide();
+        $(event.currentTarget).closest('ul').find('div.extend').show();
+        $(event.currentTarget).closest('ul').closest('li').find('.activitystream-comment').show();
     },
 
     showAddComment: function(event) {
         $(event.currentTarget).closest('li').find('.activitystream-comment').show();
+        $(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
     addComment: function(event) {
@@ -56,5 +59,29 @@
         	myPostModule = '';	
         }
         this.app.api.call('create',this.app.api.buildURL('ActivityStream'),{'module':myPostModule,'id':myPostId,'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
-    }    
+    },
+
+    _renderHtml: function() {
+        for (var i=0; i<this.collection.models.length; i++) {
+            if (this.collection.models[i].attributes.comments.length > 2) {
+                this.collection.models[i].attributes.comments[0]['_starthidden'] = true;
+                this.collection.models[i].attributes.comments[this.collection.models[i].attributes.comments.length-3]['_stophidden'] = true;
+            }
+        }
+
+        return app.view.View.prototype._renderHtml.call(this);
+    },
+
+    bindDataChange: function() {
+        var self = this;
+        if (self.model) {
+            self.model.on("change", function() {
+                self.render();
+            }, self);
+        }
+
+        if (self.collection) {
+            self.collection.on("reset", self.render, self);
+        }
+    }
 })

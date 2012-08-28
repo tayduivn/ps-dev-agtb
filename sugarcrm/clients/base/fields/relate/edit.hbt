@@ -1,7 +1,7 @@
         <select data-placeholder="{{str "LBL_MODULE_NAME" def.module}}" name="{{name}}" class="relateEdit" {{#if multi}} multiple {{/if}}>
             <option value="{{this.value}}" selected>{{this.value}}</option>
             {{#eachOptions options}}
-            <option value="{{getValue this "id"}}">{{getValue this ../this.def.rname}}</option>
+            <option value="{{getFieldValue ../this.model "id"}}">{{getFieldValue ../this.model ../this.def.rname}}</option>
             {{/eachOptions}}
         </select>
         <p class="help-block"></p>

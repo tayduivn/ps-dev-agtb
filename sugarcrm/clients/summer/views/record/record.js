@@ -4,11 +4,11 @@
 
     initialize: function(options) {
         var extraEvents = {
+            "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
             "click .record-save": "handleSave",
             "click .record-cancel": "handleCancel"
         };
-
 
         _.bindAll(this);
 
@@ -31,13 +31,13 @@
         }
     },
 
-    render: function(){
+    render: function() {
 
         var panels = this.meta.panels;
         var index = 0;
 
-        for(var i in panels){
-            var columns = (panels[i].columns)?panels[i].columns: 1;
+        for (var i in panels) {
+            var columns = (panels[i].columns) ? panels[i].columns : 1;
             var count = 0;
             var panelFieldCount  = 0;
             var rows = [];
@@ -80,9 +80,7 @@
 
     },
 
-
-  // Overloaded functions
-
+    // Overloaded functions
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
@@ -111,6 +109,15 @@
     },
 
     // Handler functions
+    toggleEdit: function(e) {
+        console.log("Toggle Edit", this.editAllMode);
+        _.each(this.fields, function(field) {
+            field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            field.render();
+        }, this);
+
+        this.editAllMode = (this.editAllMode) ? false : true;
+    },
 
     handleEdit: function(e, field) {
         var target;
