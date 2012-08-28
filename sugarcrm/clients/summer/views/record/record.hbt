@@ -14,19 +14,21 @@
        {{#each grid}}
             <div class="row-fluid">
                 {{#each this}}
+
                 <span class='record-row'>
                 {{#if ../../this.labels}}
-
                <div class="span{{this.labelSpan}} tright">{{str  this.label ../../../../../this.model.module}}</div>
                {{/if}}
-
-               <div class="span{{this.span}}" name="{{this.name}}">
-                    {{field ../../../../this}}
+               <div class="span{{this.span}}" >
+                    {{#each fields}}
+                    {{field ../../../../../this}}
                     <span class="record-edit-link-wrapper" data-name="{{name}}">
                         <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                     </span>
+                    {{/each}}
                </div>
                </span>
+
                {{/each}}
 
              </div>
