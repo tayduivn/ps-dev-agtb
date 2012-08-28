@@ -104,8 +104,6 @@
     toggleEdit: function(e) {
         console.log("Toggle Edit", this.editAllMode);
         _.each(this.fields, function(field) {
-            if (field.type == "relate") { return; }
-
             field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
             field.render();
         }, this);
@@ -129,8 +127,6 @@
         this.editMode = true;
 
         switch (field.type) {
-            case "relate":
-                break;
             default:
                 this.toggleField(field, target);
                 target.parent().find("input").focus().val(target.parent().find("input").val());
