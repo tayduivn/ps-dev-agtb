@@ -15,7 +15,7 @@
             </div>
         </div>
         <a data-toggle="modal" href="#imagesearch" class="thumbnail">
-            <img src={{profile}} id = "profile" alt=""/>
+            <img src={{profile}} style='width:50%' id = "profile" alt=""/>
         </a>
     </div>
 </div>

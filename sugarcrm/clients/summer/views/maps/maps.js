@@ -126,7 +126,7 @@
 
         var _title = this.$("h4");
 
-        _title.html(dateString);
+        //_title.html(dateString);
 
         this.$(".maps-widget .title").text(results[0].formatted_address);
         this.$('#map_panel').show();

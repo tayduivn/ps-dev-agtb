@@ -21,10 +21,15 @@
                {{/if}}
                <div class="span{{this.span}}" >
                     {{#each fields}}
-                    {{field ../../../../../this}}
-                    <span class="record-edit-link-wrapper" data-name="{{name}}">
-                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
+
+                        {{#if name}}
+                    <span class='{{../this.css}}'>
+                    {{field ../../../../../../this}}
                     </span>
+                    <span class="record-edit-link-wrapper" data-name="{{../this.name}}">
+                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../this.type}}" data-name="{{../this.name}}"></a>
+                    </span>
+                    {{/if}}
                     {{/each}}
                </div>
                </span>
@@ -47,3 +52,4 @@
          <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
    </div>
 </div>
+

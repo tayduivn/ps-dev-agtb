@@ -51,34 +51,31 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
+            'columns'=>2,
+             'labels'=>false,
+             'placeholders'=>true,
             'fields' => array(
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),
-                array('name' => 'phone_office', 'label' => 'LBL_LIST_PHONE'),
-                'email1',
-                array(
-                    'name' => 'website',
-                    'displayParams' => array(
-                        'type' => 'url',
-                    ),
-                ),
-//                array(
-//                    'name' => 'billing_address_street',
-//                    'displayParams' => array('type' => 'address')
-//                ),
-
-                'billing_address_street',
+                array('name'=>'name', 'css'=>'lead', 'span'=>12),
+                '',
                 'assigned_user_name',
-                'linkedin',
-                'facebook',
-                'twitter',
-                'googleplus',
+                'billing_address_street',
+                array('name'=>'industry', 'css'=>'minor'),
+                array('fields'=>array('billing_address_city','billing_address_state', 'billing_address_postalcode')),
+                'website',
+                'billing_address_country',
+                'phone_office',
+                'email1'
+
             ),
         ),
+        array(
+            'fields'=>array(
+                //'linkedin',
+                //'facebook',
+                'twitter',
+                //'googleplus'
+            )
+
+        )
     ),
 );

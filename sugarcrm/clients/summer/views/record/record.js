@@ -52,6 +52,7 @@
                 var fields = {};
                 fields.fields = (panels[i].fields[j].fields)?panels[i].fields[j].fields: [panels[i].fields[j]];
                 _.each(fields.fields, function(field, index){
+                    if(field.name)panelFieldCount++;
                     if(panels[i].placeholders)fields.fields[index].placeholder = field.label
                 });
                 fields.label = fields.fields[0].label;
@@ -63,7 +64,6 @@
                     row = [];
                 }
                 count++;
-                panelFieldCount += fields.fields.length;
             }
             if(i == 0){
                 this.fieldsToDisplay = panelFieldCount;

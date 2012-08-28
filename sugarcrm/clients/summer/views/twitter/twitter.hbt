@@ -1,3 +1,4 @@
+{{#if tweets}}
 <link rel="stylesheet" href="../clients/summer/views/twitter/sprite.css" xmlns="http://www.w3.org/1999/html">
 <div class="block widget">
     <div class="twitter-widget">
@@ -20,3 +21,4 @@
         {{/each}}
     </div>
 </div>
+{{/if}}
