@@ -23,7 +23,7 @@
         <p>
           <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
           {{#if attributes.activity_data.length}}          
-            {{#each attributes.activity_data.data}}
+            {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
             {{/each}}
           {{/if}} 

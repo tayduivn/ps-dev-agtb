@@ -639,7 +639,7 @@ class SugarBean
                     else
                         $field_type=$properties['dbtype'];
                 }                
-                if (!empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
+                if ($field != 'modified_user_id' && !empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
                 {
                     $this->activity_enabled_fields[$field]=$properties;
                 }
