@@ -54,11 +54,16 @@
         var myPostContents = myPost.find('input.sayit')[0].value;
         var myPostId = this.context.get("modelId");
         var myPostModule = this.module;
-
-        if(myPostModule == "ActivityStream") {
-        	myPostModule = '';	
+        var myPostUrl = 'ActivityStream';
+        
+        if(myPostModule !== "" && myPostModule !== "ActivityStream") {
+            myPostUrl += '/'+myPostModule;
+            if(myPostId !== '') {
+                myPostUrl += '/'+myPostId;
+            }
         }
-        this.app.api.call('create',this.app.api.buildURL('ActivityStream'),{'module':myPostModule,'id':myPostId,'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
+        
+        this.app.api.call('create',this.app.api.buildURL(myPostUrl),{'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
     },
 
     _renderHtml: function() {
