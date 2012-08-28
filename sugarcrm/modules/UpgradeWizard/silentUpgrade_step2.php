@@ -518,11 +518,11 @@ if($ce_to_pro_ent) {
     if(check_FTS()){
     	$GLOBALS['db']->full_text_indexing_setup();
     }
-}
 
-//BEGIN SUGARCRM flav=pro ONLY
-addPdfManagerTemplate();
-//END SUGARCRM flav=pro ONLY
+    logThis("Starting to add pdf template", $path);
+    addPdfManagerTemplate();
+    logThis("Finished adding pdf template", $path);
+}
 
 /*
 //BEGIN SUGARCRM flav=int ONLY
