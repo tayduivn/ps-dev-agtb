@@ -9,28 +9,41 @@
         </div>
     </div>
     {{#each meta.panels}}
-        {{#if ../model.isNotEmpty}}
-            {{#each grid}}
-                <div class="row-fluid">
-                    {{#each this}}
-                        <span class='record-row'>
-                            {{#if ../../this.labels}}
-                                <div class="span{{this.labelSpan}} tright">{{str  this.label ../../../../../this.model.module}}</div>
-                            {{/if}}
-                            <div class="span{{this.span}}" >
-                                {{#each fields}}
-                                <span class="record-field index{{this.index}}" data-index="{{this.index}}" data-fieldName="{{this.name}}">
-                                    {{field ../../../../../this}}
-                                    <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
-                                    </span>
-                                </span>
-                                {{/each}}
-                            </div>
-                        </span>
-                   {{/each}}
-                 </div>
-           {{/each}}
+       {{#if ../model.isNotEmpty}}
+
+       {{#each grid}}
+            <div class="row-fluid">
+                {{#each this}}
+
+                <span class='record-row'>
+                {{#unless ../../this.labelsOnTop}}
+                {{#if ../../../this.labels}}
+               <div class="span{{../this.labelSpan}} tright"><h6>{{str  ../this.label ../../../../../../this.model.module}}</h6></div>
+               {{/if}}
+               {{/unless}}
+               <div class="span{{this.span}}" >
+                    {{#if ../../this.labelsOnTop}}
+                        <h6 style='color:gray'>{{str  this.label ../../../../../this.model.module}}</h6>
+                    {{/if}}
+                    {{#each fields}}
+
+                        {{#if name}}
+                    <span class='{{../this.css}}' style='font-size:150%'>
+                    {{field ../../../../../../this}}
+                    </span>
+                    <span class="record-edit-link-wrapper" data-name="{{../this.name}}">
+                        <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../this.type}}" data-name="{{../this.name}}"></a>
+                    </span>
+                    {{/if}}
+                    {{/each}}
+               </div>
+               </span>
+
+               {{/each}}
+
+             </div>
+
+       {{/each}}
        {{else}}
            {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
        {{/if}}

@@ -53,6 +53,7 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'label' => 'LBL_PANEL_1',
             'columns'=>2,
              'labels'=>false,
+              'labelsOnTop'=>true,
              'placeholders'=>true,
             'fields' => array(
                 array('name'=>'name', 'css'=>'lead', 'span'=>12),

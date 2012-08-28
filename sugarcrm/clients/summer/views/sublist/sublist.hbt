@@ -1,24 +1,14 @@
+                   <div class="block widget">
+                   <h4>{{module}}</h4>
                    {{#each meta.panels}}
-                    <table class="table table-striped">
-                        <thead>
-                        <tr role="row">
-                            {{#each fields}}
-                            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.field name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                                role="columnheader" data-fieldname="{{name}}">
-                                {{str label ../../module}}
-                            </th>
-                            {{/each}}
-                        </tr>
-                        </thead>
-                        <tbody role="alert" aria-live="polite" aria-relevant="all">
+
                         {{#each ../collection.models}}
-                        <tr name="{{module}}_{{attributes.id}}">
+                        <article class='row-fluid' name="{{module}}_{{attributes.id}}">
                             {{#each ../fields}}
-                            <td>{{field ../../../this ../this}}</td>
+                            <span class='span4'>{{field ../../../this ../this}}</span>
                             {{/each}}
-                        </tr>
+                        </article>
                         {{/each}}
-                        </tbody>
-                    </table>
                     {{/each}}
+                    </div>
                     

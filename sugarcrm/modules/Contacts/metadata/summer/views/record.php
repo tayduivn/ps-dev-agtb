@@ -52,27 +52,29 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'label' => 'LBL_PANEL_2',
             'columns'=>2,
             'labels'=>false,
+            'labelsOnTop'=>true,
             'placeholders'=>true,
             'fields' => array(
-                array('fields'=>array('first_name', 'last_name')),
-                'primary_address_street',
-                'title',
-                array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
-                'account_name',
-                'primary_address_country',
-                'email1',
-                'phone_work',
-                'assigned_user_name',
-                'phone_mobile',
+                array('fields'=>array(array('span'=>12, 'name'=>'first_name', 'label'=>'LBL_NAME', 'css'=>'lead'), array('name'=>'last_name', 'css'=>'lead'))),'',
+                'title', 'primary_address_street',
+
+                'account_name',array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
+
+                '','primary_address_country',
+
+                'email1','phone_work',
+
+                'assigned_user_name','phone_mobile',
+
             ),
         ),
     array(
               'label' => 'LBL_PANEL_2',
               'fields' => array(
-                  'linkedin',
-                  'facebook',
+                  #'linkedin',
+                  #'facebook',
                   'twitter',
-                  'googleplus',
+                  #'googleplus',
               ),
           )
     )
