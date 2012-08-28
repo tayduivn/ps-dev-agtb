@@ -1,3 +1,3 @@
 ({
-    extends:'ListView'
+    extendsFrom:'ListView'
 })
