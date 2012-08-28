@@ -28,6 +28,9 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
 	}
 
     public function tearDown()
@@ -35,6 +38,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
@@ -73,5 +77,51 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opp->save();
 
         $this->assertEquals($tp->id, $opp->timeperiod_id);
+    }
+
+    /*
+     * Test that the currency_rate field is populated with rate
+     * of currency_id
+     *
+     */
+    public function testCurrencyRate() {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        // if Euro does not exist, will use default currency
+        $opportunity->currency_id = $currency->id;
+        $opportunity->name = "Test Opportunity Delete Me";
+        $opportunity->amount = "5000.00";
+        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->best_case = "1000.00";
+        $opportunity->likely_case = "750.00";
+        $opportunity->worst_case = "600.00";
+        $opportunity->save();
+        $this->assertEquals(
+            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
+        );
+    }
+
+    /*
+     * Test that base currency exchange rates from EUR are working properly.
+     */
+    public function testBaseCurrencyAmounts()
+    {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        // if Euro does not exist, will use default currency
+        $opportunity->currency_id = $currency->id;
+        $opportunity->name = "Test Opportunity Delete Me";
+        $opportunity->amount = "5000.00";
+        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->best_case = "1000.00";
+        $opportunity->likely_case = "750.00";
+        $opportunity->worst_case = "600.00";
+        $opportunity->save();
+
+        $this->assertEquals(
+            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
+        );
     }
 }
