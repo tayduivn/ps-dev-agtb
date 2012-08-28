@@ -114,39 +114,38 @@
                         commitDate = new Date(this.options.dateModified),
                         newestModel = {},
                         oldestModel = {},
-                        len = data.length;
+                        len = data.length,
+                        outputHTML = "<article>",
+                        outputLog = {};
 
-                    // using for because you can't break out of _.each
-                    for(var i = 0; i < len; i++) {
-                        var entry = data[i];
-                        userId = entry.user_id;
-
-                        //if first model, put it in newestModel
-                        if(i == 0) {
-                            newestModel = new Backbone.Model(entry);
-                            continue;
-                        }
-
-                        var entryDate = app.forecasts.utils.parseDBDate(entry.date_modified);
-
-                        // check for the first model equal to or past the forecast commit date
-                        // we want the last commit just before the whole forecast was committed
-                        if(entryDate <= commitDate) {
-                            oldestModel = new Backbone.Model(entry);
-                            break;
-                        }
-                    }
-
-                    // Begin creating output HTML
-                    var outputHTML = "<article>",
-                        output = {};
-
-                    if(!_.isEmpty(oldestModel) && !_.isEmpty(newestModel)) {
-                        output = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                        outputHTML += output.text + "<br><date>" + output.text2 + "</date></article>";
+                    if(len == 1) {
+                        userId = data[0].user_id;
+                        newestModel = new Backbone.Model(data[0]);
                     } else {
-                        outputHTML += "No Data</article>";
+                        // using for because you can't break out of _.each
+                        for(var i = 0; i < len; i++) {
+                            var entry = data[i];
+                            userId = entry.user_id;
+
+                            //if first model, put it in newestModel
+                            if(i == 0) {
+                                newestModel = new Backbone.Model(entry);
+                                continue;
+                            }
+
+                            var entryDate = app.forecasts.utils.parseDBDate(entry.date_modified);
+
+                            // check for the first model equal to or past the forecast commit date
+                            // we want the last commit just before the whole forecast was committed
+                            if(entryDate <= commitDate) {
+                                oldestModel = new Backbone.Model(entry);
+                                break;
+                            }
+                        }
                     }
+
+                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                    outputHTML += outputLog.text + "<br><date>" + outputLog.text2 + "</date></article>";
 
                     $('[id="popover-content-' + userId + '"]').html(outputHTML);
                 }
