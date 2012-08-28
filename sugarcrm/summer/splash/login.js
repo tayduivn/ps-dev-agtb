@@ -4,11 +4,11 @@ var login = {
         var images = [
             {url:'static/sunflower.jpg', text:'It\'s like a field of sunflowers.'},
             {url:'static/beach.jpg', text:'It\'s like a day at the beach.'},
-            {url:'static/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},
-            {url:'static/flamingos.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/houses.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/darkclouds.jpg', text:'It\'s like a dark stormy night.'}
+            //{url:'static/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},
+            //{url:'static/flamingos.jpg', text:'It\'s like a flock of flamingos.'},
+            {url:'static/houses.jpg', text:'It\'s like a warm summer night.'},
+            //{url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'},
+            //{url:'static/darkclouds.jpg', text:'It\'s like a dark stormy night.'}
         ];
         var selected = images[Math.floor(Math.random() * images.length)];
 

@@ -21,8 +21,11 @@ $app->get('/rest/users/callback', function() use ($app, $box)
     $result = $api->verify($box->getSetting('top_url')."summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
     if(empty($result['verifiedEmail'])) {
         $data = json_encode(array("error" => "Failed to authenticate. Please contact support."));
+    }else if(substr_count($result['verifiedEmail'], '@sugarcrm.com') != 1){
+                $data = json_encode(array("error" => "Summer is currently in a private beta. Thank you for your interest!"));
     } else {
         $email = $result['verifiedEmail'];
+
         session_destroy();
         session_start();
         if($box->getUser($email, false)) {
@@ -111,6 +114,10 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
         echo json_encode(array("popup" => $res['authUri'].$add));
         return;
     }
+    if(substr_count($email, '@sugarcrm.com') != 1){
+           echo json_encode(array("error" => "Summer is currently in a private beta. Thank you for your interest!"));
+
+      }else{
 
     session_destroy();
     session_start();
@@ -129,6 +136,7 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
     } else {
         echo json_encode(array("error" => "Please check your email and password."));
     }
+}
 });
 
 /**

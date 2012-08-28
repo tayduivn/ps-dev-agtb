@@ -50,21 +50,24 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_2',
-            'columns'=>2,
-            'labels'=>false,
-            'labelsOnTop'=>true,
-            'placeholders'=>true,
+            'columns'=>1,
+            'labels'=>true,
+            'labelsOnTop'=>false,
+            'placeholders'=>false,
             'fields' => array(
-                array('fields'=>array(array('span'=>12, 'name'=>'first_name', 'label'=>'LBL_NAME', 'css'=>'lead'), array('name'=>'last_name', 'css'=>'lead'))),'',
-                'title', 'primary_address_street',
+                array(
+                'fields'=>array(
+                 array('span'=>12, 'name'=>'first_name', 'label'=>' ', 'css'=>'big'), array('name'=>'last_name', 'css'=>'big'))),'',
+                'title',
+                'account_name',
+                '',
+                'primary_address_street',
+                array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
+                'primary_address_country',
+                '',
+                'email1','phone_work','phone_mobile',
 
-                'account_name',array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
-
-                '','primary_address_country',
-
-                'email1','phone_work',
-
-                'assigned_user_name','phone_mobile',
+                'assigned_user_name',
 
             ),
         ),

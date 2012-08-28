@@ -53,7 +53,7 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
             'columns'=>2,
             'placeholders'=>true,
             'fields' => array(
-               array('label'=>'', 'labelSpan'=>0, 'name'=>'name', 'css'=>'lead', 'span'=>12),
+               array('label'=>' ', 'labelSpan'=>0, 'name'=>'name', 'css'=>'big', 'span'=>12),
                 '',
                 'amount',
                 'sales_stage',

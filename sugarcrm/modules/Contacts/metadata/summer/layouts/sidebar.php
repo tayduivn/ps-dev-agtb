@@ -10,5 +10,4 @@ $layout->push('main', array('layout'=>'sublist','context'=>array('link'=>'opport
 //$layout->push('main', array('view'=>'attachments'));
 #$layout->push('main', array('view'=>'linkedin'));
 #$layout->push('main', array('view'=>'facebook'));
-$layout->push('main', array('layout'=>'sublist','context'=>array('link'=>'opportunities')));
 $viewdefs['Contacts']['summer']['layout']['sidebar'] = $layout->getLayout();
