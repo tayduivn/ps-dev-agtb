@@ -103,7 +103,7 @@ $dictionary['PdfManager'] = array(
             'calculated' => false,
             'len' => 100,
             'size' => '20',
-            'options' => 'Elastic_boost_options',
+            'options' => 'moduleList',
             'studio' => false,
             'dependency' => false,
         ),
