@@ -454,7 +454,7 @@ class MetaDataManager {
             $templates = $this->fetchTemplates($templateDirs);
             if (!empty($module)){
                 //custom views/layouts can only have one templates
-                $fileData['template'] = reset($templates);
+                $fileData['templates'] = reset($templates);
             }
             else
                 $fileData['templates'] = $templates;
@@ -618,8 +618,8 @@ class MetaDataManager {
         if ( $platform == 'portal' ) {
             // Apparently this list is not stored anywhere, the module builder just uses a very
             // complicated setup to do this glob
-            $defaultPortalViewsPath = 'modules/*/metadata/portal/views/*.php';
-            $defaultPortalLayoutsPath = 'modules/*/metadata/portal/layouts/*.php';
+            $defaultPortalViewsPath = 'modules/*/clients/portal/views/*/*.php';
+            $defaultPortalLayoutsPath = 'modules/*/clients/portal/layouts/*/*.php';
             $customPortalViewsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalViewsPath;
             $customPortalLayoutsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalLayoutsPath;
 
@@ -641,15 +641,13 @@ class MetaDataManager {
 
             $portalModules = array();
             foreach ( $portalFiles as $file ) {
-                $fileParts = explode('/',$file);
-                if ( $fileParts[0] == 'custom' ) {
-                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal, 5 => views, 6 => edit.php
-                    $module = $fileParts[2];
-                } else {
-                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal, 4 => views, 5 => edit.php
-                    $module = $fileParts[1];
+                // Grab the module name from the file path
+                preg_match('#modules/(.+)/clients#', $file, $fileParts);
+                
+                // And set it only if we haven't already
+                if (!empty($fileParts[1]) && empty($portalModules[$fileParts[1]])) {
+                    $portalModules[$fileParts[1]] = $fileParts[1];
                 }
-                $portalModules[$module] = $module;
             }
             $moduleList = array_keys($portalModules);
         } else if ( $platform == 'mobile' ) {

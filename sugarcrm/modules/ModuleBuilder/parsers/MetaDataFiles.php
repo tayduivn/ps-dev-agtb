@@ -350,11 +350,11 @@ class MetaDataFiles
 
 		// Construct filename
         if (!empty($client)) {
-            $viewPath = $client . '/' . self::$viewsPath;
+            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
         } else {
-            $viewPath = '';
+            $viewPath = 'metadata/';
         }
-		return $paths[$type] . 'modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php' ;
+		return $paths[$type] . 'modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
     }
 
     /**
@@ -383,18 +383,18 @@ class MetaDataFiles
 
         // Get final filename path part
         if (!empty($client)) {
-            $viewPath = $client . '/' . self::$viewsPath;
+            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
         } else {
-            $viewPath = '';
+            $viewPath = 'metadata/';
         }
 
         switch ($type) {
             case MB_HISTORYMETADATALOCATION:
-                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php';
+                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
             default:
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
                 $mb = new ModuleBuilder();
-                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $viewPath . $names[$view] . '.php';
+                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
         }
     }
 
@@ -470,7 +470,9 @@ class MetaDataFiles
 
         $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/';
         if (!empty($client)) {
-            $dirname .= $client . '/' . $component . 's/';
+            $dirname .= 'clients/' . $client . '/' . $component . 's/';
+        } else {
+            $dirname .= 'metadata/';
         }
 
         return $dirname;
