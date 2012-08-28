@@ -28,11 +28,11 @@
                     {{#each fields}}
 
                         {{#if name}}
-                    <span class='{{../this.css}}' style='font-size:150%'>
-                    {{field ../../../../../../this}}
-                    </span>
                     <span class="record-edit-link-wrapper" data-name="{{../this.name}}">
                         <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../this.type}}" data-name="{{../this.name}}"></a>
+                    </span>
+                    <span class='{{../this.css}}' style='font-size:150%'>
+                    {{field ../../../../../../this}}
                     </span>
                     {{/if}}
                     {{/each}}
