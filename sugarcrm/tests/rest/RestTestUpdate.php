@@ -96,9 +96,9 @@ class RestTestUpdate extends RestTestBase {
         $fav->deleted = 0;
         $fav->save();
 
-        $is_fav = (SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id) == true) ? 'true' : 'false';
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
 
-        $this->assertEquals($is_fav, 'true', "Didn't actually set the favorite");
+        $this->assertEquals($is_fav, true, "Didn't actually set the favorite");
 
         $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('_favorite' => 'false')), "PUT");
         
