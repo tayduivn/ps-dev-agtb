@@ -559,14 +559,11 @@ class BoxOffice
         VALUES (:owner, :instance, :now, :now)");
         $sth->execute(array(
             ":owner" => $user['id'],
-            ":instance" => $newinst,
+            ":instance" => 1,
+//            ":instance" => $newinst,
             ":now" => gmdate('Y-m-d H:i:s')
         ));
     }
-
-
-
-
 }
 
 
