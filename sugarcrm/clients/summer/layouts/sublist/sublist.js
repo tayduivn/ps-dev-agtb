@@ -20,7 +20,7 @@
                 self.$el.addClass("container-fluid")
                     .append($('<div/>').addClass('row-fluid')
                     .append($('<div/>').addClass("span" + size)
-                    .append($('<div/>').addClass("thumbnail list")
+                    .append($('<div/>').addClass("sublist-container")
                 )));
             }
         }
@@ -29,7 +29,7 @@
 
         // All components of this layout will be placed within the
         // innermost container div.
-        this.$el.find('.thumbnail').append(comp.el);
+        this.$el.find('.sublist-container').append(comp.el);
     }
 
 })

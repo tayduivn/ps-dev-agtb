@@ -52,42 +52,29 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'label' => 'LBL_PANEL_2',
             'columns'=>2,
             'labels'=>false,
+            'labelsOnTop'=>true,
             'placeholders'=>true,
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
-                    'displayParams' => array(
-                        'wireless_edit_only' => true,
-                    ),
-                ),
-                'primary_address_street',
-                /*array('name' => 'last_name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),*/
-                'title',
-                'primary_address_city',
-                'account_name',
-                'primary_address_state',
-                'email1',
-                'phone_work',
-                'phone_mobile',
-                'primary_address_postalcode',
-                'assigned_user_name',
-                'primary_address_country',
+                array('fields'=>array(array('span'=>12, 'name'=>'first_name', 'label'=>'LBL_NAME', 'css'=>'lead'), array('name'=>'last_name', 'css'=>'lead'))),'',
+                'title', 'primary_address_street',
+
+                'account_name',array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
+
+                '','primary_address_country',
+
+                'email1','phone_work',
+
+                'assigned_user_name','phone_mobile',
 
             ),
         ),
     array(
               'label' => 'LBL_PANEL_2',
               'fields' => array(
-                  'linkedin',
-                  'facebook',
+                  #'linkedin',
+                  #'facebook',
                   'twitter',
-                  'googleplus',
+                  #'googleplus',
               ),
           )
     )

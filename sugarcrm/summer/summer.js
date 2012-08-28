@@ -268,4 +268,136 @@
         }
     };
 
+    app.metadata._patchFields =function(moduleName, module, fields){
+        var self = this;
+        _.each(fields, function(field, fieldIndex) {
+
+                                    if(field.fields){
+                                        field.fields = self._patchFields(moduleName, module, field.fields);
+                                        return;
+                                    }
+
+                                    var name = _.isString(field) ? field : field.name;
+                                    var fieldDef = module.fields[name];
+                                    if (!_.isEmpty(fieldDef)) {
+                                        // Create a definition if it doesn't exist
+                                        if (_.isString(field)) {
+                                            field = { name: field };
+                                        }
+
+                                        // Flatten out the viewdef, i.e. put 'displayParams' onto the viewdef
+                                        // TODO: This should be done on the server-side on my opinion
+
+                                        if (_.isObject(field.displayParams)) {
+                                            _.extend(field, field.displayParams);
+                                            delete field.displayParams;
+                                        }
+
+                                        // Assign type
+                                        field.type = field.type || fieldDef.type;
+                                        // Patch type
+
+                                        field.type = (_.contains(self.fieldTypeMap, field.type))?self.fieldTypeMap[field.type]: field.type;
+                                        // Patch label
+
+                                        field.label = field.label || fieldDef.vname ||  field.name;
+
+                                        fields[fieldIndex] = field;
+                                    }
+                                    else {
+                                        // patch filler string fields to empty base fields of detail view
+                                        if (field === "") {
+                                            field = {
+                                                view:'detail'
+                                            };
+                                            fields[fieldIndex] = field;
+                                        }
+                                        // Ignore view fields that don't have module field definition
+                                        //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                                    }
+
+                                });
+        return fields;
+    };
+
+    /**
+     * Patches view fields' definitions.
+     * @param moduleName Module name
+     * @param module Module definition
+     * @private
+     */
+    app.metadata._patchMetadata =  function(moduleName, module) {
+        if (!module || module._patched === true) return module;
+        var self = this;
+        _.each(module.views, function(view) {
+            if (view.meta) {
+                _.each(view.meta.panels, function(panel) {
+                    panel.fields = self._patchFields(moduleName, module, panel.fields);
+                });
+            }
+        });
+        module._patched = true;
+        return module;
+    };
+
+
+
+    app.view.View = app.view.View.extend({getFieldName :function(panel){
+                var self = this;
+                var fields = [];
+                if(panel.fields){
+                    _.each(panel.fields, function(field, fieldIndex){
+                       if(field.fields){
+                          fields.concat(self.getFieldName(field.fields));
+                       }else{
+                          fields = fields.concat(_.pluck(panel.fields, 'name'));
+                          fields = fields.concat(_.flatten(_.pluck(panel.fields, 'related_fields')));
+                       }
+                    });
+                }
+                return fields;
+
+
+            },
+
+            /**
+             * Extracts the field names from the metadata for directly related views/panels.
+             * @param {String} module(optional) Module name.
+             * @return {Array} List of fields used on this view
+             */
+        getFieldNames:function(module) {
+                var self = this;
+                var fields = [];
+                module = module || this.context.get('module');
+
+                if (this.meta && this.meta.panels) {
+                    _.each(this.meta.panels, self.getFieldName);
+                }
+
+                fields = _.compact(_.uniq(fields));
+
+                var fieldMetadata = app.metadata.getModule(module, 'fields');
+                if (fieldMetadata) {
+                    // Filter out all fields that are not actual bean fields
+                    fields = _.reject(fields, function(name) {
+                        return _.isUndefined(fieldMetadata[name]);
+                    });
+
+                    // we need to find the relates and add the actual id fields
+                    var relates = [];
+                    _.each(fields, function(name) {
+                        if (fieldMetadata[name].type == 'relate') {
+                            relates.push(fieldMetadata[name].id_name);
+                        }
+                    });
+
+                    fields = fields.concat(relates);
+                }
+
+                return fields;
+            }
+    });
+
+
+
 })(SUGAR.App);

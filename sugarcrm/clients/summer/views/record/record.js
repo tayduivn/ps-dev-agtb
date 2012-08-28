@@ -3,6 +3,7 @@
     editMode: false,
 
     initialize: function(options) {
+        test = this;
         var extraEvents = {
             "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
@@ -32,33 +33,44 @@
     },
 
     render: function() {
-
         var panels = this.meta.panels;
         var index = 0;
-
+        var totalFieldCount =0;
         for (var i in panels) {
             var columns = (panels[i].columns) ? panels[i].columns : 1;
             var count = 0;
+            var panelFieldCount  = 0;
             var rows = [];
             var row = [];
-            for (var j in panels[i].fields) {
-                if (panels[i].placeholders)panels[i].fields[j].placeholder = panels[i].fields[j].label;
-                if (_.isUndefined(panels[i].labels))panels[i].labels = true;
+            for(var j in panels[i].fields){
+                if(_.isUndefined(panels[i].labels))panels[i].labels = true;
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panels[i].labels) ? 8 : 12;
-                if (_.isUndefined(panels[i].fields[j].span))panels[i].fields[j].span = Math.floor(maxSpan / columns);
-                //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(panels[i].fields[j].labelSpan))panels[i].fields[j].labelSpan = Math.floor(4 / columns);
-                row.push(panels[i].fields[j]);
-                if (count % columns == columns - 1) {
+                maxSpan = (panels[i].labels)?8:12;
+                if(_.isUndefined(panels[i].fields[j].span))panels[i].fields[j].span = Math.floor(maxSpan/columns);
+                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
+                if(_.isUndefined(panels[i].fields[j].labelSpan))panels[i].fields[j].labelSpan = Math.floor(4/columns);
+                var fields = {};
+                fields.fields = (panels[i].fields[j].fields)?panels[i].fields[j].fields: [panels[i].fields[j]];
+                _.each(fields.fields, function(field, index){
+                    if(field.name){
+                        fields.fields[index].index = totalFieldCount;
+                        panelFieldCount++;
+                        totalFieldCount++;
+                    }
+                    if(panels[i].placeholders)fields.fields[index].placeholder = field.label
+                });
+                fields.label = fields.fields[0].label;
+                fields.span = panels[i].fields[j].span;
+                fields.labelSpan = panels[i].fields[j].labelSpan
+                row.push(fields);
+                if(count % columns == columns - 1){
                     rows.push(row);
                     row = [];
                 }
                 count++;
             }
-            if (i == 0) {
-                this.fieldsToDisplay = count;
-                console.log('fieldsToDsiplay', count);
+            if(i == 0){
+                this.fieldsToDisplay = panelFieldCount;
             }
             rows.push(row);
             row = [];
@@ -66,10 +78,7 @@
         }
 
         this.meta.panels = panels;
-
-        console.log(this.meta);
         app.view.views.DetailView.prototype.render.call(this);
-
     },
 
     // Overloaded functions
@@ -91,21 +100,17 @@
         }
     },
 
-    getFieldIndex: function(field) {
-        return _.indexOf(_.pluck(this.options.meta.panels[0].fields, "name"), field.name);
-    },
+    getNextField: function(index) {
+        var nextIndex = index + 1,
+            nextField = this.$(".index" + nextIndex),
+            fieldName = nextField.data("fieldname");
 
-    getNextField: function(field) {
-        var nextField = this.options.meta.panels[0].fields[this.getFieldIndex(field) + 1];
-        return (nextField) ? this.getField(nextField.name) : false;
+        return (fieldName) ? this.getField(fieldName) : false;
     },
 
     // Handler functions
     toggleEdit: function(e) {
-        console.log("Toggle Edit", this.editAllMode);
         _.each(this.fields, function(field) {
-            if (field.type == "relate") { return; }
-
             field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
             field.render();
         }, this);
@@ -129,8 +134,6 @@
         this.editMode = true;
 
         switch (field.type) {
-            case "relate":
-                break;
             default:
                 this.toggleField(field, target);
                 target.parent().find("input").focus().val(target.parent().find("input").val());
@@ -164,8 +167,6 @@
     },
 
     toggleField: function(field, target) {
-        var self = this;
-
         $(target).closest('.record-row').toggleClass('edit-mode');
 
         field.options.viewName = (!field.options.viewName || field.options.viewName == "detail")
@@ -198,12 +199,12 @@
     handleKeyDown: function(e) {
         var next,
             target = e.data.target,
-            field = e.data.field;
+            field = e.data.field,
+            index = field.$el.parent().data("index");
 
         if (e.which == 9) {
-            next = this.getNextField(field);
+            next = this.getNextField(index);
             this.handleEdit(null, next);
-            //next.$el.focus();
         } else if (e.which == 27) {
             this.fieldClose(e, field, target);
         }

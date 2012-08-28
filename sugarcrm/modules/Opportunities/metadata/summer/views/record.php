@@ -48,18 +48,18 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
+            'labels'=>true,
+            'labelsOnTop'=>true,
+            'columns'=>2,
+            'placeholders'=>true,
             'fields' => array(
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                    )
-                ),
-                'account_name',
+               array('label'=>'', 'labelSpan'=>0, 'name'=>'name', 'css'=>'lead', 'span'=>12),
+                '',
                 'amount',
                 'sales_stage',
                 'probability',
                 'date_closed',
+                'account_name',
                 'assigned_user_name',
             )
         )
