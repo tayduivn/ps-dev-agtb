@@ -40,19 +40,19 @@ if (empty($templatesArray)) {
     $modStringSrc = return_module_language($GLOBALS['current_language'], 'PdfManager');
     
     $logoUrl = './themes/default/images/pdf_logo.jpg';
-if (defined(PDF_HEADER_LOGO)) {
+    if (defined(PDF_HEADER_LOGO)) {
         $logoUrl = K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO;
-    $imsize = @getimagesize($logo);
-    if ($imsize === FALSE) {
-        // encode spaces on filename
-            $logoUrl = str_replace(' ', '%20', $logo);
-        $imsize = @getimagesize($logo);
+        $imsize = @getimagesize($logoUrl);
         if ($imsize === FALSE) {
-                $logoUrl = K_PATH_IMAGES.PDF_HEADER_LOGO;
+            // encode spaces on filename
+            $logoUrl = str_replace(' ', '%20', $logoUrl);
+            $imsize = @getimagesize($logoUrl);
+            if ($imsize === FALSE) {
+                    $logoUrl = K_PATH_IMAGES.PDF_HEADER_LOGO;
+            }
         }
+            $logoUrl = './' . $logoUrl;
     }
-        $logoUrl = './' . $logoUrl;
-}
 
     $ss = new Sugar_Smarty();
     $ss->assign('logoUrl', $logoUrl);
