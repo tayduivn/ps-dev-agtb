@@ -111,11 +111,9 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
-    	}
-        
-        self.context.forecasts.set({commitForecastFlag: true});
-        self.context.forecasts.set({reloadWorksheetFlag: true});
+    		self.context.forecasts.set({commitForecastFlag: true});
+            self.context.forecasts.set({reloadWorksheetFlag: true});
+    	}        
     },
 
     /**
