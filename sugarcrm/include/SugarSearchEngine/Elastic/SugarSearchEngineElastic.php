@@ -136,6 +136,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        
         $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
         $module_favorites_user = array();
         

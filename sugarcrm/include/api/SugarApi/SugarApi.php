@@ -139,7 +139,7 @@ abstract class SugarApi {
         $bean->retrieve($id);
 
         if(isset($args['favorite']))
-            $this->toggleFavorites($bean->module_dir, $id, $args['_favorite']);
+            $this->toggleFavorites($bean->module_dir, $id, $args['favorite']);
 
         /*
          * Even though the bean is refreshed above, return only the id
@@ -156,25 +156,31 @@ abstract class SugarApi {
      * @return bool
      */
 
-    protected function toggleFavorites($module, $id, $favorite=true)
+    protected function toggleFavorites($module, $id, $favorite)
     {
+        $favorite = strtolower($favorite);
         // is currently favorite?
-        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
+        $current = (SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id) == true) ? 'true' : 'false';
+
         // already the same skip it
         if($current == $favorite)
             return true;
 
-        if($favorite === true)
+        if($favorite === 'true')
         {
-            $sf = new SugarFavorites();
-            $sf->record_id = $id;
-            $sf->module = $module;
-            $sf->assigned_user_id = $GLOBALS['current_user']->id;
-            $sf->save();
+            $fav = new SugarFavorites();
+            $fav->id = SugarFavorites::generateGUID($module,$id);
+            $fav->new_with_id = true;
+            $fav->module = $module;
+            $fav->record_id = $id;
+            $fav->created_by = $GLOBALS['current_user']->id;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;
+            $fav->deleted = 0;
+            $fav->save();
             return true;
         }
-
-        SugarFavorites::markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
+        $sf = new SugarFavorites();
+        $sf->markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
         return true;
     }
 

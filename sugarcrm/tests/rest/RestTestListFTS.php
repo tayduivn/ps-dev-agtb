@@ -93,6 +93,7 @@ class RestTestListFTS extends RestTestBase {
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+
         $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -101,7 +102,7 @@ class RestTestListFTS extends RestTestBase {
         $this->assertNotEquals($restReply['reply']['next_offset'],$restReply2['reply']['next_offset'],"Next offset was not set correctly on the second page.");
 
         // Test finding one record exact match, needs quotes in elastic or it returns a match for each word..thus returning all unit tests
-        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode('"' . $this->accounts[17]->name . '"'));
+        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
 
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
@@ -142,6 +143,8 @@ class RestTestListFTS extends RestTestBase {
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
+
+        print_r($restReply['reply']['next_offset']);
         
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 

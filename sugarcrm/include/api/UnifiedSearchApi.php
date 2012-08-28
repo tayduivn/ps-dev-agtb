@@ -198,6 +198,8 @@ class UnifiedSearchApi extends SugarApi {
 
         $options = $this->parseSearchOptions($api,$args);
 
+        $GLOBALS['log']->fatal($this->determineSugarSearchEngine($api, $args, $options) . "\r\n\r\n");
+
         // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
         $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
 
@@ -222,21 +224,14 @@ class UnifiedSearchApi extends SugarApi {
      */
     protected function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
     {
+        $GLOBALS['log']->fatal("\r\n\r\n" . print_r($options, true) . "\r\n\r\n");
         require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
         /*
             How to determine which Elastic Search
             1 - Not Portal
             2 - All Modules are full_text_search = true
-            3 - not my favorites
             4 - not order by
         */
-
-        // favorites
-        
-        if($options['favorites'] !== false)
-        {
-            return 'SugarSearchEngine';
-        }
 
         // portal
         
@@ -319,6 +314,8 @@ class UnifiedSearchApi extends SugarApi {
 
 
         $total = $results->getTotalHits();
+
+        $GLOBALS['log']->fatal("\r\n\r\nTHIS IS THE TOTAL HITS: {$total}\r\n\r\n");
 
         if ( $total > ($options['limit'] + $options['offset']))
         {

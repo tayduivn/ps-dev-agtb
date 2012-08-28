@@ -36,12 +36,13 @@ class RestTestCreate extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
         }
+        $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         parent::tearDown();
     }
 
     public function testCreate() {
         $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'UNIT TEST - AFTER')),
+                                      json_encode(array('name'=>'UNIT TEST - AFTER', 'favorite' => 'true')),
                                       'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']),
@@ -73,6 +74,10 @@ class RestTestCreate extends RestTestBase {
                             $account->team_name,
                             "Rest Reply and Bean Do Not Match Team Name.");
         //END SUGARCRM flav=pro ONLY
+        
+        $is_fav = (SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id) == true) ? 'true' : 'false';
+        
+        $this->assertEquals($is_fav, $restReply['reply']['favorite'], "The returned favorite was not the same.");
 
 
     }
