@@ -16,7 +16,7 @@
             script += " style=";
             script += " border:1px solid #ccc; padding:10px;"
             script += " width=";
-            script += " 500";
+            script += " 80%";
             script += " height=";
             script += " 250";
             script += " frameborder=";

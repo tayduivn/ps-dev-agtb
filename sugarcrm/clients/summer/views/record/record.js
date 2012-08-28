@@ -3,6 +3,7 @@
     editMode: false,
 
     initialize: function(options) {
+        test = this;
         var extraEvents = {
             "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
@@ -32,10 +33,9 @@
     },
 
     render: function() {
-
         var panels = this.meta.panels;
         var index = 0;
-
+        var totalFieldCount =0;
         for (var i in panels) {
             var columns = (panels[i].columns) ? panels[i].columns : 1;
             var count = 0;
@@ -52,7 +52,11 @@
                 var fields = {};
                 fields.fields = (panels[i].fields[j].fields)?panels[i].fields[j].fields: [panels[i].fields[j]];
                 _.each(fields.fields, function(field, index){
-                    if(field.name)panelFieldCount++;
+                    if(field.name){
+                        fields.fields[index].index = totalFieldCount;
+                        panelFieldCount++;
+                        totalFieldCount++;
+                    }
                     if(panels[i].placeholders)fields.fields[index].placeholder = field.label
                 });
                 fields.label = fields.fields[0].label;
@@ -74,10 +78,7 @@
         }
 
         this.meta.panels = panels;
-
-        console.log(this.meta);
         app.view.views.DetailView.prototype.render.call(this);
-
     },
 
     // Overloaded functions
@@ -99,18 +100,16 @@
         }
     },
 
-    getFieldIndex: function(field) {
-        return _.indexOf(_.pluck(this.options.meta.panels[0].fields, "name"), field.name);
-    },
+    getNextField: function(index) {
+        var nextIndex = index + 1,
+            nextField = this.$(".index" + nextIndex),
+            fieldName = nextField.data("fieldname");
 
-    getNextField: function(field) {
-        var nextField = this.options.meta.panels[0].fields[this.getFieldIndex(field) + 1];
-        return (nextField) ? this.getField(nextField.name) : false;
+        return (fieldName) ? this.getField(fieldName) : false;
     },
 
     // Handler functions
     toggleEdit: function(e) {
-        console.log("Toggle Edit", this.editAllMode);
         _.each(this.fields, function(field) {
             field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
             field.render();
@@ -168,8 +167,6 @@
     },
 
     toggleField: function(field, target) {
-        var self = this;
-
         $(target).closest('.record-row').toggleClass('edit-mode');
 
         field.options.viewName = (!field.options.viewName || field.options.viewName == "detail")
@@ -202,12 +199,12 @@
     handleKeyDown: function(e) {
         var next,
             target = e.data.target,
-            field = e.data.field;
+            field = e.data.field,
+            index = field.$el.parent().data("index");
 
         if (e.which == 9) {
-            next = this.getNextField(field);
+            next = this.getNextField(index);
             this.handleEdit(null, next);
-            //next.$el.focus();
         } else if (e.which == 27) {
             this.fieldClose(e, field, target);
         }
