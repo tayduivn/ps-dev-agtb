@@ -220,7 +220,7 @@ class ForecastsChartApi extends ChartApi
             // apply the adjusted values to the chart data
             foreach($dataArray['values'] as $key => $value) {
                 // don't overwrite if we get 0's back for the one we are replacing.
-                if(isset($adjusted_values[$value['label']])) {
+                if(isset($adjusted_values[$value['label']]) && array_sum($value['values']) != 0) {
                     $adj_value = $adjusted_values[$value['label']][$this->managerAdjustedField];
 
                     // if we don't have a forecast for this person set the value to 0
