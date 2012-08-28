@@ -4,11 +4,11 @@
 
     initialize: function(options) {
         var extraEvents = {
+            "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
             "click .record-save": "handleSave",
             "click .record-cancel": "handleCancel"
         };
-
 
         _.bindAll(this);
 
@@ -72,9 +72,7 @@
 
     },
 
-
   // Overloaded functions
-
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
@@ -103,6 +101,15 @@
     },
 
     // Handler functions
+    toggleEdit: function(e) {
+        console.log("Toggle Edit", this.editAllMode);
+        _.each(this.fields, function(field) {
+            field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            field.render();
+        }, this);
+
+        this.editAllMode = this.editAllMode || true;
+    },
 
     handleEdit: function(e, field) {
         var target;
