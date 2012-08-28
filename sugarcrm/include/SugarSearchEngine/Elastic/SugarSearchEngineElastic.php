@@ -142,7 +142,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         
         foreach($favorites AS $fav)
         {
-            $module_favorites_user[] = strval($fav->assigned_user_id);
+            $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
         }
 
         //$keyValues['user_favorites'] = implode(',', $module_favorites_user);
@@ -533,7 +533,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
 
-            if(isset($options['my_favorites']) && $options['my_favorites'] !== false)
+            if(isset($options['favorites']) && $options['favorites'] !== false)
             {
                 $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
@@ -548,7 +548,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function constructMyFavoritesFilter($moduleFilter)
     {
         $ownerTermFilter = new Elastica_Filter_Term();
-        $ownerTermFilter->setTerm('user_favorites', $GLOBALS['current_user']->id);
+        // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
+
+        $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
 
         $moduleFilter->addFilter($ownerTermFilter);
         return $moduleFilter;
@@ -677,6 +679,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
+            
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
         }

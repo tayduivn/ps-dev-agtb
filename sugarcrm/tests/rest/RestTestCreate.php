@@ -42,7 +42,7 @@ class RestTestCreate extends RestTestBase {
 
     public function testCreate() {
         $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'UNIT TEST - AFTER', 'favorite' => 'true')),
+                                      json_encode(array('name'=>'UNIT TEST - AFTER', '_favorite' => true)),
                                       'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']),
@@ -75,9 +75,9 @@ class RestTestCreate extends RestTestBase {
                             "Rest Reply and Bean Do Not Match Team Name.");
         //END SUGARCRM flav=pro ONLY
         
-        $is_fav = (SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id) == true) ? 'true' : 'false';
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
         
-        $this->assertEquals($is_fav, $restReply['reply']['favorite'], "The returned favorite was not the same.");
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['_favorite'], "The returned favorite was not the same.");
 
 
     }

@@ -73,11 +73,11 @@ class RestTestUpdate extends RestTestBase {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
-        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('favorite' => 'true')), "PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('_favorite' => 'true')), "PUT");
         
-        $is_fav = (SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id) == true) ? 'true' : 'false';
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
-        $this->assertEquals($is_fav, $restReply['reply']['favorite'], "The returned favorite was not the same.");
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['_favorite'], "The returned favorite was not the same.");
     }
 
     public function testRemoveFavorite()
@@ -100,11 +100,11 @@ class RestTestUpdate extends RestTestBase {
 
         $this->assertEquals($is_fav, 'true', "Didn't actually set the favorite");
 
-        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('favorite' => 'false')), "PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('_favorite' => 'false')), "PUT");
         
-        $is_fav = (SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id) == true) ? 'true' : 'false';
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
-        $this->assertEquals($is_fav, $restReply['reply']['favorite'], "The returned favorite was not the same.");
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['_favorite'], "The returned favorite was not the same.");
     }
 
     public function testUpdateEmail()

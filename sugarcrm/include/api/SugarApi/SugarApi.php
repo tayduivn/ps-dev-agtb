@@ -138,8 +138,8 @@ abstract class SugarApi {
 
         $bean->retrieve($id);
 
-        if(isset($args['favorite']))
-            $this->toggleFavorites($bean->module_dir, $id, $args['favorite']);
+        if(isset($args['_favorite']))
+            $this->toggleFavorites($bean->module_dir, $id, $args['_favorite']);
 
         /*
          * Even though the bean is refreshed above, return only the id
@@ -158,15 +158,14 @@ abstract class SugarApi {
 
     protected function toggleFavorites($module, $id, $favorite)
     {
-        $favorite = strtolower($favorite);
         // is currently favorite?
-        $current = (SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id) == true) ? 'true' : 'false';
+        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
 
         // already the same skip it
         if($current == $favorite)
             return true;
 
-        if($favorite === 'true')
+        if($favorite == true)
         {
             $fav = new SugarFavorites();
             $fav->id = SugarFavorites::generateGUID($module,$id);
