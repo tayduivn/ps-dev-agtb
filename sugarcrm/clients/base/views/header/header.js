@@ -76,8 +76,9 @@
         // application requirements so I'd rather do here than change plugin.
         evt.preventDefault();
         evt.stopPropagation();
-
-        term = this.$('.search-query').val();
+        // URI encode search query string so that it can be safely
+        // decoded by search handler (bug55572)
+        term = encodeURIComponent(this.$('.search-query').val());
         if(term && term.length) {
             app.router.navigate('#search/'+term, {trigger: true});
         }

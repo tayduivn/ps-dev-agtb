@@ -12,13 +12,22 @@
 
         // Load the search results route.
         app.router.route("search/:query", "search", function(query) {
-            app.controller.loadView({
-                mixed: true,
-                module: "Search",
-                layout: "search",
-                query: query,
-                skipFetch: true
-            });
+            // For Safari and FF, the query always comes in as URI encoded.
+            // Decode here so we don't accidently double encode it later. (bug55572)
+            try{
+                var decodedQuery = decodeURIComponent(query);
+                app.controller.loadView({
+                    mixed: true,
+                    module: "Search",
+                    layout: "search",
+                    query: decodedQuery,
+                    skipFetch: true
+                });
+            }catch(err){
+                // If not a validly encoded URI, decodeURIComponent will throw an exception
+                // If URI is not valid, don't navigate.
+            }
+
         });
 
         // Load the profile
