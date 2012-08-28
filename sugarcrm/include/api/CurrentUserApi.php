@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('include/SugarCurrency.php');
 
 class CurrentUserApi extends SugarApi {
     public function registerApiRest() {
@@ -53,14 +54,24 @@ class CurrentUserApi extends SugarApi {
      * @return array
      */
     public function retrieveCurrentUser($api, $args) {
-        global $current_user;
+        global $current_user, $locale;
         $user_data = array(
             'timezone' => $current_user->getPreference('timezone'),
             'datepref' => $current_user->getPreference('datef'),
             'timepref' => $current_user->getPreference('timef'),
         );
 
-
+        // user currency prefs
+        $currency = SugarCurrency::getUserLocaleCurrency();
+        $user_data['currency_id'] = $currency->id;
+        $user_data['currency_name'] = $currency->name;
+        $user_data['currency_symbol'] = $currency->symbol;
+        $user_data['currency_iso'] = $currency->iso4217;
+        $user_data['currency_rate'] = $currency->conversion_rate;
+        // user number formatting prefs
+        $user_data['decimal_precision'] = $locale->getPrecision();
+        $user_data['decimal_separator'] = $locale->getDecimalSeparator();
+        $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
 
         if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
