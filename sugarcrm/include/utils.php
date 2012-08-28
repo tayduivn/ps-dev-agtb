@@ -4263,6 +4263,18 @@ function rebuildConfigFile($sugar_config, $sugar_version) {
 }
 
 /**
+ * Loads clean configuration, not overridden by config_override.php
+ *
+ * @return array
+ */
+function loadCleanConfig()
+{
+    $sugar_config = array();
+    require 'config.php';
+    return $sugar_config;
+}
+
+/**
  * getJavascriptSiteURL
  * This function returns a URL for the client javascript calls to access
  * the site.  It uses $_SERVER['HTTP_REFERER'] in the event that Proxy servers
