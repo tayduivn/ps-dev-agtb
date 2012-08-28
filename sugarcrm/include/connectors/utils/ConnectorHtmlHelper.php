@@ -80,7 +80,7 @@ class ConnectorHtmlHelper
             $iconFilePath = empty($iconFilePath) ? 'themes/default/images/MoreDetail.png' : $iconFilePath;
 
             $code = '<!--not_in_theme!--><img id="dswidget_img" border="0" src="' . $iconFilePath .'" alt="'
-                    . $shown_source .'" onmouseover="show_' . $shown_source . '(event);">';
+                    . $shown_source .'" onclick="show_' . $shown_source . '(event);">';
 
             $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>";
             //$code .= $formatter->getDetailViewFormat();
