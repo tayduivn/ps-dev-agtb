@@ -304,9 +304,24 @@ class aCase extends Basic {
 	 * @return string
 	 */
 	function getEmailSubjectMacro() {
-		global $sugar_config;
-		return (isset($sugar_config['inbound_email_case_subject_macro']) && !empty($sugar_config['inbound_email_case_subject_macro'])) ?
-			$sugar_config['inbound_email_case_subject_macro'] : $this->emailSubjectMacro;
+        // jmorais@dri - Bug #55872
+        global $sugar_config, $mod_strings, $app_strings;
+
+        $macro = $this->emailSubjectMacro;
+        if (!empty($sugar_config['inbound_email_case_subject_macro'])) {
+            $macro = $sugar_config['inbound_email_case_subject_macro'];
+        }
+
+        if (!empty($mod_strings[$macro])) {
+            return $mod_strings[$macro];
+        }
+
+        if (!empty($app_strings[$macro])) {
+            return $app_strings[$macro];
+        }
+
+        return $macro;
+        // ~jmorais@dri
 	}
 
 	function getAccount($case_id){
