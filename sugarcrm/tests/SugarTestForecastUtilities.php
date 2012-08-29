@@ -131,7 +131,8 @@ class SugarTestForecastUtilities
 
         $return = array(
             'opportunities' => array(),
-            'opportunities_total' => 0
+            'opportunities_total' => 0,
+            'opp_worksheets' => array()
         );
 
 
@@ -188,6 +189,21 @@ class SugarTestForecastUtilities
                     $forecast_best_total += $opp->best_case;
                     $forecast_worst_total += $opp->worst_case;
                     $return['opportunities_total'] += $opp_amount;
+                }
+
+                if ($config['createWorksheet'] === true) {
+                    $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+                    $worksheet->user_id = $user->id;
+                    $worksheet->related_id = $opp->id;
+                    $worksheet->forecast_type = "Direct";
+                    $worksheet->timeperiod_id = $config['timeperiod_id'];
+                    $worksheet->best_case = $opp->best_case;
+                    $worksheet->likely_case = $opp->likely_case;
+                    $worksheet->worst_case = $opp->worst_case;
+                    $worksheet->forecast = 1;
+                    $worksheet->save();
+
+                    $return['opp_worksheets'][] = $worksheet;
                 }
 
                 $opportunities[] = $opp;
