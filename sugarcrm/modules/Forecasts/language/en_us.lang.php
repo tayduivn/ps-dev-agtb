@@ -303,4 +303,12 @@ $mod_strings = array (
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
     'LBL_TIMEFRAMES' => 'Timeframes',
+
+    // config panel strings
+    'LBL_FORECASTS_CONFIG_FISCAL_START_DATE' => 'Select the start date of your fiscal time period:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
+    'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:'
+
 );
