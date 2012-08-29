@@ -73,21 +73,7 @@ class Worksheet extends SugarBean {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
         $this->currency_rate = $currency->conversion_rate;
-        //If related_forecast_type is empty it is an opportunity override so we update the best_case_worksheet and likely_case_worksheet values
-        /*if (empty($this->related_forecast_type) && !empty($this->related_id))
-        {
-            $opp = new Opportunity();
-            $opp->retrieve($this->related_id);
-            if(!empty($opp->id))
-            {
-                $opp->best_case = $this->best_case;
-                $opp->likely_case = $this->likely_case;
-                $opp->worst_case = $this->worst_case;
-                $opp->currency_id = $this->currency_id;
-                $opp->currency_rate = $this->currency_rate;
-                $opp->save();
-            }
-        }*/
+        
         parent::save($check_notify);
     }
 
