@@ -41,7 +41,8 @@ function setUp()
     SugarTestHelper::setUp('beanFiles');
     SugarTestHelper::setUp('beanList');
     SugarTestHelper::setUp('app_list_strings');
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
+    global $current_user;
+    SugarTestHelper::setUp('current_user');
     $current_user->is_admin = 1;
     $current_user->save();
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 1");

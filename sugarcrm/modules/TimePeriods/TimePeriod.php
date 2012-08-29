@@ -174,7 +174,7 @@ class TimePeriod extends SugarBean {
 
     /**
      * getTimePeriod
-     *
+     * @param
      */
     static function getTimePeriod($timedate=null)
     {
@@ -199,9 +199,10 @@ class TimePeriod extends SugarBean {
 
 
     /**
-     * Return a timeperiod object for a given dbdate
-     * @param $db_date
-     * @return bool|TimePeriod
+     * Return a timeperiod object for a given database date
+     *
+     * @param $db_date String value of database date (ex: 2012-12-30)
+     * @return bool|TimePeriod TimePeriod instance for corresponding database date; false if nothing found
      */
     public static function retrieveFromDate($db_date) {
         global $app_strings;

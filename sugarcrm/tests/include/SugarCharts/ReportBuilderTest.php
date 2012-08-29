@@ -33,6 +33,11 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
         require('include/modules.php');
     }
 
+    public static function tearDownAfterClass()
+    {
+        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name = 'TestReport'");
+    }
+
     /**
      * @group ReportBuilder
      * @group SugarCharts
