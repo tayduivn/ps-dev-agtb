@@ -22,7 +22,7 @@ $viewdefs['base']['layout']['edit'] = array(
                                 0 => array(
                                     'view' => 'edit',
                                 ),
-                           ),
+                            ),
                         ),
                     ),
                 ),
