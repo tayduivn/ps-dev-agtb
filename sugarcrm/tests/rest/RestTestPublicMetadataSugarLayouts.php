@@ -85,7 +85,7 @@ class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     }
 
     public function testBaseLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata/public?typeFilter=layouts');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
@@ -99,7 +99,7 @@ class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     }
 
     public function testPortalLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata/public?typeFilter=layouts&platform=portal');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bozzle', $reply['reply']['layouts'], 'Test result not found');
@@ -113,7 +113,7 @@ class RestTestPublicMetadataSugarLayouts extends RestTestBase {
     }
 
     public function testMobileLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata/public?typeFilter=layouts&platform=mobile');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertEmpty($reply['reply']['layouts']['dizzle'], 'Incorrectly picked up metadata that should not have been read');
