@@ -21,6 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'MailerException.php';
+require_once 'EmailIdentity.php';
+
 class Headers
 {
 	const MessageId                 = 'Message-ID';
@@ -47,34 +50,36 @@ class Headers
 	}
 
 	public function buildFromArray($headers = array()) {
-		foreach ($headers as $key => $value) {
-			// the keys should look the real headers they represent
-			switch ($key) {
-				case self::MessageId:
-					$this->setMessageId($value);
-					break;
-				case self::Priority:
-					$this->setPriority($value);
-					break;
-				case self::DispositionNotificationTo:
-					$this->setRequestConfirmation($value);
-					break;
-				case self::From:
-					$this->setFrom($value);
-					break;
-				case self::ReplyTo:
-					$this->setReplyTo($value);
-					break;
-				case self::Sender:
-					$this->setSender($value);
-					break;
-				case self::Subject:
-					$this->setSubject($value);
-					break;
-				default:
-					// it's not known, so it must be a custom header
-					$this->addCustomHeader($key, $value);
-					break;
+		if (is_array($headers)) {
+			foreach ($headers as $key => $value) {
+				// the keys should look the real headers they represent
+				switch ($key) {
+					case self::MessageId:
+						$this->setMessageId($value);
+						break;
+					case self::Priority:
+						$this->setPriority($value);
+						break;
+					case self::DispositionNotificationTo:
+						$this->setRequestConfirmation($value);
+						break;
+					case self::From:
+						$this->setFrom($value);
+						break;
+					case self::ReplyTo:
+						$this->setReplyTo($value);
+						break;
+					case self::Sender:
+						$this->setSender($value);
+						break;
+					case self::Subject:
+						$this->setSubject($value);
+						break;
+					default:
+						// it's not known, so it must be a custom header
+						$this->addCustomHeader($key, $value);
+						break;
+				}
 			}
 		}
 	}
@@ -176,8 +181,8 @@ class Headers
 	}
 
 	/**
-	 * @param $key
-	 * @param $value
+	 * @param string $key
+	 * @param string $value
 	 *
 	 * @todo throw an exception if the custom header is invalid?
 	 * @todo do we need to prevent overwriting a non-custom header?
@@ -186,6 +191,22 @@ class Headers
 		if (is_string($key) && is_string($value)) {
 			$this->custom[$key] = $value;
 		}
+	}
+
+	/**
+	 * @param string $key
+	 * @return null|string
+	 */
+	public function getCustomHeader($key) {
+		if (array_key_exists($key, $this->custom)) {
+			return $this->custom[$key];
+		}
+
+		return null;
+	}
+
+	public function getCustomHeaders() {
+		return $this->custom;
 	}
 
 	/**
@@ -209,23 +230,24 @@ class Headers
 
 	private function packageFrom(&$headers) {
 		$from = $this->getFrom();
-		$fromEmail = $from->getEmail();
 
 		if (!($from instanceof EmailIdentity)) {
 			throw new MailerException("Invalid header: " . self::From);
 		}
 
-		$headers[self::From] = array($fromEmail, $from->getName());
+		$headers[self::From] = array($from->getEmail(), $from->getName());
 	}
 
 	private function packageReplyTo(&$headers) {
 		$replyTo = $this->getReplyTo();
 
-		if (!($replyTo instanceof EmailIdentity)) {
-			throw new MailerException("Invalid header: " . self::ReplyTo);
-		}
+		if (!is_null($replyTo)) {
+			if (!($replyTo instanceof EmailIdentity)) {
+				throw new MailerException("Invalid header: " . self::ReplyTo);
+			}
 
-		$headers[self::ReplyTo] = array($replyTo->getEmail(), $replyTo->getName());
+			$headers[self::ReplyTo] = array($replyTo->getEmail(), $replyTo->getName());
+		}
 	}
 
 	private function packageSender(&$headers) {
