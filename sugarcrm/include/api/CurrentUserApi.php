@@ -62,7 +62,9 @@ class CurrentUserApi extends SugarApi {
         );
 
         // user currency prefs
-        $currency = SugarCurrency::getUserLocaleCurrency();
+        $currency = BeanFactory::getBean('Currencies');
+        $currency_id = $current_user->getPreference('currency');
+        $currency->retrieve($currency_id);
         $user_data['currency_id'] = $currency->id;
         $user_data['currency_name'] = $currency->name;
         $user_data['currency_symbol'] = $currency->symbol;

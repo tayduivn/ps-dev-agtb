@@ -236,27 +236,6 @@ class MetadataApi extends SugarApi {
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
 
-        // populate available system currencies
-        require_once('modules/Currencies/ListCurrency.php');
-        $lcurrency = new ListCurrency();
-        $lcurrency->lookupCurrencies();
-        if(!empty($lcurrency->list))
-        {
-            foreach($lcurrency->list as $current)
-            {
-                $currency = array();
-                $currency['name'] = $current->name;
-                $currency['iso'] = $current->iso4217;
-                $currency['status'] = $current->status;
-                $currency['symbol'] = $current->symbol;
-                $currency['rate'] = $current->conversion_rate;
-                $currency['name'] = $current->name;
-                $currency['date_entered'] = $current->date_entered;
-                $currency['date_modified'] = $current->date_modified;
-                $data['currencies'][$current->id] = $currency;
-            }
-        }
-
         $baseChunks = array('viewTemplates','fields','appStrings','views', 'layouts', 'config');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
@@ -322,6 +301,28 @@ class MetadataApi extends SugarApi {
                 $data['acl'][$modName]['import'] = 'no';
                 $data['acl'][$modName]['export'] = 'no';
                 $data['acl'][$modName]['massupdate'] = 'no';
+            }
+        }
+
+        // populate available system currencies
+        $data['currencies'] = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $data['currencies'][$current->id] = $currency;
             }
         }
 
