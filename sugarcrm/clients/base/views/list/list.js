@@ -120,7 +120,7 @@
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
     },
     hideActions: function(e) {
-        $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
+        $(e.currentTarget).children("td").children("span").children(".btn-group").not('.static').hide();
     },
     bindDataChange: function() {
         if (this.collection) {
