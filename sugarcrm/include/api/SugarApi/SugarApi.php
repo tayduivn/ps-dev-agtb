@@ -138,8 +138,8 @@ abstract class SugarApi {
 
         $bean->retrieve($id);
 
-        if(isset($args['_favorite']))
-            $this->toggleFavorites($bean->module_dir, $id, $args['_favorite']);
+        if(isset($args['my_favorite']))
+            $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
 
         /*
          * Even though the bean is refreshed above, return only the id

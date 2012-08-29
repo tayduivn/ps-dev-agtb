@@ -108,23 +108,12 @@ class SugarBeanApiHelper
         // get favorites
         // mark if its a favorite
         
-        if ( empty($fieldList) || !in_array('_favorite',$fieldList) ) {
-            $data['_favorite'] = $this->getFavorite($bean->module_dir, $bean->id);
+        if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
+            $data['my_favorite'] = $bean->my_favorite;
         }
 
         return $data;
     } 
-
-    /**
-     * Get a Favorite by Module, Id, and User ID
-     * @param type $module 
-     * @param type $id 
-     * @return bool
-     */
-    protected function getFavorite($module, $id)
-    {
-        return SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
-    }
     
     /**
      * This function 

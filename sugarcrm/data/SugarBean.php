@@ -2520,6 +2520,12 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         //END SUGARCRM flav=pro ONLY
 
+
+        // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
+        // TODO: add global vardef for my_favorite field
+        $query_select .= ', sf.id AS my_favorite';
+        $query_from .= " LEFT JOIN sugarfavorites AS sf ON sf.module = '{$this->module_dir}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+
         $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
@@ -2633,6 +2639,11 @@ function save_relationship_changes($is_update, $exclude=array())
             {
                 $this->$field = $nullvalue;
             }
+        }
+        // TODO: add a vardef for my_favorite
+        if(isset($row['my_favorite']))
+        {
+            $this->my_favorite = $row['my_favorite'];
         }
     }
 

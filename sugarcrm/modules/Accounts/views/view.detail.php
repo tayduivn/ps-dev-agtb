@@ -39,7 +39,7 @@ class AccountsViewDetail extends ViewDetail {
  	 * locale then it'll use file include/SugarFields/Fields/Address/en_us.DetailView.tpl.
  	 */
  	function display(){
-				
+
 		if(empty($this->bean->id)){
 			global $app_strings;
 			sugar_die($app_strings['ERROR_NO_RECORD']);
