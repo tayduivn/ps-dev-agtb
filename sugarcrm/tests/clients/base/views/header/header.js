@@ -25,14 +25,14 @@ describe("Header View", function() {
 
     it("should set the current module list", function() {
         var originalModuleList, 
-            result = fixtures.metadata.moduleList;
+            result = fixtures.metadata.module_list;
 
         // Temporarily reset the display modules to our fixture's module list.
         originalModuleList = app.config.displayModules;
         app.config.displayModules = _.toArray(result);
         delete result._hash;
         view.setModuleInfo();
-        expect(view.moduleList).toEqual(_.toArray(result));
+        expect(view.module_list).toEqual(_.toArray(result));
         app.config.displayModules = originalModuleList;
     });
 
