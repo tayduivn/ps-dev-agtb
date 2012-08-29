@@ -4327,4 +4327,13 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
+
+if(class_exists('BoxOfficeClient')){
+$app_list_strings['sales_stage_dom']= array(
+    'Prospecting'=>'New',
+    'Qualification'=>'Engaged',
+    'Closed Won'=>'Won',
+    'Closed Lost'=>'Lost',
+);
+}
 ?>
