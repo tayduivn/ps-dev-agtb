@@ -1,10 +1,5 @@
 ({
     /**
-     * Holds the metadata for each of the sub-components used in convert lead
-     */
-    componentsMeta: {},
-
-    /**
      * Parent model that holds all sub-models and logic for performing the convert action
      */
     convertModel: {},
@@ -17,9 +12,6 @@
         //create parent convert model to hold all sub-models
         leadId = this.context.get('modelId');
         this.convertModel = this.createConvertModel(leadId);
-
-        //load metadata for convert to get sub-components
-        this.componentsMeta = this.app.metadata.getModule('Leads').layouts.convert.meta;
 
         //build the layout
         this.addTopView();
@@ -53,7 +45,7 @@
     addSubComponents: function() {
         var self = this;
 
-        _.each(this.componentsMeta, function(moduleMetadata, moduleName) {
+        _.each(this.meta, function(moduleMetadata, moduleName) {
             var context, view;
 
             var def = {
@@ -103,5 +95,32 @@
             layout: this,
             id: this.model.id
         }), def);
+    },
+
+    loadData: function() {
+        var self = this,
+            leadModel;
+
+        self.model.fetch({
+            success: function() {
+                leadModel = self.model;
+                _.each(self.meta, function(moduleMetadata, moduleName) {
+                    var moduleFieldNames = self.getFieldNames(moduleName);
+                    var subModel = self.convertModel.get(moduleName);
+                    _.each(moduleFieldNames, function(moduleFieldName) {
+                        if (leadModel.has(moduleFieldName)) {
+                            subModel.set(moduleFieldName, leadModel.get(moduleFieldName));
+                        }
+                    });
+                    _.each(moduleMetadata.additionalFieldMapping, function(sourceField, targetField) {
+                        debugger;
+                        if (leadModel.has(sourceField)) {
+                            subModel.set(targetField, leadModel.get(sourceField));
+                        }
+                    });
+                    //todo: if moduleName == 'Opportunities' then opportunity.amount = unformat_number(lead.opportunity_amount)
+                });
+            }
+        });
     }
 })
