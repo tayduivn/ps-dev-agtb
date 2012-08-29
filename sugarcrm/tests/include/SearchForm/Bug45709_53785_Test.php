@@ -23,7 +23,9 @@
  ********************************************************************************/
 
 require_once "modules/Tasks/Task.php";
+//BEGIN SUGARCRM flav=pro ONLY
 require_once "modules/Teams/Team.php";
+//END SUGARCRM flav=pro ONLY
 require_once "modules/Contacts/Contact.php";
 require_once "include/SearchForm/SearchForm2.php";
 
@@ -112,7 +114,8 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	// Check if the task is loaded properly	
         $this->assertEquals($this->task->id, $row2['id'], "Couldn't find the expected related task");
     }
-    
+
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @ticket 53785
      */
@@ -150,5 +153,5 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	// Check if the team was successfully loaded
     	$this->assertEquals($this->team->id, $row['id'], "Didn't find the correct team id");
     }
-    
+    //END SUGARCRM flav=pro ONLY
 }
