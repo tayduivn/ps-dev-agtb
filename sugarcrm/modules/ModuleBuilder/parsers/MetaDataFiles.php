@@ -410,12 +410,18 @@ class MetaDataFiles
      * @return null|string Null if the request is invalid, path if it is good
      */
     public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
-        $filedir = self::getModuleFileDir($module, $path, $client, $component);
+        $filedir = self::getModuleFileDir($module, $path);
         if ($filedir === null) {
             return null;
         }
+        
+        if ($client) {
+            $metadataPath = 'clients/' . $client . '/' . $component . 's/' . $deftype . '/';
+        } else {
+            $metadataPath = 'metadata/';
+        }
 
-        $filename = $filedir . $deftype . '.php';
+        $filename = $filedir . $metadataPath . $deftype . '.php';
         return $filename;
     }
 
