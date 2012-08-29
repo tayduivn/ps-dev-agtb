@@ -10,7 +10,7 @@ try {
     $variablesLess = file_get_contents( $root . 'variables.less' );
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../assets"';
-
+//print_r($variables);
     //build bootstrap.css
     $less = new lessc('../less/clients/' . $client . '/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
@@ -21,15 +21,15 @@ try {
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
-    //build module-specific.css
-    // $modulesRoot = '../bootstrap/less/modules';
-    // $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
+    //build utility css files
+    $modulesRoot = '../less/modules';
+    $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
 
-    // foreach ($modulesFile as $module) {
-    //     $less = new lessc($modulesRoot . '/' . $module);
-    //     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
-    //     file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
-    // }
+    foreach ($modulesFile as $module) {
+        $less = new lessc($modulesRoot . '/' . $module);
+        if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+        file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
+    }
 
     // echo '<h2>bootstrap.css successfully generated.</h2>';
     // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';

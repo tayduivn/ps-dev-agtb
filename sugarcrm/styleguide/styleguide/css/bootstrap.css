@@ -5102,49 +5102,49 @@ footer {
   background-color:#1f77b4;
 }
 .nv-stroke1 {
-  fill:#aec7e8;
-  stroke:#aec7e8;
-  background-color:#aec7e8;
-}
-.nv-stroke2 {
   fill:#ff7f0e;
   stroke:#ff7f0e;
   background-color:#ff7f0e;
 }
-.nv-stroke3 {
-  fill:#ffbb78;
-  stroke:#ffbb78;
-  background-color:#ffbb78;
-}
-.nv-stroke4 {
+.nv-stroke2 {
   fill:#2ca02c;
   stroke:#2ca02c;
   background-color:#2ca02c;
 }
-.nv-stroke5 {
-  fill:#98df8a;
-  stroke:#98df8a;
-  background-color:#98df8a;
-}
-.nv-stroke6 {
+.nv-stroke3 {
   fill:#d62728;
   stroke:#d62728;
   background-color:#d62728;
 }
-.nv-stroke7 {
-  fill:#ff9896;
-  stroke:#ff9896;
-  background-color:#ff9896;
-}
-.nv-stroke8 {
+.nv-stroke4 {
   fill:#9467bd;
   stroke:#9467bd;
   background-color:#9467bd;
 }
+.nv-stroke5 {
+  fill:#8c564b;
+  stroke:#8c564b;
+  background-color:#8c564b;
+}
+.nv-stroke6 {
+  fill:#e377c2;
+  stroke:#e377c2;
+  background-color:#e377c2;
+}
+.nv-stroke7 {
+  fill:#7f7f7f;
+  stroke:#7f7f7f;
+  background-color:#7f7f7f;
+}
+.nv-stroke8 {
+  fill:#bcbd22;
+  stroke:#bcbd22;
+  background-color:#bcbd22;
+}
 .nv-stroke9 {
-  fill:#c5b0d5;
-  stroke:#c5b0d5;
-  background-color:#c5b0d5;
+  fill:#17becf;
+  stroke:#17becf;
+  background-color:#17becf;
 }
 h1 {
   font-size:20px !important;
