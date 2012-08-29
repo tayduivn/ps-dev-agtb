@@ -94,7 +94,7 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
 
     public function testMetadataSubPanels()
     {
-        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
     }
 

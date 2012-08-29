@@ -167,7 +167,7 @@ class RestTestMetadataSugarViews extends RestTestBase {
 
 
         file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?typeFilter=views&platform=mobile');
+        $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 

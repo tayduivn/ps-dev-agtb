@@ -91,7 +91,7 @@ class RestTestMetadataSugarFields extends RestTestBase {
 
         // Make sure we get the private code when we have public js of the same name
         file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?typeFilter=fields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?type_filter=fields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['fields']['address']['controller'],"Didn't get mobile code when that was the direct option");
 
 
