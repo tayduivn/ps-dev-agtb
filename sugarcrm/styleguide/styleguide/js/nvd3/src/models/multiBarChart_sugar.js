@@ -95,7 +95,6 @@ nv.models.multiBarChart = function() {
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
 
-
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
@@ -236,18 +235,22 @@ nv.models.multiBarChart = function() {
       lines
         .width(availableWidth)
         .height(availableHeight)
-        .color(data.map(function(d,i) {
-          return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled && data[i].type==='line' }))
+        .color(
+          data.map( function(d,i) {
+            return d.color || color(d, i);
+          } ).filter(function(d,i) { return !data[i].disabled && data[i].type==='line' } )
+        )
         .forceY([0,350])
         .forceX([.455,5.545])
 
       bars
         .width(availableWidth)
         .height(availableHeight)
-        .color(   data.map( function(d,i) {
+        .color(   
+          data.map( function(d,i) {
             return d.color || color(d, i);
-          } ).filter( function(d,i) { return !data[i].disabled && data[i].type==='bar' } )  )
+          } ).filter( function(d,i) { return !data[i].disabled && data[i].type==='bar' } )  
+        )
         .forceY([0,350])
         ;
 
@@ -274,9 +277,6 @@ nv.models.multiBarChart = function() {
         .attr('y2', 0)
         .attr('transform', 'translate(0,' + y1(quotaValue) +')')
         .style('stroke-dasharray','20, 5');
-
-      //------------------------------------------------------------
-
 
       //------------------------------------------------------------
       // Setup Axes

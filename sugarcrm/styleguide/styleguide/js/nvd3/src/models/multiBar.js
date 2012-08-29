@@ -35,7 +35,6 @@ nv.models.multiBar = function() {
 
   //============================================================
 
-
   function chart(selection) {
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right,
@@ -139,10 +138,12 @@ nv.models.multiBar = function() {
           .attr('height', 0)
           .remove();
       groups
-          .attr('class', function(d,i) { return 'nv-group nv-series-' + i + ' nv-fill' + (i%20>9?'':'0') + i%20 })
+          //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          .attr( 'class', function(d,i) { return this.getAttribute('class') || 'nv-group nv-series-' + i + ' nv-fill' + (i%20>9?'':'0') + i%20; } )
           .classed('hover', function(d) { return d.hover })
           //.style('fill', function(d,i){ return color(d, i) })
           //.style('stroke', function(d,i){ return color(d, i) });
+
       d3.transition(groups)
           .style('stroke-opacity', 1)
           .style('fill-opacity', .75);
