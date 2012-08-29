@@ -75,11 +75,12 @@ $global_control_links['training'] = array(
  );
 //END SUGARCRM flav!=sales ONLY
 
+/* no longer goes in the menubar - now implemented in the bottom bar.
 $global_control_links['help'] = array(
     'linkinfo' => array($app_strings['LNK_HELP'] => ' javascript:void window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$sugar_version.'&edition='.$sugar_flavor.'&lang='.$current_language.'&help_module='.$GLOBALS['module'].'&help_action='.$action.'&key='.$server_unique_key.'\')'),
     'submenu' => ''
  );
-
+*/
 
 $global_control_links['users'] = array(
 'linkinfo' => array($app_strings['LBL_LOGOUT'] => 'index.php?module=Users&action=Logout'),

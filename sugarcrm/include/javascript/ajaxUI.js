@@ -87,9 +87,17 @@ SUGAR.ajaxUI = {
 
                 // Fix the help link
                 // Bug50676 - This can only be run when we have the module around
-                var hl = document.getElementById("help_link");
-                if(hl)
-                    hl.href = hl.href.replace(new RegExp("help_action=([^\&]*)"), 'help_action=' + action_sugar_grp1).replace(new RegExp("help_module=([^\&]*)"), 'help_module=' + r.menu.module);
+                var hl = $("#help");
+                if (hl.length > 0) {
+                    hl.find('a').each(function()
+                        {
+                            this.href = this.href.replace(new RegExp("help_action=([^\&]*)"), 'help_action=' + action_sugar_grp1)
+                                .replace(new RegExp("help_module=([^\&]*)"), 'help_module=' + r.menu.module);
+                        }
+                    );
+                    var label = (r.menu.label) ? r.menu.label: r.menu.module;
+                    hl.find('span.title').text(label + ' ' + SUGAR.language.get('app_strings','LNK_HELP'));
+                }
             }
             //END SUGARCRM flav=pro ONLY
 
