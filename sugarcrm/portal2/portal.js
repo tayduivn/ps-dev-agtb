@@ -93,9 +93,9 @@
          */
         handleValidationError: function(errors) {
             var self = this;
-            this.$('.control-group').addClass("error");
-            this.$('.help-block').html("");
-
+            this.$('.help-block').html("").addClass("control-group error");
+            // need to add error styling to parent view element
+            this.$el.parent().parent().addClass("error");
             // For each error add to error help block
             this.$('.controls').addClass('input-append');
             _.each(errors, function(errorContext, errorName) {
@@ -104,7 +104,19 @@
 
             // Remove previous exclamation then add back.
             this.$('.add-on').remove();
-            this.$('.controls').find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            this.$el.find(this.fieldTag+':last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+        },
+
+
+        bindDomChange: function() {
+            if (!(this.model instanceof Backbone.Model)) return;
+            var self = this;
+            var el = this.$el.find(this.fieldTag);
+            // need to clear error styling on data change
+            el.on("change", function() {
+                self.$el.parent().parent().removeClass("error");
+            });
+            app.view.Field.prototype.bindDomChange.call(this);
         }
     });
 
