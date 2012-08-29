@@ -53,6 +53,9 @@ $moduleList[] = 'ProspectLists';
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
+$moduleList[] = 'Forecasts';
+$moduleList[] = 'Contracts';
+$moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -61,16 +64,7 @@ $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
 //END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav=pro ONLY
-$moduleList[] = 'Forecasts';
-$moduleList[] = 'ForecastWorksheets';
-$moduleList[] = 'ForecastManagerWorksheets';
-$moduleList[] = 'ForecastSchedule';
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=pro ONLY
-$moduleList[] = 'Contracts';
-$moduleList[] = 'KBDocuments';
-//END SUGARCRM flav=pro ONLY
+
 //END SUGARCRM flav!=dce ONLY
 
 //BEGIN SUGARCRM flav=dce ONLY
@@ -410,7 +404,9 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
     //BEGIN SUGARCRM flav=pro ONLY
-    'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
+    'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers',
+    'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
+    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays', 'SNIP',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
@@ -427,9 +423,6 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav!=sales ONLY
     'DocumentRevisions',
     //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
-    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays', 'SNIP',
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=dce ONLY
     'DCEDataBases',
     //END SUGARCRM flav=dce ONLY
@@ -477,6 +470,8 @@ $modInvisList[] = 'WorkFlowActionShells';
 $modInvisList[] = 'WorkFlowActions';
 $modInvisList[] = 'Expressions';
 $modInvisList[] = 'ACLFields';
+$modInvisList[] = 'ForecastManagerWorksheet';
+$modInvisList[] = 'ForecastWorksheet';
 //END SUGARCRM flav=pro ONLY
 $modInvisList[] = 'ACL';
 $modInvisList[] = 'ACLRoles';

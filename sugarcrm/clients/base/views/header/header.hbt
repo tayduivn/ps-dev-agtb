@@ -17,7 +17,7 @@
                         <ul class="dropdown-menu">
                             <li class="profile"><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
                             <li class="divider"></li>
-                            <li class="logout"><a href="#logout">{{str "LBL_LOGOUT"}}</a></li>
+                            <li class="logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
                         </ul>
                     </li>
                     <li class="divider-vertical"></li>

@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-
+require_once('include/api/RelateApi.php');
 class RelateRecordApi extends ModuleApi {
     public function registerApiRest() {
         return array(
@@ -141,31 +141,30 @@ class RelateRecordApi extends ModuleApi {
      */
     protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, SugarBean $relatedBean, $linkName, $relatedData = array()) {
         $recordArray = $this->formatBean($api, $args, $primaryBean);
-        $relatedArray = $this->formatBean($api, $args, $relatedBean);
+        //$relatedArray = $this->formatBean($api, $args, $relatedBean);
 
-        // TODO: When the related data is fixed and we can fetch it from the link class, replace this with that
-        foreach ( $relatedData as $key => $value ) {
-            $relatedArray[$key] = $value;
-        }
-        
+        // need to use the same as getRealtedRecord, so just call it
+        $relatedArray = $this->getRelatedRecord($api, $args);
         return array('record'=>$recordArray,
                      'related_record'=>$relatedArray);
     }
 
 
     function getRelatedRecord($api, $args) {
-        $primaryBean = $this->loadBean($api, $args);
-        
-        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
-
-        $relatedBean->retrieve($args['remote_id']);
-        if ( empty($relatedBean->id) ) {
-            // Retrieve failed, probably doesn't have permissions
-            throw new SugarApiExceptionNotFound('Could not find the related bean');
+        // due to deficiencies in Link2 for the time being we need to use the listRelated from RelateApi and return the specific record
+        // Basically it gets all related records with the related record fields populated and then returns the specific record we want
+        // TODO: Fix this when Link2 has a method to get populated fields
+        $relateApi = new RelateApi;
+        $data = $relateApi->listRelated($api, $args);
+        if(empty($data['records']))
+        {
+            throw new SugarApiExceptionNotFound('Could not find record: '.$args['remote_id']);
         }
-
-        return $this->formatBean($api, $args, $relatedBean);
-        
+        else
+        {
+            // its always the first record
+            return reset($data['records']);
+        }
     }
 
     function createRelatedRecord($api, $args) {

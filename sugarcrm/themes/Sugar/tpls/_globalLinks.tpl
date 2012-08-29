@@ -57,4 +57,6 @@
 	<div id="dcmenuSugarCube" {$NOTIFCLASS} {if $ISADMIN}onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}"{/if}>
 	  {$NOTIFCODE}
 	</div>
+{else}
+<div id="dcmenuSugarCubeEmpty"></div>
 {/if}

@@ -117,6 +117,14 @@ class SugarSearchEngineElasticMapping
                 $properties[$fieldName] = $tmpArray;
             }
         }
+        if (isset($properties['doc_owner']) == false)
+        {
+            $properties['doc_owner'] = array(
+                'boost' => 1,
+                'type' => 'string',
+                'index' => 'not_analyzed'
+            );
+        }
         return $properties;
     }
 

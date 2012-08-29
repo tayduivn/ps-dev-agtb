@@ -7,7 +7,11 @@
 ({
     events: {
         "click [name=save_button]": "saveTheme",
-        "click [name=reset_button]": "resetTheme",
+        "click [name=refresh_button]": "loadTheme",
+        "click [name=reset_button]": "toggleModal",
+        "click #modal-confirm-reset #buttonYes": "resetTheme",
+        "click #modal-confirm-reset #buttonNo": "toggleModal",
+        "click #modal-confirm-reset .close": "toggleModal",
         "blur input": "previewTheme"
     },
     initialize: function(options) {
@@ -65,7 +69,12 @@
             self.showMessage('Done', 3000);
         }});
     },
+    toggleModal: function() {
+        this.$('#modal-confirm-reset').toggleClass('hide');
+    },
     resetTheme: function() {
+        this.toggleModal();
+
         var self = this,
             params = { "reset": true,
                 platform: app.config.platform,

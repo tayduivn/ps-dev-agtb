@@ -121,7 +121,7 @@ class AuthenticationController
 			// Check for running Admin Wizard
 			$config = new Administration();
 			$config->retrieveSettings();
-		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && $_REQUEST['action'] != 'AdminWizard' ) {
+		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && (empty($_REQUEST['action']) || $_REQUEST['action'] != 'AdminWizard') ) {
 
                 if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true ) {
                     $this->nextStep = array('module'=>'Configurator','action'=>'AdminWizard');
@@ -139,7 +139,7 @@ class AuthenticationController
 			if (is_array($PARAMS) && !empty($PARAMS) && isset($PARAMS['passwordEncrypted'])) {
 				$checkTimeZone = false;
 			} // if
-			if(empty($ut) && $checkTimeZone && $_REQUEST['action'] != 'SetTimezone' && $_REQUEST['action'] != 'SaveTimezone' ) {
+			if(empty($ut) && $checkTimeZone && (empty($_REQUEST['action']) || ($_REQUEST['action'] != 'SetTimezone' && $_REQUEST['action'] != 'SaveTimezone' ))) {
                 if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true && empty($this->nextStep) ) {
                     $this->nextStep = array('module'=>'Users','action'=>'Wizard');
                 } else {

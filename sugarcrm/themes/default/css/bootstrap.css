@@ -6908,7 +6908,6 @@ table th {
 }
 table.datatable tbody td {
   white-space: nowrap;
-  max-width: 100px;
   overflow-x: hidden;
 }
 table th,
@@ -7044,6 +7043,9 @@ table tfoot td {
 }
 #folded > div {
   width: inherit;
+}
+#folded {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
 }
 #dashboard #folded .tab-pane.active {
   position: fixed !important;
@@ -8256,43 +8258,11 @@ color: @red;
     left: auto;
   }
 }
-#folded {
-  background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
-}
 /* CSS for forecasts subnav */
 #headerbar h1 {
   float: left;
   margin-right: 5px;
   margin-left: 12px;
-}
-#overview {
-  background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
-  border-left: 3px solid #cdcccb;
-  border-top: 3px solid #cdcccb;
-}
-.viz {
-  min-height: 300px;
-  float: left;
-  width: 90% !important;
-  margin-left: 5% !important;
-  padding-top: 20px;
-}
-.btn-invisible {
-  background: none;
-  border: 1px solid transparent;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-.btn-invisible:hover {
-  border: 1px solid #d0cfce;
-  *border: 0;
-  border-top-color: #c1bfbe;
-}
-/* Forecast worksheets */
-#view-sales-rep input[type="text"],
-#view-manager input[type="text"] {
-  width: 100%;
 }
 .pull-right {
   float: right;
@@ -8421,4 +8391,91 @@ color: @red;
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
+}
+
+/* CSS for forecasts subnav */
+#headerbar h1 {
+    float:left;
+    margin-right:5px;
+    margin-left:12px;
+}
+
+#overview {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
+    border-left:3px solid #cdcccb;
+    border-top:3px solid #cdcccb;
+}
+
+.viz {
+    min-height: 300px;
+    float: left;
+    width: 90% !important;
+    margin-left: 5% !important;
+    padding-top: 20px;
+}
+
+.btn-invisible {
+    background:none;
+    border:1px solid transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.btn-invisible:hover {
+    border:1px solid #d0cfce;
+    *border:0;
+    border-top-color:#c1bfbe;
+}
+
+#forecastsCommitButtons {
+    float:right;
+    padding:15px 0px;
+}
+
+/** Fixed navbar from styleguide **/
+.navbar-fixed-top {
+    position:fixed;
+    top:0;
+    right:0;
+    left:0;
+    z-index:1030;
+}
+.navbar-fixed-top .navbar-inner {
+    padding-left:0;
+    padding-right:0;
+    -webkit-border-radius:0;
+    -moz-border-radius:0;
+    border-radius:0;
+}
+
+a#save_draft {
+    margin-right: 8px;
+}
+
+.label, .badge {
+    font-size:10.152px;
+    line-height:12px;
+    color:#000;
+    vertical-align:baseline;
+    white-space:nowrap;
+    background-color:#cdcccb;
+    height:12px;
+    display:inline-block;
+}
+.label {
+    padding:1px 4px 2px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.badge {
+    padding:1px 9px 2px;
+    -webkit-border-radius:9px;
+    -moz-border-radius:9px;
+    border-radius:9px;
+}
+a.label:hover, a.badge:hover {
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
 }
